@@ -66,6 +66,8 @@ macro_rules! trace_write_lock {
 }
 
 #[cfg(feature = "client")]
+pub mod async_client;
+#[cfg(feature = "client")]
 pub mod client;
 #[cfg(feature = "console-logging")]
 pub mod console_logging;
