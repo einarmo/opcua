@@ -1,6 +1,6 @@
 use std::{pin::pin, sync::Arc};
 
-use super::core::{OutgoingMessage, TransportState, TransportTerminationResult};
+use super::core::{OutgoingMessage, TransportState};
 use crate::core::comms::{
     message_writer::MessageWriter,
     secure_channel::SecureChannel,
@@ -25,12 +25,12 @@ pub(crate) struct TcpTransport {
 
 #[derive(Debug, Clone)]
 pub struct TransportConfiguration {
-    max_pending_incoming: usize,
-    max_inflight: usize,
-    send_buffer_size: usize,
-    recv_buffer_size: usize,
-    max_message_size: usize,
-    max_chunk_count: usize,
+    pub max_pending_incoming: usize,
+    pub max_inflight: usize,
+    pub send_buffer_size: usize,
+    pub recv_buffer_size: usize,
+    pub max_message_size: usize,
+    pub max_chunk_count: usize,
 }
 
 impl TcpTransport {
@@ -43,6 +43,40 @@ impl TcpTransport {
         config: TransportConfiguration,
         endpoint_url: &str,
     ) -> Result<Self, StatusCode> {
+        let (framed_read, writer) =
+            match Self::connect_inner(&secure_channel, &config, endpoint_url).await {
+                Ok(k) => k,
+                Err(status) => return Err(status),
+            };
+
+        Ok(Self {
+            state: TransportState::new(
+                secure_channel,
+                outgoing_recv,
+                config.max_pending_incoming,
+                config.max_inflight,
+            ),
+            read: framed_read,
+            write: writer,
+            send_buffer: MessageWriter::new(
+                config.send_buffer_size,
+                config.max_message_size,
+                config.max_chunk_count,
+            ),
+        })
+    }
+
+    async fn connect_inner(
+        secure_channel: &RwLock<SecureChannel>,
+        config: &TransportConfiguration,
+        endpoint_url: &str,
+    ) -> Result<
+        (
+            FramedRead<ReadHalf<TcpStream>, TcpCodec>,
+            WriteHalf<TcpStream>,
+        ),
+        StatusCode,
+    > {
         let (host, port) = hostname_port_from_url(
             endpoint_url,
             crate::core::constants::DEFAULT_OPC_UA_SERVER_PORT,
@@ -100,7 +134,7 @@ impl TcpTransport {
         match framed_read.next().await {
             Some(Ok(Message::Acknowledge(ack))) => {
                 // TODO revise our sizes and other things according to the ACK
-                log::trace!("Received acknowledgement: {:?}", ack)
+                log::trace!("Received acknowledgement: {:?}", ack);
             }
             other => {
                 error!(
@@ -111,21 +145,7 @@ impl TcpTransport {
             }
         }
 
-        Ok(Self {
-            state: TransportState::new(
-                secure_channel,
-                outgoing_recv,
-                config.max_pending_incoming,
-                config.max_inflight,
-            ),
-            read: framed_read,
-            write: writer,
-            send_buffer: MessageWriter::new(
-                config.send_buffer_size,
-                config.max_message_size,
-                config.max_chunk_count,
-            ),
-        })
+        Ok((framed_read, writer))
     }
 
     async fn write_loop(
@@ -148,7 +168,7 @@ impl TcpTransport {
     /// Run the transport, actively sending and receiving messages.
     /// This returns the persistent state used to create the transport,
     /// and a status code indicating the reason why the transport closed.
-    pub async fn run(mut self) -> TransportTerminationResult {
+    pub async fn run(mut self) -> StatusCode {
         // Message queue for sending messages, if this goes full we will block.
         let (send_buf, recv_buf) = tokio::sync::mpsc::channel(10);
         // Run the write loop in a separate future. This lets us both send and receive at the same time.
@@ -193,6 +213,6 @@ impl TcpTransport {
                 }
             }
         };
-        self.state.close(status)
+        self.state.close(status).await
     }
 }

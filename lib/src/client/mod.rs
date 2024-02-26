@@ -153,6 +153,7 @@ pub mod prelude {
         client::*,
         config::*,
         session::{services::*, session::*},
+        session_retry_policy::*,
         subscription::MonitoredItem,
     };
 }

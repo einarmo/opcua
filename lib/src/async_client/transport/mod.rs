@@ -1,2 +1,7 @@
+mod channel;
 mod core;
-mod tcp;
+mod state;
+pub mod tcp;
+
+pub use channel::AsyncSecureChannel;
+pub(crate) use core::OutgoingMessage;

@@ -40,15 +40,10 @@ pub(super) struct TransportState {
     last_received_sequence_number: u32,
 }
 
-pub struct TransportTerminationResult {
-    pub outgoing_recv: tokio::sync::mpsc::Receiver<OutgoingMessage>,
-    pub status: StatusCode,
-}
-
-pub struct OutgoingMessage {
-    request: SupportedMessage,
-    callback: Option<tokio::sync::oneshot::Sender<Result<SupportedMessage, StatusCode>>>,
-    deadline: Instant,
+pub(crate) struct OutgoingMessage {
+    pub request: SupportedMessage,
+    pub callback: Option<tokio::sync::oneshot::Sender<Result<SupportedMessage, StatusCode>>>,
+    pub deadline: Instant,
 }
 
 impl TransportState {
@@ -268,7 +263,7 @@ impl TransportState {
     /// Close the transport, aborting any pending requests.
     /// If `status` is good, the pending requests will be terminated with
     /// `BadConnectionClosed`.
-    pub fn close(self, status: StatusCode) -> TransportTerminationResult {
+    pub async fn close(mut self, status: StatusCode) -> StatusCode {
         // If the status is good, we still want to send a bad status code
         // to the pending requests. They didn't succeed, after all.
         let request_status = if status.is_good() {
@@ -281,9 +276,17 @@ impl TransportState {
             let _ = pending.callback.send(Err(request_status));
         }
 
-        TransportTerminationResult {
-            outgoing_recv: self.outgoing_recv,
-            status,
+        // Make sure we also send a bad status for any remaining messages in the queue
+        // Close the channel first.
+        self.outgoing_recv.close();
+
+        // recv is no longer blocking.
+        while let Some(msg) = self.outgoing_recv.recv().await {
+            if let Some(cb) = msg.callback {
+                let _ = cb.send(Err(request_status));
+            }
         }
+
+        status
     }
 }
