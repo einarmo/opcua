@@ -7,8 +7,8 @@ use tokio_util::sync::CancellationToken;
 use crate::{
     async_client::session::SessionInfo,
     client::prelude::{
-        CertificateStore, CloseSecureChannelRequest, Role, SecureChannel, SecurityPolicy,
-        SecurityTokenRequestType, StatusCode, SupportedMessage,
+        CertificateStore, CloseSecureChannelRequest, RequestHeader, Role, SecureChannel,
+        SecurityPolicy, SecurityTokenRequestType, StatusCode, SupportedMessage,
     },
     sync::RwLock,
     types::DecodingOptions,
@@ -24,13 +24,6 @@ use crate::async_client::{
     },
 };
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ChannelState {
-    Disconnected,
-    Connecting,
-    Connected,
-}
-
 /// Wrapper around an open secure channel
 pub struct AsyncSecureChannel {
     session_info: SessionInfo,
@@ -40,10 +33,10 @@ pub struct AsyncSecureChannel {
     transport_config: TransportConfiguration,
     /// Ignore clock skew between the client and the server.
     run_transport_in_parallel: bool,
-    state: RwLock<SecureChannelState>,
+    state: SecureChannelState,
 
-    state_watch_rx: tokio::sync::watch::Receiver<ChannelState>,
-    state_watch_tx: tokio::sync::watch::Sender<ChannelState>,
+    state_watch_rx: tokio::sync::watch::Receiver<State>,
+    state_watch_tx: tokio::sync::watch::Sender<State>,
     token: CancellationToken,
 }
 
@@ -63,8 +56,7 @@ impl AsyncSecureChannel {
             decoding_options,
         )));
 
-        let (state_watch_tx, state_watch_rx) =
-            tokio::sync::watch::channel(ChannelState::Disconnected);
+        let (state_watch_tx, state_watch_rx) = tokio::sync::watch::channel(State::Disconnected);
 
         Self {
             transport_config: TransportConfiguration {
@@ -75,10 +67,7 @@ impl AsyncSecureChannel {
                 max_message_size: 65535,
                 max_chunk_count: 5,
             },
-            state: RwLock::new(SecureChannelState::new(
-                ignore_clock_skew,
-                secure_channel.clone(),
-            )),
+            state: SecureChannelState::new(ignore_clock_skew, secure_channel.clone()),
             session_info,
             secure_channel,
             certificate_store,
@@ -92,8 +81,7 @@ impl AsyncSecureChannel {
 
     pub async fn run(&self) -> Result<(), StatusCode> {
         {
-            let mut channel_state = trace_write_lock!(self.state);
-            if !matches!(channel_state.state, State::Disconnected) {
+            if !matches!(*self.state_watch_rx.borrow(), State::Disconnected) {
                 error!("Secure channel is already running");
                 return Err(StatusCode::BadInvalidState);
             }
@@ -101,20 +89,17 @@ impl AsyncSecureChannel {
                 error!("Secure channel has already been cancelled");
                 return Err(StatusCode::BadInvalidState);
             }
-            channel_state.state = State::Connecting;
-            let _ = self.state_watch_tx.send(ChannelState::Connecting);
+            let _ = self.state_watch_tx.send(State::Connecting);
         }
 
         let res = self.run_inner().await;
 
-        let mut channel_state = trace_write_lock!(self.state);
-        channel_state.state = State::Disconnected;
-        let _ = self.state_watch_tx.send(ChannelState::Disconnected);
+        let _ = self.state_watch_tx.send(State::Disconnected);
 
         res
     }
 
-    async fn wait_for_state(&self, target_state: ChannelState) -> bool {
+    async fn wait_for_state(&self, connected: bool) -> bool {
         let mut rx = self.state_watch_rx.clone();
 
         loop {
@@ -123,7 +108,9 @@ impl AsyncSecureChannel {
             };
             {
                 let state = rx.borrow();
-                if *state == target_state {
+                if connected && matches!(*state, State::Connected(_))
+                    || !connected && matches!(*state, State::Disconnected)
+                {
                     return true;
                 }
             }
@@ -131,17 +118,16 @@ impl AsyncSecureChannel {
     }
 
     pub async fn wait_for_connection(&self) -> bool {
-        self.wait_for_state(ChannelState::Connected).await
+        self.wait_for_state(true).await
     }
 
     pub async fn send(
         &self,
-        request: SupportedMessage,
+        request: impl Into<SupportedMessage>,
         timeout: Duration,
     ) -> Result<SupportedMessage, StatusCode> {
         let send = {
-            let channel_state = trace_read_lock!(self.state);
-            if let State::Connected(s) = &channel_state.state {
+            if let State::Connected(s) = &*self.state_watch_rx.borrow() {
                 s.clone()
             } else {
                 return Err(StatusCode::BadNotConnected);
@@ -157,9 +143,7 @@ impl AsyncSecureChannel {
             let (transport_fut, send) = self.connect().await?;
 
             {
-                let mut channel_state = trace_write_lock!(self.state);
-                channel_state.state = State::Connected(send);
-                let _ = self.state_watch_tx.send(ChannelState::Connected);
+                let _ = self.state_watch_tx.send(State::Connected(send));
             }
 
             let status = transport_fut.await;
@@ -170,9 +154,7 @@ impl AsyncSecureChannel {
                 break Ok(());
             }
 
-            let mut channel_state = trace_write_lock!(self.state);
-            channel_state.state = State::Connecting;
-            let _ = self.state_watch_tx.send(ChannelState::Connecting);
+            let _ = self.state_watch_tx.send(State::Connecting);
         }
     }
 
@@ -199,19 +181,20 @@ impl AsyncSecureChannel {
         }
     }
 
+    pub(crate) fn make_request_header(&self, timeout: Duration) -> RequestHeader {
+        self.state.make_request_header(timeout)
+    }
+
     async fn connect_no_retry(
         &self,
     ) -> Result<(Pin<Box<impl Future<Output = StatusCode>>>, RequestSend), StatusCode> {
         let (transport, send) = self.create_transport().await?;
 
-        let state = trace_read_lock!(self.state);
-        let request = state.begin_issue_or_renew_secure_channel(
+        let request = self.state.begin_issue_or_renew_secure_channel(
             SecurityTokenRequestType::Issue,
             Duration::from_secs(30),
             send.clone(),
         )?;
-
-        drop(state);
 
         let fut = if self.run_transport_in_parallel {
             futures::future::Either::Left(transport.run())
@@ -234,8 +217,7 @@ impl AsyncSecureChannel {
             }
         };
 
-        let mut state = trace_write_lock!(self.state);
-        state.end_issue_or_renew_secure_channel(resp)?;
+        self.state.end_issue_or_renew_secure_channel(resp)?;
 
         Ok((fut, send))
     }
@@ -293,11 +275,10 @@ impl AsyncSecureChannel {
     /// Close the secure channel, optionally wait for the channel to close.
     pub async fn close_channel(&self, wait: bool) {
         let request = {
-            let channel_state = trace_read_lock!(self.state);
             let msg = CloseSecureChannelRequest {
-                request_header: channel_state.make_request_header(Duration::from_secs(60)),
+                request_header: self.state.make_request_header(Duration::from_secs(60)),
             };
-            match &channel_state.state {
+            match &*self.state_watch_rx.borrow() {
                 State::Connected(sender) => {
                     Some(Request::new(msg, sender.clone(), Duration::from_secs(60)))
                 }
@@ -316,11 +297,11 @@ impl AsyncSecureChannel {
         }
 
         if wait {
-            self.wait_for_state(ChannelState::Disconnected).await;
+            self.wait_for_state(false).await;
         }
     }
 
-    pub fn get_state_change_rx(&self) -> tokio::sync::watch::Receiver<ChannelState> {
+    pub(super) fn get_state_change_rx(&self) -> tokio::sync::watch::Receiver<State> {
         self.state_watch_rx.clone()
     }
 }

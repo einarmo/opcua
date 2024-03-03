@@ -1,3 +1,5 @@
+mod client;
+
 use crate::client::prelude::{EndpointDescription, IdentityToken};
 
 /// Information about the server endpoint, security policy, security mode and user identity that the session will
@@ -11,3 +13,5 @@ pub struct SessionInfo {
     /// Preferred language locales
     pub preferred_locales: Vec<String>,
 }
+
+pub use client::AsyncClient;

@@ -15,6 +15,7 @@ use crate::{
     core::handle::AtomicHandle,
     sync::RwLock,
 };
+use arc_swap::ArcSwap;
 
 pub type RequestSend = tokio::sync::mpsc::Sender<OutgoingMessage>;
 
@@ -31,17 +32,15 @@ lazy_static! {
 
 pub struct SecureChannelState {
     /// Time offset between the client and the server.
-    client_offset: chrono::Duration,
+    client_offset: ArcSwap<chrono::Duration>,
     /// Ignore clock skew between the client and the server.
     ignore_clock_skew: bool,
     /// Secure channel information
     secure_channel: Arc<RwLock<SecureChannel>>,
     /// The session authentication token, used for session activation
-    authentication_token: NodeId,
+    authentication_token: ArcSwap<NodeId>,
     /// The next handle to assign to a request
     request_handle: AtomicHandle,
-    /// Current session state
-    pub(super) state: State,
 }
 
 pub(super) struct Request {
@@ -105,11 +104,10 @@ impl SecureChannelState {
 
     pub fn new(ignore_clock_skew: bool, secure_channel: Arc<RwLock<SecureChannel>>) -> Self {
         SecureChannelState {
-            client_offset: chrono::Duration::zero(),
+            client_offset: ArcSwap::new(Arc::new(chrono::Duration::zero())),
             ignore_clock_skew,
             secure_channel,
-            state: State::Disconnected,
-            authentication_token: NodeId::null(),
+            authentication_token: ArcSwap::new(Arc::new(NodeId::null())),
             request_handle: AtomicHandle::new(Self::FIRST_REQUEST_HANDLE),
         }
     }
@@ -152,13 +150,16 @@ impl SecureChannelState {
         Ok(Request::new(request, sender, timeout))
     }
 
-    pub fn set_client_offset(&mut self, offset: chrono::Duration) {
-        self.client_offset = self.client_offset + offset;
+    pub fn set_client_offset(&self, offset: chrono::Duration) {
+        // This is not strictly speaking thread safe, but it doesn't really matter in this case,
+        // the assumption is that this is only called from a single thread at once.
+        self.client_offset
+            .store(Arc::new(**self.client_offset.load() + offset));
         debug!("Client offset set to {}", self.client_offset);
     }
 
     pub(crate) fn end_issue_or_renew_secure_channel(
-        &mut self,
+        &self,
         response: SupportedMessage,
     ) -> Result<(), StatusCode> {
         if let SupportedMessage::OpenSecureChannelResponse(response) = response {
@@ -182,7 +183,7 @@ impl SecureChannelState {
             debug!("Setting transport's security token");
             {
                 let mut secure_channel = trace_write_lock!(self.secure_channel);
-                secure_channel.set_client_offset(self.client_offset);
+                secure_channel.set_client_offset(**self.client_offset.load());
                 secure_channel.set_security_token(security_token);
 
                 if secure_channel.security_policy() != SecurityPolicy::None
@@ -203,8 +204,8 @@ impl SecureChannelState {
     /// to supply an authentication token.
     pub fn make_request_header(&self, timeout: Duration) -> RequestHeader {
         RequestHeader {
-            authentication_token: self.authentication_token.clone(),
-            timestamp: DateTime::now_with_offset(self.client_offset),
+            authentication_token: self.authentication_token.load().as_ref().clone(),
+            timestamp: DateTime::now_with_offset(**self.client_offset.load()),
             request_handle: self.request_handle.next(),
             return_diagnostics: DiagnosticBits::empty(),
             timeout_hint: timeout.as_millis().min(u32::MAX as u128) as u32,
