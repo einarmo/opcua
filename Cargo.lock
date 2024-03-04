@@ -16,7 +16,7 @@ dependencies = [
  "fnv",
  "futures 0.1.31",
  "libc",
- "log 0.4.20",
+ "log 0.4.21",
  "parking_lot 0.7.1",
  "smallvec 0.6.14",
  "tokio 0.1.22",
@@ -65,7 +65,7 @@ dependencies = [
  "derive_more",
  "futures-core",
  "http-range",
- "log 0.4.20",
+ "log 0.4.21",
  "mime",
  "mime_guess",
  "percent-encoding 2.3.1",
@@ -130,7 +130,7 @@ dependencies = [
  "actix",
  "bytes 0.4.12",
  "futures 0.1.31",
- "log 0.4.20",
+ "log 0.4.21",
  "mio 0.6.23",
  "net2",
  "num_cpus",
@@ -232,7 +232,7 @@ dependencies = [
  "language-tags 0.2.2",
  "lazy_static",
  "lazycell",
- "log 0.4.20",
+ "log 0.4.21",
  "mime",
  "mime_guess",
  "mio 0.6.23",
@@ -286,7 +286,7 @@ dependencies = [
  "futures-util",
  "itoa 1.0.10",
  "language-tags 0.3.2",
- "log 0.4.20",
+ "log 0.4.21",
  "mime",
  "once_cell",
  "pin-project-lite",
@@ -1010,7 +1010,7 @@ checksum = "95b3f3e67048839cb0d0781f445682a35113da7121f7c949db0e2be96a4fbece"
 dependencies = [
  "humantime",
  "is-terminal",
- "log 0.4.20",
+ "log 0.4.21",
  "regex",
  "termcolor",
 ]
@@ -1310,7 +1310,7 @@ dependencies = [
  "futures 0.1.31",
  "http 0.1.21",
  "indexmap 1.9.3",
- "log 0.4.20",
+ "log 0.4.21",
  "slab",
  "string",
  "tokio-io",
@@ -1661,14 +1661,14 @@ version = "0.3.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e19e8d5c34a3e0e2223db8e060f9e8264aeeb5c5fc64a4ee9965c062211c024b"
 dependencies = [
- "log 0.4.20",
+ "log 0.4.21",
 ]
 
 [[package]]
 name = "log"
-version = "0.4.20"
+version = "0.4.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
+checksum = "90ed8c1e510134f979dbc4f070f87d4313098b704861a105fe34231c70a3901c"
 dependencies = [
  "serde",
 ]
@@ -1692,7 +1692,7 @@ dependencies = [
  "fnv",
  "humantime",
  "libc",
- "log 0.4.20",
+ "log 0.4.21",
  "log-mdc",
  "parking_lot 0.12.1",
  "serde",
@@ -1784,7 +1784,7 @@ dependencies = [
  "iovec",
  "kernel32-sys",
  "libc",
- "log 0.4.20",
+ "log 0.4.21",
  "miow",
  "net2",
  "slab",
@@ -1798,7 +1798,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f3d0b296e374a4e6f3c7b0a1f5a51d748a0d34c85e7dc48fc3fa9a87657fe09"
 dependencies = [
  "libc",
- "log 0.4.20",
+ "log 0.4.21",
  "wasi 0.11.0+wasi-snapshot-preview1",
  "windows-sys 0.48.0",
 ]
@@ -1907,7 +1907,7 @@ dependencies = [
  "gethostname",
  "lazy_static",
  "libc",
- "log 0.4.20",
+ "log 0.4.21",
  "openssl",
  "openssl-sys",
  "parking_lot 0.12.1",
@@ -1928,6 +1928,7 @@ dependencies = [
 name = "opcua-async-client"
 version = "0.13.0"
 dependencies = [
+ "log 0.4.21",
  "opcua",
  "pico-args",
  "tokio 1.36.0",
@@ -1955,7 +1956,7 @@ version = "0.13.0"
 dependencies = [
  "chrono",
  "lazy_static",
- "log 0.4.20",
+ "log 0.4.21",
  "log4rs",
  "opcua",
  "pico-args",
@@ -1984,7 +1985,7 @@ name = "opcua-integration"
 version = "0.13.0"
 dependencies = [
  "chrono",
- "log 0.4.20",
+ "log 0.4.21",
  "opcua",
 ]
 
@@ -2010,7 +2011,7 @@ name = "opcua-simple-server"
 version = "0.13.0"
 dependencies = [
  "chrono",
- "log 0.4.20",
+ "log 0.4.21",
  "opcua",
 ]
 
@@ -2577,7 +2578,7 @@ dependencies = [
  "bytes 1.5.0",
  "flume",
  "futures-util",
- "log 0.4.20",
+ "log 0.4.21",
  "rustls-native-certs",
  "rustls-pemfile",
  "rustls-webpki",
@@ -2629,7 +2630,7 @@ version = "0.21.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f9d5a6813c0759e4609cd494e8e725babae6a2ca7b62a5536a13daaec6fcb7ba"
 dependencies = [
- "log 0.4.20",
+ "log 0.4.21",
  "ring",
  "rustls-webpki",
  "sct",
@@ -3202,7 +3203,7 @@ checksum = "57fc868aae093479e3131e3d165c93b1c7474109d13c90ec0dda2a1bbfff0674"
 dependencies = [
  "bytes 0.4.12",
  "futures 0.1.31",
- "log 0.4.20",
+ "log 0.4.21",
 ]
 
 [[package]]
@@ -3225,7 +3226,7 @@ dependencies = [
  "crossbeam-utils 0.7.2",
  "futures 0.1.31",
  "lazy_static",
- "log 0.4.20",
+ "log 0.4.21",
  "mio 0.6.23",
  "num_cpus",
  "parking_lot 0.9.0",
@@ -3297,7 +3298,7 @@ dependencies = [
  "crossbeam-utils 0.7.2",
  "futures 0.1.31",
  "lazy_static",
- "log 0.4.20",
+ "log 0.4.21",
  "num_cpus",
  "slab",
  "tokio-executor",
@@ -3323,7 +3324,7 @@ checksum = "e2a0b10e610b39c38b031a2fcab08e4b82f16ece36504988dcbd81dbba650d82"
 dependencies = [
  "bytes 0.4.12",
  "futures 0.1.31",
- "log 0.4.20",
+ "log 0.4.21",
  "mio 0.6.23",
  "tokio-codec",
  "tokio-io",
@@ -3340,7 +3341,7 @@ dependencies = [
  "futures 0.1.31",
  "iovec",
  "libc",
- "log 0.4.20",
+ "log 0.4.21",
  "mio 0.6.23",
  "mio-uds",
  "tokio-codec",
@@ -3377,7 +3378,7 @@ version = "0.1.40"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c3523ab5a71916ccf420eebdf5521fcef02141234bbc0b8a49f2fdc4544364ef"
 dependencies = [
- "log 0.4.20",
+ "log 0.4.21",
  "pin-project-lite",
  "tracing-core",
 ]
@@ -3402,7 +3403,7 @@ dependencies = [
  "futures 0.1.31",
  "idna 0.1.5",
  "lazy_static",
- "log 0.4.20",
+ "log 0.4.21",
  "rand 0.5.6",
  "smallvec 0.6.14",
  "socket2 0.3.19",
@@ -3426,7 +3427,7 @@ dependencies = [
  "futures 0.1.31",
  "idna 0.1.5",
  "lazy_static",
- "log 0.4.20",
+ "log 0.4.21",
  "rand 0.5.6",
  "smallvec 0.6.14",
  "socket2 0.3.19",
@@ -3450,7 +3451,7 @@ dependencies = [
  "futures 0.1.31",
  "ipconfig",
  "lazy_static",
- "log 0.4.20",
+ "log 0.4.21",
  "lru-cache",
  "resolv-conf",
  "smallvec 0.6.14",
@@ -3680,7 +3681,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1b56f625e64f3a1084ded111c4d5f477df9f8c92df113852fa5a374dbda78826"
 dependencies = [
  "bumpalo",
- "log 0.4.20",
+ "log 0.4.21",
  "once_cell",
  "proc-macro2 1.0.73",
  "quote 1.0.34",

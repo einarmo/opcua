@@ -1,5 +1,6 @@
 use std::{pin::Pin, str::FromStr, sync::Arc, time::Duration};
 
+use arc_swap::ArcSwap;
 use futures::{Future, FutureExt};
 use tokio::select;
 use tokio_util::sync::CancellationToken;
@@ -7,8 +8,8 @@ use tokio_util::sync::CancellationToken;
 use crate::{
     async_client::session::SessionInfo,
     client::prelude::{
-        CertificateStore, CloseSecureChannelRequest, RequestHeader, Role, SecureChannel,
-        SecurityPolicy, SecurityTokenRequestType, StatusCode, SupportedMessage,
+        ByteString, CertificateStore, CloseSecureChannelRequest, NodeId, RequestHeader, Role,
+        SecureChannel, SecurityPolicy, SecurityTokenRequestType, StatusCode, SupportedMessage,
     },
     sync::RwLock,
     types::DecodingOptions,
@@ -28,7 +29,7 @@ use crate::async_client::{
 pub struct AsyncSecureChannel {
     session_info: SessionInfo,
     session_retry_policy: SessionRetryPolicy,
-    secure_channel: Arc<RwLock<SecureChannel>>,
+    pub(crate) secure_channel: Arc<RwLock<SecureChannel>>,
     certificate_store: Arc<RwLock<CertificateStore>>,
     transport_config: TransportConfiguration,
     /// Ignore clock skew between the client and the server.
@@ -48,7 +49,7 @@ impl AsyncSecureChannel {
         decoding_options: DecodingOptions,
         ignore_clock_skew: bool,
         run_transport_in_parallel: bool,
-        token: CancellationToken,
+        auth_token: Arc<ArcSwap<NodeId>>,
     ) -> Self {
         let secure_channel = Arc::new(RwLock::new(SecureChannel::new(
             certificate_store.clone(),
@@ -67,7 +68,7 @@ impl AsyncSecureChannel {
                 max_message_size: 65535,
                 max_chunk_count: 5,
             },
-            state: SecureChannelState::new(ignore_clock_skew, secure_channel.clone()),
+            state: SecureChannelState::new(ignore_clock_skew, secure_channel.clone(), auth_token),
             session_info,
             secure_channel,
             certificate_store,
@@ -75,7 +76,7 @@ impl AsyncSecureChannel {
             run_transport_in_parallel,
             state_watch_rx,
             state_watch_tx,
-            token,
+            token: CancellationToken::new(),
         }
     }
 
@@ -183,6 +184,27 @@ impl AsyncSecureChannel {
 
     pub(crate) fn make_request_header(&self, timeout: Duration) -> RequestHeader {
         self.state.make_request_header(timeout)
+    }
+
+    pub(crate) fn client_nonce(&self) -> ByteString {
+        let secure_channel = trace_read_lock!(self.secure_channel);
+        secure_channel.local_nonce_as_byte_string()
+    }
+
+    pub(crate) fn update_from_created_session(
+        &self,
+        nonce: &ByteString,
+        certificate: &ByteString,
+    ) -> Result<(), StatusCode> {
+        let mut secure_channel = trace_write_lock!(self.secure_channel);
+        secure_channel.set_remote_nonce_from_byte_string(nonce)?;
+        secure_channel.set_remote_cert_from_byte_string(certificate)?;
+        Ok(())
+    }
+
+    pub(crate) fn security_policy(&self) -> SecurityPolicy {
+        let secure_channel = trace_read_lock!(self.secure_channel);
+        secure_channel.security_policy()
     }
 
     async fn connect_no_retry(
@@ -301,7 +323,7 @@ impl AsyncSecureChannel {
         }
     }
 
-    pub(super) fn get_state_change_rx(&self) -> tokio::sync::watch::Receiver<State> {
+    pub(crate) fn get_state_change_rx(&self) -> tokio::sync::watch::Receiver<State> {
         self.state_watch_rx.clone()
     }
 }

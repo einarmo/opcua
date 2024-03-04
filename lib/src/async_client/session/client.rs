@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{str::FromStr, sync::Arc};
 
 use chrono::Duration;
 use tokio::{pin, select};
@@ -8,16 +8,18 @@ use crate::{
     async_client::{retry::SessionRetryPolicy, AsyncSecureChannel},
     client::{
         prelude::{
-            encoding::DecodingOptions, is_opc_ua_binary_url, server_url_from_endpoint_url,
+            encoding::DecodingOptions, hostname_from_url, is_opc_ua_binary_url,
+            server_url_from_endpoint_url, url_matches_except_host, url_with_replaced_hostname,
             CertificateStore, ClientConfig, ClientEndpoint, Config, EndpointDescription,
-            GetEndpointsRequest, IdentityToken, StatusCode, SupportedMessage,
+            GetEndpointsRequest, IdentityToken, MessageSecurityMode, SecurityPolicy, StatusCode,
+            SupportedMessage,
         },
         process_service_result, process_unexpected_response,
     },
     sync::RwLock,
 };
 
-use super::SessionInfo;
+use super::{AsyncSession, SessionEventLoop, SessionInfo};
 
 pub struct AsyncClient {
     /// Client configuration
@@ -75,6 +77,87 @@ impl AsyncClient {
         }
     }
 
+    /// Connects to an ad-hoc server endpoint description. and an [`AsyncSession`] for
+    /// that endpoint.
+    ///
+    /// Returns with the session object, you must call `run` on the returned eventloop.
+    ///
+    pub async fn new_session_from_endpoint(
+        &mut self,
+        endpoint: impl Into<EndpointDescription>,
+        user_identity_token: IdentityToken,
+    ) -> Result<(AsyncSession, SessionEventLoop), StatusCode> {
+        let endpoint = endpoint.into();
+
+        // Get the server endpoints
+        let server_url = endpoint.endpoint_url.as_ref();
+
+        let server_endpoints = self
+            .get_server_endpoints_from_url(server_url)
+            .await
+            .map_err(|status_code| {
+                error!("Cannot get endpoints for server, error - {}", status_code);
+                status_code
+            })?;
+
+        // Find the server endpoint that matches the one desired
+        let security_policy = SecurityPolicy::from_str(endpoint.security_policy_uri.as_ref())
+            .map_err(|_| StatusCode::BadSecurityPolicyRejected)?;
+        let server_endpoint = Self::find_matching_endpoint(
+            &server_endpoints,
+            endpoint.endpoint_url.as_ref(),
+            security_policy,
+            endpoint.security_mode,
+        )
+        .ok_or(StatusCode::BadTcpEndpointUrlInvalid)
+        .map_err(|status_code| {
+            error!(
+                "Cannot find matching endpoint for {}",
+                endpoint.endpoint_url.as_ref()
+            );
+            status_code
+        })?;
+
+        Ok(self
+            .new_session_from_info(SessionInfo {
+                endpoint: server_endpoint,
+                user_identity_token,
+                preferred_locales: Vec::new(),
+            })
+            .unwrap())
+    }
+
+    /// Creates an ad hoc new [`Session`] using the specified endpoint url, security policy and mode.
+    ///
+    /// This function supports anything that implements `Into<SessionInfo>`, for example `EndpointDescription`.
+    ///
+    /// [`Session`]: ../session/struct.Session.html
+    ///
+    pub fn new_session_from_info(
+        &mut self,
+        session_info: impl Into<SessionInfo>,
+    ) -> Result<(AsyncSession, SessionEventLoop), String> {
+        let session_info = session_info.into();
+        if !is_opc_ua_binary_url(session_info.endpoint.endpoint_url.as_ref()) {
+            Err(format!(
+                "Endpoint url {}, is not a valid / supported url",
+                session_info.endpoint.endpoint_url
+            ))
+        } else {
+            Ok(AsyncSession::new(
+                self.certificate_store.clone(),
+                session_info,
+                self.config.session_name.clone().into(),
+                self.config.application_description(),
+                self.session_retry_policy.clone(),
+                self.decoding_options(),
+                self.config.performance.ignore_clock_skew,
+                false,
+                CancellationToken::new(),
+            ))
+        }
+    }
+
     /// Gets the [`ClientEndpoint`] information for the default endpoint, as defined
     /// by the configuration. If there is no default endpoint, this function will return an error.
     ///
@@ -127,6 +210,7 @@ impl AsyncClient {
         endpoint: &EndpointDescription,
         channel: &AsyncSecureChannel,
     ) -> Result<Vec<EndpointDescription>, StatusCode> {
+        // Wait until the channel is open.
         channel.wait_for_connection().await;
         let request = GetEndpointsRequest {
             request_header: channel.make_request_header(std::time::Duration::from_secs(30)),
@@ -134,6 +218,7 @@ impl AsyncClient {
             locale_ids: None,
             profile_uris: None,
         };
+        // Send the message and wait for a response.
         let response = channel
             .send(request, std::time::Duration::from_secs(30))
             .await?;
@@ -159,7 +244,6 @@ impl AsyncClient {
             let preferred_locales = Vec::new();
             // Most of these fields mean nothing when getting endpoints
             let endpoint = EndpointDescription::from(server_url.as_ref());
-            let token = CancellationToken::new();
             let session_info = SessionInfo {
                 endpoint: endpoint.clone(),
                 user_identity_token: IdentityToken::Anonymous,
@@ -172,12 +256,12 @@ impl AsyncClient {
                 self.decoding_options(),
                 self.config.performance.ignore_clock_skew,
                 false,
-                token,
+                Arc::default(),
             );
             let channel_fut = channel.run();
             pin!(channel_fut);
 
-            // Wait for connection
+            // Poll the channel while sending the request.
             let res = select! {
                 e = &mut channel_fut => {
                     return Err(e.err().unwrap_or(StatusCode::BadNotConnected));
@@ -193,6 +277,47 @@ impl AsyncClient {
             }
 
             res
+        }
+    }
+
+    /// Find an endpoint supplied from the list of endpoints that matches the input criteria
+    pub fn find_matching_endpoint(
+        endpoints: &[EndpointDescription],
+        endpoint_url: &str,
+        security_policy: SecurityPolicy,
+        security_mode: MessageSecurityMode,
+    ) -> Option<EndpointDescription> {
+        if security_policy == SecurityPolicy::Unknown {
+            panic!("Cannot match against unknown security policy");
+        }
+
+        let matching_endpoint = endpoints
+            .iter()
+            .find(|e| {
+                // Endpoint matches if the security mode, policy and url match
+                security_mode == e.security_mode
+                    && security_policy == SecurityPolicy::from_uri(e.security_policy_uri.as_ref())
+                    && url_matches_except_host(endpoint_url, e.endpoint_url.as_ref())
+            })
+            .cloned();
+
+        // Issue #16, #17 - the server may advertise an endpoint whose hostname is inaccessible
+        // to the client so substitute the advertised hostname with the one the client supplied.
+        if let Some(mut matching_endpoint) = matching_endpoint {
+            if let Ok(hostname) = hostname_from_url(endpoint_url) {
+                if let Ok(new_endpoint_url) =
+                    url_with_replaced_hostname(matching_endpoint.endpoint_url.as_ref(), &hostname)
+                {
+                    matching_endpoint.endpoint_url = new_endpoint_url.into();
+                    Some(matching_endpoint)
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        } else {
+            None
         }
     }
 }

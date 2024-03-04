@@ -1,10 +1,11 @@
 mod client;
+mod session;
 
 use crate::client::prelude::{EndpointDescription, IdentityToken};
 
 /// Information about the server endpoint, security policy, security mode and user identity that the session will
 /// will use to establish a connection.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct SessionInfo {
     /// The endpoint
     pub endpoint: EndpointDescription,
@@ -15,3 +16,4 @@ pub struct SessionInfo {
 }
 
 pub use client::AsyncClient;
+pub use session::{AsyncSession, SessionEventLoop};

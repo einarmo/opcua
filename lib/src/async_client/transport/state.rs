@@ -20,7 +20,7 @@ use arc_swap::ArcSwap;
 pub type RequestSend = tokio::sync::mpsc::Sender<OutgoingMessage>;
 
 #[derive(Debug, Clone)]
-pub(super) enum State {
+pub(crate) enum State {
     Disconnected,
     Connected(RequestSend),
     Connecting,
@@ -38,7 +38,7 @@ pub struct SecureChannelState {
     /// Secure channel information
     secure_channel: Arc<RwLock<SecureChannel>>,
     /// The session authentication token, used for session activation
-    authentication_token: ArcSwap<NodeId>,
+    authentication_token: Arc<ArcSwap<NodeId>>,
     /// The next handle to assign to a request
     request_handle: AtomicHandle,
 }
@@ -102,12 +102,16 @@ impl Request {
 impl SecureChannelState {
     const FIRST_REQUEST_HANDLE: u32 = 1;
 
-    pub fn new(ignore_clock_skew: bool, secure_channel: Arc<RwLock<SecureChannel>>) -> Self {
+    pub fn new(
+        ignore_clock_skew: bool,
+        secure_channel: Arc<RwLock<SecureChannel>>,
+        authentication_token: Arc<ArcSwap<NodeId>>,
+    ) -> Self {
         SecureChannelState {
             client_offset: ArcSwap::new(Arc::new(chrono::Duration::zero())),
             ignore_clock_skew,
             secure_channel,
-            authentication_token: ArcSwap::new(Arc::new(NodeId::null())),
+            authentication_token,
             request_handle: AtomicHandle::new(Self::FIRST_REQUEST_HANDLE),
         }
     }

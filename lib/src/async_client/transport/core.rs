@@ -84,7 +84,6 @@ impl TransportState {
                             return None;
                         };
                         let request_id = send_buffer.next_request_id();
-                        trace!("Received outgoing request: {:?}", outgoing.request);
                         if let Some(callback) = outgoing.callback {
                             self.message_states.insert(request_id, MessageState {
                                 callback,
