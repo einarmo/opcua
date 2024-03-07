@@ -1,6 +1,6 @@
 use std::{pin::pin, sync::Arc};
 
-use super::core::{OutgoingMessage, TransportState};
+use super::core::{OutgoingMessage, TransportPollResult, TransportState};
 use crate::core::comms::{
     message_writer::MessageWriter,
     secure_channel::SecureChannel,
@@ -21,6 +21,7 @@ pub(crate) struct TcpTransport {
     read: FramedRead<ReadHalf<TcpStream>, TcpCodec>,
     write: WriteHalf<TcpStream>,
     send_buffer: MessageWriter,
+    should_close: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -63,6 +64,7 @@ impl TcpTransport {
                 config.max_message_size,
                 config.max_chunk_count,
             ),
+            should_close: false,
         })
     }
 
@@ -148,6 +150,28 @@ impl TcpTransport {
         Ok((framed_read, writer))
     }
 
+    fn handle_incoming_message(
+        &mut self,
+        incoming: Option<Result<Message, std::io::Error>>,
+    ) -> TransportPollResult {
+        let Some(incoming) = incoming else {
+            return TransportPollResult::Closed(StatusCode::BadCommunicationError);
+        };
+        match incoming {
+            Ok(message) => {
+                if let Err(e) = self.state.handle_incoming_message(message) {
+                    TransportPollResult::Closed(e)
+                } else {
+                    TransportPollResult::IncomingMessage
+                }
+            }
+            Err(err) => {
+                error!("Error reading from stream {:?}", err);
+                TransportPollResult::Closed(StatusCode::BadConnectionClosed)
+            }
+        }
+    }
+
     async fn write_loop(
         mut write: WriteHalf<TcpStream>,
         mut recv: tokio::sync::mpsc::Receiver<(Vec<u8>, bool)>,
@@ -165,54 +189,58 @@ impl TcpTransport {
         StatusCode::Good
     }
 
-    /// Run the transport, actively sending and receiving messages.
-    /// This returns the persistent state used to create the transport,
-    /// and a status code indicating the reason why the transport closed.
-    pub async fn run(mut self) -> StatusCode {
-        // Message queue for sending messages, if this goes full we will block.
-        let (send_buf, recv_buf) = tokio::sync::mpsc::channel(10);
-        // Run the write loop in a separate future. This lets us both send and receive at the same time.
-        let mut write_fut = pin!(Self::write_loop(self.write, recv_buf));
-
-        let status = loop {
+    async fn poll_inner(&mut self) -> TransportPollResult {
+        if !self.send_buffer.is_empty() {
+            let buf = self.send_buffer.bytes_to_write_ref();
             tokio::select! {
-                status = &mut write_fut => {
-                    break status;
+                r = self.write.write_all(buf) => {
+                    self.send_buffer.clear();
+                    if let Err(e) = r {
+                        error!("write bytes task failed: {}", e);
+                        return TransportPollResult::Closed(StatusCode::BadCommunicationError);
+                    }
+                    if self.should_close {
+                        debug!("Writer is setting the connection state to finished(good)");
+                        return TransportPollResult::Closed(StatusCode::Good);
+                    }
+                    TransportPollResult::OutgoingMessageSent
                 }
+                incoming = self.read.next() => {
+                    self.handle_incoming_message(incoming)
+
+                }
+            }
+        } else {
+            tokio::select! {
                 outgoing = self.state.wait_for_outgoing_message(&mut self.send_buffer) => {
                     let Some((outgoing, request_id)) = outgoing else {
-                        break StatusCode::Good;
+                        return TransportPollResult::Closed(StatusCode::Good);
                     };
                     let close_connection =
                         matches!(outgoing, SupportedMessage::CloseSecureChannelRequest(_));
                     if close_connection {
+                        self.should_close = true;
                         debug!("Writer is about to send a CloseSecureChannelRequest which means it should close in a moment");
                     }
                     let secure_channel = trace_read_lock!(self.state.secure_channel);
                     if let Err(e) = self.send_buffer.write(request_id, outgoing, &secure_channel) {
-                        break e;
-                    }
-                    let _ = send_buf.send((self.send_buffer.bytes_to_write(), close_connection)).await;
-                },
-                incoming = self.read.next() => {
-                    let Some(incoming) = incoming else {
-                        break StatusCode::BadCommunicationError;
-                    };
-
-                    match incoming {
-                        Ok(message) => {
-                            if let Err(e) = self.state.handle_incoming_message(message) {
-                                break e;
-                            }
-                        }
-                        Err(err) => {
-                            error!("Error reading from stream {:?}", err);
-                            break StatusCode::BadConnectionClosed;
-                        }
+                        TransportPollResult::Closed(e)
+                    } else {
+                        TransportPollResult::OutgoingMessage
                     }
                 }
+                incoming = self.read.next() => {
+                    self.handle_incoming_message(incoming)
+                }
             }
-        };
-        self.state.close(status).await
+        }
+    }
+
+    pub async fn poll(&mut self) -> TransportPollResult {
+        let r = self.poll_inner().await;
+        if let TransportPollResult::Closed(status) = &r {
+            self.state.close(*status).await;
+        }
+        r
     }
 }

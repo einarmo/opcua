@@ -5,7 +5,7 @@ use tokio::{pin, select};
 use tokio_util::sync::CancellationToken;
 
 use crate::{
-    async_client::{retry::SessionRetryPolicy, AsyncSecureChannel},
+    async_client::{retry::SessionRetryPolicy, transport::TransportPollResult, AsyncSecureChannel},
     client::{
         prelude::{
             encoding::DecodingOptions, hostname_from_url, is_opc_ua_binary_url,
@@ -152,7 +152,6 @@ impl AsyncClient {
                 self.session_retry_policy.clone(),
                 self.decoding_options(),
                 self.config.performance.ignore_clock_skew,
-                false,
                 CancellationToken::new(),
             ))
         }
@@ -210,8 +209,6 @@ impl AsyncClient {
         endpoint: &EndpointDescription,
         channel: &AsyncSecureChannel,
     ) -> Result<Vec<EndpointDescription>, StatusCode> {
-        // Wait until the channel is open.
-        channel.wait_for_connection().await;
         let request = GetEndpointsRequest {
             request_header: channel.make_request_header(std::time::Duration::from_secs(30)),
             endpoint_url: endpoint.endpoint_url.clone(),
@@ -255,25 +252,31 @@ impl AsyncClient {
                 self.session_retry_policy.clone(),
                 self.decoding_options(),
                 self.config.performance.ignore_clock_skew,
-                false,
                 Arc::default(),
             );
-            let channel_fut = channel.run();
-            pin!(channel_fut);
 
-            // Poll the channel while sending the request.
-            let res = select! {
-                e = &mut channel_fut => {
-                    return Err(e.err().unwrap_or(StatusCode::BadNotConnected));
-                },
-                res = self.get_server_endpoints_inner(&endpoint, &channel) => res
+            let mut evt_loop = channel.connect().await?;
+
+            let send_fut = self.get_server_endpoints_inner(&endpoint, &channel);
+            pin!(send_fut);
+
+            let res = loop {
+                select! {
+                    r = evt_loop.poll() => {
+                        if let TransportPollResult::Closed(e) = r {
+                            return Err(e);
+                        }
+                    },
+                    res = &mut send_fut => break res
+                }
             };
 
-            select! {
-                e = &mut channel_fut => {
-                    e?;
-                },
-                _ = channel.close_channel(true) => {}
+            channel.close_channel().await;
+
+            loop {
+                if matches!(evt_loop.poll().await, TransportPollResult::Closed(_)) {
+                    break;
+                }
             }
 
             res

@@ -19,7 +19,7 @@ async fn main() {
         );
     }
 
-    let (session, event_loop) = client
+    /* let (session, event_loop) = client
         .new_session_from_endpoint("opc.tcp://localhost:62546", IdentityToken::Anonymous)
         .await
         .unwrap();
@@ -43,5 +43,5 @@ async fn main() {
         .unwrap();
 
     let val = &result[0];
-    println!("{}", val.value.as_ref().unwrap());
+    println!("{}", val.value.as_ref().unwrap()); */
 }

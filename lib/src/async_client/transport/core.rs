@@ -40,6 +40,13 @@ pub(super) struct TransportState {
     last_received_sequence_number: u32,
 }
 
+pub enum TransportPollResult {
+    OutgoingMessage,
+    OutgoingMessageSent,
+    IncomingMessage,
+    Closed(StatusCode),
+}
+
 pub(crate) struct OutgoingMessage {
     pub request: SupportedMessage,
     pub callback: Option<tokio::sync::oneshot::Sender<Result<SupportedMessage, StatusCode>>>,
@@ -262,7 +269,7 @@ impl TransportState {
     /// Close the transport, aborting any pending requests.
     /// If `status` is good, the pending requests will be terminated with
     /// `BadConnectionClosed`.
-    pub async fn close(mut self, status: StatusCode) -> StatusCode {
+    pub async fn close(&mut self, status: StatusCode) -> StatusCode {
         // If the status is good, we still want to send a bad status code
         // to the pending requests. They didn't succeed, after all.
         let request_status = if status.is_good() {
@@ -271,7 +278,7 @@ impl TransportState {
             status
         };
 
-        for (_, pending) in self.message_states.into_iter() {
+        for (_, pending) in self.message_states.drain() {
             let _ = pending.callback.send(Err(request_status));
         }
 
