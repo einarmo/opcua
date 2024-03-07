@@ -105,17 +105,8 @@ impl MessageWriter {
     }
 
     /// Clears the buffer
-    pub fn clear(&mut self) {
+    fn clear(&mut self) {
         self.buffer.set_position(0);
-    }
-
-    pub fn bytes_to_write_ref(&self) -> &[u8] {
-        let pos = self.buffer.position() as usize;
-        &(self.buffer.get_ref())[0..pos]
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.buffer.position() == 0
     }
 
     /// Yields any results to write, resetting the buffer back afterwards

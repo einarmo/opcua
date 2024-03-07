@@ -2,7 +2,6 @@ use std::{str::FromStr, sync::Arc};
 
 use chrono::Duration;
 use tokio::{pin, select};
-use tokio_util::sync::CancellationToken;
 
 use crate::{
     async_client::{retry::SessionRetryPolicy, transport::TransportPollResult, AsyncSecureChannel},
@@ -152,7 +151,6 @@ impl AsyncClient {
                 self.session_retry_policy.clone(),
                 self.decoding_options(),
                 self.config.performance.ignore_clock_skew,
-                CancellationToken::new(),
             ))
         }
     }

@@ -1,8 +1,8 @@
-use std::{pin::pin, sync::Arc};
+use std::sync::Arc;
 
+use super::buffer::SendBuffer;
 use super::core::{OutgoingMessage, TransportPollResult, TransportState};
 use crate::core::comms::{
-    message_writer::MessageWriter,
     secure_channel::SecureChannel,
     tcp_codec::{Message, TcpCodec},
     tcp_types::HelloMessage,
@@ -20,8 +20,9 @@ pub(crate) struct TcpTransport {
     state: TransportState,
     read: FramedRead<ReadHalf<TcpStream>, TcpCodec>,
     write: WriteHalf<TcpStream>,
-    send_buffer: MessageWriter,
+    send_buffer: SendBuffer,
     should_close: bool,
+    closed: Option<StatusCode>,
 }
 
 #[derive(Debug, Clone)]
@@ -59,12 +60,13 @@ impl TcpTransport {
             ),
             read: framed_read,
             write: writer,
-            send_buffer: MessageWriter::new(
+            send_buffer: SendBuffer::new(
                 config.send_buffer_size,
                 config.max_message_size,
                 config.max_chunk_count,
             ),
             should_close: false,
+            closed: None,
         })
     }
 
@@ -172,45 +174,30 @@ impl TcpTransport {
         }
     }
 
-    async fn write_loop(
-        mut write: WriteHalf<TcpStream>,
-        mut recv: tokio::sync::mpsc::Receiver<(Vec<u8>, bool)>,
-    ) -> StatusCode {
-        while let Some((next_buf, should_close)) = recv.recv().await {
-            if let Err(e) = write.write_all(&next_buf).await {
-                error!("write bytes task failed: {}", e);
-                return StatusCode::BadCommunicationError;
-            }
-            if should_close {
-                debug!("Writer is setting the connection state to finished(good)");
-                return StatusCode::Good;
-            }
-        }
-        StatusCode::Good
-    }
-
     async fn poll_inner(&mut self) -> TransportPollResult {
-        if !self.send_buffer.is_empty() {
-            let buf = self.send_buffer.bytes_to_write_ref();
+        // Either we've got something in the send buffer, which we can send,
+        // or we're waiting for more outgoing messages.
+        // We won't wait for outgoing messages while sending, since that
+        // could cause the send buffer to fill up.
+        if self.send_buffer.can_read() {
             tokio::select! {
-                r = self.write.write_all(buf) => {
-                    self.send_buffer.clear();
+                // write i
+                r = self.send_buffer.read_into_async(&mut self.write) => {
                     if let Err(e) = r {
                         error!("write bytes task failed: {}", e);
                         return TransportPollResult::Closed(StatusCode::BadCommunicationError);
-                    }
-                    if self.should_close {
-                        debug!("Writer is setting the connection state to finished(good)");
-                        return TransportPollResult::Closed(StatusCode::Good);
                     }
                     TransportPollResult::OutgoingMessageSent
                 }
                 incoming = self.read.next() => {
                     self.handle_incoming_message(incoming)
-
                 }
             }
         } else {
+            if self.should_close {
+                debug!("Writer is setting the connection state to finished(good)");
+                return TransportPollResult::Closed(StatusCode::Good);
+            }
             tokio::select! {
                 outgoing = self.state.wait_for_outgoing_message(&mut self.send_buffer) => {
                     let Some((outgoing, request_id)) = outgoing else {
@@ -237,8 +224,13 @@ impl TcpTransport {
     }
 
     pub async fn poll(&mut self) -> TransportPollResult {
+        if let Some(code) = self.closed {
+            return TransportPollResult::Closed(code);
+        }
+
         let r = self.poll_inner().await;
         if let TransportPollResult::Closed(status) = &r {
+            self.closed = Some(*status);
             self.state.close(*status).await;
         }
         r

@@ -5,13 +5,14 @@ use std::time::{Duration, Instant};
 use parking_lot::RwLock;
 
 use crate::client::prelude::MessageIsFinalType;
-use crate::core::comms::message_writer::MessageWriter;
 use crate::core::comms::{
     chunker::Chunker, message_chunk::MessageChunk, message_chunk_info::ChunkInfo,
     secure_channel::SecureChannel, tcp_codec::Message,
 };
 use crate::core::supported_message::SupportedMessage;
 use crate::types::StatusCode;
+
+use super::buffer::SendBuffer;
 
 #[derive(Debug)]
 struct MessageChunkWithChunkInfo {
@@ -73,7 +74,7 @@ impl TransportState {
     /// Wait for an outgoing message. Will also check for timed out messages.
     pub async fn wait_for_outgoing_message(
         &mut self,
-        send_buffer: &mut MessageWriter,
+        send_buffer: &mut SendBuffer,
     ) -> Option<(SupportedMessage, u32)> {
         loop {
             // Check for any messages that have timed out, and get the time until the next message

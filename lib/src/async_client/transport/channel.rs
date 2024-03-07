@@ -100,12 +100,8 @@ impl AsyncSecureChannel {
         loop {
             let mut backoff = self.session_retry_policy.new_backoff();
             match self.connect_no_retry().await {
-                Ok((transport, sender)) => {
-                    {
-                        let mut request_send = trace_write_lock!(self.request_send);
-                        *request_send = Some(sender);
-                    }
-                    break Ok(SecureChannelEventLoop { transport });
+                Ok(event_loop) => {
+                    break Ok(event_loop);
                 }
                 Err(s) => {
                     let Some(delay) = backoff.next() else {
@@ -143,7 +139,7 @@ impl AsyncSecureChannel {
         secure_channel.security_policy()
     }
 
-    async fn connect_no_retry(&self) -> Result<(TcpTransport, RequestSend), StatusCode> {
+    pub async fn connect_no_retry(&self) -> Result<SecureChannelEventLoop, StatusCode> {
         let (mut transport, send) = self.create_transport().await?;
 
         let request = self.state.begin_issue_or_renew_secure_channel(
@@ -167,9 +163,14 @@ impl AsyncSecureChannel {
             }
         };
 
+        {
+            let mut request_send = trace_write_lock!(self.request_send);
+            *request_send = Some(send);
+        }
+
         self.state.end_issue_or_renew_secure_channel(resp)?;
 
-        Ok((transport, send))
+        Ok(SecureChannelEventLoop { transport })
     }
 
     async fn create_transport(

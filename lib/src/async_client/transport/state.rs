@@ -19,13 +19,6 @@ use arc_swap::ArcSwap;
 
 pub type RequestSend = tokio::sync::mpsc::Sender<OutgoingMessage>;
 
-#[derive(Debug, Clone)]
-pub(crate) enum State {
-    Disconnected,
-    Connected(RequestSend),
-    Connecting,
-}
-
 lazy_static! {
     static ref NEXT_SESSION_ID: AtomicU32 = AtomicU32::new(1);
 }
