@@ -35,6 +35,7 @@ pub enum SessionState {
     Connecting,
 }
 
+#[derive(Debug)]
 pub enum SessionPollResult {
     Transport(TransportPollResult),
     ConnectionLost(StatusCode),
@@ -84,8 +85,7 @@ pub struct SessionEventLoop {
 }
 
 impl SessionEventLoop {
-    /// Poll the session. Note that this method is _not_ cancellation safe,
-    /// due the connection loop being stateful
+    /// Poll the session.
     pub async fn poll(&mut self) -> Result<SessionPollResult, StatusCode> {
         match &mut self.state {
             SessionEventLoopState::Disconnected => {
@@ -103,6 +103,8 @@ impl SessionEventLoop {
                 let r = c.poll().await;
                 if let TransportPollResult::Closed(code) = r {
                     log::warn!("Transport disconnected: {code}");
+
+                    self.state = SessionEventLoopState::Disconnected;
 
                     let _ = self.inner.state_watch_tx.send(SessionState::Disconnected);
                     Ok(SessionPollResult::ConnectionLost(code))

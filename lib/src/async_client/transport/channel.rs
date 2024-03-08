@@ -140,6 +140,11 @@ impl AsyncSecureChannel {
     }
 
     pub async fn connect_no_retry(&self) -> Result<SecureChannelEventLoop, StatusCode> {
+        {
+            let mut secure_channel = trace_write_lock!(self.secure_channel);
+            secure_channel.clear_security_token();
+        }
+
         let (mut transport, send) = self.create_transport().await?;
 
         let request = self.state.begin_issue_or_renew_secure_channel(

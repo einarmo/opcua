@@ -9,6 +9,7 @@ pub(crate) struct ExponentialBackoff {
 
 impl ExponentialBackoff {
     pub fn new(max_sleep: Duration, max_retries: Option<u32>, initial_sleep: Duration) -> Self {
+        log::info!("New backoff: {max_sleep:?} {max_retries:?} {initial_sleep:?}");
         Self {
             max_sleep,
             max_retries,
@@ -22,7 +23,7 @@ impl Iterator for ExponentialBackoff {
     type Item = Duration;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.max_retries.is_some_and(|max| max >= self.retry_count) {
+        if self.max_retries.is_some_and(|max| max <= self.retry_count) {
             return None;
         }
 

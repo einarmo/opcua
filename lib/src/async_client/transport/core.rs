@@ -41,6 +41,7 @@ pub(super) struct TransportState {
     last_received_sequence_number: u32,
 }
 
+#[derive(Debug)]
 pub enum TransportPollResult {
     OutgoingMessage,
     OutgoingMessageSent,
