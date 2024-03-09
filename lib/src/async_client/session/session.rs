@@ -10,13 +10,9 @@ use arc_swap::ArcSwap;
 
 use crate::{
     async_client::{retry::SessionRetryPolicy, AsyncSecureChannel},
-    client::{
-        prelude::{
-            encoding::DecodingOptions, ApplicationDescription, CertificateStore, DataValue, NodeId,
-            ReadRequest, ReadValueId, RequestHeader, StatusCode, SupportedMessage,
-            TimestampsToReturn, UAString,
-        },
-        process_service_result, process_unexpected_response,
+    client::prelude::{
+        encoding::DecodingOptions, ApplicationDescription, CertificateStore, NodeId, RequestHeader,
+        StatusCode, SupportedMessage, UAString,
     },
     sync::RwLock,
 };
@@ -114,33 +110,6 @@ impl AsyncSession {
 
     pub(super) fn make_request_header(&self) -> RequestHeader {
         self.channel.make_request_header(self.request_timeout)
-    }
-
-    pub async fn read(
-        &self,
-        nodes_to_read: &[ReadValueId],
-        timestamps_to_return: TimestampsToReturn,
-        max_age: f64,
-    ) -> Result<Vec<DataValue>, StatusCode> {
-        if nodes_to_read.is_empty() {
-            return Err(StatusCode::BadNothingToDo);
-        }
-
-        let request = ReadRequest {
-            request_header: self.make_request_header(),
-            max_age,
-            timestamps_to_return,
-            nodes_to_read: Some(nodes_to_read.to_vec()),
-        };
-
-        let response = self.send(request).await?;
-
-        if let SupportedMessage::ReadResponse(response) = response {
-            process_service_result(&response.response_header)?;
-            Ok(response.results.unwrap_or_default())
-        } else {
-            Err(process_unexpected_response(response))
-        }
     }
 
     pub(crate) fn reset(&self) {
