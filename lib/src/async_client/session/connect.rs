@@ -4,10 +4,7 @@ use crypto::{certificate_store::CertificateStore, user_identity::make_user_name_
 use tokio::{pin, select};
 
 use crate::{
-    async_client::{
-        retry::ExponentialBackoff,
-        transport::{SecureChannelEventLoop, TransportPollResult},
-    },
+    async_client::transport::{SecureChannelEventLoop, TransportPollResult},
     client::{
         prelude::{
             hostname_from_url, ActivateSessionRequest, AnonymousIdentityToken, ByteString,
@@ -26,30 +23,26 @@ pub(super) struct SessionConnector {
     inner: Arc<AsyncSession>,
 }
 
+#[derive(Debug, Clone)]
+pub enum SessionReconnectMode {
+    NewSession(NodeId),
+    ReactivatedSession(NodeId),
+}
+
 impl SessionConnector {
     pub fn new(session: Arc<AsyncSession>) -> Self {
         Self { inner: session }
     }
 
-    pub async fn run(
-        self,
-        mut backoff: ExponentialBackoff,
-    ) -> Result<SecureChannelEventLoop, StatusCode> {
-        loop {
-            match self.connect_and_activate().await {
-                Ok(c) => return Ok(c),
-                Err(e) => {
-                    log::warn!("Failed to connect to server: {e}");
-                    match backoff.next() {
-                        Some(b) => tokio::time::sleep(b).await,
-                        None => return Err(e),
-                    }
-                }
-            }
-        }
+    pub async fn try_connect(
+        &self,
+    ) -> Result<(SecureChannelEventLoop, SessionReconnectMode), StatusCode> {
+        self.connect_and_activate().await
     }
 
-    async fn connect_and_activate(&self) -> Result<SecureChannelEventLoop, StatusCode> {
+    async fn connect_and_activate(
+        &self,
+    ) -> Result<(SecureChannelEventLoop, SessionReconnectMode), StatusCode> {
         let mut event_loop = self.inner.channel.connect_no_retry().await?;
 
         let activate_fut = self.ensure_and_activate_session();
@@ -66,23 +59,27 @@ impl SessionConnector {
             }
         };
 
-        if let Err(e) = res {
-            self.inner.channel.close_channel().await;
+        let id = match res {
+            Ok(id) => id,
+            Err(e) => {
+                self.inner.channel.close_channel().await;
 
-            loop {
-                if matches!(event_loop.poll().await, TransportPollResult::Closed(_)) {
-                    break;
+                loop {
+                    if matches!(event_loop.poll().await, TransportPollResult::Closed(_)) {
+                        break;
+                    }
                 }
-            }
 
-            return Err(e);
-        }
+                return Err(e);
+            }
+        };
+
         drop(activate_fut);
 
-        Ok(event_loop)
+        Ok((event_loop, id))
     }
 
-    async fn ensure_and_activate_session(&self) -> Result<(), StatusCode> {
+    async fn ensure_and_activate_session(&self) -> Result<SessionReconnectMode, StatusCode> {
         let should_create_session = {
             let state = trace_read_lock!(self.inner.state);
             state.session_id.is_null()
@@ -92,27 +89,38 @@ impl SessionConnector {
             self.create_session().await?;
         }
 
-        match self.activate_session().await {
+        let reconnect = match self.activate_session().await {
             Err(status_code) if !should_create_session => {
                 info!(
-                    "Session activation failed on reconnect, error = {}, so creating a new session",
+                    "Session activation failed on reconnect, error = {}, creating a new session",
                     status_code
                 );
                 {
                     let mut session_state = trace_write_lock!(self.inner.state);
                     session_state.reset();
                 }
-                self.create_session().await?;
+                let id = self.create_session().await?;
                 self.activate_session().await?;
+                SessionReconnectMode::NewSession(id)
             }
             Err(e) => return Err(e),
-            Ok(_) => {}
-        }
+            Ok(_) => {
+                let session_id = {
+                    let state = trace_read_lock!(self.inner.state);
+                    state.session_id.clone()
+                };
+                if should_create_session {
+                    SessionReconnectMode::NewSession(session_id)
+                } else {
+                    SessionReconnectMode::ReactivatedSession(session_id)
+                }
+            }
+        };
 
         // TODO: transfer subscriptions
         // self.transfer_subscriptions_from_old_session
 
-        Ok(())
+        Ok(reconnect)
     }
 
     async fn create_session(&self) -> Result<NodeId, StatusCode> {

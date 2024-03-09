@@ -66,4 +66,8 @@ impl SessionRetryPolicy {
             self.reconnect_initial_sleep,
         )
     }
+
+    pub fn keep_alive_interval(&self) -> Duration {
+        self.keep_alive_interval
+    }
 }

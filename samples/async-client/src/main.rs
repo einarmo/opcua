@@ -32,17 +32,16 @@ async fn main() {
         .await
         .unwrap();
 
-    tokio::task::spawn(async move {
-        let stream = event_loop.run();
+    let handle = tokio::task::spawn(async move {
+        let stream = event_loop.enter();
         futures::pin_mut!(stream);
-        loop {
-            while let Ok(Some(r)) = stream.try_next().await {
-                info!("Session update: {:?}", r);
-            }
+        while let Ok(Some(r)) = stream.try_next().await {
+            info!("Session update: {:?}", r);
         }
     });
 
     session.wait_for_connection().await;
+    let mut i = 0;
 
     loop {
         let result = session
@@ -65,6 +64,15 @@ async fn main() {
             Err(e) => println!("Read failed: {e}"),
         }
 
+        i += 1;
+
+        if i >= 5 {
+            break;
+        }
+
         tokio::time::sleep(Duration::from_secs(1)).await;
     }
+
+    let _ = session.disconnect().await;
+    handle.await.unwrap();
 }

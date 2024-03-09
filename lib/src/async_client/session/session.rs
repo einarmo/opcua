@@ -3,11 +3,12 @@ use std::{sync::Arc, time::Duration};
 use arc_swap::ArcSwap;
 
 use crate::{
-    async_client::{retry::SessionRetryPolicy, transport::TransportPollResult, AsyncSecureChannel},
+    async_client::{retry::SessionRetryPolicy, AsyncSecureChannel},
     client::{
         prelude::{
-            encoding::DecodingOptions, ApplicationDescription, CertificateStore, DataValue, NodeId,
-            ReadRequest, ReadValueId, StatusCode, SupportedMessage, TimestampsToReturn, UAString,
+            encoding::DecodingOptions, ApplicationDescription, CertificateStore,
+            CloseSessionRequest, DataValue, NodeId, ReadRequest, ReadValueId, StatusCode,
+            SupportedMessage, TimestampsToReturn, UAString,
         },
         process_service_result, process_unexpected_response,
     },
@@ -21,15 +22,6 @@ pub enum SessionState {
     Disconnected,
     Connected,
     Connecting,
-}
-
-#[derive(Debug)]
-pub enum SessionPollResult {
-    Transport(TransportPollResult),
-    ConnectionLost(StatusCode),
-    ReconnectFailed,
-    Reconnected,
-    BeginReconnect,
 }
 
 pub(super) struct AsyncSessionState {
@@ -142,5 +134,28 @@ impl AsyncSession {
 
     pub async fn wait_for_connection(&self) -> bool {
         self.wait_for_state(true).await
+    }
+
+    async fn close_session(&self) -> Result<(), StatusCode> {
+        let request = CloseSessionRequest {
+            delete_subscriptions: true,
+            request_header: self.channel.make_request_header(Duration::from_secs(30)),
+        };
+        let response = self.channel.send(request, Duration::from_secs(30)).await?;
+        if let SupportedMessage::CloseSessionResponse(_) = response {
+            Ok(())
+        } else {
+            error!("close_session failed {:?}", response);
+            Err(process_unexpected_response(response))
+        }
+    }
+
+    pub async fn disconnect(&self) -> Result<(), StatusCode> {
+        self.close_session().await?;
+        self.channel.close_channel().await;
+
+        self.wait_for_state(false).await;
+
+        Ok(())
     }
 }
