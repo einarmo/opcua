@@ -85,10 +85,7 @@ impl SessionConnector {
                     "Session activation failed on reconnect, error = {}, creating a new session",
                     status_code
                 );
-                {
-                    let mut session_state = trace_write_lock!(self.inner.state);
-                    session_state.reset();
-                }
+                self.inner.reset();
                 let id = self.inner.create_session().await?;
                 self.inner.activate_session().await?;
                 SessionReconnectMode::NewSession(id)

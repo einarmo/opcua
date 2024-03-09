@@ -8,6 +8,7 @@ use futures::{stream::BoxStream, Stream, StreamExt, TryStreamExt};
 use crate::{
     async_client::{
         retry::{ExponentialBackoff, SessionRetryPolicy},
+        session::{session_error, session_warn},
         transport::{SecureChannelEventLoop, TransportPollResult},
     },
     client::prelude::{AttributeId, QualifiedName, ReadValueId, StatusCode, VariableId},
@@ -78,7 +79,7 @@ impl SessionEventLoop {
                         tokio::select! {
                             r = c.poll() => {
                                 if let TransportPollResult::Closed(code) = r {
-                                    log::warn!("Transport disconnected: {code}");
+                                    session_warn!(slf.inner, "Transport disconnected: {code}");
                                     let _ = slf.inner.state_watch_tx.send(SessionState::Disconnected);
 
                                     if code.is_good() {
@@ -99,7 +100,7 @@ impl SessionEventLoop {
                             r = activity.next() => {
                                 // Should never be null, fail out
                                 let Some(r) = r else {
-                                    log::error!("Session activity loop ended unexpectedly");
+                                    session_error!(slf.inner, "Session activity loop ended unexpectedly");
                                     return Err(StatusCode::BadUnexpectedError);
                                 };
 

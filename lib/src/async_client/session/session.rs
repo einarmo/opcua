@@ -1,4 +1,10 @@
-use std::{sync::Arc, time::Duration};
+use std::{
+    sync::{
+        atomic::{AtomicU32, Ordering},
+        Arc,
+    },
+    time::Duration,
+};
 
 use arc_swap::ArcSwap;
 
@@ -7,7 +13,8 @@ use crate::{
     client::{
         prelude::{
             encoding::DecodingOptions, ApplicationDescription, CertificateStore, DataValue, NodeId,
-            ReadRequest, ReadValueId, StatusCode, SupportedMessage, TimestampsToReturn, UAString,
+            ReadRequest, ReadValueId, RequestHeader, StatusCode, SupportedMessage,
+            TimestampsToReturn, UAString,
         },
         process_service_result, process_unexpected_response,
     },
@@ -33,6 +40,10 @@ impl AsyncSessionState {
     }
 }
 
+lazy_static! {
+    static ref NEXT_SESSION_ID: AtomicU32 = AtomicU32::new(1);
+}
+
 pub struct AsyncSession {
     pub(super) channel: AsyncSecureChannel,
     pub(super) state_watch_rx: tokio::sync::watch::Receiver<SessionState>,
@@ -40,9 +51,12 @@ pub struct AsyncSession {
     pub(super) certificate_store: Arc<RwLock<CertificateStore>>,
     pub(super) state: RwLock<AsyncSessionState>,
     pub(super) auth_token: Arc<ArcSwap<NodeId>>,
+    pub(super) internal_session_id: AtomicU32,
     pub(super) session_info: SessionInfo,
     pub(super) session_name: UAString,
     pub(super) application_description: ApplicationDescription,
+    pub(super) request_timeout: Duration,
+    pub(super) session_timeout: f64,
 }
 
 impl AsyncSession {
@@ -54,6 +68,8 @@ impl AsyncSession {
         session_retry_policy: SessionRetryPolicy,
         decoding_options: DecodingOptions,
         ignore_clock_skew: bool,
+        request_timeout: Duration,
+        session_timeout: f64,
     ) -> (Arc<Self>, SessionEventLoop) {
         let auth_token: Arc<ArcSwap<NodeId>> = Default::default();
         let (state_watch_tx, state_watch_rx) =
@@ -68,6 +84,7 @@ impl AsyncSession {
                 ignore_clock_skew,
                 auth_token.clone(),
             ),
+            internal_session_id: AtomicU32::new(NEXT_SESSION_ID.fetch_add(1, Ordering::Relaxed)),
             state_watch_rx,
             state_watch_tx,
             state: RwLock::new(AsyncSessionState {
@@ -78,12 +95,25 @@ impl AsyncSession {
             session_name,
             application_description,
             certificate_store,
+            request_timeout,
+            session_timeout,
         });
 
         (
             session.clone(),
             SessionEventLoop::new(session, session_retry_policy),
         )
+    }
+
+    pub(super) async fn send(
+        &self,
+        request: impl Into<SupportedMessage>,
+    ) -> Result<SupportedMessage, StatusCode> {
+        self.channel.send(request, self.request_timeout).await
+    }
+
+    pub(super) fn make_request_header(&self) -> RequestHeader {
+        self.channel.make_request_header(self.request_timeout)
     }
 
     pub async fn read(
@@ -97,13 +127,13 @@ impl AsyncSession {
         }
 
         let request = ReadRequest {
-            request_header: self.channel.make_request_header(Duration::from_secs(30)),
+            request_header: self.make_request_header(),
             max_age,
             timestamps_to_return,
             nodes_to_read: Some(nodes_to_read.to_vec()),
         };
 
-        let response = self.channel.send(request, Duration::from_secs(30)).await?;
+        let response = self.send(request).await?;
 
         if let SupportedMessage::ReadResponse(response) = response {
             process_service_result(&response.response_header)?;
@@ -111,6 +141,17 @@ impl AsyncSession {
         } else {
             Err(process_unexpected_response(response))
         }
+    }
+
+    pub(crate) fn reset(&self) {
+        {
+            let mut session_state = trace_write_lock!(self.state);
+            session_state.reset();
+        }
+        self.internal_session_id.store(
+            NEXT_SESSION_ID.fetch_add(1, Ordering::Relaxed),
+            Ordering::Relaxed,
+        );
     }
 
     async fn wait_for_state(&self, connected: bool) -> bool {
@@ -129,6 +170,10 @@ impl AsyncSession {
                 }
             }
         }
+    }
+
+    pub fn session_id(&self) -> u32 {
+        self.internal_session_id.load(Ordering::Relaxed)
     }
 
     pub async fn wait_for_connection(&self) -> bool {

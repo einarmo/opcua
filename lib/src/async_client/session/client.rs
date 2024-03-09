@@ -59,14 +59,14 @@ impl AsyncClient {
         // and on what interval
 
         let session_retry_policy = SessionRetryPolicy::new(
-            std::time::Duration::from_secs(120),
+            config.session_retry_max,
             if config.session_retry_limit < 0 {
                 None
             } else {
                 Some(config.session_retry_limit as u32)
             },
-            std::time::Duration::from_secs(config.session_retry_interval as u64),
-            std::time::Duration::from_secs(10),
+            config.session_retry_initial,
+            config.keep_alive_interval,
         );
 
         Self {
@@ -151,6 +151,8 @@ impl AsyncClient {
                 self.session_retry_policy.clone(),
                 self.decoding_options(),
                 self.config.performance.ignore_clock_skew,
+                self.config.request_timeout,
+                self.config.session_timeout as f64,
             ))
         }
     }
@@ -208,15 +210,13 @@ impl AsyncClient {
         channel: &AsyncSecureChannel,
     ) -> Result<Vec<EndpointDescription>, StatusCode> {
         let request = GetEndpointsRequest {
-            request_header: channel.make_request_header(std::time::Duration::from_secs(30)),
+            request_header: channel.make_request_header(self.config.request_timeout),
             endpoint_url: endpoint.endpoint_url.clone(),
             locale_ids: None,
             profile_uris: None,
         };
         // Send the message and wait for a response.
-        let response = channel
-            .send(request, std::time::Duration::from_secs(30))
-            .await?;
+        let response = channel.send(request, self.config.request_timeout).await?;
         if let SupportedMessage::GetEndpointsResponse(response) = response {
             process_service_result(&response.response_header)?;
             match response.endpoints {

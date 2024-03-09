@@ -1,4 +1,4 @@
-use std::{sync::Arc, time::Duration};
+use std::sync::Arc;
 
 use crypto::{certificate_store::CertificateStore, user_identity::make_user_name_identity_token};
 
@@ -37,18 +37,18 @@ impl AsyncSession {
         };
 
         let request = CreateSessionRequest {
-            request_header: self.channel.make_request_header(Duration::from_secs(30)),
+            request_header: self.make_request_header(),
             client_description: self.application_description.clone(),
             server_uri,
             endpoint_url,
             session_name,
             client_nonce,
             client_certificate,
-            requested_session_timeout: f64::MAX,
+            requested_session_timeout: self.session_timeout,
             max_response_message_size: 0,
         };
 
-        let response = self.channel.send(request, Duration::from_secs(30)).await?;
+        let response = self.send(request).await?;
 
         if let SupportedMessage::CreateSessionResponse(response) = response {
             process_service_result(&response.response_header)?;
@@ -156,7 +156,7 @@ impl AsyncSession {
         };
 
         let request = ActivateSessionRequest {
-            request_header: self.channel.make_request_header(Duration::from_secs(30)),
+            request_header: self.make_request_header(),
             client_signature,
             client_software_certificates: None,
             locale_ids,
@@ -164,7 +164,7 @@ impl AsyncSession {
             user_token_signature,
         };
 
-        let response = self.channel.send(request, Duration::from_secs(30)).await?;
+        let response = self.send(request).await?;
 
         if let SupportedMessage::ActivateSessionResponse(response) = response {
             // trace!("ActivateSessionResponse = {:#?}", response);
@@ -303,9 +303,9 @@ impl AsyncSession {
     pub(crate) async fn close_session(&self) -> Result<(), StatusCode> {
         let request = CloseSessionRequest {
             delete_subscriptions: true,
-            request_header: self.channel.make_request_header(Duration::from_secs(30)),
+            request_header: self.make_request_header(),
         };
-        let response = self.channel.send(request, Duration::from_secs(30)).await?;
+        let response = self.send(request).await?;
         if let SupportedMessage::CloseSessionResponse(_) = response {
             Ok(())
         } else {
@@ -316,10 +316,10 @@ impl AsyncSession {
 
     pub async fn cancel(&self, request_handle: IntegerId) -> Result<u32, StatusCode> {
         let request = CancelRequest {
-            request_header: self.channel.make_request_header(Duration::from_secs(30)),
+            request_header: self.make_request_header(),
             request_handle,
         };
-        let response = self.channel.send(request, Duration::from_secs(30)).await?;
+        let response = self.send(request).await?;
         if let SupportedMessage::CancelResponse(response) = response {
             process_service_result(&response.response_header)?;
             Ok(response.cancel_count)

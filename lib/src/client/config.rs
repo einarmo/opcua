@@ -9,6 +9,7 @@ use std::{
     collections::BTreeMap,
     path::{Path, PathBuf},
     str::FromStr,
+    time::Duration,
 };
 
 use crate::{
@@ -193,12 +194,26 @@ pub struct ClientConfig {
     pub endpoints: BTreeMap<String, ClientEndpoint>,
     /// Decoding options used for serialization / deserialization
     pub decoding_options: DecodingOptions,
-    /// Max retry limit -1, 0 or number
+    /// Maximum number of times to attempt to reconnect to the server before giving up.
+    /// -1 retries forever
     pub session_retry_limit: i32,
+    // TODO: Remove
     /// Retry interval in milliseconds
     pub session_retry_interval: u32,
-    /// Session timeout period in milliseconds
+
+    /// Initial delay for exponential backoff when reconnecting to the server.
+    pub session_retry_initial: Duration,
+    /// Max delay between retry attempts.
+    pub session_retry_max: Duration,
+    /// Interval between each keep-alive request sent to the server.
+    pub keep_alive_interval: Duration,
+
+    /// Timeout for each request sent to the server.
+    pub request_timeout: Duration,
+
+    /// Requested session timeout in milliseconds
     pub session_timeout: u32,
+
     /// Client performance settings
     pub performance: Performance,
     /// Session name
@@ -307,10 +322,7 @@ impl ClientConfig {
     /// The default PKI directory
     pub const PKI_DIR: &'static str = "pki";
 
-    pub fn new<T>(application_name: T, application_uri: T) -> Self
-    where
-        T: Into<String>,
-    {
+    pub fn new(application_name: impl Into<String>, application_uri: impl Into<String>) -> Self {
         let mut pki_dir = std::env::current_dir().unwrap();
         pki_dir.push(Self::PKI_DIR);
 
@@ -331,6 +343,10 @@ impl ClientConfig {
             endpoints: BTreeMap::new(),
             session_retry_limit: SessionRetryPolicy::DEFAULT_RETRY_LIMIT as i32,
             session_retry_interval: SessionRetryPolicy::DEFAULT_RETRY_INTERVAL_MS,
+            session_retry_initial: Duration::from_secs(1),
+            session_retry_max: Duration::from_secs(30),
+            keep_alive_interval: Duration::from_secs(10),
+            request_timeout: Duration::from_secs(60),
             session_timeout: 0,
             decoding_options: DecodingOptions {
                 max_array_length: decoding_options.max_array_length,
