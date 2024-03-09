@@ -1,6 +1,7 @@
 mod client;
 mod connect;
 mod event_loop;
+mod services;
 mod session;
 
 use crate::client::prelude::{EndpointDescription, IdentityToken};
