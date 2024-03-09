@@ -1169,6 +1169,8 @@ name = "opcua-async-client"
 version = "0.13.0"
 dependencies = [
  "env_logger 0.11.3",
+ "futures",
+ "futures-util",
  "log",
  "opcua",
  "pico-args",

@@ -1,5 +1,7 @@
 use std::time::Duration;
 
+use futures::TryStreamExt;
+use log::info;
 use opcua::{
     async_client::AsyncClient,
     client::prelude::{ClientConfig, IdentityToken},
@@ -10,7 +12,7 @@ use opcua::{
 async fn main() {
     env_logger::init();
     let mut config = ClientConfig::new("Async client", "urn:AsyncClient");
-    config.session_retry_limit = 10;
+    config.session_retry_limit = 4;
     config.session_retry_interval = 2;
     let mut client = AsyncClient::new(config);
     let endpoints = client
@@ -25,18 +27,17 @@ async fn main() {
         );
     }
 
-    let (session, mut event_loop) = client
+    let (session, event_loop) = client
         .new_session_from_endpoint("opc.tcp://localhost:62546", IdentityToken::Anonymous)
         .await
         .unwrap();
 
     tokio::task::spawn(async move {
+        let stream = event_loop.run();
+        futures::pin_mut!(stream);
         loop {
-            let r = event_loop.poll().await;
-            println!("{:?}", r);
-
-            if let Err(e) = r {
-                panic!("Session died: {e}");
+            while let Ok(Some(r)) = stream.try_next().await {
+                info!("Session update: {:?}", r);
             }
         }
     });

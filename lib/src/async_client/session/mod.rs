@@ -1,4 +1,6 @@
 mod client;
+mod connect;
+mod event_loop;
 mod session;
 
 use crate::client::prelude::{EndpointDescription, IdentityToken};
@@ -16,4 +18,5 @@ pub struct SessionInfo {
 }
 
 pub use client::AsyncClient;
-pub use session::{AsyncSession, SessionEventLoop};
+pub use event_loop::SessionEventLoop;
+pub use session::AsyncSession;

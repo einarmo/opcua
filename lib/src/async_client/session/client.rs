@@ -85,7 +85,7 @@ impl AsyncClient {
         &mut self,
         endpoint: impl Into<EndpointDescription>,
         user_identity_token: IdentityToken,
-    ) -> Result<(AsyncSession, SessionEventLoop), StatusCode> {
+    ) -> Result<(Arc<AsyncSession>, SessionEventLoop), StatusCode> {
         let endpoint = endpoint.into();
 
         // Get the server endpoints
@@ -135,7 +135,7 @@ impl AsyncClient {
     pub fn new_session_from_info(
         &mut self,
         session_info: impl Into<SessionInfo>,
-    ) -> Result<(AsyncSession, SessionEventLoop), String> {
+    ) -> Result<(Arc<AsyncSession>, SessionEventLoop), String> {
         let session_info = session_info.into();
         if !is_opc_ua_binary_url(session_info.endpoint.endpoint_url.as_ref()) {
             Err(format!(

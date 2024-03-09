@@ -5,6 +5,8 @@ edition = "2021"
 
 [dependencies]
 env_logger = "0.11.3"
+futures = "0.3.30"
+futures-util = "0.3.30"
 log = "0.4.21"
 pico-args = "0.5"
 tokio = { version = "1.36.0", features = ["full"] }
