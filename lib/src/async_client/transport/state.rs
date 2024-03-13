@@ -114,7 +114,7 @@ impl SecureChannelState {
         request_type: SecurityTokenRequestType,
         timeout: Duration,
         sender: RequestSend,
-    ) -> Result<Request, StatusCode> {
+    ) -> Request {
         trace!("issue_or_renew_secure_channel({:?})", request_type);
 
         const REQUESTED_LIFETIME: u32 = 60000; // TODO
@@ -144,7 +144,7 @@ impl SecureChannelState {
             requested_lifetime,
         };
 
-        Ok(Request::new(request, sender, timeout))
+        Request::new(request, sender, timeout)
     }
 
     pub fn set_client_offset(&self, offset: chrono::Duration) {

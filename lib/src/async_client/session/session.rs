@@ -11,13 +11,14 @@ use arc_swap::ArcSwap;
 use crate::{
     async_client::{retry::SessionRetryPolicy, AsyncSecureChannel},
     client::prelude::{
-        encoding::DecodingOptions, ApplicationDescription, CertificateStore, NodeId, RequestHeader,
-        StatusCode, SupportedMessage, UAString,
+        encoding::DecodingOptions, ApplicationDescription, CertificateStore, ClientConfig, NodeId,
+        RequestHeader, StatusCode, SupportedMessage, UAString,
     },
-    sync::RwLock,
+    core::handle::AtomicHandle,
+    sync::{Mutex, RwLock},
 };
 
-use super::{SessionEventLoop, SessionInfo};
+use super::{services::subscriptions::state::SubscriptionState, SessionEventLoop, SessionInfo};
 
 #[derive(Clone, Copy)]
 pub enum SessionState {
@@ -52,7 +53,11 @@ pub struct AsyncSession {
     pub(super) session_name: UAString,
     pub(super) application_description: ApplicationDescription,
     pub(super) request_timeout: Duration,
+    pub(super) publish_timeout: Duration,
+    pub(super) recreate_monitored_items_chunk: usize,
     pub(super) session_timeout: f64,
+    pub(super) subscription_state: Mutex<SubscriptionState>,
+    pub(super) monitored_item_handle: AtomicHandle,
 }
 
 impl AsyncSession {
@@ -63,9 +68,7 @@ impl AsyncSession {
         application_description: ApplicationDescription,
         session_retry_policy: SessionRetryPolicy,
         decoding_options: DecodingOptions,
-        ignore_clock_skew: bool,
-        request_timeout: Duration,
-        session_timeout: f64,
+        config: &ClientConfig,
     ) -> (Arc<Self>, SessionEventLoop) {
         let auth_token: Arc<ArcSwap<NodeId>> = Default::default();
         let (state_watch_tx, state_watch_rx) =
@@ -77,7 +80,7 @@ impl AsyncSession {
                 session_info.clone(),
                 session_retry_policy.clone(),
                 decoding_options,
-                ignore_clock_skew,
+                config.performance.ignore_clock_skew,
                 auth_token.clone(),
             ),
             internal_session_id: AtomicU32::new(NEXT_SESSION_ID.fetch_add(1, Ordering::Relaxed)),
@@ -91,8 +94,12 @@ impl AsyncSession {
             session_name,
             application_description,
             certificate_store,
-            request_timeout,
-            session_timeout,
+            request_timeout: config.request_timeout,
+            session_timeout: config.session_timeout as f64,
+            publish_timeout: config.publish_timeout,
+            recreate_monitored_items_chunk: config.performance.recreate_monitored_items_chunk,
+            subscription_state: Mutex::new(SubscriptionState::new(config.min_publish_interval)),
+            monitored_item_handle: AtomicHandle::new(1000),
         });
 
         (

@@ -44,6 +44,15 @@ async fn main() {
     let mut i = 0;
 
     loop {
+        /* let ids: Vec<_> = (0..1000)
+        .map(|i| ReadValueId {
+            node_id: NodeId::new(0, i),
+            attribute_id: AttributeId::DisplayName as u32,
+            index_range: Default::default(),
+            data_encoding: QualifiedName::null(),
+        })
+        .collect(); */
+
         let result = session
             .read(
                 &[ReadValueId {
@@ -58,8 +67,11 @@ async fn main() {
             .await;
         match result {
             Ok(result) => {
-                let val = &result[0];
-                println!("{}", val.value.as_ref().unwrap());
+                for val in result {
+                    if let Some(n) = val.value.as_ref() {
+                        println!("{n}");
+                    }
+                }
             }
             Err(e) => println!("Read failed: {e}"),
         }

@@ -104,8 +104,7 @@ impl SessionConnector {
             }
         };
 
-        // TODO: transfer subscriptions
-        // self.transfer_subscriptions_from_old_session
+        self.inner.transfer_subscriptions_from_old_session().await;
 
         Ok(reconnect)
     }

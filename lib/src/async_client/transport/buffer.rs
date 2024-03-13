@@ -1,6 +1,9 @@
-use std::io::{BufRead, Cursor};
+use std::{
+    collections::VecDeque,
+    io::{BufRead, Cursor},
+};
 
-use crate::client::prelude::{Chunker, SecureChannel, StatusCode, SupportedMessage};
+use crate::client::prelude::{Chunker, MessageChunk, SecureChannel, StatusCode, SupportedMessage};
 use tokio::io::AsyncWriteExt;
 
 #[derive(Copy, Clone, Debug)]
@@ -10,9 +13,10 @@ enum SendBufferState {
 }
 
 pub struct SendBuffer {
-    data_buffer: Vec<u8>,
     /// The send buffer
     buffer: Cursor<Vec<u8>>,
+    /// Queued chunks
+    chunks: VecDeque<MessageChunk>,
     /// The last request id
     last_request_id: u32,
     /// Last sent sequence number
@@ -25,17 +29,38 @@ pub struct SendBuffer {
     state: SendBufferState,
 }
 
+// The send buffer works as follows:
+//  - `write` is called with a message that is written to the internal buffer.
+//  - `read_into_async` is called, which sets the state to `Writing`.
+//  - Once the buffer is exhausted, the state is set back to `Reading`.
+//  - `write` cannot be called while we are writing to the output.
 impl SendBuffer {
     pub fn new(buffer_size: usize, max_message_size: usize, max_chunk_count: usize) -> Self {
         Self {
-            data_buffer: vec![0u8; buffer_size + 1024],
-            buffer: Cursor::new(vec![0u8; buffer_size]),
+            buffer: Cursor::new(vec![0u8; buffer_size + 1024]),
+            chunks: VecDeque::with_capacity(max_chunk_count),
             last_request_id: 1000,
             last_sent_sequence_number: 0,
             max_message_size,
             max_chunk_count,
             state: SendBufferState::Writing,
         }
+    }
+
+    pub fn encode_next_chunk(&mut self, secure_channel: &SecureChannel) -> Result<(), StatusCode> {
+        if matches!(self.state, SendBufferState::Reading(_)) {
+            return Err(StatusCode::BadInvalidState);
+        }
+
+        let Some(next_chunk) = self.chunks.pop_front() else {
+            return Ok(());
+        };
+
+        trace!("Sending chunk {:?}", next_chunk);
+        let size = secure_channel.apply_security(&next_chunk, self.buffer.get_mut())?;
+        self.state = SendBufferState::Reading(size);
+
+        Ok(())
     }
 
     pub fn write(
@@ -56,7 +81,7 @@ impl SendBuffer {
             self.last_sent_sequence_number + 1,
             request_id,
             self.max_message_size,
-            0,
+            8196,
             secure_channel,
             &message,
         )?;
@@ -73,20 +98,7 @@ impl SendBuffer {
             self.last_sent_sequence_number += chunks.len() as u32;
 
             // Send chunks
-            for chunk in chunks {
-                trace!("Sending chunk {:?}", chunk);
-                let size = secure_channel.apply_security(&chunk, &mut self.data_buffer)?;
-                std::io::Write::write(&mut self.buffer, &self.data_buffer[..size]).map_err(
-                    |error| {
-                        error!(
-                        "Error while writing bytes to stream, connection broken, check error {:?}",
-                        error
-                    );
-                        StatusCode::BadCommunicationError
-                    },
-                )?;
-            }
-            trace!("Message written");
+            self.chunks.extend(chunks.into_iter());
             Ok(request_id)
         }
     }
@@ -128,6 +140,10 @@ impl SendBuffer {
         }
 
         Ok(())
+    }
+
+    pub fn should_encode_chunks(&self) -> bool {
+        !self.chunks.is_empty() && !self.can_read()
     }
 
     pub fn can_read(&self) -> bool {

@@ -169,6 +169,7 @@ impl SessionEventLoop {
 pub enum SessionActivity {
     KeepAliveSucceeded,
     KeepAliveFailed(StatusCode),
+    Publish,
 }
 
 enum SessionTickEvent {
@@ -215,7 +216,7 @@ impl SessionActivityLoop {
                         .inner
                         .read(
                             &[ReadValueId {
-                                node_id: VariableId::Server_ServerStatus.into(),
+                                node_id: VariableId::Server_ServerStatus_State.into(),
                                 attribute_id: AttributeId::Value as u32,
                                 index_range: Default::default(),
                                 data_encoding: QualifiedName::null(),
@@ -249,10 +250,13 @@ impl SessionActivityLoop {
                     match status {
                         // ServerState::Running
                         0 => Some((SessionActivity::KeepAliveSucceeded, slf)),
-                        _ => Some((
-                            SessionActivity::KeepAliveFailed(StatusCode::BadServerHalted),
-                            slf,
-                        )),
+                        s => {
+                            warn!("Keep alive failed, non-running status code {s}");
+                            Some((
+                                SessionActivity::KeepAliveFailed(StatusCode::BadServerHalted),
+                                slf,
+                            ))
+                        }
                     }
                 }
             }

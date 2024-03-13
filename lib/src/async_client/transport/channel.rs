@@ -29,6 +29,7 @@ pub struct AsyncSecureChannel {
     certificate_store: Arc<RwLock<CertificateStore>>,
     transport_config: TransportConfiguration,
     state: SecureChannelState,
+    issue_channel_lock: tokio::sync::Mutex<()>,
 
     request_send: RwLock<Option<RequestSend>>,
 }
@@ -67,6 +68,7 @@ impl AsyncSecureChannel {
                 max_message_size: 65535,
                 max_chunk_count: 5,
             },
+            issue_channel_lock: tokio::sync::Mutex::new(()),
             state: SecureChannelState::new(ignore_clock_skew, secure_channel.clone(), auth_token),
             session_info,
             secure_channel,
@@ -88,6 +90,37 @@ impl AsyncSecureChannel {
             };
             send
         };
+
+        let should_renew_security_token = {
+            let secure_channel = trace_read_lock!(self.secure_channel);
+            secure_channel.should_renew_security_token()
+        };
+
+        if should_renew_security_token {
+            // Grab the lock, then check again whether we should renew the secure channel,
+            // this avoids renewing it multiple times if the client sends many requests in quick
+            // succession.
+            // Also, if the channel is currently being renewed, we need to wait for the new security token.
+            let guard = self.issue_channel_lock.lock().await;
+            let should_renew_security_token = {
+                let secure_channel = trace_read_lock!(self.secure_channel);
+                secure_channel.should_renew_security_token()
+            };
+
+            if should_renew_security_token {
+                let request = self.state.begin_issue_or_renew_secure_channel(
+                    SecurityTokenRequestType::Renew,
+                    Duration::from_secs(30),
+                    send.clone(),
+                );
+
+                let resp = request.send().await?;
+
+                self.state.end_issue_or_renew_secure_channel(resp)?;
+            }
+
+            drop(guard);
+        }
 
         Request::new(request, send, timeout).send().await
     }
@@ -151,7 +184,7 @@ impl AsyncSecureChannel {
             SecurityTokenRequestType::Issue,
             Duration::from_secs(30),
             send.clone(),
-        )?;
+        );
 
         let request_fut = request.send();
         tokio::pin!(request_fut);

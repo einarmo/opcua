@@ -150,9 +150,7 @@ impl AsyncClient {
                 self.config.application_description(),
                 self.session_retry_policy.clone(),
                 self.decoding_options(),
-                self.config.performance.ignore_clock_skew,
-                self.config.request_timeout,
-                self.config.session_timeout as f64,
+                &self.config,
             ))
         }
     }

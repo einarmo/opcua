@@ -158,6 +158,8 @@ pub struct Performance {
     /// Use a single-threaded executor. The default executor uses a thread pool with a worker
     /// thread for each CPU core available on the system.
     pub single_threaded_executor: bool,
+    /// Maximum number of monitored items per request when recreating subscriptions on session recreation.
+    pub recreate_monitored_items_chunk: usize,
 }
 
 /// Client OPC UA configuration
@@ -210,6 +212,12 @@ pub struct ClientConfig {
 
     /// Timeout for each request sent to the server.
     pub request_timeout: Duration,
+    /// Timeout for publish requests, separate from normal timeout since
+    /// subscriptions are often more time sensitive.
+    pub publish_timeout: Duration,
+    /// Minimum publish interval. Setting this higher will make sure that subscriptions
+    /// publish together, which may reduce the number of publish requests if you have a lot of subscriptions.
+    pub min_publish_interval: Duration,
 
     /// Requested session timeout in milliseconds
     pub session_timeout: u32,
@@ -347,6 +355,8 @@ impl ClientConfig {
             session_retry_max: Duration::from_secs(30),
             keep_alive_interval: Duration::from_secs(10),
             request_timeout: Duration::from_secs(60),
+            min_publish_interval: Duration::from_secs(1),
+            publish_timeout: Duration::from_secs(5),
             session_timeout: 0,
             decoding_options: DecodingOptions {
                 max_array_length: decoding_options.max_array_length,
@@ -358,6 +368,7 @@ impl ClientConfig {
             performance: Performance {
                 ignore_clock_skew: false,
                 single_threaded_executor: true,
+                recreate_monitored_items_chunk: 1000,
             },
             session_name: "Rust OPC UA Client".into(),
         }

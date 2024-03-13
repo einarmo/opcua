@@ -179,9 +179,21 @@ impl TcpTransport {
         // or we're waiting for more outgoing messages.
         // We won't wait for outgoing messages while sending, since that
         // could cause the send buffer to fill up.
+
+        // If there's nothing in the send buffer, but there are chunks available,
+        // write them to the send buffer before proceeding.
+        if self.send_buffer.should_encode_chunks() {
+            let secure_channel = trace_read_lock!(self.state.secure_channel);
+            if let Err(e) = self.send_buffer.encode_next_chunk(&secure_channel) {
+                return TransportPollResult::Closed(e);
+            }
+        }
+
+        // If there is something in the send buffer, write to the stream.
+        // If not, wait for outgoing messages.
+        // Either way, listen to incoming messages while we do this.
         if self.send_buffer.can_read() {
             tokio::select! {
-                // write i
                 r = self.send_buffer.read_into_async(&mut self.write) => {
                     if let Err(e) = r {
                         error!("write bytes task failed: {}", e);
