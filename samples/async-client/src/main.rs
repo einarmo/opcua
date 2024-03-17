@@ -3,9 +3,12 @@ use std::time::Duration;
 use futures::TryStreamExt;
 use log::info;
 use opcua::{
-    async_client::AsyncClient,
+    async_client::{AsyncClient, SubscriptionCallbacks},
     client::prelude::{ClientConfig, IdentityToken},
-    types::{AttributeId, ObjectId, QualifiedName, ReadValueId},
+    types::{
+        AttributeId, MonitoredItemCreateRequest, MonitoringParameters, NodeId, ObjectId,
+        QualifiedName, ReadValueId,
+    },
 };
 
 #[tokio::main]
@@ -42,6 +45,49 @@ async fn main() {
 
     session.wait_for_connection().await;
     let mut i = 0;
+
+    let id = session
+        .create_subscription(
+            Duration::from_secs(1),
+            6000,
+            60000,
+            1000,
+            1,
+            true,
+            SubscriptionCallbacks::new(
+                |s| {
+                    println!("Status change: {s:?}");
+                },
+                |n, i| {
+                    println!("Data change: {n:?} for {}", i.item_to_monitor().node_id);
+                },
+                |_, _| {},
+            ),
+        )
+        .await
+        .unwrap();
+
+    println!("Subscription created");
+
+    session
+        .create_monitored_items(
+            id,
+            opcua::types::TimestampsToReturn::Both,
+            vec![MonitoredItemCreateRequest {
+                item_to_monitor: ReadValueId {
+                    node_id: NodeId::new(2, 36),
+                    attribute_id: AttributeId::Value as u32,
+                    index_range: Default::default(),
+                    data_encoding: QualifiedName::null(),
+                },
+                monitoring_mode: opcua::types::MonitoringMode::Reporting,
+                requested_parameters: MonitoringParameters::default(),
+            }],
+        )
+        .await
+        .unwrap();
+
+    println!("Monitored items created");
 
     loop {
         /* let ids: Vec<_> = (0..1000)

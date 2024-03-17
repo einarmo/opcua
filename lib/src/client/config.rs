@@ -218,6 +218,8 @@ pub struct ClientConfig {
     /// Minimum publish interval. Setting this higher will make sure that subscriptions
     /// publish together, which may reduce the number of publish requests if you have a lot of subscriptions.
     pub min_publish_interval: Duration,
+    /// Maximum number of inflight publish requests before further requests are skipped.
+    pub max_inflight_publish: usize,
 
     /// Requested session timeout in milliseconds
     pub session_timeout: u32,
@@ -357,6 +359,7 @@ impl ClientConfig {
             request_timeout: Duration::from_secs(60),
             min_publish_interval: Duration::from_secs(1),
             publish_timeout: Duration::from_secs(5),
+            max_inflight_publish: 5,
             session_timeout: 0,
             decoding_options: DecodingOptions {
                 max_array_length: decoding_options.max_array_length,

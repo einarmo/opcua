@@ -1,9 +1,10 @@
+pub mod event_loop;
 mod service;
 pub mod state;
 
 use std::{
     collections::{BTreeSet, HashMap},
-    time::{Duration, Instant},
+    time::Duration,
 };
 
 use crate::client::prelude::{
@@ -29,11 +30,48 @@ pub(crate) struct ModifyMonitoredItem {
 }
 
 pub trait OnSubscriptionNotification: Send + Sync {
-    fn on_subscription_status_change(&mut self, notification: StatusChangeNotification) {}
+    fn on_subscription_status_change(&mut self, _notification: StatusChangeNotification) {}
 
-    fn on_data_value(&mut self, notification: DataValue, item: &MonitoredItem) {}
+    fn on_data_value(&mut self, _notification: DataValue, _item: &MonitoredItem) {}
 
-    fn on_event(&mut self, event_fields: Option<Vec<Variant>>, item: &MonitoredItem) {}
+    fn on_event(&mut self, _event_fields: Option<Vec<Variant>>, _item: &MonitoredItem) {}
+}
+
+pub struct SubscriptionCallbacks {
+    status_change: Box<dyn FnMut(StatusChangeNotification) + Send + Sync>,
+    data_value: Box<dyn FnMut(DataValue, &MonitoredItem) + Send + Sync>,
+    event: Box<dyn FnMut(Option<Vec<Variant>>, &MonitoredItem) + Send + Sync>,
+}
+
+impl SubscriptionCallbacks {
+    pub fn new(
+        status_change: impl FnMut(StatusChangeNotification) + Send + Sync + 'static,
+        data_value: impl FnMut(DataValue, &MonitoredItem) + Send + Sync + 'static,
+        event: impl FnMut(Option<Vec<Variant>>, &MonitoredItem) + Send + Sync + 'static,
+    ) -> Self {
+        Self {
+            status_change: Box::new(status_change)
+                as Box<dyn FnMut(StatusChangeNotification) + Send + Sync>,
+            data_value: Box::new(data_value)
+                as Box<dyn FnMut(DataValue, &MonitoredItem) + Send + Sync>,
+            event: Box::new(event)
+                as Box<dyn FnMut(Option<Vec<Variant>>, &MonitoredItem) + Send + Sync>,
+        }
+    }
+}
+
+impl OnSubscriptionNotification for SubscriptionCallbacks {
+    fn on_subscription_status_change(&mut self, notification: StatusChangeNotification) {
+        (&mut self.status_change)(notification);
+    }
+
+    fn on_data_value(&mut self, notification: DataValue, item: &MonitoredItem) {
+        (&mut self.data_value)(notification, item);
+    }
+
+    fn on_event(&mut self, event_fields: Option<Vec<Variant>>, item: &MonitoredItem) {
+        (&mut self.event)(event_fields, item);
+    }
 }
 
 pub struct MonitoredItem {
@@ -45,14 +83,14 @@ pub struct MonitoredItem {
     item_to_monitor: ReadValueId,
     /// Queue size
     queue_size: usize,
-    /// Discard oldest
-    discard_oldest: bool,
     /// Monitoring mode
     monitoring_mode: MonitoringMode,
     /// Sampling interval
     sampling_interval: f64,
     /// Triggered items
     triggered_items: BTreeSet<u32>,
+    /// Whether to discard oldest values on queue overflow
+    discard_oldest: bool,
 }
 
 impl MonitoredItem {
@@ -67,10 +105,10 @@ impl MonitoredItem {
                 data_encoding: QualifiedName::null(),
             },
             queue_size: 1,
-            discard_oldest: false,
             monitoring_mode: MonitoringMode::Reporting,
             sampling_interval: 0.0,
             triggered_items: BTreeSet::new(),
+            discard_oldest: true,
         }
     }
 
@@ -94,12 +132,8 @@ impl MonitoredItem {
         self.queue_size
     }
 
-    pub(crate) fn set_id(&mut self, value: u32) {
-        self.id = value;
-    }
-
-    pub(crate) fn set_item_to_monitor(&mut self, item_to_monitor: ReadValueId) {
-        self.item_to_monitor = item_to_monitor;
+    pub fn discard_oldest(&self) -> bool {
+        self.discard_oldest
     }
 
     pub(crate) fn set_sampling_interval(&mut self, value: f64) {
@@ -112,10 +146,6 @@ impl MonitoredItem {
 
     pub(crate) fn set_monitoring_mode(&mut self, monitoring_mode: MonitoringMode) {
         self.monitoring_mode = monitoring_mode;
-    }
-
-    pub(crate) fn set_discard_oldest(&mut self, discard_oldest: bool) {
-        self.discard_oldest = discard_oldest;
     }
 
     pub(crate) fn set_triggering(&mut self, links_to_add: &[u32], links_to_remove: &[u32]) {
@@ -153,8 +183,6 @@ pub struct Subscription {
     /// A map of client handle to monitored item id
     client_handles: HashMap<u32, u32>,
 
-    next_publish: Instant,
-
     callback: Box<dyn OnSubscriptionNotification>,
 }
 
@@ -180,7 +208,6 @@ impl Subscription {
             priority,
             monitored_items: HashMap::new(),
             client_handles: HashMap::new(),
-            next_publish: Instant::now(),
             callback: status_change_callback,
         }
     }
@@ -217,10 +244,6 @@ impl Subscription {
         self.publishing_enabled
     }
 
-    pub(crate) fn notify_is_publishing_now(&mut self) {
-        self.next_publish = Instant::now() + self.publishing_interval;
-    }
-
     pub(crate) fn set_publishing_interval(&mut self, publishing_interval: Duration) {
         self.publishing_interval = publishing_interval;
     }
@@ -252,10 +275,10 @@ impl Subscription {
                 client_handle: i.client_handle,
                 item_to_monitor: i.item_to_monitor,
                 queue_size: i.queue_size as usize,
-                discard_oldest: i.discard_oldest,
                 monitoring_mode: i.monitoring_mode,
                 sampling_interval: i.sampling_interval,
                 triggered_items: BTreeSet::new(),
+                discard_oldest: i.discard_oldest,
             };
 
             let client_handle = monitored_item.client_handle();
@@ -293,10 +316,6 @@ impl Subscription {
         if let Some(ref mut monitored_item) = self.monitored_items.get_mut(&triggering_item_id) {
             monitored_item.set_triggering(links_to_add, links_to_remove);
         }
-    }
-
-    fn monitored_item_id_from_handle(&self, client_handle: u32) -> Option<u32> {
-        self.client_handles.get(&client_handle).copied()
     }
 
     pub(crate) fn on_notification(

@@ -3,7 +3,7 @@ use std::{
         atomic::{AtomicU32, Ordering},
         Arc,
     },
-    time::Duration,
+    time::{Duration, Instant},
 };
 
 use arc_swap::ArcSwap;
@@ -56,8 +56,10 @@ pub struct AsyncSession {
     pub(super) publish_timeout: Duration,
     pub(super) recreate_monitored_items_chunk: usize,
     pub(super) session_timeout: f64,
-    pub(super) subscription_state: Mutex<SubscriptionState>,
+    pub(super) max_inflight_publish: usize,
+    pub subscription_state: Mutex<SubscriptionState>,
     pub(super) monitored_item_handle: AtomicHandle,
+    pub(super) trigger_publish_tx: tokio::sync::watch::Sender<Instant>,
 }
 
 impl AsyncSession {
@@ -73,6 +75,7 @@ impl AsyncSession {
         let auth_token: Arc<ArcSwap<NodeId>> = Default::default();
         let (state_watch_tx, state_watch_rx) =
             tokio::sync::watch::channel(SessionState::Disconnected);
+        let (trigger_publish_tx, trigger_publish_rx) = tokio::sync::watch::channel(Instant::now());
 
         let session = Arc::new(AsyncSession {
             channel: AsyncSecureChannel::new(
@@ -97,14 +100,16 @@ impl AsyncSession {
             request_timeout: config.request_timeout,
             session_timeout: config.session_timeout as f64,
             publish_timeout: config.publish_timeout,
+            max_inflight_publish: config.max_inflight_publish,
             recreate_monitored_items_chunk: config.performance.recreate_monitored_items_chunk,
             subscription_state: Mutex::new(SubscriptionState::new(config.min_publish_interval)),
             monitored_item_handle: AtomicHandle::new(1000),
+            trigger_publish_tx,
         });
 
         (
             session.clone(),
-            SessionEventLoop::new(session, session_retry_policy),
+            SessionEventLoop::new(session, session_retry_policy, trigger_publish_rx),
         )
     }
 

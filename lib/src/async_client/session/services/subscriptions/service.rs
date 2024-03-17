@@ -1,4 +1,7 @@
-use std::{collections::HashSet, time::Duration};
+use std::{
+    collections::HashSet,
+    time::{Duration, Instant},
+};
 
 use crate::{
     async_client::{
@@ -65,10 +68,7 @@ impl AsyncSession {
             }
 
             // Send an async publish request for this new subscription
-            /* {
-                let mut session_state = trace_write_lock!(self.session_state);
-                let _ = session_state.async_publish();
-            } */
+            let _ = self.trigger_publish_tx.send(Instant::now());
 
             session_debug!(
                 self,
@@ -328,7 +328,9 @@ impl AsyncSession {
                 timestamps_to_return,
                 items_to_create: Some(final_items_to_create.clone()),
             };
+            println!("Send request");
             let response = self.send(request).await?;
+            println!("Request sent");
             if let SupportedMessage::CreateMonitoredItemsResponse(response) = response {
                 process_service_result(&response.response_header)?;
                 if let Some(ref results) = response.results {
@@ -457,6 +459,15 @@ impl AsyncSession {
                 }
             };
             let response = self.send(request).await?;
+
+            {
+                let mut subscription_state = trace_lock!(self.subscription_state);
+                subscription_state.set_monitoring_mode(
+                    subscription_id,
+                    monitored_item_ids,
+                    monitoring_mode,
+                );
+            }
             if let SupportedMessage::SetMonitoringModeResponse(response) = response {
                 Ok(response.results.unwrap())
             } else {
@@ -563,7 +574,15 @@ impl AsyncSession {
         }
     }
 
-    pub(crate) async fn publish_ready_subscriptions(&self) -> Result<(), StatusCode> {
+    pub(crate) fn next_publish_time(&self, set_last_publish: bool) -> Option<Instant> {
+        let mut subscription_state = trace_lock!(self.subscription_state);
+        if set_last_publish {
+            subscription_state.set_last_publish();
+        }
+        subscription_state.next_publish_time()
+    }
+
+    pub(crate) async fn publish(&self) -> Result<(), StatusCode> {
         let acks = {
             let mut subscription_state = trace_lock!(self.subscription_state);
             let acks = subscription_state.take_acknowledgements();
@@ -581,7 +600,7 @@ impl AsyncSession {
                 .map(|ack| ack.sequence_number)
                 .collect();
             debug!(
-                "async_publish is acknowledging subscription acknowledgements with sequence nrs {:?}",
+                "publish is acknowledging subscription acknowledgements with sequence nrs {:?}",
                 sequence_nrs
             );
         }
@@ -651,12 +670,13 @@ impl AsyncSession {
             session_warn!(self, "Some or all of the existing subscriptions could not be transferred and must be created manually");
         }
 
-        let mut subscription_state = trace_lock!(self.subscription_state);
-
         for subscription_id in subscription_ids_to_recreate {
             session_debug!(self, "Recreating subscription {}", subscription_id);
 
-            let deleted_subscription = subscription_state.delete_subscription(subscription_id);
+            let deleted_subscription = {
+                let mut subscription_state = trace_lock!(self.subscription_state);
+                subscription_state.delete_subscription(subscription_id)
+            };
 
             let Some(subscription) = deleted_subscription else {
                 session_warn!(
@@ -697,7 +717,7 @@ impl AsyncSession {
                         sampling_interval: item.sampling_interval(),
                         filter: ExtensionObject::null(),
                         queue_size: item.queue_size() as u32,
-                        discard_oldest: true,
+                        discard_oldest: item.discard_oldest(),
                     },
                 })
                 .collect::<Vec<MonitoredItemCreateRequest>>();

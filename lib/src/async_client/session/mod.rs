@@ -20,6 +20,7 @@ pub struct SessionInfo {
 
 pub use client::AsyncClient;
 pub use event_loop::SessionEventLoop;
+pub use services::subscriptions::{OnSubscriptionNotification, SubscriptionCallbacks};
 pub use session::AsyncSession;
 
 #[allow(unused)]

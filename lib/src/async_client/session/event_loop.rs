@@ -16,6 +16,7 @@ use crate::{
 
 use super::{
     connect::{SessionConnector, SessionReconnectMode},
+    services::subscriptions::event_loop::{SubscriptionActivity, SubscriptionEventLoop},
     session::SessionState,
     AsyncSession,
 };
@@ -27,11 +28,16 @@ pub enum SessionPollResult {
     ReconnectFailed(StatusCode),
     Reconnected(SessionReconnectMode),
     SessionActivity(SessionActivity),
+    Subscription(SubscriptionActivity),
     BeginReconnect,
 }
 
 enum SessionEventLoopState {
-    Connected(SecureChannelEventLoop, BoxStream<'static, SessionActivity>),
+    Connected(
+        SecureChannelEventLoop,
+        BoxStream<'static, SessionActivity>,
+        BoxStream<'static, SubscriptionActivity>,
+    ),
     Connecting(SessionConnector, ExponentialBackoff, Instant),
     Disconnected,
 }
@@ -39,12 +45,21 @@ enum SessionEventLoopState {
 #[must_use = "The session event loop must be started for the session to work"]
 pub struct SessionEventLoop {
     inner: Arc<AsyncSession>,
+    trigger_publish_recv: tokio::sync::watch::Receiver<Instant>,
     retry: SessionRetryPolicy,
 }
 
 impl SessionEventLoop {
-    pub fn new(inner: Arc<AsyncSession>, retry: SessionRetryPolicy) -> Self {
-        Self { inner, retry }
+    pub fn new(
+        inner: Arc<AsyncSession>,
+        retry: SessionRetryPolicy,
+        trigger_publish_recv: tokio::sync::watch::Receiver<Instant>,
+    ) -> Self {
+        Self {
+            inner,
+            retry,
+            trigger_publish_recv,
+        }
     }
 
     /// Convenience method for running the session event loop until completion,
@@ -75,7 +90,7 @@ impl SessionEventLoop {
             (self, SessionEventLoopState::Disconnected),
             |(slf, state)| async move {
                 let (res, state) = match state {
-                    SessionEventLoopState::Connected(mut c, mut activity) => {
+                    SessionEventLoopState::Connected(mut c, mut activity, mut subscriptions) => {
                         tokio::select! {
                             r = c.poll() => {
                                 if let TransportPollResult::Closed(code) = r {
@@ -93,7 +108,7 @@ impl SessionEventLoop {
                                 } else {
                                     Ok((
                                         SessionPollResult::Transport(r),
-                                        SessionEventLoopState::Connected(c, activity),
+                                        SessionEventLoopState::Connected(c, activity, subscriptions),
                                     ))
                                 }
                             }
@@ -106,7 +121,19 @@ impl SessionEventLoop {
 
                                 Ok((
                                     SessionPollResult::SessionActivity(r),
-                                    SessionEventLoopState::Connected(c, activity),
+                                    SessionEventLoopState::Connected(c, activity, subscriptions),
+                                ))
+                            }
+                            r = subscriptions.next() => {
+                                // Should never be null, fail out
+                                let Some(r) = r else {
+                                    session_error!(slf.inner, "Subscription event loop ended unexpectedly");
+                                    return Err(StatusCode::BadUnexpectedError);
+                                };
+
+                                Ok((
+                                    SessionPollResult::Subscription(r),
+                                    SessionEventLoopState::Connected(c, activity, subscriptions),
                                 ))
                             }
                         }
@@ -138,6 +165,12 @@ impl SessionEventLoop {
                                         SessionActivityLoop::new(
                                             slf.inner.clone(),
                                             slf.retry.keep_alive_interval(),
+                                        )
+                                        .run()
+                                        .boxed(),
+                                        SubscriptionEventLoop::new(
+                                            slf.inner.clone(),
+                                            slf.trigger_publish_recv.clone(),
                                         )
                                         .run()
                                         .boxed(),
