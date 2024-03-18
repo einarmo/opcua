@@ -1,4 +1,4 @@
-use std::{str::FromStr, sync::Arc};
+use std::{path::PathBuf, str::FromStr, sync::Arc};
 
 use chrono::Duration;
 use tokio::{pin, select};
@@ -8,10 +8,11 @@ use crate::{
     client::{
         prelude::{
             encoding::DecodingOptions, hostname_from_url, is_opc_ua_binary_url,
-            server_url_from_endpoint_url, url_matches_except_host, url_with_replaced_hostname,
-            CertificateStore, ClientConfig, ClientEndpoint, Config, EndpointDescription,
-            GetEndpointsRequest, IdentityToken, MessageSecurityMode, SecurityPolicy, StatusCode,
-            SupportedMessage,
+            is_valid_opc_ua_url, server_url_from_endpoint_url, url_matches_except_host,
+            url_with_replaced_hostname, ApplicationDescription, CertificateStore, ClientConfig,
+            ClientEndpoint, Config, EndpointDescription, FindServersRequest, GetEndpointsRequest,
+            IdentityToken, MessageSecurityMode, RegisterServerRequest, RegisteredServer,
+            SecurityPolicy, StatusCode, SupportedMessage, ANONYMOUS_USER_TOKEN_ID,
         },
         process_service_result, process_unexpected_response,
     },
@@ -129,9 +130,6 @@ impl AsyncClient {
     /// Creates an ad hoc new [`Session`] using the specified endpoint url, security policy and mode.
     ///
     /// This function supports anything that implements `Into<SessionInfo>`, for example `EndpointDescription`.
-    ///
-    /// [`Session`]: ../session/struct.Session.html
-    ///
     pub fn new_session_from_info(
         &mut self,
         session_info: impl Into<SessionInfo>,
@@ -152,6 +150,138 @@ impl AsyncClient {
                 self.decoding_options(),
                 &self.config,
             ))
+        }
+    }
+
+    /// Creates a new [`Session`] using the default endpoint specified in the config. If
+    /// there is no default, or the endpoint does not exist, this function will return an error
+    ///
+    /// [`Session`]: ../session/struct.Session.html
+    ///
+    pub fn new_session(
+        &mut self,
+        endpoints: &[EndpointDescription],
+    ) -> Result<(Arc<AsyncSession>, SessionEventLoop), String> {
+        let endpoint = self.default_endpoint()?;
+        let session_info = self.session_info_for_endpoint(&endpoint, endpoints)?;
+        self.new_session_from_info(session_info)
+    }
+
+    /// Creates a new [`Session`] using the named endpoint id. If there is no
+    /// endpoint of that id in the config, this function will return an error
+    ///
+    /// [`Session`]: ../session/struct.Session.html
+    ///
+    pub fn new_session_from_id<T>(
+        &mut self,
+        endpoint_id: T,
+        endpoints: &[EndpointDescription],
+    ) -> Result<(Arc<AsyncSession>, SessionEventLoop), String>
+    where
+        T: Into<String>,
+    {
+        let endpoint_id = endpoint_id.into();
+        let endpoint = {
+            let endpoint = self.config.endpoints.get(&endpoint_id);
+            if endpoint.is_none() {
+                return Err(format!("Cannot find endpoint with id {}", endpoint_id));
+            }
+            // This clone is an unfortunate workaround to a lifetime issue between the borrowed
+            // endpoint and the need to call the mutable new_session_from_endpoint()
+            endpoint.unwrap().clone()
+        };
+        let session_info = self.session_info_for_endpoint(&endpoint, endpoints)?;
+        self.new_session_from_info(session_info)
+    }
+
+    /// Creates a [`SessionInfo`](SessionInfo) information from the supplied client endpoint.
+    fn session_info_for_endpoint(
+        &self,
+        client_endpoint: &ClientEndpoint,
+        endpoints: &[EndpointDescription],
+    ) -> Result<SessionInfo, String> {
+        // Enumerate endpoints looking for matching one
+        if let Ok(security_policy) = SecurityPolicy::from_str(&client_endpoint.security_policy) {
+            let security_mode = MessageSecurityMode::from(client_endpoint.security_mode.as_ref());
+            if security_mode != MessageSecurityMode::Invalid {
+                let endpoint_url = client_endpoint.url.clone();
+                // Now find a matching endpoint from those on the server
+                let endpoint = Self::find_matching_endpoint(
+                    endpoints,
+                    &endpoint_url,
+                    security_policy,
+                    security_mode,
+                );
+                if endpoint.is_none() {
+                    Err(format!("Endpoint {}, {:?} / {:?} does not match against any supplied by the server", endpoint_url, security_policy, security_mode))
+                } else if let Some(user_identity_token) =
+                    self.client_identity_token(client_endpoint.user_token_id.clone())
+                {
+                    info!(
+                        "Creating a session for endpoint {}, {:?} / {:?}",
+                        endpoint_url, security_policy, security_mode
+                    );
+                    let preferred_locales = self.config.preferred_locales.clone();
+                    Ok(SessionInfo {
+                        endpoint: endpoint.unwrap(),
+                        user_identity_token,
+                        preferred_locales,
+                    })
+                } else {
+                    Err(format!(
+                        "Endpoint {} user id cannot be found",
+                        client_endpoint.user_token_id
+                    ))
+                }
+            } else {
+                Err(format!(
+                    "Endpoint {} security mode {} is invalid",
+                    client_endpoint.url, client_endpoint.security_mode
+                ))
+            }
+        } else {
+            Err(format!(
+                "Endpoint {} security policy {} is invalid",
+                client_endpoint.url, client_endpoint.security_policy
+            ))
+        }
+    }
+
+    fn channel_from_session_info(&self, session_info: SessionInfo) -> AsyncSecureChannel {
+        AsyncSecureChannel::new(
+            self.certificate_store.clone(),
+            session_info,
+            self.session_retry_policy.clone(),
+            self.decoding_options(),
+            self.config.performance.ignore_clock_skew,
+            Arc::default(),
+        )
+    }
+
+    /// Returns an identity token corresponding to the matching user in the configuration. Or None
+    /// if there is no matching token.
+    fn client_identity_token<T>(&self, user_token_id: T) -> Option<IdentityToken>
+    where
+        T: Into<String>,
+    {
+        let user_token_id = user_token_id.into();
+        if user_token_id == ANONYMOUS_USER_TOKEN_ID {
+            Some(IdentityToken::Anonymous)
+        } else if let Some(token) = self.config.user_tokens.get(&user_token_id) {
+            if let Some(ref password) = token.password {
+                Some(IdentityToken::UserName(
+                    token.user.clone(),
+                    password.clone(),
+                ))
+            } else if let Some(ref cert_path) = token.cert_path {
+                token.private_key_path.as_ref().map(|private_key_path| {
+                    IdentityToken::X509(PathBuf::from(cert_path), PathBuf::from(private_key_path))
+                })
+            } else {
+                None
+            }
+        } else {
+            None
         }
     }
 
@@ -242,14 +372,7 @@ impl AsyncClient {
                 user_identity_token: IdentityToken::Anonymous,
                 preferred_locales,
             };
-            let channel = AsyncSecureChannel::new(
-                self.certificate_store.clone(),
-                session_info,
-                self.session_retry_policy.clone(),
-                self.decoding_options(),
-                self.config.performance.ignore_clock_skew,
-                Arc::default(),
-            );
+            let channel = self.channel_from_session_info(session_info);
 
             let mut evt_loop = channel.connect().await?;
 
@@ -277,6 +400,78 @@ impl AsyncClient {
 
             res
         }
+    }
+
+    async fn find_servers_inner(
+        &self,
+        endpoint_url: String,
+        channel: &AsyncSecureChannel,
+    ) -> Result<Vec<ApplicationDescription>, StatusCode> {
+        let request = FindServersRequest {
+            request_header: channel.make_request_header(self.config.request_timeout),
+            endpoint_url: endpoint_url.into(),
+            locale_ids: None,
+            server_uris: None,
+        };
+
+        let response = channel.send(request, self.config.request_timeout).await?;
+        if let SupportedMessage::FindServersResponse(response) = response {
+            process_service_result(&response.response_header)?;
+            let servers = if let Some(servers) = response.servers {
+                servers
+            } else {
+                Vec::new()
+            };
+            Ok(servers)
+        } else {
+            Err(process_unexpected_response(response))
+        }
+    }
+
+    /// Connects to a discovery server and asks the server for a list of
+    /// available server [`ApplicationDescription`].
+    ///
+    /// [`ApplicationDescription`]: ../../opcua_types/service_types/application_description/struct.ApplicationDescription.html
+    ///
+    pub async fn find_servers(
+        &mut self,
+        discovery_endpoint_url: impl Into<String>,
+    ) -> Result<Vec<ApplicationDescription>, StatusCode> {
+        let discovery_endpoint_url = discovery_endpoint_url.into();
+        debug!("find_servers, {}", discovery_endpoint_url);
+        let endpoint = EndpointDescription::from(discovery_endpoint_url.as_ref());
+        let session_info = SessionInfo {
+            endpoint: endpoint.clone(),
+            user_identity_token: IdentityToken::Anonymous,
+            preferred_locales: Vec::new(),
+        };
+        let channel = self.channel_from_session_info(session_info);
+
+        let mut evt_loop = channel.connect().await?;
+
+        let send_fut = self.find_servers_inner(discovery_endpoint_url, &channel);
+        pin!(send_fut);
+
+        let res = loop {
+            select! {
+                r = evt_loop.poll() => {
+                    if let TransportPollResult::Closed(e) = r {
+                        return Err(e);
+                    }
+                },
+                res = &mut send_fut => break res
+            }
+        };
+
+        channel.close_channel().await;
+
+        loop {
+            if matches!(evt_loop.poll().await, TransportPollResult::Closed(_)) {
+                break;
+            }
+        }
+
+        res
     }
 
     /// Find an endpoint supplied from the list of endpoints that matches the input criteria
@@ -318,5 +513,103 @@ impl AsyncClient {
         } else {
             None
         }
+    }
+
+    /// Determine if we recognize the security of this endpoint
+    pub fn is_supported_endpoint(&self, endpoint: &EndpointDescription) -> bool {
+        if let Ok(security_policy) = SecurityPolicy::from_str(endpoint.security_policy_uri.as_ref())
+        {
+            !matches!(security_policy, SecurityPolicy::Unknown)
+        } else {
+            false
+        }
+    }
+
+    async fn register_server_inner(
+        &self,
+        server: RegisteredServer,
+        channel: &AsyncSecureChannel,
+    ) -> Result<(), StatusCode> {
+        let request = RegisterServerRequest {
+            request_header: channel.make_request_header(self.config.request_timeout),
+            server,
+        };
+        let response = channel.send(request, self.config.request_timeout).await?;
+        if let SupportedMessage::RegisterServerResponse(response) = response {
+            process_service_result(&response.response_header)?;
+            Ok(())
+        } else {
+            Err(process_unexpected_response(response))
+        }
+    }
+
+    pub async fn register_server(
+        &mut self,
+        discovery_endpoint_url: impl Into<String>,
+        server: RegisteredServer,
+    ) -> Result<(), StatusCode> {
+        let discovery_endpoint_url = discovery_endpoint_url.into();
+        if !is_valid_opc_ua_url(&discovery_endpoint_url) {
+            error!(
+                "Discovery endpoint url \"{}\" is not a valid OPC UA url",
+                discovery_endpoint_url
+            );
+            return Err(StatusCode::BadTcpEndpointUrlInvalid);
+        }
+
+        debug!("register_server({}, {:?}", discovery_endpoint_url, server);
+        let endpoints = self
+            .get_server_endpoints_from_url(discovery_endpoint_url.clone())
+            .await?;
+        if endpoints.is_empty() {
+            return Err(StatusCode::BadUnexpectedError);
+        }
+
+        let Some(endpoint) = endpoints
+            .iter()
+            .filter(|e| self.is_supported_endpoint(*e))
+            .max_by(|a, b| a.security_level.cmp(&b.security_level))
+        else {
+            error!("Cannot find an endpoint that we call register server on");
+            return Err(StatusCode::BadUnexpectedError);
+        };
+
+        debug!(
+            "Registering this server via discovery endpoint {:?}",
+            endpoint
+        );
+
+        let session_info = SessionInfo {
+            endpoint: endpoint.clone(),
+            user_identity_token: IdentityToken::Anonymous,
+            preferred_locales: Vec::new(),
+        };
+        let channel = self.channel_from_session_info(session_info);
+
+        let mut evt_loop = channel.connect().await?;
+
+        let send_fut = self.register_server_inner(server, &channel);
+        pin!(send_fut);
+
+        let res = loop {
+            select! {
+                r = evt_loop.poll() => {
+                    if let TransportPollResult::Closed(e) = r {
+                        return Err(e);
+                    }
+                },
+                res = &mut send_fut => break res
+            }
+        };
+
+        channel.close_channel().await;
+
+        loop {
+            if matches!(evt_loop.poll().await, TransportPollResult::Closed(_)) {
+                break;
+            }
+        }
+
+        res
     }
 }

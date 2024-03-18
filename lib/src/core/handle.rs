@@ -3,7 +3,7 @@
 // Copyright (C) 2017-2024 Adam Lock
 
 use std::{
-    sync::atomic::{AtomicU32, AtomicU64, Ordering},
+    sync::atomic::{AtomicU32, Ordering},
     u32,
 };
 

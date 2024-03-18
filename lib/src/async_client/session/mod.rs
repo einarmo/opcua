@@ -18,6 +18,26 @@ pub struct SessionInfo {
     pub preferred_locales: Vec<String>,
 }
 
+impl From<EndpointDescription> for SessionInfo {
+    fn from(value: EndpointDescription) -> Self {
+        Self {
+            endpoint: value,
+            user_identity_token: IdentityToken::Anonymous,
+            preferred_locales: Vec::new(),
+        }
+    }
+}
+
+impl From<(EndpointDescription, IdentityToken)> for SessionInfo {
+    fn from(value: (EndpointDescription, IdentityToken)) -> Self {
+        Self {
+            endpoint: value.0,
+            user_identity_token: value.1,
+            preferred_locales: Vec::new(),
+        }
+    }
+}
+
 pub use client::AsyncClient;
 pub use event_loop::SessionEventLoop;
 pub use services::subscriptions::{OnSubscriptionNotification, SubscriptionCallbacks};
