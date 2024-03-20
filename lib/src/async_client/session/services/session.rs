@@ -54,9 +54,8 @@ impl AsyncSession {
             process_service_result(&response.response_header)?;
 
             let session_id = {
-                let mut session_state = trace_write_lock!(self.state);
-                session_state.session_id = response.session_id.clone();
-                session_state.session_id.clone()
+                self.session_id.store(Arc::new(response.session_id.clone()));
+                response.session_id.clone()
             };
             self.auth_token
                 .store(Arc::new(response.authentication_token));

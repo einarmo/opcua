@@ -57,7 +57,7 @@ impl SubscriptionEventLoop {
                     tokio::select! {
                         v = recv.wait_for(|i| i > &slf.last_external_trigger) => {
                             if let Ok(v) = v {
-                                info!("Sending publish due to external trigger");
+                                debug!("Sending publish due to external trigger");
                                 futures.push(slf.static_publish());
                                 next = slf.session.next_publish_time(true);
                                 slf.last_external_trigger = v.clone();
@@ -65,15 +65,25 @@ impl SubscriptionEventLoop {
                         }
                         _ = next_tick_fut => {
                             if futures.len() < slf.max_inflight_publish {
-                                info!("Sending publish due to internal tick");
+                                debug!("Sending publish due to internal tick");
                                 futures.push(slf.static_publish());
                             }
                             next = slf.session.next_publish_time(true);
-                            info!("Next publish at {next:?}");
                         }
                         res = next_publish_fut => {
                             match res {
-                                Some(Ok(())) => break SubscriptionActivity::Publish,
+                                Some(Ok(should_publish_now)) => {
+                                    if should_publish_now {
+                                        futures.push(slf.static_publish());
+                                        // Set the last publish time.
+                                        // We do this to avoid a buildup of publish requests
+                                        // if exhausting the queue takes more time than
+                                        // a single publishing interval.
+                                        slf.session.next_publish_time(true);
+                                    }
+
+                                    break SubscriptionActivity::Publish
+                                }
                                 Some(Err(e)) => {
                                     session_error!(slf.session, "Publish failed, sending a new request");
                                     if futures.len() < slf.max_inflight_publish {
@@ -93,7 +103,7 @@ impl SubscriptionEventLoop {
         )
     }
 
-    fn static_publish(&self) -> impl Future<Output = Result<(), StatusCode>> + 'static {
+    fn static_publish(&self) -> impl Future<Output = Result<bool, StatusCode>> + 'static {
         let inner_session = self.session.clone();
         async move { inner_session.publish().await }
     }

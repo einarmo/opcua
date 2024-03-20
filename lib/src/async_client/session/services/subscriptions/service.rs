@@ -582,7 +582,9 @@ impl AsyncSession {
         subscription_state.next_publish_time()
     }
 
-    pub(crate) async fn publish(&self) -> Result<(), StatusCode> {
+    /// Send a publish request, returning `true` if the session should send a new request
+    /// immediately.
+    pub(crate) async fn publish(&self) -> Result<bool, StatusCode> {
         let acks = {
             let mut subscription_state = trace_lock!(self.subscription_state);
             let acks = subscription_state.take_acknowledgements();
@@ -607,33 +609,44 @@ impl AsyncSession {
 
         let request = PublishRequest {
             request_header: self.channel.make_request_header(self.publish_timeout),
-            subscription_acknowledgements: acks,
+            subscription_acknowledgements: acks.clone(),
         };
 
-        let response = self.channel.send(request, self.publish_timeout).await?;
+        let response = self.channel.send(request, self.publish_timeout).await;
 
-        if let SupportedMessage::PublishResponse(response) = response {
-            session_debug!(self, "PublishResponse");
+        let err_status = match response {
+            Ok(SupportedMessage::PublishResponse(r)) => {
+                session_debug!(self, "PublishResponse");
 
-            let decoding_options = {
-                let secure_channel = trace_read_lock!(self.channel.secure_channel);
-                secure_channel.decoding_options()
-            };
+                let decoding_options = {
+                    let secure_channel = trace_read_lock!(self.channel.secure_channel);
+                    secure_channel.decoding_options()
+                };
 
-            {
-                let mut subscription_state = trace_lock!(self.subscription_state);
-                subscription_state.handle_notification(
-                    response.subscription_id,
-                    response.notification_message,
-                    &decoding_options,
-                );
+                {
+                    let mut subscription_state = trace_lock!(self.subscription_state);
+                    subscription_state.handle_notification(
+                        r.subscription_id,
+                        r.notification_message,
+                        &decoding_options,
+                    );
+                }
+
+                return Ok(r.more_notifications);
             }
+            Err(e) => e,
+            Ok(r) => {
+                session_error!(self, "publish failed {:?}", r);
+                process_unexpected_response(r)
+            }
+        };
 
-            Ok(())
-        } else {
-            session_error!(self, "publish failed {:?}", response);
-            Err(process_unexpected_response(response))
+        if let Some(acks) = acks {
+            let mut subscription_state = trace_lock!(self.subscription_state);
+            subscription_state.re_queue_acknowledgements(acks);
         }
+
+        Err(err_status)
     }
 
     /// This code attempts to take the existing subscriptions created by a previous session and

@@ -70,10 +70,7 @@ impl SessionConnector {
     }
 
     async fn ensure_and_activate_session(&self) -> Result<SessionReconnectMode, StatusCode> {
-        let should_create_session = {
-            let state = trace_read_lock!(self.inner.state);
-            state.session_id.is_null()
-        };
+        let should_create_session = self.inner.session_id.load().is_null();
 
         if should_create_session {
             self.inner.create_session().await?;
@@ -92,10 +89,7 @@ impl SessionConnector {
             }
             Err(e) => return Err(e),
             Ok(_) => {
-                let session_id = {
-                    let state = trace_read_lock!(self.inner.state);
-                    state.session_id.clone()
-                };
+                let session_id = (**self.inner.session_id.load()).clone();
                 if should_create_session {
                     SessionReconnectMode::NewSession(session_id)
                 } else {

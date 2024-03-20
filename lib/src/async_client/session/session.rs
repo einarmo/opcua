@@ -27,16 +27,6 @@ pub enum SessionState {
     Connecting,
 }
 
-pub(super) struct AsyncSessionState {
-    pub(super) session_id: NodeId,
-}
-
-impl AsyncSessionState {
-    pub fn reset(&mut self) {
-        self.session_id = NodeId::null();
-    }
-}
-
 lazy_static! {
     static ref NEXT_SESSION_ID: AtomicU32 = AtomicU32::new(1);
 }
@@ -46,7 +36,7 @@ pub struct AsyncSession {
     pub(super) state_watch_rx: tokio::sync::watch::Receiver<SessionState>,
     pub(super) state_watch_tx: tokio::sync::watch::Sender<SessionState>,
     pub(super) certificate_store: Arc<RwLock<CertificateStore>>,
-    pub(super) state: RwLock<AsyncSessionState>,
+    pub(super) session_id: Arc<ArcSwap<NodeId>>,
     pub(super) auth_token: Arc<ArcSwap<NodeId>>,
     pub(super) internal_session_id: AtomicU32,
     pub(super) session_info: SessionInfo,
@@ -89,9 +79,7 @@ impl AsyncSession {
             internal_session_id: AtomicU32::new(NEXT_SESSION_ID.fetch_add(1, Ordering::Relaxed)),
             state_watch_rx,
             state_watch_tx,
-            state: RwLock::new(AsyncSessionState {
-                session_id: NodeId::null(),
-            }),
+            session_id: Default::default(),
             session_info,
             auth_token,
             session_name,
@@ -125,10 +113,7 @@ impl AsyncSession {
     }
 
     pub(crate) fn reset(&self) {
-        {
-            let mut session_state = trace_write_lock!(self.state);
-            session_state.reset();
-        }
+        self.session_id.store(Arc::new(NodeId::null()));
         self.internal_session_id.store(
             NEXT_SESSION_ID.fetch_add(1, Ordering::Relaxed),
             Ordering::Relaxed,

@@ -49,8 +49,19 @@ impl SubscriptionState {
         self.last_publish = Instant::now();
     }
 
-    pub fn take_acknowledgements(&mut self) -> Vec<SubscriptionAcknowledgement> {
+    pub(crate) fn take_acknowledgements(&mut self) -> Vec<SubscriptionAcknowledgement> {
         std::mem::take(&mut self.acknowledgements)
+    }
+
+    fn add_acknowledgement(&mut self, subscription_id: u32, sequence_number: u32) {
+        self.acknowledgements.push(SubscriptionAcknowledgement {
+            subscription_id,
+            sequence_number,
+        })
+    }
+
+    pub(crate) fn re_queue_acknowledgements(&mut self, acks: Vec<SubscriptionAcknowledgement>) {
+        self.acknowledgements.extend(acks.into_iter());
     }
 
     pub fn subscription_ids(&self) -> Option<Vec<u32>> {
@@ -171,6 +182,7 @@ impl SubscriptionState {
         notification: NotificationMessage,
         decoding_options: &DecodingOptions,
     ) {
+        self.add_acknowledgement(subscription_id, notification.sequence_number);
         if let Some(sub) = self.subscriptions.get_mut(&subscription_id) {
             sub.on_notification(notification, decoding_options);
         }
