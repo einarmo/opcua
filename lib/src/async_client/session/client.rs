@@ -4,7 +4,11 @@ use chrono::Duration;
 use tokio::{pin, select};
 
 use crate::{
-    async_client::{retry::SessionRetryPolicy, transport::TransportPollResult, AsyncSecureChannel},
+    async_client::{
+        retry::SessionRetryPolicy,
+        transport::{tcp::TransportConfiguration, TransportPollResult},
+        AsyncSecureChannel,
+    },
     client::{
         prelude::{
             encoding::DecodingOptions, hostname_from_url, is_opc_ua_binary_url,
@@ -255,6 +259,14 @@ impl AsyncClient {
             self.decoding_options(),
             self.config.performance.ignore_clock_skew,
             Arc::default(),
+            TransportConfiguration {
+                max_pending_incoming: 5,
+                max_inflight: self.config.performance.max_inflight_messages,
+                send_buffer_size: self.config.decoding_options.max_chunk_size,
+                recv_buffer_size: self.config.decoding_options.max_incoming_chunk_size,
+                max_message_size: self.config.decoding_options.max_message_size,
+                max_chunk_count: self.config.decoding_options.max_chunk_count,
+            },
         )
     }
 
@@ -267,7 +279,9 @@ impl AsyncClient {
         let user_token_id = user_token_id.into();
         if user_token_id == ANONYMOUS_USER_TOKEN_ID {
             Some(IdentityToken::Anonymous)
-        } else if let Some(token) = self.config.user_tokens.get(&user_token_id) {
+        } else {
+            let token = self.config.user_tokens.get(&user_token_id)?;
+
             if let Some(ref password) = token.password {
                 Some(IdentityToken::UserName(
                     token.user.clone(),
@@ -280,8 +294,6 @@ impl AsyncClient {
             } else {
                 None
             }
-        } else {
-            None
         }
     }
 
@@ -485,7 +497,7 @@ impl AsyncClient {
             panic!("Cannot match against unknown security policy");
         }
 
-        let matching_endpoint = endpoints
+        let mut matching_endpoint = endpoints
             .iter()
             .find(|e| {
                 // Endpoint matches if the security mode, policy and url match
@@ -493,26 +505,16 @@ impl AsyncClient {
                     && security_policy == SecurityPolicy::from_uri(e.security_policy_uri.as_ref())
                     && url_matches_except_host(endpoint_url, e.endpoint_url.as_ref())
             })
-            .cloned();
+            .cloned()?;
+
+        let hostname = hostname_from_url(endpoint_url).ok()?;
+        let new_endpoint_url =
+            url_with_replaced_hostname(matching_endpoint.endpoint_url.as_ref(), &hostname).ok()?;
 
         // Issue #16, #17 - the server may advertise an endpoint whose hostname is inaccessible
         // to the client so substitute the advertised hostname with the one the client supplied.
-        if let Some(mut matching_endpoint) = matching_endpoint {
-            if let Ok(hostname) = hostname_from_url(endpoint_url) {
-                if let Ok(new_endpoint_url) =
-                    url_with_replaced_hostname(matching_endpoint.endpoint_url.as_ref(), &hostname)
-                {
-                    matching_endpoint.endpoint_url = new_endpoint_url.into();
-                    Some(matching_endpoint)
-                } else {
-                    None
-                }
-            } else {
-                None
-            }
-        } else {
-            None
-        }
+        matching_endpoint.endpoint_url = new_endpoint_url.into();
+        Some(matching_endpoint)
     }
 
     /// Determine if we recognize the security of this endpoint

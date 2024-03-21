@@ -23,8 +23,10 @@ pub struct SendBuffer {
     last_sent_sequence_number: u32,
     /// Maximum size of a message, total. Use 0 for no limit
     max_message_size: usize,
-    /// Maximum size of a chunk. Use 0 for no limit
+    /// Maximum number of chunks in a message.
     max_chunk_count: usize,
+    /// Maximum size of each individual chunk.
+    send_buffer_size: usize,
 
     state: SendBufferState,
 }
@@ -43,6 +45,7 @@ impl SendBuffer {
             last_sent_sequence_number: 0,
             max_message_size,
             max_chunk_count,
+            send_buffer_size: buffer_size,
             state: SendBufferState::Writing,
         }
     }
@@ -81,7 +84,7 @@ impl SendBuffer {
             self.last_sent_sequence_number + 1,
             request_id,
             self.max_message_size,
-            8196,
+            self.send_buffer_size,
             secure_channel,
             &message,
         )?;

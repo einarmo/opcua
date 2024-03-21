@@ -52,6 +52,7 @@ impl AsyncSecureChannel {
         decoding_options: DecodingOptions,
         ignore_clock_skew: bool,
         auth_token: Arc<ArcSwap<NodeId>>,
+        transport_config: TransportConfiguration,
     ) -> Self {
         let secure_channel = Arc::new(RwLock::new(SecureChannel::new(
             certificate_store.clone(),
@@ -60,14 +61,7 @@ impl AsyncSecureChannel {
         )));
 
         Self {
-            transport_config: TransportConfiguration {
-                max_pending_incoming: 5,
-                max_inflight: 5,
-                send_buffer_size: 65535,
-                recv_buffer_size: 65535,
-                max_message_size: 65535,
-                max_chunk_count: 5,
-            },
+            transport_config,
             issue_channel_lock: tokio::sync::Mutex::new(()),
             state: SecureChannelState::new(ignore_clock_skew, secure_channel.clone(), auth_token),
             session_info,

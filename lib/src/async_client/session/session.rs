@@ -9,7 +9,9 @@ use std::{
 use arc_swap::ArcSwap;
 
 use crate::{
-    async_client::{retry::SessionRetryPolicy, AsyncSecureChannel},
+    async_client::{
+        retry::SessionRetryPolicy, transport::tcp::TransportConfiguration, AsyncSecureChannel,
+    },
     client::prelude::{
         encoding::DecodingOptions, ApplicationDescription, CertificateStore, ClientConfig, NodeId,
         RequestHeader, StatusCode, SupportedMessage, UAString,
@@ -75,6 +77,14 @@ impl AsyncSession {
                 decoding_options,
                 config.performance.ignore_clock_skew,
                 auth_token.clone(),
+                TransportConfiguration {
+                    max_pending_incoming: 5,
+                    max_inflight: config.performance.max_inflight_messages,
+                    send_buffer_size: config.decoding_options.max_chunk_size,
+                    recv_buffer_size: config.decoding_options.max_incoming_chunk_size,
+                    max_message_size: config.decoding_options.max_message_size,
+                    max_chunk_count: config.decoding_options.max_chunk_count,
+                },
             ),
             internal_session_id: AtomicU32::new(NEXT_SESSION_ID.fetch_add(1, Ordering::Relaxed)),
             state_watch_rx,

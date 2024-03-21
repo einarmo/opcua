@@ -142,6 +142,10 @@ pub struct DecodingOptions {
     pub max_message_size: usize,
     /// Maximum number of chunks in a message. 0 means no limit
     pub max_chunk_count: usize,
+    /// Maximum size of each individual sent message chunk.
+    pub max_chunk_size: usize,
+    /// Maximum size of each received chunk.
+    pub max_incoming_chunk_size: usize,
     /// Maximum length in bytes (not chars!) of a string. 0 actually means 0, i.e. no string permitted
     pub max_string_length: usize,
     /// Maximum length in bytes of a byte string. 0 actually means 0, i.e. no byte string permitted
@@ -160,74 +164,76 @@ pub struct Performance {
     pub single_threaded_executor: bool,
     /// Maximum number of monitored items per request when recreating subscriptions on session recreation.
     pub recreate_monitored_items_chunk: usize,
+    /// Maximum number of inflight messages.
+    pub max_inflight_messages: usize,
 }
 
 /// Client OPC UA configuration
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 pub struct ClientConfig {
     /// Name of the application that the client presents itself as to the server
-    pub application_name: String,
+    pub(crate) application_name: String,
     /// The application uri
-    pub application_uri: String,
+    pub(crate) application_uri: String,
     /// Product uri
-    pub product_uri: String,
+    pub(crate) product_uri: String,
     /// Autocreates public / private keypair if they don't exist. For testing/samples only
     /// since you do not have control of the values
-    pub create_sample_keypair: bool,
+    pub(crate) create_sample_keypair: bool,
     /// Custom certificate path, to be used instead of the default .der certificate path
-    pub certificate_path: Option<PathBuf>,
+    pub(crate) certificate_path: Option<PathBuf>,
     /// Custom private key path, to be used instead of the default private key path
-    pub private_key_path: Option<PathBuf>,
+    pub(crate) private_key_path: Option<PathBuf>,
     /// Auto trusts server certificates. For testing/samples only unless you're sure what you're
     /// doing.
-    pub trust_server_certs: bool,
+    pub(crate) trust_server_certs: bool,
     /// Verify server certificates. For testing/samples only unless you're sure what you're
     /// doing.
-    pub verify_server_certs: bool,
+    pub(crate) verify_server_certs: bool,
     /// PKI folder, either absolute or relative to executable
-    pub pki_dir: PathBuf,
+    pub(crate) pki_dir: PathBuf,
     /// Preferred locales
-    pub preferred_locales: Vec<String>,
+    pub(crate) preferred_locales: Vec<String>,
     /// Identifier of the default endpoint
-    pub default_endpoint: String,
+    pub(crate) default_endpoint: String,
     /// User tokens
-    pub user_tokens: BTreeMap<String, ClientUserToken>,
+    pub(crate) user_tokens: BTreeMap<String, ClientUserToken>,
     /// List of end points
-    pub endpoints: BTreeMap<String, ClientEndpoint>,
+    pub(crate) endpoints: BTreeMap<String, ClientEndpoint>,
     /// Decoding options used for serialization / deserialization
-    pub decoding_options: DecodingOptions,
+    pub(crate) decoding_options: DecodingOptions,
     /// Maximum number of times to attempt to reconnect to the server before giving up.
     /// -1 retries forever
-    pub session_retry_limit: i32,
+    pub(crate) session_retry_limit: i32,
     // TODO: Remove
     /// Retry interval in milliseconds
-    pub session_retry_interval: u32,
+    pub(crate) session_retry_interval: u32,
 
     /// Initial delay for exponential backoff when reconnecting to the server.
-    pub session_retry_initial: Duration,
+    pub(crate) session_retry_initial: Duration,
     /// Max delay between retry attempts.
-    pub session_retry_max: Duration,
+    pub(crate) session_retry_max: Duration,
     /// Interval between each keep-alive request sent to the server.
-    pub keep_alive_interval: Duration,
+    pub(crate) keep_alive_interval: Duration,
 
     /// Timeout for each request sent to the server.
-    pub request_timeout: Duration,
+    pub(crate) request_timeout: Duration,
     /// Timeout for publish requests, separate from normal timeout since
     /// subscriptions are often more time sensitive.
-    pub publish_timeout: Duration,
+    pub(crate) publish_timeout: Duration,
     /// Minimum publish interval. Setting this higher will make sure that subscriptions
     /// publish together, which may reduce the number of publish requests if you have a lot of subscriptions.
-    pub min_publish_interval: Duration,
+    pub(crate) min_publish_interval: Duration,
     /// Maximum number of inflight publish requests before further requests are skipped.
-    pub max_inflight_publish: usize,
+    pub(crate) max_inflight_publish: usize,
 
     /// Requested session timeout in milliseconds
-    pub session_timeout: u32,
+    pub(crate) session_timeout: u32,
 
     /// Client performance settings
-    pub performance: Performance,
+    pub(crate) performance: Performance,
     /// Session name
-    pub session_name: String,
+    pub(crate) session_name: String,
 }
 
 impl Config for ClientConfig {
@@ -367,11 +373,14 @@ impl ClientConfig {
                 max_byte_string_length: decoding_options.max_byte_string_length,
                 max_chunk_count: decoding_options.max_chunk_count,
                 max_message_size: decoding_options.max_message_size,
+                max_chunk_size: 65535,
+                max_incoming_chunk_size: 65535,
             },
             performance: Performance {
                 ignore_clock_skew: false,
                 single_threaded_executor: true,
                 recreate_monitored_items_chunk: 1000,
+                max_inflight_messages: 20,
             },
             session_name: "Rust OPC UA Client".into(),
         }
