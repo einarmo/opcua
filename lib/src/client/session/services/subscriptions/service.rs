@@ -4,30 +4,28 @@ use std::{
 };
 
 use crate::{
-    async_client::{
+    client::{
         session::{
+            process_service_result, process_unexpected_response,
             services::subscriptions::{CreateMonitoredItem, ModifyMonitoredItem, Subscription},
             session_debug, session_error, session_trace, session_warn,
         },
-        AsyncSession,
+        Session,
     },
-    client::{
-        prelude::{
-            CreateMonitoredItemsRequest, CreateSubscriptionRequest, DeleteMonitoredItemsRequest,
-            DeleteSubscriptionsRequest, ExtensionObject, ModifyMonitoredItemsRequest,
-            ModifySubscriptionRequest, MonitoredItemCreateRequest, MonitoredItemCreateResult,
-            MonitoredItemModifyRequest, MonitoredItemModifyResult, MonitoringMode,
-            MonitoringParameters, PublishRequest, SetMonitoringModeRequest,
-            SetPublishingModeRequest, SetTriggeringRequest, StatusCode, SupportedMessage,
-            TimestampsToReturn, TransferResult, TransferSubscriptionsRequest,
-        },
-        process_service_result, process_unexpected_response,
+    core::supported_message::SupportedMessage,
+    types::{
+        CreateMonitoredItemsRequest, CreateSubscriptionRequest, DeleteMonitoredItemsRequest,
+        DeleteSubscriptionsRequest, ModifyMonitoredItemsRequest, ModifySubscriptionRequest,
+        MonitoredItemCreateRequest, MonitoredItemCreateResult, MonitoredItemModifyRequest,
+        MonitoredItemModifyResult, MonitoringMode, MonitoringParameters, PublishRequest,
+        SetMonitoringModeRequest, SetPublishingModeRequest, SetTriggeringRequest, StatusCode,
+        TimestampsToReturn, TransferResult, TransferSubscriptionsRequest,
     },
 };
 
 use super::OnSubscriptionNotification;
 
-impl AsyncSession {
+impl Session {
     async fn create_subscription_inner(
         &self,
         publishing_interval: Duration,
@@ -82,6 +80,47 @@ impl AsyncSession {
         }
     }
 
+    /// Create a subscription by sending a [`CreateSubscriptionRequest`] to the server.
+    ///
+    /// See OPC UA Part 4 - Services 5.13.2 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `publishing_interval` - The requested publishing interval defines the cyclic rate that
+    ///   the Subscription is being requested to return Notifications to the Client. This interval
+    ///   is expressed in milliseconds. This interval is represented by the publishing timer in the
+    ///   Subscription state table. The negotiated value for this parameter returned in the
+    ///   response is used as the default sampling interval for MonitoredItems assigned to this
+    ///   Subscription. If the requested value is 0 or negative, the server shall revise with the
+    ///   fastest supported publishing interval in milliseconds.
+    /// * `lifetime_count` - Requested lifetime count. The lifetime count shall be a minimum of
+    ///   three times the keep keep-alive count. When the publishing timer has expired this
+    ///   number of times without a Publish request being available to send a NotificationMessage,
+    ///   then the Subscription shall be deleted by the Server.
+    /// * `max_keep_alive_count` - Requested maximum keep-alive count. When the publishing timer has
+    ///   expired this number of times without requiring any NotificationMessage to be sent, the
+    ///   Subscription sends a keep-alive Message to the Client. The negotiated value for this
+    ///   parameter is returned in the response. If the requested value is 0, the server shall
+    ///   revise with the smallest supported keep-alive count.
+    /// * `max_notifications_per_publish` - The maximum number of notifications that the Client
+    ///   wishes to receive in a single Publish response. A value of zero indicates that there is
+    ///   no limit. The number of notifications per Publish is the sum of monitoredItems in
+    ///   the DataChangeNotification and events in the EventNotificationList.
+    /// * `priority` - Indicates the relative priority of the Subscription. When more than one
+    ///   Subscription needs to send Notifications, the Server should de-queue a Publish request
+    ///   to the Subscription with the highest priority number. For Subscriptions with equal
+    ///   priority the Server should de-queue Publish requests in a round-robin fashion.
+    ///   A Client that does not require special priority settings should set this value to zero.
+    /// * `publishing_enabled` - A boolean parameter with the following values - `true` publishing
+    ///   is enabled for the Subscription, `false`, publishing is disabled for the Subscription.
+    ///   The value of this parameter does not affect the value of the monitoring mode Attribute of
+    ///   MonitoredItems.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(u32)` - identifier for new subscription
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn create_subscription(
         &self,
         publishing_interval: Duration,
@@ -109,6 +148,44 @@ impl AsyncSession {
         subscription_state.subscription_exists(subscription_id)
     }
 
+    /// Modifies a subscription by sending a [`ModifySubscriptionRequest`] to the server.
+    ///
+    /// See OPC UA Part 4 - Services 5.13.3 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `subscription_id` - subscription identifier returned from `create_subscription`.
+    /// * `publishing_interval` - The requested publishing interval defines the cyclic rate that
+    ///   the Subscription is being requested to return Notifications to the Client. This interval
+    ///   is expressed in milliseconds. This interval is represented by the publishing timer in the
+    ///   Subscription state table. The negotiated value for this parameter returned in the
+    ///   response is used as the default sampling interval for MonitoredItems assigned to this
+    ///   Subscription. If the requested value is 0 or negative, the server shall revise with the
+    ///   fastest supported publishing interval in milliseconds.
+    /// * `lifetime_count` - Requested lifetime count. The lifetime count shall be a minimum of
+    ///   three times the keep keep-alive count. When the publishing timer has expired this
+    ///   number of times without a Publish request being available to send a NotificationMessage,
+    ///   then the Subscription shall be deleted by the Server.
+    /// * `max_keep_alive_count` - Requested maximum keep-alive count. When the publishing timer has
+    ///   expired this number of times without requiring any NotificationMessage to be sent, the
+    ///   Subscription sends a keep-alive Message to the Client. The negotiated value for this
+    ///   parameter is returned in the response. If the requested value is 0, the server shall
+    ///   revise with the smallest supported keep-alive count.
+    /// * `max_notifications_per_publish` - The maximum number of notifications that the Client
+    ///   wishes to receive in a single Publish response. A value of zero indicates that there is
+    ///   no limit. The number of notifications per Publish is the sum of monitoredItems in
+    ///   the DataChangeNotification and events in the EventNotificationList.
+    /// * `priority` - Indicates the relative priority of the Subscription. When more than one
+    ///   Subscription needs to send Notifications, the Server should de-queue a Publish request
+    ///   to the Subscription with the highest priority number. For Subscriptions with equal
+    ///   priority the Server should de-queue Publish requests in a round-robin fashion.
+    ///   A Client that does not require special priority settings should set this value to zero.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(())` - Success
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn modify_subscription(
         &self,
         subscription_id: u32,
@@ -157,6 +234,21 @@ impl AsyncSession {
         }
     }
 
+    /// Changes the publishing mode of subscriptions by sending a [`SetPublishingModeRequest`] to the server.
+    ///
+    /// See OPC UA Part 4 - Services 5.13.4 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `subscription_ids` - one or more subscription identifiers.
+    /// * `publishing_enabled` - A boolean parameter with the following values - `true` publishing
+    ///   is enabled for the Subscriptions, `false`, publishing is disabled for the Subscriptions.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Vec<StatusCode>)` - Service return code for the action for each id, `Good` or `BadSubscriptionIdInvalid`
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn set_publishing_mode(
         &self,
         subscription_ids: &[u32],
@@ -198,6 +290,24 @@ impl AsyncSession {
         }
     }
 
+    /// Transfers Subscriptions and their MonitoredItems from one Session to another. For example,
+    /// a Client may need to reopen a Session and then transfer its Subscriptions to that Session.
+    /// It may also be used by one Client to take over a Subscription from another Client by
+    /// transferring the Subscription to its Session.
+    ///
+    /// See OPC UA Part 4 - Services 5.13.7 for complete description of the service and error responses.
+    ///
+    /// * `subscription_ids` - one or more subscription identifiers.
+    /// * `send_initial_values` - A boolean parameter with the following values - `true` the first
+    ///   publish response shall contain the current values of all monitored items in the subscription,
+    ///   `false`, the first publish response shall contain only the value changes since the last
+    ///   publish response was sent.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Vec<TransferResult>)` - The [`TransferResult`] for each transfer subscription.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn transfer_subscriptions(
         &self,
         subscription_ids: &[u32],
@@ -228,6 +338,19 @@ impl AsyncSession {
         }
     }
 
+    /// Deletes a subscription by sending a [`DeleteSubscriptionsRequest`] to the server.
+    ///
+    /// See OPC UA Part 4 - Services 5.13.8 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `subscription_id` - subscription identifier returned from `create_subscription`.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(StatusCode)` - Service return code for the delete action, `Good` or `BadSubscriptionIdInvalid`
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn delete_subscription(
         &self,
         subscription_id: u32,
@@ -248,6 +371,21 @@ impl AsyncSession {
         }
     }
 
+    /// Deletes subscriptions by sending a [`DeleteSubscriptionsRequest`] to the server with the list
+    /// of subscriptions to delete.
+    ///
+    /// See OPC UA Part 4 - Services 5.13.8 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `subscription_ids` - List of subscription identifiers to delete.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Vec<StatusCode>)` - List of result for delete action on each id, `Good` or `BadSubscriptionIdInvalid`
+    ///   The size and order of the list matches the size and order of the input.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn delete_subscriptions(
         &self,
         subscription_ids: &[u32],
@@ -281,6 +419,22 @@ impl AsyncSession {
         }
     }
 
+    /// Creates monitored items on a subscription by sending a [`CreateMonitoredItemsRequest`] to the server.
+    ///
+    /// See OPC UA Part 4 - Services 5.12.2 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `subscription_id` - The Server-assigned identifier for the Subscription that will report Notifications for this MonitoredItem
+    /// * `timestamps_to_return` - An enumeration that specifies the timestamp Attributes to be transmitted for each MonitoredItem.
+    /// * `items_to_create` - A list of [`MonitoredItemCreateRequest`] to be created and assigned to the specified Subscription.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Vec<MonitoredItemCreateResult>)` - A list of [`MonitoredItemCreateResult`] corresponding to the items to create.
+    ///    The size and order of the list matches the size and order of the `items_to_create` request parameter.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn create_monitored_items(
         &self,
         subscription_id: u32,
@@ -351,6 +505,7 @@ impl AsyncSession {
                             monitoring_mode: i.monitoring_mode,
                             queue_size: r.revised_queue_size,
                             sampling_interval: r.revised_sampling_interval,
+                            filter: i.requested_parameters.filter,
                         })
                         .collect::<Vec<CreateMonitoredItem>>();
                     {
@@ -371,6 +526,22 @@ impl AsyncSession {
         }
     }
 
+    /// Modifies monitored items on a subscription by sending a [`ModifyMonitoredItemsRequest`] to the server.
+    ///
+    /// See OPC UA Part 4 - Services 5.12.3 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `subscription_id` - The Server-assigned identifier for the Subscription that will report Notifications for this MonitoredItem.
+    /// * `timestamps_to_return` - An enumeration that specifies the timestamp Attributes to be transmitted for each MonitoredItem.
+    /// * `items_to_modify` - The list of [`MonitoredItemModifyRequest`] to modify.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Vec<MonitoredItemModifyResult>)` - A list of [`MonitoredItemModifyResult`] corresponding to the MonitoredItems to modify.
+    ///    The size and order of the list matches the size and order of the `items_to_modify` request parameter.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn modify_monitored_items(
         &self,
         subscription_id: u32,
@@ -439,6 +610,22 @@ impl AsyncSession {
         }
     }
 
+    /// Sets the monitoring mode on one or more monitored items by sending a [`SetMonitoringModeRequest`]
+    /// to the server.
+    ///
+    /// See OPC UA Part 4 - Services 5.12.4 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `subscription_id` - the subscription identifier containing the monitored items to be modified.
+    /// * `monitoring_mode` - the monitored mode to apply to the monitored items
+    /// * `monitored_item_ids` - the monitored items to be modified
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Vec<StatusCode>)` - Individual result for each monitored item.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn set_monitoring_mode(
         &self,
         subscription_id: u32,
@@ -477,6 +664,24 @@ impl AsyncSession {
         }
     }
 
+    /// Sets a monitored item so it becomes the trigger that causes other monitored items to send
+    /// change events in the same update. Sends a [`SetTriggeringRequest`] to the server.
+    /// Note that `items_to_remove` is applied before `items_to_add`.
+    ///
+    /// See OPC UA Part 4 - Services 5.12.5 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `subscription_id` - the subscription identifier containing the monitored item to be used as the trigger.
+    /// * `monitored_item_id` - the monitored item that is the trigger.
+    /// * `links_to_add` - zero or more items to be added to the monitored item's triggering list.
+    /// * `items_to_remove` - zero or more items to be removed from the monitored item's triggering list.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok((Option<Vec<StatusCode>>, Option<Vec<StatusCode>>))` - Individual result for each item added / removed for the SetTriggering call.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn set_triggering(
         &self,
         subscription_id: u32,
@@ -525,6 +730,21 @@ impl AsyncSession {
         }
     }
 
+    /// Deletes monitored items from a subscription by sending a [`DeleteMonitoredItemsRequest`] to the server.
+    ///
+    /// See OPC UA Part 4 - Services 5.12.6 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `subscription_id` - The Server-assigned identifier for the Subscription that will report Notifications for this MonitoredItem.
+    /// * `items_to_delete` - List of Server-assigned ids for the MonitoredItems to be deleted.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Vec<StatusCode>)` - List of StatusCodes for the MonitoredItems to delete. The size and
+    ///   order of the list matches the size and order of the `items_to_delete` request parameter.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn delete_monitored_items(
         &self,
         subscription_id: u32,
@@ -728,7 +948,7 @@ impl AsyncSession {
                     requested_parameters: MonitoringParameters {
                         client_handle: item.client_handle(),
                         sampling_interval: item.sampling_interval(),
-                        filter: ExtensionObject::null(),
+                        filter: item.filter.clone(),
                         queue_size: item.queue_size() as u32,
                         discard_oldest: item.discard_oldest(),
                     },

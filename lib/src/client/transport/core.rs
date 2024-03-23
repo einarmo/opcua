@@ -4,7 +4,7 @@ use std::time::{Duration, Instant};
 
 use parking_lot::RwLock;
 
-use crate::client::prelude::MessageIsFinalType;
+use crate::core::comms::message_chunk::MessageIsFinalType;
 use crate::core::comms::{
     chunker::Chunker, message_chunk::MessageChunk, message_chunk_info::ChunkInfo,
     secure_channel::SecureChannel, tcp_codec::Message,

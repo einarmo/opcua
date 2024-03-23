@@ -7,10 +7,10 @@ use std::{
     time::Duration,
 };
 
-use crate::client::prelude::{
-    encoding::DecodingOptions, DataChangeNotification, DataValue, EventNotificationList,
-    Identifier, MonitoringMode, NodeId, NotificationMessage, ObjectId, QualifiedName, ReadValueId,
-    StatusChangeNotification, UAString, Variant,
+use crate::types::{
+    DataChangeNotification, DataValue, DecodingOptions, EventNotificationList, ExtensionObject,
+    Identifier, MonitoringMode, NotificationMessage, ObjectId, ReadValueId,
+    StatusChangeNotification, Variant,
 };
 
 pub(crate) struct CreateMonitoredItem {
@@ -21,6 +21,7 @@ pub(crate) struct CreateMonitoredItem {
     pub queue_size: u32,
     pub discard_oldest: bool,
     pub sampling_interval: f64,
+    pub filter: ExtensionObject,
 }
 
 pub(crate) struct ModifyMonitoredItem {
@@ -29,14 +30,21 @@ pub(crate) struct ModifyMonitoredItem {
     pub queue_size: u32,
 }
 
+/// A set of callbacks for notifications on a subscription.
+/// You may implement this on your own struct, or simply use [SubscriptionCallbacks]
+/// for a simple collection of closures.
 pub trait OnSubscriptionNotification: Send + Sync {
+    /// Called when a subscription changes state on the server.
     fn on_subscription_status_change(&mut self, _notification: StatusChangeNotification) {}
 
+    /// Called for each data value change.
     fn on_data_value(&mut self, _notification: DataValue, _item: &MonitoredItem) {}
 
+    /// Called for each received event.
     fn on_event(&mut self, _event_fields: Option<Vec<Variant>>, _item: &MonitoredItem) {}
 }
 
+/// A convenient wrapper around a set of callback functions that implements [OnSubscriptionNotification]
 pub struct SubscriptionCallbacks {
     status_change: Box<dyn FnMut(StatusChangeNotification) + Send + Sync>,
     data_value: Box<dyn FnMut(DataValue, &MonitoredItem) + Send + Sync>,
@@ -44,6 +52,11 @@ pub struct SubscriptionCallbacks {
 }
 
 impl SubscriptionCallbacks {
+    /// Create a new subscription callback wrapper.
+    ///
+    /// # Arguments
+    ///
+    ///  * `status_change` - Called when a subscription changes state on the server.
     pub fn new(
         status_change: impl FnMut(StatusChangeNotification) + Send + Sync + 'static,
         data_value: impl FnMut(DataValue, &MonitoredItem) + Send + Sync + 'static,
@@ -91,6 +104,8 @@ pub struct MonitoredItem {
     triggered_items: BTreeSet<u32>,
     /// Whether to discard oldest values on queue overflow
     discard_oldest: bool,
+    /// Active filter
+    filter: ExtensionObject,
 }
 
 impl MonitoredItem {
@@ -98,40 +113,42 @@ impl MonitoredItem {
         MonitoredItem {
             id: 0,
             client_handle,
-            item_to_monitor: ReadValueId {
-                node_id: NodeId::null(),
-                attribute_id: 0,
-                index_range: UAString::null(),
-                data_encoding: QualifiedName::null(),
-            },
+            item_to_monitor: ReadValueId::default(),
             queue_size: 1,
             monitoring_mode: MonitoringMode::Reporting,
             sampling_interval: 0.0,
             triggered_items: BTreeSet::new(),
             discard_oldest: true,
+            filter: ExtensionObject::null(),
         }
     }
 
+    /// Server assigned ID of the monitored item.
     pub fn id(&self) -> u32 {
         self.id
     }
 
+    /// Client assigned handle for the monitored item.
     pub fn client_handle(&self) -> u32 {
         self.client_handle
     }
 
+    /// Attribute and node ID for the item the monitored item receives notifications for.
     pub fn item_to_monitor(&self) -> &ReadValueId {
         &self.item_to_monitor
     }
 
+    /// Sampling interval.
     pub fn sampling_interval(&self) -> f64 {
         self.sampling_interval
     }
 
+    /// Queue size on the server.
     pub fn queue_size(&self) -> usize {
         self.queue_size
     }
 
+    /// Whether the oldest values are discarded on queue overflow on the server.
     pub fn discard_oldest(&self) -> bool {
         self.discard_oldest
     }
@@ -279,6 +296,7 @@ impl Subscription {
                 sampling_interval: i.sampling_interval,
                 triggered_items: BTreeSet::new(),
                 discard_oldest: i.discard_oldest,
+                filter: i.filter,
             };
 
             let client_handle = monitored_item.client_handle();

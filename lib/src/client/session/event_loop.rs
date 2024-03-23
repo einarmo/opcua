@@ -6,30 +6,40 @@ use std::{
 use futures::{stream::BoxStream, Stream, StreamExt, TryStreamExt};
 
 use crate::{
-    async_client::{
+    client::{
         retry::{ExponentialBackoff, SessionRetryPolicy},
         session::{session_error, session_warn},
         transport::{SecureChannelEventLoop, TransportPollResult},
     },
-    client::prelude::{AttributeId, QualifiedName, ReadValueId, StatusCode, VariableId},
+    types::{AttributeId, QualifiedName, ReadValueId, StatusCode, TimestampsToReturn, VariableId},
 };
 
 use super::{
-    connect::{SessionConnector, SessionReconnectMode},
+    connect::{SessionConnectMode, SessionConnector},
     services::subscriptions::event_loop::{SubscriptionActivity, SubscriptionEventLoop},
     session::SessionState,
-    AsyncSession,
+    Session,
 };
 
+/// A list of possible events that happens while polling the session.
+/// The client can use this list to monitor events such as disconnects,
+/// publish failures, etc.
 #[derive(Debug)]
 pub enum SessionPollResult {
+    /// A message was sent to or received from the server.
     Transport(TransportPollResult),
+    /// Connection was lost with the inner [`StatusCode`].
     ConnectionLost(StatusCode),
+    /// Reconnecting to the server failed with the inner [`StatusCode`].
     ReconnectFailed(StatusCode),
-    Reconnected(SessionReconnectMode),
+    /// Session was reconnected, the mode is given by the innner [`SessionConnectMode`]
+    Reconnected(SessionConnectMode),
+    /// The session performed some periodic activity.
     SessionActivity(SessionActivity),
+    /// The session performed some subscription-related activity.
     Subscription(SubscriptionActivity),
-    BeginReconnect,
+    /// The session begins (re)connecting to the server.
+    BeginConnect,
 }
 
 enum SessionEventLoopState {
@@ -42,29 +52,37 @@ enum SessionEventLoopState {
     Disconnected,
 }
 
+/// The session event loop drives the client. It must be polled for anything to happen at all.
 #[must_use = "The session event loop must be started for the session to work"]
 pub struct SessionEventLoop {
-    inner: Arc<AsyncSession>,
+    inner: Arc<Session>,
     trigger_publish_recv: tokio::sync::watch::Receiver<Instant>,
     retry: SessionRetryPolicy,
+    keep_alive_interval: Duration,
 }
 
 impl SessionEventLoop {
-    pub fn new(
-        inner: Arc<AsyncSession>,
+    pub(crate) fn new(
+        inner: Arc<Session>,
         retry: SessionRetryPolicy,
         trigger_publish_recv: tokio::sync::watch::Receiver<Instant>,
+        keep_alive_interval: Duration,
     ) -> Self {
         Self {
             inner,
             retry,
             trigger_publish_recv,
+            keep_alive_interval,
         }
     }
 
     /// Convenience method for running the session event loop until completion,
     /// this method will return once the session is closed manually, or
     /// after it fails to reconnect.
+    ///
+    /// # Returns
+    ///
+    /// * `StatusCode` - [Status code](StatusCode) indicating how the session terminated.
     pub async fn run(self) -> StatusCode {
         let stream = self.enter();
         tokio::pin!(stream);
@@ -144,7 +162,7 @@ impl SessionEventLoop {
                         let _ = slf.inner.state_watch_tx.send(SessionState::Connecting);
 
                         Ok((
-                            SessionPollResult::BeginReconnect,
+                            SessionPollResult::BeginConnect,
                             SessionEventLoopState::Connecting(
                                 connector,
                                 slf.retry.new_backoff(),
@@ -164,7 +182,7 @@ impl SessionEventLoop {
                                         channel,
                                         SessionActivityLoop::new(
                                             slf.inner.clone(),
-                                            slf.retry.keep_alive_interval(),
+                                            slf.keep_alive_interval,
                                         )
                                         .run()
                                         .boxed(),
@@ -198,11 +216,13 @@ impl SessionEventLoop {
     }
 }
 
+/// Periodic activity performed by the session.
 #[derive(Debug, Clone)]
 pub enum SessionActivity {
+    /// A keep alive request was sent to the server and a response was received with a successful state.
     KeepAliveSucceeded,
+    /// A keep alive request was sent to the server, but it failed or the server was in an invalid state.
     KeepAliveFailed(StatusCode),
-    Publish,
 }
 
 enum SessionTickEvent {
@@ -229,12 +249,12 @@ impl SessionIntervals {
 }
 
 struct SessionActivityLoop {
-    inner: Arc<AsyncSession>,
+    inner: Arc<Session>,
     tick_gen: SessionIntervals,
 }
 
 impl SessionActivityLoop {
-    pub fn new(inner: Arc<AsyncSession>, keep_alive_interval: Duration) -> Self {
+    pub fn new(inner: Arc<Session>, keep_alive_interval: Duration) -> Self {
         Self {
             inner,
             tick_gen: SessionIntervals::new(keep_alive_interval),
@@ -254,7 +274,7 @@ impl SessionActivityLoop {
                                 index_range: Default::default(),
                                 data_encoding: QualifiedName::null(),
                             }],
-                            crate::client::prelude::TimestampsToReturn::Server,
+                            TimestampsToReturn::Server,
                             1f64,
                         )
                         .await;

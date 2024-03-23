@@ -4,28 +4,33 @@ use chrono::Duration;
 use tokio::{pin, select};
 
 use crate::{
-    async_client::{
+    client::{
         retry::SessionRetryPolicy,
         transport::{tcp::TransportConfiguration, TransportPollResult},
-        AsyncSecureChannel,
+        AsyncSecureChannel, ClientConfig, ClientEndpoint, IdentityToken, ANONYMOUS_USER_TOKEN_ID,
     },
-    client::{
-        prelude::{
-            encoding::DecodingOptions, hostname_from_url, is_opc_ua_binary_url,
-            is_valid_opc_ua_url, server_url_from_endpoint_url, url_matches_except_host,
-            url_with_replaced_hostname, ApplicationDescription, CertificateStore, ClientConfig,
-            ClientEndpoint, Config, EndpointDescription, FindServersRequest, GetEndpointsRequest,
-            IdentityToken, MessageSecurityMode, RegisterServerRequest, RegisteredServer,
-            SecurityPolicy, StatusCode, SupportedMessage, ANONYMOUS_USER_TOKEN_ID,
+    core::{
+        comms::url::{
+            hostname_from_url, is_opc_ua_binary_url, is_valid_opc_ua_url,
+            server_url_from_endpoint_url, url_matches_except_host, url_with_replaced_hostname,
         },
-        process_service_result, process_unexpected_response,
+        config::Config,
+        supported_message::SupportedMessage,
     },
+    crypto::{CertificateStore, SecurityPolicy},
     sync::RwLock,
+    types::{
+        ApplicationDescription, DecodingOptions, EndpointDescription, FindServersRequest,
+        GetEndpointsRequest, MessageSecurityMode, RegisterServerRequest, RegisteredServer,
+        StatusCode,
+    },
 };
 
-use super::{AsyncSession, SessionEventLoop, SessionInfo};
+use super::{
+    process_service_result, process_unexpected_response, Session, SessionEventLoop, SessionInfo,
+};
 
-pub struct AsyncClient {
+pub struct Client {
     /// Client configuration
     config: ClientConfig,
     /// Certificate store is where certificates go.
@@ -34,7 +39,14 @@ pub struct AsyncClient {
     session_retry_policy: SessionRetryPolicy,
 }
 
-impl AsyncClient {
+impl Client {
+    /// Create a new client from config.
+    ///
+    /// Note that this does not make any connection to the server.
+    ///
+    /// # Arguments
+    ///
+    /// * `config` - Client configuration object.
     pub fn new(config: ClientConfig) -> Self {
         let application_description = if config.create_sample_keypair {
             Some(config.application_description())
@@ -71,7 +83,6 @@ impl AsyncClient {
                 Some(config.session_retry_limit as u32)
             },
             config.session_retry_initial,
-            config.keep_alive_interval,
         );
 
         Self {
@@ -81,16 +92,30 @@ impl AsyncClient {
         }
     }
 
-    /// Connects to an ad-hoc server endpoint description. and an [`AsyncSession`] for
-    /// that endpoint.
+    /// Connects to an ad-hoc server endpoint description.
     ///
-    /// Returns with the session object, you must call `run` on the returned eventloop.
+    /// This function returns both a reference to the session, and a `SessionEventLoop`. You must run and
+    /// poll the event loop in order to actually establish a connection.
+    ///
+    /// This method will not attempt to create a session on the server, that will only happen once you start polling
+    /// the session event loop.
+    ///
+    /// # Arguments
+    ///
+    /// * `endpoint` - Discovery endpoint, the client will first connect to this in order to get a list of the
+    ///   available endpoints on the server.
+    /// * `user_identity_token` - Identity token to use for authentication.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok((Arc<AsyncSession>, SessionEventLoop))` - Session and event loop.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
     ///
     pub async fn new_session_from_endpoint(
         &mut self,
         endpoint: impl Into<EndpointDescription>,
         user_identity_token: IdentityToken,
-    ) -> Result<(Arc<AsyncSession>, SessionEventLoop), StatusCode> {
+    ) -> Result<(Arc<Session>, SessionEventLoop), StatusCode> {
         let endpoint = endpoint.into();
 
         // Get the server endpoints
@@ -131,13 +156,27 @@ impl AsyncClient {
             .unwrap())
     }
 
-    /// Creates an ad hoc new [`Session`] using the specified endpoint url, security policy and mode.
+    /// Connects to an a server directly using provided [`SessionInfo`].
     ///
-    /// This function supports anything that implements `Into<SessionInfo>`, for example `EndpointDescription`.
+    /// This function returns both a reference to the session, and a `SessionEventLoop`. You must run and
+    /// poll the event loop in order to actually establish a connection.
+    ///
+    /// This method will not attempt to create a session on the server, that will only happen once you start polling
+    /// the session event loop.
+    ///
+    /// # Arguments
+    ///
+    /// * `session_info` - Session info for creating a new session.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok((Arc<AsyncSession>, SessionEventLoop))` - Session and event loop.
+    /// * `Err(String)` - Endpoint is invalid.
+    ///
     pub fn new_session_from_info(
         &mut self,
         session_info: impl Into<SessionInfo>,
-    ) -> Result<(Arc<AsyncSession>, SessionEventLoop), String> {
+    ) -> Result<(Arc<Session>, SessionEventLoop), String> {
         let session_info = session_info.into();
         if !is_opc_ua_binary_url(session_info.endpoint.endpoint_url.as_ref()) {
             Err(format!(
@@ -145,7 +184,7 @@ impl AsyncClient {
                 session_info.endpoint.endpoint_url
             ))
         } else {
-            Ok(AsyncSession::new(
+            Ok(Session::new(
                 self.certificate_store.clone(),
                 session_info,
                 self.config.session_name.clone().into(),
@@ -157,33 +196,52 @@ impl AsyncClient {
         }
     }
 
-    /// Creates a new [`Session`] using the default endpoint specified in the config. If
+    /// Creates a new [`AsyncSession`] using the default endpoint specified in the config. If
     /// there is no default, or the endpoint does not exist, this function will return an error
     ///
-    /// [`Session`]: ../session/struct.Session.html
+    /// This function returns both a reference to the session, and a `SessionEventLoop`. You must run and
+    /// poll the event loop in order to actually establish a connection.
+    ///
+    /// This method will not attempt to create a session on the server, that will only happen once you start polling
+    /// the session event loop.
+    ///
+    /// # Arguments
+    ///
+    /// * `endpoints` - A list of [`EndpointDescription`] containing the endpoints available on the server.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok((Arc<AsyncSession>, SessionEventLoop))` - Session and event loop.
+    /// * `Err(String)` - Endpoint is invalid.
     ///
     pub fn new_session(
         &mut self,
         endpoints: &[EndpointDescription],
-    ) -> Result<(Arc<AsyncSession>, SessionEventLoop), String> {
+    ) -> Result<(Arc<Session>, SessionEventLoop), String> {
         let endpoint = self.default_endpoint()?;
         let session_info = self.session_info_for_endpoint(&endpoint, endpoints)?;
         self.new_session_from_info(session_info)
     }
 
-    /// Creates a new [`Session`] using the named endpoint id. If there is no
+    /// Creates a new [`AsyncSession`] using the named endpoint id. If there is no
     /// endpoint of that id in the config, this function will return an error
     ///
-    /// [`Session`]: ../session/struct.Session.html
+    /// This function returns both a reference to the session, and a `SessionEventLoop`. You must run and
+    /// poll the event loop in order to actually establish a connection.
     ///
-    pub fn new_session_from_id<T>(
+    /// This method will not attempt to create a session on the server, that will only happen once you start polling
+    /// the session event loop.
+    ///
+    /// # Arguments
+    ///
+    /// * `endpoint_id` - ID matching an endpoint defined in config.
+    /// * `endpoints` - List of endpoints available on the server.
+    ///
+    pub fn new_session_from_id(
         &mut self,
-        endpoint_id: T,
+        endpoint_id: impl Into<String>,
         endpoints: &[EndpointDescription],
-    ) -> Result<(Arc<AsyncSession>, SessionEventLoop), String>
-    where
-        T: Into<String>,
-    {
+    ) -> Result<(Arc<Session>, SessionEventLoop), String> {
         let endpoint_id = endpoint_id.into();
         let endpoint = {
             let endpoint = self.config.endpoints.get(&endpoint_id);
@@ -251,6 +309,10 @@ impl AsyncClient {
         }
     }
 
+    /// Create a secure channel using the provided [`SessionInfo`].
+    ///
+    /// This is used when creating temporary connections to the server, when creating a session,
+    /// [`AsyncSession`] manages its own channel.
     fn channel_from_session_info(&self, session_info: SessionInfo) -> AsyncSecureChannel {
         AsyncSecureChannel::new(
             self.certificate_store.clone(),
@@ -272,10 +334,7 @@ impl AsyncClient {
 
     /// Returns an identity token corresponding to the matching user in the configuration. Or None
     /// if there is no matching token.
-    fn client_identity_token<T>(&self, user_token_id: T) -> Option<IdentityToken>
-    where
-        T: Into<String>,
-    {
+    fn client_identity_token(&self, user_token_id: impl Into<String>) -> Option<IdentityToken> {
         let user_token_id = user_token_id.into();
         if user_token_id == ANONYMOUS_USER_TOKEN_ID {
             Some(IdentityToken::Anonymous)
@@ -300,8 +359,10 @@ impl AsyncClient {
     /// Gets the [`ClientEndpoint`] information for the default endpoint, as defined
     /// by the configuration. If there is no default endpoint, this function will return an error.
     ///
-    /// [`ClientEndpoint`]: ../config/struct.ClientEndpoint.html
+    /// # Returns
     ///
+    /// * `Ok(ClientEndpoint)` - The default endpoint set in config.
+    /// * `Err(String)` - No default endpoint could be found.
     pub fn default_endpoint(&self) -> Result<ClientEndpoint, String> {
         let default_endpoint_id = self.config.default_endpoint.clone();
         if default_endpoint_id.is_empty() {
@@ -315,6 +376,13 @@ impl AsyncClient {
             ))
         }
     }
+
+    /// Get the list of endpoints for the server at the configured default endpoint.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Vec<EndpointDescription>)` - A list of the available endpoints on the server.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
     pub async fn get_server_endpoints(&self) -> Result<Vec<EndpointDescription>, StatusCode> {
         if let Ok(default_endpoint) = self.default_endpoint() {
             if let Ok(server_url) = server_url_from_endpoint_url(&default_endpoint.url) {
@@ -331,6 +399,7 @@ impl AsyncClient {
             Err(StatusCode::BadUnexpectedError)
         }
     }
+
     fn decoding_options(&self) -> DecodingOptions {
         let decoding_options = &self.config.decoding_options;
         DecodingOptions {
@@ -368,6 +437,16 @@ impl AsyncClient {
         }
     }
 
+    /// Get the list of endpoints for the server at the given URL.
+    ///
+    /// # Arguments
+    ///
+    /// * `server_url` - URL of the discovery server to get endpoints from.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Vec<EndpointDescription>)` - A list of the available endpoints on the server.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
     pub async fn get_server_endpoints_from_url(
         &self,
         server_url: impl Into<String>,
@@ -441,10 +520,16 @@ impl AsyncClient {
     }
 
     /// Connects to a discovery server and asks the server for a list of
-    /// available server [`ApplicationDescription`].
+    /// available servers' [`ApplicationDescription`].
     ///
-    /// [`ApplicationDescription`]: ../../opcua_types/service_types/application_description/struct.ApplicationDescription.html
+    /// # Arguments
     ///
+    /// * `discovery_endpoint_url` - Discovery endpoint to connect to.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Vec<ApplicationDescription>)` - List of descriptions for servers known to the discovery server.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
     pub async fn find_servers(
         &mut self,
         discovery_endpoint_url: impl Into<String>,
@@ -486,7 +571,19 @@ impl AsyncClient {
         res
     }
 
-    /// Find an endpoint supplied from the list of endpoints that matches the input criteria
+    /// Find an endpoint supplied from the list of endpoints that matches the input criteria.
+    ///
+    /// # Arguments
+    ///
+    /// * `endpoints` - List of available endpoints on the server.
+    /// * `endpoint_url` - Given endpoint URL.
+    /// * `security_policy` - Required security policy.
+    /// * `security_mode` - Required security mode.
+    ///
+    /// # Returns
+    ///
+    /// * `Some(EndpointDescription)` - Validated endpoint.
+    /// * `None` - No matching endpoint was found.
     pub fn find_matching_endpoint(
         endpoints: &[EndpointDescription],
         endpoint_url: &str,
@@ -517,7 +614,15 @@ impl AsyncClient {
         Some(matching_endpoint)
     }
 
-    /// Determine if we recognize the security of this endpoint
+    /// Determine if we recognize the security of this endpoint.
+    ///
+    /// # Arguments
+    ///
+    /// * `endpoint` - Endpoint to check.
+    ///
+    /// # Returns
+    ///
+    /// * `bool` - `true` if the endpoint is supported.
     pub fn is_supported_endpoint(&self, endpoint: &EndpointDescription) -> bool {
         if let Ok(security_policy) = SecurityPolicy::from_str(endpoint.security_policy_uri.as_ref())
         {
@@ -545,6 +650,22 @@ impl AsyncClient {
         }
     }
 
+    /// This function is used by servers that wish to register themselves with a discovery server.
+    /// i.e. one server is the client to another server. The server sends a [`RegisterServerRequest`]
+    /// to the discovery server to register itself. Servers are expected to re-register themselves periodically
+    /// with the discovery server, with a maximum of 10 minute intervals.
+    ///
+    /// See OPC UA Part 4 - Services 5.4.5 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `server` - The server to register
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(())` - Success
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn register_server(
         &mut self,
         discovery_endpoint_url: impl Into<String>,

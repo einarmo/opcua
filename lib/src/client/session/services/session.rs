@@ -3,21 +3,35 @@ use std::sync::Arc;
 use crypto::{certificate_store::CertificateStore, user_identity::make_user_name_identity_token};
 
 use crate::{
-    async_client::AsyncSession,
     client::{
-        prelude::{
-            hostname_from_url, ActivateSessionRequest, AnonymousIdentityToken, ByteString,
-            CancelRequest, CloseSessionRequest, CreateSessionRequest, ExtensionObject,
-            IdentityToken, IntegerId, NodeId, ObjectId, SecureChannel, SecurityPolicy,
-            SignatureData, StatusCode, SupportedMessage, UAString, UserNameIdentityToken,
-            UserTokenPolicy, UserTokenType, X509IdentityToken,
-        },
-        process_service_result, process_unexpected_response,
+        session::{process_service_result, process_unexpected_response},
+        IdentityToken, Session,
     },
-    crypto,
+    core::{
+        comms::{secure_channel::SecureChannel, url::hostname_from_url},
+        supported_message::SupportedMessage,
+    },
+    crypto::{self, SecurityPolicy},
+    types::{
+        ActivateSessionRequest, AnonymousIdentityToken, ByteString, CancelRequest,
+        CloseSessionRequest, CreateSessionRequest, ExtensionObject, IntegerId, NodeId, ObjectId,
+        SignatureData, StatusCode, UAString, UserNameIdentityToken, UserTokenPolicy, UserTokenType,
+        X509IdentityToken,
+    },
 };
 
-impl AsyncSession {
+impl Session {
+    /// Sends a [`CreateSessionRequest`] to the server, returning the session id of the created
+    /// session. Internally, the session will store the authentication token which is used for requests
+    /// subsequent to this call.
+    ///
+    /// See OPC UA Part 4 - Services 5.6.2 for complete description of the service and error responses.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(NodeId)` - Success, session id
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub(crate) async fn create_session(&self) -> Result<NodeId, StatusCode> {
         let endpoint_url = self.session_info.endpoint.endpoint_url.clone();
 
@@ -99,6 +113,15 @@ impl AsyncSession {
         }
     }
 
+    /// Sends an [`ActivateSessionRequest`] to the server to activate this session
+    ///
+    /// See OPC UA Part 4 - Services 5.6.3 for complete description of the service and error responses.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(())` - Success
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub(crate) async fn activate_session(&self) -> Result<(), StatusCode> {
         let secure_channel = trace_read_lock!(self.channel.secure_channel);
 
@@ -174,6 +197,7 @@ impl AsyncSession {
         }
     }
 
+    /// Create a user identity token from config and the secure channel.
     fn user_identity_token(
         &self,
         channel: &SecureChannel,
@@ -279,6 +303,7 @@ impl AsyncSession {
         }
     }
 
+    /// Create a user name identity token.
     fn make_user_name_identity_token(
         &self,
         secure_channel: &SecureChannel,
@@ -299,6 +324,9 @@ impl AsyncSession {
         )
     }
 
+    /// Close the session by sending a [`CloseSessionRequest`] to the server.
+    ///
+    /// This is not accessible by users, they must instead call `disconnect` to properly close the session.
     pub(crate) async fn close_session(&self) -> Result<(), StatusCode> {
         let request = CloseSessionRequest {
             delete_subscriptions: true,
@@ -313,6 +341,19 @@ impl AsyncSession {
         }
     }
 
+    /// Cancels an outstanding service request by sending a [`CancelRequest`] to the server.
+    ///
+    /// See OPC UA Part 4 - Services 5.6.5 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `request_handle` - Handle to the outstanding request to be cancelled.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(u32)` - Success, number of cancelled requests
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn cancel(&self, request_handle: IntegerId) -> Result<u32, StatusCode> {
         let request = CancelRequest {
             request_header: self.make_request_header(),

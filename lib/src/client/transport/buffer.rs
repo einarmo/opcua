@@ -3,8 +3,15 @@ use std::{
     io::{BufRead, Cursor},
 };
 
-use crate::client::prelude::{Chunker, MessageChunk, SecureChannel, StatusCode, SupportedMessage};
 use tokio::io::AsyncWriteExt;
+
+use crate::{
+    core::{
+        comms::{chunker::Chunker, message_chunk::MessageChunk, secure_channel::SecureChannel},
+        supported_message::SupportedMessage,
+    },
+    types::StatusCode,
+};
 
 #[derive(Copy, Clone, Debug)]
 enum SendBufferState {

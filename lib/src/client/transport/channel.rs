@@ -1,19 +1,23 @@
 use std::{str::FromStr, sync::Arc, time::Duration};
 
 use crate::{
-    async_client::{session::SessionInfo, transport::core::TransportPollResult},
-    client::prelude::{
-        ByteString, CertificateStore, CloseSecureChannelRequest, NodeId, RequestHeader, Role,
-        SecureChannel, SecurityPolicy, SecurityTokenRequestType, StatusCode, SupportedMessage,
+    client::{session::SessionInfo, transport::core::TransportPollResult},
+    core::{
+        comms::secure_channel::{Role, SecureChannel},
+        supported_message::SupportedMessage,
     },
+    crypto::{CertificateStore, SecurityPolicy},
     sync::RwLock,
-    types::DecodingOptions,
+    types::{
+        ByteString, CloseSecureChannelRequest, DecodingOptions, NodeId, RequestHeader,
+        SecurityTokenRequestType, StatusCode,
+    },
 };
 use arc_swap::ArcSwap;
 
 use super::state::{Request, RequestSend, SecureChannelState};
 
-use crate::async_client::{
+use crate::client::{
     retry::SessionRetryPolicy,
     transport::{
         tcp::{TcpTransport, TransportConfiguration},

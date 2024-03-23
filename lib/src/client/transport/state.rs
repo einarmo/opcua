@@ -6,14 +6,17 @@ use std::{
 use tokio::sync::mpsc::error::SendTimeoutError;
 
 use crate::{
-    async_client::transport::OutgoingMessage,
-    client::prelude::{
-        DateTime, DiagnosticBits, MessageSecurityMode, NodeId, OpenSecureChannelRequest,
-        RequestHeader, SecureChannel, SecurityPolicy, SecurityTokenRequestType, StatusCode,
-        SupportedMessage,
+    client::transport::OutgoingMessage,
+    core::{
+        comms::secure_channel::SecureChannel, handle::AtomicHandle,
+        supported_message::SupportedMessage,
     },
-    core::handle::AtomicHandle,
+    crypto::SecurityPolicy,
     sync::RwLock,
+    types::{
+        DateTime, DiagnosticBits, MessageSecurityMode, NodeId, OpenSecureChannelRequest,
+        RequestHeader, SecurityTokenRequestType, StatusCode,
+    },
 };
 use arc_swap::ArcSwap;
 

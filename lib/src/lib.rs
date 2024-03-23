@@ -66,8 +66,6 @@ macro_rules! trace_write_lock {
 }
 
 #[cfg(feature = "client")]
-pub mod async_client;
-#[cfg(feature = "client")]
 pub mod client;
 #[cfg(feature = "console-logging")]
 pub mod console_logging;
@@ -119,9 +117,6 @@ fn from_hex(v: &str) -> Vec<u8> {
 }
 
 mod prelude {
-    #[cfg(feature = "client")]
-    pub use crate::client::prelude::*;
-    pub use crate::core::prelude::*;
     #[cfg(feature = "server")]
     pub use crate::server::prelude::*;
 }

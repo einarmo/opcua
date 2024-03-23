@@ -3,26 +3,45 @@ use std::{sync::Arc, time::Instant};
 use futures::{future::Either, stream::FuturesUnordered, Future, Stream, StreamExt};
 
 use crate::{
-    async_client::{session::session_error, AsyncSession},
-    client::prelude::StatusCode,
+    client::{
+        session::{session_debug, session_error},
+        Session,
+    },
+    types::StatusCode,
 };
 
+/// An event on the subscription event loop.
 #[derive(Debug)]
 pub enum SubscriptionActivity {
+    /// A publish request received a successful response.
     Publish,
+    /// A publish request failed, either due to a timeout or an error.
+    /// The publish request will typically be retried.
     PublishFailed(StatusCode),
 }
 
+/// An event loop for running periodic subscription tasks.
+///
+/// This handles publshing on a fixed interval, republishing failed requests,
+/// and subscription keep-alive.
 pub struct SubscriptionEventLoop {
-    session: Arc<AsyncSession>,
+    session: Arc<Session>,
     trigger_publish_recv: tokio::sync::watch::Receiver<Instant>,
     max_inflight_publish: usize,
     last_external_trigger: Instant,
 }
 
 impl SubscriptionEventLoop {
+    /// Create a new subscription event loop for `session`
+    ///
+    /// # Arguments
+    ///
+    ///  * `session` - A shared reference to an [AsyncSession].
+    ///  * `trigger_publish_recv` - A channel used to transmit external publish triggers.
+    ///  This is used to trigger publish outside of the normal schedule, for example when
+    ///  a new subscription is created.
     pub fn new(
-        session: Arc<AsyncSession>,
+        session: Arc<Session>,
         trigger_publish_recv: tokio::sync::watch::Receiver<Instant>,
     ) -> Self {
         let last_external_trigger = trigger_publish_recv.borrow().clone();
@@ -34,20 +53,28 @@ impl SubscriptionEventLoop {
         }
     }
 
+    /// Run the subscription event loop, returning a stream that produces
+    /// [SubscriptionActivity] enums, reporting activity to the session event loop.
     pub fn run(self) -> impl Stream<Item = SubscriptionActivity> {
         futures::stream::unfold(
             (self, FuturesUnordered::new()),
             |(mut slf, mut futures)| async move {
+                // Store the next publish time, or None if there are no active subscriptions.
                 let mut next = slf.session.next_publish_time(false);
                 let mut recv: tokio::sync::watch::Receiver<Instant> =
                     slf.trigger_publish_recv.clone();
 
                 let res = loop {
+                    // Future for the next periodic publish. We do not send publish requests if there
+                    // are no active subscriptions. In this case, simply return the non-terminating
+                    // future.
                     let next_tick_fut = if let Some(next) = next {
                         Either::Left(tokio::time::sleep_until(next.into()))
                     } else {
                         Either::Right(futures::future::pending::<()>())
                     };
+                    // If FuturesUnordered is empty, it will immediately yield `None`. We don't want that,
+                    // so if it is empty we return the non-terminating future.
                     let next_publish_fut = if futures.is_empty() {
                         Either::Left(futures::future::pending())
                     } else {
@@ -55,15 +82,18 @@ impl SubscriptionEventLoop {
                     };
 
                     tokio::select! {
+                        // Both internal ticks and external triggers result in publish requests.
                         v = recv.wait_for(|i| i > &slf.last_external_trigger) => {
                             if let Ok(v) = v {
                                 debug!("Sending publish due to external trigger");
+                                // On an external trigger, we always publish.
                                 futures.push(slf.static_publish());
                                 next = slf.session.next_publish_time(true);
                                 slf.last_external_trigger = v.clone();
                             }
                         }
                         _ = next_tick_fut => {
+                            // Avoid publishing if there are too many inflight publish requests.
                             if futures.len() < slf.max_inflight_publish {
                                 debug!("Sending publish due to internal tick");
                                 futures.push(slf.static_publish());
@@ -85,9 +115,28 @@ impl SubscriptionEventLoop {
                                     break SubscriptionActivity::Publish
                                 }
                                 Some(Err(e)) => {
-                                    session_error!(slf.session, "Publish failed, sending a new request");
-                                    if futures.len() < slf.max_inflight_publish {
-                                        futures.push(slf.static_publish());
+                                    match e {
+                                        StatusCode::BadTimeout => {
+                                            session_error!(slf.session, "Publish request timed out, sending another");
+                                            if futures.len() < slf.max_inflight_publish {
+                                                futures.push(slf.static_publish());
+                                            }
+                                        }
+                                        StatusCode::BadTooManyPublishRequests => {
+                                            session_debug!(slf.session, "Server returned BadTooManyPublishRequests, backing off");
+                                        }
+                                        StatusCode::BadSessionClosed
+                                        | StatusCode::BadSessionIdInvalid => {
+                                            // TODO: Do something here?
+                                            session_error!(slf.session, "Publish response indicates session is dead");
+                                        }
+                                        StatusCode::BadNoSubscription
+                                        | StatusCode::BadSubscriptionIdInvalid => {
+                                            // TODO: Maybe do something here? This could happen when subscriptions are
+                                            // in the process of being recreated. Make sure to avoid race conditions.
+                                            session_error!(slf.session, "Publish response indicates subscription is dead");
+                                        }
+                                        _ => ()
                                     }
                                     break SubscriptionActivity::PublishFailed(e)
                                 }

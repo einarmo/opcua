@@ -3,8 +3,7 @@ use std::time::Duration;
 use futures::TryStreamExt;
 use log::info;
 use opcua::{
-    async_client::{AsyncClient, SubscriptionCallbacks},
-    client::prelude::{ClientConfig, IdentityToken},
+    client::{ClientBuilder, IdentityToken, SubscriptionCallbacks},
     types::{
         AttributeId, MonitoredItemCreateRequest, MonitoringParameters, NodeId, ObjectId,
         QualifiedName, ReadValueId,
@@ -14,10 +13,12 @@ use opcua::{
 #[tokio::main]
 async fn main() {
     env_logger::init();
-    let mut config = ClientConfig::new("Async client", "urn:AsyncClient");
-    config.session_retry_limit = 4;
-    config.session_retry_interval = 2;
-    let mut client = AsyncClient::new(config);
+    let mut client = ClientBuilder::new()
+        .application_name("Async client")
+        .application_uri("urn:AsyncClient")
+        .session_retry_limit(4)
+        .client()
+        .unwrap();
     let endpoints = client
         .get_server_endpoints_from_url("opc.tcp://localhost:62546")
         .await

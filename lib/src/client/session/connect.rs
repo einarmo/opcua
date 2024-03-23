@@ -3,36 +3,42 @@ use std::sync::Arc;
 use tokio::{pin, select};
 
 use crate::{
-    async_client::transport::{SecureChannelEventLoop, TransportPollResult},
-    client::prelude::{NodeId, StatusCode},
+    client::transport::{SecureChannelEventLoop, TransportPollResult},
+    types::{NodeId, StatusCode},
 };
 
-use super::AsyncSession;
+use super::Session;
 
+/// This struct manages the task of connecting to the server.
+/// It will only make a single attempt, so whatever is calling it is responsible for retries.
 pub(super) struct SessionConnector {
-    inner: Arc<AsyncSession>,
+    inner: Arc<Session>,
 }
 
+/// When the session connects to the server, this describes
+/// how that happened, whether a new session was created, or an old session was reactivated.
 #[derive(Debug, Clone)]
-pub enum SessionReconnectMode {
+pub enum SessionConnectMode {
+    /// A new session was created with session ID given by the inner [`NodeId`]
     NewSession(NodeId),
+    /// An old session was reactivated with session ID given by the inner [`NodeId`]
     ReactivatedSession(NodeId),
 }
 
 impl SessionConnector {
-    pub fn new(session: Arc<AsyncSession>) -> Self {
+    pub fn new(session: Arc<Session>) -> Self {
         Self { inner: session }
     }
 
     pub async fn try_connect(
         &self,
-    ) -> Result<(SecureChannelEventLoop, SessionReconnectMode), StatusCode> {
+    ) -> Result<(SecureChannelEventLoop, SessionConnectMode), StatusCode> {
         self.connect_and_activate().await
     }
 
     async fn connect_and_activate(
         &self,
-    ) -> Result<(SecureChannelEventLoop, SessionReconnectMode), StatusCode> {
+    ) -> Result<(SecureChannelEventLoop, SessionConnectMode), StatusCode> {
         let mut event_loop = self.inner.channel.connect_no_retry().await?;
 
         let activate_fut = self.ensure_and_activate_session();
@@ -69,7 +75,7 @@ impl SessionConnector {
         Ok((event_loop, id))
     }
 
-    async fn ensure_and_activate_session(&self) -> Result<SessionReconnectMode, StatusCode> {
+    async fn ensure_and_activate_session(&self) -> Result<SessionConnectMode, StatusCode> {
         let should_create_session = self.inner.session_id.load().is_null();
 
         if should_create_session {
@@ -85,15 +91,15 @@ impl SessionConnector {
                 self.inner.reset();
                 let id = self.inner.create_session().await?;
                 self.inner.activate_session().await?;
-                SessionReconnectMode::NewSession(id)
+                SessionConnectMode::NewSession(id)
             }
             Err(e) => return Err(e),
             Ok(_) => {
                 let session_id = (**self.inner.session_id.load()).clone();
                 if should_create_session {
-                    SessionReconnectMode::NewSession(session_id)
+                    SessionConnectMode::NewSession(session_id)
                 } else {
-                    SessionReconnectMode::ReactivatedSession(session_id)
+                    SessionConnectMode::ReactivatedSession(session_id)
                 }
             }
         };

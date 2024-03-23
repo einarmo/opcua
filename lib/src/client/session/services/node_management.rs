@@ -1,16 +1,30 @@
 use crate::{
-    async_client::{session::session_error, AsyncSession},
     client::{
-        prelude::{
-            AddNodesItem, AddNodesRequest, AddNodesResult, AddReferencesItem, AddReferencesRequest,
-            DeleteNodesItem, DeleteNodesRequest, DeleteReferencesItem, DeleteReferencesRequest,
-            StatusCode, SupportedMessage,
-        },
-        process_unexpected_response,
+        session::{process_service_result, process_unexpected_response, session_error},
+        Session,
+    },
+    core::supported_message::SupportedMessage,
+    types::{
+        AddNodesItem, AddNodesRequest, AddNodesResult, AddReferencesItem, AddReferencesRequest,
+        DeleteNodesItem, DeleteNodesRequest, DeleteReferencesItem, DeleteReferencesRequest,
+        StatusCode,
     },
 };
 
-impl AsyncSession {
+impl Session {
+    /// Add nodes by sending a [`AddNodesRequest`] to the server.
+    ///
+    /// See OPC UA Part 4 - Services 5.7.2 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `nodes_to_add` - A list of [`AddNodesItem`] to be added to the server.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Vec<AddNodesResult>)` - A list of [`AddNodesResult`] corresponding to each add node operation.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn add_nodes(
         &self,
         nodes_to_add: &[AddNodesItem],
@@ -32,6 +46,19 @@ impl AsyncSession {
         }
     }
 
+    /// Add references by sending a [`AddReferencesRequest`] to the server.
+    ///
+    /// See OPC UA Part 4 - Services 5.7.3 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `references_to_add` - A list of [`AddReferencesItem`] to be sent to the server.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Vec<StatusCode>)` - A list of `StatusCode` corresponding to each add reference operation.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn add_references(
         &self,
         references_to_add: &[AddReferencesItem],
@@ -46,6 +73,7 @@ impl AsyncSession {
             };
             let response = self.send(request).await?;
             if let SupportedMessage::AddReferencesResponse(response) = response {
+                process_service_result(&response.response_header)?;
                 Ok(response.results.unwrap())
             } else {
                 Err(process_unexpected_response(response))
@@ -53,6 +81,19 @@ impl AsyncSession {
         }
     }
 
+    /// Delete nodes by sending a [`DeleteNodesRequest`] to the server.
+    ///
+    /// See OPC UA Part 4 - Services 5.7.4 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `nodes_to_delete` - A list of [`DeleteNodesItem`] to be sent to the server.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Vec<StatusCode>)` - A list of `StatusCode` corresponding to each delete node operation.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn delete_nodes(
         &self,
         nodes_to_delete: &[DeleteNodesItem],
@@ -74,6 +115,19 @@ impl AsyncSession {
         }
     }
 
+    /// Delete references by sending a [`DeleteReferencesRequest`] to the server.
+    ///
+    /// See OPC UA Part 4 - Services 5.7.5 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `nodes_to_delete` - A list of [`DeleteReferencesItem`] to be sent to the server.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Vec<StatusCode>)` - A list of `StatusCode` corresponding to each delete node operation.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn delete_references(
         &self,
         references_to_delete: &[DeleteReferencesItem],

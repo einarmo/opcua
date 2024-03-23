@@ -2,9 +2,7 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
-use crate::client::prelude::ClientBuilder;
-
-use crate::server::state::ServerState;
+use crate::{client::ClientBuilder, server::state::ServerState};
 
 // Note these two functions are presently informational, but in the future they could
 // be used to automatically set up trust between LDS and server if the server
@@ -36,7 +34,10 @@ fn linux_lds_pki_dir() -> String {
 }
 
 /// Registers the specified endpoints with the specified discovery server
-pub fn register_with_discovery_server(discovery_server_url: &str, server_state: &ServerState) {
+pub async fn register_with_discovery_server(
+    discovery_server_url: &str,
+    server_state: &ServerState,
+) {
     debug!(
         "register_with_discovery_server, for {}",
         discovery_server_url
@@ -56,12 +57,15 @@ pub fn register_with_discovery_server(discovery_server_url: &str, server_state: 
         // find_servers on it first.
 
         // Connect to the server and call find_servers to ensure it is a discovery server
-        match client.find_servers(discovery_server_url) {
+        match client.find_servers(discovery_server_url).await {
             Ok(servers) => {
                 debug!("Servers on the discovery endpoint - {:?}", servers);
                 // Register the server
                 let registered_server = server_state.registered_server();
-                match client.register_server(discovery_server_url, registered_server) {
+                match client
+                    .register_server(discovery_server_url, registered_server)
+                    .await
+                {
                     Ok(_) => {}
                     Err(err) => {
                         error!(

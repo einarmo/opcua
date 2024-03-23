@@ -1,20 +1,33 @@
 use crate::{
-    async_client::{
-        session::{session_debug, session_error},
-        AsyncSession,
-    },
     client::{
-        prelude::{
-            BrowseDescription, BrowseNextRequest, BrowsePath, BrowsePathResult, BrowseRequest,
-            BrowseResult, ByteString, DateTime, NodeId, RegisterNodesRequest, StatusCode,
-            SupportedMessage, TranslateBrowsePathsToNodeIdsRequest, UnregisterNodesRequest,
-            ViewDescription,
+        session::{
+            process_service_result, process_unexpected_response, session_debug, session_error,
         },
-        process_service_result, process_unexpected_response,
+        Session,
+    },
+    core::supported_message::SupportedMessage,
+    types::{
+        BrowseDescription, BrowseNextRequest, BrowsePath, BrowsePathResult, BrowseRequest,
+        BrowseResult, ByteString, DateTime, NodeId, RegisterNodesRequest, StatusCode,
+        TranslateBrowsePathsToNodeIdsRequest, UnregisterNodesRequest, ViewDescription,
     },
 };
 
-impl AsyncSession {
+impl Session {
+    /// Discover the references to the specified nodes by sending a [`BrowseRequest`] to the server.
+    ///
+    /// See OPC UA Part 4 - Services 5.8.2 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `nodes_to_browse` - A list of [`BrowseDescription`] describing nodes to browse.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Option<Vec<BrowseResult>)` - A list [`BrowseResult`] corresponding to each node to browse. A browse result
+    ///                                    may contain a continuation point, for use with `browse_next()`.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn browse(
         &self,
         nodes_to_browse: &[BrowseDescription],
@@ -45,6 +58,22 @@ impl AsyncSession {
         }
     }
 
+    /// Continue to discover references to nodes by sending continuation points in a [`BrowseNextRequest`]
+    /// to the server. This function may have to be called repeatedly to process the initial query.
+    ///
+    /// See OPC UA Part 4 - Services 5.8.3 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `release_continuation_points` - Flag indicating if the continuation points should be released by the server
+    /// * `continuation_points` - A list of [`BrowseDescription`] continuation points
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Option<Vec<BrowseResult>)` - A list [`BrowseResult`] corresponding to each node to browse. A browse result
+    ///                                    may contain a continuation point, for use with `browse_next()`.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn browse_next(
         &self,
         release_continuation_points: bool,
@@ -70,6 +99,24 @@ impl AsyncSession {
         }
     }
 
+    /// Translate browse paths to NodeIds by sending a [`TranslateBrowsePathsToNodeIdsRequest`] request to the Server
+    /// Each [`BrowsePath`] is constructed of a starting node and a `RelativePath`. The specified starting node
+    /// identifies the node from which the RelativePath is based. The RelativePath contains a sequence of
+    /// ReferenceTypes and BrowseNames.
+    ///
+    /// See OPC UA Part 4 - Services 5.8.4 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `browse_paths` - A list of [`BrowsePath`] node + relative path for the server to look up
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Vec<BrowsePathResult>>)` - List of [`BrowsePathResult`] for the list of browse
+    ///                       paths. The size and order of the list matches the size and order of the `browse_paths`
+    ///                       parameter.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn translate_browse_paths_to_node_ids(
         &self,
         browse_paths: &[BrowsePath],
@@ -101,6 +148,22 @@ impl AsyncSession {
         }
     }
 
+    /// Register nodes on the server by sending a [`RegisterNodesRequest`]. The purpose of this
+    /// call is server-dependent but allows a client to ask a server to create nodes which are
+    /// otherwise expensive to set up or maintain, e.g. nodes attached to hardware.
+    ///
+    /// See OPC UA Part 4 - Services 5.8.5 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `nodes_to_register` - A list of [`NodeId`] nodes for the server to register
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Vec<NodeId>)` - A list of [`NodeId`] corresponding to size and order of the input. The
+    ///                       server may return an alias for the input `NodeId`
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn register_nodes(
         &self,
         nodes_to_register: &[NodeId],
@@ -128,6 +191,21 @@ impl AsyncSession {
         }
     }
 
+    /// Unregister nodes on the server by sending a [`UnregisterNodesRequest`]. This indicates to
+    /// the server that the client relinquishes any need for these nodes. The server will ignore
+    /// unregistered nodes.
+    ///
+    /// See OPC UA Part 4 - Services 5.8.5 for complete description of the service and error responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `nodes_to_unregister` - A list of [`NodeId`] nodes for the server to unregister
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(())` - Request succeeded, server ignores invalid nodes
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
     pub async fn unregister_nodes(&self, nodes_to_unregister: &[NodeId]) -> Result<(), StatusCode> {
         if nodes_to_unregister.is_empty() {
             session_error!(
