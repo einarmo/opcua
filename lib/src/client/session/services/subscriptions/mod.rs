@@ -56,7 +56,9 @@ impl SubscriptionCallbacks {
     ///
     /// # Arguments
     ///
-    ///  * `status_change` - Called when a subscription changes state on the server.
+    /// * `status_change` - Called when a subscription changes state on the server.
+    /// * `data_value` - Called for each received data value.
+    /// * `event` - Called for each received event.
     pub fn new(
         status_change: impl FnMut(StatusChangeNotification) + Send + Sync + 'static,
         data_value: impl FnMut(DataValue, &MonitoredItem) + Send + Sync + 'static,
@@ -82,6 +84,58 @@ impl OnSubscriptionNotification for SubscriptionCallbacks {
         (&mut self.data_value)(notification, item);
     }
 
+    fn on_event(&mut self, event_fields: Option<Vec<Variant>>, item: &MonitoredItem) {
+        (&mut self.event)(event_fields, item);
+    }
+}
+
+/// A wrapper around a data change callback that implements [OnSubscriptionNotification]
+pub struct DataChangeCallback {
+    data_value: Box<dyn FnMut(DataValue, &MonitoredItem) + Send + Sync>,
+}
+
+impl DataChangeCallback {
+    /// Create a new data change callback wrapper.
+    ///
+    /// # Arguments
+    ///
+    /// * `data_value` - Called for each received data value.
+    pub fn new(data_value: impl FnMut(DataValue, &MonitoredItem) + Send + Sync + 'static) -> Self {
+        Self {
+            data_value: Box::new(data_value)
+                as Box<dyn FnMut(DataValue, &MonitoredItem) + Send + Sync>,
+        }
+    }
+}
+
+impl OnSubscriptionNotification for DataChangeCallback {
+    fn on_data_value(&mut self, notification: DataValue, item: &MonitoredItem) {
+        (&mut self.data_value)(notification, item);
+    }
+}
+
+/// A wrapper around an event callback that implements [OnSubscriptionNotification]
+pub struct EventCallback {
+    event: Box<dyn FnMut(Option<Vec<Variant>>, &MonitoredItem) + Send + Sync>,
+}
+
+impl EventCallback {
+    /// Create a new event callback wrapper.
+    ///
+    /// # Arguments
+    ///
+    /// * `data_value` - Called for each received data value.
+    pub fn new(
+        event: impl FnMut(Option<Vec<Variant>>, &MonitoredItem) + Send + Sync + 'static,
+    ) -> Self {
+        Self {
+            event: Box::new(event)
+                as Box<dyn FnMut(Option<Vec<Variant>>, &MonitoredItem) + Send + Sync>,
+        }
+    }
+}
+
+impl OnSubscriptionNotification for EventCallback {
     fn on_event(&mut self, event_fields: Option<Vec<Variant>>, item: &MonitoredItem) {
         (&mut self.event)(event_fields, item);
     }

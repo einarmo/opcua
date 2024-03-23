@@ -40,7 +40,8 @@ pub use client::Client;
 pub use connect::SessionConnectMode;
 pub use event_loop::{SessionActivity, SessionEventLoop, SessionPollResult};
 pub use services::subscriptions::{
-    MonitoredItem, OnSubscriptionNotification, Subscription, SubscriptionCallbacks,
+    DataChangeCallback, EventCallback, MonitoredItem, OnSubscriptionNotification, Subscription,
+    SubscriptionCallbacks,
 };
 pub use session::Session;
 

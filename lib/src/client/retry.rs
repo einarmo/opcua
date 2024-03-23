@@ -9,7 +9,6 @@ pub(crate) struct ExponentialBackoff {
 
 impl ExponentialBackoff {
     pub fn new(max_sleep: Duration, max_retries: Option<u32>, initial_sleep: Duration) -> Self {
-        log::info!("New backoff: {max_sleep:?} {max_retries:?} {initial_sleep:?}");
         Self {
             max_sleep,
             max_retries,

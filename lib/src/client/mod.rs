@@ -38,7 +38,7 @@
 //! ```no_run
 //! use std::sync::Arc;
 //! use std::time::Duration;
-//! use opcua::client::{ClientBuilder, IdentityToken, Session, SubscriptionCallbacks, MonitoredItem};
+//! use opcua::client::{ClientBuilder, IdentityToken, Session, DataChangeCallback, MonitoredItem};
 //! use opcua::types::{
 //!     EndpointDescription, MessageSecurityMode, UserTokenPolicy, StatusCode,
 //!     NodeId, TimestampsToReturn, MonitoredItemCreateRequest, DataValue
@@ -60,7 +60,7 @@
 //!
 //!     // Create the session and event loop
 //!     let (session, event_loop) = client.new_session_from_endpoint(endpoint, IdentityToken::Anonymous).await.unwrap();
-//!     let handle = tokio::task::spawn(event_loop.run());
+//!     let handle = event_loop.spawn();
 //!
 //!     session.wait_for_connection().await;
 //!
@@ -81,13 +81,11 @@
 //!         0,
 //!         0,
 //!         true,
-//!         SubscriptionCallbacks::new(
-//!             |_| (),
+//!         DataChangeCallback::new(
 //!             |value, monitored_item| {
 //!                 println!("Data change from server:");
 //!                 print_value(value, monitored_item);
-//!             },
-//!             |_, _| (),
+//!             }
 //!         )
 //!     ).await?;
 //!     // Create some monitored items
@@ -123,8 +121,9 @@ use std::path::PathBuf;
 pub use builder::ClientBuilder;
 pub use config::{ClientConfig, ClientEndpoint, ClientUserToken, ANONYMOUS_USER_TOKEN_ID};
 pub use session::{
-    Client, MonitoredItem, OnSubscriptionNotification, Session, SessionActivity,
-    SessionConnectMode, SessionEventLoop, SessionPollResult, Subscription, SubscriptionCallbacks,
+    Client, DataChangeCallback, EventCallback, MonitoredItem, OnSubscriptionNotification, Session,
+    SessionActivity, SessionConnectMode, SessionEventLoop, SessionPollResult, Subscription,
+    SubscriptionCallbacks,
 };
 pub use transport::AsyncSecureChannel;
 

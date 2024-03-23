@@ -97,6 +97,17 @@ impl SessionEventLoop {
         }
     }
 
+    /// Convenience method for running the session event loop until completion on a tokio task.
+    /// This method will return a [`JoinHandle`](tokio::task::JoinHandle) that will terminate
+    /// once the session is closed manually, or after it fails to reconnect.
+    ///
+    /// # Returns
+    ///
+    /// * `JoinHandle<StatusCode>` - Handle to a tokio task wrapping the event loop.
+    pub fn spawn(self) -> tokio::task::JoinHandle<StatusCode> {
+        tokio::task::spawn(self.run())
+    }
+
     /// Start the event loop, returning a stream that must be polled until it is closed.
     /// The stream will return `None` when the transport is closed manually, or
     /// `Some(Err(StatusCode))` when the stream fails to reconnect after a loss of connection.
@@ -195,17 +206,20 @@ impl SessionEventLoop {
                                     ),
                                 ))
                             }
-                            Err(e) => match backoff.next() {
-                                Some(x) => Ok((
-                                    SessionPollResult::ReconnectFailed(e),
-                                    SessionEventLoopState::Connecting(
-                                        connector,
-                                        backoff,
-                                        Instant::now() + x,
-                                    ),
-                                )),
-                                None => Err(e),
-                            },
+                            Err(e) => {
+                                warn!("Failed to connect to server, status code: {e}");
+                                match backoff.next() {
+                                    Some(x) => Ok((
+                                        SessionPollResult::ReconnectFailed(e),
+                                        SessionEventLoopState::Connecting(
+                                            connector,
+                                            backoff,
+                                            Instant::now() + x,
+                                        ),
+                                    )),
+                                    None => Err(e),
+                                }
+                            }
                         }
                     }
                 }?;
