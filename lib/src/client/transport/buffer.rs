@@ -142,7 +142,7 @@ impl SendBuffer {
 
         self.buffer.consume(written);
 
-        trace!("Write {} bytes {} {}", written, end, self.buffer.position());
+        println!("Write {} bytes {} {}", written, end, self.buffer.position());
 
         if end == self.buffer.position() as usize {
             self.state = SendBufferState::Writing;
@@ -158,5 +158,213 @@ impl SendBuffer {
 
     pub fn can_read(&self) -> bool {
         matches!(self.state, SendBufferState::Reading(_)) || self.buffer.position() != 0
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::io::Cursor;
+    use std::sync::Arc;
+
+    use parking_lot::RwLock;
+
+    use super::SendBuffer;
+
+    use crate::core::comms::secure_channel::{Role, SecureChannel};
+    use crate::crypto::CertificateStore;
+    use crate::server::prelude::StatusCode;
+    use crate::types::{
+        DateTime, DecodingOptions, NodeId, ReadRequest, ReadValueId, RequestHeader,
+        TimestampsToReturn,
+    };
+
+    fn get_buffer_and_channel() -> (SendBuffer, SecureChannel) {
+        let buffer = SendBuffer::new(8196, 81960, 5);
+        let channel = SecureChannel::new(
+            Arc::new(RwLock::new(CertificateStore::new(std::path::Path::new(
+                "./pki",
+            )))),
+            Role::Client,
+            DecodingOptions::test(),
+        );
+
+        (buffer, channel)
+    }
+
+    #[tokio::test]
+    async fn test_buffer_simple() {
+        crate::console_logging::init();
+        // Write a small message to the buffer
+        let message = ReadRequest {
+            request_header: RequestHeader::new(&NodeId::null(), &DateTime::null(), 101),
+            max_age: 0.0,
+            timestamps_to_return: TimestampsToReturn::Both,
+            nodes_to_read: Some(vec![ReadValueId {
+                node_id: (1, 1).into(),
+                attribute_id: 1,
+                ..Default::default()
+            }]),
+        };
+
+        let (mut buffer, channel) = get_buffer_and_channel();
+
+        let request_id = buffer.write(1, message.into(), &channel).unwrap();
+        assert_eq!(request_id, 1);
+
+        assert!(buffer.should_encode_chunks());
+        assert_eq!(buffer.chunks.len(), 1);
+        buffer.encode_next_chunk(&channel).unwrap();
+        assert!(buffer.can_read());
+
+        let mut cursor = Cursor::new(Vec::new());
+        buffer.read_into_async(&mut cursor).await.unwrap();
+        assert!(cursor.get_ref().len() > 50);
+    }
+
+    #[tokio::test]
+    async fn test_buffer_chunking() {
+        crate::console_logging::init();
+        // Write a large enough message that it is split into chunks.
+        let message = ReadRequest {
+            request_header: RequestHeader::new(&NodeId::null(), &DateTime::null(), 101),
+            max_age: 0.0,
+            timestamps_to_return: TimestampsToReturn::Both,
+            nodes_to_read: Some(
+                (0..1000)
+                    .map(|r| ReadValueId {
+                        node_id: (1, r).into(),
+                        attribute_id: 1,
+                        ..Default::default()
+                    })
+                    .collect(),
+            ),
+        };
+
+        let (mut buffer, channel) = get_buffer_and_channel();
+
+        let request_id = buffer.write(1, message.into(), &channel).unwrap();
+        assert_eq!(request_id, 1);
+
+        assert_eq!(buffer.chunks.len(), 3);
+        let mut cursor = Cursor::new(Vec::new());
+
+        for _ in 0..3 {
+            assert!(buffer.should_encode_chunks());
+            buffer.encode_next_chunk(&channel).unwrap();
+            assert!(!buffer.should_encode_chunks());
+            assert!(buffer.can_read());
+
+            buffer.read_into_async(&mut cursor).await.unwrap();
+        }
+        assert!(!buffer.should_encode_chunks());
+        assert!(!buffer.can_read());
+        assert!(cursor.get_ref().len() > 8196 * 2 && cursor.get_ref().len() < 8196 * 3);
+    }
+
+    #[test]
+    fn test_buffer_too_large_message() {
+        crate::console_logging::init();
+        // Write a very large message exceeding the max message size.
+        let message = ReadRequest {
+            request_header: RequestHeader::new(&NodeId::null(), &DateTime::null(), 101),
+            max_age: 0.0,
+            timestamps_to_return: TimestampsToReturn::Both,
+            nodes_to_read: Some(
+                (0..10000)
+                    .map(|r| ReadValueId {
+                        node_id: (1, r).into(),
+                        attribute_id: 1,
+                        ..Default::default()
+                    })
+                    .collect(),
+            ),
+        };
+
+        let (mut buffer, channel) = get_buffer_and_channel();
+
+        let err = buffer.write(1, message.into(), &channel).unwrap_err();
+        assert_eq!(err, StatusCode::BadRequestTooLarge);
+    }
+
+    #[test]
+    fn test_buffer_too_many_chunks() {
+        crate::console_logging::init();
+        // Write a large enough message that we exceed the maximum chunk count.
+        let message = ReadRequest {
+            request_header: RequestHeader::new(&NodeId::null(), &DateTime::null(), 101),
+            max_age: 0.0,
+            timestamps_to_return: TimestampsToReturn::Both,
+            nodes_to_read: Some(
+                (0..4000)
+                    .map(|r| ReadValueId {
+                        node_id: (1, r).into(),
+                        attribute_id: 1,
+                        ..Default::default()
+                    })
+                    .collect(),
+            ),
+        };
+
+        let (mut buffer, channel) = get_buffer_and_channel();
+
+        let err = buffer.write(1, message.into(), &channel).unwrap_err();
+        assert_eq!(err, StatusCode::BadCommunicationError);
+    }
+
+    #[tokio::test]
+    async fn test_buffer_read_partial() {
+        crate::console_logging::init();
+        // Write a large message to the buffer.
+        let message = ReadRequest {
+            request_header: RequestHeader::new(&NodeId::null(), &DateTime::null(), 101),
+            max_age: 0.0,
+            timestamps_to_return: TimestampsToReturn::Both,
+            nodes_to_read: Some(
+                (0..1000)
+                    .map(|r| ReadValueId {
+                        node_id: (1, r).into(),
+                        attribute_id: 1,
+                        ..Default::default()
+                    })
+                    .collect(),
+            ),
+        };
+
+        let (mut buffer, channel) = get_buffer_and_channel();
+
+        let request_id = buffer.write(1, message.into(), &channel).unwrap();
+        assert_eq!(request_id, 1);
+
+        assert_eq!(buffer.chunks.len(), 3);
+        // Use a fixed size buffer exactly half the chunk size. This simulates a TCP connection
+        // writing data in smaller chunks than configured chunk size.
+        let mut buf = [0u8; 4098];
+        // Cursor<&mut [u8; N]> doesn't support AsyncWrite, but Cursor<&mut [u8]> does.
+        let mut cursor = Cursor::new(&mut buf as &mut [u8]);
+
+        for _ in 0..2 {
+            println!("Encode chunks");
+            assert!(buffer.should_encode_chunks());
+            buffer.encode_next_chunk(&channel).unwrap();
+            assert!(!buffer.should_encode_chunks());
+            assert!(buffer.can_read());
+
+            buffer.read_into_async(&mut cursor).await.unwrap();
+            assert!(buffer.can_read());
+            assert_eq!(cursor.position(), 4098);
+            cursor.set_position(0);
+            buffer.read_into_async(&mut cursor).await.unwrap();
+            assert!(!buffer.can_read());
+            assert_eq!(cursor.position(), 4098);
+            cursor.set_position(0);
+        }
+        assert!(buffer.should_encode_chunks());
+        buffer.encode_next_chunk(&channel).unwrap();
+        assert!(buffer.can_read());
+        buffer.read_into_async(&mut cursor).await.unwrap();
+        assert!(cursor.position() < 4098);
+
+        assert!(!buffer.should_encode_chunks());
+        assert!(!buffer.can_read());
     }
 }
