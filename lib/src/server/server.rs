@@ -4,7 +4,7 @@
 
 //! Provides the [`Server`] type and functionality related to it.
 
-use std::{marker::Sync, net::SocketAddr, panic::AssertUnwindSafe, sync::Arc};
+use std::{marker::Sync, net::SocketAddr, sync::Arc};
 
 use tokio::{
     self,
@@ -555,11 +555,24 @@ impl Server {
                 let mut last_registered = trace_lock!(last_registered);
                 if now.duration_since(*last_registered) >= register_duration {
                     *last_registered = now;
-                    let server_state = trace_read_lock!(server_state);
-                    if server_state.is_running() {
+                    drop(last_registered);
+                    let (is_running, pki_dir, registered_server) = {
+                        let server_state = trace_read_lock!(server_state);
+                        let pki_dir = {
+                            let config = server_state.config.read();
+                            config.pki_dir.clone()
+                        };
+                        (
+                            server_state.is_running(),
+                            pki_dir,
+                            server_state.registered_server(),
+                        )
+                    };
+                    if is_running {
                         discovery::register_with_discovery_server(
                             &discovery_server_url,
-                            &server_state,
+                            registered_server,
+                            pki_dir,
                         )
                         .await;
                     }

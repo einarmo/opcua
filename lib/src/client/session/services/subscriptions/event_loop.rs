@@ -29,6 +29,9 @@ pub struct SubscriptionEventLoop {
     trigger_publish_recv: tokio::sync::watch::Receiver<Instant>,
     max_inflight_publish: usize,
     last_external_trigger: Instant,
+    // This is true if the client has received a message BadTooManyPublishRequests
+    // and is waiting for a response before making further requests.
+    is_waiting_for_response: bool,
 }
 
 impl SubscriptionEventLoop {
@@ -50,6 +53,7 @@ impl SubscriptionEventLoop {
             last_external_trigger,
             trigger_publish_recv,
             session,
+            is_waiting_for_response: false,
         }
     }
 
@@ -69,7 +73,11 @@ impl SubscriptionEventLoop {
                     // are no active subscriptions. In this case, simply return the non-terminating
                     // future.
                     let next_tick_fut = if let Some(next) = next {
-                        Either::Left(tokio::time::sleep_until(next.into()))
+                        if slf.is_waiting_for_response && !futures.is_empty() {
+                            Either::Right(futures::future::pending::<()>())
+                        } else {
+                            Either::Left(tokio::time::sleep_until(next.into()))
+                        }
                     } else {
                         Either::Right(futures::future::pending::<()>())
                     };
@@ -111,19 +119,21 @@ impl SubscriptionEventLoop {
                                         // a single publishing interval.
                                         slf.session.next_publish_time(true);
                                     }
+                                    slf.is_waiting_for_response = false;
 
                                     break SubscriptionActivity::Publish
                                 }
                                 Some(Err(e)) => {
                                     match e {
                                         StatusCode::BadTimeout => {
-                                            session_error!(slf.session, "Publish request timed out, sending another");
+                                            session_debug!(slf.session, "Publish request timed out, sending another");
                                             if futures.len() < slf.max_inflight_publish {
                                                 futures.push(slf.static_publish());
                                             }
                                         }
                                         StatusCode::BadTooManyPublishRequests => {
                                             session_debug!(slf.session, "Server returned BadTooManyPublishRequests, backing off");
+                                            slf.is_waiting_for_response = true;
                                         }
                                         StatusCode::BadSessionClosed
                                         | StatusCode::BadSessionIdInvalid => {

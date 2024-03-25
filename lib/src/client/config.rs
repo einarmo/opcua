@@ -357,8 +357,8 @@ impl ClientConfig {
             keep_alive_interval: Duration::from_secs(10),
             request_timeout: Duration::from_secs(60),
             min_publish_interval: Duration::from_secs(1),
-            publish_timeout: Duration::from_secs(5),
-            max_inflight_publish: 5,
+            publish_timeout: Duration::from_secs(60),
+            max_inflight_publish: 2,
             session_timeout: 0,
             decoding_options: DecodingOptions {
                 max_array_length: decoding_options.max_array_length,

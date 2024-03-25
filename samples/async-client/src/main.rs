@@ -126,7 +126,7 @@ async fn main() {
 
         i += 1;
 
-        if i >= 5 {
+        if i >= 50 {
             break;
         }
 
