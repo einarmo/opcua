@@ -153,7 +153,53 @@ impl ClientBuilder {
         self
     }
 
+    /// Sets the maximum outgoing message size in bytes. 0 means no limit.
+    pub fn max_message_size(mut self, max_message_size: usize) -> Self {
+        self.config.decoding_options.max_message_size = max_message_size;
+        self
+    }
+
+    /// Sets the maximum number of chunks in an outgoing message. 0 means no limit.
+    pub fn max_chunk_count(mut self, max_chunk_count: usize) -> Self {
+        self.config.decoding_options.max_chunk_count = max_chunk_count;
+        self
+    }
+
+    /// Maximum size of each individual outgoing message chunk.
+    pub fn max_chunk_size(mut self, max_chunk_size: usize) -> Self {
+        self.config.decoding_options.max_chunk_size = max_chunk_size;
+        self
+    }
+
+    /// Maximum size of each incoming chunk.
+    pub fn max_incoming_chunk_size(mut self, max_incoming_chunk_size: usize) -> Self {
+        self.config.decoding_options.max_incoming_chunk_size = max_incoming_chunk_size;
+        self
+    }
+
+    /// Maximum length in bytes of a string. 0 actually means 0, i.e. no string permitted.
+    pub fn max_string_length(mut self, max_string_length: usize) -> Self {
+        self.config.decoding_options.max_string_length = max_string_length;
+        self
+    }
+
+    /// Maximum length in bytes of a byte string. 0 actually means 0, i.e. no byte strings permitted.
+    pub fn max_byte_string_length(mut self, max_byte_string_length: usize) -> Self {
+        self.config.decoding_options.max_byte_string_length = max_byte_string_length;
+        self
+    }
+
+    /// Maximum number of array elements. 0 actually means 0, i.e. no array permitted
+    pub fn max_array_length(mut self, max_array_length: usize) -> Self {
+        self.config.decoding_options.max_array_length = max_array_length;
+        self
+    }
+
     /// Sets the session retry limit.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `session_retry_limit` is less -1.
     pub fn session_retry_limit(mut self, session_retry_limit: i32) -> Self {
         if session_retry_limit < 0 && session_retry_limit != -1 {
             panic!("Session retry limit must be -1, 0 or a positive number");
@@ -162,57 +208,20 @@ impl ClientBuilder {
         self
     }
 
-    /// Sets the session timeout period.
-    pub fn session_timeout(mut self, session_timeout: u32) -> Self {
-        self.config.session_timeout = session_timeout;
+    /// Initial time between retries when backing off on session reconnects.
+    pub fn session_retry_initial(mut self, session_retry_initial: Duration) -> Self {
+        self.config.session_retry_initial = session_retry_initial;
         self
     }
 
-    /// Sets whether the client should ignore clock skew so the client can make a successful
-    /// connection to the server, even when the client and server clocks are out of sync.
-    pub fn ignore_clock_skew(mut self) -> Self {
-        self.config.performance.ignore_clock_skew = true;
+    /// Maximum time between retries when backing off on session reconnects.
+    pub fn session_retry_max(mut self, session_retry_max: Duration) -> Self {
+        self.config.session_retry_max = session_retry_max;
         self
     }
 
-    /// Configures the client to use a single-threaded executor. This reduces the number of
-    /// threads used by the client.
-    pub fn single_threaded_executor(mut self) -> Self {
-        self.config.performance.single_threaded_executor = true;
-        self
-    }
-
-    /// Configures the client to use a multi-threaded executor.
-    pub fn multi_threaded_executor(mut self) -> Self {
-        self.config.performance.single_threaded_executor = false;
-        self
-    }
-
-    /// Session name - the default name to use for a new session
-    pub fn session_name(mut self, session_name: impl Into<String>) -> Self {
-        self.config.session_name = session_name.into();
-        self
-    }
-
-    /// Set the maximum message size
-    pub fn max_message_size(mut self, max_message_size: usize) -> Self {
-        self.config.decoding_options.max_message_size = max_message_size;
-        self
-    }
-
-    /// Set the max chunk count
-    pub fn max_chunk_count(mut self, max_chunk_count: usize) -> Self {
-        self.config.decoding_options.max_chunk_count = max_chunk_count;
-        self
-    }
-
-    /// Set the max size of each chunk sent to the server.
-    pub fn max_chunk_size(mut self, max_chunk_size: usize) -> Self {
-        self.config.decoding_options.max_chunk_size = max_chunk_size;
-        self
-    }
-
-    /// Set the time between each keep-alive request to the server.
+    /// Time between making simple Read requests to the server to check for liveness
+    /// and avoid session timeouts.
     pub fn keep_alive_interval(mut self, keep_alive_interval: Duration) -> Self {
         self.config.keep_alive_interval = keep_alive_interval;
         self
@@ -234,6 +243,45 @@ impl ClientBuilder {
     /// The server may also enforce its own minimum.
     pub fn min_publish_interval(mut self, min_publish_interval: Duration) -> Self {
         self.config.min_publish_interval = min_publish_interval;
+        self
+    }
+
+    /// Maximum number of pending publish requests.
+    pub fn max_inflight_publish(mut self, max_inflight_publish: usize) -> Self {
+        self.config.max_inflight_publish = max_inflight_publish;
+        self
+    }
+
+    /// Sets the session timeout period, in milliseconds.
+    pub fn session_timeout(mut self, session_timeout: u32) -> Self {
+        self.config.session_timeout = session_timeout;
+        self
+    }
+
+    /// Sets whether the client should ignore clock skew so the client can make a successful
+    /// connection to the server, even when the client and server clocks are out of sync.
+    pub fn ignore_clock_skew(mut self) -> Self {
+        self.config.performance.ignore_clock_skew = true;
+        self
+    }
+
+    /// When a session is recreated on the server, the client will attempt to
+    /// transfer monitored subscriptions from the old session to the new.
+    /// This is the maximum number of monitored items to create per request.
+    pub fn recreate_monitored_items_chunk(mut self, recreate_monitored_items_chunk: usize) -> Self {
+        self.config.performance.recreate_monitored_items_chunk = recreate_monitored_items_chunk;
+        self
+    }
+
+    /// Maximum number of inflight messages.
+    pub fn max_inflight_messages(mut self, max_inflight_messages: usize) -> Self {
+        self.config.performance.max_inflight_messages = max_inflight_messages;
+        self
+    }
+
+    /// Session name - the default name to use for a new session
+    pub fn session_name(mut self, session_name: impl Into<String>) -> Self {
+        self.config.session_name = session_name.into();
         self
     }
 }

@@ -120,7 +120,6 @@ fn endpoint_aes256sha256rsapss_sign_encrypt(port: u16) -> EndpointDescription {
 /// This is the most basic integration test starting the server on a thread, setting an abort flag
 /// and expecting the test to complete before it times out.
 #[test]
-#[ignore]
 fn server_abort() {
     opcua::console_logging::init();
 
@@ -223,7 +222,7 @@ async fn hello_timeout() {
         }
     };
 
-    let (client, server) = new_client_server(port);
+    let (client, server) = new_client_server(port, false);
     perform_test(client, server, Some(client_test), regular_server_test).await;
 }
 
@@ -237,7 +236,6 @@ async fn get_endpoints() {
 
 /// Connect to the server using no encryption, anonymous
 #[tokio::test]
-#[ignore]
 async fn connect_none() {
     // Connect a session using None security policy and anonymous token.
     let port = next_port();
@@ -246,7 +244,6 @@ async fn connect_none() {
 
 /// Connect to the server using Basic128Rsa15 + Sign
 #[tokio::test]
-#[ignore]
 async fn connect_basic128rsa15_sign() {
     // Connect a session with Basic128Rsa and Sign
     let port = next_port();
@@ -260,7 +257,6 @@ async fn connect_basic128rsa15_sign() {
 
 /// Connect to the server using Basic128Rsa15 + SignEncrypt
 #[tokio::test]
-#[ignore]
 async fn connect_basic128rsa15_sign_and_encrypt() {
     // Connect a session with Basic128Rsa and SignAndEncrypt
     let port = next_port();
@@ -274,7 +270,6 @@ async fn connect_basic128rsa15_sign_and_encrypt() {
 
 /// Connect to the server using Basic256 + Sign
 #[tokio::test]
-#[ignore]
 async fn connect_basic256_sign() {
     // Connect a session with Basic256 and Sign
     let port = next_port();
@@ -283,7 +278,6 @@ async fn connect_basic256_sign() {
 
 /// Connect to the server using Basic256 + SignEncrypt
 #[tokio::test]
-#[ignore]
 async fn connect_basic256_sign_and_encrypt() {
     // Connect a session with Basic256 and SignAndEncrypt
     let port = next_port();
@@ -297,7 +291,6 @@ async fn connect_basic256_sign_and_encrypt() {
 
 /// Connect to the server using Basic256Sha256 + Sign
 #[tokio::test]
-#[ignore]
 async fn connect_basic256sha256_sign() {
     // Connect a session with Basic256Sha256 and Sign
     let port = next_port();
@@ -311,7 +304,6 @@ async fn connect_basic256sha256_sign() {
 
 /// Connect to the server using Basic256Sha256 + SignEncrypt
 #[tokio::test]
-#[ignore]
 async fn connect_basic256sha256_sign_and_encrypt() {
     let port = next_port();
     connect_with(
@@ -324,7 +316,6 @@ async fn connect_basic256sha256_sign_and_encrypt() {
 
 /// Connect to the server using Aes128Sha256RsaOaep + Sign
 #[tokio::test]
-#[ignore]
 async fn connect_aes128sha256rsaoaep_sign() {
     let port = next_port();
     connect_with(
@@ -337,7 +328,6 @@ async fn connect_aes128sha256rsaoaep_sign() {
 
 /// Connect to the server using Aes128Sha256RsaOaep + SignEncrypt
 #[tokio::test]
-#[ignore]
 async fn connect_aes128sha256rsaoaep_sign_encrypt() {
     let port = next_port();
     connect_with(
@@ -350,7 +340,6 @@ async fn connect_aes128sha256rsaoaep_sign_encrypt() {
 
 /// Connect to the server using Aes128Sha256RsaOaep + Sign
 #[tokio::test]
-#[ignore]
 async fn connect_aes256sha256rsapss_sign() {
     let port = next_port();
     connect_with(
@@ -363,7 +352,6 @@ async fn connect_aes256sha256rsapss_sign() {
 
 /// Connect to the server using Aes128Sha256RsaOaep + SignEncrypt
 #[tokio::test]
-#[ignore]
 async fn connect_aes256sha256rsapss_sign_encrypt() {
     let port = next_port();
     connect_with(
@@ -376,7 +364,6 @@ async fn connect_aes256sha256rsapss_sign_encrypt() {
 
 /// Connect to the server user/pass
 #[tokio::test]
-#[ignore]
 async fn connect_basic128rsa15_with_username_password() {
     // Connect a session using username/password token
     let port = next_port();
@@ -390,7 +377,6 @@ async fn connect_basic128rsa15_with_username_password() {
 
 /// Connect a session using an invalid username/password token and expect it to fail
 #[tokio::test]
-#[ignore]
 async fn connect_basic128rsa15_with_invalid_username_password() {
     let port = next_port();
     connect_with_invalid_token(
@@ -403,7 +389,6 @@ async fn connect_basic128rsa15_with_invalid_username_password() {
 
 /// Connect a session using an X509 key and certificate
 #[tokio::test]
-#[ignore]
 async fn connect_basic128rsa15_with_x509_token() {
     let port = next_port();
     connect_with(
@@ -416,7 +401,6 @@ async fn connect_basic128rsa15_with_x509_token() {
 
 /// Connect to a server, read a variable, write a value to the variable, read the variable to verify it changed
 #[tokio::test]
-#[ignore]
 async fn read_write_read() {
     let port = next_port();
     let client_endpoint = endpoint_basic128rsa15_sign_encrypt(port);
@@ -469,12 +453,12 @@ async fn read_write_read() {
             session.disconnect().await.unwrap();
             handle.await.unwrap();
         },
+        false
     ).await;
 }
 
 /// Connect with the server and attempt to subscribe and monitor 1000 variables
 #[tokio::test]
-#[ignore]
 async fn subscribe_1000() {
     let port = next_port();
     let client_endpoint = endpoint_basic128rsa15_sign_encrypt(port);
@@ -553,11 +537,11 @@ async fn subscribe_1000() {
             session.disconnect().await.unwrap();
             handle.await.unwrap();
         },
+        false
     ).await;
 }
 
 #[tokio::test]
-#[ignore]
 async fn method_call() {
     // Call a method on the server, one exercising some parameters in and out
     let port = next_port();
@@ -597,5 +581,6 @@ async fn method_call() {
             session.disconnect().await.unwrap();
             handle.await.unwrap();
         },
+        false
     ).await;
 }

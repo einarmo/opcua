@@ -159,9 +159,6 @@ pub struct Performance {
     /// Ignore clock skew allows the client to make a successful connection to the server, even
     /// when the client and server clocks are out of sync.
     pub(crate) ignore_clock_skew: bool,
-    /// Use a single-threaded executor. The default executor uses a thread pool with a worker
-    /// thread for each CPU core available on the system.
-    pub(crate) single_threaded_executor: bool,
     /// Maximum number of monitored items per request when recreating subscriptions on session recreation.
     pub(crate) recreate_monitored_items_chunk: usize,
     /// Maximum number of inflight messages.
@@ -374,7 +371,6 @@ impl ClientConfig {
             },
             performance: Performance {
                 ignore_clock_skew: false,
-                single_threaded_executor: true,
                 recreate_monitored_items_chunk: 1000,
                 max_inflight_messages: 20,
             },

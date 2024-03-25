@@ -1,5 +1,5 @@
 use std::future::Future;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 use std::{
     path::PathBuf,
     sync::{
@@ -334,19 +334,25 @@ impl callbacks::Method for HelloX {
     }
 }
 
-fn new_client(_port: u16) -> Client {
-    ClientBuilder::new()
+fn new_client(_port: u16, quick_timeout: bool) -> Client {
+    let builder = ClientBuilder::new()
         .application_name("integration_client")
         .application_uri("x")
         .pki_dir("./pki-client")
         .create_sample_keypair(true)
         .trust_server_certs(true)
-        .client()
-        .unwrap()
+        .session_retry_initial(Duration::from_millis(200));
+
+    let builder = if quick_timeout {
+        builder.session_retry_limit(1)
+    } else {
+        builder
+    };
+    builder.client().unwrap()
 }
 
-pub fn new_client_server(port: u16) -> (Client, Server) {
-    (new_client(port), new_server(port))
+pub fn new_client_server(port: u16, quick_timeout: bool) -> (Client, Server) {
+    (new_client(port, quick_timeout), new_server(port))
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -477,7 +483,10 @@ pub async fn perform_test<CT, ST, CFut, SFut>(
                         .join("\n  ")
                 });
 
-                panic!("Timeout");
+                server_success = false;
+                client_success = false;
+
+                break;
             }
             response = rx_client_response.recv() => {
                 match response {
@@ -525,8 +534,12 @@ pub async fn perform_test<CT, ST, CFut, SFut>(
     info!("Joining on threads....");
 
     // Threads should exit by now
-    let _ = client_fut.await.unwrap();
-    let _ = server_fut.await.unwrap();
+    if !client_fut.is_finished() {
+        let _ = client_fut.await.unwrap();
+    }
+    if !server_fut.is_finished() {
+        let _ = server_fut.await.unwrap();
+    }
 
     assert!(client_success);
     assert!(server_success);
@@ -585,38 +598,6 @@ pub async fn regular_client_test(
     handle.await.unwrap();
 }
 
-pub async fn invalid_session_client_test(
-    client_endpoint: impl Into<EndpointDescription>,
-    identity_token: IdentityToken,
-    _rx_client_command: mpsc::UnboundedReceiver<ClientCommand>,
-    mut client: Client,
-) {
-    // Connect to the server
-    let client_endpoint = client_endpoint.into();
-    info!(
-        "Client will try to connect to endpoint {:?}",
-        client_endpoint
-    );
-    let (session, event_loop) = client
-        .new_session_from_endpoint(client_endpoint, identity_token)
-        .await
-        .unwrap();
-
-    let handle = event_loop.spawn();
-    session.wait_for_connection().await;
-
-    // Read the variable and expect that to fail
-    let read_nodes = vec![ReadValueId::from(v1_node_id())];
-    let status_code = session
-        .read(&read_nodes, TimestampsToReturn::Both, 1.0)
-        .await
-        .unwrap_err();
-    assert_eq!(status_code, StatusCode::BadSessionNotActivated);
-
-    session.disconnect().await.unwrap();
-    handle.await.unwrap();
-}
-
 pub async fn invalid_token_test(
     client_endpoint: impl Into<EndpointDescription>,
     identity_token: IdentityToken,
@@ -629,10 +610,12 @@ pub async fn invalid_token_test(
         "Client will try to connect to endpoint {:?}",
         client_endpoint
     );
-    let session = client
+    let (_, event_loop) = client
         .new_session_from_endpoint(client_endpoint, identity_token)
-        .await;
-    assert!(session.is_err());
+        .await
+        .unwrap();
+    let res = event_loop.spawn().await.unwrap();
+    assert_eq!(res, StatusCode::BadUserAccessDenied);
 }
 
 pub async fn regular_server_test(
@@ -675,12 +658,12 @@ pub async fn regular_server_test(
     }
 }
 
-pub async fn connect_with_client_test<CT, Fut>(port: u16, client_test: CT)
+pub async fn connect_with_client_test<CT, Fut>(port: u16, client_test: CT, quick_timeout: bool)
 where
     CT: FnOnce(mpsc::UnboundedReceiver<ClientCommand>, Client) -> Fut + Send + 'static,
     Fut: Future<Output = ()> + Send + 'static,
 {
-    let (client, server) = new_client_server(port);
+    let (client, server) = new_client_server(port, quick_timeout);
     perform_test(client, server, Some(client_test), regular_server_test).await;
 }
 
@@ -696,6 +679,7 @@ pub async fn connect_with_get_endpoints(port: u16) {
             )
             .await;
         },
+        false
     ).await;
 }
 
@@ -709,6 +693,7 @@ pub async fn connect_with_invalid_token(
         move |rx_client_command: mpsc::UnboundedReceiver<ClientCommand>, client: Client| async move {
             invalid_token_test(client_endpoint, identity_token, rx_client_command, client).await;
         },
+        true
     )
     .await;
 }
@@ -723,5 +708,6 @@ pub async fn connect_with(
         move |rx_client_command: mpsc::UnboundedReceiver<ClientCommand>, client: Client| async move {
             regular_client_test(client_endpoint, identity_token, rx_client_command, client).await;
         },
+        false
     ).await;
 }

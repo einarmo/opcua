@@ -19,6 +19,7 @@ async fn main() {
         .session_retry_limit(4)
         .client()
         .unwrap();
+
     let endpoints = client
         .get_server_endpoints_from_url("opc.tcp://localhost:62546")
         .await
