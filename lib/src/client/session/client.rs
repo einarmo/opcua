@@ -92,6 +92,47 @@ impl Client {
         }
     }
 
+    /// Connects to a named endpoint that you have defined in the `ClientConfig`
+    /// and creates a [`Session`] for that endpoint. Note that `GetEndpoints` is first
+    /// called on the server and it is expected to support the endpoint you intend to connect to.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok((Arc<AsyncSession>, SessionEventLoop))` - Session and event loop.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    ///
+    pub async fn connect_to_endpoint_id(
+        &mut self,
+        endpoint_id: Option<&str>,
+    ) -> Result<(Arc<Session>, SessionEventLoop), StatusCode> {
+        // Ask the server associated with the default endpoint for its list of endpoints
+        let endpoints = match self.get_server_endpoints().await {
+            Err(status_code) => {
+                error!("Cannot get endpoints for server, error - {}", status_code);
+                return Err(status_code);
+            }
+            Ok(endpoints) => endpoints,
+        };
+
+        info!("Server has these endpoints:");
+        endpoints.iter().for_each(|e| {
+            info!(
+                "  {} - {:?} / {:?}",
+                e.endpoint_url,
+                SecurityPolicy::from_str(e.security_policy_uri.as_ref()).unwrap(),
+                e.security_mode
+            )
+        });
+
+        // Create a session to an endpoint. If an endpoint id is specified use that
+        if let Some(endpoint_id) = endpoint_id {
+            self.new_session_from_id(endpoint_id, &endpoints)
+        } else {
+            self.new_session(&endpoints)
+        }
+        .map_err(|_| StatusCode::BadConfigurationError)
+    }
+
     /// Connects to an ad-hoc server endpoint description.
     ///
     /// This function returns both a reference to the session, and a `SessionEventLoop`. You must run and
