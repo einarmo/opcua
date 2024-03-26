@@ -1,6 +1,6 @@
 # Async Client
 
-The client has been rewritten from a synchronous API to an asynchronous API. This came in the form of a gigantic patch. This document lays out the why and what of that change.
+The client has been rewritten from a synchronous API to an asynchronous API. This came in the form of a rather large patch. This document lays out the why and what of that change.
 
 ## Why
 
@@ -12,12 +12,12 @@ In particular, the library did (and still does, to a slightly lesser degree) con
 
 In order to produce a deadlock, you _must_ hold two forms of synchronization mechanisms at the same time. The simplest way to make deadlock-free code is to forbid this, which is often easier said than done. The code as is did avoid deadlocks for the most part, but _await points are synchronization_. By allowing locks to be held accross await points, channel uses, or thread joins, there is an implicit risk of deadlocks.
 
-This rewrite does still use locks, it is largely unavoidable. Some more could have been removed, but that would have required rewriting the server as well. It does, however, attempt to replace locks in a few ways.
+This rewrite does still use locks, it is largely unavoidable. More locks could have been removed, but that would have required rewriting the server as well. It does, however, attempt to replace locks in a few ways.
 
  - Assign clearer ownership of components. For example, the transport layer now owns the message buffer.
  - Use more specialized synchronization mechanisms. The `Handle` implementation now uses atomics, as does the `DepthGauge`. A few types have been swapped for `ArcSwap`, which while still a form of locking, is less intrusive than an `RwLock` or `Mutex` for things that are written rarely, read from often, and never mutated except for being replaced, like channel and session IDs.
 
-There is still a lot more to do here, but this is a decent start.
+There is still a lot more to do here, but this is hopefully a decent start.
 
 ### Weight
 
@@ -27,15 +27,15 @@ While less obviously a goal, this rewrite had a few major requirements:
  - The client should never spawn a thread, unless explicity asked to by the user.
  - The user must be able to apply backpressure to the client.
 
-Async rust is uniquely well suited to these requirements. Implementing this allows us to create an _incredibly_ light weight client, but this necessitated further changes to the API.
+Async rust is uniquely well suited to these requirements. Implementing this allows us to create a very light weight client, but this necessitated further changes to the API.
 
-Everything is now driven by a set of event loops wrapped in a "poll" API. This means that it is fully possible to run the client entirely cooperatively on a single OS thread, without a single tokio task. Alternatively, users can quite easily just spawn the event loop on a tokio task. This design is inspired by the wonderful rust MQTT library rumqttc.
+Everything is now driven by a set of event loops wrapped in a "poll" API. This means that it is fully possible to run the client entirely cooperatively on a single OS thread, without any tokio tasks. Alternatively, users can quite easily just spawn the event loop on a tokio task. This design is inspired by the wonderful rust MQTT library rumqttc.
 
 This does have a few downsides.
 
  - There is no single method to connect to the server, though one could be written. You have to use `wait_for_connection` after spawning the event loop. Having the event loop own the connection was essential in order to avoid excessive locking and complexity in the client.
- - There is no way to have a session object with just a secure channel. This simplifies the session a bit (it now has just two real states, connected and not connected), but it makes the code for making calls to a server without a session a bit hairy, see `client.rs`.
- - The transport event loop shares an OS thread with everything else the session does. If this ever becomes a problem it is very possible to make the session optionally run the transport in an internal task.
+ - There is no way to have a session object with just a secure channel and no active session. This simplifies the session a bit (it now has just two real states, connected and not connected), but it makes the code for making calls to a server without a session a bit hairy, see `client.rs`.
+ - The transport event loop shares a single thread with everything else the session does. If this ever becomes a problem it is very possible to make the session optionally run the transport in an internal task.
 
 ## What
 
@@ -75,7 +75,5 @@ This is a large patch, hopefully without too many bugs, though it is hard to say
  - Look into using pure rust crypto libraries as an alternative. Rust crypto has come a long way, and avoiding external libraries can improve the portability of the code.
  - Make the transport layer generic to allow for other transports.
  - Expand on the session with more utility methods for making more sophisticated requests to OPC-UA servers. Continuation point handling, server limits, events, etc.
-
-
-
+ - Fix all the warnings on recent rust versions. There are a few deprecated methods, and a few warnings related to glob imports mentioned above.
 

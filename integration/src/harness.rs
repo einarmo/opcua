@@ -534,12 +534,8 @@ pub async fn perform_test<CT, ST, CFut, SFut>(
     info!("Joining on threads....");
 
     // Threads should exit by now
-    if !client_fut.is_finished() {
-        let _ = client_fut.await.unwrap();
-    }
-    if !server_fut.is_finished() {
-        let _ = server_fut.await.unwrap();
-    }
+    let _ = client_fut.await.unwrap();
+    let _ = server_fut.await.unwrap();
 
     assert!(client_success);
     assert!(server_success);

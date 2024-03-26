@@ -10,7 +10,6 @@ resolver = "2"
 members = [
     "lib",
     "integration",
-    "samples/async-client",
     "samples/demo-server",
     "samples/simple-client",
     "samples/mqtt-client",

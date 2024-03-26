@@ -25,6 +25,7 @@ use super::{
 /// The client can use this list to monitor events such as disconnects,
 /// publish failures, etc.
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum SessionPollResult {
     /// A message was sent to or received from the server.
     Transport(TransportPollResult),
