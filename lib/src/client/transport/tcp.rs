@@ -16,13 +16,20 @@ use tokio::io::{AsyncWriteExt, ReadHalf, WriteHalf};
 use tokio::net::TcpStream;
 use tokio_util::codec::FramedRead;
 
+#[derive(Debug, Clone, Copy)]
+enum TransportCloseState {
+    Open,
+    Closing(StatusCode),
+    Closed(StatusCode),
+}
+
 pub(crate) struct TcpTransport {
     state: TransportState,
     read: FramedRead<ReadHalf<TcpStream>, TcpCodec>,
     write: WriteHalf<TcpStream>,
     send_buffer: SendBuffer,
     should_close: bool,
-    closed: Option<StatusCode>,
+    closed: TransportCloseState,
 }
 
 #[derive(Debug, Clone)]
@@ -66,7 +73,7 @@ impl TcpTransport {
                 config.max_chunk_count,
             ),
             should_close: false,
-            closed: None,
+            closed: TransportCloseState::Open,
         })
     }
 
@@ -236,14 +243,34 @@ impl TcpTransport {
     }
 
     pub async fn poll(&mut self) -> TransportPollResult {
-        if let Some(code) = self.closed {
-            return TransportPollResult::Closed(code);
+        // We want poll to be cancel safe, this means that if we stop polling
+        // a future returned from poll, we do not lose data or get in an
+        // inconsistent state.
+        // `poll_inner` is cancel safe, because all the async methods it
+        // calls are cancel safe, and it only ever finishes one future.
+        // The only thing that isn't cancel safe is when we close the channel.
+        // `close` can be called multiple times, and will continue where it left off,
+        // so all we have to do is keep calling close until we manage to complete it,
+        // and _then_ we can set the state to `closed`.
+        match self.closed {
+            TransportCloseState::Open => {}
+            TransportCloseState::Closing(c) => {
+                // Close is kind-of cancel safe, in that
+                // calling it multiple times is safe.
+                let r = self.state.close(c).await;
+                self.closed = TransportCloseState::Closed(c);
+                return TransportPollResult::Closed(r);
+            }
+            TransportCloseState::Closed(c) => {
+                return TransportPollResult::Closed(c);
+            }
         }
 
         let r = self.poll_inner().await;
         if let TransportPollResult::Closed(status) = &r {
-            self.closed = Some(*status);
-            self.state.close(*status).await;
+            self.closed = TransportCloseState::Closing(*status);
+            let r = self.state.close(*status).await;
+            self.closed = TransportCloseState::Closed(r);
         }
         r
     }

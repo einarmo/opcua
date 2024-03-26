@@ -65,6 +65,17 @@ A few changes were made outside of the client, though they are very limited in s
  - The samples needed to be rewritten as well.
  - A pair of default implementations was added for `ReadValueId` and `QualifiedName`, just for convenience. `QualifiedName` has `null` which is a very reasonable default.
 
+### Remaining gaps
+
+There are a few things that were deemed out of scope for the initial implementation. Implementing these need not be complicated, but they are also not strictly necessary for a fully featured async client.
+
+ - Wrapper methods for creating session and connecting. This could be useful, and is likely fairly easy to do. We would create a session, temporarily poll the event loop, and connect to the client. These methods would have to return an `impl Stream`, or a `JoinHandle`, since we would need to start the event loop to connect.
+ - A wrapper around the event loop to provide a better interface for monitoring the connection.
+ - Better control over subscription transfers. Currently it is a bit magical. Calling `transfer_subscriptions` is fine, but actually recreating them is a bit agressive. Especially if the user has tens or hundreds of thousands of monitored items. This change adds chunking to that process, but this is a bit of a stopgap measure.
+ - Utility methods for retries on service calls.
+ - Mechanisms for handling session loss without an actual lost TCP connection. This is partially covered in the old sync client, so there is a clear gap here. It requires some careful investigation however, to determine the best way to deal with this.
+ - Discovery endpoints on the session. They are currently only available on the client itself, which spins up a new connection. Technically they are available on sessions as well.
+
 ## Future projects
 
 This is a large patch, hopefully without too many bugs, though it is hard to say for sure. While it is huge, it is constrained to the client for the most part. In the process of writing this, a few issues came up that make for nice future projects:

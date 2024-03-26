@@ -142,8 +142,6 @@ impl SendBuffer {
 
         self.buffer.consume(written);
 
-        println!("Write {} bytes {} {}", written, end, self.buffer.position());
-
         if end == self.buffer.position() as usize {
             self.state = SendBufferState::Writing;
             self.buffer.set_position(0);

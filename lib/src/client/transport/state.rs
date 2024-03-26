@@ -6,7 +6,7 @@ use std::{
 use tokio::sync::mpsc::error::SendTimeoutError;
 
 use crate::{
-    client::transport::OutgoingMessage,
+    client::{session::process_unexpected_response, transport::OutgoingMessage},
     core::{
         comms::secure_channel::SecureChannel, handle::AtomicHandle,
         supported_message::SupportedMessage,
@@ -210,22 +210,6 @@ impl SecureChannelState {
             return_diagnostics: DiagnosticBits::empty(),
             timeout_hint: timeout.as_millis().min(u32::MAX as u128) as u32,
             ..Default::default()
-        }
-    }
-}
-
-pub(crate) fn process_unexpected_response(response: SupportedMessage) -> StatusCode {
-    match response {
-        SupportedMessage::ServiceFault(service_fault) => {
-            error!(
-                "Received a service fault of {} for the request",
-                service_fault.response_header.service_result
-            );
-            service_fault.response_header.service_result
-        }
-        _ => {
-            error!("Received an unexpected response to the request");
-            StatusCode::BadUnknownResponse
         }
     }
 }

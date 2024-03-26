@@ -482,9 +482,8 @@ impl Session {
                 timestamps_to_return,
                 items_to_create: Some(final_items_to_create.clone()),
             };
-            println!("Send request");
             let response = self.send(request).await?;
-            println!("Request sent");
+
             if let SupportedMessage::CreateMonitoredItemsResponse(response) = response {
                 process_service_result(&response.response_header)?;
                 if let Some(ref results) = response.results {
