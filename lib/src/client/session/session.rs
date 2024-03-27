@@ -150,19 +150,18 @@ impl Session {
     async fn wait_for_state(&self, connected: bool) -> bool {
         let mut rx = self.state_watch_rx.clone();
 
-        loop {
-            if !rx.changed().await.is_ok() {
-                return false;
-            };
-            {
-                let state = rx.borrow();
-                if connected && matches!(*state, SessionState::Connected)
-                    || !connected && matches!(*state, SessionState::Disconnected)
-                {
-                    return true;
-                }
-            }
-        }
+        let res = match rx
+            .wait_for(|s| {
+                connected && matches!(*s, SessionState::Connected)
+                    || !connected && matches!(*s, SessionState::Disconnected)
+            })
+            .await
+        {
+            Ok(_) => true,
+            Err(_) => false,
+        };
+
+        res
     }
 
     /// The internal ID of the session, used to keep track of multiple sessions in the same program.
