@@ -163,7 +163,6 @@ fn server_abort() {
 /// Start a server, send a HELLO message but then wait for the server
 /// to timeout and drop the connection.
 #[tokio::test]
-#[ignore]
 async fn hello_timeout() {
     use tokio::io::AsyncReadExt;
     use tokio::net::TcpStream;
@@ -178,21 +177,33 @@ async fn hello_timeout() {
     let client_test = move |_rx_client_command: mpsc::UnboundedReceiver<ClientCommand>,
                             _client: Client| async move {
         // Client will open a socket, and sit there waiting for the socket to close, which should happen in under the timeout_wait_duration
-        let timeout_wait_duration = std::time::Duration::from_secs(
-            opcua::server::constants::DEFAULT_HELLO_TIMEOUT_SECONDS as u64 + 3,
-        );
+        let timeout_wait_duration = std::time::Duration::from_secs(2);
 
         let host = crate::harness::hostname();
         let address = (host.as_ref(), port);
+        let mut c = 0;
+        // Getting a connection can sometimes take a few tries, since the server reports it is
+        // ready before it actually is in some cases.
+        let mut stream = loop {
+            let stream = TcpStream::connect(address).await;
+            if let Ok(stream) = stream {
+                break stream;
+            }
+            c += 1;
+            if c >= 10 {
+                panic!("Failed to connect to server");
+            }
+
+            tokio::time::sleep(std::time::Duration::from_millis(200)).await;
+        };
         debug!("Client is going to connect to port {:?}", address);
 
-        let mut stream = TcpStream::connect(address).await.unwrap();
         let mut buf = [0u8];
 
         // Spin around for the timeout to finish and then try using the socket to see if it is still open.
         let start = std::time::Instant::now();
         loop {
-            thread::sleep(std::time::Duration::from_millis(100));
+            tokio::time::sleep(std::time::Duration::from_millis(100)).await;
             let now = std::time::Instant::now();
             if now - start > timeout_wait_duration {
                 debug!("Timeout wait duration has passed, so trying to read from the socket");
