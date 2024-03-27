@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 use std::sync::Arc;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
+use futures::future::Either;
 use parking_lot::RwLock;
 
 use crate::core::comms::message_chunk::MessageIsFinalType;
@@ -80,12 +81,15 @@ impl TransportState {
         loop {
             // Check for any messages that have timed out, and get the time until the next message
             // times out
-            let until_timeout = self.check_for_timeout();
+            let timeout_fut = match self.next_timeout() {
+                Some(t) => Either::Left(tokio::time::sleep_until(t.into())),
+                None => Either::Right(futures::future::pending::<()>()),
+            };
 
             // Only listen for outgoing messages if the number of inflight messages is below the limit.
             if self.max_inflight > self.message_states.len() {
                 tokio::select! {
-                    _ = tokio::time::sleep(until_timeout) => {
+                    _ = timeout_fut => {
                         continue;
                     }
                     outgoing = self.outgoing_recv.recv() => {
@@ -104,7 +108,7 @@ impl TransportState {
                     }
                 }
             } else {
-                tokio::time::sleep(until_timeout).await;
+                timeout_fut.await;
             }
         }
     }
@@ -137,15 +141,19 @@ impl TransportState {
         }
     }
 
-    fn check_for_timeout(&mut self) -> Duration {
+    fn next_timeout(&mut self) -> Option<Instant> {
         let now = Instant::now();
-        let mut next_timeout = Duration::from_secs(u64::MAX);
+        let mut next_timeout = None;
         let mut timed_out = Vec::new();
         for (id, state) in &self.message_states {
             if state.deadline <= now {
                 timed_out.push(*id);
-            } else if next_timeout > state.deadline - now {
-                next_timeout = state.deadline - now;
+            } else {
+                match &next_timeout {
+                    Some(t) if *t > state.deadline => next_timeout = Some(state.deadline),
+                    None => next_timeout = Some(state.deadline),
+                    _ => {}
+                }
             }
         }
         for id in timed_out {

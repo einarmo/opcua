@@ -119,7 +119,7 @@ pub fn new_server(port: u16) -> Server {
         .application_uri("urn:integration_server")
         .discovery_urls(vec![endpoint_url(port, endpoint_path).to_string()])
         .create_sample_keypair(true)
-        .pki_dir("./pki-server")
+        .pki_dir(format!("./pki-server/{}", port))
         .discovery_server_url(None)
         .host_and_port(hostname(), port)
         .user_token(sample_user_id, server_user_token())
@@ -334,11 +334,11 @@ impl callbacks::Method for HelloX {
     }
 }
 
-fn new_client(_port: u16, quick_timeout: bool) -> Client {
+fn new_client(port: u16, quick_timeout: bool) -> Client {
     let builder = ClientBuilder::new()
         .application_name("integration_client")
         .application_uri("x")
-        .pki_dir("./pki-client")
+        .pki_dir(format!("./pki-client/{port}"))
         .create_sample_keypair(true)
         .trust_server_certs(true)
         .session_retry_initial(Duration::from_millis(200));

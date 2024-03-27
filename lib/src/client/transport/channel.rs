@@ -13,7 +13,7 @@ use crate::{
         SecurityTokenRequestType, StatusCode,
     },
 };
-use arc_swap::ArcSwap;
+use arc_swap::{ArcSwap, ArcSwapOption};
 
 use super::state::{Request, RequestSend, SecureChannelState};
 
@@ -35,7 +35,7 @@ pub struct AsyncSecureChannel {
     state: SecureChannelState,
     issue_channel_lock: tokio::sync::Mutex<()>,
 
-    request_send: RwLock<Option<RequestSend>>,
+    request_send: ArcSwapOption<RequestSend>,
 }
 
 pub struct SecureChannelEventLoop {
@@ -81,12 +81,9 @@ impl AsyncSecureChannel {
         request: impl Into<SupportedMessage>,
         timeout: Duration,
     ) -> Result<SupportedMessage, StatusCode> {
-        let send = {
-            let sender = trace_read_lock!(self.request_send);
-            let Some(send) = (*sender).clone() else {
-                return Err(StatusCode::BadNotConnected);
-            };
-            send
+        let sender = self.request_send.load().as_deref().cloned();
+        let Some(send) = sender else {
+            return Err(StatusCode::BadNotConnected);
         };
 
         let should_renew_security_token = {
@@ -124,10 +121,7 @@ impl AsyncSecureChannel {
     }
 
     pub async fn connect(&self) -> Result<SecureChannelEventLoop, StatusCode> {
-        {
-            let mut request_send = trace_write_lock!(self.request_send);
-            *request_send = None;
-        }
+        self.request_send.store(None);
         loop {
             let mut backoff = self.session_retry_policy.new_backoff();
             match self.connect_no_retry().await {
@@ -199,11 +193,7 @@ impl AsyncSecureChannel {
             }
         };
 
-        {
-            let mut request_send = trace_write_lock!(self.request_send);
-            *request_send = Some(send);
-        }
-
+        self.request_send.store(Some(Arc::new(send)));
         self.state.end_issue_or_renew_secure_channel(resp)?;
 
         Ok(SecureChannelEventLoop { transport })
@@ -261,15 +251,12 @@ impl AsyncSecureChannel {
 
     /// Close the secure channel, optionally wait for the channel to close.
     pub async fn close_channel(&self) {
-        let request = {
-            let msg = CloseSecureChannelRequest {
-                request_header: self.state.make_request_header(Duration::from_secs(60)),
-            };
-            let sender = trace_read_lock!(self.request_send);
-            (*sender)
-                .clone()
-                .map(|s| Request::new(msg, s, Duration::from_secs(60)))
+        let msg = CloseSecureChannelRequest {
+            request_header: self.state.make_request_header(Duration::from_secs(60)),
         };
+
+        let sender = self.request_send.load().as_deref().cloned();
+        let request = sender.map(|s| Request::new(msg, s, Duration::from_secs(60)));
 
         // Instruct the channel to not attempt to reopen.
         if let Some(request) = request {
