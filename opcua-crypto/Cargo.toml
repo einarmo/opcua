@@ -15,21 +15,24 @@ edition = "2021"
 [lib]
 name = "opcua_crypto"
 
-[features]
-# OpenSSL can be compiled and statically linked to with this feature
-vendored-openssl = ["openssl/vendored"]
-
 [dependencies]
 log = { workspace = true }
 gethostname = { workspace = true }
-openssl = { workspace = true }
-openssl-sys = { workspace = true }
 chrono = { workspace = true }
 foreign-types = { workspace = true }
 serde = { workspace = true }
 
 opcua-types = { path = "../opcua-types" }
 
+hmac = "0.12.1"
+sha2 = {version = "0.10.8", features = ["oid"]}
+sha1 = {version = "0.10.6", features = ["oid"]}
+cbc  = "0.1.2"
+aes  = "0.8.4"
+rsa = {version = "0.9.6", features = ["sha2","sha1","pem"]}
+rand = "0.8.5"
+x509-cert = {version="0.2.5",features=["builder","hazmat"]}
+const-oid = {version="0.9.3",features=["db"]}
 
 [dev-dependencies]
 tempdir = "0.3"
