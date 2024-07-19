@@ -453,6 +453,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "convert_case"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ec182b0ca2f35d8fc196cf3404988fd8b8c739a4d270ff118a398feb0cbec1ca"
+dependencies = [
+ "unicode-segmentation",
+]
+
+[[package]]
 name = "cookie"
 version = "0.11.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -928,6 +937,15 @@ dependencies = [
  "pin-project-lite",
  "pin-utils",
  "slab",
+]
+
+[[package]]
+name = "gen-test"
+version = "0.1.0"
+dependencies = [
+ "bitflags 2.6.0",
+ "opcua",
+ "serde",
 ]
 
 [[package]]
@@ -1638,6 +1656,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "opcua_codegen"
+version = "0.1.0"
+dependencies = [
+ "convert_case",
+ "log 0.4.22",
+ "prettyplease",
+ "proc-macro2 1.0.86",
+ "quote 1.0.36",
+ "roxmltree",
+ "serde",
+ "serde_json",
+ "syn 2.0.72",
+ "thiserror",
+]
+
+[[package]]
 name = "openssl"
 version = "0.10.66"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1833,6 +1867,16 @@ name = "ppv-lite86"
 version = "0.2.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
+
+[[package]]
+name = "prettyplease"
+version = "0.2.20"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5f12335488a2f3b0a83b14edad48dca9879ce89b2edd10e80237e4e852dd645e"
+dependencies = [
+ "proc-macro2 1.0.86",
+ "syn 2.0.72",
+]
 
 [[package]]
 name = "proc-macro2"
@@ -2165,6 +2209,12 @@ dependencies = [
  "untrusted",
  "windows-sys",
 ]
+
+[[package]]
+name = "roxmltree"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6c20b6793b5c2fa6553b250154b78d6d0db37e72700ae35fad9387a46f487c97"
 
 [[package]]
 name = "rumqttc"
@@ -2995,6 +3045,12 @@ checksum = "a56d1686db2308d901306f92a263857ef59ea39678a5458e7cb17f01415101f5"
 dependencies = [
  "tinyvec",
 ]
+
+[[package]]
+name = "unicode-segmentation"
+version = "1.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d4c87d22b6e3f4a18d4d40ef354e97c90fcb14dd91d7dc0aa9d8a1172ebf7202"
 
 [[package]]
 name = "unicode-xid"
