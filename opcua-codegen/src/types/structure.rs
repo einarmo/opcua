@@ -30,3 +30,4 @@ impl StructuredType {
             .filter(|f| !self.hidden_fields.contains(&f.name))
     }
 }
+

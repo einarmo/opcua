@@ -18,5 +18,6 @@ members = [
     "samples/event-client",
     "tools/certificate-creator",
     "samples/async-server",
-    "opcua-codegen"
+    "opcua-codegen",
+    "opcua-xml"
 ]

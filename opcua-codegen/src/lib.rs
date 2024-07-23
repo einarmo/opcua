@@ -1,20 +1,20 @@
 mod error;
 mod types;
 mod utils;
-mod xml;
 
 use error::CodeGenError;
+use opcua_xml::schema::TypeDictionary;
 use serde::{Deserialize, Serialize};
 pub use types::{
     base_ignored_types, base_json_serialized_types, base_native_type_mappings,
-    basic_types_import_map, CodeGenItemConfig, GeneratedItem, ItemDefinition, LoadedTypes,
-    StructureField, StructureFieldType, StructuredType, TypeLoader,
+    basic_types_import_map, BsdTypeLoader, CodeGenItemConfig, GeneratedItem, ItemDefinition,
+    LoadedTypes, StructureField, StructureFieldType, StructuredType,
 };
 use types::{CodeGenerator, LoadedType};
 pub use utils::create_module_file;
 
-pub fn default_type_loader<'a>(data: &'a str) -> Result<TypeLoader<'a>, CodeGenError<'a>> {
-    TypeLoader::new(base_ignored_types(), base_native_type_mappings(), data)
+pub fn default_bsd_type_loader<'a>(data: TypeDictionary) -> Result<BsdTypeLoader, CodeGenError> {
+    BsdTypeLoader::new(base_ignored_types(), base_native_type_mappings(), data)
 }
 
 pub fn default_code_generator(

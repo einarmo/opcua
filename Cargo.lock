@@ -795,11 +795,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "opcua-xml"
+version = "0.1.0"
+dependencies = [
+ "roxmltree",
+ "thiserror",
+]
+
+[[package]]
 name = "opcua_codegen"
 version = "0.1.0"
 dependencies = [
  "convert_case",
  "log 0.4.22",
+ "opcua-xml",
  "prettyplease",
  "proc-macro2",
  "quote",

@@ -1,26 +1,23 @@
 use std::collections::{HashMap, HashSet};
 
-use log::trace;
-use roxmltree::{Document, Node};
+use convert_case::{Case, Casing};
+use opcua_xml::schema::{EnumeratedType, TypeDictionary};
 
-use crate::{
-    error::CodeGenError,
-    xml::{to_snake_case, NodeExt},
-    StructureField, StructureFieldType, StructuredType,
-};
+use crate::{error::CodeGenError, StructureField, StructureFieldType, StructuredType};
 
 use super::{enum_type::EnumReprType, EnumType, EnumValue};
 
-pub struct TypeLoader<'a> {
-    ignored: HashSet<String>,
-    native_type_mappings: HashMap<String, String>,
-    xml: Document<'a>,
+pub fn to_snake_case(v: &str) -> String {
+    v.to_case(Case::Snake)
 }
 
-fn strip_first_segment<'a>(
-    val: &'a str,
-    sep: &'static str,
-) -> Result<&'a str, CodeGenError<'static>> {
+pub struct BsdTypeLoader {
+    ignored: HashSet<String>,
+    native_type_mappings: HashMap<String, String>,
+    xml: TypeDictionary,
+}
+
+fn strip_first_segment<'a>(val: &'a str, sep: &'static str) -> Result<&'a str, CodeGenError> {
     val.split_once(sep)
         .ok_or_else(|| CodeGenError::WrongFormat(format!("A{sep}B.."), val.to_owned()))
         .map(|v| v.1)
@@ -50,16 +47,16 @@ impl LoadedType {
     }
 }
 
-impl<'input> TypeLoader<'input> {
+impl BsdTypeLoader {
     pub fn new(
         ignored: HashSet<String>,
         native_type_mappings: HashMap<String, String>,
-        data: &'input str,
-    ) -> Result<Self, CodeGenError<'input>> {
+        data: TypeDictionary,
+    ) -> Result<Self, CodeGenError> {
         Ok(Self {
             ignored,
             native_type_mappings,
-            xml: Document::parse(data)?,
+            xml: data,
         })
     }
 
@@ -70,24 +67,27 @@ impl<'input> TypeLoader<'input> {
             .unwrap_or_else(|| name.to_owned())
     }
 
-    fn load_structure<'a>(
+    fn load_structure(
         &self,
-        name: &str,
-        node: Node<'a, 'input>,
-    ) -> Result<StructuredType, CodeGenError<'input>> {
+        item: opcua_xml::schema::StructuredType,
+    ) -> Result<StructuredType, CodeGenError> {
         let mut fields_to_add = Vec::new();
         let mut fields_to_hide = Vec::new();
-        for field in node.with_name("Field") {
-            let field_name = to_snake_case(field.try_attribute("Name")?);
-            let typ = strip_first_segment(field.try_attribute("TypeName")?, ":")?;
+
+        for field in item.fields {
+            let field_name = to_snake_case(&field.name);
+            let type_name = field
+                .type_name
+                .ok_or_else(|| CodeGenError::MissingRequiredValue("TypeName"))?;
+            let typ = strip_first_segment(&type_name, ":")?;
             let typ = self.massage_type_name(typ);
 
-            if let Some(length_attr) = field.attribute("LengthField") {
+            if let Some(length_field) = field.length_field {
                 fields_to_add.push(StructureField {
                     name: field_name,
                     typ: StructureFieldType::Array(typ),
                 });
-                fields_to_hide.push(to_snake_case(length_attr));
+                fields_to_hide.push(to_snake_case(&length_field))
             } else {
                 fields_to_add.push(StructureField {
                     name: field_name,
@@ -95,25 +95,22 @@ impl<'input> TypeLoader<'input> {
                 });
             }
         }
+
         Ok(StructuredType {
-            name: name.to_owned(),
+            name: item.description.name,
             fields: fields_to_add,
             hidden_fields: fields_to_hide,
-            documentation: node.child_contents("Documentation").map(|v| v.to_owned()),
-            base_type: node.attribute("BaseType").map(|v| v.to_owned()),
+            documentation: item.description.documentation.and_then(|d| d.contents),
+            base_type: item.base_type,
             is_union: false,
         })
     }
 
-    fn load_enum<'a>(
-        &self,
-        name: &str,
-        node: Node<'a, 'input>,
-    ) -> Result<EnumType, CodeGenError<'input>> {
-        let len = node.try_attribute("LengthInBits")?;
-        let len: u64 = len
-            .parse()
-            .map_err(|e| CodeGenError::ParseInt(len.to_owned(), e))?;
+    fn load_enum(&self, item: EnumeratedType) -> Result<EnumType, CodeGenError> {
+        let Some(len) = item.opaque.length_in_bits else {
+            return Err(CodeGenError::MissingRequiredValue("LengthInBits"));
+        };
+
         let len_bytes = ((len as f64) / 8.0).ceil() as u64;
         let ty = match len_bytes {
             1 => EnumReprType::u8,
@@ -122,73 +119,63 @@ impl<'input> TypeLoader<'input> {
             8 => EnumReprType::i64,
             r => {
                 return Err(CodeGenError::Other(format!(
-                    "Unexpected enum length. {r} bytes for {name}"
+                    "Unexpected enum length. {r} bytes for {}",
+                    item.opaque.description.name
                 )))
             }
         };
         let mut variants = Vec::new();
-        for val in node.with_name("EnumeratedValue") {
-            let value = val.try_attribute("Value")?;
-            let value = value
-                .parse()
-                .map_err(|e| CodeGenError::ParseInt(value.to_owned(), e))?;
+        for val in item.variants {
+            let Some(value) = val.value else {
+                return Err(CodeGenError::MissingRequiredValue("Value"));
+            };
+            let Some(name) = val.name else {
+                return Err(CodeGenError::MissingRequiredValue("Name"));
+            };
 
-            variants.push(EnumValue {
-                name: val.try_attribute("Name")?.to_owned(),
-                value,
-            });
+            variants.push(EnumValue { name, value });
         }
 
         Ok(EnumType {
-            name: name.to_owned(),
+            name: item.opaque.description.name,
             values: variants,
-            documentation: node.child_contents("Documentation").map(|v| v.to_owned()),
-            option: node.attribute("IsOptionSet") == Some("true"),
+            documentation: item
+                .opaque
+                .description
+                .documentation
+                .and_then(|d| d.contents),
+            option: item.is_option_set,
             typ: ty,
             size: len_bytes,
             default_value: None,
         })
     }
 
-    pub fn from_bsd(&self) -> Result<Vec<LoadedType>, CodeGenError<'input>> {
-        let type_dict = self.xml.root().first_child_with_name("TypeDictionary")?;
-
+    pub fn from_bsd(mut self) -> Result<Vec<LoadedType>, CodeGenError> {
         let mut types = Vec::new();
-
-        for element in type_dict.children() {
-            match element.tag_name().name() {
-                "StructuredType" => {
-                    let name = element.try_attribute("Name")?;
-                    if self.ignored.contains(name) {
+        for node in std::mem::take(&mut self.xml.elements) {
+            match node {
+                // Ignore opaque types for now, should these be mapped to structs with raw binary data?
+                opcua_xml::schema::TypeDictionaryItem::Opaque(_) => continue,
+                opcua_xml::schema::TypeDictionaryItem::Enumerated(e) => {
+                    if self.ignored.contains(&e.opaque.description.name) {
                         continue;
                     }
-                    types.push(LoadedType::Struct(self.load_structure(name, element)?));
+                    types.push(LoadedType::Enum(self.load_enum(e)?));
                 }
-                "EnumeratedType" => {
-                    let name = element.try_attribute("Name")?;
-                    if self.ignored.contains(name) {
+                opcua_xml::schema::TypeDictionaryItem::Structured(s) => {
+                    if self.ignored.contains(&s.description.name) {
                         continue;
                     }
-                    types.push(LoadedType::Enum(self.load_enum(name, element)?));
+                    types.push(LoadedType::Struct(self.load_structure(s)?));
                 }
-                r => {
-                    trace!("Unknown field type {r}");
-                    continue;
-                }
-            }
-        }
-
-        for element in type_dict.with_name("StructuredType") {
-            let name = element.tag_name().name();
-            if self.ignored.contains(name) {
-                continue;
             }
         }
 
         Ok(types)
     }
 
-    pub fn from_nodeset(&self) -> Result<Vec<LoadedType>, CodeGenError<'input>> {
+    /* pub fn from_nodeset(&self) -> Result<Vec<LoadedType>, CodeGenError> {
         let mut types = Vec::new();
 
         let mut type_names: HashMap<_, _> = [
@@ -325,5 +312,5 @@ impl<'input> TypeLoader<'input> {
         }
 
         Ok(types)
-    }
+    } */
 }
