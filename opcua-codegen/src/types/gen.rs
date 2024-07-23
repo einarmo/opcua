@@ -106,7 +106,7 @@ impl CodeGenerator {
         }
     }
 
-    pub fn generate_types(mut self) -> Result<Vec<GeneratedItem>, CodeGenError<'static>> {
+    pub fn generate_types(mut self) -> Result<Vec<GeneratedItem>, CodeGenError> {
         let mut generated = Vec::new();
 
         for item in self.input.values() {
@@ -170,7 +170,7 @@ impl CodeGenerator {
             .is_some_and(|v| v.has_default.is_some_and(|v| v))
     }
 
-    fn generate_bitfield(&self, item: EnumType) -> Result<GeneratedItem, CodeGenError<'static>> {
+    fn generate_bitfield(&self, item: EnumType) -> Result<GeneratedItem, CodeGenError> {
         let mut body = quote! {};
         let ty: Type = syn::parse_str(&item.typ.to_string())?;
         if let Some(doc) = item.documentation {
@@ -313,7 +313,7 @@ impl CodeGenerator {
         })
     }
 
-    fn generate_enum(&self, item: EnumType) -> Result<GeneratedItem, CodeGenError<'static>> {
+    fn generate_enum(&self, item: EnumType) -> Result<GeneratedItem, CodeGenError> {
         if item.option {
             return self.generate_bitfield(item);
         }
@@ -465,10 +465,7 @@ impl CodeGenerator {
         })
     }
 
-    fn generate_struct(
-        &self,
-        item: StructuredType,
-    ) -> Result<GeneratedItem, CodeGenError<'static>> {
+    fn generate_struct(&self, item: StructuredType) -> Result<GeneratedItem, CodeGenError> {
         let mut attrs = Vec::new();
         let mut fields = Punctuated::new();
 

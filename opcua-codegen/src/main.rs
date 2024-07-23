@@ -5,8 +5,9 @@ use std::{
 };
 
 use opcua_codegen::{
-    create_module_file, default_code_generator, default_type_loader, CodeGenItemConfig,
+    create_module_file, default_bsd_type_loader, default_code_generator, CodeGenItemConfig,
 };
+use opcua_xml::load_bsd_file;
 
 fn main() {
     let path = "../tools/schema/schemas/1.0.4/Opc.Ua.Types.bsd";
@@ -15,13 +16,15 @@ fn main() {
 
     file.read_to_string(&mut buf).unwrap();
 
+    let data = load_bsd_file(&buf).unwrap();
+
     let config = CodeGenItemConfig {
-        enums_single_file: false,
+        enums_single_file: true,
         structs_single_file: false,
         opcua_crate_path: "opcua".to_owned(),
     };
 
-    let type_gen = default_type_loader(&buf).unwrap();
+    let type_gen = default_bsd_type_loader(data).unwrap();
     let res = type_gen.from_bsd().unwrap();
     //let pretty = serde_json::to_string_pretty(&res).unwrap();
     //println!("{pretty}");

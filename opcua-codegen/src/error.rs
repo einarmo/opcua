@@ -3,13 +3,11 @@ use std::num::ParseIntError;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum CodeGenError<'a> {
+pub enum CodeGenError {
     #[error("Failed to load XML: {0}")]
-    XML(#[from] roxmltree::Error),
-    #[error("Expected child: {0}")]
-    MissingField(&'a str),
-    #[error("Expected attribute: {0}")]
-    MissingAttribute(&'a str),
+    XML(#[from] opcua_xml::XmlError),
+    #[error("Missing required field: {0}")]
+    MissingRequiredValue(&'static str),
     #[error("Wrong format on field. Expected {0}, got {1}")]
     WrongFormat(String, String),
     #[error("Failed to parse {0} as integer.")]
