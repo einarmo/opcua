@@ -41,6 +41,15 @@ pub enum LoadedType {
     Enum(EnumType),
 }
 
+impl LoadedType {
+    pub fn name(&self) -> &str {
+        match self {
+            LoadedType::Struct(s) => &s.name,
+            LoadedType::Enum(s) => &s.name,
+        }
+    }
+}
+
 impl<'input> TypeLoader<'input> {
     pub fn new(
         ignored: HashSet<String>,
@@ -78,7 +87,7 @@ impl<'input> TypeLoader<'input> {
                     name: field_name,
                     typ: StructureFieldType::Array(typ),
                 });
-                fields_to_hide.push(length_attr.to_owned());
+                fields_to_hide.push(to_snake_case(length_attr));
             } else {
                 fields_to_add.push(StructureField {
                     name: field_name,
@@ -137,6 +146,7 @@ impl<'input> TypeLoader<'input> {
             option: node.attribute("IsOptionSet") == Some("true"),
             typ: ty,
             size: len_bytes,
+            default_value: None,
         })
     }
 
@@ -256,6 +266,7 @@ impl<'input> TypeLoader<'input> {
                     typ: EnumReprType::i32,
                     size: 4,
                     option: definition.child_contents("IsOptionSet") == Some("true"),
+                    default_value: None,
                 }));
             } else {
                 let mut fields_to_add = Vec::new();

@@ -14,7 +14,7 @@ use crate::types::{
 };
 
 /// The `ResponseHeader` contains information common to every response from server to client.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct ResponseHeader {
     pub timestamp: UtcTime,
     pub request_handle: IntegerId,

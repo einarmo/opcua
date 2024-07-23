@@ -4,7 +4,9 @@ use std::{
     io::{Read, Write},
 };
 
-use opcua_codegen::{create_module_file, default_code_generator, default_type_loader};
+use opcua_codegen::{
+    create_module_file, default_code_generator, default_type_loader, CodeGenItemConfig,
+};
 
 fn main() {
     let path = "../tools/schema/schemas/1.0.4/Opc.Ua.Types.bsd";
@@ -13,12 +15,18 @@ fn main() {
 
     file.read_to_string(&mut buf).unwrap();
 
+    let config = CodeGenItemConfig {
+        enums_single_file: false,
+        structs_single_file: false,
+        opcua_crate_path: "opcua".to_owned(),
+    };
+
     let type_gen = default_type_loader(&buf).unwrap();
     let res = type_gen.from_bsd().unwrap();
     //let pretty = serde_json::to_string_pretty(&res).unwrap();
     //println!("{pretty}");
 
-    let generator = default_code_generator(res, "opcua::types");
+    let generator = default_code_generator(res, config);
     let generated = generator.generate_types().unwrap();
 
     std::fs::remove_dir_all("../samples/gen-test/src/generated").unwrap();
