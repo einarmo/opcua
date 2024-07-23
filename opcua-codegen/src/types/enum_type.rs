@@ -35,4 +35,5 @@ pub struct EnumType {
     pub typ: EnumReprType,
     pub size: u64,
     pub option: bool,
+    pub default_value: Option<String>,
 }

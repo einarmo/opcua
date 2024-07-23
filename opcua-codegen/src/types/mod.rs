@@ -7,6 +7,6 @@ mod structure;
 
 pub use base_constants::*;
 pub use enum_type::{EnumType, EnumValue};
-pub use gen::{CodeGenerator, GeneratedItem, ItemDefinition};
+pub use gen::{CodeGenItemConfig, CodeGenerator, GeneratedItem, ItemDefinition};
 pub use loader::{LoadedType, LoadedTypes, TypeLoader};
 pub use structure::{StructureField, StructureFieldType, StructuredType};

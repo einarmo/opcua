@@ -469,20 +469,21 @@ impl ServiceCounterDataType {
 
 // Serialize / Deserialize for DataSetFieldFlags
 
-struct Int16Visitor;
-impl<'de> serde::de::Visitor<'de> for Int16Visitor {
-    type Value = i16;
-
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "an int16")
-    }
-}
-
 impl<'de> Deserialize<'de> for DataSetFieldFlags {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
+        struct Int16Visitor;
+
+        impl<'de> serde::de::Visitor<'de> for Int16Visitor {
+            type Value = i16;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                write!(formatter, "an int16")
+            }
+        }
+
         deserializer
             .deserialize_i16(Int16Visitor)
             .map(DataSetFieldFlags::from_bits_truncate)

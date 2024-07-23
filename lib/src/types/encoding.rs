@@ -202,6 +202,57 @@ where
     })
 }
 
+impl<T> BinaryEncoder<Option<Vec<T>>> for Option<Vec<T>>
+where
+    T: BinaryEncoder<T>,
+{
+    fn byte_len(&self) -> usize {
+        let mut size = 4;
+        if let Some(ref values) = self {
+            size += values.iter().map(|v| v.byte_len()).sum::<usize>();
+        }
+        size
+    }
+
+    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+        let mut size = 0;
+        if let Some(ref values) = self {
+            size += write_i32(stream, values.len() as i32)?;
+            for value in values.iter() {
+                size += value.encode(stream)?;
+            }
+        } else {
+            size += write_i32(stream, -1)?;
+        }
+        Ok(size)
+    }
+
+    fn decode<S: Read>(
+        stream: &mut S,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Option<Vec<T>>> {
+        let len = read_i32(stream)?;
+        if len == -1 {
+            Ok(None)
+        } else if len < -1 {
+            error!("Array length is negative value and invalid");
+            Err(StatusCode::BadDecodingError)
+        } else if len as usize > decoding_options.max_array_length {
+            error!(
+                "Array length {} exceeds decoding limit {}",
+                len, decoding_options.max_array_length
+            );
+            Err(StatusCode::BadDecodingError)
+        } else {
+            let mut values: Vec<T> = Vec::with_capacity(len as usize);
+            for _ in 0..len {
+                values.push(T::decode(stream, decoding_options)?);
+            }
+            Ok(Some(values))
+        }
+    }
+}
+
 /// Calculates the length in bytes of an array of encoded type
 pub fn byte_len_array<T: BinaryEncoder<T>>(values: &Option<Vec<T>>) -> usize {
     let mut size = 4;

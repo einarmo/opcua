@@ -1,18 +1,5 @@
 use std::collections::{HashMap, HashSet};
 
-pub fn make_import_lookup_map(
-    inverted: HashMap<String, Vec<String>>,
-    path_root: &str,
-) -> HashMap<String, String> {
-    let mut res = HashMap::new();
-    for (key, val) in inverted {
-        for v in val {
-            res.insert(v, format!("{}::{}", path_root, key));
-        }
-    }
-    res
-}
-
 pub fn base_ignored_types() -> HashSet<String> {
     [
         "ExtensionObject",
@@ -51,62 +38,67 @@ pub fn base_ignored_types() -> HashSet<String> {
     .collect()
 }
 
-pub fn basic_types_import_map() -> HashMap<String, Vec<String>> {
+#[derive(Debug)]
+pub struct ExternalType {
+    pub path: String,
+    pub has_default: Option<bool>,
+}
+
+impl ExternalType {
+    pub fn new(path: &str, has_default: bool) -> Self {
+        Self {
+            path: path.to_owned(),
+            has_default: Some(has_default),
+        }
+    }
+}
+
+pub fn basic_types_import_map(root: &str) -> HashMap<String, ExternalType> {
     [
-        ("string", vec!["UAString", "XmlElement"]),
-        ("byte_string", vec!["ByteString"]),
-        ("variant", vec!["Variant"]),
-        ("guid", vec!["Guid"]),
-        ("localized_text", vec!["LocalizedText"]),
-        ("qualified_name", vec!["QualifiedName"]),
-        ("diagnostic_info", vec!["DiagnosticInfo"]),
-        ("extension_object", vec!["ExtensionObject"]),
-        ("data_types", vec!["Duration", "UtcTime"]),
-        ("request_header", vec!["RequestHeader"]),
-        ("response_header", vec!["ResponseHeader"]),
+        ("UAString", ExternalType::new("types::string", true)),
+        ("ByteString", ExternalType::new("types::byte_string", true)),
+        ("XmlElement", ExternalType::new("types::string", true)),
+        ("Variant", ExternalType::new("types::variant", true)),
+        ("Guid", ExternalType::new("types::guid", true)),
         (
-            "service_types::enums",
-            vec![
-                "MessageSecurityMode",
-                "MonitoringMode",
-                "TimestampsToReturn",
-                "FilterOperator",
-                "BrowseDirection",
-                "NodeClass",
-                "SecurityTokenRequestType",
-                "ApplicationType",
-                "UserTokenType",
-                "DataChangeTrigger",
-                "HistoryUpdateType",
-                "PerformUpdateType",
-                "ServerState",
-                "AxisScaleEnumeration",
-                "BrokerTransportQualityOfService",
-                "JsonDataSetMessageContentMask",
-                "JsonNetworkMessageContentMask",
-                "DataSetFieldContentMask",
-                "DataSetFieldFlags",
-                "UadpDataSetMessageContentMask",
-                "UadpNetworkMessageContentMask",
-                "OverrideValueHandling",
-                "DataSetOrderingType",
-                "PermissionType",
-                "StructureType",
-                "IdentityCriteriaType",
-            ],
+            "LocalizedText",
+            ExternalType::new("types::localized_text", true),
         ),
-        ("expanded_node_id", vec!["ExpandedNodeId"]),
-        ("node_id", vec!["NodeId"]),
-        ("data_value", vec!["DataValue"]),
-        ("date_time", vec!["DateTime"]),
-        ("status_code", vec!["StatusCode"]),
+        (
+            "QualifiedName",
+            ExternalType::new("types::qualified_name", true),
+        ),
+        (
+            "DiagnosticInfo",
+            ExternalType::new("types::diagnostic_info", true),
+        ),
+        (
+            "ExtensionObject",
+            ExternalType::new("types::extension_object", true),
+        ),
+        ("Duration", ExternalType::new("types::data_types", true)),
+        ("UtcTime", ExternalType::new("types::data_types", true)),
+        (
+            "RequestHeader",
+            ExternalType::new("types::request_header", true),
+        ),
+        (
+            "ResponseHeader",
+            ExternalType::new("types::response_header", true),
+        ),
+        (
+            "ExpandedNodeId",
+            ExternalType::new("types::expanded_node_id", true),
+        ),
+        ("NodeId", ExternalType::new("types::node_id", true)),
+        ("DataValue", ExternalType::new("types::data_value", true)),
+        ("DateTime", ExternalType::new("types::date_time", true)),
+        ("StatusCode", ExternalType::new("types::status_code", true)),
     ]
     .into_iter()
-    .map(|(k, v)| {
-        (
-            k.to_owned(),
-            v.into_iter().map(|l| l.to_owned()).collect::<Vec<_>>(),
-        )
+    .map(|(k, mut v)| {
+        v.path = format!("{}::{}", root, v.path);
+        (k.to_owned(), v)
     })
     .collect()
 }

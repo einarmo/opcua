@@ -1667,6 +1667,7 @@ dependencies = [
  "roxmltree",
  "serde",
  "serde_json",
+ "serde_yaml",
  "syn 2.0.72",
  "thiserror",
 ]
