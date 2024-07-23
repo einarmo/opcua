@@ -92,6 +92,7 @@ impl<'input> TypeLoader<'input> {
             hidden_fields: fields_to_hide,
             documentation: node.child_contents("Documentation").map(|v| v.to_owned()),
             base_type: node.attribute("BaseType").map(|v| v.to_owned()),
+            is_union: false,
         })
     }
 
@@ -307,6 +308,7 @@ impl<'input> TypeLoader<'input> {
                         .child_contents("Documentation")
                         .map(|v| v.to_owned()),
                     base_type: base_type.cloned(),
+                    is_union: definition.attribute("IsUnion") == Some("true"),
                 }))
             }
         }
