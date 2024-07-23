@@ -20,4 +20,5 @@ pub struct StructuredType {
     pub hidden_fields: Vec<String>,
     pub documentation: Option<String>,
     pub base_type: Option<String>,
+    pub is_union: bool,
 }

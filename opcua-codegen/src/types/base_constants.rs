@@ -1,10 +1,13 @@
 use std::collections::{HashMap, HashSet};
 
-pub fn make_import_lookup_map(inverted: HashMap<String, Vec<String>>) -> HashMap<String, String> {
+pub fn make_import_lookup_map(
+    inverted: HashMap<String, Vec<String>>,
+    path_root: &str,
+) -> HashMap<String, String> {
     let mut res = HashMap::new();
     for (key, val) in inverted {
         for v in val {
-            res.insert(v, key.clone());
+            res.insert(v, format!("{}::{}", path_root, key));
         }
     }
     res
@@ -96,7 +99,7 @@ pub fn basic_types_import_map() -> HashMap<String, Vec<String>> {
         ("node_id", vec!["NodeId"]),
         ("data_value", vec!["DataValue"]),
         ("date_time", vec!["DateTime"]),
-        ("status_codes", vec!["StatusCode"]),
+        ("status_code", vec!["StatusCode"]),
     ]
     .into_iter()
     .map(|(k, v)| {
