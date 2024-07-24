@@ -8,7 +8,7 @@ use std::{
     path::Path,
 };
 
-use error::CodeGenError;
+pub use error::CodeGenError;
 use opcua_xml::load_bsd_file;
 use serde::{Deserialize, Serialize};
 pub use types::{
@@ -22,11 +22,14 @@ pub use utils::{create_module_file, GeneratedOutput};
 pub fn write_to_directory<T: GeneratedOutput>(
     dir: &str,
     header: &str,
-    items: impl Iterator<Item = T>,
+    mut items: Vec<T>,
 ) -> Result<(), CodeGenError> {
-    let mut modules = HashSet::new();
+    let mut modules = Vec::new();
+    let mut modules_seen = HashSet::new();
     std::fs::remove_dir_all(dir)?;
     std::fs::create_dir_all(dir)?;
+
+    items.sort_by(|a, b| a.name().to_lowercase().cmp(&b.name().to_lowercase()));
 
     for gen in items {
         let module = gen.module().to_owned();
@@ -39,7 +42,10 @@ pub fn write_to_directory<T: GeneratedOutput>(
         if is_new {
             file.write_all(header.as_bytes())?;
         }
-        modules.insert(module);
+        // Do it this way so that we keep a stable ordering.
+        if modules_seen.insert(module.clone()) {
+            modules.push(module);
+        }
         file.write_all(&prettyplease::unparse(&gen.to_file()).as_bytes())?;
     }
 
@@ -47,7 +53,6 @@ pub fn write_to_directory<T: GeneratedOutput>(
         .append(true)
         .create(true)
         .open(format!("{}/{}", dir, "mod.rs"))?;
-
     let module_file = create_module_file(modules);
     mod_file.write_all(&prettyplease::unparse(&module_file).as_bytes())?;
 
@@ -134,11 +139,11 @@ pub fn run_codegen(config: &CodeGenConfig) -> Result<(), CodeGenError> {
                         r#"{}
 //
 {header}"#,
-                        config.extra_header
+                        config.extra_header.trim()
                     );
                 }
 
-                write_to_directory(&t.output_dir, &header, types.into_iter())?;
+                write_to_directory(&t.output_dir, &header, types)?;
             }
         }
     }
@@ -166,6 +171,7 @@ pub struct TypeCodeGenTarget {
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(tag = "type")]
+#[serde(rename_all = "snake_case")]
 pub enum CodeGenTarget {
     Types(TypeCodeGenTarget),
 }
