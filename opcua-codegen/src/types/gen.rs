@@ -7,7 +7,7 @@ use syn::{
     ItemImpl, ItemMacro, ItemStruct, Lit, LitByte, Path, Token, Type, Visibility,
 };
 
-use crate::{error::CodeGenError, StructuredType};
+use crate::{error::CodeGenError, GeneratedOutput, StructuredType};
 
 use super::{loader::LoadedType, EnumType, ExternalType};
 use quote::quote;
@@ -24,8 +24,8 @@ pub struct GeneratedItem {
     pub module: String,
 }
 
-impl GeneratedItem {
-    pub fn to_file(self) -> File {
+impl GeneratedOutput for GeneratedItem {
+    fn to_file(self) -> File {
         let mut items = Vec::new();
         match self.item {
             ItemDefinition::Struct(v) => items.push(Item::Struct(v)),
@@ -41,6 +41,10 @@ impl GeneratedItem {
             attrs: Vec::new(),
             items,
         }
+    }
+
+    fn module(&self) -> &str {
+        &self.module
     }
 }
 
