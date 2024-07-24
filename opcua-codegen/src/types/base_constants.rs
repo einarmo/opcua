@@ -1,5 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
+use serde::{Deserialize, Serialize};
+
 pub fn base_ignored_types() -> HashSet<String> {
     [
         "ExtensionObject",
@@ -38,9 +40,11 @@ pub fn base_ignored_types() -> HashSet<String> {
     .collect()
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ExternalType {
+    /// Relative path in the OPC-UA types library.
     pub path: String,
+    /// Whether this type has a default implementation.
     pub has_default: Option<bool>,
 }
 

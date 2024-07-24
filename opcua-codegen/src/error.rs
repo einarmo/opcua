@@ -16,4 +16,6 @@ pub enum CodeGenError {
     Other(String),
     #[error("Failed to generate code: {0}")]
     Syn(#[from] syn::Error),
+    #[error("Failed to load file: {0}")]
+    Io(#[from] std::io::Error),
 }

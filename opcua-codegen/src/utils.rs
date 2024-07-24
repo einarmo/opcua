@@ -21,3 +21,9 @@ pub fn create_module_file(modules: HashSet<String>) -> File {
         items,
     }
 }
+
+pub trait GeneratedOutput {
+    fn to_file(self) -> File;
+
+    fn module(&self) -> &str;
+}
