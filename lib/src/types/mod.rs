@@ -206,6 +206,7 @@ pub mod encoding;
 pub mod expanded_node_id;
 pub mod extension_object;
 pub mod guid;
+mod impls;
 pub mod localized_text;
 pub mod node_id;
 pub mod notification_message;
@@ -221,12 +222,12 @@ pub mod variant;
 pub mod variant_json;
 pub mod variant_type_id;
 
-pub use crate::types::{
+pub use self::{
     add_node_attributes::AddNodeAttributes, array::*, attribute::*, byte_string::*, data_types::*,
     data_value::*, date_time::*, diagnostic_info::*, encoding::*, expanded_node_id::*,
-    extension_object::*, guid::*, localized_text::*, node_id::*, node_ids::*, numeric_range::*,
-    operand::*, qualified_name::*, request_header::*, response_header::*, service_types::*,
-    status_code::*, string::*, variant::*, variant_type_id::*,
+    extension_object::*, guid::*, impls::*, localized_text::*, node_id::*, node_ids::*,
+    numeric_range::*, operand::*, qualified_name::*, request_header::*, response_header::*,
+    service_types::*, status_code::*, string::*, variant::*, variant_type_id::*,
 };
 
 #[cfg(test)]

@@ -10,7 +10,7 @@ use std::io::{Read, Write};
 
 use crate::types::{
     encoding::*, node_id::NodeId, node_ids::ObjectId, request_header::RequestHeader,
-    response_header::ResponseHeader, service_types::*,
+    response_header::ResponseHeader, service_types::*, MessageInfo,
 };
 
 pub use crate::core::comms::tcp_types::AcknowledgeMessage;
