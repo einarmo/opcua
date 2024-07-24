@@ -4,7 +4,11 @@
 
 use roxmltree::{Document, Node};
 
-use crate::{error::XmlError, ext::NodeExt, XmlLoad};
+use crate::{
+    error::XmlError,
+    ext::{children_with_name, first_child_with_name_opt, int_attr, uint_attr, NodeExt},
+    XmlLoad,
+};
 
 #[derive(Debug)]
 pub struct Documentation {
@@ -25,6 +29,22 @@ pub enum ByteOrder {
     LittleEndian,
 }
 
+impl ByteOrder {
+    pub fn from_node(node: &Node<'_, '_>, attr: &str) -> Result<Option<Self>, XmlError> {
+        Ok(match node.attribute(attr) {
+            Some("LittleEndian") => Some(ByteOrder::LittleEndian),
+            Some("BigEndian") => Some(ByteOrder::BigEndian),
+            Some(r) => {
+                return Err(XmlError::other(
+                    &node,
+                    &format!("Expected LittleEndian or BigEndian for {attr}, got {r}"),
+                ))
+            }
+            None => None,
+        })
+    }
+}
+
 #[derive(Debug)]
 pub struct TypeDescription {
     pub documentation: Option<Documentation>,
@@ -35,24 +55,9 @@ pub struct TypeDescription {
 impl<'input> XmlLoad<'input> for TypeDescription {
     fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError> {
         Ok(Self {
-            documentation: node
-                .first_child_with_name("Documentation")
-                .ok()
-                .and_then(|d| Documentation::load(&d).ok()),
+            documentation: first_child_with_name_opt(node, "Documentation")?,
             name: node.try_attribute("Name")?.to_owned(),
-            default_byte_order: match node.attribute("DefaultByteOrder") {
-                Some("LittleEndian") => Some(ByteOrder::LittleEndian),
-                Some("BigEndian") => Some(ByteOrder::BigEndian),
-                Some(r) => {
-                    return Err(XmlError::other(
-                        &node,
-                        &format!(
-                            "Expected LittleEndian or BigEndian for DefaultByteOrder, got {r}"
-                        ),
-                    ))
-                }
-                None => None,
-            },
+            default_byte_order: ByteOrder::from_node(node, "DefaultByteOrder")?,
         })
     }
 }
@@ -68,13 +73,7 @@ impl<'input> XmlLoad<'input> for OpaqueType {
     fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError> {
         Ok(Self {
             description: TypeDescription::load(node)?,
-            length_in_bits: node
-                .attribute("LengthInBits")
-                .map(|v| {
-                    v.parse()
-                        .map_err(|e| XmlError::parse_int(node, "LengthInBits", e))
-                })
-                .transpose()?,
+            length_in_bits: int_attr(node, "LengthInBits")?,
             byte_order_significant: node.attribute("ByteOrderSignificant") == Some("true"),
         })
     }
@@ -89,15 +88,9 @@ pub struct EnumeratedValue {
 impl<'input> XmlLoad<'input> for EnumeratedValue {
     fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError> {
         Ok(Self {
-            documentation: node
-                .first_child_with_name("Documentation")
-                .ok()
-                .and_then(|d| Documentation::load(&d).ok()),
+            documentation: first_child_with_name_opt(node, "Documentation")?,
             name: node.attribute("Name").map(|n| n.to_owned()),
-            value: node
-                .attribute("Value")
-                .map(|v| v.parse().map_err(|e| XmlError::parse_int(node, "Value", e)))
-                .transpose()?,
+            value: int_attr(node, "Value")?,
         })
     }
 }
@@ -113,10 +106,7 @@ impl<'input> XmlLoad<'input> for EnumeratedType {
     fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError> {
         Ok(Self {
             opaque: OpaqueType::load(node)?,
-            variants: node
-                .with_name("EnumeratedValue")
-                .map(|v| EnumeratedValue::load(&v))
-                .collect::<Result<Vec<_>, _>>()?,
+            variants: children_with_name(node, "EnumeratedValue")?,
             is_option_set: node.attribute("IsOptionSet") == Some("true"),
         })
     }
@@ -130,6 +120,26 @@ pub enum SwitchOperand {
     GreaterThanOrEqual,
     LessThanOrEqual,
     NotEqual,
+}
+
+impl SwitchOperand {
+    pub fn from_node(node: &Node<'_, '_>, attr: &str) -> Result<Option<Self>, XmlError> {
+        Ok(match node.attribute(attr) {
+            Some("Equals") => Some(SwitchOperand::Equals),
+            Some("GreaterThan") => Some(SwitchOperand::GreaterThan),
+            Some("LessThan") => Some(SwitchOperand::LessThan),
+            Some("GreaterThanOrEqual") => Some(SwitchOperand::GreaterThanOrEqual),
+            Some("LessThanOrEqual") => Some(SwitchOperand::LessThanOrEqual),
+            Some("NotEqual") => Some(SwitchOperand::NotEqual),
+            Some(r) => {
+                return Err(XmlError::other(
+                    node,
+                    &format!("Unexpected value for {attr}: {r}"),
+                ))
+            }
+            _ => None,
+        })
+    }
 }
 
 #[derive(Debug)]
@@ -149,40 +159,15 @@ pub struct FieldType {
 impl<'input> XmlLoad<'input> for FieldType {
     fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError> {
         Ok(Self {
-            documentation: node
-                .first_child_with_name("Documentation")
-                .ok()
-                .and_then(|d| Documentation::load(&d).ok()),
+            documentation: first_child_with_name_opt(node, "Documentation")?,
             name: node.try_attribute("Name")?.to_owned(),
             type_name: node.attribute("TypeName").map(|a| a.to_owned()),
-            length: node
-                .attribute("Length")
-                .map(|a| a.parse())
-                .transpose()
-                .map_err(|e| XmlError::parse_int(node, "Length", e))?,
+            length: uint_attr(node, "Length")?,
             length_field: node.attribute("LengthField").map(|a| a.to_owned()),
             is_length_in_bytes: node.attribute("IsLengthInBytes") == Some("true"),
             switch_field: node.attribute("SwitchField").map(|a| a.to_owned()),
-            switch_value: node
-                .attribute("SwitchValue")
-                .map(|a| a.parse())
-                .transpose()
-                .map_err(|e| XmlError::parse_int(node, "SwitchValue", e))?,
-            switch_operand: match node.attribute("SwitchOperand") {
-                Some("Equals") => Some(SwitchOperand::Equals),
-                Some("GreaterThan") => Some(SwitchOperand::GreaterThan),
-                Some("LessThan") => Some(SwitchOperand::LessThan),
-                Some("GreaterThanOrEqual") => Some(SwitchOperand::GreaterThanOrEqual),
-                Some("LessThanOrEqual") => Some(SwitchOperand::LessThanOrEqual),
-                Some("NotEqual") => Some(SwitchOperand::NotEqual),
-                Some(r) => {
-                    return Err(XmlError::other(
-                        node,
-                        &format!("Unexpected value for SwitchOperand: {r}"),
-                    ))
-                }
-                _ => None,
-            },
+            switch_value: uint_attr(node, "SwitchValue")?,
+            switch_operand: SwitchOperand::from_node(node, "SwitchOperand")?,
             terminator: node.attribute("Terminator").map(|a| a.to_owned()),
         })
     }
@@ -199,10 +184,7 @@ impl<'input> XmlLoad<'input> for StructuredType {
     fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError> {
         Ok(Self {
             description: TypeDescription::load(node)?,
-            fields: node
-                .with_name("Field")
-                .map(|e| FieldType::load(&e))
-                .collect::<Result<Vec<_>, _>>()?,
+            fields: children_with_name(node, "Field")?,
             base_type: node.attribute("BaseType").map(|t| t.to_owned()),
         })
     }
@@ -242,14 +224,8 @@ pub struct TypeDictionary {
 impl<'input> XmlLoad<'input> for TypeDictionary {
     fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError> {
         Ok(Self {
-            documentation: node
-                .first_child_with_name("Documentation")
-                .ok()
-                .and_then(|d| Documentation::load(&d).ok()),
-            imports: node
-                .with_name("Import")
-                .map(|e| ImportDirective::load(&e))
-                .collect::<Result<Vec<_>, _>>()?,
+            documentation: first_child_with_name_opt(node, "Documentation")?,
+            imports: children_with_name(node, "Import")?,
             elements: node
                 .children()
                 .filter_map(|e| match e.tag_name().name() {
@@ -264,19 +240,7 @@ impl<'input> XmlLoad<'input> for TypeDictionary {
                 })
                 .collect::<Result<Vec<_>, _>>()?,
             target_namespace: node.try_attribute("TargetNamespace")?.to_owned(),
-            default_byte_order: match node.attribute("DefaultByteOrder") {
-                Some("LittleEndian") => Some(ByteOrder::LittleEndian),
-                Some("BigEndian") => Some(ByteOrder::BigEndian),
-                Some(r) => {
-                    return Err(XmlError::other(
-                        &node,
-                        &format!(
-                            "Expected LittleEndian or BigEndian for DefaultByteOrder, got {r}"
-                        ),
-                    ))
-                }
-                None => None,
-            },
+            default_byte_order: ByteOrder::from_node(node, "DefaultByteOrder")?,
         })
     }
 }
