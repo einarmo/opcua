@@ -22,6 +22,7 @@ pub struct GeneratedItem {
     pub item: ItemDefinition,
     pub impls: Vec<ItemImpl>,
     pub module: String,
+    pub name: String,
 }
 
 impl GeneratedOutput for GeneratedItem {
@@ -45,6 +46,10 @@ impl GeneratedOutput for GeneratedItem {
 
     fn module(&self) -> &str {
         &self.module
+    }
+
+    fn name(&self) -> &str {
+        &self.name
     }
 }
 
@@ -321,6 +326,7 @@ impl CodeGenerator {
             } else {
                 item.name.to_case(Case::Snake)
             },
+            name: item.name.clone(),
         })
     }
 
@@ -473,6 +479,7 @@ impl CodeGenerator {
             } else {
                 item.name.to_case(Case::Snake)
             },
+            name: item.name.clone(),
         })
     }
 
@@ -640,6 +647,7 @@ impl CodeGenerator {
             } else {
                 item.name.to_case(Case::Snake)
             },
+            name: item.name.clone(),
         })
     }
 }

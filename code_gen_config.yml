@@ -1,0 +1,12 @@
+extra_header: |
+  // OPCUA for Rust
+  // SPDX-License-Identifier: MPL-2.0
+  // Copyright (C) 2017-2024 Adam Lock, Einar Omang
+opcua_crate_path: crate
+targets:
+  - type: types
+    file_path: tools/schema/schemas/1.0.4/Opc.Ua.Types.bsd
+    output_dir: lib/src/types/service_types
+    enums_single_file: true
+    default_excluded:
+      - AnonymousIdentityToken
