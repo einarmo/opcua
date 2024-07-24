@@ -102,6 +102,7 @@ pub fn generate_types(
             .collect(),
         types_import_map,
         types,
+        target.default_excluded.clone(),
         CodeGenItemConfig {
             enums_single_file: target.enums_single_file,
             structs_single_file: target.structs_single_file,
@@ -155,6 +156,8 @@ pub struct TypeCodeGenTarget {
     pub json_serialized_types: Vec<String>,
     #[serde(default)]
     pub types_import_map: HashMap<String, ExternalType>,
+    #[serde(default)]
+    pub default_excluded: HashSet<String>,
     #[serde(default)]
     pub enums_single_file: bool,
     #[serde(default)]

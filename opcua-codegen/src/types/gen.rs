@@ -58,6 +58,7 @@ pub struct CodeGenerator {
     json_serializable_types: HashSet<String>,
     import_map: HashMap<String, ExternalType>,
     input: HashMap<String, LoadedType>,
+    default_excluded: HashSet<String>,
     config: CodeGenItemConfig,
 }
 
@@ -66,6 +67,7 @@ impl CodeGenerator {
         json_serializable_types: HashSet<String>,
         external_import_map: HashMap<String, ExternalType>,
         input: Vec<LoadedType>,
+        default_excluded: HashSet<String>,
         config: CodeGenItemConfig,
     ) -> Self {
         Self {
@@ -76,10 +78,15 @@ impl CodeGenerator {
                 .map(|v| (v.name().to_owned(), v))
                 .collect(),
             config,
+            default_excluded,
         }
     }
 
     fn is_default_recursive(&self, name: &str) -> bool {
+        if self.default_excluded.contains(name) {
+            return false;
+        }
+
         let Some(it) = self.import_map.get(name) else {
             // Not in the import map means it's a builtin, we assume these have defaults for now.
             return true;
