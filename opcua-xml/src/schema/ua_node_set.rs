@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use roxmltree::{Document, Node};
 
 use crate::{
@@ -63,7 +64,7 @@ pub struct UANodeSet {
     pub models: Option<ModelTable>,
     pub aliases: Option<AliasTable>,
     pub nodes: Vec<UANode>,
-    pub last_modified: Option<DateTime>,
+    pub last_modified: Option<DateTime<Utc>>,
 }
 
 impl<'input> XmlLoad<'input> for UANodeSet {
@@ -110,7 +111,7 @@ pub struct UANodeSetChanges {
     pub references_to_add: Option<ReferencesToChange>,
     pub nodes_to_delete: Option<NodesToDelete>,
     pub references_to_delete: Option<ReferencesToChange>,
-    pub last_modified: Option<DateTime>,
+    pub last_modified: Option<DateTime<Utc>>,
     pub transaction_id: String,
     pub accept_all_or_nothing: bool,
 }
@@ -139,7 +140,7 @@ pub struct UANodeSetChangesStatus {
     pub references_to_add: Option<NodeSetStatusList>,
     pub nodes_to_delete: Option<NodeSetStatusList>,
     pub references_to_delete: Option<NodeSetStatusList>,
-    pub last_modified: Option<DateTime>,
+    pub last_modified: Option<DateTime<Utc>>,
     pub transaction_id: String,
 }
 
@@ -296,7 +297,7 @@ pub struct ModelTableEntry {
     pub required_model: Vec<ModelTableEntry>,
     pub model_uri: String,
     pub version: Option<String>,
-    pub publication_date: Option<DateTime>,
+    pub publication_date: Option<DateTime<Utc>>,
     pub access_restrictions: AccessRestriction,
 }
 
@@ -337,7 +338,14 @@ value_wrapper!(AccessRestriction, u8);
 value_wrapper!(ArrayDimensions, String);
 value_wrapper!(Duration, f64);
 value_wrapper!(AccessLevel, u64);
-value_wrapper!(DateTime, String);
+
+impl FromValue for chrono::DateTime<Utc> {
+    fn from_value(node: &Node<'_, '_>, attr: &str, v: &str) -> Result<Self, XmlError> {
+        let v = chrono::DateTime::parse_from_rfc3339(v)
+            .map_err(|e| XmlError::parse_date_time(node, attr, e))?;
+        Ok(v.with_timezone(&Utc))
+    }
+}
 
 #[derive(Debug)]
 pub struct NodeIdAlias {
@@ -826,3 +834,5 @@ impl<'input> XmlLoad<'input> for UAReferenceType {
         })
     }
 }
+
+pub enum Variant {}

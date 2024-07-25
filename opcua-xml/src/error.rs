@@ -4,6 +4,7 @@ use std::{
     str::ParseBoolError,
 };
 
+use chrono::ParseError;
 use roxmltree::Node;
 use thiserror::Error;
 
@@ -23,6 +24,8 @@ pub enum XmlErrorInner {
     ParseBool(String, ParseBoolError),
     #[error("Missing node content")]
     MissingContent,
+    #[error("Invalid timestamp for {0}: {1}")]
+    ParseDateTime(String, ParseError),
     #[error("{0}")]
     Other(String),
 }
@@ -74,6 +77,13 @@ impl XmlError {
         Self {
             span: node.range(),
             error: XmlErrorInner::ParseBool(attr.to_owned(), err),
+        }
+    }
+
+    pub fn parse_date_time(node: &Node<'_, '_>, attr: &str, err: ParseError) -> Self {
+        Self {
+            span: node.range(),
+            error: XmlErrorInner::ParseDateTime(attr.to_owned(), err),
         }
     }
 

@@ -1650,6 +1650,7 @@ dependencies = [
 name = "opcua-xml"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "roxmltree",
  "thiserror",
 ]
