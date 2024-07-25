@@ -1,7 +1,23 @@
 use opcua_codegen::{run_codegen, CodeGenConfig, CodeGenError};
+use opcua_xml::{load_nodeset2_file, schema::xml_schema::load_xsd_schema};
 
 fn main() -> Result<(), CodeGenError> {
-    run_cli()
+    // run_cli()?;
+    let types_xml = std::fs::read_to_string("tools/schema/schemas/1.0.4/Opc.Ua.Types.xsd").unwrap();
+    let schema = load_xsd_schema(&types_xml)?;
+
+    for item in schema.items {
+        println!("{:?}", item);
+    }
+
+    let node_set =
+        std::fs::read_to_string("tools/schema/schemas/1.0.4/Opc.Ua.NodeSet2.xml").unwrap();
+    let node_set = load_nodeset2_file(&node_set)?;
+
+    let nodes = node_set.node_set.unwrap();
+    println!("{}", nodes.nodes.len());
+
+    Ok(())
 }
 
 fn run_cli() -> Result<(), CodeGenError> {

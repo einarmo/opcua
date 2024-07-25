@@ -99,3 +99,43 @@ pub fn value_from_attr_opt<T: FromValue>(
 
     T::from_value(node, attr, c).map(Some)
 }
+
+pub fn children_of_type<'input, T>(node: &Node<'_, 'input>) -> Result<Vec<T>, XmlError>
+where
+    Option<T>: XmlLoad<'input>,
+{
+    node.children()
+        .filter_map(|n| XmlLoad::load(&n).transpose())
+        .collect()
+}
+
+pub fn first_child_of_type<'input, T>(node: &Node<'_, 'input>) -> Result<Option<T>, XmlError>
+where
+    Option<T>: XmlLoad<'input>,
+{
+    node.children()
+        .filter_map(|n| XmlLoad::load(&n).transpose())
+        .next()
+        .transpose()
+}
+
+pub fn first_child_of_type_req<'input, T>(node: &Node<'_, 'input>, ctx: &str) -> Result<T, XmlError>
+where
+    Option<T>: XmlLoad<'input>,
+{
+    node.children()
+        .filter_map(|n| XmlLoad::load(&n).transpose())
+        .next()
+        .ok_or_else(|| XmlError::other(node, &format!("Expected child of type {}", ctx)))?
+}
+
+impl<T> FromValue for Vec<T>
+where
+    T: FromValue,
+{
+    fn from_value(node: &Node<'_, '_>, attr: &str, v: &str) -> Result<Self, XmlError> {
+        v.split_whitespace()
+            .map(|v| T::from_value(node, attr, v))
+            .collect()
+    }
+}
