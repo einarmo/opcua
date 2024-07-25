@@ -1,4 +1,8 @@
-use std::{num::ParseIntError, ops::Range};
+use std::{
+    num::{ParseFloatError, ParseIntError},
+    ops::Range,
+    str::ParseBoolError,
+};
 
 use roxmltree::Node;
 use thiserror::Error;
@@ -13,6 +17,12 @@ pub enum XmlErrorInner {
     MissingAttribute(String),
     #[error("Failed to parse {0} as integer.")]
     ParseInt(String, ParseIntError),
+    #[error("Failed to parse {0} as float.")]
+    ParseFloat(String, ParseFloatError),
+    #[error("Failed to parse {0} as bool.")]
+    ParseBool(String, ParseBoolError),
+    #[error("Missing node content")]
+    MissingContent,
     #[error("{0}")]
     Other(String),
 }
@@ -50,6 +60,27 @@ impl XmlError {
         Self {
             span: node.range(),
             error: XmlErrorInner::ParseInt(attr.to_owned(), err),
+        }
+    }
+
+    pub fn parse_float(node: &Node<'_, '_>, attr: &str, err: ParseFloatError) -> Self {
+        Self {
+            span: node.range(),
+            error: XmlErrorInner::ParseFloat(attr.to_owned(), err),
+        }
+    }
+
+    pub fn parse_bool(node: &Node<'_, '_>, attr: &str, err: ParseBoolError) -> Self {
+        Self {
+            span: node.range(),
+            error: XmlErrorInner::ParseBool(attr.to_owned(), err),
+        }
+    }
+
+    pub fn missing_content(node: &Node<'_, '_>) -> Self {
+        Self {
+            span: node.range(),
+            error: XmlErrorInner::MissingContent,
         }
     }
 }
