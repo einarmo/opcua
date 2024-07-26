@@ -26,6 +26,8 @@ pub enum XmlErrorInner {
     MissingContent,
     #[error("Invalid timestamp for {0}: {1}")]
     ParseDateTime(String, ParseError),
+    #[error("Invalid UUID for {0}: {1}")]
+    ParseUuid(String, uuid::Error),
     #[error("{0}")]
     Other(String),
 }
@@ -87,7 +89,15 @@ impl XmlError {
         }
     }
 
+    pub fn parse_uuid(node: &Node<'_, '_>, attr: &str, err: uuid::Error) -> Self {
+        Self {
+            span: node.range(),
+            error: XmlErrorInner::ParseUuid(attr.to_owned(), err),
+        }
+    }
+
     pub fn missing_content(node: &Node<'_, '_>) -> Self {
+        println!("{:?}", node.tag_name().name());
         Self {
             span: node.range(),
             error: XmlErrorInner::MissingContent,
