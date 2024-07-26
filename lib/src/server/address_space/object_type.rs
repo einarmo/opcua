@@ -108,6 +108,12 @@ impl ObjectType {
         }
     }
 
+    /// Create a new object type with all attributes, may change if
+    /// new attributes are added to the OPC-UA standard.
+    pub fn new_full(base: Base, is_abstract: bool) -> Self {
+        Self { base, is_abstract }
+    }
+
     pub fn from_attributes<S>(
         node_id: &NodeId,
         browse_name: S,

@@ -131,6 +131,15 @@ impl Object {
         }
     }
 
+    /// Create a new object with all attributes, may change if
+    /// new attributes are added to the OPC-UA standard.
+    pub fn new_full(base: Base, event_notifier: EventNotifier) -> Self {
+        Self {
+            base,
+            event_notifier,
+        }
+    }
+
     pub fn from_attributes<S>(
         node_id: &NodeId,
         browse_name: S,

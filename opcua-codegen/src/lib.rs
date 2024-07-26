@@ -1,4 +1,5 @@
 mod error;
+pub mod nodeset;
 mod types;
 mod utils;
 

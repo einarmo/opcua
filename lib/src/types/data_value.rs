@@ -421,6 +421,49 @@ impl DataValue {
         }
     }
 
+    /// Creates a `DataValue` from the supplied value AND a timestamp for now. If you are passing a value to the Attribute::Write service
+    /// on a server from a server, you may consider this from the specification:
+    ///
+    /// _If the SourceTimestamp or the ServerTimestamp is specified, the Server shall use these values.
+    /// The Server returns a Bad_WriteNotSupported error if it does not support writing of timestamps_
+    ///
+    /// In which case, use the `value_only()` constructor, or make explicit which fields you pass.
+    pub fn new_now_status<V>(value: V, status: StatusCode) -> DataValue
+    where
+        V: Into<Variant>,
+    {
+        let now = DateTime::now();
+        DataValue {
+            value: Some(value.into()),
+            status: Some(status),
+            source_timestamp: Some(now),
+            source_picoseconds: Some(0),
+            server_timestamp: Some(now),
+            server_picoseconds: Some(0),
+        }
+    }
+
+    /// Creates a `DataValue` from the supplied value and timestamp. If you are passing a value to the Attribute::Write service
+    /// on a server from a server, you may consider this from the specification:
+    ///
+    /// _If the SourceTimestamp or the ServerTimestamp is specified, the Server shall use these values.
+    /// The Server returns a Bad_WriteNotSupported error if it does not support writing of timestamps_
+    ///
+    /// In which case, use the `value_only()` constructor, or make explicit which fields you pass.
+    pub fn new_at_status<V>(value: V, time: DateTime, status: StatusCode) -> DataValue
+    where
+        V: Into<Variant>,
+    {
+        DataValue {
+            value: Some(value.into()),
+            status: Some(status),
+            source_timestamp: Some(time),
+            source_picoseconds: Some(0),
+            server_timestamp: Some(time),
+            server_picoseconds: Some(0),
+        }
+    }
+
     /// Creates an empty DataValue
     pub fn null() -> DataValue {
         DataValue {

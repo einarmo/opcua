@@ -140,6 +140,22 @@ impl ReferenceType {
         }
     }
 
+    /// Create a new reference type with all attributes, may change if
+    /// new attributes are added to the OPC-UA standard.
+    pub fn new_full(
+        base: Base,
+        symmetric: bool,
+        is_abstract: bool,
+        inverse_name: Option<LocalizedText>,
+    ) -> Self {
+        Self {
+            base,
+            symmetric,
+            is_abstract,
+            inverse_name,
+        }
+    }
+
     pub fn from_attributes<S>(
         node_id: &NodeId,
         browse_name: S,

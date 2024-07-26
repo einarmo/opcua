@@ -176,6 +176,26 @@ impl VariableType {
         }
     }
 
+    /// Create a new variable type with all attributes, may change if
+    /// new attributes are added to the OPC-UA standard.
+    pub fn new_full(
+        base: Base,
+        data_type: NodeId,
+        is_abstract: bool,
+        value_rank: i32,
+        value: Option<DataValue>,
+        array_dimensions: Option<Vec<u32>>,
+    ) -> Self {
+        Self {
+            base,
+            data_type,
+            is_abstract,
+            value,
+            value_rank,
+            array_dimensions,
+        }
+    }
+
     pub fn from_attributes<S>(
         node_id: &NodeId,
         browse_name: S,

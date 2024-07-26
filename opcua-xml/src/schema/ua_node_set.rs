@@ -282,7 +282,7 @@ impl<'input> XmlLoad<'input> for UriTable {
 
 macro_rules! value_wrapper {
     ($key:ident, $ty:ident) => {
-        #[derive(Debug)]
+        #[derive(Debug, Default, Clone)]
         pub struct $key(pub $ty);
 
         impl FromValue for $key {
@@ -333,13 +333,13 @@ impl<'input> XmlLoad<'input> for ModelTable {
 value_wrapper!(NodeId, String);
 value_wrapper!(QualifiedName, String);
 value_wrapper!(Locale, String);
-value_wrapper!(WriteMask, u64);
+value_wrapper!(WriteMask, u32);
 value_wrapper!(EventNotifier, u8);
-value_wrapper!(ValueRank, i64);
+value_wrapper!(ValueRank, i32);
 value_wrapper!(AccessRestriction, u8);
 value_wrapper!(ArrayDimensions, String);
 value_wrapper!(Duration, f64);
-value_wrapper!(AccessLevel, u64);
+value_wrapper!(AccessLevel, u8);
 
 impl FromValue for chrono::DateTime<Utc> {
     fn from_value(node: &Node<'_, '_>, attr: &str, v: &str) -> Result<Self, XmlError> {
@@ -377,7 +377,7 @@ impl<'input> XmlLoad<'input> for AliasTable {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default, Clone)]
 pub struct LocalizedText {
     pub text: String,
     pub locale: Locale,
