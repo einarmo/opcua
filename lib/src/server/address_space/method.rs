@@ -184,6 +184,16 @@ impl Method {
         }
     }
 
+    /// Create a new method with all attributes, may change if
+    /// new attributes are added to the OPC-UA standard.
+    pub fn new_full(base: Base, executable: bool, user_executable: bool) -> Self {
+        Self {
+            base,
+            executable,
+            user_executable,
+        }
+    }
+
     pub fn from_attributes<S>(
         node_id: &NodeId,
         browse_name: S,

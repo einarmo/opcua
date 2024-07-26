@@ -320,6 +320,35 @@ impl Variable {
         }
     }
 
+    /// Create a new variable with all attributes, may change if
+    /// new attributes are added to the OPC-UA standard.
+    ///
+    /// Note: This uses the given value and data type directly, you must ensure that the
+    /// type of the value matches the data type.
+    pub fn new_full(
+        base: Base,
+        data_type: NodeId,
+        historizing: bool,
+        value_rank: i32,
+        value: DataValue,
+        access_level: u8,
+        user_access_level: u8,
+        array_dimensions: Option<Vec<u32>>,
+        minimum_sampling_interval: Option<f64>,
+    ) -> Self {
+        Self {
+            base,
+            data_type,
+            historizing,
+            value_rank,
+            value,
+            access_level,
+            user_access_level,
+            array_dimensions,
+            minimum_sampling_interval,
+        }
+    }
+
     pub fn from_attributes<S>(
         node_id: &NodeId,
         browse_name: S,

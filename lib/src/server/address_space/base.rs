@@ -8,7 +8,7 @@ use super::node::{Node, NodeBase};
 
 /// Base node class contains the attributes that all other kinds of nodes need. Part 3, diagram B.4
 #[derive(Debug)]
-pub(crate) struct Base {
+pub struct Base {
     /// The node id of this node
     pub(super) node_id: NodeId,
     /// The node class of this node
@@ -195,6 +195,28 @@ impl Base {
             description: None,
             write_mask: None,
             user_write_mask: None,
+        }
+    }
+
+    /// Create a new base node with all attributes, may change if
+    /// new attributes are added to the OPC-UA standard.
+    pub fn new_full(
+        node_id: NodeId,
+        node_class: NodeClass,
+        browse_name: QualifiedName,
+        display_name: LocalizedText,
+        description: Option<LocalizedText>,
+        write_mask: Option<u32>,
+        user_write_mask: Option<u32>,
+    ) -> Self {
+        Self {
+            node_id,
+            node_class,
+            browse_name,
+            display_name,
+            description,
+            write_mask,
+            user_write_mask,
         }
     }
 
