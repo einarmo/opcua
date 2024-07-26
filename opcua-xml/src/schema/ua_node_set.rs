@@ -9,6 +9,8 @@ use crate::{
     FromValue, XmlError, XmlLoad,
 };
 
+use super::opc_ua_types::Variant;
+
 #[derive(Debug)]
 pub struct NodeSet2 {
     pub node_set: Option<UANodeSet>,
@@ -549,11 +551,24 @@ impl<'input> XmlLoad<'input> for UAObject {
 }
 
 #[derive(Debug)]
+pub struct Value(pub Variant);
+
+impl<'input> XmlLoad<'input> for Value {
+    fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError> {
+        Ok(Self(
+            node.children()
+                .find(|n| !n.tag_name().name().is_empty())
+                .map(|n| Variant::load(&n))
+                .transpose()?
+                .ok_or_else(|| XmlError::other(node, "Empty value, expected variant"))?,
+        ))
+    }
+}
+
+#[derive(Debug)]
 pub struct UAVariable {
     pub base: UAInstance,
-    // TODO: Figure out value, schema is unhelpful, we will need a more sophisticated method
-    // to handle this, and other "any" types, probably.
-    pub value: (),
+    pub value: Option<Value>,
     pub data_type: NodeId,
     pub value_rank: ValueRank,
     pub array_dimensions: ArrayDimensions,
@@ -567,7 +582,7 @@ impl<'input> XmlLoad<'input> for UAVariable {
     fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError> {
         Ok(Self {
             base: UAInstance::load(node)?,
-            value: (),
+            value: first_child_with_name_opt(node, "Value")?,
             data_type: value_from_attr_opt(node, "DataType")?
                 .unwrap_or_else(|| NodeId("i=24".to_owned())),
             value_rank: value_from_attr_opt(node, "ValueRank")?.unwrap_or(ValueRank(-1)),
@@ -703,7 +718,7 @@ impl<'input> XmlLoad<'input> for UAObjectType {
 #[derive(Debug)]
 pub struct UAVariableType {
     pub base: UAType,
-    pub value: (),
+    pub value: Option<Value>,
     pub data_type: NodeId,
     pub value_rank: ValueRank,
     pub array_dimensions: ArrayDimensions,
@@ -713,7 +728,7 @@ impl<'input> XmlLoad<'input> for UAVariableType {
     fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError> {
         Ok(Self {
             base: UAType::load(node)?,
-            value: (),
+            value: first_child_with_name_opt(node, "Value")?,
             data_type: value_from_attr_opt(node, "DataType")?
                 .unwrap_or_else(|| NodeId("i=24".to_owned())),
             value_rank: value_from_attr_opt(node, "ValueRank")?.unwrap_or(ValueRank(-1)),
@@ -834,5 +849,3 @@ impl<'input> XmlLoad<'input> for UAReferenceType {
         })
     }
 }
-
-pub enum Variant {}

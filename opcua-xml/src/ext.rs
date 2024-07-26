@@ -109,6 +109,7 @@ where
         .collect()
 }
 
+#[allow(unused)]
 pub fn first_child_of_type<'input, T>(node: &Node<'_, 'input>) -> Result<Option<T>, XmlError>
 where
     Option<T>: XmlLoad<'input>,
@@ -119,6 +120,7 @@ where
         .transpose()
 }
 
+#[allow(unused)]
 pub fn first_child_of_type_req<'input, T>(node: &Node<'_, 'input>, ctx: &str) -> Result<T, XmlError>
 where
     Option<T>: XmlLoad<'input>,
