@@ -1,15 +1,19 @@
-use std::{collections::HashMap, sync::OnceLock};
+use std::collections::HashMap;
 
-use base64::Engine;
-use opcua_xml::schema::ua_node_set::{
-    AliasTable, ArrayDimensions, LocalizedText, NodeId, QualifiedName, UADataType, UAMethod,
-    UANode, UANodeBase, UAObject, UAObjectType, UAReferenceType, UAVariable, UAVariableType,
-    UAView,
+use opcua_xml::schema::{
+    ua_node_set::{
+        AliasTable, ArrayDimensions, LocalizedText, NodeId, Reference, UADataType, UAMethod,
+        UANode, UANodeBase, UAObject, UAObjectType, UAReferenceType, UAVariable, UAVariableType,
+        UAView,
+    },
+    xml_schema::XsdFileType,
 };
-use regex::Regex;
+use proc_macro2::TokenStream;
 use syn::{parse_quote, parse_str, Expr, Ident, ItemFn, Path};
 
 use crate::{utils::RenderExpr, CodeGenError};
+
+use super::value::render_value;
 
 pub struct NodeGenMethod {
     pub func: ItemFn,
@@ -23,127 +27,7 @@ pub struct NodeSetCodeGenerator {
     empty_text: LocalizedText,
     aliases: HashMap<String, String>,
     node_counter: usize,
-}
-
-impl RenderExpr for LocalizedText {
-    fn render(&self, opcua_path: &Path) -> Result<syn::Expr, CodeGenError> {
-        let locale = &self.locale.0;
-        let text = &self.text;
-        Ok(parse_quote! {
-            #opcua_path::types::LocalizedText::new(#locale, #text)
-        })
-    }
-}
-
-static NODEID_REGEX: OnceLock<Regex> = OnceLock::new();
-
-fn nodeid_regex() -> &'static Regex {
-    NODEID_REGEX.get_or_init(|| Regex::new(r"^(ns=(?P<ns>[0-9]+);)?(?P<t>[isgb]=.+)$").unwrap())
-}
-
-impl RenderExpr for NodeId {
-    fn render(&self, opcua_path: &Path) -> Result<syn::Expr, CodeGenError> {
-        let id = &self.0;
-        let captures = nodeid_regex()
-            .captures(id)
-            .ok_or_else(|| CodeGenError::Other(format!("Invalid nodeId: {}", id)))?;
-        let namespace = if let Some(ns) = captures.name("ns") {
-            ns.as_str()
-                .parse::<u16>()
-                .map_err(|_| CodeGenError::Other(format!("Invalid nodeId: {}", id)))?
-        } else {
-            0
-        };
-
-        let t = captures.name("t").unwrap();
-        let idf = t.as_str();
-        if idf.len() < 2 {
-            return Err(CodeGenError::Other(format!("Invalid nodeId: {}", id)))?;
-        }
-        let k = &idf[..2];
-        let v = &idf[2..];
-        // Do as much parsing as possible here, to optimize performance and get the errors as early as possible.
-        let id_item: Expr = match k {
-            "i=" => {
-                let i = v
-                    .parse::<u32>()
-                    .map_err(|_| CodeGenError::Other(format!("Invalid nodeId: {}", id)))?;
-                parse_quote! { #i }
-            }
-            "s=" => {
-                parse_quote! { #v }
-            }
-            "g=" => {
-                let uuid = uuid::Uuid::parse_str(&v)
-                    .map_err(|e| CodeGenError::Other(format!("Invalid nodeId: {}, {e}", id)))?;
-                let bytes = uuid.as_bytes();
-                parse_quote! { #opcua_path::types::Uuid::from_slice(&[#(#bytes)*,]).unwrap() }
-            }
-            "b=" => {
-                let bytes = base64::engine::general_purpose::STANDARD
-                    .decode(v)
-                    .map_err(|e| CodeGenError::Other(format!("Invalid nodeId: {}, {e}", id)))?;
-                parse_quote! { #opcua_path::types::ByteString::from(vec![#(#bytes)*,]) }
-            }
-            _ => return Err(CodeGenError::Other(format!("Invalid nodeId: {}", id))),
-        };
-
-        let ns_item: Expr = parse_quote! {
-            ns_map.get_index(#namespace)
-        };
-
-        Ok(parse_quote! {
-            #opcua_path::types::NodeId::new(#ns_item, #id_item)
-        })
-    }
-}
-
-static QUALIFIED_NAME_REGEX: OnceLock<Regex> = OnceLock::new();
-
-fn qualified_name_regex() -> &'static Regex {
-    QUALIFIED_NAME_REGEX.get_or_init(|| Regex::new(r"^((?P<ns>[0-9]+):)?(?P<name>.*)$").unwrap())
-}
-
-impl RenderExpr for QualifiedName {
-    fn render(&self, opcua_path: &Path) -> Result<syn::Expr, CodeGenError> {
-        let name = &self.0;
-        let captures = qualified_name_regex()
-            .captures(name)
-            .ok_or_else(|| CodeGenError::Other(format!("Invalid qualifiedname: {}", name)))?;
-
-        let namespace = if let Some(ns) = captures.name("ns") {
-            ns.as_str()
-                .parse::<u16>()
-                .map_err(|_| CodeGenError::Other(format!("Invalid nodeId: {}", name)))?
-        } else {
-            0
-        };
-
-        let name = captures.name("name").unwrap();
-        let name_str = name.as_str();
-
-        Ok(parse_quote! {
-            #opcua_path::types::QualifiedName::new(ns_map.get_index(#namespace), #name_str)
-        })
-    }
-}
-
-impl RenderExpr for Vec<u32> {
-    fn render(&self, _opcua_path: &Path) -> Result<syn::Expr, CodeGenError> {
-        let r = self;
-        Ok(parse_quote! {
-            vec![#(#r),*]
-        })
-    }
-}
-
-impl RenderExpr for f64 {
-    fn render(&self, _opcua_path: &Path) -> Result<syn::Expr, CodeGenError> {
-        let r = self;
-        Ok(parse_quote! {
-            #r
-        })
-    }
+    types: HashMap<String, XsdFileType>,
 }
 
 impl NodeSetCodeGenerator {
@@ -151,6 +35,7 @@ impl NodeSetCodeGenerator {
         opcua_path_str: &str,
         preferred_locale: &str,
         alias_table: Option<AliasTable>,
+        types: HashMap<String, XsdFileType>,
     ) -> Result<Self, CodeGenError> {
         let mut aliases = HashMap::new();
         if let Some(alias_table) = alias_table {
@@ -167,10 +52,11 @@ impl NodeSetCodeGenerator {
             empty_text: LocalizedText::default(),
             aliases,
             node_counter: 0,
+            types,
         })
     }
 
-    fn resolve_node_id(&self, node_id: &NodeId) -> Result<Expr, CodeGenError> {
+    fn resolve_node_id(&self, node_id: &NodeId) -> Result<TokenStream, CodeGenError> {
         if let Some(aliased) = self.aliases.get(&node_id.0) {
             NodeId(aliased.to_owned()).render(&self.opcua_path)
         } else {
@@ -257,10 +143,7 @@ impl NodeSetCodeGenerator {
         let data_type = self.resolve_node_id(&node.data_type)?;
         let historizing = node.historizing;
         let value_rank = node.value_rank.0;
-        // TODO...
-        let value: Expr = parse_quote! {
-            #opcua_path::types::DataValue::null()
-        };
+        let value = render_value(node.value.as_ref(), opcua_path, &self.types)?;
         let access_level = node.access_level.0;
         let user_access_level = node.user_access_level.0;
         let array_dimensions = self
@@ -334,13 +217,7 @@ impl NodeSetCodeGenerator {
         let data_type = self.resolve_node_id(&node.data_type)?;
         let is_abstract = node.base.is_abstract;
         let value_rank = node.value_rank.0;
-        // TODO...
-        let value: Expr = match &node.value {
-            Some(_) => parse_quote! {
-                Some(#opcua_path::types::DataValue::null())
-            },
-            None => parse_quote! { None },
-        };
+        let value = render_value(node.value.as_ref(), opcua_path, &self.types)?;
         let array_dimensions = self
             .parse_array_dimensions(&node.array_dimensions)?
             .as_ref()
@@ -351,7 +228,7 @@ impl NodeSetCodeGenerator {
                 #data_type,
                 #is_abstract,
                 #value_rank,
-                #value,
+                Some(#value),
                 #array_dimensions,
             )
         })
@@ -389,6 +266,29 @@ impl NodeSetCodeGenerator {
         })
     }
 
+    fn generate_reference(&self, reference: &Reference) -> Result<Expr, CodeGenError> {
+        let target_id = self.resolve_node_id(&reference.node_id)?;
+        let type_id = self.resolve_node_id(&reference.reference_type)?;
+        let is_forward = reference.is_forward;
+
+        let opcua_path = &self.opcua_path;
+        Ok(parse_quote! {
+            #opcua_path::server::address_space::ImportedReference {
+                target_id: #target_id,
+                type_id: #type_id,
+                is_forward: #is_forward,
+            }
+        })
+    }
+
+    fn generate_references(&self, node: &UANodeBase) -> Result<Vec<Expr>, CodeGenError> {
+        node.references
+            .iter()
+            .flat_map(|f| f.references.iter())
+            .map(|r| self.generate_reference(r))
+            .collect()
+    }
+
     pub fn generate_item(&mut self, node: UANode) -> Result<NodeGenMethod, CodeGenError> {
         let name = match node {
             UANode::Object(_) => "object",
@@ -404,22 +304,27 @@ impl NodeSetCodeGenerator {
         let func_name: Ident = parse_str(&func_name_str)?;
         self.node_counter += 1;
         let opcua_path = &self.opcua_path;
-        let node = match node {
-            UANode::Object(n) => self.generate_object(&n),
-            UANode::Variable(n) => self.generate_variable(&n),
-            UANode::Method(n) => self.generate_method(&n),
-            UANode::View(n) => self.generate_view(&n),
-            UANode::ObjectType(n) => self.generate_object_type(&n),
-            UANode::VariableType(n) => self.generate_variable_type(&n),
-            UANode::DataType(n) => self.generate_data_type(&n),
-            UANode::ReferenceType(n) => self.generate_reference_type(&n),
+
+        let references = self.generate_references(node.base())?;
+        let node = match &node {
+            UANode::Object(n) => self.generate_object(n),
+            UANode::Variable(n) => self.generate_variable(n),
+            UANode::Method(n) => self.generate_method(n),
+            UANode::View(n) => self.generate_view(n),
+            UANode::ObjectType(n) => self.generate_object_type(n),
+            UANode::VariableType(n) => self.generate_variable_type(n),
+            UANode::DataType(n) => self.generate_data_type(n),
+            UANode::ReferenceType(n) => self.generate_reference_type(n),
         }?;
 
         let func: ItemFn = parse_quote! {
             fn #func_name(ns_map: &#opcua_path::server::address_space::NodeSetNamespaceMapper<'_>)
-                -> #opcua_path::server::address_space::NodeType
+                -> #opcua_path::server::address_space::ImportedItem
             {
-                #node.into()
+                #opcua_path::server::address_space::ImportedItem {
+                    node: #node.into(),
+                    references: vec![#(#references),*]
+                }
             }
         };
 

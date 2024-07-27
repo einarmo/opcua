@@ -6,7 +6,8 @@ use uuid::Uuid;
 
 use crate::{
     ext::{
-        children_of_type, children_with_name, first_child_with_name_opt, value_from_contents_opt,
+        children_of_type, children_with_name, first_child_of_type, first_child_of_type_req,
+        first_child_with_name_opt, value_from_contents_opt,
     },
     XmlError, XmlLoad,
 };
@@ -202,6 +203,25 @@ impl<'input> XmlLoad<'input> for Option<XmlElement> {
     }
 }
 
+impl XmlElement {
+    pub fn children_with_name<'a>(
+        &'a self,
+        name: &'a str,
+    ) -> impl Iterator<Item = &XmlElement> + 'a {
+        self.children.iter().filter(move |c| &c.tag == name)
+    }
+
+    pub fn first_child_with_name<'a>(&'a self, name: &'a str) -> Option<&'a XmlElement> {
+        self.children_with_name(name).next()
+    }
+
+    pub fn child_content<'a>(&'a self, name: &'a str) -> Option<&'a str> {
+        self.first_child_with_name(name)
+            .and_then(|c| c.text.as_ref())
+            .map(|c| c.as_str())
+    }
+}
+
 #[derive(Debug)]
 pub struct QualifiedName {
     pub namespace_index: Option<u16>,
@@ -234,13 +254,13 @@ impl<'input> XmlLoad<'input> for LocalizedText {
 
 #[derive(Debug)]
 pub struct ExtensionObjectBody {
-    pub data: Vec<XmlElement>,
+    pub data: XmlElement,
 }
 
 impl<'input> XmlLoad<'input> for ExtensionObjectBody {
     fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError> {
         Ok(Self {
-            data: children_of_type(node)?,
+            data: first_child_of_type_req(node, "Body")?,
         })
     }
 }

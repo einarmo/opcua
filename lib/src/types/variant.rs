@@ -31,6 +31,8 @@ use crate::types::{
     DataValue, DiagnosticInfo,
 };
 
+use super::DateTimeUtc;
+
 /// A `Variant` holds built-in OPC UA data types, including single and multi dimensional arrays,
 /// data values and extension objects.
 ///
@@ -319,6 +321,12 @@ impl From<DiagnosticInfo> for Variant {
     }
 }
 
+impl From<DateTimeUtc> for Variant {
+    fn from(v: DateTimeUtc) -> Self {
+        Variant::DateTime(Box::new(DateTime::from(v)))
+    }
+}
+
 impl<'a, 'b> From<(VariantTypeId, &'a [&'b str])> for Variant {
     fn from(v: (VariantTypeId, &'a [&'b str])) -> Self {
         let values: Vec<Variant> = v.1.iter().map(|v| Variant::from(*v)).collect();
@@ -397,7 +405,7 @@ macro_rules! cast_to_integer {
 }
 
 macro_rules! from_array_to_variant_impl {
-    ($encoding_mask: expr, $rtype: ident) => {
+    ($encoding_mask: expr, $rtype: ty) => {
         impl<'a> From<&'a Vec<$rtype>> for Variant {
             fn from(v: &'a Vec<$rtype>) -> Self {
                 Variant::from(v.as_slice())
@@ -421,6 +429,7 @@ macro_rules! from_array_to_variant_impl {
 }
 
 from_array_to_variant_impl!(VariantTypeId::String, String);
+from_array_to_variant_impl!(VariantTypeId::String, &str);
 from_array_to_variant_impl!(VariantTypeId::Boolean, bool);
 from_array_to_variant_impl!(VariantTypeId::SByte, i8);
 from_array_to_variant_impl!(VariantTypeId::Byte, u8);
@@ -433,8 +442,13 @@ from_array_to_variant_impl!(VariantTypeId::UInt64, u64);
 from_array_to_variant_impl!(VariantTypeId::Float, f32);
 from_array_to_variant_impl!(VariantTypeId::Double, f64);
 from_array_to_variant_impl!(VariantTypeId::NodeId, NodeId);
+from_array_to_variant_impl!(VariantTypeId::ExpandedNodeId, ExpandedNodeId);
 from_array_to_variant_impl!(VariantTypeId::LocalizedText, LocalizedText);
+from_array_to_variant_impl!(VariantTypeId::QualifiedName, QualifiedName);
+from_array_to_variant_impl!(VariantTypeId::StatusCode, StatusCode);
 from_array_to_variant_impl!(VariantTypeId::ExtensionObject, ExtensionObject);
+from_array_to_variant_impl!(VariantTypeId::Variant, Variant);
+from_array_to_variant_impl!(VariantTypeId::DateTime, DateTimeUtc);
 
 /// This macro tries to return a `Vec<foo>` from a `Variant::Array<Variant::Foo>>`, e.g.
 /// If the Variant holds

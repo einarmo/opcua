@@ -1,4 +1,4 @@
-use proc_macro2::Span;
+use proc_macro2::{Span, TokenStream};
 use syn::{parse_quote, File, Ident, Path};
 
 use crate::CodeGenError;
@@ -31,14 +31,14 @@ pub trait GeneratedOutput {
 }
 
 pub trait RenderExpr {
-    fn render(&self, opcua_path: &Path) -> Result<syn::Expr, CodeGenError>;
+    fn render(&self, opcua_path: &Path) -> Result<TokenStream, CodeGenError>;
 }
 
 impl<T> RenderExpr for Option<&T>
 where
     T: RenderExpr,
 {
-    fn render(&self, opcua_path: &Path) -> Result<syn::Expr, CodeGenError> {
+    fn render(&self, opcua_path: &Path) -> Result<TokenStream, CodeGenError> {
         Ok(match self {
             Some(t) => {
                 let rendered = t.render(opcua_path)?;

@@ -1,5 +1,9 @@
 use std::collections::HashMap;
 
+use crate::types::NodeId;
+
+use super::NodeType;
+
 /// Utility for handling assignment of namespaces on server startup.
 #[derive(Debug)]
 pub struct NamespaceMap {
@@ -58,4 +62,21 @@ impl<'a> NodeSetNamespaceMapper<'a> {
         };
         *idx
     }
+}
+
+#[derive(Debug)]
+pub struct ImportedReference {
+    pub target_id: NodeId,
+    pub type_id: NodeId,
+    pub is_forward: bool,
+}
+
+#[derive(Debug)]
+pub struct ImportedItem {
+    pub node: NodeType,
+    pub references: Vec<ImportedReference>,
+}
+
+pub trait NodeSetImport {
+    fn load() -> impl Iterator<Item = ImportedItem>;
 }

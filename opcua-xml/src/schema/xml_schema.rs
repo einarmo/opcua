@@ -339,6 +339,7 @@ pub struct ComplexType {
     pub content: Option<ComplexTypeContents>,
     pub particle: Option<TypeDefParticle>,
     pub attributes: Vec<Attribute>,
+    pub name: Option<String>,
 }
 
 impl<'input> XmlLoad<'input> for ComplexType {
@@ -347,6 +348,7 @@ impl<'input> XmlLoad<'input> for ComplexType {
             content: first_child_of_type(node)?,
             particle: first_child_of_type(node)?,
             attributes: children_with_name(node, "attribute")?,
+            name: value_from_attr_opt(node, "name")?,
         })
     }
 }
@@ -500,4 +502,10 @@ impl<'input> XmlLoad<'input> for XmlSchema {
             version: value_from_attr_opt(node, "version")?,
         })
     }
+}
+
+#[derive(Debug)]
+pub enum XsdFileType {
+    Simple(SimpleType),
+    Complex(ComplexType),
 }
