@@ -1,19 +1,15 @@
 use std::collections::HashMap;
 
-use opcua_xml::schema::{
-    ua_node_set::{
-        AliasTable, ArrayDimensions, LocalizedText, NodeId, Reference, UADataType, UAMethod,
-        UANode, UANodeBase, UAObject, UAObjectType, UAReferenceType, UAVariable, UAVariableType,
-        UAView,
-    },
-    xml_schema::XsdFileType,
+use opcua_xml::schema::ua_node_set::{
+    AliasTable, ArrayDimensions, LocalizedText, NodeId, Reference, UADataType, UAMethod, UANode,
+    UANodeBase, UAObject, UAObjectType, UAReferenceType, UAVariable, UAVariableType, UAView,
 };
 use proc_macro2::TokenStream;
 use syn::{parse_quote, parse_str, Expr, Ident, ItemFn, Path};
 
 use crate::{utils::RenderExpr, CodeGenError};
 
-use super::value::render_value;
+use super::{value::render_value, XsdTypeWithPath};
 
 pub struct NodeGenMethod {
     pub func: ItemFn,
@@ -27,7 +23,7 @@ pub struct NodeSetCodeGenerator {
     empty_text: LocalizedText,
     aliases: HashMap<String, String>,
     node_counter: usize,
-    types: HashMap<String, XsdFileType>,
+    types: HashMap<String, XsdTypeWithPath>,
 }
 
 impl NodeSetCodeGenerator {
@@ -35,7 +31,7 @@ impl NodeSetCodeGenerator {
         opcua_path_str: &str,
         preferred_locale: &str,
         alias_table: Option<AliasTable>,
-        types: HashMap<String, XsdFileType>,
+        types: HashMap<String, XsdTypeWithPath>,
     ) -> Result<Self, CodeGenError> {
         let mut aliases = HashMap::new();
         if let Some(alias_table) = alias_table {
@@ -289,7 +285,7 @@ impl NodeSetCodeGenerator {
             .collect()
     }
 
-    pub fn generate_item(&mut self, node: UANode) -> Result<NodeGenMethod, CodeGenError> {
+    pub fn generate_item(&mut self, node: &UANode) -> Result<NodeGenMethod, CodeGenError> {
         let name = match node {
             UANode::Object(_) => "object",
             UANode::Variable(_) => "variable",
@@ -318,6 +314,7 @@ impl NodeSetCodeGenerator {
         }?;
 
         let func: ItemFn = parse_quote! {
+            #[allow(unused)]
             fn #func_name(ns_map: &#opcua_path::server::address_space::NodeSetNamespaceMapper<'_>)
                 -> #opcua_path::server::address_space::ImportedItem
             {

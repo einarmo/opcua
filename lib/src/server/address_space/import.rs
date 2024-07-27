@@ -32,6 +32,10 @@ impl NamespaceMap {
 
         max + 1
     }
+
+    pub fn known_namespaces(&self) -> &HashMap<String, u16> {
+        &self.known_namespaces
+    }
 }
 
 /// Utility handling namespaces when loading node sets.
@@ -62,6 +66,10 @@ impl<'a> NodeSetNamespaceMapper<'a> {
         };
         *idx
     }
+
+    pub fn namespaces(&'a self) -> &'a NamespaceMap {
+        &*self.namespaces
+    }
 }
 
 #[derive(Debug)]
@@ -78,5 +86,7 @@ pub struct ImportedItem {
 }
 
 pub trait NodeSetImport {
-    fn load() -> impl Iterator<Item = ImportedItem>;
+    fn register_namespaces(namespaces: &mut NodeSetNamespaceMapper) -> Vec<String>;
+
+    fn load<'a>(namespaces: &'a NodeSetNamespaceMapper) -> impl Iterator<Item = ImportedItem> + 'a;
 }
