@@ -743,6 +743,7 @@ name = "opcua-codegen"
 version = "0.1.0"
 dependencies = [
  "base64 0.22.1",
+ "chrono",
  "convert_case",
  "log 0.4.22",
  "opcua-xml",

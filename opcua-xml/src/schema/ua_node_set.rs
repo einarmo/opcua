@@ -57,6 +57,19 @@ impl UANode {
             _ => return Ok(None),
         }))
     }
+
+    pub fn base(&self) -> &UANodeBase {
+        match self {
+            UANode::Object(n) => &n.base.base,
+            UANode::Variable(n) => &n.base.base,
+            UANode::Method(n) => &n.base.base,
+            UANode::View(n) => &n.base.base,
+            UANode::ObjectType(n) => &n.base.base,
+            UANode::VariableType(n) => &n.base.base,
+            UANode::DataType(n) => &n.base.base,
+            UANode::ReferenceType(n) => &n.base.base,
+        }
+    }
 }
 
 #[derive(Debug)]
