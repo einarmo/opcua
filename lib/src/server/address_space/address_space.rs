@@ -11,8 +11,9 @@ use crate::{
 };
 
 use super::{
-    read_node_value, validate_node_read, validate_node_write, HasNodeId, NodeType, ObjectBuilder,
-    Variable,
+    read_node_value, validate_node_read, validate_node_write, HasNodeId, ImportedItem,
+    ImportedReference, NamespaceMap, NodeSetImport, NodeSetNamespaceMapper, NodeType,
+    ObjectBuilder, Variable,
 };
 
 #[derive(PartialEq, Eq, Clone, Debug, Hash)]
@@ -138,6 +139,38 @@ impl References {
         for (source, target, typ) in references {
             self.insert_reference(source, target, typ);
         }
+    }
+
+    pub fn import_reference(&mut self, source_node: NodeId, rf: ImportedReference) {
+        if source_node == rf.target_id {
+            panic!(
+                "Node id from == node id to {}, self reference is not allowed",
+                source_node
+            );
+        }
+
+        let forward_refs = match self.by_source.get_mut(&source_node) {
+            Some(r) => r,
+            None => self.by_source.entry(source_node.clone()).or_default(),
+        };
+
+        if !forward_refs.insert(Reference {
+            reference_type: rf.type_id.clone(),
+            target_node: rf.target_id.clone(),
+        }) {
+            // If the reference is already added, no reason to try adding it to the inverse.
+            return;
+        }
+
+        let inverse_refs = match self.by_target.get_mut(&rf.target_id) {
+            Some(r) => r,
+            None => self.by_target.entry(rf.target_id).or_default(),
+        };
+
+        inverse_refs.insert(Reference {
+            reference_type: rf.type_id,
+            target_node: source_node,
+        });
     }
 
     pub fn delete_reference(
@@ -365,6 +398,22 @@ impl AddressSpace {
         }
     }
 
+    pub fn import_node_set<T: NodeSetImport>(&mut self, namespaces: &mut NamespaceMap) {
+        let mut map = NodeSetNamespaceMapper::new(namespaces);
+        let owned_namespaces = T::register_namespaces(&mut map);
+        for ns in owned_namespaces {
+            let idx = map
+                .namespaces()
+                .known_namespaces()
+                .get(&ns)
+                .expect("Node import returned owned namespace not added to the namespace map");
+            self.add_namespace(&ns, *idx);
+        }
+        for item in T::load(&map) {
+            self.import_node(item);
+        }
+    }
+
     pub fn load_into_type_tree(&self, type_tree: &mut TypeTree) {
         let mut found_ids = VecDeque::new();
         // Populate types first so that we have reference types to browse in the next stage.
@@ -466,6 +515,23 @@ impl AddressSpace {
                 self.references.insert::<T, S>(&node_id, references);
             }
             self.node_map.insert(node_id, node_type);
+
+            true
+        }
+    }
+
+    pub fn import_node(&mut self, node: ImportedItem) -> bool {
+        let node_id = node.node.node_id().clone();
+
+        self.assert_namespace(&node_id);
+        if self.node_exists(&node_id) {
+            error!("This node {} already exists", node_id);
+            false
+        } else {
+            self.node_map.insert(node_id.clone(), node.node);
+            for r in node.references {
+                self.references.import_reference(node_id.clone(), r);
+            }
 
             true
         }

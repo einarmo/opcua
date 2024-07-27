@@ -23,8 +23,8 @@ pub enum CodeGenError {
     Other(String),
     #[error("Failed to generate code: {0}")]
     Syn(#[from] syn::Error),
-    #[error("Failed to load file: {0}")]
-    Io(#[from] std::io::Error),
+    #[error("{0}: {1}")]
+    Io(String, std::io::Error),
 }
 
 impl From<ParseIntError> for CodeGenError {
@@ -42,5 +42,11 @@ impl From<ParseBoolError> for CodeGenError {
 impl From<ParseFloatError> for CodeGenError {
     fn from(value: ParseFloatError) -> Self {
         Self::ParseFloat("content".to_owned(), value)
+    }
+}
+
+impl CodeGenError {
+    pub fn io(msg: &str, e: std::io::Error) -> Self {
+        Self::Io(msg.to_owned(), e)
     }
 }

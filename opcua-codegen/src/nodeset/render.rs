@@ -72,8 +72,12 @@ impl RenderExpr for NodeId {
             _ => return Err(CodeGenError::Other(format!("Invalid nodeId: {}", id))),
         };
 
-        let ns_item: Expr = parse_quote! {
-            ns_map.get_index(#namespace)
+        let ns_item = if namespace == 0 {
+            quote! { 0u16 }
+        } else {
+            quote! {
+                ns_map.get_index(#namespace)
+            }
         };
 
         Ok(quote! {
@@ -106,8 +110,16 @@ impl RenderExpr for QualifiedName {
         let name = captures.name("name").unwrap();
         let name_str = name.as_str();
 
+        let ns_item = if namespace == 0 {
+            quote! { 0u16 }
+        } else {
+            quote! {
+                ns_map.get_index(#namespace)
+            }
+        };
+
         Ok(quote! {
-            #opcua_path::types::QualifiedName::new(ns_map.get_index(#namespace), #name_str)
+            #opcua_path::types::QualifiedName::new(#ns_item, #name_str)
         })
     }
 }
