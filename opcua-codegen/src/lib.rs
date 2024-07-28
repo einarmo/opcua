@@ -120,6 +120,8 @@ pub fn run_codegen(config: &CodeGenConfig) -> Result<(), CodeGenError> {
                     generate_target(&n, &config.opcua_crate_path, &config.preferred_locale)?;
                 let module_file = make_root_module(&chunks, &config.opcua_crate_path, &n)?;
 
+                println!("Writing {} files to {}", chunks.len() + 1, n.output_dir);
+
                 let header = make_header(&n.file_path, &config.extra_header);
 
                 write_to_directory(&n.output_dir, &header, chunks)?;

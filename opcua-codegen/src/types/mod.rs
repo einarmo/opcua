@@ -18,36 +18,26 @@ pub fn generate_types(
     config: &CodeGenConfig,
     target: &TypeCodeGenTarget,
 ) -> Result<Vec<GeneratedItem>, CodeGenError> {
-    let path = std::path::Path::new(&target.file_path);
+    println!("Loading types from {}", target.file_path);
     let data = std::fs::read_to_string(&target.file_path)
         .map_err(|e| CodeGenError::io(&format!("Failed to read file {}", target.file_path), e))?;
     let type_dictionary = load_bsd_file(&data)?;
-
-    let types = match path.extension().and_then(|p| p.to_str()) {
-        Some("bsd") => {
-            let type_loader = BsdTypeLoader::new(
-                target
-                    .ignore
-                    .iter()
-                    .cloned()
-                    .chain(base_ignored_types().into_iter())
-                    .collect(),
-                base_native_type_mappings(),
-                type_dictionary,
-            )?;
-            type_loader.from_bsd()?
-        }
-        Some(r) => {
-            return Err(CodeGenError::Other(format!(
-                "Invalid code gen file, unknown extension {r}"
-            )))
-        }
-        None => {
-            return Err(CodeGenError::Other(
-                "Invalid code gen file, no extension".to_owned(),
-            ))
-        }
-    };
+    println!(
+        "Found {} raw elements in the type dictionary.",
+        type_dictionary.elements.len()
+    );
+    let type_loader = BsdTypeLoader::new(
+        target
+            .ignore
+            .iter()
+            .cloned()
+            .chain(base_ignored_types().into_iter())
+            .collect(),
+        base_native_type_mappings(),
+        type_dictionary,
+    )?;
+    let types = type_loader.from_bsd()?;
+    println!("Generated code for {} types", types.len());
 
     let mut types_import_map = basic_types_import_map(&config.opcua_crate_path);
     for (k, v) in &target.types_import_map {

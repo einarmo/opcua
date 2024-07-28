@@ -131,6 +131,7 @@ pub fn generate_target(
     opcua_path: &str,
     preferred_locale: &str,
 ) -> Result<Vec<NodeSetChunk>, CodeGenError> {
+    println!("Loading node set from {}", config.file_path);
     let node_set = std::fs::read_to_string(&config.file_path)
         .map_err(|e| CodeGenError::io(&format!("Failed to read file {}", config.file_path), e))?;
     let node_set = load_nodeset2_file(&node_set)?;
@@ -138,6 +139,7 @@ pub fn generate_target(
     let nodes = node_set
         .node_set
         .ok_or_else(|| CodeGenError::Other("Missing UANodeSet in xml schema".to_owned()))?;
+    println!("Found {} nodes in node set", nodes.nodes.len());
 
     let types = make_type_dict(&config)?;
 
@@ -149,6 +151,7 @@ pub fn generate_target(
         fns.push(generator.generate_item(node)?);
     }
     fns.sort_by(|a, b| a.name.cmp(&b.name));
+    println!("Generated {} node creation methods", fns.len());
 
     let mut iter = fns.into_iter();
 

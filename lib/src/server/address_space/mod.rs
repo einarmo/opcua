@@ -8,7 +8,7 @@ pub use base::Base;
 pub use data_type::{DataType, DataTypeBuilder};
 pub use generic::new_node_from_attributes;
 pub use import::{
-    ImportedItem, ImportedReference, NamespaceMap, NodeSetImport, NodeSetNamespaceMapper,
+    ImportedItem, ImportedReference, NodeSetImport, NodeSetNamespaceMapper,
 };
 pub use method::{Method, MethodBuilder};
 pub use node::{HasNodeId, Node, NodeBase, NodeType};
@@ -20,13 +20,7 @@ pub use variable::{Variable, VariableBuilder};
 pub use variable_type::{VariableType, VariableTypeBuilder};
 pub use view::{View, ViewBuilder};
 
-// TODO: Remove, this is for compat with old generated code.
-pub(crate) mod types {
-    pub use super::{
-        AddressSpace, DataType, Method, NodeBase, Object, ObjectType, ReferenceDirection,
-        ReferenceType, Variable, VariableType,
-    };
-}
+pub use generated::CoreNamespace;
 
 // A macro for creating builders. Builders can be used for more conveniently creating objects,
 // variables etc.
@@ -352,8 +346,6 @@ mod reference_type;
 mod variable;
 mod variable_type;
 mod view;
-
-pub use generated::populate_address_space;
 
 bitflags! {
     pub struct AccessLevel: u8 {

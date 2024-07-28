@@ -114,13 +114,15 @@ impl<'a> ValueBuilder<'a> {
                 }
             }
             Variant::ByteString(v) => {
+                let cleaned = v.replace('\n', "");
                 quote::quote! {
-                    #opcua_path::types::ByteString::from_base64(#v).unwrap()
+                    #opcua_path::types::ByteString::from_base64(#cleaned).unwrap()
                 }
             }
             Variant::ListOfByteString(v) => {
+                let cleaned = v.iter().map(|v| v.replace('\n', ""));
                 quote::quote! {
-                    #(#opcua_path::types::ByteString::from_base64(#v).unwrap()),*
+                    #(#opcua_path::types::ByteString::from_base64(#cleaned).unwrap()),*
                 }
             }
             Variant::XmlElement(_) | Variant::ListOfXmlElement(_) => {
@@ -636,9 +638,12 @@ impl<'a> ValueBuilder<'a> {
                     #opcua_path::types::DateTimeUtc::from_timestamp_micros(#ts).unwrap()
                 })
             }
-            "base64Binary" => Ok(quote! {
-                #opcua_path::types::ByteString::from_base64(#data).unwrap()
-            }),
+            "base64Binary" => {
+                let cleaned = data.replace('\n', "");
+                Ok(quote! {
+                    #opcua_path::types::ByteString::from_base64(#cleaned).unwrap()
+                })
+            }
             _ => unreachable!(),
         }
     }
@@ -751,9 +756,13 @@ impl<'a> ValueBuilder<'a> {
                     }
                 }
 
+                // Sort the fields to ensure consistent ordering.
+                let mut fields: Vec<_> = elements.into_iter().collect();
+                fields.sort_by(|a, b| a.0.cmp(&b.0));
+
                 Ok(TypeRef::Struct(StructRef {
                     name: &name,
-                    fields: elements,
+                    fields,
                     path: &ty.path,
                 }))
             }
@@ -768,7 +777,7 @@ struct EnumRef<'a> {
 }
 
 struct StructRef<'a> {
-    fields: HashMap<&'a str, &'a Element>,
+    fields: Vec<(&'a str, &'a Element)>,
     name: &'a str,
     path: &'a Path,
 }
