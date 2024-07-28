@@ -12,7 +12,7 @@ impl crate::types::MessageInfo for HistoryReadDetails {
         crate::types::ObjectId::HistoryReadDetails_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<HistoryReadDetails> for HistoryReadDetails {
+impl crate::types::BinaryEncoder for HistoryReadDetails {
     fn byte_len(&self) -> usize {
         0usize
     }

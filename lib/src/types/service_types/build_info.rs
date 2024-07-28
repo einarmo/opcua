@@ -19,7 +19,7 @@ impl crate::types::MessageInfo for BuildInfo {
         crate::types::ObjectId::BuildInfo_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<BuildInfo> for BuildInfo {
+impl crate::types::BinaryEncoder for BuildInfo {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.product_uri.byte_len();
@@ -46,24 +46,30 @@ impl crate::types::BinaryEncoder<BuildInfo> for BuildInfo {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let product_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let manufacturer_name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let product_name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let software_version = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let build_number = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let build_date = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
+        let product_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let manufacturer_name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let product_name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let software_version = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let build_number = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let build_date = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             product_uri,
             manufacturer_name,

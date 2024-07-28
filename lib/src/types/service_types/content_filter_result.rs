@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for ContentFilterResult {
         crate::types::ObjectId::ContentFilterResult_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<ContentFilterResult> for ContentFilterResult {
+impl crate::types::BinaryEncoder for ContentFilterResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.element_results.byte_len();
@@ -37,14 +37,10 @@ impl crate::types::BinaryEncoder<ContentFilterResult> for ContentFilterResult {
     ) -> crate::types::EncodingResult<Self> {
         let element_results = <Option<
             Vec<super::content_filter_element_result::ContentFilterElementResult>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::content_filter_element_result::ContentFilterElementResult>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let element_diagnostic_infos = <Option<
             Vec<crate::types::diagnostic_info::DiagnosticInfo>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::diagnostic_info::DiagnosticInfo>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             element_results,
             element_diagnostic_infos,

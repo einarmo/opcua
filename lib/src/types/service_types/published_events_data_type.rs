@@ -11,7 +11,7 @@ pub struct PublishedEventsDataType {
     pub selected_fields: Option<Vec<super::simple_attribute_operand::SimpleAttributeOperand>>,
     pub filter: super::content_filter::ContentFilter,
 }
-impl crate::types::BinaryEncoder<PublishedEventsDataType> for PublishedEventsDataType {
+impl crate::types::BinaryEncoder for PublishedEventsDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.event_notifier.byte_len();
@@ -32,17 +32,17 @@ impl crate::types::BinaryEncoder<PublishedEventsDataType> for PublishedEventsDat
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let event_notifier = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
+        let event_notifier = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let selected_fields = <Option<
             Vec<super::simple_attribute_operand::SimpleAttributeOperand>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::simple_attribute_operand::SimpleAttributeOperand>>,
-        >>::decode(stream, decoding_options)?;
-        let filter = <super::content_filter::ContentFilter as crate::types::BinaryEncoder<
-            super::content_filter::ContentFilter,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let filter = <super::content_filter::ContentFilter as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             event_notifier,
             selected_fields,

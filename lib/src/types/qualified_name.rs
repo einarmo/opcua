@@ -65,7 +65,7 @@ impl From<String> for QualifiedName {
     }
 }
 
-impl BinaryEncoder<QualifiedName> for QualifiedName {
+impl BinaryEncoder for QualifiedName {
     fn byte_len(&self) -> usize {
         let mut size: usize = 0;
         size += self.namespace_index.byte_len();

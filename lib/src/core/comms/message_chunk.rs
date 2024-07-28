@@ -59,7 +59,7 @@ pub struct MessageChunkHeader {
     pub secure_channel_id: u32,
 }
 
-impl BinaryEncoder<MessageChunkHeader> for MessageChunkHeader {
+impl BinaryEncoder for MessageChunkHeader {
     fn byte_len(&self) -> usize {
         MESSAGE_CHUNK_HEADER_SIZE
     }
@@ -134,7 +134,7 @@ pub struct MessageChunk {
     pub data: Vec<u8>,
 }
 
-impl BinaryEncoder<MessageChunk> for MessageChunk {
+impl BinaryEncoder for MessageChunk {
     fn byte_len(&self) -> usize {
         self.data.len()
     }

@@ -14,7 +14,7 @@ impl crate::types::MessageInfo for RelativePath {
         crate::types::ObjectId::RelativePath_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<RelativePath> for RelativePath {
+impl crate::types::BinaryEncoder for RelativePath {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.elements.byte_len();
@@ -33,9 +33,7 @@ impl crate::types::BinaryEncoder<RelativePath> for RelativePath {
     ) -> crate::types::EncodingResult<Self> {
         let elements = <Option<
             Vec<super::relative_path_element::RelativePathElement>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::relative_path_element::RelativePathElement>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self { elements })
     }
 }

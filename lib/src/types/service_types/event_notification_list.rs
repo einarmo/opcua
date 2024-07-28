@@ -9,7 +9,7 @@
 pub struct EventNotificationList {
     pub events: Option<Vec<super::event_field_list::EventFieldList>>,
 }
-impl crate::types::BinaryEncoder<EventNotificationList> for EventNotificationList {
+impl crate::types::BinaryEncoder for EventNotificationList {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.events.byte_len();
@@ -28,9 +28,7 @@ impl crate::types::BinaryEncoder<EventNotificationList> for EventNotificationLis
     ) -> crate::types::EncodingResult<Self> {
         let events = <Option<
             Vec<super::event_field_list::EventFieldList>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::event_field_list::EventFieldList>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self { events })
     }
 }

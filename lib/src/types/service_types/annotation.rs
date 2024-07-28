@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for Annotation {
         crate::types::ObjectId::Annotation_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<Annotation> for Annotation {
+impl crate::types::BinaryEncoder for Annotation {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.message.byte_len();
@@ -37,15 +37,18 @@ impl crate::types::BinaryEncoder<Annotation> for Annotation {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let message = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let user_name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let annotation_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
+        let message = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let user_name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let annotation_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             message,
             user_name,

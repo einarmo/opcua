@@ -12,7 +12,7 @@ impl crate::types::MessageInfo for NotificationData {
         crate::types::ObjectId::NotificationData_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<NotificationData> for NotificationData {
+impl crate::types::BinaryEncoder for NotificationData {
     fn byte_len(&self) -> usize {
         0usize
     }

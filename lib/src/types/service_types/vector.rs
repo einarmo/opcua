@@ -12,7 +12,7 @@ impl crate::types::MessageInfo for Vector {
         crate::types::ObjectId::Vector_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<Vector> for Vector {
+impl crate::types::BinaryEncoder for Vector {
     fn byte_len(&self) -> usize {
         0usize
     }

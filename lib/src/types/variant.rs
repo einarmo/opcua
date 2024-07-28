@@ -485,7 +485,7 @@ try_from_variant_to_array_impl!(u64, UInt64);
 try_from_variant_to_array_impl!(f32, Float);
 try_from_variant_to_array_impl!(f64, Double);
 
-impl BinaryEncoder<Variant> for Variant {
+impl BinaryEncoder for Variant {
     fn byte_len(&self) -> usize {
         let mut size: usize = 0;
 

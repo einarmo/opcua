@@ -12,7 +12,7 @@ impl crate::types::MessageInfo for Orientation {
         crate::types::ObjectId::Orientation_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<Orientation> for Orientation {
+impl crate::types::BinaryEncoder for Orientation {
     fn byte_len(&self) -> usize {
         0usize
     }

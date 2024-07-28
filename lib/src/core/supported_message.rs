@@ -31,7 +31,7 @@ macro_rules! supported_messages_enum {
             $( $x(Box<$x>), )*
         }
 
-        impl BinaryEncoder <SupportedMessage> for SupportedMessage {
+        impl BinaryEncoder for SupportedMessage {
             fn byte_len(&self) -> usize {
                 match self {
                     SupportedMessage::Invalid(object_id) => {

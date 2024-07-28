@@ -254,7 +254,7 @@ impl CodeGenerator {
         let write_method = Ident::new(&format!("write_{}", item.typ), Span::call_site());
 
         impls.push(parse_quote! {
-            impl #opcua_path::types::BinaryEncoder<#enum_ident> for #enum_ident {
+            impl #opcua_path::types::BinaryEncoder for #enum_ident {
                 fn byte_len(&self) -> usize {
                     #size
                 }
@@ -445,7 +445,7 @@ impl CodeGenerator {
         let read_method = Ident::new(&format!("read_{}", item.typ), Span::call_site());
 
         impls.push(parse_quote! {
-            impl #opcua_path::types::BinaryEncoder<#enum_ident> for #enum_ident {
+            impl #opcua_path::types::BinaryEncoder for #enum_ident {
                 fn byte_len(&self) -> usize {
                     #size
                 }
@@ -587,7 +587,7 @@ impl CodeGenerator {
                     size += self.#ident.encode(stream)?;
                 });
                 decode_impl.extend(quote! {
-                    let #ident = <#ty as #opcua_path::types::BinaryEncoder<#ty>>::decode(stream, decoding_options)?;
+                    let #ident = <#ty as #opcua_path::types::BinaryEncoder>::decode(stream, decoding_options)?;
                 });
 
                 decode_build.extend(quote! {
@@ -608,7 +608,7 @@ impl CodeGenerator {
         }
 
         impls.push(parse_quote! {
-            impl #opcua_path::types::BinaryEncoder<#struct_ident> for #struct_ident {
+            impl #opcua_path::types::BinaryEncoder for #struct_ident {
                 fn byte_len(&self) -> usize {
                     #len_impl
                 }

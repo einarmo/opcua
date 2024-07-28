@@ -12,7 +12,7 @@ impl crate::types::MessageInfo for DiscoveryConfiguration {
         crate::types::ObjectId::DiscoveryConfiguration_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<DiscoveryConfiguration> for DiscoveryConfiguration {
+impl crate::types::BinaryEncoder for DiscoveryConfiguration {
     fn byte_len(&self) -> usize {
         0usize
     }

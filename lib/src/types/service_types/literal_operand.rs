@@ -9,7 +9,7 @@
 pub struct LiteralOperand {
     pub value: crate::types::variant::Variant,
 }
-impl crate::types::BinaryEncoder<LiteralOperand> for LiteralOperand {
+impl crate::types::BinaryEncoder for LiteralOperand {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.value.byte_len();
@@ -26,9 +26,10 @@ impl crate::types::BinaryEncoder<LiteralOperand> for LiteralOperand {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let value = <crate::types::variant::Variant as crate::types::BinaryEncoder<
-            crate::types::variant::Variant,
-        >>::decode(stream, decoding_options)?;
+        let value = <crate::types::variant::Variant as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { value })
     }
 }

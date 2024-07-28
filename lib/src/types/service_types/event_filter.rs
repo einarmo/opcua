@@ -12,7 +12,7 @@ pub struct EventFilter {
     pub select_clauses: Option<Vec<super::simple_attribute_operand::SimpleAttributeOperand>>,
     pub where_clause: super::content_filter::ContentFilter,
 }
-impl crate::types::BinaryEncoder<EventFilter> for EventFilter {
+impl crate::types::BinaryEncoder for EventFilter {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.select_clauses.byte_len();
@@ -33,12 +33,11 @@ impl crate::types::BinaryEncoder<EventFilter> for EventFilter {
     ) -> crate::types::EncodingResult<Self> {
         let select_clauses = <Option<
             Vec<super::simple_attribute_operand::SimpleAttributeOperand>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::simple_attribute_operand::SimpleAttributeOperand>>,
-        >>::decode(stream, decoding_options)?;
-        let where_clause = <super::content_filter::ContentFilter as crate::types::BinaryEncoder<
-            super::content_filter::ContentFilter,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let where_clause = <super::content_filter::ContentFilter as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             select_clauses,
             where_clause,

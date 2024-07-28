@@ -9,7 +9,7 @@
 pub struct TargetVariablesDataType {
     pub target_variables: Option<Vec<super::field_target_data_type::FieldTargetDataType>>,
 }
-impl crate::types::BinaryEncoder<TargetVariablesDataType> for TargetVariablesDataType {
+impl crate::types::BinaryEncoder for TargetVariablesDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.target_variables.byte_len();
@@ -28,9 +28,7 @@ impl crate::types::BinaryEncoder<TargetVariablesDataType> for TargetVariablesDat
     ) -> crate::types::EncodingResult<Self> {
         let target_variables = <Option<
             Vec<super::field_target_data_type::FieldTargetDataType>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::field_target_data_type::FieldTargetDataType>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self { target_variables })
     }
 }

@@ -105,7 +105,7 @@ impl TcpCodec {
     // Writes the encodable thing into the buffer.
     fn write<T>(&self, msg: T, buf: &mut BytesMut) -> Result<(), io::Error>
     where
-        T: BinaryEncoder<T> + std::fmt::Debug,
+        T: BinaryEncoder + std::fmt::Debug,
     {
         buf.reserve(msg.byte_len());
         msg.encode(&mut buf.writer()).map(|_| ()).map_err(|err| {

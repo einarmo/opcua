@@ -74,7 +74,7 @@ pub struct DiagnosticInfo {
     pub inner_diagnostic_info: Option<Box<DiagnosticInfo>>,
 }
 
-impl BinaryEncoder<DiagnosticInfo> for DiagnosticInfo {
+impl BinaryEncoder for DiagnosticInfo {
     fn byte_len(&self) -> usize {
         let mut size: usize = 0;
         size += 1; // self.encoding_mask())

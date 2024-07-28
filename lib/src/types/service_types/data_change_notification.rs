@@ -10,7 +10,7 @@ pub struct DataChangeNotification {
     pub monitored_items: Option<Vec<super::monitored_item_notification::MonitoredItemNotification>>,
     pub diagnostic_infos: Option<Vec<crate::types::diagnostic_info::DiagnosticInfo>>,
 }
-impl crate::types::BinaryEncoder<DataChangeNotification> for DataChangeNotification {
+impl crate::types::BinaryEncoder for DataChangeNotification {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.monitored_items.byte_len();
@@ -31,14 +31,10 @@ impl crate::types::BinaryEncoder<DataChangeNotification> for DataChangeNotificat
     ) -> crate::types::EncodingResult<Self> {
         let monitored_items = <Option<
             Vec<super::monitored_item_notification::MonitoredItemNotification>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::monitored_item_notification::MonitoredItemNotification>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let diagnostic_infos = <Option<
             Vec<crate::types::diagnostic_info::DiagnosticInfo>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::diagnostic_info::DiagnosticInfo>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             monitored_items,
             diagnostic_infos,

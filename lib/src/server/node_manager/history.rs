@@ -116,7 +116,7 @@ impl HistoryUpdateDetails {
 }
 
 /// Trait for values storable as history data.
-pub trait HistoryResult: BinaryEncoder<Self> + Sized {
+pub trait HistoryResult: BinaryEncoder + Sized {
     /// The object ID of the object encoding.
     const OBJECT_ID: ObjectId;
 

@@ -12,7 +12,7 @@ impl crate::types::MessageInfo for FilterOperand {
         crate::types::ObjectId::FilterOperand_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<FilterOperand> for FilterOperand {
+impl crate::types::BinaryEncoder for FilterOperand {
     fn byte_len(&self) -> usize {
         0usize
     }

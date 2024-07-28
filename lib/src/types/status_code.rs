@@ -249,7 +249,7 @@ impl std::fmt::Debug for StatusCode {
     }
 }
 
-impl BinaryEncoder<StatusCode> for StatusCode {
+impl BinaryEncoder for StatusCode {
     fn byte_len(&self) -> usize {
         4
     }

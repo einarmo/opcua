@@ -12,7 +12,7 @@ impl crate::types::MessageInfo for CartesianCoordinates {
         crate::types::ObjectId::CartesianCoordinates_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<CartesianCoordinates> for CartesianCoordinates {
+impl crate::types::BinaryEncoder for CartesianCoordinates {
     fn byte_len(&self) -> usize {
         0usize
     }

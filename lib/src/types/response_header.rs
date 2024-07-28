@@ -24,7 +24,7 @@ pub struct ResponseHeader {
     pub additional_header: ExtensionObject,
 }
 
-impl BinaryEncoder<ResponseHeader> for ResponseHeader {
+impl BinaryEncoder for ResponseHeader {
     fn byte_len(&self) -> usize {
         let mut size = 0;
         size += self.timestamp.byte_len();

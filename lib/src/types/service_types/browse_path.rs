@@ -15,7 +15,7 @@ impl crate::types::MessageInfo for BrowsePath {
         crate::types::ObjectId::BrowsePath_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<BrowsePath> for BrowsePath {
+impl crate::types::BinaryEncoder for BrowsePath {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.starting_node.byte_len();
@@ -34,12 +34,14 @@ impl crate::types::BinaryEncoder<BrowsePath> for BrowsePath {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let starting_node = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let relative_path = <super::relative_path::RelativePath as crate::types::BinaryEncoder<
-            super::relative_path::RelativePath,
-        >>::decode(stream, decoding_options)?;
+        let starting_node = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let relative_path = <super::relative_path::RelativePath as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             starting_node,
             relative_path,

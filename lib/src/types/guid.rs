@@ -53,7 +53,7 @@ impl fmt::Debug for Guid {
     }
 }
 
-impl BinaryEncoder<Guid> for Guid {
+impl BinaryEncoder for Guid {
     fn byte_len(&self) -> usize {
         16
     }

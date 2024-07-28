@@ -12,7 +12,7 @@ impl crate::types::MessageInfo for Frame {
         crate::types::ObjectId::Frame_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<Frame> for Frame {
+impl crate::types::BinaryEncoder for Frame {
     fn byte_len(&self) -> usize {
         0usize
     }

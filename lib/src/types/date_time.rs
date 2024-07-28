@@ -55,7 +55,7 @@ impl<'de> Deserialize<'de> for DateTime {
 }
 
 /// DateTime encoded as 64-bit signed int
-impl BinaryEncoder<DateTime> for DateTime {
+impl BinaryEncoder for DateTime {
     fn byte_len(&self) -> usize {
         8
     }

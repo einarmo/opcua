@@ -15,7 +15,7 @@ impl crate::types::MessageInfo for OptionSet {
         crate::types::ObjectId::OptionSet_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<OptionSet> for OptionSet {
+impl crate::types::BinaryEncoder for OptionSet {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.value.byte_len();
@@ -34,12 +34,14 @@ impl crate::types::BinaryEncoder<OptionSet> for OptionSet {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let value = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-            crate::types::byte_string::ByteString,
-        >>::decode(stream, decoding_options)?;
-        let valid_bits = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-            crate::types::byte_string::ByteString,
-        >>::decode(stream, decoding_options)?;
+        let value = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let valid_bits = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { value, valid_bits })
     }
 }

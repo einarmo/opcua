@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for ContentFilterElement {
         crate::types::ObjectId::ContentFilterElement_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<ContentFilterElement> for ContentFilterElement {
+impl crate::types::BinaryEncoder for ContentFilterElement {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.filter_operator.byte_len();
@@ -35,14 +35,13 @@ impl crate::types::BinaryEncoder<ContentFilterElement> for ContentFilterElement 
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let filter_operator = <super::enums::FilterOperator as crate::types::BinaryEncoder<
-            super::enums::FilterOperator,
-        >>::decode(stream, decoding_options)?;
+        let filter_operator = <super::enums::FilterOperator as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let filter_operands = <Option<
             Vec<crate::types::extension_object::ExtensionObject>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::extension_object::ExtensionObject>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             filter_operator,
             filter_operands,

@@ -17,7 +17,7 @@ impl crate::types::MessageInfo for KeyValuePair {
         crate::types::ObjectId::KeyValuePair_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<KeyValuePair> for KeyValuePair {
+impl crate::types::BinaryEncoder for KeyValuePair {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.key.byte_len();
@@ -36,12 +36,14 @@ impl crate::types::BinaryEncoder<KeyValuePair> for KeyValuePair {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let key = <crate::types::qualified_name::QualifiedName as crate::types::BinaryEncoder<
-            crate::types::qualified_name::QualifiedName,
-        >>::decode(stream, decoding_options)?;
-        let value = <crate::types::variant::Variant as crate::types::BinaryEncoder<
-            crate::types::variant::Variant,
-        >>::decode(stream, decoding_options)?;
+        let key = <crate::types::qualified_name::QualifiedName as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let value = <crate::types::variant::Variant as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { key, value })
     }
 }
