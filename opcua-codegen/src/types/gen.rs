@@ -555,6 +555,8 @@ impl CodeGenerator {
         let mut encode_impl;
         let mut decode_impl = quote! {};
         let mut decode_build = quote! {};
+
+        let mut has_context = false;
         // Special case an empty struct
         if item.fields.is_empty() {
             len_impl = quote! { 0usize };
@@ -586,13 +588,32 @@ impl CodeGenerator {
                 encode_impl.extend(quote! {
                     size += self.#ident.encode(stream)?;
                 });
-                decode_impl.extend(quote! {
-                    let #ident = <#ty as #opcua_path::types::BinaryEncoder>::decode(stream, decoding_options)?;
-                });
+                if has_context {
+                    decode_impl.extend(quote! {
+                        let #ident = <#ty as #opcua_path::types::BinaryEncoder>::decode(stream, decoding_options)
+                            .map_err(|e| e.with_request_handle(__request_handle))?;
+                    })
+                } else {
+                    decode_impl.extend(quote! {
+                        let #ident = <#ty as #opcua_path::types::BinaryEncoder>::decode(stream, decoding_options)?;
+                    });
+                }
 
                 decode_build.extend(quote! {
                     #ident,
                 });
+
+                if field.name == "request_header" {
+                    decode_impl.extend(quote! {
+                        let __request_handle = request_header.request_handle;
+                    });
+                    has_context = true;
+                } else if field.name == "response_header" {
+                    decode_impl.extend(quote! {
+                        let __request_handle = response_header.request_handle;
+                    });
+                    has_context = true;
+                }
             }
             len_impl.extend(quote! {
                 size

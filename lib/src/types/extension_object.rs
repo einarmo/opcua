@@ -105,7 +105,7 @@ impl BinaryEncoder for ExtensionObject {
             }
             _ => {
                 error!("Invalid encoding type {} in stream", encoding_type);
-                return Err(StatusCode::BadDecodingError);
+                return Err(StatusCode::BadDecodingError.into());
             }
         };
         Ok(ExtensionObject { node_id, body })
@@ -169,12 +169,12 @@ impl ExtensionObject {
                     let mut stream = Cursor::new(value);
                     T::decode(&mut stream, decoding_options)
                 } else {
-                    Err(StatusCode::BadDecodingError)
+                    Err(StatusCode::BadDecodingError.into())
                 }
             }
             _ => {
                 error!("decode_inner called on an unsupported ExtensionObject type");
-                Err(StatusCode::BadDecodingError)
+                Err(StatusCode::BadDecodingError.into())
             }
         }
     }

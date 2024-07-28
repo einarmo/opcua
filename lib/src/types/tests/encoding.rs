@@ -104,7 +104,9 @@ fn decode_string_malformed_utf8() {
     let mut stream = Cursor::new(bytes);
     let decoding_options = DecodingOptions::test();
     assert_eq!(
-        UAString::decode(&mut stream, &decoding_options).unwrap_err(),
+        UAString::decode(&mut stream, &decoding_options)
+            .unwrap_err()
+            .status(),
         StatusCode::BadDecodingError
     );
 }
@@ -551,5 +553,5 @@ fn deep_encoding() {
     let d1 = Variant::Variant(Box::new(d2));
     let mut stream = serialize_as_stream(d1);
     let res = Variant::decode(&mut stream, &decoding_options);
-    assert_eq!(res.unwrap_err(), StatusCode::BadDecodingError);
+    assert_eq!(res.unwrap_err().status(), StatusCode::BadDecodingError);
 }

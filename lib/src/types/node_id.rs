@@ -370,7 +370,7 @@ impl BinaryEncoder for NodeId {
             }
             _ => {
                 error!("Unrecognized node id type {}", identifier);
-                return Err(StatusCode::BadDecodingError);
+                return Err(StatusCode::BadDecodingError.into());
             }
         };
         Ok(node_id)
