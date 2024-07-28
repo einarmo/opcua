@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for AddReferencesRequest {
         crate::types::ObjectId::AddReferencesRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<AddReferencesRequest> for AddReferencesRequest {
+impl crate::types::BinaryEncoder for AddReferencesRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -38,14 +38,13 @@ impl crate::types::BinaryEncoder<AddReferencesRequest> for AddReferencesRequest 
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-            crate::types::request_header::RequestHeader,
-        >>::decode(stream, decoding_options)?;
+        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let references_to_add = <Option<
             Vec<super::add_references_item::AddReferencesItem>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::add_references_item::AddReferencesItem>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             request_header,
             references_to_add,

@@ -16,7 +16,7 @@ pub struct ViewAttributes {
     pub contains_no_loops: bool,
     pub event_notifier: u8,
 }
-impl crate::types::BinaryEncoder<ViewAttributes> for ViewAttributes {
+impl crate::types::BinaryEncoder for ViewAttributes {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.specified_attributes.byte_len();
@@ -48,27 +48,34 @@ impl crate::types::BinaryEncoder<ViewAttributes> for ViewAttributes {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let specified_attributes = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let display_name = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-            crate::types::localized_text::LocalizedText,
-        >>::decode(stream, decoding_options)?;
-        let description = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-            crate::types::localized_text::LocalizedText,
-        >>::decode(stream, decoding_options)?;
-        let write_mask = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let user_write_mask = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let contains_no_loops = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
-        let event_notifier = <u8 as crate::types::BinaryEncoder<
-            u8,
-        >>::decode(stream, decoding_options)?;
+        let specified_attributes = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let display_name = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let description = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let write_mask = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let user_write_mask = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let contains_no_loops = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let event_notifier = <u8 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             specified_attributes,
             display_name,

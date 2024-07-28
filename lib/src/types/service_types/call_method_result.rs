@@ -20,7 +20,7 @@ impl crate::types::MessageInfo for CallMethodResult {
         crate::types::ObjectId::CallMethodResult_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<CallMethodResult> for CallMethodResult {
+impl crate::types::BinaryEncoder for CallMethodResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.status_code.byte_len();
@@ -46,24 +46,19 @@ impl crate::types::BinaryEncoder<CallMethodResult> for CallMethodResult {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let status_code = <crate::types::status_code::StatusCode as crate::types::BinaryEncoder<
-            crate::types::status_code::StatusCode,
-        >>::decode(stream, decoding_options)?;
+        let status_code = <crate::types::status_code::StatusCode as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let input_argument_results = <Option<
             Vec<crate::types::status_code::StatusCode>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::status_code::StatusCode>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let input_argument_diagnostic_infos = <Option<
             Vec<crate::types::diagnostic_info::DiagnosticInfo>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::diagnostic_info::DiagnosticInfo>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let output_arguments = <Option<
             Vec<crate::types::variant::Variant>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::variant::Variant>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             status_code,
             input_argument_results,

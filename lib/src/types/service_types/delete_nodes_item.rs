@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for DeleteNodesItem {
         crate::types::ObjectId::DeleteNodesItem_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<DeleteNodesItem> for DeleteNodesItem {
+impl crate::types::BinaryEncoder for DeleteNodesItem {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.node_id.byte_len();
@@ -38,12 +38,14 @@ impl crate::types::BinaryEncoder<DeleteNodesItem> for DeleteNodesItem {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let delete_target_references = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        let node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let delete_target_references = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             node_id,
             delete_target_references,

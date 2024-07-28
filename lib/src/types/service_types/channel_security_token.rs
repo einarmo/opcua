@@ -18,7 +18,7 @@ impl crate::types::MessageInfo for ChannelSecurityToken {
         crate::types::ObjectId::ChannelSecurityToken_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<ChannelSecurityToken> for ChannelSecurityToken {
+impl crate::types::BinaryEncoder for ChannelSecurityToken {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.channel_id.byte_len();
@@ -44,18 +44,22 @@ impl crate::types::BinaryEncoder<ChannelSecurityToken> for ChannelSecurityToken 
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let channel_id = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let token_id = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let created_at = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
-        let revised_lifetime = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let channel_id = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let token_id = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let created_at = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let revised_lifetime = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             channel_id,
             token_id,

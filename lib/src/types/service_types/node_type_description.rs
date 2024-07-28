@@ -17,7 +17,7 @@ impl crate::types::MessageInfo for NodeTypeDescription {
         crate::types::ObjectId::NodeTypeDescription_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<NodeTypeDescription> for NodeTypeDescription {
+impl crate::types::BinaryEncoder for NodeTypeDescription {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.type_definition_node.byte_len();
@@ -41,17 +41,17 @@ impl crate::types::BinaryEncoder<NodeTypeDescription> for NodeTypeDescription {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let type_definition_node = <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder<
-            crate::types::expanded_node_id::ExpandedNodeId,
-        >>::decode(stream, decoding_options)?;
-        let include_sub_types = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        let type_definition_node = <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let include_sub_types = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let data_to_return = <Option<
             Vec<super::query_data_description::QueryDataDescription>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::query_data_description::QueryDataDescription>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             type_definition_node,
             include_sub_types,

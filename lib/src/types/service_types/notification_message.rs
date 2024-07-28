@@ -17,7 +17,7 @@ impl crate::types::MessageInfo for NotificationMessage {
         crate::types::ObjectId::NotificationMessage_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<NotificationMessage> for NotificationMessage {
+impl crate::types::BinaryEncoder for NotificationMessage {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.sequence_number.byte_len();
@@ -41,17 +41,17 @@ impl crate::types::BinaryEncoder<NotificationMessage> for NotificationMessage {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let sequence_number = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let publish_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
+        let sequence_number = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let publish_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let notification_data = <Option<
             Vec<crate::types::extension_object::ExtensionObject>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::extension_object::ExtensionObject>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             sequence_number,
             publish_time,

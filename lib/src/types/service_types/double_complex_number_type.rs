@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for DoubleComplexNumberType {
         crate::types::ObjectId::DoubleComplexNumberType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<DoubleComplexNumberType> for DoubleComplexNumberType {
+impl crate::types::BinaryEncoder for DoubleComplexNumberType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.real.byte_len();
@@ -38,12 +38,14 @@ impl crate::types::BinaryEncoder<DoubleComplexNumberType> for DoubleComplexNumbe
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let real = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let imaginary = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
+        let real = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let imaginary = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { real, imaginary })
     }
 }

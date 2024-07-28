@@ -16,8 +16,7 @@ impl crate::types::MessageInfo for SignedSoftwareCertificate {
         crate::types::ObjectId::SignedSoftwareCertificate_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<SignedSoftwareCertificate>
-for SignedSoftwareCertificate {
+impl crate::types::BinaryEncoder for SignedSoftwareCertificate {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.certificate_data.byte_len();
@@ -39,12 +38,14 @@ for SignedSoftwareCertificate {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let certificate_data = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-            crate::types::byte_string::ByteString,
-        >>::decode(stream, decoding_options)?;
-        let signature = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-            crate::types::byte_string::ByteString,
-        >>::decode(stream, decoding_options)?;
+        let certificate_data = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let signature = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             certificate_data,
             signature,

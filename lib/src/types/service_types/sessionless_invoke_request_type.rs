@@ -19,8 +19,7 @@ impl crate::types::MessageInfo for SessionlessInvokeRequestType {
         crate::types::ObjectId::SessionlessInvokeRequestType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<SessionlessInvokeRequestType>
-for SessionlessInvokeRequestType {
+impl crate::types::BinaryEncoder for SessionlessInvokeRequestType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.uris_version.byte_len();
@@ -48,27 +47,23 @@ for SessionlessInvokeRequestType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let uris_version = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let uris_version = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let namespace_uris = <Option<
             Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::string::UAString>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let server_uris = <Option<
             Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::string::UAString>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let locale_ids = <Option<
             Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::string::UAString>>,
-        >>::decode(stream, decoding_options)?;
-        let service_id = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let service_id = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             uris_version,
             namespace_uris,

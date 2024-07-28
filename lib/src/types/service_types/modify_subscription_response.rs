@@ -18,8 +18,7 @@ impl crate::types::MessageInfo for ModifySubscriptionResponse {
         crate::types::ObjectId::ModifySubscriptionResponse_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<ModifySubscriptionResponse>
-for ModifySubscriptionResponse {
+impl crate::types::BinaryEncoder for ModifySubscriptionResponse {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.response_header.byte_len();
@@ -45,18 +44,22 @@ for ModifySubscriptionResponse {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let response_header = <crate::types::response_header::ResponseHeader as crate::types::BinaryEncoder<
-            crate::types::response_header::ResponseHeader,
-        >>::decode(stream, decoding_options)?;
-        let revised_publishing_interval = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let revised_lifetime_count = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let revised_max_keep_alive_count = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let response_header = <crate::types::response_header::ResponseHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let revised_publishing_interval = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let revised_lifetime_count = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let revised_max_keep_alive_count = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             response_header,
             revised_publishing_interval,

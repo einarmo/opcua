@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for AliasNameDataType {
         crate::types::ObjectId::AliasNameDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<AliasNameDataType> for AliasNameDataType {
+impl crate::types::BinaryEncoder for AliasNameDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.alias_name.byte_len();
@@ -38,14 +38,13 @@ impl crate::types::BinaryEncoder<AliasNameDataType> for AliasNameDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let alias_name = <crate::types::qualified_name::QualifiedName as crate::types::BinaryEncoder<
-            crate::types::qualified_name::QualifiedName,
-        >>::decode(stream, decoding_options)?;
+        let alias_name = <crate::types::qualified_name::QualifiedName as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let referenced_nodes = <Option<
             Vec<crate::types::expanded_node_id::ExpandedNodeId>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::expanded_node_id::ExpandedNodeId>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             alias_name,
             referenced_nodes,

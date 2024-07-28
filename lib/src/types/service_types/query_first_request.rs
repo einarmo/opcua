@@ -20,7 +20,7 @@ impl crate::types::MessageInfo for QueryFirstRequest {
         crate::types::ObjectId::QueryFirstRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<QueryFirstRequest> for QueryFirstRequest {
+impl crate::types::BinaryEncoder for QueryFirstRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -50,26 +50,29 @@ impl crate::types::BinaryEncoder<QueryFirstRequest> for QueryFirstRequest {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-            crate::types::request_header::RequestHeader,
-        >>::decode(stream, decoding_options)?;
-        let view = <super::view_description::ViewDescription as crate::types::BinaryEncoder<
-            super::view_description::ViewDescription,
-        >>::decode(stream, decoding_options)?;
+        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let view = <super::view_description::ViewDescription as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let node_types = <Option<
             Vec<super::node_type_description::NodeTypeDescription>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::node_type_description::NodeTypeDescription>>,
-        >>::decode(stream, decoding_options)?;
-        let filter = <super::content_filter::ContentFilter as crate::types::BinaryEncoder<
-            super::content_filter::ContentFilter,
-        >>::decode(stream, decoding_options)?;
-        let max_data_sets_to_return = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let max_references_to_return = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let filter = <super::content_filter::ContentFilter as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let max_data_sets_to_return = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let max_references_to_return = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             request_header,
             view,

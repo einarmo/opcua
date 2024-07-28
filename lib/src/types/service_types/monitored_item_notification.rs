@@ -18,8 +18,7 @@ impl crate::types::MessageInfo for MonitoredItemNotification {
         crate::types::ObjectId::MonitoredItemNotification_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<MonitoredItemNotification>
-for MonitoredItemNotification {
+impl crate::types::BinaryEncoder for MonitoredItemNotification {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.client_handle.byte_len();
@@ -41,12 +40,14 @@ for MonitoredItemNotification {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let client_handle = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let value = <crate::types::data_value::DataValue as crate::types::BinaryEncoder<
-            crate::types::data_value::DataValue,
-        >>::decode(stream, decoding_options)?;
+        let client_handle = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let value = <crate::types::data_value::DataValue as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { client_handle, value })
     }
 }

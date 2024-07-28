@@ -15,7 +15,7 @@ impl crate::types::MessageInfo for AdditionalParametersType {
         crate::types::ObjectId::AdditionalParametersType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<AdditionalParametersType> for AdditionalParametersType {
+impl crate::types::BinaryEncoder for AdditionalParametersType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.parameters.byte_len();
@@ -37,9 +37,7 @@ impl crate::types::BinaryEncoder<AdditionalParametersType> for AdditionalParamet
     ) -> crate::types::EncodingResult<Self> {
         let parameters = <Option<
             Vec<super::key_value_pair::KeyValuePair>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::key_value_pair::KeyValuePair>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self { parameters })
     }
 }

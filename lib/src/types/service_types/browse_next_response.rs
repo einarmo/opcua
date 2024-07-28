@@ -17,7 +17,7 @@ impl crate::types::MessageInfo for BrowseNextResponse {
         crate::types::ObjectId::BrowseNextResponse_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<BrowseNextResponse> for BrowseNextResponse {
+impl crate::types::BinaryEncoder for BrowseNextResponse {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.response_header.byte_len();
@@ -41,19 +41,16 @@ impl crate::types::BinaryEncoder<BrowseNextResponse> for BrowseNextResponse {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let response_header = <crate::types::response_header::ResponseHeader as crate::types::BinaryEncoder<
-            crate::types::response_header::ResponseHeader,
-        >>::decode(stream, decoding_options)?;
+        let response_header = <crate::types::response_header::ResponseHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let results = <Option<
             Vec<super::browse_result::BrowseResult>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::browse_result::BrowseResult>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let diagnostic_infos = <Option<
             Vec<crate::types::diagnostic_info::DiagnosticInfo>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::diagnostic_info::DiagnosticInfo>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             response_header,
             results,

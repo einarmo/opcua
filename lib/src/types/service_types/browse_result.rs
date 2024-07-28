@@ -17,7 +17,7 @@ impl crate::types::MessageInfo for BrowseResult {
         crate::types::ObjectId::BrowseResult_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<BrowseResult> for BrowseResult {
+impl crate::types::BinaryEncoder for BrowseResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.status_code.byte_len();
@@ -41,17 +41,17 @@ impl crate::types::BinaryEncoder<BrowseResult> for BrowseResult {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let status_code = <crate::types::status_code::StatusCode as crate::types::BinaryEncoder<
-            crate::types::status_code::StatusCode,
-        >>::decode(stream, decoding_options)?;
-        let continuation_point = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-            crate::types::byte_string::ByteString,
-        >>::decode(stream, decoding_options)?;
+        let status_code = <crate::types::status_code::StatusCode as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let continuation_point = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let references = <Option<
             Vec<super::reference_description::ReferenceDescription>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::reference_description::ReferenceDescription>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             status_code,
             continuation_point,

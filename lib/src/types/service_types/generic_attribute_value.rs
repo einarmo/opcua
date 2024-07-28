@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for GenericAttributeValue {
         crate::types::ObjectId::GenericAttributeValue_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<GenericAttributeValue> for GenericAttributeValue {
+impl crate::types::BinaryEncoder for GenericAttributeValue {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.attribute_id.byte_len();
@@ -38,12 +38,14 @@ impl crate::types::BinaryEncoder<GenericAttributeValue> for GenericAttributeValu
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let attribute_id = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let value = <crate::types::variant::Variant as crate::types::BinaryEncoder<
-            crate::types::variant::Variant,
-        >>::decode(stream, decoding_options)?;
+        let attribute_id = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let value = <crate::types::variant::Variant as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { attribute_id, value })
     }
 }

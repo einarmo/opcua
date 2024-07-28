@@ -11,8 +11,7 @@ pub struct SubscribedDataSetMirrorDataType {
     pub parent_node_name: crate::types::string::UAString,
     pub role_permissions: Option<Vec<super::role_permission_type::RolePermissionType>>,
 }
-impl crate::types::BinaryEncoder<SubscribedDataSetMirrorDataType>
-for SubscribedDataSetMirrorDataType {
+impl crate::types::BinaryEncoder for SubscribedDataSetMirrorDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.parent_node_name.byte_len();
@@ -34,14 +33,13 @@ for SubscribedDataSetMirrorDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let parent_node_name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        let parent_node_name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let role_permissions = <Option<
             Vec<super::role_permission_type::RolePermissionType>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::role_permission_type::RolePermissionType>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             parent_node_name,
             role_permissions,

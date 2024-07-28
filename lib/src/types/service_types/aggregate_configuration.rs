@@ -19,7 +19,7 @@ impl crate::types::MessageInfo for AggregateConfiguration {
         crate::types::ObjectId::AggregateConfiguration_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<AggregateConfiguration> for AggregateConfiguration {
+impl crate::types::BinaryEncoder for AggregateConfiguration {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.use_server_capabilities_defaults.byte_len();
@@ -47,21 +47,26 @@ impl crate::types::BinaryEncoder<AggregateConfiguration> for AggregateConfigurat
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let use_server_capabilities_defaults = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
-        let treat_uncertain_as_bad = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
-        let percent_data_bad = <u8 as crate::types::BinaryEncoder<
-            u8,
-        >>::decode(stream, decoding_options)?;
-        let percent_data_good = <u8 as crate::types::BinaryEncoder<
-            u8,
-        >>::decode(stream, decoding_options)?;
-        let use_sloped_extrapolation = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        let use_server_capabilities_defaults = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let treat_uncertain_as_bad = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let percent_data_bad = <u8 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let percent_data_good = <u8 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let use_sloped_extrapolation = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             use_server_capabilities_defaults,
             treat_uncertain_as_bad,

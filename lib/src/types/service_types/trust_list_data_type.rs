@@ -19,7 +19,7 @@ impl crate::types::MessageInfo for TrustListDataType {
         crate::types::ObjectId::TrustListDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<TrustListDataType> for TrustListDataType {
+impl crate::types::BinaryEncoder for TrustListDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.specified_lists.byte_len();
@@ -47,29 +47,22 @@ impl crate::types::BinaryEncoder<TrustListDataType> for TrustListDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let specified_lists = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let specified_lists = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let trusted_certificates = <Option<
             Vec<crate::types::byte_string::ByteString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::byte_string::ByteString>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let trusted_crls = <Option<
             Vec<crate::types::byte_string::ByteString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::byte_string::ByteString>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let issuer_certificates = <Option<
             Vec<crate::types::byte_string::ByteString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::byte_string::ByteString>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let issuer_crls = <Option<
             Vec<crate::types::byte_string::ByteString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::byte_string::ByteString>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             specified_lists,
             trusted_certificates,

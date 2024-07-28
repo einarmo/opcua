@@ -23,7 +23,7 @@ impl crate::types::MessageInfo for StructureField {
         crate::types::ObjectId::StructureField_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<StructureField> for StructureField {
+impl crate::types::BinaryEncoder for StructureField {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.name.byte_len();
@@ -55,29 +55,33 @@ impl crate::types::BinaryEncoder<StructureField> for StructureField {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let description = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-            crate::types::localized_text::LocalizedText,
-        >>::decode(stream, decoding_options)?;
-        let data_type = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let value_rank = <i32 as crate::types::BinaryEncoder<
-            i32,
-        >>::decode(stream, decoding_options)?;
+        let name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let description = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let data_type = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let value_rank = <i32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let array_dimensions = <Option<
             Vec<u32>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<u32>>,
-        >>::decode(stream, decoding_options)?;
-        let max_string_length = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let is_optional = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let max_string_length = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let is_optional = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             name,
             description,

@@ -10,7 +10,7 @@
 pub struct ElementOperand {
     pub index: u32,
 }
-impl crate::types::BinaryEncoder<ElementOperand> for ElementOperand {
+impl crate::types::BinaryEncoder for ElementOperand {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.index.byte_len();
@@ -30,9 +30,10 @@ impl crate::types::BinaryEncoder<ElementOperand> for ElementOperand {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let index = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let index = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { index })
     }
 }

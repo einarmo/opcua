@@ -18,8 +18,7 @@ impl crate::types::MessageInfo for FindServersOnNetworkRequest {
         crate::types::ObjectId::FindServersOnNetworkRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<FindServersOnNetworkRequest>
-for FindServersOnNetworkRequest {
+impl crate::types::BinaryEncoder for FindServersOnNetworkRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -45,20 +44,21 @@ for FindServersOnNetworkRequest {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-            crate::types::request_header::RequestHeader,
-        >>::decode(stream, decoding_options)?;
-        let starting_record_id = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let max_records_to_return = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let starting_record_id = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let max_records_to_return = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let server_capability_filter = <Option<
             Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::string::UAString>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             request_header,
             starting_record_id,

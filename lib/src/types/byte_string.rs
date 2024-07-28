@@ -90,7 +90,7 @@ impl<'de> Deserialize<'de> for ByteString {
     }
 }
 
-impl BinaryEncoder<ByteString> for ByteString {
+impl BinaryEncoder for ByteString {
     fn byte_len(&self) -> usize {
         // Length plus the actual length of bytes (if not null)
         4 + if self.value.is_none() {

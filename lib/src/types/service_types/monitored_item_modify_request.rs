@@ -16,8 +16,7 @@ impl crate::types::MessageInfo for MonitoredItemModifyRequest {
         crate::types::ObjectId::MonitoredItemModifyRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<MonitoredItemModifyRequest>
-for MonitoredItemModifyRequest {
+impl crate::types::BinaryEncoder for MonitoredItemModifyRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.monitored_item_id.byte_len();
@@ -39,12 +38,14 @@ for MonitoredItemModifyRequest {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let monitored_item_id = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let requested_parameters = <super::monitoring_parameters::MonitoringParameters as crate::types::BinaryEncoder<
-            super::monitoring_parameters::MonitoringParameters,
-        >>::decode(stream, decoding_options)?;
+        let monitored_item_id = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let requested_parameters = <super::monitoring_parameters::MonitoringParameters as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             monitored_item_id,
             requested_parameters,

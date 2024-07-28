@@ -18,7 +18,7 @@ impl crate::types::MessageInfo for GetEndpointsRequest {
         crate::types::ObjectId::GetEndpointsRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<GetEndpointsRequest> for GetEndpointsRequest {
+impl crate::types::BinaryEncoder for GetEndpointsRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -44,22 +44,20 @@ impl crate::types::BinaryEncoder<GetEndpointsRequest> for GetEndpointsRequest {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-            crate::types::request_header::RequestHeader,
-        >>::decode(stream, decoding_options)?;
-        let endpoint_url = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let endpoint_url = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let locale_ids = <Option<
             Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::string::UAString>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let profile_uris = <Option<
             Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::string::UAString>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             request_header,
             endpoint_url,

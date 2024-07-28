@@ -18,8 +18,7 @@ impl crate::types::MessageInfo for OpenSecureChannelResponse {
         crate::types::ObjectId::OpenSecureChannelResponse_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<OpenSecureChannelResponse>
-for OpenSecureChannelResponse {
+impl crate::types::BinaryEncoder for OpenSecureChannelResponse {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.response_header.byte_len();
@@ -45,18 +44,22 @@ for OpenSecureChannelResponse {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let response_header = <crate::types::response_header::ResponseHeader as crate::types::BinaryEncoder<
-            crate::types::response_header::ResponseHeader,
-        >>::decode(stream, decoding_options)?;
-        let server_protocol_version = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let security_token = <super::channel_security_token::ChannelSecurityToken as crate::types::BinaryEncoder<
-            super::channel_security_token::ChannelSecurityToken,
-        >>::decode(stream, decoding_options)?;
-        let server_nonce = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-            crate::types::byte_string::ByteString,
-        >>::decode(stream, decoding_options)?;
+        let response_header = <crate::types::response_header::ResponseHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let server_protocol_version = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let security_token = <super::channel_security_token::ChannelSecurityToken as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let server_nonce = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             response_header,
             server_protocol_version,

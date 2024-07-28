@@ -15,7 +15,7 @@ pub struct EnumField {
     pub description: crate::types::localized_text::LocalizedText,
     pub name: crate::types::string::UAString,
 }
-impl crate::types::BinaryEncoder<EnumField> for EnumField {
+impl crate::types::BinaryEncoder for EnumField {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.value.byte_len();
@@ -41,18 +41,22 @@ impl crate::types::BinaryEncoder<EnumField> for EnumField {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let value = <i64 as crate::types::BinaryEncoder<
-            i64,
-        >>::decode(stream, decoding_options)?;
-        let display_name = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-            crate::types::localized_text::LocalizedText,
-        >>::decode(stream, decoding_options)?;
-        let description = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-            crate::types::localized_text::LocalizedText,
-        >>::decode(stream, decoding_options)?;
-        let name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        let value = <i64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let display_name = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let description = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             value,
             display_name,

@@ -11,7 +11,7 @@ pub struct ReadAtTimeDetails {
     pub req_times: Option<Vec<crate::types::date_time::DateTime>>,
     pub use_simple_bounds: bool,
 }
-impl crate::types::BinaryEncoder<ReadAtTimeDetails> for ReadAtTimeDetails {
+impl crate::types::BinaryEncoder for ReadAtTimeDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.req_times.byte_len();
@@ -35,12 +35,11 @@ impl crate::types::BinaryEncoder<ReadAtTimeDetails> for ReadAtTimeDetails {
     ) -> crate::types::EncodingResult<Self> {
         let req_times = <Option<
             Vec<crate::types::date_time::DateTime>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::date_time::DateTime>>,
-        >>::decode(stream, decoding_options)?;
-        let use_simple_bounds = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let use_simple_bounds = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             req_times,
             use_simple_bounds,

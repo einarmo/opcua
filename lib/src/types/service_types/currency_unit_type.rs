@@ -18,7 +18,7 @@ impl crate::types::MessageInfo for CurrencyUnitType {
         crate::types::ObjectId::CurrencyUnitType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<CurrencyUnitType> for CurrencyUnitType {
+impl crate::types::BinaryEncoder for CurrencyUnitType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.numeric_code.byte_len();
@@ -44,18 +44,22 @@ impl crate::types::BinaryEncoder<CurrencyUnitType> for CurrencyUnitType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let numeric_code = <i16 as crate::types::BinaryEncoder<
-            i16,
-        >>::decode(stream, decoding_options)?;
-        let exponent = <i8 as crate::types::BinaryEncoder<
-            i8,
-        >>::decode(stream, decoding_options)?;
-        let alphabetic_code = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let currency = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-            crate::types::localized_text::LocalizedText,
-        >>::decode(stream, decoding_options)?;
+        let numeric_code = <i16 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let exponent = <i8 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let alphabetic_code = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let currency = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             numeric_code,
             exponent,

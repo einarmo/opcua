@@ -23,7 +23,7 @@ impl crate::types::MessageInfo for DataSetWriterDataType {
         crate::types::ObjectId::DataSetWriterDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<DataSetWriterDataType> for DataSetWriterDataType {
+impl crate::types::BinaryEncoder for DataSetWriterDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.name.byte_len();
@@ -59,35 +59,41 @@ impl crate::types::BinaryEncoder<DataSetWriterDataType> for DataSetWriterDataTyp
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let enabled = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
-        let data_set_writer_id = <u16 as crate::types::BinaryEncoder<
-            u16,
-        >>::decode(stream, decoding_options)?;
-        let data_set_field_content_mask = <super::enums::DataSetFieldContentMask as crate::types::BinaryEncoder<
-            super::enums::DataSetFieldContentMask,
-        >>::decode(stream, decoding_options)?;
-        let key_frame_count = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let data_set_name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        let name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let enabled = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let data_set_writer_id = <u16 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let data_set_field_content_mask = <super::enums::DataSetFieldContentMask as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let key_frame_count = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let data_set_name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let data_set_writer_properties = <Option<
             Vec<super::key_value_pair::KeyValuePair>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::key_value_pair::KeyValuePair>>,
-        >>::decode(stream, decoding_options)?;
-        let transport_settings = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
-            crate::types::extension_object::ExtensionObject,
-        >>::decode(stream, decoding_options)?;
-        let message_settings = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
-            crate::types::extension_object::ExtensionObject,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let transport_settings = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let message_settings = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             name,
             enabled,

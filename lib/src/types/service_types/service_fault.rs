@@ -15,7 +15,7 @@ impl crate::types::MessageInfo for ServiceFault {
         crate::types::ObjectId::ServiceFault_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<ServiceFault> for ServiceFault {
+impl crate::types::BinaryEncoder for ServiceFault {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.response_header.byte_len();
@@ -35,9 +35,10 @@ impl crate::types::BinaryEncoder<ServiceFault> for ServiceFault {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let response_header = <crate::types::response_header::ResponseHeader as crate::types::BinaryEncoder<
-            crate::types::response_header::ResponseHeader,
-        >>::decode(stream, decoding_options)?;
+        let response_header = <crate::types::response_header::ResponseHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { response_header })
     }
 }

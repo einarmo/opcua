@@ -12,7 +12,7 @@ pub struct ThreeDOrientation {
     pub b: f64,
     pub c: f64,
 }
-impl crate::types::BinaryEncoder<ThreeDOrientation> for ThreeDOrientation {
+impl crate::types::BinaryEncoder for ThreeDOrientation {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.a.byte_len();
@@ -36,15 +36,9 @@ impl crate::types::BinaryEncoder<ThreeDOrientation> for ThreeDOrientation {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let a = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let b = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let c = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
+        let a = <f64 as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let b = <f64 as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let c = <f64 as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self { a, b, c })
     }
 }

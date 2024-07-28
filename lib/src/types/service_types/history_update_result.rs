@@ -17,7 +17,7 @@ impl crate::types::MessageInfo for HistoryUpdateResult {
         crate::types::ObjectId::HistoryUpdateResult_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<HistoryUpdateResult> for HistoryUpdateResult {
+impl crate::types::BinaryEncoder for HistoryUpdateResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.status_code.byte_len();
@@ -41,19 +41,16 @@ impl crate::types::BinaryEncoder<HistoryUpdateResult> for HistoryUpdateResult {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let status_code = <crate::types::status_code::StatusCode as crate::types::BinaryEncoder<
-            crate::types::status_code::StatusCode,
-        >>::decode(stream, decoding_options)?;
+        let status_code = <crate::types::status_code::StatusCode as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let operation_results = <Option<
             Vec<crate::types::status_code::StatusCode>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::status_code::StatusCode>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let diagnostic_infos = <Option<
             Vec<crate::types::diagnostic_info::DiagnosticInfo>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::diagnostic_info::DiagnosticInfo>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             status_code,
             operation_results,

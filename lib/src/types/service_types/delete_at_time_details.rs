@@ -11,7 +11,7 @@ pub struct DeleteAtTimeDetails {
     pub node_id: crate::types::node_id::NodeId,
     pub req_times: Option<Vec<crate::types::date_time::DateTime>>,
 }
-impl crate::types::BinaryEncoder<DeleteAtTimeDetails> for DeleteAtTimeDetails {
+impl crate::types::BinaryEncoder for DeleteAtTimeDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.node_id.byte_len();
@@ -33,14 +33,13 @@ impl crate::types::BinaryEncoder<DeleteAtTimeDetails> for DeleteAtTimeDetails {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
+        let node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let req_times = <Option<
             Vec<crate::types::date_time::DateTime>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::date_time::DateTime>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self { node_id, req_times })
     }
 }

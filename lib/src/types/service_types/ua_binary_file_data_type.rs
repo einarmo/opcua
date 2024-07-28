@@ -20,7 +20,7 @@ pub struct UABinaryFileDataType {
     pub file_header: Option<Vec<super::key_value_pair::KeyValuePair>>,
     pub body: crate::types::variant::Variant,
 }
-impl crate::types::BinaryEncoder<UABinaryFileDataType> for UABinaryFileDataType {
+impl crate::types::BinaryEncoder for UABinaryFileDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.namespaces.byte_len();
@@ -54,35 +54,27 @@ impl crate::types::BinaryEncoder<UABinaryFileDataType> for UABinaryFileDataType 
     ) -> crate::types::EncodingResult<Self> {
         let namespaces = <Option<
             Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::string::UAString>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let structure_data_types = <Option<
             Vec<super::structure_description::StructureDescription>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::structure_description::StructureDescription>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let enum_data_types = <Option<
             Vec<super::enum_description::EnumDescription>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::enum_description::EnumDescription>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let simple_data_types = <Option<
             Vec<super::simple_type_description::SimpleTypeDescription>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::simple_type_description::SimpleTypeDescription>>,
-        >>::decode(stream, decoding_options)?;
-        let schema_location = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let schema_location = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let file_header = <Option<
             Vec<super::key_value_pair::KeyValuePair>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::key_value_pair::KeyValuePair>>,
-        >>::decode(stream, decoding_options)?;
-        let body = <crate::types::variant::Variant as crate::types::BinaryEncoder<
-            crate::types::variant::Variant,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let body = <crate::types::variant::Variant as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             namespaces,
             structure_data_types,

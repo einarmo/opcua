@@ -11,7 +11,7 @@ pub struct UpdateDataDetails {
     pub perform_insert_replace: super::enums::PerformUpdateType,
     pub update_values: Option<Vec<crate::types::data_value::DataValue>>,
 }
-impl crate::types::BinaryEncoder<UpdateDataDetails> for UpdateDataDetails {
+impl crate::types::BinaryEncoder for UpdateDataDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.node_id.byte_len();
@@ -35,17 +35,17 @@ impl crate::types::BinaryEncoder<UpdateDataDetails> for UpdateDataDetails {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let perform_insert_replace = <super::enums::PerformUpdateType as crate::types::BinaryEncoder<
-            super::enums::PerformUpdateType,
-        >>::decode(stream, decoding_options)?;
+        let node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let perform_insert_replace = <super::enums::PerformUpdateType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let update_values = <Option<
             Vec<crate::types::data_value::DataValue>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::data_value::DataValue>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             node_id,
             perform_insert_replace,

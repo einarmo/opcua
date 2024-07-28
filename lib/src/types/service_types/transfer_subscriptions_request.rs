@@ -17,8 +17,7 @@ impl crate::types::MessageInfo for TransferSubscriptionsRequest {
         crate::types::ObjectId::TransferSubscriptionsRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<TransferSubscriptionsRequest>
-for TransferSubscriptionsRequest {
+impl crate::types::BinaryEncoder for TransferSubscriptionsRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -42,17 +41,17 @@ for TransferSubscriptionsRequest {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-            crate::types::request_header::RequestHeader,
-        >>::decode(stream, decoding_options)?;
+        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let subscription_ids = <Option<
             Vec<u32>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<u32>>,
-        >>::decode(stream, decoding_options)?;
-        let send_initial_values = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let send_initial_values = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             request_header,
             subscription_ids,

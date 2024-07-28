@@ -21,8 +21,7 @@ impl crate::types::MessageInfo for PubSubConfigurationDataType {
         crate::types::ObjectId::PubSubConfigurationDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<PubSubConfigurationDataType>
-for PubSubConfigurationDataType {
+impl crate::types::BinaryEncoder for PubSubConfigurationDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.published_data_sets.byte_len();
@@ -48,17 +47,14 @@ for PubSubConfigurationDataType {
     ) -> crate::types::EncodingResult<Self> {
         let published_data_sets = <Option<
             Vec<super::published_data_set_data_type::PublishedDataSetDataType>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::published_data_set_data_type::PublishedDataSetDataType>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let connections = <Option<
             Vec<super::pub_sub_connection_data_type::PubSubConnectionDataType>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::pub_sub_connection_data_type::PubSubConnectionDataType>>,
-        >>::decode(stream, decoding_options)?;
-        let enabled = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let enabled = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             published_data_sets,
             connections,

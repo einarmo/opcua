@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for Range {
         crate::types::ObjectId::Range_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<Range> for Range {
+impl crate::types::BinaryEncoder for Range {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.low.byte_len();
@@ -38,12 +38,14 @@ impl crate::types::BinaryEncoder<Range> for Range {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let low = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let high = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
+        let low = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let high = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { low, high })
     }
 }

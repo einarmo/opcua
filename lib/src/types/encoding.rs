@@ -163,7 +163,7 @@ impl DecodingOptions {
 /// OPC UA Binary Encoding interface. Anything that encodes to binary must implement this. It provides
 /// functions to calculate the size in bytes of the struct (for allocating memory), encoding to a stream
 /// and decoding from a stream.
-pub trait BinaryEncoder<T> {
+pub trait BinaryEncoder: Sized {
     /// Returns the exact byte length of the structure as it would be if `encode` were called.
     /// This may be called prior to writing to ensure the correct amount of space is available.
     fn byte_len(&self) -> usize;
@@ -172,7 +172,7 @@ pub trait BinaryEncoder<T> {
     /// Decodes an instance from the read stream. The decoding options contains restrictions set by
     /// the server / client on the length of strings, arrays etc. If these limits are exceeded the
     /// implementation should return with a `BadDecodingError` as soon as possible.
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<T>;
+    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self>;
 
     // Convenience method for encoding a message straight into an array of bytes. It is preferable to reuse buffers than
     // to call this so it should be reserved for tests and trivial code.
@@ -202,9 +202,9 @@ where
     })
 }
 
-impl<T> BinaryEncoder<Option<Vec<T>>> for Option<Vec<T>>
+impl<T> BinaryEncoder for Option<Vec<T>>
 where
-    T: BinaryEncoder<T>,
+    T: BinaryEncoder,
 {
     fn byte_len(&self) -> usize {
         let mut size = 4;
@@ -254,7 +254,7 @@ where
 }
 
 /// Calculates the length in bytes of an array of encoded type
-pub fn byte_len_array<T: BinaryEncoder<T>>(values: &Option<Vec<T>>) -> usize {
+pub fn byte_len_array<T: BinaryEncoder>(values: &Option<Vec<T>>) -> usize {
     let mut size = 4;
     if let Some(ref values) = values {
         size += values.iter().map(|v| v.byte_len()).sum::<usize>();
@@ -263,7 +263,7 @@ pub fn byte_len_array<T: BinaryEncoder<T>>(values: &Option<Vec<T>>) -> usize {
 }
 
 /// Write an array of the encoded type to stream, preserving distinction between null array and empty array
-pub fn write_array<S: Write, T: BinaryEncoder<T>>(
+pub fn write_array<S: Write, T: BinaryEncoder>(
     stream: &mut S,
     values: &Option<Vec<T>>,
 ) -> EncodingResult<usize> {
@@ -280,7 +280,7 @@ pub fn write_array<S: Write, T: BinaryEncoder<T>>(
 }
 
 /// Reads an array of the encoded type from a stream, preserving distinction between null array and empty array
-pub fn read_array<S: Read, T: BinaryEncoder<T>>(
+pub fn read_array<S: Read, T: BinaryEncoder>(
     stream: &mut S,
     decoding_options: &DecodingOptions,
 ) -> EncodingResult<Option<Vec<T>>> {

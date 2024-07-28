@@ -22,7 +22,7 @@ pub struct VariableAttributes {
     pub minimum_sampling_interval: f64,
     pub historizing: bool,
 }
-impl crate::types::BinaryEncoder<VariableAttributes> for VariableAttributes {
+impl crate::types::BinaryEncoder for VariableAttributes {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.specified_attributes.byte_len();
@@ -66,47 +66,57 @@ impl crate::types::BinaryEncoder<VariableAttributes> for VariableAttributes {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let specified_attributes = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let display_name = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-            crate::types::localized_text::LocalizedText,
-        >>::decode(stream, decoding_options)?;
-        let description = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-            crate::types::localized_text::LocalizedText,
-        >>::decode(stream, decoding_options)?;
-        let write_mask = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let user_write_mask = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let value = <crate::types::variant::Variant as crate::types::BinaryEncoder<
-            crate::types::variant::Variant,
-        >>::decode(stream, decoding_options)?;
-        let data_type = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let value_rank = <i32 as crate::types::BinaryEncoder<
-            i32,
-        >>::decode(stream, decoding_options)?;
+        let specified_attributes = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let display_name = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let description = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let write_mask = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let user_write_mask = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let value = <crate::types::variant::Variant as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let data_type = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let value_rank = <i32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let array_dimensions = <Option<
             Vec<u32>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<u32>>,
-        >>::decode(stream, decoding_options)?;
-        let access_level = <u8 as crate::types::BinaryEncoder<
-            u8,
-        >>::decode(stream, decoding_options)?;
-        let user_access_level = <u8 as crate::types::BinaryEncoder<
-            u8,
-        >>::decode(stream, decoding_options)?;
-        let minimum_sampling_interval = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let historizing = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let access_level = <u8 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let user_access_level = <u8 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let minimum_sampling_interval = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let historizing = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             specified_attributes,
             display_name,

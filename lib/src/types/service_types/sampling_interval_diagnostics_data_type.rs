@@ -18,8 +18,7 @@ impl crate::types::MessageInfo for SamplingIntervalDiagnosticsDataType {
         crate::types::ObjectId::SamplingIntervalDiagnosticsDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<SamplingIntervalDiagnosticsDataType>
-for SamplingIntervalDiagnosticsDataType {
+impl crate::types::BinaryEncoder for SamplingIntervalDiagnosticsDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.sampling_interval.byte_len();
@@ -45,18 +44,22 @@ for SamplingIntervalDiagnosticsDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let sampling_interval = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let monitored_item_count = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let max_monitored_item_count = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let disabled_monitored_item_count = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let sampling_interval = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let monitored_item_count = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let max_monitored_item_count = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let disabled_monitored_item_count = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             sampling_interval,
             monitored_item_count,

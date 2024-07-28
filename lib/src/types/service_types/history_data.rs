@@ -15,7 +15,7 @@ impl crate::types::MessageInfo for HistoryData {
         crate::types::ObjectId::HistoryData_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<HistoryData> for HistoryData {
+impl crate::types::BinaryEncoder for HistoryData {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.data_values.byte_len();
@@ -37,9 +37,7 @@ impl crate::types::BinaryEncoder<HistoryData> for HistoryData {
     ) -> crate::types::EncodingResult<Self> {
         let data_values = <Option<
             Vec<crate::types::data_value::DataValue>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::data_value::DataValue>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self { data_values })
     }
 }

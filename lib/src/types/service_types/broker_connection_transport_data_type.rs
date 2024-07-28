@@ -11,8 +11,7 @@ pub struct BrokerConnectionTransportDataType {
     pub resource_uri: crate::types::string::UAString,
     pub authentication_profile_uri: crate::types::string::UAString,
 }
-impl crate::types::BinaryEncoder<BrokerConnectionTransportDataType>
-for BrokerConnectionTransportDataType {
+impl crate::types::BinaryEncoder for BrokerConnectionTransportDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.resource_uri.byte_len();
@@ -34,12 +33,14 @@ for BrokerConnectionTransportDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let resource_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let authentication_profile_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        let resource_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let authentication_profile_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             resource_uri,
             authentication_profile_uri,

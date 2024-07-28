@@ -14,7 +14,7 @@ pub struct EventFilterResult {
     >,
     pub where_clause_result: super::content_filter_result::ContentFilterResult,
 }
-impl crate::types::BinaryEncoder<EventFilterResult> for EventFilterResult {
+impl crate::types::BinaryEncoder for EventFilterResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.select_clause_results.byte_len();
@@ -40,17 +40,14 @@ impl crate::types::BinaryEncoder<EventFilterResult> for EventFilterResult {
     ) -> crate::types::EncodingResult<Self> {
         let select_clause_results = <Option<
             Vec<crate::types::status_code::StatusCode>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::status_code::StatusCode>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let select_clause_diagnostic_infos = <Option<
             Vec<crate::types::diagnostic_info::DiagnosticInfo>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::diagnostic_info::DiagnosticInfo>>,
-        >>::decode(stream, decoding_options)?;
-        let where_clause_result = <super::content_filter_result::ContentFilterResult as crate::types::BinaryEncoder<
-            super::content_filter_result::ContentFilterResult,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let where_clause_result = <super::content_filter_result::ContentFilterResult as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             select_clause_results,
             select_clause_diagnostic_infos,

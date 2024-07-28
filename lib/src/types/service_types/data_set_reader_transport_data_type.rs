@@ -13,8 +13,7 @@ impl crate::types::MessageInfo for DataSetReaderTransportDataType {
         crate::types::ObjectId::DataSetReaderTransportDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<DataSetReaderTransportDataType>
-for DataSetReaderTransportDataType {
+impl crate::types::BinaryEncoder for DataSetReaderTransportDataType {
     fn byte_len(&self) -> usize {
         0usize
     }

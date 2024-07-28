@@ -11,7 +11,7 @@ pub struct StatusChangeNotification {
     pub status: crate::types::status_code::StatusCode,
     pub diagnostic_info: crate::types::diagnostic_info::DiagnosticInfo,
 }
-impl crate::types::BinaryEncoder<StatusChangeNotification> for StatusChangeNotification {
+impl crate::types::BinaryEncoder for StatusChangeNotification {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.status.byte_len();
@@ -33,12 +33,14 @@ impl crate::types::BinaryEncoder<StatusChangeNotification> for StatusChangeNotif
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let status = <crate::types::status_code::StatusCode as crate::types::BinaryEncoder<
-            crate::types::status_code::StatusCode,
-        >>::decode(stream, decoding_options)?;
-        let diagnostic_info = <crate::types::diagnostic_info::DiagnosticInfo as crate::types::BinaryEncoder<
-            crate::types::diagnostic_info::DiagnosticInfo,
-        >>::decode(stream, decoding_options)?;
+        let status = <crate::types::status_code::StatusCode as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let diagnostic_info = <crate::types::diagnostic_info::DiagnosticInfo as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { status, diagnostic_info })
     }
 }

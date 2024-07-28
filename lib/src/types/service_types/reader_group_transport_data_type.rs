@@ -13,8 +13,7 @@ impl crate::types::MessageInfo for ReaderGroupTransportDataType {
         crate::types::ObjectId::ReaderGroupTransportDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<ReaderGroupTransportDataType>
-for ReaderGroupTransportDataType {
+impl crate::types::BinaryEncoder for ReaderGroupTransportDataType {
     fn byte_len(&self) -> usize {
         0usize
     }

@@ -22,7 +22,7 @@ impl crate::types::MessageInfo for ActivateSessionRequest {
         crate::types::ObjectId::ActivateSessionRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<ActivateSessionRequest> for ActivateSessionRequest {
+impl crate::types::BinaryEncoder for ActivateSessionRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -52,28 +52,28 @@ impl crate::types::BinaryEncoder<ActivateSessionRequest> for ActivateSessionRequ
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-            crate::types::request_header::RequestHeader,
-        >>::decode(stream, decoding_options)?;
-        let client_signature = <super::signature_data::SignatureData as crate::types::BinaryEncoder<
-            super::signature_data::SignatureData,
-        >>::decode(stream, decoding_options)?;
+        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let client_signature = <super::signature_data::SignatureData as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let client_software_certificates = <Option<
             Vec<super::signed_software_certificate::SignedSoftwareCertificate>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::signed_software_certificate::SignedSoftwareCertificate>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let locale_ids = <Option<
             Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::string::UAString>>,
-        >>::decode(stream, decoding_options)?;
-        let user_identity_token = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
-            crate::types::extension_object::ExtensionObject,
-        >>::decode(stream, decoding_options)?;
-        let user_token_signature = <super::signature_data::SignatureData as crate::types::BinaryEncoder<
-            super::signature_data::SignatureData,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let user_identity_token = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let user_token_signature = <super::signature_data::SignatureData as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             request_header,
             client_signature,

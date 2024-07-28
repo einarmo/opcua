@@ -14,7 +14,7 @@ pub struct ReadProcessedDetails {
     pub aggregate_type: Option<Vec<crate::types::node_id::NodeId>>,
     pub aggregate_configuration: super::aggregate_configuration::AggregateConfiguration,
 }
-impl crate::types::BinaryEncoder<ReadProcessedDetails> for ReadProcessedDetails {
+impl crate::types::BinaryEncoder for ReadProcessedDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.start_time.byte_len();
@@ -42,23 +42,25 @@ impl crate::types::BinaryEncoder<ReadProcessedDetails> for ReadProcessedDetails 
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let start_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
-        let end_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
-        let processing_interval = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
+        let start_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let end_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let processing_interval = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let aggregate_type = <Option<
             Vec<crate::types::node_id::NodeId>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::node_id::NodeId>>,
-        >>::decode(stream, decoding_options)?;
-        let aggregate_configuration = <super::aggregate_configuration::AggregateConfiguration as crate::types::BinaryEncoder<
-            super::aggregate_configuration::AggregateConfiguration,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let aggregate_configuration = <super::aggregate_configuration::AggregateConfiguration as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             start_time,
             end_time,

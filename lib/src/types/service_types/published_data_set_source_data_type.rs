@@ -13,8 +13,7 @@ impl crate::types::MessageInfo for PublishedDataSetSourceDataType {
         crate::types::ObjectId::PublishedDataSetSourceDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<PublishedDataSetSourceDataType>
-for PublishedDataSetSourceDataType {
+impl crate::types::BinaryEncoder for PublishedDataSetSourceDataType {
     fn byte_len(&self) -> usize {
         0usize
     }

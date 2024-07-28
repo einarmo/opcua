@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for AddNodesResult {
         crate::types::ObjectId::AddNodesResult_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<AddNodesResult> for AddNodesResult {
+impl crate::types::BinaryEncoder for AddNodesResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.status_code.byte_len();
@@ -38,12 +38,14 @@ impl crate::types::BinaryEncoder<AddNodesResult> for AddNodesResult {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let status_code = <crate::types::status_code::StatusCode as crate::types::BinaryEncoder<
-            crate::types::status_code::StatusCode,
-        >>::decode(stream, decoding_options)?;
-        let added_node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
+        let status_code = <crate::types::status_code::StatusCode as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let added_node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { status_code, added_node_id })
     }
 }

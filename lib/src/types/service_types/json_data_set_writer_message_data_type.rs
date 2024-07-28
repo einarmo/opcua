@@ -10,8 +10,7 @@
 pub struct JsonDataSetWriterMessageDataType {
     pub data_set_message_content_mask: super::enums::JsonDataSetMessageContentMask,
 }
-impl crate::types::BinaryEncoder<JsonDataSetWriterMessageDataType>
-for JsonDataSetWriterMessageDataType {
+impl crate::types::BinaryEncoder for JsonDataSetWriterMessageDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.data_set_message_content_mask.byte_len();
@@ -31,9 +30,10 @@ for JsonDataSetWriterMessageDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let data_set_message_content_mask = <super::enums::JsonDataSetMessageContentMask as crate::types::BinaryEncoder<
-            super::enums::JsonDataSetMessageContentMask,
-        >>::decode(stream, decoding_options)?;
+        let data_set_message_content_mask = <super::enums::JsonDataSetMessageContentMask as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             data_set_message_content_mask,
         })

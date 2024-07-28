@@ -19,7 +19,7 @@ impl crate::types::MessageInfo for DeleteReferencesItem {
         crate::types::ObjectId::DeleteReferencesItem_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<DeleteReferencesItem> for DeleteReferencesItem {
+impl crate::types::BinaryEncoder for DeleteReferencesItem {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.source_node_id.byte_len();
@@ -47,21 +47,26 @@ impl crate::types::BinaryEncoder<DeleteReferencesItem> for DeleteReferencesItem 
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let source_node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let reference_type_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let is_forward = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
-        let target_node_id = <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder<
-            crate::types::expanded_node_id::ExpandedNodeId,
-        >>::decode(stream, decoding_options)?;
-        let delete_bidirectional = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        let source_node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let reference_type_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let is_forward = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let target_node_id = <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let delete_bidirectional = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             source_node_id,
             reference_type_id,

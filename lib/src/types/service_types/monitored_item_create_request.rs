@@ -16,8 +16,7 @@ impl crate::types::MessageInfo for MonitoredItemCreateRequest {
         crate::types::ObjectId::MonitoredItemCreateRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<MonitoredItemCreateRequest>
-for MonitoredItemCreateRequest {
+impl crate::types::BinaryEncoder for MonitoredItemCreateRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.item_to_monitor.byte_len();
@@ -41,15 +40,18 @@ for MonitoredItemCreateRequest {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let item_to_monitor = <super::read_value_id::ReadValueId as crate::types::BinaryEncoder<
-            super::read_value_id::ReadValueId,
-        >>::decode(stream, decoding_options)?;
-        let monitoring_mode = <super::enums::MonitoringMode as crate::types::BinaryEncoder<
-            super::enums::MonitoringMode,
-        >>::decode(stream, decoding_options)?;
-        let requested_parameters = <super::monitoring_parameters::MonitoringParameters as crate::types::BinaryEncoder<
-            super::monitoring_parameters::MonitoringParameters,
-        >>::decode(stream, decoding_options)?;
+        let item_to_monitor = <super::read_value_id::ReadValueId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let monitoring_mode = <super::enums::MonitoringMode as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let requested_parameters = <super::monitoring_parameters::MonitoringParameters as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             item_to_monitor,
             monitoring_mode,

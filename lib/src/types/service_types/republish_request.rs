@@ -17,7 +17,7 @@ impl crate::types::MessageInfo for RepublishRequest {
         crate::types::ObjectId::RepublishRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<RepublishRequest> for RepublishRequest {
+impl crate::types::BinaryEncoder for RepublishRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -41,15 +41,18 @@ impl crate::types::BinaryEncoder<RepublishRequest> for RepublishRequest {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-            crate::types::request_header::RequestHeader,
-        >>::decode(stream, decoding_options)?;
-        let subscription_id = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let retransmit_sequence_number = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let subscription_id = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let retransmit_sequence_number = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             request_header,
             subscription_id,

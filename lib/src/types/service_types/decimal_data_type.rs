@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for DecimalDataType {
         crate::types::ObjectId::DecimalDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<DecimalDataType> for DecimalDataType {
+impl crate::types::BinaryEncoder for DecimalDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.scale.byte_len();
@@ -38,12 +38,14 @@ impl crate::types::BinaryEncoder<DecimalDataType> for DecimalDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let scale = <i16 as crate::types::BinaryEncoder<
-            i16,
-        >>::decode(stream, decoding_options)?;
-        let value = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-            crate::types::byte_string::ByteString,
-        >>::decode(stream, decoding_options)?;
+        let scale = <i16 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let value = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { scale, value })
     }
 }

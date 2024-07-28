@@ -13,8 +13,7 @@ impl crate::types::MessageInfo for ConnectionTransportDataType {
         crate::types::ObjectId::ConnectionTransportDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<ConnectionTransportDataType>
-for ConnectionTransportDataType {
+impl crate::types::BinaryEncoder for ConnectionTransportDataType {
     fn byte_len(&self) -> usize {
         0usize
     }

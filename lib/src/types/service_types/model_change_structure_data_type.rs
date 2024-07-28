@@ -17,8 +17,7 @@ impl crate::types::MessageInfo for ModelChangeStructureDataType {
         crate::types::ObjectId::ModelChangeStructureDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<ModelChangeStructureDataType>
-for ModelChangeStructureDataType {
+impl crate::types::BinaryEncoder for ModelChangeStructureDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.affected.byte_len();
@@ -42,15 +41,18 @@ for ModelChangeStructureDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let affected = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let affected_type = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let verb = <u8 as crate::types::BinaryEncoder<
-            u8,
-        >>::decode(stream, decoding_options)?;
+        let affected = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let affected_type = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let verb = <u8 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             affected,
             affected_type,

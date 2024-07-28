@@ -18,8 +18,7 @@ impl crate::types::MessageInfo for ConfigurationVersionDataType {
         crate::types::ObjectId::ConfigurationVersionDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<ConfigurationVersionDataType>
-for ConfigurationVersionDataType {
+impl crate::types::BinaryEncoder for ConfigurationVersionDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.major_version.byte_len();
@@ -41,12 +40,14 @@ for ConfigurationVersionDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let major_version = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let minor_version = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let major_version = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let minor_version = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             major_version,
             minor_version,

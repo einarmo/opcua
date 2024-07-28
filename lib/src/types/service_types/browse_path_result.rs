@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for BrowsePathResult {
         crate::types::ObjectId::BrowsePathResult_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<BrowsePathResult> for BrowsePathResult {
+impl crate::types::BinaryEncoder for BrowsePathResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.status_code.byte_len();
@@ -38,14 +38,13 @@ impl crate::types::BinaryEncoder<BrowsePathResult> for BrowsePathResult {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let status_code = <crate::types::status_code::StatusCode as crate::types::BinaryEncoder<
-            crate::types::status_code::StatusCode,
-        >>::decode(stream, decoding_options)?;
+        let status_code = <crate::types::status_code::StatusCode as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let targets = <Option<
             Vec<super::browse_path_target::BrowsePathTarget>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::browse_path_target::BrowsePathTarget>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self { status_code, targets })
     }
 }

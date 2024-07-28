@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for ServiceCounterDataType {
         crate::types::ObjectId::ServiceCounterDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<ServiceCounterDataType> for ServiceCounterDataType {
+impl crate::types::BinaryEncoder for ServiceCounterDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.total_count.byte_len();
@@ -38,12 +38,14 @@ impl crate::types::BinaryEncoder<ServiceCounterDataType> for ServiceCounterDataT
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let total_count = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let error_count = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let total_count = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let error_count = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { total_count, error_count })
     }
 }

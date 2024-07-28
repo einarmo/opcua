@@ -16,8 +16,7 @@ impl crate::types::MessageInfo for TranslateBrowsePathsToNodeIdsRequest {
         crate::types::ObjectId::TranslateBrowsePathsToNodeIdsRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<TranslateBrowsePathsToNodeIdsRequest>
-for TranslateBrowsePathsToNodeIdsRequest {
+impl crate::types::BinaryEncoder for TranslateBrowsePathsToNodeIdsRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -39,14 +38,13 @@ for TranslateBrowsePathsToNodeIdsRequest {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-            crate::types::request_header::RequestHeader,
-        >>::decode(stream, decoding_options)?;
+        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let browse_paths = <Option<
             Vec<super::browse_path::BrowsePath>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::browse_path::BrowsePath>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             request_header,
             browse_paths,

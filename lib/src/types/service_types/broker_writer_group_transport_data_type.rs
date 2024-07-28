@@ -12,8 +12,7 @@ pub struct BrokerWriterGroupTransportDataType {
     pub authentication_profile_uri: crate::types::string::UAString,
     pub requested_delivery_guarantee: super::enums::BrokerTransportQualityOfService,
 }
-impl crate::types::BinaryEncoder<BrokerWriterGroupTransportDataType>
-for BrokerWriterGroupTransportDataType {
+impl crate::types::BinaryEncoder for BrokerWriterGroupTransportDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.queue_name.byte_len();
@@ -39,18 +38,22 @@ for BrokerWriterGroupTransportDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let queue_name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let resource_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let authentication_profile_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let requested_delivery_guarantee = <super::enums::BrokerTransportQualityOfService as crate::types::BinaryEncoder<
-            super::enums::BrokerTransportQualityOfService,
-        >>::decode(stream, decoding_options)?;
+        let queue_name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let resource_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let authentication_profile_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let requested_delivery_guarantee = <super::enums::BrokerTransportQualityOfService as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             queue_name,
             resource_uri,

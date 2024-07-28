@@ -13,8 +13,7 @@ impl crate::types::MessageInfo for DataSetWriterMessageDataType {
         crate::types::ObjectId::DataSetWriterMessageDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<DataSetWriterMessageDataType>
-for DataSetWriterMessageDataType {
+impl crate::types::BinaryEncoder for DataSetWriterMessageDataType {
     fn byte_len(&self) -> usize {
         0usize
     }

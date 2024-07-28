@@ -26,7 +26,7 @@ impl crate::types::MessageInfo for FieldMetaData {
         crate::types::ObjectId::FieldMetaData_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<FieldMetaData> for FieldMetaData {
+impl crate::types::BinaryEncoder for FieldMetaData {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.name.byte_len();
@@ -64,40 +64,44 @@ impl crate::types::BinaryEncoder<FieldMetaData> for FieldMetaData {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let description = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-            crate::types::localized_text::LocalizedText,
-        >>::decode(stream, decoding_options)?;
-        let field_flags = <super::enums::DataSetFieldFlags as crate::types::BinaryEncoder<
-            super::enums::DataSetFieldFlags,
-        >>::decode(stream, decoding_options)?;
-        let built_in_type = <u8 as crate::types::BinaryEncoder<
-            u8,
-        >>::decode(stream, decoding_options)?;
-        let data_type = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let value_rank = <i32 as crate::types::BinaryEncoder<
-            i32,
-        >>::decode(stream, decoding_options)?;
+        let name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let description = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let field_flags = <super::enums::DataSetFieldFlags as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let built_in_type = <u8 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let data_type = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let value_rank = <i32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let array_dimensions = <Option<
             Vec<u32>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<u32>>,
-        >>::decode(stream, decoding_options)?;
-        let max_string_length = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let data_set_field_id = <crate::types::guid::Guid as crate::types::BinaryEncoder<
-            crate::types::guid::Guid,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let max_string_length = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let data_set_field_id = <crate::types::guid::Guid as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let properties = <Option<
             Vec<super::key_value_pair::KeyValuePair>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::key_value_pair::KeyValuePair>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             name,
             description,

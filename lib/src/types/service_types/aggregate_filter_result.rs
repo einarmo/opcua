@@ -12,7 +12,7 @@ pub struct AggregateFilterResult {
     pub revised_processing_interval: f64,
     pub revised_aggregate_configuration: super::aggregate_configuration::AggregateConfiguration,
 }
-impl crate::types::BinaryEncoder<AggregateFilterResult> for AggregateFilterResult {
+impl crate::types::BinaryEncoder for AggregateFilterResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.revised_start_time.byte_len();
@@ -36,15 +36,18 @@ impl crate::types::BinaryEncoder<AggregateFilterResult> for AggregateFilterResul
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let revised_start_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
-        let revised_processing_interval = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let revised_aggregate_configuration = <super::aggregate_configuration::AggregateConfiguration as crate::types::BinaryEncoder<
-            super::aggregate_configuration::AggregateConfiguration,
-        >>::decode(stream, decoding_options)?;
+        let revised_start_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let revised_processing_interval = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let revised_aggregate_configuration = <super::aggregate_configuration::AggregateConfiguration as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             revised_start_time,
             revised_processing_interval,

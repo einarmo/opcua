@@ -16,8 +16,7 @@ impl crate::types::MessageInfo for SemanticChangeStructureDataType {
         crate::types::ObjectId::SemanticChangeStructureDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<SemanticChangeStructureDataType>
-for SemanticChangeStructureDataType {
+impl crate::types::BinaryEncoder for SemanticChangeStructureDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.affected.byte_len();
@@ -39,12 +38,14 @@ for SemanticChangeStructureDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let affected = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let affected_type = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
+        let affected = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let affected_type = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { affected, affected_type })
     }
 }

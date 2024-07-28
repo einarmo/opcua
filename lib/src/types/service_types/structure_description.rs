@@ -13,7 +13,7 @@ pub struct StructureDescription {
     pub name: crate::types::qualified_name::QualifiedName,
     pub structure_definition: super::structure_definition::StructureDefinition,
 }
-impl crate::types::BinaryEncoder<StructureDescription> for StructureDescription {
+impl crate::types::BinaryEncoder for StructureDescription {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.data_type_id.byte_len();
@@ -37,15 +37,18 @@ impl crate::types::BinaryEncoder<StructureDescription> for StructureDescription 
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let data_type_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let name = <crate::types::qualified_name::QualifiedName as crate::types::BinaryEncoder<
-            crate::types::qualified_name::QualifiedName,
-        >>::decode(stream, decoding_options)?;
-        let structure_definition = <super::structure_definition::StructureDefinition as crate::types::BinaryEncoder<
-            super::structure_definition::StructureDefinition,
-        >>::decode(stream, decoding_options)?;
+        let data_type_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let name = <crate::types::qualified_name::QualifiedName as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let structure_definition = <super::structure_definition::StructureDefinition as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             data_type_id,
             name,

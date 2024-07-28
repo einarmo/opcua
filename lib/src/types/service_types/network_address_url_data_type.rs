@@ -11,8 +11,7 @@ pub struct NetworkAddressUrlDataType {
     pub network_interface: crate::types::string::UAString,
     pub url: crate::types::string::UAString,
 }
-impl crate::types::BinaryEncoder<NetworkAddressUrlDataType>
-for NetworkAddressUrlDataType {
+impl crate::types::BinaryEncoder for NetworkAddressUrlDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.network_interface.byte_len();
@@ -34,12 +33,14 @@ for NetworkAddressUrlDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let network_interface = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let url = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        let network_interface = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let url = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { network_interface, url })
     }
 }

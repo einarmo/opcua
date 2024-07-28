@@ -18,7 +18,7 @@ impl crate::types::MessageInfo for EUInformation {
         crate::types::ObjectId::EUInformation_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<EUInformation> for EUInformation {
+impl crate::types::BinaryEncoder for EUInformation {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.namespace_uri.byte_len();
@@ -44,18 +44,22 @@ impl crate::types::BinaryEncoder<EUInformation> for EUInformation {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let namespace_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let unit_id = <i32 as crate::types::BinaryEncoder<
-            i32,
-        >>::decode(stream, decoding_options)?;
-        let display_name = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-            crate::types::localized_text::LocalizedText,
-        >>::decode(stream, decoding_options)?;
-        let description = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-            crate::types::localized_text::LocalizedText,
-        >>::decode(stream, decoding_options)?;
+        let namespace_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let unit_id = <i32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let display_name = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let description = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             namespace_uri,
             unit_id,

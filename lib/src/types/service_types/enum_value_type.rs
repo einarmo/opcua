@@ -17,7 +17,7 @@ impl crate::types::MessageInfo for EnumValueType {
         crate::types::ObjectId::EnumValueType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<EnumValueType> for EnumValueType {
+impl crate::types::BinaryEncoder for EnumValueType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.value.byte_len();
@@ -41,15 +41,18 @@ impl crate::types::BinaryEncoder<EnumValueType> for EnumValueType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let value = <i64 as crate::types::BinaryEncoder<
-            i64,
-        >>::decode(stream, decoding_options)?;
-        let display_name = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-            crate::types::localized_text::LocalizedText,
-        >>::decode(stream, decoding_options)?;
-        let description = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-            crate::types::localized_text::LocalizedText,
-        >>::decode(stream, decoding_options)?;
+        let value = <i64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let display_name = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let description = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             value,
             display_name,

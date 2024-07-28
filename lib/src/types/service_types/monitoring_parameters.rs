@@ -19,7 +19,7 @@ impl crate::types::MessageInfo for MonitoringParameters {
         crate::types::ObjectId::MonitoringParameters_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<MonitoringParameters> for MonitoringParameters {
+impl crate::types::BinaryEncoder for MonitoringParameters {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.client_handle.byte_len();
@@ -47,21 +47,26 @@ impl crate::types::BinaryEncoder<MonitoringParameters> for MonitoringParameters 
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let client_handle = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let sampling_interval = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let filter = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
-            crate::types::extension_object::ExtensionObject,
-        >>::decode(stream, decoding_options)?;
-        let queue_size = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let discard_oldest = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        let client_handle = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let sampling_interval = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let filter = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let queue_size = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let discard_oldest = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             client_handle,
             sampling_interval,

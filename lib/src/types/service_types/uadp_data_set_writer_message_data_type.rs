@@ -13,8 +13,7 @@ pub struct UadpDataSetWriterMessageDataType {
     pub network_message_number: u16,
     pub data_set_offset: u16,
 }
-impl crate::types::BinaryEncoder<UadpDataSetWriterMessageDataType>
-for UadpDataSetWriterMessageDataType {
+impl crate::types::BinaryEncoder for UadpDataSetWriterMessageDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.data_set_message_content_mask.byte_len();
@@ -40,18 +39,22 @@ for UadpDataSetWriterMessageDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let data_set_message_content_mask = <super::enums::UadpDataSetMessageContentMask as crate::types::BinaryEncoder<
-            super::enums::UadpDataSetMessageContentMask,
-        >>::decode(stream, decoding_options)?;
-        let configured_size = <u16 as crate::types::BinaryEncoder<
-            u16,
-        >>::decode(stream, decoding_options)?;
-        let network_message_number = <u16 as crate::types::BinaryEncoder<
-            u16,
-        >>::decode(stream, decoding_options)?;
-        let data_set_offset = <u16 as crate::types::BinaryEncoder<
-            u16,
-        >>::decode(stream, decoding_options)?;
+        let data_set_message_content_mask = <super::enums::UadpDataSetMessageContentMask as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let configured_size = <u16 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let network_message_number = <u16 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let data_set_offset = <u16 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             data_set_message_content_mask,
             configured_size,

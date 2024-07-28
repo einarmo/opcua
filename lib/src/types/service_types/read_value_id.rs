@@ -20,7 +20,7 @@ impl crate::types::MessageInfo for ReadValueId {
         crate::types::ObjectId::ReadValueId_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<ReadValueId> for ReadValueId {
+impl crate::types::BinaryEncoder for ReadValueId {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.node_id.byte_len();
@@ -46,18 +46,22 @@ impl crate::types::BinaryEncoder<ReadValueId> for ReadValueId {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let attribute_id = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let index_range = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let data_encoding = <crate::types::qualified_name::QualifiedName as crate::types::BinaryEncoder<
-            crate::types::qualified_name::QualifiedName,
-        >>::decode(stream, decoding_options)?;
+        let node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let attribute_id = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let index_range = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let data_encoding = <crate::types::qualified_name::QualifiedName as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             node_id,
             attribute_id,

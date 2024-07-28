@@ -21,7 +21,7 @@ impl crate::types::MessageInfo for PublishResponse {
         crate::types::ObjectId::PublishResponse_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<PublishResponse> for PublishResponse {
+impl crate::types::BinaryEncoder for PublishResponse {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.response_header.byte_len();
@@ -53,33 +53,31 @@ impl crate::types::BinaryEncoder<PublishResponse> for PublishResponse {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let response_header = <crate::types::response_header::ResponseHeader as crate::types::BinaryEncoder<
-            crate::types::response_header::ResponseHeader,
-        >>::decode(stream, decoding_options)?;
-        let subscription_id = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let response_header = <crate::types::response_header::ResponseHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let subscription_id = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let available_sequence_numbers = <Option<
             Vec<u32>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<u32>>,
-        >>::decode(stream, decoding_options)?;
-        let more_notifications = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
-        let notification_message = <super::notification_message::NotificationMessage as crate::types::BinaryEncoder<
-            super::notification_message::NotificationMessage,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let more_notifications = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let notification_message = <super::notification_message::NotificationMessage as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let results = <Option<
             Vec<crate::types::status_code::StatusCode>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::status_code::StatusCode>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let diagnostic_infos = <Option<
             Vec<crate::types::diagnostic_info::DiagnosticInfo>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::diagnostic_info::DiagnosticInfo>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             response_header,
             subscription_id,

@@ -17,7 +17,7 @@ impl crate::types::MessageInfo for BrowseNextRequest {
         crate::types::ObjectId::BrowseNextRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<BrowseNextRequest> for BrowseNextRequest {
+impl crate::types::BinaryEncoder for BrowseNextRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -41,17 +41,17 @@ impl crate::types::BinaryEncoder<BrowseNextRequest> for BrowseNextRequest {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-            crate::types::request_header::RequestHeader,
-        >>::decode(stream, decoding_options)?;
-        let release_continuation_points = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let release_continuation_points = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let continuation_points = <Option<
             Vec<crate::types::byte_string::ByteString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::byte_string::ByteString>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             request_header,
             release_continuation_points,

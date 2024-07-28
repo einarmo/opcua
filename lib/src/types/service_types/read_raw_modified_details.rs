@@ -14,7 +14,7 @@ pub struct ReadRawModifiedDetails {
     pub num_values_per_node: u32,
     pub return_bounds: bool,
 }
-impl crate::types::BinaryEncoder<ReadRawModifiedDetails> for ReadRawModifiedDetails {
+impl crate::types::BinaryEncoder for ReadRawModifiedDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.is_read_modified.byte_len();
@@ -42,21 +42,26 @@ impl crate::types::BinaryEncoder<ReadRawModifiedDetails> for ReadRawModifiedDeta
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let is_read_modified = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
-        let start_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
-        let end_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
-        let num_values_per_node = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let return_bounds = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        let is_read_modified = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let start_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let end_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let num_values_per_node = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let return_bounds = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             is_read_modified,
             start_time,

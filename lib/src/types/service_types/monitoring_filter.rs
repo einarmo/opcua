@@ -13,7 +13,7 @@ impl crate::types::MessageInfo for MonitoringFilter {
         crate::types::ObjectId::MonitoringFilter_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<MonitoringFilter> for MonitoringFilter {
+impl crate::types::BinaryEncoder for MonitoringFilter {
     fn byte_len(&self) -> usize {
         0usize
     }

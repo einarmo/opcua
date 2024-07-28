@@ -15,7 +15,7 @@ pub struct SimpleTypeDescription {
     pub base_data_type: crate::types::node_id::NodeId,
     pub built_in_type: u8,
 }
-impl crate::types::BinaryEncoder<SimpleTypeDescription> for SimpleTypeDescription {
+impl crate::types::BinaryEncoder for SimpleTypeDescription {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.data_type_id.byte_len();
@@ -41,18 +41,22 @@ impl crate::types::BinaryEncoder<SimpleTypeDescription> for SimpleTypeDescriptio
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let data_type_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let name = <crate::types::qualified_name::QualifiedName as crate::types::BinaryEncoder<
-            crate::types::qualified_name::QualifiedName,
-        >>::decode(stream, decoding_options)?;
-        let base_data_type = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let built_in_type = <u8 as crate::types::BinaryEncoder<
-            u8,
-        >>::decode(stream, decoding_options)?;
+        let data_type_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let name = <crate::types::qualified_name::QualifiedName as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let base_data_type = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let built_in_type = <u8 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             data_type_id,
             name,

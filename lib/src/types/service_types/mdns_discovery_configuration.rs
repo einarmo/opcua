@@ -11,8 +11,7 @@ pub struct MdnsDiscoveryConfiguration {
     pub mdns_server_name: crate::types::string::UAString,
     pub server_capabilities: Option<Vec<crate::types::string::UAString>>,
 }
-impl crate::types::BinaryEncoder<MdnsDiscoveryConfiguration>
-for MdnsDiscoveryConfiguration {
+impl crate::types::BinaryEncoder for MdnsDiscoveryConfiguration {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.mdns_server_name.byte_len();
@@ -34,14 +33,13 @@ for MdnsDiscoveryConfiguration {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let mdns_server_name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        let mdns_server_name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let server_capabilities = <Option<
             Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::string::UAString>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             mdns_server_name,
             server_capabilities,

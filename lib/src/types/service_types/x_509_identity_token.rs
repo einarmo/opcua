@@ -11,7 +11,7 @@ pub struct X509IdentityToken {
     pub policy_id: crate::types::string::UAString,
     pub certificate_data: crate::types::byte_string::ByteString,
 }
-impl crate::types::BinaryEncoder<X509IdentityToken> for X509IdentityToken {
+impl crate::types::BinaryEncoder for X509IdentityToken {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.policy_id.byte_len();
@@ -33,12 +33,14 @@ impl crate::types::BinaryEncoder<X509IdentityToken> for X509IdentityToken {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let policy_id = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let certificate_data = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-            crate::types::byte_string::ByteString,
-        >>::decode(stream, decoding_options)?;
+        let policy_id = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let certificate_data = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             policy_id,
             certificate_data,

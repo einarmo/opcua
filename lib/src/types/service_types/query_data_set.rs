@@ -17,7 +17,7 @@ impl crate::types::MessageInfo for QueryDataSet {
         crate::types::ObjectId::QueryDataSet_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<QueryDataSet> for QueryDataSet {
+impl crate::types::BinaryEncoder for QueryDataSet {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.node_id.byte_len();
@@ -41,17 +41,17 @@ impl crate::types::BinaryEncoder<QueryDataSet> for QueryDataSet {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let node_id = <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder<
-            crate::types::expanded_node_id::ExpandedNodeId,
-        >>::decode(stream, decoding_options)?;
-        let type_definition_node = <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder<
-            crate::types::expanded_node_id::ExpandedNodeId,
-        >>::decode(stream, decoding_options)?;
+        let node_id = <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let type_definition_node = <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let values = <Option<
             Vec<crate::types::variant::Variant>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::variant::Variant>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             node_id,
             type_definition_node,

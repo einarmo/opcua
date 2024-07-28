@@ -13,8 +13,7 @@ impl crate::types::MessageInfo for SubscribedDataSetDataType {
         crate::types::ObjectId::SubscribedDataSetDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<SubscribedDataSetDataType>
-for SubscribedDataSetDataType {
+impl crate::types::BinaryEncoder for SubscribedDataSetDataType {
     fn byte_len(&self) -> usize {
         0usize
     }

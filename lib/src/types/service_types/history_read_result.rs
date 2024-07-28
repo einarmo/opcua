@@ -17,7 +17,7 @@ impl crate::types::MessageInfo for HistoryReadResult {
         crate::types::ObjectId::HistoryReadResult_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<HistoryReadResult> for HistoryReadResult {
+impl crate::types::BinaryEncoder for HistoryReadResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.status_code.byte_len();
@@ -41,15 +41,18 @@ impl crate::types::BinaryEncoder<HistoryReadResult> for HistoryReadResult {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let status_code = <crate::types::status_code::StatusCode as crate::types::BinaryEncoder<
-            crate::types::status_code::StatusCode,
-        >>::decode(stream, decoding_options)?;
-        let continuation_point = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-            crate::types::byte_string::ByteString,
-        >>::decode(stream, decoding_options)?;
-        let history_data = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
-            crate::types::extension_object::ExtensionObject,
-        >>::decode(stream, decoding_options)?;
+        let status_code = <crate::types::status_code::StatusCode as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let continuation_point = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let history_data = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             status_code,
             continuation_point,

@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for TransferResult {
         crate::types::ObjectId::TransferResult_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<TransferResult> for TransferResult {
+impl crate::types::BinaryEncoder for TransferResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.status_code.byte_len();
@@ -38,14 +38,13 @@ impl crate::types::BinaryEncoder<TransferResult> for TransferResult {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let status_code = <crate::types::status_code::StatusCode as crate::types::BinaryEncoder<
-            crate::types::status_code::StatusCode,
-        >>::decode(stream, decoding_options)?;
+        let status_code = <crate::types::status_code::StatusCode as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let available_sequence_numbers = <Option<
             Vec<u32>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<u32>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             status_code,
             available_sequence_numbers,

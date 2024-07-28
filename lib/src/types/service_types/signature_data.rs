@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for SignatureData {
         crate::types::ObjectId::SignatureData_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<SignatureData> for SignatureData {
+impl crate::types::BinaryEncoder for SignatureData {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.algorithm.byte_len();
@@ -38,12 +38,14 @@ impl crate::types::BinaryEncoder<SignatureData> for SignatureData {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let algorithm = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let signature = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-            crate::types::byte_string::ByteString,
-        >>::decode(stream, decoding_options)?;
+        let algorithm = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let signature = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { algorithm, signature })
     }
 }

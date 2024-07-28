@@ -11,7 +11,7 @@ pub struct HistoryModifiedData {
     pub data_values: Option<Vec<crate::types::data_value::DataValue>>,
     pub modification_infos: Option<Vec<super::modification_info::ModificationInfo>>,
 }
-impl crate::types::BinaryEncoder<HistoryModifiedData> for HistoryModifiedData {
+impl crate::types::BinaryEncoder for HistoryModifiedData {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.data_values.byte_len();
@@ -35,14 +35,10 @@ impl crate::types::BinaryEncoder<HistoryModifiedData> for HistoryModifiedData {
     ) -> crate::types::EncodingResult<Self> {
         let data_values = <Option<
             Vec<crate::types::data_value::DataValue>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::data_value::DataValue>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let modification_infos = <Option<
             Vec<super::modification_info::ModificationInfo>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::modification_info::ModificationInfo>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             data_values,
             modification_infos,

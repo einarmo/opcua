@@ -10,8 +10,7 @@
 pub struct JsonWriterGroupMessageDataType {
     pub network_message_content_mask: super::enums::JsonNetworkMessageContentMask,
 }
-impl crate::types::BinaryEncoder<JsonWriterGroupMessageDataType>
-for JsonWriterGroupMessageDataType {
+impl crate::types::BinaryEncoder for JsonWriterGroupMessageDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.network_message_content_mask.byte_len();
@@ -31,9 +30,10 @@ for JsonWriterGroupMessageDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let network_message_content_mask = <super::enums::JsonNetworkMessageContentMask as crate::types::BinaryEncoder<
-            super::enums::JsonNetworkMessageContentMask,
-        >>::decode(stream, decoding_options)?;
+        let network_message_content_mask = <super::enums::JsonNetworkMessageContentMask as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             network_message_content_mask,
         })

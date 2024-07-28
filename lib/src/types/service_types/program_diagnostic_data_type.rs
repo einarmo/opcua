@@ -24,8 +24,7 @@ impl crate::types::MessageInfo for ProgramDiagnosticDataType {
         crate::types::ObjectId::ProgramDiagnosticDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<ProgramDiagnosticDataType>
-for ProgramDiagnosticDataType {
+impl crate::types::BinaryEncoder for ProgramDiagnosticDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.create_session_id.byte_len();
@@ -63,40 +62,44 @@ for ProgramDiagnosticDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let create_session_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let create_client_name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let invocation_creation_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
-        let last_transition_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
-        let last_method_call = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let last_method_session_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
+        let create_session_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let create_client_name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let invocation_creation_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let last_transition_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let last_method_call = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let last_method_session_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let last_method_input_arguments = <Option<
             Vec<super::argument::Argument>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::argument::Argument>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let last_method_output_arguments = <Option<
             Vec<super::argument::Argument>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::argument::Argument>>,
-        >>::decode(stream, decoding_options)?;
-        let last_method_call_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
-        let last_method_return_status = <super::status_result::StatusResult as crate::types::BinaryEncoder<
-            super::status_result::StatusResult,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let last_method_call_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let last_method_return_status = <super::status_result::StatusResult as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             create_session_id,
             create_client_name,

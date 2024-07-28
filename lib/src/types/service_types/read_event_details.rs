@@ -13,7 +13,7 @@ pub struct ReadEventDetails {
     pub end_time: crate::types::date_time::DateTime,
     pub filter: super::event_filter::EventFilter,
 }
-impl crate::types::BinaryEncoder<ReadEventDetails> for ReadEventDetails {
+impl crate::types::BinaryEncoder for ReadEventDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.num_values_per_node.byte_len();
@@ -39,18 +39,22 @@ impl crate::types::BinaryEncoder<ReadEventDetails> for ReadEventDetails {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let num_values_per_node = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let start_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
-        let end_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
-        let filter = <super::event_filter::EventFilter as crate::types::BinaryEncoder<
-            super::event_filter::EventFilter,
-        >>::decode(stream, decoding_options)?;
+        let num_values_per_node = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let start_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let end_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let filter = <super::event_filter::EventFilter as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             num_values_per_node,
             start_time,

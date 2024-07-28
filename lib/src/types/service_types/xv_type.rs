@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for XVType {
         crate::types::ObjectId::XVType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<XVType> for XVType {
+impl crate::types::BinaryEncoder for XVType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.x.byte_len();
@@ -38,12 +38,11 @@ impl crate::types::BinaryEncoder<XVType> for XVType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let x = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let value = <f32 as crate::types::BinaryEncoder<
-            f32,
-        >>::decode(stream, decoding_options)?;
+        let x = <f64 as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let value = <f32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { x, value })
     }
 }

@@ -23,7 +23,7 @@ impl crate::types::MessageInfo for EndpointConfiguration {
         crate::types::ObjectId::EndpointConfiguration_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<EndpointConfiguration> for EndpointConfiguration {
+impl crate::types::BinaryEncoder for EndpointConfiguration {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.operation_timeout.byte_len();
@@ -59,33 +59,42 @@ impl crate::types::BinaryEncoder<EndpointConfiguration> for EndpointConfiguratio
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let operation_timeout = <i32 as crate::types::BinaryEncoder<
-            i32,
-        >>::decode(stream, decoding_options)?;
-        let use_binary_encoding = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
-        let max_string_length = <i32 as crate::types::BinaryEncoder<
-            i32,
-        >>::decode(stream, decoding_options)?;
-        let max_byte_string_length = <i32 as crate::types::BinaryEncoder<
-            i32,
-        >>::decode(stream, decoding_options)?;
-        let max_array_length = <i32 as crate::types::BinaryEncoder<
-            i32,
-        >>::decode(stream, decoding_options)?;
-        let max_message_size = <i32 as crate::types::BinaryEncoder<
-            i32,
-        >>::decode(stream, decoding_options)?;
-        let max_buffer_size = <i32 as crate::types::BinaryEncoder<
-            i32,
-        >>::decode(stream, decoding_options)?;
-        let channel_lifetime = <i32 as crate::types::BinaryEncoder<
-            i32,
-        >>::decode(stream, decoding_options)?;
-        let security_token_lifetime = <i32 as crate::types::BinaryEncoder<
-            i32,
-        >>::decode(stream, decoding_options)?;
+        let operation_timeout = <i32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let use_binary_encoding = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let max_string_length = <i32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let max_byte_string_length = <i32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let max_array_length = <i32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let max_message_size = <i32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let max_buffer_size = <i32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let channel_lifetime = <i32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let security_token_lifetime = <i32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             operation_timeout,
             use_binary_encoding,

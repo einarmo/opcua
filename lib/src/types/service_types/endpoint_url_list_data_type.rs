@@ -15,7 +15,7 @@ impl crate::types::MessageInfo for EndpointUrlListDataType {
         crate::types::ObjectId::EndpointUrlListDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<EndpointUrlListDataType> for EndpointUrlListDataType {
+impl crate::types::BinaryEncoder for EndpointUrlListDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.endpoint_url_list.byte_len();
@@ -37,9 +37,7 @@ impl crate::types::BinaryEncoder<EndpointUrlListDataType> for EndpointUrlListDat
     ) -> crate::types::EncodingResult<Self> {
         let endpoint_url_list = <Option<
             Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::string::UAString>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self { endpoint_url_list })
     }
 }

@@ -15,7 +15,7 @@ impl crate::types::MessageInfo for HistoryEventFieldList {
         crate::types::ObjectId::HistoryEventFieldList_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<HistoryEventFieldList> for HistoryEventFieldList {
+impl crate::types::BinaryEncoder for HistoryEventFieldList {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.event_fields.byte_len();
@@ -37,9 +37,7 @@ impl crate::types::BinaryEncoder<HistoryEventFieldList> for HistoryEventFieldLis
     ) -> crate::types::EncodingResult<Self> {
         let event_fields = <Option<
             Vec<crate::types::variant::Variant>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::variant::Variant>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self { event_fields })
     }
 }

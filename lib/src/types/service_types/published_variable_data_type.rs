@@ -22,8 +22,7 @@ impl crate::types::MessageInfo for PublishedVariableDataType {
         crate::types::ObjectId::PublishedVariableDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<PublishedVariableDataType>
-for PublishedVariableDataType {
+impl crate::types::BinaryEncoder for PublishedVariableDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.published_variable.byte_len();
@@ -57,32 +56,37 @@ for PublishedVariableDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let published_variable = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let attribute_id = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let sampling_interval_hint = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let deadband_type = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let deadband_value = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let index_range = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let substitute_value = <crate::types::variant::Variant as crate::types::BinaryEncoder<
-            crate::types::variant::Variant,
-        >>::decode(stream, decoding_options)?;
+        let published_variable = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let attribute_id = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let sampling_interval_hint = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let deadband_type = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let deadband_value = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let index_range = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let substitute_value = <crate::types::variant::Variant as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let meta_data_properties = <Option<
             Vec<crate::types::qualified_name::QualifiedName>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::qualified_name::QualifiedName>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             published_variable,
             attribute_id,

@@ -13,8 +13,7 @@ impl crate::types::MessageInfo for WriterGroupMessageDataType {
         crate::types::ObjectId::WriterGroupMessageDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<WriterGroupMessageDataType>
-for WriterGroupMessageDataType {
+impl crate::types::BinaryEncoder for WriterGroupMessageDataType {
     fn byte_len(&self) -> usize {
         0usize
     }

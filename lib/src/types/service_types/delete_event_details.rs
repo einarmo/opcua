@@ -11,7 +11,7 @@ pub struct DeleteEventDetails {
     pub node_id: crate::types::node_id::NodeId,
     pub event_ids: Option<Vec<crate::types::byte_string::ByteString>>,
 }
-impl crate::types::BinaryEncoder<DeleteEventDetails> for DeleteEventDetails {
+impl crate::types::BinaryEncoder for DeleteEventDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.node_id.byte_len();
@@ -33,14 +33,13 @@ impl crate::types::BinaryEncoder<DeleteEventDetails> for DeleteEventDetails {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
+        let node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let event_ids = <Option<
             Vec<crate::types::byte_string::ByteString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::byte_string::ByteString>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self { node_id, event_ids })
     }
 }

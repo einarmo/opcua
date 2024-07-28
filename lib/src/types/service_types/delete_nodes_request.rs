@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for DeleteNodesRequest {
         crate::types::ObjectId::DeleteNodesRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<DeleteNodesRequest> for DeleteNodesRequest {
+impl crate::types::BinaryEncoder for DeleteNodesRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -38,14 +38,13 @@ impl crate::types::BinaryEncoder<DeleteNodesRequest> for DeleteNodesRequest {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-            crate::types::request_header::RequestHeader,
-        >>::decode(stream, decoding_options)?;
+        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let nodes_to_delete = <Option<
             Vec<super::delete_nodes_item::DeleteNodesItem>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::delete_nodes_item::DeleteNodesItem>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             request_header,
             nodes_to_delete,

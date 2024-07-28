@@ -12,7 +12,7 @@ pub struct IssuedIdentityToken {
     pub token_data: crate::types::byte_string::ByteString,
     pub encryption_algorithm: crate::types::string::UAString,
 }
-impl crate::types::BinaryEncoder<IssuedIdentityToken> for IssuedIdentityToken {
+impl crate::types::BinaryEncoder for IssuedIdentityToken {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.policy_id.byte_len();
@@ -36,15 +36,18 @@ impl crate::types::BinaryEncoder<IssuedIdentityToken> for IssuedIdentityToken {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let policy_id = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let token_data = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-            crate::types::byte_string::ByteString,
-        >>::decode(stream, decoding_options)?;
-        let encryption_algorithm = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        let policy_id = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let token_data = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let encryption_algorithm = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             policy_id,
             token_data,

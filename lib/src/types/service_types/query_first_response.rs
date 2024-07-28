@@ -20,7 +20,7 @@ impl crate::types::MessageInfo for QueryFirstResponse {
         crate::types::ObjectId::QueryFirstResponse_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<QueryFirstResponse> for QueryFirstResponse {
+impl crate::types::BinaryEncoder for QueryFirstResponse {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.response_header.byte_len();
@@ -50,30 +50,27 @@ impl crate::types::BinaryEncoder<QueryFirstResponse> for QueryFirstResponse {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let response_header = <crate::types::response_header::ResponseHeader as crate::types::BinaryEncoder<
-            crate::types::response_header::ResponseHeader,
-        >>::decode(stream, decoding_options)?;
+        let response_header = <crate::types::response_header::ResponseHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let query_data_sets = <Option<
             Vec<super::query_data_set::QueryDataSet>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::query_data_set::QueryDataSet>>,
-        >>::decode(stream, decoding_options)?;
-        let continuation_point = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-            crate::types::byte_string::ByteString,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let continuation_point = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let parsing_results = <Option<
             Vec<super::parsing_result::ParsingResult>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::parsing_result::ParsingResult>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let diagnostic_infos = <Option<
             Vec<crate::types::diagnostic_info::DiagnosticInfo>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::diagnostic_info::DiagnosticInfo>>,
-        >>::decode(stream, decoding_options)?;
-        let filter_result = <super::content_filter_result::ContentFilterResult as crate::types::BinaryEncoder<
-            super::content_filter_result::ContentFilterResult,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let filter_result = <super::content_filter_result::ContentFilterResult as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             response_header,
             query_data_sets,

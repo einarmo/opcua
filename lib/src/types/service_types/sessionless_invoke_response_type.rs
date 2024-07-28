@@ -17,8 +17,7 @@ impl crate::types::MessageInfo for SessionlessInvokeResponseType {
         crate::types::ObjectId::SessionlessInvokeResponseType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<SessionlessInvokeResponseType>
-for SessionlessInvokeResponseType {
+impl crate::types::BinaryEncoder for SessionlessInvokeResponseType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.namespace_uris.byte_len();
@@ -44,17 +43,14 @@ for SessionlessInvokeResponseType {
     ) -> crate::types::EncodingResult<Self> {
         let namespace_uris = <Option<
             Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::string::UAString>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         let server_uris = <Option<
             Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::string::UAString>>,
-        >>::decode(stream, decoding_options)?;
-        let service_id = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let service_id = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             namespace_uris,
             server_uris,

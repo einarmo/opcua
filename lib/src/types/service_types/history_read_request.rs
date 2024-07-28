@@ -18,7 +18,7 @@ impl crate::types::MessageInfo for HistoryReadRequest {
         crate::types::ObjectId::HistoryReadRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<HistoryReadRequest> for HistoryReadRequest {
+impl crate::types::BinaryEncoder for HistoryReadRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -46,23 +46,25 @@ impl crate::types::BinaryEncoder<HistoryReadRequest> for HistoryReadRequest {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-            crate::types::request_header::RequestHeader,
-        >>::decode(stream, decoding_options)?;
-        let history_read_details = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
-            crate::types::extension_object::ExtensionObject,
-        >>::decode(stream, decoding_options)?;
-        let timestamps_to_return = <super::enums::TimestampsToReturn as crate::types::BinaryEncoder<
-            super::enums::TimestampsToReturn,
-        >>::decode(stream, decoding_options)?;
-        let release_continuation_points = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let history_read_details = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let timestamps_to_return = <super::enums::TimestampsToReturn as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let release_continuation_points = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let nodes_to_read = <Option<
             Vec<super::history_read_value_id::HistoryReadValueId>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::history_read_value_id::HistoryReadValueId>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             request_header,
             history_read_details,

@@ -10,8 +10,7 @@
 pub struct DatagramConnectionTransportDataType {
     pub discovery_address: crate::types::extension_object::ExtensionObject,
 }
-impl crate::types::BinaryEncoder<DatagramConnectionTransportDataType>
-for DatagramConnectionTransportDataType {
+impl crate::types::BinaryEncoder for DatagramConnectionTransportDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.discovery_address.byte_len();
@@ -31,9 +30,10 @@ for DatagramConnectionTransportDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let discovery_address = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
-            crate::types::extension_object::ExtensionObject,
-        >>::decode(stream, decoding_options)?;
+        let discovery_address = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { discovery_address })
     }
 }

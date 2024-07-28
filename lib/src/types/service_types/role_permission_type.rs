@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for RolePermissionType {
         crate::types::ObjectId::RolePermissionType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<RolePermissionType> for RolePermissionType {
+impl crate::types::BinaryEncoder for RolePermissionType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.role_id.byte_len();
@@ -38,12 +38,14 @@ impl crate::types::BinaryEncoder<RolePermissionType> for RolePermissionType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let role_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let permissions = <super::enums::PermissionType as crate::types::BinaryEncoder<
-            super::enums::PermissionType,
-        >>::decode(stream, decoding_options)?;
+        let role_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let permissions = <super::enums::PermissionType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { role_id, permissions })
     }
 }

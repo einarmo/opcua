@@ -12,7 +12,7 @@ pub struct ThreeDVector {
     pub y: f64,
     pub z: f64,
 }
-impl crate::types::BinaryEncoder<ThreeDVector> for ThreeDVector {
+impl crate::types::BinaryEncoder for ThreeDVector {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.x.byte_len();
@@ -36,15 +36,9 @@ impl crate::types::BinaryEncoder<ThreeDVector> for ThreeDVector {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let x = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let y = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let z = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
+        let x = <f64 as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let y = <f64 as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let z = <f64 as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self { x, y, z })
     }
 }

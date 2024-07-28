@@ -17,7 +17,7 @@ impl crate::types::MessageInfo for CallMethodRequest {
         crate::types::ObjectId::CallMethodRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<CallMethodRequest> for CallMethodRequest {
+impl crate::types::BinaryEncoder for CallMethodRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.object_id.byte_len();
@@ -41,17 +41,17 @@ impl crate::types::BinaryEncoder<CallMethodRequest> for CallMethodRequest {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let object_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let method_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
+        let object_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let method_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let input_arguments = <Option<
             Vec<crate::types::variant::Variant>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::variant::Variant>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             object_id,
             method_id,

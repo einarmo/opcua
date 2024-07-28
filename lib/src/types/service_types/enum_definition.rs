@@ -12,7 +12,7 @@
 pub struct EnumDefinition {
     pub fields: Option<Vec<super::enum_field::EnumField>>,
 }
-impl crate::types::BinaryEncoder<EnumDefinition> for EnumDefinition {
+impl crate::types::BinaryEncoder for EnumDefinition {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.fields.byte_len();
@@ -34,9 +34,7 @@ impl crate::types::BinaryEncoder<EnumDefinition> for EnumDefinition {
     ) -> crate::types::EncodingResult<Self> {
         let fields = <Option<
             Vec<super::enum_field::EnumField>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::enum_field::EnumField>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self { fields })
     }
 }

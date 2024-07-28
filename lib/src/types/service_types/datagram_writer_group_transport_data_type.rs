@@ -11,8 +11,7 @@ pub struct DatagramWriterGroupTransportDataType {
     pub message_repeat_count: u8,
     pub message_repeat_delay: f64,
 }
-impl crate::types::BinaryEncoder<DatagramWriterGroupTransportDataType>
-for DatagramWriterGroupTransportDataType {
+impl crate::types::BinaryEncoder for DatagramWriterGroupTransportDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.message_repeat_count.byte_len();
@@ -34,12 +33,14 @@ for DatagramWriterGroupTransportDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let message_repeat_count = <u8 as crate::types::BinaryEncoder<
-            u8,
-        >>::decode(stream, decoding_options)?;
-        let message_repeat_delay = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
+        let message_repeat_count = <u8 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let message_repeat_delay = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             message_repeat_count,
             message_repeat_delay,

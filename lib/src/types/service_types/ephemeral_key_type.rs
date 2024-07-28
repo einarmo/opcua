@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for EphemeralKeyType {
         crate::types::ObjectId::EphemeralKeyType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<EphemeralKeyType> for EphemeralKeyType {
+impl crate::types::BinaryEncoder for EphemeralKeyType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.public_key.byte_len();
@@ -38,12 +38,14 @@ impl crate::types::BinaryEncoder<EphemeralKeyType> for EphemeralKeyType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let public_key = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-            crate::types::byte_string::ByteString,
-        >>::decode(stream, decoding_options)?;
-        let signature = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-            crate::types::byte_string::ByteString,
-        >>::decode(stream, decoding_options)?;
+        let public_key = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let signature = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { public_key, signature })
     }
 }

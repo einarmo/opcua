@@ -18,7 +18,7 @@ impl crate::types::MessageInfo for UserTokenPolicy {
         crate::types::ObjectId::UserTokenPolicy_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<UserTokenPolicy> for UserTokenPolicy {
+impl crate::types::BinaryEncoder for UserTokenPolicy {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.policy_id.byte_len();
@@ -46,21 +46,26 @@ impl crate::types::BinaryEncoder<UserTokenPolicy> for UserTokenPolicy {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let policy_id = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let token_type = <super::enums::UserTokenType as crate::types::BinaryEncoder<
-            super::enums::UserTokenType,
-        >>::decode(stream, decoding_options)?;
-        let issued_token_type = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let issuer_endpoint_url = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let security_policy_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        let policy_id = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let token_type = <super::enums::UserTokenType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let issued_token_type = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let issuer_endpoint_url = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let security_policy_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             policy_id,
             token_type,

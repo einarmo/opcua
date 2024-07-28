@@ -13,7 +13,7 @@ bitflags::bitflags! {
     NonatomicWrite = 512i32; const WriteFullArrayOnly = 1024i32; const NoSubDataTypes =
     2048i32; }
 }
-impl crate::types::BinaryEncoder<AccessLevelExType> for AccessLevelExType {
+impl crate::types::BinaryEncoder for AccessLevelExType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -72,7 +72,7 @@ bitflags::bitflags! {
     const HistoryWrite = 8u8; const SemanticChange = 16u8; const StatusWrite = 32u8;
     const TimestampWrite = 64u8; }
 }
-impl crate::types::BinaryEncoder<AccessLevelType> for AccessLevelType {
+impl crate::types::BinaryEncoder for AccessLevelType {
     fn byte_len(&self) -> usize {
         1usize
     }
@@ -130,7 +130,7 @@ bitflags::bitflags! {
     const None = 0i16; const SigningRequired = 1i16; const EncryptionRequired = 2i16;
     const SessionRequired = 4i16; const ApplyRestrictionsToBrowse = 8i16; }
 }
-impl crate::types::BinaryEncoder<AccessRestrictionType> for AccessRestrictionType {
+impl crate::types::BinaryEncoder for AccessRestrictionType {
     fn byte_len(&self) -> usize {
         2usize
     }
@@ -205,7 +205,7 @@ impl TryFrom<i32> for ApplicationType {
         )
     }
 }
-impl crate::types::BinaryEncoder<ApplicationType> for ApplicationType {
+impl crate::types::BinaryEncoder for ApplicationType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -236,7 +236,7 @@ bitflags::bitflags! {
     const DataTypeDefinition = 4194304i32; const RolePermissions = 8388608i32; const
     AccessRestrictions = 16777216i32; const AccessLevelEx = 33554432i32; }
 }
-impl crate::types::BinaryEncoder<AttributeWriteMask> for AttributeWriteMask {
+impl crate::types::BinaryEncoder for AttributeWriteMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -309,7 +309,7 @@ impl TryFrom<i32> for AxisScaleEnumeration {
         )
     }
 }
-impl crate::types::BinaryEncoder<AxisScaleEnumeration> for AxisScaleEnumeration {
+impl crate::types::BinaryEncoder for AxisScaleEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -351,8 +351,7 @@ impl TryFrom<i32> for BrokerTransportQualityOfService {
         )
     }
 }
-impl crate::types::BinaryEncoder<BrokerTransportQualityOfService>
-for BrokerTransportQualityOfService {
+impl crate::types::BinaryEncoder for BrokerTransportQualityOfService {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -392,7 +391,7 @@ impl TryFrom<i32> for BrowseDirection {
         )
     }
 }
-impl crate::types::BinaryEncoder<BrowseDirection> for BrowseDirection {
+impl crate::types::BinaryEncoder for BrowseDirection {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -444,7 +443,7 @@ impl TryFrom<i32> for BrowseResultMask {
         )
     }
 }
-impl crate::types::BinaryEncoder<BrowseResultMask> for BrowseResultMask {
+impl crate::types::BinaryEncoder for BrowseResultMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -484,7 +483,7 @@ impl TryFrom<i32> for DataChangeTrigger {
         )
     }
 }
-impl crate::types::BinaryEncoder<DataChangeTrigger> for DataChangeTrigger {
+impl crate::types::BinaryEncoder for DataChangeTrigger {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -508,7 +507,7 @@ bitflags::bitflags! {
     ServerTimestamp = 4i32; const SourcePicoSeconds = 8i32; const ServerPicoSeconds =
     16i32; const RawData = 32i32; }
 }
-impl crate::types::BinaryEncoder<DataSetFieldContentMask> for DataSetFieldContentMask {
+impl crate::types::BinaryEncoder for DataSetFieldContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -565,7 +564,7 @@ bitflags::bitflags! {
     #[derive(Debug, Copy, Clone, PartialEq)] pub struct DataSetFieldFlags : i16 { const
     None = 0i16; const PromotedField = 1i16; }
 }
-impl crate::types::BinaryEncoder<DataSetFieldFlags> for DataSetFieldFlags {
+impl crate::types::BinaryEncoder for DataSetFieldFlags {
     fn byte_len(&self) -> usize {
         2usize
     }
@@ -638,7 +637,7 @@ impl TryFrom<i32> for DataSetOrderingType {
         )
     }
 }
-impl crate::types::BinaryEncoder<DataSetOrderingType> for DataSetOrderingType {
+impl crate::types::BinaryEncoder for DataSetOrderingType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -676,7 +675,7 @@ impl TryFrom<i32> for DeadbandType {
         )
     }
 }
-impl crate::types::BinaryEncoder<DeadbandType> for DeadbandType {
+impl crate::types::BinaryEncoder for DeadbandType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -718,7 +717,7 @@ impl TryFrom<i32> for DiagnosticsLevel {
         )
     }
 }
-impl crate::types::BinaryEncoder<DiagnosticsLevel> for DiagnosticsLevel {
+impl crate::types::BinaryEncoder for DiagnosticsLevel {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -741,7 +740,7 @@ bitflags::bitflags! {
     None = 0u8; const SubscribeToEvents = 1u8; const HistoryRead = 4u8; const
     HistoryWrite = 8u8; }
 }
-impl crate::types::BinaryEncoder<EventNotifierType> for EventNotifierType {
+impl crate::types::BinaryEncoder for EventNotifierType {
     fn byte_len(&self) -> usize {
         1usize
     }
@@ -818,7 +817,7 @@ impl TryFrom<i32> for ExceptionDeviationFormat {
         )
     }
 }
-impl crate::types::BinaryEncoder<ExceptionDeviationFormat> for ExceptionDeviationFormat {
+impl crate::types::BinaryEncoder for ExceptionDeviationFormat {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -888,7 +887,7 @@ impl TryFrom<i32> for FilterOperator {
         )
     }
 }
-impl crate::types::BinaryEncoder<FilterOperator> for FilterOperator {
+impl crate::types::BinaryEncoder for FilterOperator {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -928,7 +927,7 @@ impl TryFrom<i32> for HistoryUpdateType {
         )
     }
 }
-impl crate::types::BinaryEncoder<HistoryUpdateType> for HistoryUpdateType {
+impl crate::types::BinaryEncoder for HistoryUpdateType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -972,7 +971,7 @@ impl TryFrom<i32> for IdentityCriteriaType {
         )
     }
 }
-impl crate::types::BinaryEncoder<IdentityCriteriaType> for IdentityCriteriaType {
+impl crate::types::BinaryEncoder for IdentityCriteriaType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1012,7 +1011,7 @@ impl TryFrom<i32> for IdType {
         )
     }
 }
-impl crate::types::BinaryEncoder<IdType> for IdType {
+impl crate::types::BinaryEncoder for IdType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1035,8 +1034,7 @@ bitflags::bitflags! {
     i32 { const None = 0i32; const DataSetWriterId = 1i32; const MetaDataVersion = 2i32;
     const SequenceNumber = 4i32; const Timestamp = 8i32; const Status = 16i32; }
 }
-impl crate::types::BinaryEncoder<JsonDataSetMessageContentMask>
-for JsonDataSetMessageContentMask {
+impl crate::types::BinaryEncoder for JsonDataSetMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1095,8 +1093,7 @@ bitflags::bitflags! {
     DataSetMessageHeader = 2i32; const SingleDataSetMessage = 4i32; const PublisherId =
     8i32; const DataSetClassId = 16i32; const ReplyTo = 32i32; }
 }
-impl crate::types::BinaryEncoder<JsonNetworkMessageContentMask>
-for JsonNetworkMessageContentMask {
+impl crate::types::BinaryEncoder for JsonNetworkMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1171,7 +1168,7 @@ impl TryFrom<i32> for MessageSecurityMode {
         )
     }
 }
-impl crate::types::BinaryEncoder<MessageSecurityMode> for MessageSecurityMode {
+impl crate::types::BinaryEncoder for MessageSecurityMode {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1213,8 +1210,7 @@ impl TryFrom<i32> for ModelChangeStructureVerbMask {
         )
     }
 }
-impl crate::types::BinaryEncoder<ModelChangeStructureVerbMask>
-for ModelChangeStructureVerbMask {
+impl crate::types::BinaryEncoder for ModelChangeStructureVerbMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1254,7 +1250,7 @@ impl TryFrom<i32> for MonitoringMode {
         )
     }
 }
-impl crate::types::BinaryEncoder<MonitoringMode> for MonitoringMode {
+impl crate::types::BinaryEncoder for MonitoringMode {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1292,7 +1288,7 @@ impl TryFrom<i32> for NamingRuleType {
         )
     }
 }
-impl crate::types::BinaryEncoder<NamingRuleType> for NamingRuleType {
+impl crate::types::BinaryEncoder for NamingRuleType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1394,7 +1390,7 @@ impl TryFrom<i32> for NodeAttributesMask {
         )
     }
 }
-impl crate::types::BinaryEncoder<NodeAttributesMask> for NodeAttributesMask {
+impl crate::types::BinaryEncoder for NodeAttributesMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1444,7 +1440,7 @@ impl TryFrom<i32> for NodeClass {
         )
     }
 }
-impl crate::types::BinaryEncoder<NodeClass> for NodeClass {
+impl crate::types::BinaryEncoder for NodeClass {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1489,7 +1485,7 @@ impl TryFrom<u8> for NodeIdType {
         )
     }
 }
-impl crate::types::BinaryEncoder<NodeIdType> for NodeIdType {
+impl crate::types::BinaryEncoder for NodeIdType {
     fn byte_len(&self) -> usize {
         1usize
     }
@@ -1529,7 +1525,7 @@ impl TryFrom<i32> for OpenFileMode {
         )
     }
 }
-impl crate::types::BinaryEncoder<OpenFileMode> for OpenFileMode {
+impl crate::types::BinaryEncoder for OpenFileMode {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1567,7 +1563,7 @@ impl TryFrom<i32> for OverrideValueHandling {
         )
     }
 }
-impl crate::types::BinaryEncoder<OverrideValueHandling> for OverrideValueHandling {
+impl crate::types::BinaryEncoder for OverrideValueHandling {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1607,7 +1603,7 @@ impl TryFrom<i32> for PerformUpdateType {
         )
     }
 }
-impl crate::types::BinaryEncoder<PerformUpdateType> for PerformUpdateType {
+impl crate::types::BinaryEncoder for PerformUpdateType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1634,7 +1630,7 @@ bitflags::bitflags! {
     2048i32; const Call = 4096i32; const AddReference = 8192i32; const RemoveReference =
     16384i32; const DeleteNode = 32768i32; const AddNode = 65536i32; }
 }
-impl crate::types::BinaryEncoder<PermissionType> for PermissionType {
+impl crate::types::BinaryEncoder for PermissionType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1705,8 +1701,7 @@ impl TryFrom<i32> for PubSubDiagnosticsCounterClassification {
         )
     }
 }
-impl crate::types::BinaryEncoder<PubSubDiagnosticsCounterClassification>
-for PubSubDiagnosticsCounterClassification {
+impl crate::types::BinaryEncoder for PubSubDiagnosticsCounterClassification {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1746,7 +1741,7 @@ impl TryFrom<i32> for PubSubState {
         )
     }
 }
-impl crate::types::BinaryEncoder<PubSubState> for PubSubState {
+impl crate::types::BinaryEncoder for PubSubState {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1790,7 +1785,7 @@ impl TryFrom<i32> for RedundancySupport {
         )
     }
 }
-impl crate::types::BinaryEncoder<RedundancySupport> for RedundancySupport {
+impl crate::types::BinaryEncoder for RedundancySupport {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1826,7 +1821,7 @@ impl TryFrom<i32> for SecurityTokenRequestType {
         )
     }
 }
-impl crate::types::BinaryEncoder<SecurityTokenRequestType> for SecurityTokenRequestType {
+impl crate::types::BinaryEncoder for SecurityTokenRequestType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1874,7 +1869,7 @@ impl TryFrom<i32> for ServerState {
         )
     }
 }
-impl crate::types::BinaryEncoder<ServerState> for ServerState {
+impl crate::types::BinaryEncoder for ServerState {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1914,7 +1909,7 @@ impl TryFrom<i32> for StructureType {
         )
     }
 }
-impl crate::types::BinaryEncoder<StructureType> for StructureType {
+impl crate::types::BinaryEncoder for StructureType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1958,7 +1953,7 @@ impl TryFrom<i32> for TimestampsToReturn {
         )
     }
 }
-impl crate::types::BinaryEncoder<TimestampsToReturn> for TimestampsToReturn {
+impl crate::types::BinaryEncoder for TimestampsToReturn {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -2002,7 +1997,7 @@ impl TryFrom<i32> for TrustListMasks {
         )
     }
 }
-impl crate::types::BinaryEncoder<TrustListMasks> for TrustListMasks {
+impl crate::types::BinaryEncoder for TrustListMasks {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -2026,8 +2021,7 @@ bitflags::bitflags! {
     Status = 4i32; const MajorVersion = 8i32; const MinorVersion = 16i32; const
     SequenceNumber = 32i32; }
 }
-impl crate::types::BinaryEncoder<UadpDataSetMessageContentMask>
-for UadpDataSetMessageContentMask {
+impl crate::types::BinaryEncoder for UadpDataSetMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -2088,8 +2082,7 @@ bitflags::bitflags! {
     const PicoSeconds = 256i32; const DataSetClassId = 512i32; const PromotedFields =
     1024i32; }
 }
-impl crate::types::BinaryEncoder<UadpNetworkMessageContentMask>
-for UadpNetworkMessageContentMask {
+impl crate::types::BinaryEncoder for UadpNetworkMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -2164,7 +2157,7 @@ impl TryFrom<i32> for UserTokenType {
         )
     }
 }
-impl crate::types::BinaryEncoder<UserTokenType> for UserTokenType {
+impl crate::types::BinaryEncoder for UserTokenType {
     fn byte_len(&self) -> usize {
         4usize
     }

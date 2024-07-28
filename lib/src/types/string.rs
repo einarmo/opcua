@@ -92,7 +92,7 @@ impl<'de> Deserialize<'de> for UAString {
     }
 }
 
-impl BinaryEncoder<UAString> for UAString {
+impl BinaryEncoder for UAString {
     fn byte_len(&self) -> usize {
         // Length plus the actual string length in bytes for a non-null string.
         4 + if self.value.is_none() {

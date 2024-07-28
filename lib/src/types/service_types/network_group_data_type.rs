@@ -18,7 +18,7 @@ impl crate::types::MessageInfo for NetworkGroupDataType {
         crate::types::ObjectId::NetworkGroupDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<NetworkGroupDataType> for NetworkGroupDataType {
+impl crate::types::BinaryEncoder for NetworkGroupDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.server_uri.byte_len();
@@ -40,14 +40,13 @@ impl crate::types::BinaryEncoder<NetworkGroupDataType> for NetworkGroupDataType 
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let server_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        let server_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let network_paths = <Option<
             Vec<super::endpoint_url_list_data_type::EndpointUrlListDataType>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::endpoint_url_list_data_type::EndpointUrlListDataType>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self { server_uri, network_paths })
     }
 }

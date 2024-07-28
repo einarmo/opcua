@@ -10,8 +10,7 @@
 pub struct ReadAnnotationDataDetails {
     pub req_times: Option<Vec<crate::types::date_time::DateTime>>,
 }
-impl crate::types::BinaryEncoder<ReadAnnotationDataDetails>
-for ReadAnnotationDataDetails {
+impl crate::types::BinaryEncoder for ReadAnnotationDataDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.req_times.byte_len();
@@ -33,9 +32,7 @@ for ReadAnnotationDataDetails {
     ) -> crate::types::EncodingResult<Self> {
         let req_times = <Option<
             Vec<crate::types::date_time::DateTime>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::date_time::DateTime>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self { req_times })
     }
 }

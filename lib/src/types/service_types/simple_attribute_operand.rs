@@ -15,7 +15,7 @@ pub struct SimpleAttributeOperand {
     pub attribute_id: u32,
     pub index_range: crate::types::string::UAString,
 }
-impl crate::types::BinaryEncoder<SimpleAttributeOperand> for SimpleAttributeOperand {
+impl crate::types::BinaryEncoder for SimpleAttributeOperand {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.type_definition_id.byte_len();
@@ -41,20 +41,21 @@ impl crate::types::BinaryEncoder<SimpleAttributeOperand> for SimpleAttributeOper
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let type_definition_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
+        let type_definition_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let browse_path = <Option<
             Vec<crate::types::qualified_name::QualifiedName>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::qualified_name::QualifiedName>>,
-        >>::decode(stream, decoding_options)?;
-        let attribute_id = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let index_range = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let attribute_id = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let index_range = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             type_definition_id,
             browse_path,

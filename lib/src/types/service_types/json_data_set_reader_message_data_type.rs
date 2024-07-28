@@ -11,8 +11,7 @@ pub struct JsonDataSetReaderMessageDataType {
     pub network_message_content_mask: super::enums::JsonNetworkMessageContentMask,
     pub data_set_message_content_mask: super::enums::JsonDataSetMessageContentMask,
 }
-impl crate::types::BinaryEncoder<JsonDataSetReaderMessageDataType>
-for JsonDataSetReaderMessageDataType {
+impl crate::types::BinaryEncoder for JsonDataSetReaderMessageDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.network_message_content_mask.byte_len();
@@ -34,12 +33,14 @@ for JsonDataSetReaderMessageDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let network_message_content_mask = <super::enums::JsonNetworkMessageContentMask as crate::types::BinaryEncoder<
-            super::enums::JsonNetworkMessageContentMask,
-        >>::decode(stream, decoding_options)?;
-        let data_set_message_content_mask = <super::enums::JsonDataSetMessageContentMask as crate::types::BinaryEncoder<
-            super::enums::JsonDataSetMessageContentMask,
-        >>::decode(stream, decoding_options)?;
+        let network_message_content_mask = <super::enums::JsonNetworkMessageContentMask as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let data_set_message_content_mask = <super::enums::JsonDataSetMessageContentMask as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             network_message_content_mask,
             data_set_message_content_mask,

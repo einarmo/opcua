@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for CancelResponse {
         crate::types::ObjectId::CancelResponse_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<CancelResponse> for CancelResponse {
+impl crate::types::BinaryEncoder for CancelResponse {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.response_header.byte_len();
@@ -38,12 +38,14 @@ impl crate::types::BinaryEncoder<CancelResponse> for CancelResponse {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let response_header = <crate::types::response_header::ResponseHeader as crate::types::BinaryEncoder<
-            crate::types::response_header::ResponseHeader,
-        >>::decode(stream, decoding_options)?;
-        let cancel_count = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let response_header = <crate::types::response_header::ResponseHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let cancel_count = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             response_header,
             cancel_count,

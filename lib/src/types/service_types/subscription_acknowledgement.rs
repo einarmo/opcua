@@ -16,8 +16,7 @@ impl crate::types::MessageInfo for SubscriptionAcknowledgement {
         crate::types::ObjectId::SubscriptionAcknowledgement_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<SubscriptionAcknowledgement>
-for SubscriptionAcknowledgement {
+impl crate::types::BinaryEncoder for SubscriptionAcknowledgement {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.subscription_id.byte_len();
@@ -39,12 +38,14 @@ for SubscriptionAcknowledgement {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let subscription_id = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let sequence_number = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let subscription_id = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let sequence_number = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             subscription_id,
             sequence_number,

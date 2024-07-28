@@ -18,7 +18,7 @@ impl crate::types::MessageInfo for EventFieldList {
         crate::types::ObjectId::EventFieldList_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<EventFieldList> for EventFieldList {
+impl crate::types::BinaryEncoder for EventFieldList {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.client_handle.byte_len();
@@ -40,14 +40,13 @@ impl crate::types::BinaryEncoder<EventFieldList> for EventFieldList {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let client_handle = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let client_handle = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let event_fields = <Option<
             Vec<crate::types::variant::Variant>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::variant::Variant>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             client_handle,
             event_fields,

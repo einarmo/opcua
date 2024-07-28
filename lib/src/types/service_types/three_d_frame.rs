@@ -11,7 +11,7 @@ pub struct ThreeDFrame {
     pub cartesian_coordinates: super::three_d_cartesian_coordinates::ThreeDCartesianCoordinates,
     pub orientation: super::three_d_orientation::ThreeDOrientation,
 }
-impl crate::types::BinaryEncoder<ThreeDFrame> for ThreeDFrame {
+impl crate::types::BinaryEncoder for ThreeDFrame {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.cartesian_coordinates.byte_len();
@@ -33,12 +33,14 @@ impl crate::types::BinaryEncoder<ThreeDFrame> for ThreeDFrame {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let cartesian_coordinates = <super::three_d_cartesian_coordinates::ThreeDCartesianCoordinates as crate::types::BinaryEncoder<
-            super::three_d_cartesian_coordinates::ThreeDCartesianCoordinates,
-        >>::decode(stream, decoding_options)?;
-        let orientation = <super::three_d_orientation::ThreeDOrientation as crate::types::BinaryEncoder<
-            super::three_d_orientation::ThreeDOrientation,
-        >>::decode(stream, decoding_options)?;
+        let cartesian_coordinates = <super::three_d_cartesian_coordinates::ThreeDCartesianCoordinates as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let orientation = <super::three_d_orientation::ThreeDOrientation as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             cartesian_coordinates,
             orientation,

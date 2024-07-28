@@ -12,8 +12,7 @@ pub struct PublishedDataItemsDataType {
         Vec<super::published_variable_data_type::PublishedVariableDataType>,
     >,
 }
-impl crate::types::BinaryEncoder<PublishedDataItemsDataType>
-for PublishedDataItemsDataType {
+impl crate::types::BinaryEncoder for PublishedDataItemsDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.published_data.byte_len();
@@ -35,9 +34,7 @@ for PublishedDataItemsDataType {
     ) -> crate::types::EncodingResult<Self> {
         let published_data = <Option<
             Vec<super::published_variable_data_type::PublishedVariableDataType>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::published_variable_data_type::PublishedVariableDataType>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self { published_data })
     }
 }

@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for RationalNumber {
         crate::types::ObjectId::RationalNumber_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<RationalNumber> for RationalNumber {
+impl crate::types::BinaryEncoder for RationalNumber {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.numerator.byte_len();
@@ -38,12 +38,14 @@ impl crate::types::BinaryEncoder<RationalNumber> for RationalNumber {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let numerator = <i32 as crate::types::BinaryEncoder<
-            i32,
-        >>::decode(stream, decoding_options)?;
-        let denominator = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let numerator = <i32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let denominator = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self { numerator, denominator })
     }
 }

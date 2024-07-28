@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for TimeZoneDataType {
         crate::types::ObjectId::TimeZoneDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<TimeZoneDataType> for TimeZoneDataType {
+impl crate::types::BinaryEncoder for TimeZoneDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.offset.byte_len();
@@ -38,12 +38,14 @@ impl crate::types::BinaryEncoder<TimeZoneDataType> for TimeZoneDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let offset = <i16 as crate::types::BinaryEncoder<
-            i16,
-        >>::decode(stream, decoding_options)?;
-        let daylight_saving_in_offset = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        let offset = <i16 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let daylight_saving_in_offset = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             offset,
             daylight_saving_in_offset,

@@ -17,7 +17,7 @@ impl crate::types::MessageInfo for QueryNextResponse {
         crate::types::ObjectId::QueryNextResponse_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<QueryNextResponse> for QueryNextResponse {
+impl crate::types::BinaryEncoder for QueryNextResponse {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.response_header.byte_len();
@@ -41,17 +41,17 @@ impl crate::types::BinaryEncoder<QueryNextResponse> for QueryNextResponse {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let response_header = <crate::types::response_header::ResponseHeader as crate::types::BinaryEncoder<
-            crate::types::response_header::ResponseHeader,
-        >>::decode(stream, decoding_options)?;
+        let response_header = <crate::types::response_header::ResponseHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let query_data_sets = <Option<
             Vec<super::query_data_set::QueryDataSet>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::query_data_set::QueryDataSet>>,
-        >>::decode(stream, decoding_options)?;
-        let revised_continuation_point = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-            crate::types::byte_string::ByteString,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let revised_continuation_point = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             response_header,
             query_data_sets,

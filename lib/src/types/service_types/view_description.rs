@@ -17,7 +17,7 @@ impl crate::types::MessageInfo for ViewDescription {
         crate::types::ObjectId::ViewDescription_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<ViewDescription> for ViewDescription {
+impl crate::types::BinaryEncoder for ViewDescription {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.view_id.byte_len();
@@ -41,15 +41,18 @@ impl crate::types::BinaryEncoder<ViewDescription> for ViewDescription {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let view_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let timestamp = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
-        let view_version = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let view_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let timestamp = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let view_version = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             view_id,
             timestamp,
