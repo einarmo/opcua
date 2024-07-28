@@ -377,7 +377,7 @@ impl SecureChannel {
     }
 
     pub fn token_renewal_deadline(&self) -> Instant {
-        self.token_created_at + Duration::from_secs((self.token_lifetime as u64) * 3 / 4)
+        self.token_created_at + Duration::from_secs((self.token_lifetime as u64) * 4 / 3)
     }
 
     /// Calculates the signature size for a message depending on the supplied security header

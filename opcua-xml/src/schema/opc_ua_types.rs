@@ -6,8 +6,8 @@ use uuid::Uuid;
 
 use crate::{
     ext::{
-        children_of_type, children_with_name, first_child_of_type, first_child_of_type_req,
-        first_child_with_name_opt, value_from_contents_opt,
+        children_of_type, children_with_name, first_child_of_type_req, first_child_with_name_opt,
+        value_from_contents_opt,
     },
     XmlError, XmlLoad,
 };

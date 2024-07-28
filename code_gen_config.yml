@@ -10,3 +10,14 @@ targets:
     enums_single_file: true
     default_excluded:
       - AnonymousIdentityToken
+  - type: nodes
+    file_path: tools/schema/schemas/1.0.4/Opc.Ua.NodeSet2.xml
+    output_dir: lib/src/server/address_space/generated
+    max_nodes_per_file: 100
+    types:
+      - file_path: tools/schema/schemas/1.0.4/Opc.Ua.Types.xsd
+        root_path: crate::types
+    own_namespaces:
+      - "http://opcfoundation.org/UA/"
+    imported_namespaces: []
+    name: CoreNamespace

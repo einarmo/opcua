@@ -377,9 +377,8 @@ mod tests {
     use regex::Regex;
 
     use crate::{
-        server::address_space::types::AddressSpace,
         server::{
-            address_space::{ObjectTypeBuilder, VariableBuilder},
+            address_space::{AddressSpace, CoreNamespace, ObjectTypeBuilder, VariableBuilder},
             events::evaluate::like_to_regex,
             node_manager::TypeTree,
             BaseEventType, Event, ParsedContentFilter,
@@ -517,9 +516,12 @@ mod tests {
 
     fn type_tree() -> TypeTree {
         let mut address_space = AddressSpace::new();
-        address_space.add_namespace("http://opcfoundation.org/UA/", 0);
-        address_space.add_namespace("my:namespace:uri", 1);
-        crate::server::address_space::populate_address_space(&mut address_space);
+        let mut type_tree = TypeTree::new();
+        address_space.import_node_set::<CoreNamespace>(type_tree.namespaces_mut());
+        address_space.add_namespace(
+            "my:namespace:uri",
+            type_tree.namespaces_mut().add_namespace("my:namespace:uri"),
+        );
 
         let event_type_id = NodeId::new(1, 123);
         ObjectTypeBuilder::new(&event_type_id, "TestEventType", "TestEventType")
@@ -534,7 +536,6 @@ mod tests {
             .has_modelling_rule(ObjectId::ModellingRule_Mandatory)
             .insert(&mut address_space);
 
-        let mut type_tree = TypeTree::new();
         address_space.load_into_type_tree(&mut type_tree);
 
         type_tree
