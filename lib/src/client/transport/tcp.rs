@@ -230,7 +230,14 @@ impl TcpTransport {
                     }
                     let secure_channel = trace_read_lock!(self.state.secure_channel);
                     if let Err(e) = self.send_buffer.write(request_id, outgoing, &secure_channel) {
-                        TransportPollResult::Closed(e)
+                        drop(secure_channel);
+                        if let Some((request_id, request_handle)) = e.full_context() {
+                            error!("Failed to send message with request handle {}: {}", request_handle, e.status());
+                            self.state.message_send_failed(request_id, e.status());
+                            TransportPollResult::RecoverableError(e.status())
+                        } else {
+                            TransportPollResult::Closed(e.status())
+                        }
                     } else {
                         TransportPollResult::OutgoingMessage
                     }

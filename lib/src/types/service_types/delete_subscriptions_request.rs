@@ -42,9 +42,11 @@ impl crate::types::BinaryEncoder for DeleteSubscriptionsRequest {
             stream,
             decoding_options,
         )?;
+        let __request_handle = request_header.request_handle;
         let subscription_ids = <Option<
             Vec<u32>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             subscription_ids,

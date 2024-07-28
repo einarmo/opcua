@@ -42,9 +42,11 @@ impl crate::types::BinaryEncoder for AddReferencesRequest {
             stream,
             decoding_options,
         )?;
+        let __request_handle = request_header.request_handle;
         let references_to_add = <Option<
             Vec<super::add_references_item::AddReferencesItem>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             references_to_add,

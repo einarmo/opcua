@@ -42,10 +42,12 @@ impl crate::types::BinaryEncoder for CancelResponse {
             stream,
             decoding_options,
         )?;
+        let __request_handle = response_header.request_handle;
         let cancel_count = <u32 as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             response_header,
             cancel_count,

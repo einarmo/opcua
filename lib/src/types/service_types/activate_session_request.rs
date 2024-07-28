@@ -56,24 +56,30 @@ impl crate::types::BinaryEncoder for ActivateSessionRequest {
             stream,
             decoding_options,
         )?;
+        let __request_handle = request_header.request_handle;
         let client_signature = <super::signature_data::SignatureData as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let client_software_certificates = <Option<
             Vec<super::signed_software_certificate::SignedSoftwareCertificate>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let locale_ids = <Option<
             Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let user_identity_token = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let user_token_signature = <super::signature_data::SignatureData as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             client_signature,

@@ -45,13 +45,16 @@ impl crate::types::BinaryEncoder for FindServersOnNetworkResponse {
             stream,
             decoding_options,
         )?;
+        let __request_handle = response_header.request_handle;
         let last_counter_reset_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let servers = <Option<
             Vec<super::server_on_network::ServerOnNetwork>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             response_header,
             last_counter_reset_time,

@@ -47,17 +47,21 @@ impl crate::types::BinaryEncoder for SetMonitoringModeRequest {
             stream,
             decoding_options,
         )?;
+        let __request_handle = request_header.request_handle;
         let subscription_id = <u32 as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let monitoring_mode = <super::enums::MonitoringMode as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let monitored_item_ids = <Option<
             Vec<u32>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             subscription_id,

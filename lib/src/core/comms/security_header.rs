@@ -91,7 +91,7 @@ impl BinaryEncoder for AsymmetricSecurityHeader {
             && sender_certificate.value.as_ref().unwrap().len() >= constants::MAX_CERTIFICATE_LENGTH
         {
             error!("Sender certificate exceeds max certificate size");
-            Err(StatusCode::BadDecodingError)
+            Err(StatusCode::BadDecodingError.into())
         } else {
             // validate receiver_certificate_thumbprint_length == 20
             let thumbprint_len = if receiver_certificate_thumbprint.value.is_some() {
@@ -112,7 +112,7 @@ impl BinaryEncoder for AsymmetricSecurityHeader {
                         .unwrap()
                         .len()
                 );
-                Err(StatusCode::BadDecodingError)
+                Err(StatusCode::BadDecodingError.into())
             } else {
                 Ok(AsymmetricSecurityHeader {
                     security_policy_uri,

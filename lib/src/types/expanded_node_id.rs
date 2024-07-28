@@ -291,7 +291,7 @@ impl BinaryEncoder for ExpandedNodeId {
             }
             _ => {
                 error!("Unrecognized expanded node id type {}", identifier);
-                return Err(StatusCode::BadDecodingError);
+                return Err(StatusCode::BadDecodingError.into());
             }
         };
 

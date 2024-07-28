@@ -42,10 +42,12 @@ impl crate::types::BinaryEncoder for RepublishResponse {
             stream,
             decoding_options,
         )?;
+        let __request_handle = response_header.request_handle;
         let notification_message = <super::notification_message::NotificationMessage as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             response_header,
             notification_message,

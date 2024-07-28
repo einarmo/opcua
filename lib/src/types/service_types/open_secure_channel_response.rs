@@ -48,18 +48,22 @@ impl crate::types::BinaryEncoder for OpenSecureChannelResponse {
             stream,
             decoding_options,
         )?;
+        let __request_handle = response_header.request_handle;
         let server_protocol_version = <u32 as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let security_token = <super::channel_security_token::ChannelSecurityToken as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let server_nonce = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             response_header,
             server_protocol_version,

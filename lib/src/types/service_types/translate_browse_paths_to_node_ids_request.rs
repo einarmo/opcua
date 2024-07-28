@@ -42,9 +42,11 @@ impl crate::types::BinaryEncoder for TranslateBrowsePathsToNodeIdsRequest {
             stream,
             decoding_options,
         )?;
+        let __request_handle = request_header.request_handle;
         let browse_paths = <Option<
             Vec<super::browse_path::BrowsePath>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             browse_paths,

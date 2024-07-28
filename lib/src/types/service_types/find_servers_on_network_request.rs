@@ -48,17 +48,21 @@ impl crate::types::BinaryEncoder for FindServersOnNetworkRequest {
             stream,
             decoding_options,
         )?;
+        let __request_handle = request_header.request_handle;
         let starting_record_id = <u32 as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let max_records_to_return = <u32 as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let server_capability_filter = <Option<
             Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             starting_record_id,

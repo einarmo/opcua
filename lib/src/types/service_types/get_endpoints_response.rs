@@ -42,9 +42,11 @@ impl crate::types::BinaryEncoder for GetEndpointsResponse {
             stream,
             decoding_options,
         )?;
+        let __request_handle = response_header.request_handle;
         let endpoints = <Option<
             Vec<super::endpoint_description::EndpointDescription>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self { response_header, endpoints })
     }
 }

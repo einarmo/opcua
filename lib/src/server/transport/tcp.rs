@@ -17,7 +17,7 @@ use crate::{
         SupportedMessage,
     },
     server::info::ServerInfo,
-    types::{DecodingOptions, StatusCode},
+    types::{DecodingOptions, EncodingError, StatusCode},
 };
 use futures::StreamExt;
 use tokio::{
@@ -69,6 +69,7 @@ pub(crate) enum TransportPollResult {
     IncomingMessage(Request),
     IncomingHello,
     Error(StatusCode),
+    RecoverableError(StatusCode, u32, u32),
     Closed,
 }
 
@@ -281,7 +282,11 @@ impl TcpTransport {
                 }
                 Err(e) => {
                     self.pending_chunks.clear();
-                    TransportPollResult::Error(e)
+                    if let Some((id, handle)) = e.full_context() {
+                        TransportPollResult::RecoverableError(e.status(), id, handle)
+                    } else {
+                        TransportPollResult::Error(e.status())
+                    }
                 }
             },
             Err(err) => {
@@ -295,7 +300,7 @@ impl TcpTransport {
         &mut self,
         message: Message,
         channel: &mut SecureChannel,
-    ) -> Result<Option<Request>, StatusCode> {
+    ) -> Result<Option<Request>, EncodingError> {
         match message {
             Message::Chunk(chunk) => {
                 let header = chunk.message_header(&channel.decoding_options())?;
@@ -307,7 +312,7 @@ impl TcpTransport {
                     let chunk = channel.verify_and_remove_security(&chunk.data)?;
 
                     if self.pending_chunks.len() == self.send_buffer.max_chunk_count {
-                        return Err(StatusCode::BadEncodingLimitsExceeded);
+                        return Err(StatusCode::BadEncodingLimitsExceeded.into());
                     }
                     self.pending_chunks.push(chunk);
 
@@ -323,7 +328,8 @@ impl TcpTransport {
                         &self.pending_chunks,
                     )?;
 
-                    let request = Chunker::decode(&self.pending_chunks, channel, None)?;
+                    let request = Chunker::decode(&self.pending_chunks, channel, None)
+                        .map_err(|e| e.with_request_id(chunk_info.sequence_header.request_id))?;
                     Ok(Some(Request {
                         request_id: chunk_info.sequence_header.request_id,
                         chunk_info,
@@ -333,7 +339,7 @@ impl TcpTransport {
             }
             unexpected => {
                 error!("Received unexpected message: {:?}", unexpected);
-                Err(StatusCode::BadUnexpectedError)
+                Err(StatusCode::BadUnexpectedError.into())
             }
         }
     }

@@ -42,9 +42,11 @@ impl crate::types::BinaryEncoder for FindServersResponse {
             stream,
             decoding_options,
         )?;
+        let __request_handle = response_header.request_handle;
         let servers = <Option<
             Vec<super::application_description::ApplicationDescription>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self { response_header, servers })
     }
 }

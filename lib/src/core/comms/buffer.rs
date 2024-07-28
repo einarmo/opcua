@@ -10,7 +10,7 @@ use crate::{
         comms::{chunker::Chunker, message_chunk::MessageChunk, secure_channel::SecureChannel},
         supported_message::SupportedMessage,
     },
-    types::{BinaryEncoder, StatusCode},
+    types::{BinaryEncoder, EncodingError, StatusCode},
 };
 
 use super::tcp_types::{AcknowledgeMessage, ErrorMessage};
@@ -102,7 +102,7 @@ impl SendBuffer {
         request_id: u32,
         message: SupportedMessage,
         secure_channel: &SecureChannel,
-    ) -> Result<u32, StatusCode> {
+    ) -> Result<u32, EncodingError> {
         trace!("Writing request to buffer");
 
         // Turn message to chunk(s)
@@ -113,7 +113,8 @@ impl SendBuffer {
             self.send_buffer_size,
             secure_channel,
             &message,
-        )?;
+        )
+        .map_err(|e| e.with_request_id(request_id))?;
 
         if self.max_chunk_count > 0 && chunks.len() > self.max_chunk_count {
             error!(
@@ -121,7 +122,11 @@ impl SendBuffer {
                 chunks.len(),
                 self.max_chunk_count
             );
-            Err(StatusCode::BadCommunicationError)
+            Err(EncodingError::new(
+                StatusCode::BadCommunicationError,
+                Some(request_id),
+                Some(message.request_handle()),
+            ))
         } else {
             // Sequence number monotonically increases per chunk
             self.last_sent_sequence_number += chunks.len() as u32;
@@ -319,7 +324,7 @@ mod tests {
         let (mut buffer, channel) = get_buffer_and_channel();
 
         let err = buffer.write(1, message.into(), &channel).unwrap_err();
-        assert_eq!(err, StatusCode::BadRequestTooLarge);
+        assert_eq!(err.status(), StatusCode::BadRequestTooLarge);
     }
 
     #[test]
@@ -344,7 +349,7 @@ mod tests {
         let (mut buffer, channel) = get_buffer_and_channel();
 
         let err = buffer.write(1, message.into(), &channel).unwrap_err();
-        assert_eq!(err, StatusCode::BadCommunicationError);
+        assert_eq!(err.status(), StatusCode::BadCommunicationError);
     }
 
     #[tokio::test]

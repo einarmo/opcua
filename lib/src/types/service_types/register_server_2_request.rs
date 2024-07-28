@@ -46,13 +46,16 @@ impl crate::types::BinaryEncoder for RegisterServer2Request {
             stream,
             decoding_options,
         )?;
+        let __request_handle = request_header.request_handle;
         let server = <super::registered_server::RegisteredServer as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let discovery_configuration = <Option<
             Vec<crate::types::extension_object::ExtensionObject>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             server,

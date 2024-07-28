@@ -48,16 +48,20 @@ impl crate::types::BinaryEncoder for FindServersRequest {
             stream,
             decoding_options,
         )?;
+        let __request_handle = request_header.request_handle;
         let endpoint_url = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let locale_ids = <Option<
             Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let server_uris = <Option<
             Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             endpoint_url,

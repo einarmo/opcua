@@ -45,12 +45,12 @@ impl BinaryEncoder for Argument {
             if let Some(ref array_dimensions) = self.array_dimensions {
                 if self.value_rank as usize != array_dimensions.len() {
                     error!("The array dimensions {} of the Argument should match value rank {} and they don't", array_dimensions.len(), self.value_rank);
-                    return Err(StatusCode::BadDataEncodingInvalid);
+                    return Err(StatusCode::BadDataEncodingInvalid.into());
                 }
                 size += write_array(stream, &self.array_dimensions)?;
             } else {
                 error!("The array dimensions are expected in the Argument matching value rank {} and they aren't", self.value_rank);
-                return Err(StatusCode::BadDataEncodingInvalid);
+                return Err(StatusCode::BadDataEncodingInvalid.into());
             }
         } else {
             size += write_u32(stream, 0u32)?;
@@ -69,7 +69,7 @@ impl BinaryEncoder for Argument {
         if let Some(ref array_dimensions) = array_dimensions {
             if value_rank > 0 && value_rank as usize != array_dimensions.len() {
                 error!("The array dimensions {} of the Argument should match value rank {} and they don't", array_dimensions.len(), value_rank);
-                return Err(StatusCode::BadDataEncodingInvalid);
+                return Err(StatusCode::BadDataEncodingInvalid.into());
             }
         }
         let description = LocalizedText::decode(stream, decoding_options)?;

@@ -48,17 +48,21 @@ impl crate::types::BinaryEncoder for BrowseRequest {
             stream,
             decoding_options,
         )?;
+        let __request_handle = request_header.request_handle;
         let view = <super::view_description::ViewDescription as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let requested_max_references_per_node = <u32 as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let nodes_to_browse = <Option<
             Vec<super::browse_description::BrowseDescription>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             view,

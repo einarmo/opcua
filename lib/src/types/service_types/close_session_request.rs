@@ -42,10 +42,12 @@ impl crate::types::BinaryEncoder for CloseSessionRequest {
             stream,
             decoding_options,
         )?;
+        let __request_handle = request_header.request_handle;
         let delete_subscriptions = <bool as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             delete_subscriptions,

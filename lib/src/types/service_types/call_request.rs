@@ -42,9 +42,11 @@ impl crate::types::BinaryEncoder for CallRequest {
             stream,
             decoding_options,
         )?;
+        let __request_handle = request_header.request_handle;
         let methods_to_call = <Option<
             Vec<super::call_method_request::CallMethodRequest>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             methods_to_call,

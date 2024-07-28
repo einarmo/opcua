@@ -47,12 +47,15 @@ impl crate::types::BinaryEncoder for ModifyMonitoredItemsResponse {
             stream,
             decoding_options,
         )?;
+        let __request_handle = response_header.request_handle;
         let results = <Option<
             Vec<super::monitored_item_modify_result::MonitoredItemModifyResult>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let diagnostic_infos = <Option<
             Vec<crate::types::diagnostic_info::DiagnosticInfo>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             response_header,
             results,

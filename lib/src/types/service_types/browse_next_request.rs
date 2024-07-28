@@ -45,13 +45,16 @@ impl crate::types::BinaryEncoder for BrowseNextRequest {
             stream,
             decoding_options,
         )?;
+        let __request_handle = request_header.request_handle;
         let release_continuation_points = <bool as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let continuation_points = <Option<
             Vec<crate::types::byte_string::ByteString>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             release_continuation_points,

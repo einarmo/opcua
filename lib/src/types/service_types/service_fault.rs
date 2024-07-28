@@ -39,6 +39,7 @@ impl crate::types::BinaryEncoder for ServiceFault {
             stream,
             decoding_options,
         )?;
+        let __request_handle = response_header.request_handle;
         Ok(Self { response_header })
     }
 }

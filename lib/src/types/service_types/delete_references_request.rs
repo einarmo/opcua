@@ -44,9 +44,11 @@ impl crate::types::BinaryEncoder for DeleteReferencesRequest {
             stream,
             decoding_options,
         )?;
+        let __request_handle = request_header.request_handle;
         let references_to_delete = <Option<
             Vec<super::delete_references_item::DeleteReferencesItem>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             references_to_delete,

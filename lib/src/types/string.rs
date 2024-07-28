@@ -124,13 +124,13 @@ impl BinaryEncoder for UAString {
             Ok(UAString::null())
         } else if len < -1 {
             error!("String buf length is a negative number {}", len);
-            Err(StatusCode::BadDecodingError)
+            Err(StatusCode::BadDecodingError.into())
         } else if len as usize > decoding_options.max_string_length {
             error!(
                 "String buf length {} exceeds decoding limit {}",
                 len, decoding_options.max_string_length
             );
-            Err(StatusCode::BadDecodingError)
+            Err(StatusCode::BadDecodingError.into())
         } else {
             // Create a buffer filled with zeroes and read the string over the top
             let mut buf = vec![0u8; len as usize];

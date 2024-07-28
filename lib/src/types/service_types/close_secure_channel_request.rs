@@ -39,6 +39,7 @@ impl crate::types::BinaryEncoder for CloseSecureChannelRequest {
             stream,
             decoding_options,
         )?;
+        let __request_handle = request_header.request_handle;
         Ok(Self { request_header })
     }
 }

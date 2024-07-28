@@ -42,9 +42,11 @@ impl crate::types::BinaryEncoder for RegisterNodesResponse {
             stream,
             decoding_options,
         )?;
+        let __request_handle = response_header.request_handle;
         let registered_node_ids = <Option<
             Vec<crate::types::node_id::NodeId>,
-        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             response_header,
             registered_node_ids,

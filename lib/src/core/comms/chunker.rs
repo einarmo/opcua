@@ -17,6 +17,7 @@ use crate::{
     crypto::SecurityPolicy,
     types::{
         encoding::BinaryEncoder, node_id::NodeId, node_ids::ObjectId, status_code::StatusCode,
+        EncodingError,
     },
 };
 
@@ -115,11 +116,15 @@ impl Chunker {
         max_chunk_size: usize,
         secure_channel: &SecureChannel,
         supported_message: &SupportedMessage,
-    ) -> std::result::Result<Vec<MessageChunk>, StatusCode> {
+    ) -> std::result::Result<Vec<MessageChunk>, EncodingError> {
         let security_policy = secure_channel.security_policy();
         if security_policy == SecurityPolicy::Unknown {
             panic!("Security policy cannot be unknown");
         }
+
+        let ctx_id = Some(request_id);
+        let handle = supported_message.request_handle();
+        let ctx_handle = if handle > 0 { Some(handle) } else { None };
 
         // Client / server stacks should validate the length of a message before sending it and
         // here makes as good a place as any to do that.
@@ -131,9 +136,9 @@ impl Chunker {
             );
             // Client stack should report a BadRequestTooLarge, server BadResponseTooLarge
             Err(if secure_channel.is_client_role() {
-                StatusCode::BadRequestTooLarge
+                EncodingError::new(StatusCode::BadRequestTooLarge, ctx_id, ctx_handle)
             } else {
-                StatusCode::BadResponseTooLarge
+                EncodingError::new(StatusCode::BadResponseTooLarge, ctx_id, ctx_handle)
             })
         } else {
             let node_id = supported_message.node_id();
@@ -144,7 +149,9 @@ impl Chunker {
 
             trace!("Encoding node id {:?}", node_id);
             let _ = node_id.encode(&mut stream);
-            let _ = supported_message.encode(&mut stream)?;
+            let _ = supported_message
+                .encode(&mut stream)
+                .map_err(|e| e.with_context(ctx_id, ctx_handle))?;
             let data = stream.into_inner();
 
             let result = if max_chunk_size > 0 {
@@ -158,7 +165,7 @@ impl Chunker {
                         "body_size_from_message_size error for max_chunk_size = {}",
                         max_chunk_size
                     );
-                    StatusCode::BadTcpInternalError
+                    EncodingError::new(StatusCode::BadTcpInternalError, ctx_id, ctx_handle)
                 })?;
 
                 // Multiple chunks means breaking the data up into sections. Fortunately
@@ -179,7 +186,8 @@ impl Chunker {
                         is_final,
                         secure_channel,
                         data_chunk,
-                    )?;
+                    )
+                    .map_err(|e| EncodingError::new(e, ctx_id, ctx_handle))?;
                     chunks.push(chunk);
                 }
                 chunks
@@ -191,7 +199,8 @@ impl Chunker {
                     MessageIsFinalType::Final,
                     secure_channel,
                     &data,
-                )?;
+                )
+                .map_err(|e| EncodingError::new(e, ctx_id, ctx_handle))?;
                 vec![chunk]
             };
             Ok(result)
@@ -204,7 +213,7 @@ impl Chunker {
         chunks: &[MessageChunk],
         secure_channel: &SecureChannel,
         expected_node_id: Option<NodeId>,
-    ) -> std::result::Result<SupportedMessage, StatusCode> {
+    ) -> std::result::Result<SupportedMessage, EncodingError> {
         // Calculate the size of data held in all chunks
         let mut data_size: usize = 0;
         for (i, chunk) in chunks.iter().enumerate() {
@@ -216,7 +225,7 @@ impl Chunker {
                 MessageIsFinalType::Intermediate
             };
             if chunk_info.message_header.is_final != expected_is_final {
-                return Err(StatusCode::BadDecodingError);
+                return Err(StatusCode::BadDecodingError.into());
             }
             // Calculate how much space data is in the chunk
             let body_start = chunk_info.body_offset;
@@ -254,7 +263,7 @@ impl Chunker {
             Ok(decoded_message) => {
                 if let SupportedMessage::Invalid(_) = decoded_message {
                     debug!("Message {:?} is unsupported", object_id);
-                    Err(StatusCode::BadServiceUnsupported)
+                    Err(StatusCode::BadServiceUnsupported.into())
                 } else {
                     // debug!("Returning decoded msg {:?}", decoded_message);
                     Ok(decoded_message)

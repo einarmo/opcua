@@ -45,14 +45,17 @@ impl crate::types::BinaryEncoder for QueryNextRequest {
             stream,
             decoding_options,
         )?;
+        let __request_handle = request_header.request_handle;
         let release_continuation_point = <bool as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let continuation_point = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             release_continuation_point,
