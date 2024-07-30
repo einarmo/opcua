@@ -82,7 +82,7 @@ impl AttributeQueryable for &dyn Event {
         attribute_id: AttributeId,
         index_range: NumericRange,
     ) -> Variant {
-        self.get_field(type_definition_id, browse_path, attribute_id, index_range)
+        self.get_field(type_definition_id, attribute_id, index_range, browse_path)
     }
 }
 
@@ -290,9 +290,9 @@ impl ParsedContentFilter {
 fn get_field(event: &dyn Event, attr: &ParsedSimpleAttributeOperand) -> Variant {
     event.get_field(
         &attr.type_definition_id,
-        &attr.browse_path,
         attr.attribute_id,
         attr.index_range.clone(),
+        &attr.browse_path,
     )
 }
 
@@ -374,12 +374,13 @@ fn like_to_regex(v: &str) -> Result<Regex, ()> {
 
 #[cfg(test)]
 mod tests {
+    use opcua_macros::Event;
     use regex::Regex;
 
     use crate::{
         server::{
             address_space::{AddressSpace, CoreNamespace, ObjectTypeBuilder, VariableBuilder},
-            events::evaluate::like_to_regex,
+            events::{evaluate::like_to_regex, value::EventField},
             node_manager::TypeTree,
             BaseEventType, Event, ParsedContentFilter,
         },
@@ -457,8 +458,13 @@ mod tests {
         assert!(!re.is_match("ABC5"));
     }
 
+    use crate as opcua;
+
+    #[derive(Event)]
+    #[opcua(identifier = "i=123")]
     struct TestEvent {
         base: BaseEventType,
+        own_namespace_index: u16,
         field: i32,
     }
 
@@ -473,44 +479,8 @@ mod tests {
             Self {
                 base: BaseEventType::new(type_id, event_id, message, time),
                 field,
+                own_namespace_index: 1,
             }
-        }
-    }
-
-    impl Event for TestEvent {
-        fn get_field(
-            &self,
-            type_definition_id: &crate::types::NodeId,
-            browse_path: &[crate::types::QualifiedName],
-            attribute_id: crate::types::AttributeId,
-            index_range: crate::types::NumericRange,
-        ) -> crate::types::Variant {
-            if !self.matches_type_id(type_definition_id)
-                || browse_path.len() != 1
-                || attribute_id != AttributeId::Value
-            {
-                return Variant::Empty;
-            }
-            let field = &browse_path[0];
-            if field.namespace_index != 0 {
-                return Variant::Empty;
-            }
-
-            match field.name.as_ref() {
-                "Field" => take_value!(self.field, index_range),
-                _ => {
-                    self.base
-                        .get_field(type_definition_id, browse_path, attribute_id, index_range)
-                }
-            }
-        }
-
-        fn time(&self) -> &crate::types::DateTime {
-            self.base.time()
-        }
-
-        fn matches_type_id(&self, id: &NodeId) -> bool {
-            id == &NodeId::new(1, 123) || self.base.matches_type_id(id)
         }
     }
 

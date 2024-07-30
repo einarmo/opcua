@@ -17,7 +17,7 @@ use opcua::{
             AddressSpace, EventNotifier, ObjectBuilder, ObjectTypeBuilder, VariableBuilder,
         },
         node_manager::memory::SimpleNodeManager,
-        BaseEventType, Event, SubscriptionCache,
+        BaseEventType, Event, EventField, SubscriptionCache,
     },
     types::{
         DataTypeId, DataValue, DateTime, NodeId, ObjectId, ObjectTypeId, UAString, VariableTypeId,
@@ -179,18 +179,19 @@ pub struct MachineCycledEventType {
     ns: u16,
 }
 
-impl Event for MachineCycledEventType {
-    fn get_field(
+impl EventField for MachineCycledEventType {
+    fn get_value(
         &self,
-        type_definition_id: &NodeId,
-        browse_path: &[opcua::types::QualifiedName],
         attribute_id: opcua::types::AttributeId,
         index_range: opcua::types::NumericRange,
+        remaining_path: &[opcua::types::QualifiedName],
     ) -> opcua::types::Variant {
         self.base
-            .get_field(type_definition_id, browse_path, attribute_id, index_range)
+            .get_value(attribute_id, index_range, remaining_path)
     }
+}
 
+impl Event for MachineCycledEventType {
     fn time(&self) -> &opcua::types::DateTime {
         self.base.time()
     }

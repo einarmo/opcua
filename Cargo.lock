@@ -1542,6 +1542,7 @@ dependencies = [
  "libc",
  "log 0.4.22",
  "opcua",
+ "opcua-macros",
  "openssl",
  "openssl-sys",
  "parking_lot 0.12.3",
@@ -1606,6 +1607,18 @@ dependencies = [
  "opcua",
  "pico-args",
  "tokio 1.39.1",
+]
+
+[[package]]
+name = "opcua-macros"
+version = "0.1.0"
+dependencies = [
+ "base64 0.22.1",
+ "convert_case",
+ "proc-macro2 1.0.86",
+ "quote 1.0.36",
+ "syn 2.0.72",
+ "uuid 1.10.0",
 ]
 
 [[package]]
