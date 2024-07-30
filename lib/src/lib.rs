@@ -6,6 +6,7 @@ extern crate serde_json;
 extern crate tempdir;
 
 pub use opcua_core::sync;
+pub use opcua_macros::*;
 
 #[cfg(feature = "client")]
 pub use opcua_client as client;

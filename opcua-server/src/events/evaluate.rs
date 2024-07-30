@@ -387,7 +387,7 @@ mod tests {
     use opcua_types::{
         AttributeId, ByteString, ContentFilter, ContentFilterElement, DataTypeId, DateTime,
         FilterOperator, LocalizedText, NodeId, ObjectId, ObjectTypeId, Operand, UAString,
-        VariableTypeId, Variant,
+        VariableTypeId,
     };
 
     fn compare_regex(r1: Regex, r2: Regex) {

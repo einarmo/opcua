@@ -69,9 +69,9 @@ pub fn generate_event_impls(event: EventStruct) -> syn::Result<TokenStream> {
                 attribute_id: opcua::types::AttributeId,
                 index_range: opcua::types::NumericRange,
                 browse_path: &[opcua::types::QualifiedName],
-            ) -> Variant {
+            ) -> opcua::types::Variant {
                 if browse_path.is_empty() {
-                    return Variant::Empty;
+                    return opcua::types::Variant::Empty;
                 }
                 let field = &browse_path[0];
                 let rest = browse_path.get(1..).unwrap_or(&[]);
@@ -87,7 +87,7 @@ pub fn generate_event_impls(event: EventStruct) -> syn::Result<TokenStream> {
                 self.base.time()
             }
 
-            fn matches_type_id(&self, id: &NodeId) -> bool {
+            fn matches_type_id(&self, id: &opcua::types::NodeId) -> bool {
                 #type_id_body || self.base.matches_type_id(id)
             }
         }

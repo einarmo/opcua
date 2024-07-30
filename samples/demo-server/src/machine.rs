@@ -17,11 +17,12 @@ use opcua::{
             AddressSpace, EventNotifier, ObjectBuilder, ObjectTypeBuilder, VariableBuilder,
         },
         node_manager::memory::SimpleNodeManager,
-        BaseEventType, Event, EventField, SubscriptionCache,
+        BaseEventType, Event, SubscriptionCache,
     },
     types::{
         DataTypeId, DataValue, DateTime, NodeId, ObjectId, ObjectTypeId, UAString, VariableTypeId,
     },
+    Event,
 };
 use rand;
 use tokio_util::sync::CancellationToken;
@@ -174,31 +175,11 @@ fn add_machine(
     machine_id
 }
 
+#[derive(Event)]
+#[opcua(identifier = "s=MachineCycledEventId")]
 pub struct MachineCycledEventType {
     base: BaseEventType,
-    ns: u16,
-}
-
-impl EventField for MachineCycledEventType {
-    fn get_value(
-        &self,
-        attribute_id: opcua::types::AttributeId,
-        index_range: opcua::types::NumericRange,
-        remaining_path: &[opcua::types::QualifiedName],
-    ) -> opcua::types::Variant {
-        self.base
-            .get_value(attribute_id, index_range, remaining_path)
-    }
-}
-
-impl Event for MachineCycledEventType {
-    fn time(&self) -> &opcua::types::DateTime {
-        self.base.time()
-    }
-
-    fn matches_type_id(&self, id: &NodeId) -> bool {
-        self.base.matches_type_id(id) || id != &Self::event_type_id(self.ns)
-    }
+    own_namespace_index: u16,
 }
 
 impl MachineCycledEventType {
@@ -225,7 +206,7 @@ impl MachineCycledEventType {
             .set_source_node(source_node.clone())
             .set_source_name(UAString::from(machine_name))
             .set_severity(rand::random::<u16>() % 999u16 + 1u16),
-            ns,
+            own_namespace_index: ns,
         }
     }
 }
