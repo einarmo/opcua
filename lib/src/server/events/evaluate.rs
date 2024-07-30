@@ -380,14 +380,14 @@ mod tests {
     use crate::{
         server::{
             address_space::{AddressSpace, CoreNamespace, ObjectTypeBuilder, VariableBuilder},
-            events::{evaluate::like_to_regex, value::EventField},
+            events::evaluate::like_to_regex,
             node_manager::TypeTree,
             BaseEventType, Event, ParsedContentFilter,
         },
         types::{
             AttributeId, ByteString, ContentFilter, ContentFilterElement, DataTypeId, DateTime,
             FilterOperator, LocalizedText, NodeId, ObjectId, ObjectTypeId, Operand, UAString,
-            VariableTypeId, Variant,
+            VariableTypeId,
         },
     };
 
