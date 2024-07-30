@@ -41,7 +41,7 @@ async fn browse() {
 
     let server_cap_node = refs
         .iter()
-        .find(|f| f.node_id.node_id == ObjectId::Server_ServerCapabilities.into())
+        .find(|f| f.node_id.node_id == ObjectId::Server_ServerCapabilities)
         .unwrap();
     let type_tree = tester.handle.type_tree().read();
     for rf in &refs {
@@ -58,7 +58,7 @@ async fn browse() {
     assert!(server_cap_node.is_forward);
     assert_eq!(
         server_cap_node.type_definition.node_id,
-        ObjectTypeId::ServerCapabilitiesType.into()
+        ObjectTypeId::ServerCapabilitiesType
     );
 }
 
@@ -102,7 +102,7 @@ async fn browse_reverse() {
     assert_eq!(refs.len(), 1);
     let rf = &refs[0];
     assert!(!rf.is_forward);
-    assert_eq!(rf.reference_type_id, ReferenceTypeId::Organizes.into());
+    assert_eq!(rf.reference_type_id, ReferenceTypeId::Organizes);
     assert_eq!(rf.browse_name, "Objects".into());
     assert_eq!(rf.display_name, "Objects".into());
 }
@@ -221,20 +221,17 @@ async fn browse_cross_node_manager() {
     assert_eq!(2, refs.len());
     let type_def_ref = refs
         .iter()
-        .find(|r| r.reference_type_id == ReferenceTypeId::HasTypeDefinition.into())
+        .find(|r| r.reference_type_id == ReferenceTypeId::HasTypeDefinition)
         .unwrap();
     assert_eq!(type_def_ref.display_name, "FolderType".into());
     let server_ref = refs
         .iter()
-        .find(|r| r.node_id.node_id == ObjectId::Server.into())
+        .find(|r| r.node_id.node_id == ObjectId::Server)
         .unwrap();
     assert_eq!(server_ref.display_name, "Server".into());
     assert_eq!(server_ref.type_definition, ObjectTypeId::ServerType.into());
     assert_eq!(server_ref.browse_name, "Server".into());
-    assert_eq!(
-        server_ref.reference_type_id,
-        ReferenceTypeId::HasCondition.into()
-    );
+    assert_eq!(server_ref.reference_type_id, ReferenceTypeId::HasCondition);
     assert!(server_ref.is_forward);
 
     let it = &r[1];

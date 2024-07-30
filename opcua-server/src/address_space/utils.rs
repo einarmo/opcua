@@ -125,7 +125,7 @@ pub fn validate_value_to_write(
             // a byte string to a byte array should succeed
             match value {
                 Variant::ByteString(_) => {
-                    if node_data_type == DataTypeId::Byte.into() {
+                    if node_data_type == DataTypeId::Byte {
                         match value_rank {
                             -2 | -3 | 1 => Ok(()),
                             _ => Err(StatusCode::BadTypeMismatch),

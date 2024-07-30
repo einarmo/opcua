@@ -419,7 +419,6 @@ impl AddressSpace {
 
     pub fn load_into_type_tree(&self, type_tree: &mut DefaultTypeTree) {
         let mut found_ids = VecDeque::new();
-        println!("Begin loading into type tree");
         // Populate types first so that we have reference types to browse in the next stage.
         for node in self.node_map.values() {
             let nc = node.node_class();
@@ -437,7 +436,7 @@ impl AddressSpace {
 
             let parent = self.references.by_target.get(node_id).and_then(|refs| {
                 refs.iter()
-                    .find(|r| &r.reference_type == &ReferenceTypeId::HasSubtype.into())
+                    .find(|r| r.reference_type == ReferenceTypeId::HasSubtype)
             });
             // If a node somehow lacks a super-type, insert it as a child of the relevant base type.
             let parent_id = if let Some(parent) = parent {
@@ -500,8 +499,6 @@ impl AddressSpace {
                 type_tree.add_type_property(&node, &root_type, &path, node_class);
             }
         }
-
-        println!("End loading into type tree");
     }
 
     pub fn add_namespace(&mut self, namespace: &str, index: u16) {
@@ -916,7 +913,7 @@ mod tests {
 
         let node = node_type.unwrap().as_node();
         assert_eq!(node.node_id(), &NodeId::new(0, 84));
-        assert_eq!(node.node_id(), &ObjectId::RootFolder.into());
+        assert_eq!(node.node_id(), &ObjectId::RootFolder);
     }
 
     #[test]
@@ -1053,7 +1050,7 @@ mod tests {
         assert_eq!(references.len(), 4);
 
         let r1 = &references[0];
-        assert_eq!(r1.reference_type, &ReferenceTypeId::Organizes.into());
+        assert_eq!(r1.reference_type, &ReferenceTypeId::Organizes);
         let child_node_id = r1.target_node.clone();
 
         let child = address_space.find_node(&child_node_id);
@@ -1388,7 +1385,7 @@ mod tests {
         assert_eq!(v.node_id(), &NodeId::new(1, "Hello"));
         assert_eq!(v.browse_name(), &QualifiedName::new(0, "BrowseName"));
         assert_eq!(v.display_name(), &"DisplayName".into());
-        assert_eq!(v.data_type(), DataTypeId::UInt32.into());
+        assert_eq!(v.data_type(), DataTypeId::UInt32);
         assert_eq!(v.description().unwrap(), &"Desc".into());
         assert_eq!(v.value_rank(), 10);
         assert_eq!(v.array_dimensions().unwrap(), vec![1, 2, 3]);
@@ -1474,7 +1471,7 @@ mod tests {
         if let NodeType::Variable(v) = child {
             // verify OutputArguments
             // verify OutputArguments / Argument value
-            assert_eq!(v.data_type(), DataTypeId::Argument.into());
+            assert_eq!(v.data_type(), DataTypeId::Argument);
             assert_eq!(v.display_name(), &LocalizedText::from("OutputArguments"));
             let v = v
                 .value(
@@ -1494,7 +1491,7 @@ mod tests {
                     let decoding_options = DecodingOptions::test();
                     let argument = v.decode_inner::<Argument>(&decoding_options).unwrap();
                     assert_eq!(argument.name, UAString::from("Result"));
-                    assert_eq!(argument.data_type, DataTypeId::String.into());
+                    assert_eq!(argument.data_type, DataTypeId::String);
                     assert_eq!(argument.value_rank, -1);
                     assert_eq!(argument.array_dimensions, None);
                     assert_eq!(argument.description, LocalizedText::null());

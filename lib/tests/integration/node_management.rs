@@ -116,9 +116,7 @@ async fn add_delete_reference() {
             &*type_tree,
             opcua::types::BrowseDirection::Forward,
         )
-        .find(|r| {
-            r.target_node == &id2 && r.reference_type == &ReferenceTypeId::HasCondition.into()
-        })
+        .find(|r| r.target_node == &id2 && r.reference_type == &ReferenceTypeId::HasCondition)
         .unwrap();
     }
 

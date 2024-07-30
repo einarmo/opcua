@@ -304,9 +304,9 @@ impl RelativePathElement {
         let mut result = String::with_capacity(1024);
         // Common references will come out as '/' or '.'
         if self.include_subtypes && !self.is_inverse {
-            if self.reference_type_id == ReferenceTypeId::HierarchicalReferences.into() {
+            if self.reference_type_id == ReferenceTypeId::HierarchicalReferences {
                 result.push('/');
-            } else if self.reference_type_id == ReferenceTypeId::Aggregates.into() {
+            } else if self.reference_type_id == ReferenceTypeId::Aggregates {
                 result.push('.');
             }
         };

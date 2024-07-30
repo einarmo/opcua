@@ -52,6 +52,8 @@ opcua-client = { path = "../opcua-client", optional = true }
 opcua-server = { path = "../opcua-server", optional = true, default-features = false }
 opcua-nodes = { path = "../opcua-nodes", optional = true }
 
+opcua-macros = { path = "../opcua-macros" }
+
 [dev-dependencies]
 async-trait = { workspace = true }
 bytes = { workspace = true }

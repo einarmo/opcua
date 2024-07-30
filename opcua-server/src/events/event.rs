@@ -1,16 +1,21 @@
 use opcua_types::{
-    AttributeId, ByteString, DateTime, ExtensionObject, LocalizedText, NodeId, NumericRange,
-    ObjectId, ObjectTypeId, QualifiedName, TimeZoneDataType, UAString, Variant,
+    event_field::EventField, AttributeId, ByteString, DateTime, LocalizedText, NodeId,
+    NumericRange, ObjectTypeId, QualifiedName, TimeZoneDataType, UAString, Variant,
 };
 
-pub trait Event {
+pub trait Event: EventField {
     fn get_field(
         &self,
         type_definition_id: &NodeId,
-        browse_path: &[QualifiedName],
         attribute_id: AttributeId,
         index_range: NumericRange,
-    ) -> Variant;
+        browse_path: &[QualifiedName],
+    ) -> Variant {
+        if !self.matches_type_id(type_definition_id) {
+            return Variant::Empty;
+        }
+        self.get_value(attribute_id, index_range, browse_path)
+    }
 
     fn time(&self) -> &DateTime;
 
@@ -63,59 +68,53 @@ pub struct BaseEventType {
     pub condition_sub_class_name: Option<Vec<LocalizedText>>,
 }
 
-macro_rules! take_value {
-    ($v:expr, $r:ident) => {{
-        let variant: Variant = $v.clone().into();
-        variant.range_of_owned($r).unwrap_or(Variant::Empty)
-    }};
-}
-
-impl Event for BaseEventType {
-    fn get_field(
+impl EventField for BaseEventType {
+    fn get_value(
         &self,
-        type_definition_id: &NodeId,
-        browse_path: &[QualifiedName],
         attribute_id: AttributeId,
         index_range: NumericRange,
+        remaining_path: &[QualifiedName],
     ) -> Variant {
-        if !self.matches_type_id(type_definition_id)
-            || browse_path.len() != 1
-            || attribute_id != AttributeId::Value
-        {
+        if remaining_path.len() != 1 || attribute_id != AttributeId::Value {
             // Field is not from base event type.
             return Variant::Empty;
         }
-        let field = &browse_path[0];
+        let field = &remaining_path[0];
         if field.namespace_index != 0 {
             return Variant::Empty;
         }
 
         match field.name.as_ref() {
-            "EventId" => take_value!(self.event_id, index_range),
-            "EventType" => take_value!(self.event_type, index_range),
-            "SourceNode" => take_value!(self.source_node, index_range),
-            "SourceName" => take_value!(self.source_name, index_range),
-            "Time" => take_value!(self.time, index_range),
-            "ReceiveTime" => take_value!(self.receive_time, index_range),
-            "LocalTime" => take_value!(
-                self.local_time
-                    .as_ref()
-                    .map(|t| ExtensionObject::from_encodable(
-                        ObjectId::TimeZoneDataType_Encoding_DefaultBinary,
-                        t
-                    )),
-                index_range
-            ),
-            "Message" => take_value!(self.message, index_range),
-            "Severity" => take_value!(self.severity, index_range),
-            "ConditionClassId" => take_value!(self.condition_class_id, index_range),
-            "ConditionClassName" => take_value!(self.condition_class_name, index_range),
-            "ConditionSubClassId" => take_value!(self.condition_sub_class_id, index_range),
-            "ConditionSubClassName" => take_value!(self.condition_sub_class_name, index_range),
+            "EventId" => self.event_id.get_value(attribute_id, index_range, &[]),
+            "EventType" => self.event_type.get_value(attribute_id, index_range, &[]),
+            "SourceNode" => self.source_node.get_value(attribute_id, index_range, &[]),
+            "SourceName" => self.source_name.get_value(attribute_id, index_range, &[]),
+            "Time" => self.time.get_value(attribute_id, index_range, &[]),
+            "ReceiveTime" => self.receive_time.get_value(attribute_id, index_range, &[]),
+            "LocalTime" => self.local_time.get_value(attribute_id, index_range, &[]),
+            "Message" => self.message.get_value(attribute_id, index_range, &[]),
+            "Severity" => self.severity.get_value(attribute_id, index_range, &[]),
+            "ConditionClassId" => self
+                .condition_class_id
+                .get_value(attribute_id, index_range, &[]),
+            "ConditionClassName" => {
+                self.condition_class_name
+                    .get_value(attribute_id, index_range, &[])
+            }
+            "ConditionSubClassId" => {
+                self.condition_sub_class_id
+                    .get_value(attribute_id, index_range, &[])
+            }
+            "ConditionSubClassName" => {
+                self.condition_sub_class_name
+                    .get_value(attribute_id, index_range, &[])
+            }
             _ => Variant::Empty,
         }
     }
+}
 
+impl Event for BaseEventType {
     fn time(&self) -> &DateTime {
         &self.time
     }
