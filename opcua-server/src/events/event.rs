@@ -1,6 +1,7 @@
+use opcua_nodes::NamespaceMap;
 use opcua_types::{
     event_field::EventField, AttributeId, ByteString, DateTime, LocalizedText, NodeId,
-    NumericRange, QualifiedName, TimeZoneDataType, UAString, Variant,
+    NumericRange, ObjectTypeId, QualifiedName, TimeZoneDataType, UAString, Variant,
 };
 
 pub trait Event: EventField {
@@ -54,7 +55,7 @@ pub struct BaseEventType {
     pub condition_class_id: Option<NodeId>,
     /// Condition class name specifies the name of the condition class of this event, if set.
     pub condition_class_name: Option<LocalizedText>,
-    /// ConditionSubClassId specifies additional class[es] that apply to the Event.
+    /// ConditionSubClassId specifies additional classes that apply to the Event.
     /// It is the NodeId of the corresponding subtype of BaseConditionClassType.
     pub condition_sub_class_id: Option<Vec<NodeId>>,
     /// Condition sub class name specifies the names of additional classes that apply to the event.
@@ -68,16 +69,31 @@ impl Event for BaseEventType {
 
     fn get_field(
         &self,
-        _type_definition_id: &NodeId,
+        type_definition_id: &NodeId,
         attribute_id: AttributeId,
         index_range: NumericRange,
         browse_path: &[QualifiedName],
     ) -> Variant {
-        if browse_path.len() != 1 || attribute_id != AttributeId::Value {
+        if type_definition_id == &ObjectTypeId::BaseEventType {
+            self.get_value(attribute_id, index_range, browse_path)
+        } else {
+            Variant::Empty
+        }
+    }
+}
+
+impl EventField for BaseEventType {
+    fn get_value(
+        &self,
+        attribute_id: AttributeId,
+        index_range: NumericRange,
+        remaining_path: &[QualifiedName],
+    ) -> Variant {
+        if remaining_path.len() != 1 || attribute_id != AttributeId::Value {
             // Field is not from base event type.
             return Variant::Empty;
         }
-        let field = &browse_path[0];
+        let field = &remaining_path[0];
         if field.namespace_index != 0 {
             return Variant::Empty;
         }
@@ -135,6 +151,16 @@ impl BaseEventType {
             receive_time: time,
             ..Default::default()
         }
+    }
+
+    pub fn new_event(
+        type_id: impl Into<NodeId>,
+        event_id: ByteString,
+        message: impl Into<LocalizedText>,
+        _namespace: &NamespaceMap,
+        time: DateTime,
+    ) -> Self {
+        Self::new(type_id, event_id, message, time)
     }
 
     pub fn set_source_node(mut self, source_node: NodeId) -> Self {

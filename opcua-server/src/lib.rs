@@ -28,6 +28,8 @@ pub use subscriptions::{
     SubscriptionCache, SubscriptionState,
 };
 
+pub use opcua_macros::{Event, EventField};
+
 /// Contains constaints for default configuration values.
 /// These are for the most part possible to override through server configuration.
 pub mod constants {

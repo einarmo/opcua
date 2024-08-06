@@ -1,5 +1,21 @@
 use syn::{parse::Parse, DeriveInput, Field, Ident, Type};
 
+#[derive(Debug, Default)]
+pub struct EmptyAttribute;
+
+impl Parse for EmptyAttribute {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        if !input.is_empty() {
+            return Err(syn::Error::new(input.span(), "Unexpected attribute"));
+        }
+        Ok(EmptyAttribute)
+    }
+}
+
+impl ItemAttr for EmptyAttribute {
+    fn combine(&mut self, _other: Self) {}
+}
+
 pub trait ItemAttr {
     fn combine(&mut self, other: Self);
 }

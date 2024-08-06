@@ -375,7 +375,6 @@ fn like_to_regex(v: &str) -> Result<Regex, ()> {
 
 #[cfg(test)]
 mod tests {
-    use opcua_macros::Event;
     use regex::Regex;
 
     use crate::{
@@ -459,11 +458,12 @@ mod tests {
 
     mod opcua {
         pub use crate as server;
+        pub use opcua_nodes as nodes;
         pub use opcua_types as types;
     }
 
     #[derive(Event)]
-    #[opcua(identifier = "i=123")]
+    #[opcua(identifier = "i=123", namespace = "my:namespace:uri")]
     struct TestEvent {
         base: BaseEventType,
         own_namespace_index: u16,

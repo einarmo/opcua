@@ -167,6 +167,7 @@ basic_field_impl!(u64);
 basic_field_impl!(f32);
 basic_field_impl!(f64);
 basic_field_impl!(UAString);
+basic_field_impl!(String);
 basic_field_impl!(DateTime);
 basic_field_impl!(Guid);
 basic_field_impl!(StatusCode);
@@ -178,3 +179,231 @@ basic_field_impl!(ExpandedNodeId);
 basic_field_impl!(ExtensionObject);
 basic_field_impl!(DataValue);
 basic_field_impl!(DiagnosticInfo);
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        crypto::random,
+        server::{node_manager::NamespaceMap, BaseEventType, Event, EventField},
+        types::{
+            AttributeId, DecodingOptions, EUInformation, KeyValuePair, LocalizedText, NodeId,
+            NumericRange, ObjectTypeId, QualifiedName, StatusCode, UAString, Variant,
+        },
+    };
+
+    use crate as opcua;
+
+    #[derive(Event)]
+    #[opcua(identifier = "s=myevent", namespace = "uri:my:namespace")]
+    struct BasicValueEvent {
+        base: BaseEventType,
+        own_namespace_index: u16,
+        // Some primitives
+        float: f32,
+        double: f64,
+        string: String,
+        status: StatusCode,
+        // Option
+        int: Option<i64>,
+        int2: Option<u64>,
+        // Vec
+        vec: Vec<i64>,
+        // OptVec
+        optvec: Option<Vec<i32>>,
+        // Complex type with message info
+        kvp: KeyValuePair,
+        euinfo: EUInformation,
+    }
+
+    fn namespace_map() -> NamespaceMap {
+        let mut map = NamespaceMap::new();
+        map.add_namespace("uri:my:namespace");
+        map
+    }
+
+    fn get(id: &NodeId, evt: &dyn Event, field: &str) -> Variant {
+        evt.get_field(&id, AttributeId::Value, NumericRange::None, &[field.into()])
+    }
+
+    fn get_nested(id: &NodeId, evt: &dyn Event, fields: &[&str]) -> Variant {
+        let fields: Vec<QualifiedName> = fields.iter().map(|f| (*f).into()).collect();
+        evt.get_field(&id, AttributeId::Value, NumericRange::None, &fields)
+    }
+
+    #[test]
+    fn test_basic_values() {
+        let namespaces = namespace_map();
+        let mut evt = BasicValueEvent::new_event_now(
+            BasicValueEvent::event_type_id(&namespaces),
+            random::byte_string(128),
+            "Some message",
+            &namespaces,
+        );
+        evt.float = 1.0;
+        evt.double = 2.0;
+        evt.string = "foo".to_owned();
+        evt.status = StatusCode::BadMaxAgeInvalid;
+        evt.kvp = KeyValuePair {
+            key: "Key".into(),
+            value: 123.into(),
+        };
+        evt.int = None;
+        evt.int2 = Some(5);
+        evt.vec = vec![1, 2, 3];
+        evt.optvec = Some(vec![3, 2, 1]);
+        evt.euinfo = EUInformation {
+            namespace_uri: "uri:my:namespace".into(),
+            unit_id: 15,
+            display_name: "Some unit".into(),
+            description: "Some unit desc".into(),
+        };
+        let id = BasicValueEvent::event_type_id(&namespaces);
+
+        // Get for some other event
+        assert_eq!(
+            evt.get_field(
+                &ObjectTypeId::ProgressEventType.into(),
+                AttributeId::Value,
+                NumericRange::None,
+                &["Message".into()]
+            ),
+            Variant::Empty
+        );
+        // Get a field that doesn't exist
+        assert_eq!(
+            evt.get_field(
+                &id,
+                AttributeId::Value,
+                NumericRange::None,
+                &["FooBar".into()]
+            ),
+            Variant::Empty
+        );
+        // Get a child of a field without children
+        assert_eq!(
+            evt.get_field(
+                &id,
+                AttributeId::Value,
+                NumericRange::None,
+                &["Float".into(), "Child".into()]
+            ),
+            Variant::Empty
+        );
+        // Get a non-value attribute
+        assert_eq!(
+            evt.get_field(
+                &id,
+                AttributeId::NodeId,
+                NumericRange::None,
+                &["Float".into()]
+            ),
+            Variant::Empty
+        );
+
+        // Test equality for each field
+        assert_eq!(get(&id, &evt, "Float"), Variant::from(1f32));
+        assert_eq!(get(&id, &evt, "Double"), Variant::from(2.0));
+        assert_eq!(get(&id, &evt, "String"), Variant::from("foo"));
+        assert_eq!(
+            get(&id, &evt, "Status"),
+            Variant::from(StatusCode::BadMaxAgeInvalid)
+        );
+        let kvp: KeyValuePair = match get(&id, &evt, "Kvp") {
+            Variant::ExtensionObject(o) => o.decode_inner(&DecodingOptions::test()).unwrap(),
+            _ => panic!("Wrong variant type"),
+        };
+        assert_eq!(kvp.key, "Key".into());
+        assert_eq!(kvp.value, 123.into());
+
+        assert_eq!(get(&id, &evt, "Int"), Variant::Empty);
+        assert_eq!(get(&id, &evt, "Int2"), Variant::from(5u64));
+        assert_eq!(get(&id, &evt, "Vec"), Variant::from(vec![1i64, 2i64, 3i64]));
+        assert_eq!(
+            get(&id, &evt, "Optvec"),
+            Variant::from(vec![3i32, 2i32, 1i32])
+        );
+        let euinfo: EUInformation = match get(&id, &evt, "Euinfo") {
+            Variant::ExtensionObject(o) => o.decode_inner(&DecodingOptions::test()).unwrap(),
+            _ => panic!("Wrong variant type"),
+        };
+        assert_eq!(euinfo.namespace_uri.as_ref(), "uri:my:namespace");
+        assert_eq!(euinfo.unit_id, 15);
+        assert_eq!(euinfo.display_name, "Some unit".into());
+        assert_eq!(euinfo.description, "Some unit desc".into());
+    }
+
+    #[derive(EventField, Default, Debug)]
+    struct ComplexEventField {
+        float: f32,
+    }
+
+    #[derive(EventField, Default, Debug)]
+    struct SubComplexEventField {
+        base: ComplexEventField,
+        #[opcua(rename = "gnirtS")]
+        string: UAString,
+        #[opcua(ignore)]
+        data: i32,
+    }
+
+    #[derive(Event)]
+    #[opcua(identifier = "s=mynestedevent", namespace = "uri:my:namespace")]
+    struct NestedEvent {
+        base: BasicValueEvent,
+        own_namespace_index: u16,
+        complex: ComplexEventField,
+        sub_complex: SubComplexEventField,
+        #[opcua(ignore)]
+        ignored: i32,
+        #[opcua(rename = "Fancy Name")]
+        renamed: String,
+    }
+
+    #[test]
+    fn test_nested_values() {
+        let namespaces = namespace_map();
+        let mut evt = NestedEvent::new_event_now(
+            NestedEvent::event_type_id(&namespaces),
+            random::byte_string(128),
+            "Some message",
+            &namespaces,
+        );
+        let id = NestedEvent::event_type_id(&namespaces);
+        evt.base.float = 2f32;
+        evt.complex.float = 3f32;
+        evt.sub_complex.base.float = 4f32;
+        evt.sub_complex.string = "foo".into();
+        evt.sub_complex.data = 15;
+        evt.ignored = 16;
+        evt.renamed = "bar".to_owned();
+
+        // Get field from middle event type
+        assert_eq!(get(&id, &evt, "Float"), Variant::from(2f32));
+        // Get from grandparent
+        assert_eq!(
+            get(&id, &evt, "Message"),
+            Variant::from(LocalizedText::from("Some message"))
+        );
+        // Ignored fields should be skipped
+        assert_eq!(get(&id, &evt, "Ignored"), Variant::Empty);
+        assert_eq!(
+            get_nested(&id, &evt, &["SubComplex", "Data"]),
+            Variant::Empty
+        );
+        // Get renamed
+        assert_eq!(get(&id, &evt, "Fancy Name"), Variant::from("bar"));
+        assert_eq!(
+            get_nested(&id, &evt, &["SubComplex", "gnirtS"]),
+            Variant::from("foo")
+        );
+        // Get complex
+        assert_eq!(
+            get_nested(&id, &evt, &["Complex", "Float"]),
+            Variant::from(3f32)
+        );
+        assert_eq!(
+            get_nested(&id, &evt, &["SubComplex", "Float"]),
+            Variant::from(4f32)
+        );
+    }
+}

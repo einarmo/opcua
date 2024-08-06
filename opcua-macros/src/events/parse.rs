@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use base64::Engine;
-use syn::{parse::Parse, DeriveInput, Ident, LitStr, Token};
+use syn::{parse::Parse, DeriveInput, Ident, LitStr, Token, Type};
 use uuid::Uuid;
 
 use crate::utils::{ItemAttr, StructItem};
@@ -9,7 +9,6 @@ use crate::utils::{ItemAttr, StructItem};
 #[derive(Default, Debug)]
 pub(super) struct EventFieldAttribute {
     pub ignore: bool,
-    pub required: bool,
     pub rename: Option<String>,
 }
 
@@ -20,7 +19,6 @@ impl Parse for EventFieldAttribute {
             let ident: Ident = input.parse()?;
             match ident.to_string().as_str() {
                 "ignore" => slf.ignore = true,
-                "required" => slf.required = true,
                 "rename" => {
                     input.parse::<Token![=]>()?;
                     let val: LitStr = input.parse()?;
@@ -40,7 +38,6 @@ impl Parse for EventFieldAttribute {
 impl ItemAttr for EventFieldAttribute {
     fn combine(&mut self, other: Self) {
         self.ignore |= other.ignore;
-        self.required |= other.required;
         if other.rename.is_some() {
             self.rename = other.rename.clone();
         }
@@ -86,26 +83,44 @@ impl FromStr for Identifier {
 #[derive(Default)]
 pub(super) struct EventAttribute {
     pub identifier: Option<Identifier>,
+    pub namespace: Option<String>,
+    pub base_type: Option<Type>,
 }
 
 impl Parse for EventAttribute {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        let idf: Option<Identifier>;
+        let mut idf: Option<Identifier> = None;
+        let mut namespace: Option<String> = None;
 
-        let ident: Ident = input.parse()?;
-        match ident.to_string().as_str() {
-            "identifier" => {
-                input.parse::<Token![=]>()?;
-                let lit: LitStr = input.parse()?;
-                idf = Some(
-                    Identifier::from_str(&lit.value())
-                        .map_err(|e| syn::Error::new_spanned(lit, e))?,
-                );
+        loop {
+            let ident: Ident = input.parse()?;
+            match ident.to_string().as_str() {
+                "identifier" => {
+                    input.parse::<Token![=]>()?;
+                    let lit: LitStr = input.parse()?;
+                    idf = Some(
+                        Identifier::from_str(&lit.value())
+                            .map_err(|e| syn::Error::new_spanned(lit, e))?,
+                    );
+                }
+                "namespace" => {
+                    input.parse::<Token![=]>()?;
+                    let lit: LitStr = input.parse()?;
+                    namespace = Some(lit.value().to_string())
+                }
+                _ => return Err(syn::Error::new_spanned(ident, "Unknown attribute value")),
             }
-            _ => return Err(syn::Error::new_spanned(ident, "Unknown attribute value")),
+            if !input.peek(Token![,]) {
+                break;
+            }
+            input.parse::<Token![,]>()?;
         }
 
-        Ok(Self { identifier: idf })
+        Ok(Self {
+            identifier: idf,
+            namespace,
+            base_type: None,
+        })
     }
 }
 
@@ -128,6 +143,7 @@ pub fn parse_event_struct(input: DeriveInput) -> syn::Result<EventStruct> {
         let name = field.ident.to_string();
         if name == "base" {
             has_base = true;
+            parsed.attribute.base_type = Some(field.typ);
             continue;
         }
         if name == "own_namespace_index" {
