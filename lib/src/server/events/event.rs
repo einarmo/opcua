@@ -1,27 +1,20 @@
 use crate::types::{
-    AttributeId, ByteString, DateTime, LocalizedText, NodeId, NumericRange, ObjectTypeId,
-    QualifiedName, TimeZoneDataType, UAString, Variant,
+    AttributeId, ByteString, DateTime, LocalizedText, NodeId, NumericRange, QualifiedName,
+    TimeZoneDataType, UAString, Variant,
 };
 
 use super::value::EventField;
 
-pub trait Event: EventField {
+pub trait Event {
     fn get_field(
         &self,
         type_definition_id: &NodeId,
         attribute_id: AttributeId,
         index_range: NumericRange,
         browse_path: &[QualifiedName],
-    ) -> Variant {
-        if !self.matches_type_id(type_definition_id) {
-            return Variant::Empty;
-        }
-        self.get_value(attribute_id, index_range, browse_path)
-    }
+    ) -> Variant;
 
     fn time(&self) -> &DateTime;
-
-    fn matches_type_id(&self, id: &NodeId) -> bool;
 }
 
 #[derive(Debug, Default)]
@@ -70,22 +63,26 @@ pub struct BaseEventType {
     pub condition_sub_class_name: Option<Vec<LocalizedText>>,
 }
 
-impl EventField for BaseEventType {
-    fn get_value(
+impl Event for BaseEventType {
+    fn time(&self) -> &DateTime {
+        &self.time
+    }
+
+    fn get_field(
         &self,
+        _type_definition_id: &NodeId,
         attribute_id: AttributeId,
         index_range: NumericRange,
-        remaining_path: &[QualifiedName],
+        browse_path: &[QualifiedName],
     ) -> Variant {
-        if remaining_path.len() != 1 || attribute_id != AttributeId::Value {
+        if browse_path.len() != 1 || attribute_id != AttributeId::Value {
             // Field is not from base event type.
             return Variant::Empty;
         }
-        let field = &remaining_path[0];
+        let field = &browse_path[0];
         if field.namespace_index != 0 {
             return Variant::Empty;
         }
-
         match field.name.as_ref() {
             "EventId" => self.event_id.get_value(attribute_id, index_range, &[]),
             "EventType" => self.event_type.get_value(attribute_id, index_range, &[]),
@@ -113,17 +110,6 @@ impl EventField for BaseEventType {
             }
             _ => Variant::Empty,
         }
-    }
-}
-
-impl Event for BaseEventType {
-    fn time(&self) -> &DateTime {
-        &self.time
-    }
-
-    fn matches_type_id(&self, id: &NodeId) -> bool {
-        let own_type_id: NodeId = ObjectTypeId::BaseEventType.into();
-        id == &own_type_id
     }
 }
 
