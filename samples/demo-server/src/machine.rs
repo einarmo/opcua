@@ -22,7 +22,6 @@ use opcua::{
     types::{
         DataTypeId, DataValue, DateTime, NodeId, ObjectId, ObjectTypeId, UAString, VariableTypeId,
     },
-    Event,
 };
 use rand;
 use tokio_util::sync::CancellationToken;
@@ -118,7 +117,7 @@ fn add_machinery_model(address_space: &mut AddressSpace, ns: u16) {
     ObjectTypeBuilder::new(&machine_type_id, "MachineCounterType", "MachineCounterType")
         .is_abstract(false)
         .subtype_of(ObjectTypeId::BaseObjectType)
-        .generates_event(MachineCycledEventType::event_type_id(ns))
+        .generates_event(MachineCycledEventType::event_type_id_from_index(ns))
         .insert(address_space);
 
     // Add some variables to the type
@@ -131,7 +130,7 @@ fn add_machinery_model(address_space: &mut AddressSpace, ns: u16) {
         .insert(address_space);
 
     // Create a counter cycled event type
-    let machine_cycled_event_type_id = MachineCycledEventType::event_type_id(ns);
+    let machine_cycled_event_type_id = MachineCycledEventType::event_type_id_from_index(ns);
     ObjectTypeBuilder::new(
         &machine_cycled_event_type_id,
         "MachineCycledEventType",
@@ -176,16 +175,10 @@ fn add_machine(
 }
 
 #[derive(Event)]
-#[opcua(identifier = "s=MachineCycledEventId")]
+#[opcua(identifier = "s=MachineCycledEventId", namespace = "urn:DemoServer")]
 pub struct MachineCycledEventType {
     base: BaseEventType,
     own_namespace_index: u16,
-}
-
-impl MachineCycledEventType {
-    pub fn event_type_id(ns: u16) -> NodeId {
-        NodeId::new(ns, "MachineCycledEventId")
-    }
 }
 
 lazy_static! {
@@ -194,7 +187,7 @@ lazy_static! {
 
 impl MachineCycledEventType {
     fn new(machine_name: &str, ns: u16, source_node: impl Into<NodeId>, time: DateTime) -> Self {
-        let event_type_id = MachineCycledEventType::event_type_id(ns);
+        let event_type_id = MachineCycledEventType::event_type_id_from_index(ns);
         let source_node: NodeId = source_node.into();
         MachineCycledEventType {
             base: BaseEventType::new(

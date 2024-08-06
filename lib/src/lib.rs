@@ -13,8 +13,6 @@ extern crate serde_json;
 #[macro_use]
 extern crate derivative;
 
-pub use opcua_macros::*;
-
 // Synchronization structs. This is a wrapper mod around `parking_lot` types so opcua users don't have
 // to reference that other crate.
 pub mod sync {
