@@ -20,6 +20,7 @@ impl fmt::Display for AttributeIdError {
 impl Error for AttributeIdError {}
 
 #[derive(Debug, Copy, Clone, Hash, Eq, PartialEq)]
+#[repr(u32)]
 pub enum AttributeId {
     NodeId = 1,
     NodeClass = 2,

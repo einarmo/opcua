@@ -3,7 +3,7 @@ pub mod authenticator;
 mod builder;
 mod config;
 mod discovery;
-mod events;
+pub mod events;
 mod identity_token;
 mod info;
 pub mod node_manager;
