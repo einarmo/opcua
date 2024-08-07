@@ -25,6 +25,8 @@ use crate::{
     variant::Variant,
 };
 
+use super::{EventFilter, PerformUpdateType, SecurityTokenRequestType};
+
 /// Implemented by messages
 pub trait MessageInfo {
     /// The object id associated with the message
@@ -451,5 +453,29 @@ impl ServiceCounterDataType {
     pub fn error(&mut self) {
         self.total_count += 1;
         self.error_count += 1;
+    }
+}
+
+impl Default for MessageSecurityMode {
+    fn default() -> Self {
+        Self::None
+    }
+}
+
+impl Default for SecurityTokenRequestType {
+    fn default() -> Self {
+        Self::Issue
+    }
+}
+
+impl Default for PerformUpdateType {
+    fn default() -> Self {
+        Self::Insert
+    }
+}
+
+impl MessageInfo for EventFilter {
+    fn object_id(&self) -> ObjectId {
+        ObjectId::EventFilter_Encoding_DefaultBinary
     }
 }

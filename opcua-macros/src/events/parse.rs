@@ -127,6 +127,7 @@ impl Parse for EventAttribute {
 impl ItemAttr for EventAttribute {
     fn combine(&mut self, other: Self) {
         self.identifier = other.identifier;
+        self.namespace = other.namespace;
     }
 }
 
@@ -135,7 +136,7 @@ pub type EventStruct = StructItem<EventFieldAttribute, EventAttribute>;
 pub fn parse_event_struct(input: DeriveInput) -> syn::Result<EventStruct> {
     let mut parsed = EventStruct::from_input(input)?;
 
-    let mut filtered_fields = Vec::with_capacity(parsed.fields.len() - 2);
+    let mut filtered_fields = Vec::with_capacity(parsed.fields.len());
 
     let mut has_base = false;
     let mut has_own_idx = false;
@@ -161,11 +162,17 @@ pub fn parse_event_struct(input: DeriveInput) -> syn::Result<EventStruct> {
             "Event must contain a field `base` that implements `Event`",
         ));
     }
-    if !has_own_idx {
+    if !has_own_idx && parsed.attribute.namespace.is_some() {
         return Err(syn::Error::new_spanned(
             parsed.ident,
             "Event must contain a field `own_namespace_index` of type `u16`",
         ));
+    }
+    if has_own_idx && parsed.attribute.namespace.is_none() {
+        return Err(syn::Error::new_spanned(
+            parsed.ident,
+        "Event must have an attribute #[opcua(namespace = ...)] to set a namespace other than 0")
+        );
     }
 
     return Ok(parsed);

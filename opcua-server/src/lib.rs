@@ -4,7 +4,7 @@ mod builder;
 mod config;
 #[cfg(feature = "discovery-server-registration")]
 mod discovery;
-mod events;
+pub mod events;
 mod identity_token;
 mod info;
 pub mod node_manager;

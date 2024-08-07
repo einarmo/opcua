@@ -55,14 +55,20 @@ pub fn generate_event_impls(event: EventStruct) -> syn::Result<TokenStream> {
         }
     };
 
-    let type_id_body = quote! {
-        type_definition_id == &(self.own_namespace_index, #identifier_body)
+    let type_id_body = if event.attribute.namespace.is_some() {
+        quote! {
+            type_definition_id == &(self.own_namespace_index, #identifier_body)
+        }
+    } else {
+        quote! {
+            type_definition_id == &(0, #identifier_body)
+        }
     };
 
-    let get_namespace = if let Some(ns) = event.attribute.namespace {
+    let get_namespace = if let Some(ns) = &event.attribute.namespace {
         quote! {
             namespaces.get_index(#ns).unwrap_or_else(||
-                panic!("Attempted to create event with unknown namespace {}", #ns));
+                panic!("Attempted to create event with unknown namespace {}", #ns))
         }
     } else {
         quote! { 0 }
@@ -70,7 +76,13 @@ pub fn generate_event_impls(event: EventStruct) -> syn::Result<TokenStream> {
 
     let base_type = event.attribute.base_type.unwrap();
 
-    let ctors = quote! {
+    if event.attribute.namespace.is_some() {
+        init_items.extend(quote! {
+            own_namespace_index: #get_namespace,
+        });
+    }
+
+    let mut ctors = quote! {
         pub fn new_event_now(
             type_id: opcua::types::NodeId,
             event_id: opcua::types::ByteString,
@@ -89,19 +101,28 @@ pub fn generate_event_impls(event: EventStruct) -> syn::Result<TokenStream> {
         ) -> Self {
             Self {
                 base: #base_type::new_event(type_id, event_id, message, namespaces, time),
-                own_namespace_index: #get_namespace,
                 #init_items
             }
         }
-
-        pub fn event_type_id(namespaces: &opcua::nodes::NamespaceMap,) -> opcua::types::NodeId {
-            Self::event_type_id_from_index(#get_namespace)
-        }
-
-        pub fn event_type_id_from_index(namespace: u16) -> opcua::types::NodeId {
-            opcua::types::NodeId::new(namespace, #identifier_body)
-        }
     };
+
+    if event.attribute.namespace.is_some() {
+        ctors.extend(quote! {
+            pub fn event_type_id(namespaces: &opcua::server::node_manager::NamespaceMap) -> opcua::types::NodeId {
+                Self::event_type_id_from_index(#get_namespace)
+            }
+    
+            pub fn event_type_id_from_index(namespace: u16) -> opcua::types::NodeId {
+                opcua::types::NodeId::new(namespace, #identifier_body)
+            }
+        });
+    } else {
+        ctors.extend(quote! {
+            pub fn event_type_id() -> opcua::types::NodeId {
+                opcua::types::NodeId::new(0, #identifier_body)
+            }
+        })
+    }
 
     Ok(quote! {
         impl opcua::server::Event for #ident {

@@ -179,6 +179,23 @@ basic_field_impl!(ExpandedNodeId);
 basic_field_impl!(ExtensionObject);
 basic_field_impl!(DataValue);
 basic_field_impl!(DiagnosticInfo);
+basic_field_impl!(Array);
+
+impl EventField for Variant {
+    fn get_value(
+        &self,
+        attribute_id: AttributeId,
+        index_range: NumericRange,
+        remaining_path: &[QualifiedName],
+    ) -> Variant {
+        if remaining_path.len() != 0 || attribute_id != AttributeId::Value {
+            return Variant::Empty;
+        }
+        self.clone()
+            .range_of_owned(index_range)
+            .unwrap_or(Variant::Empty)
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -340,10 +357,18 @@ mod tests {
     #[derive(EventField, Default, Debug)]
     struct SubComplexEventField {
         base: ComplexEventField,
+        node_id: NodeId,
         #[opcua(rename = "gnirtS")]
         string: UAString,
         #[opcua(ignore)]
         data: i32,
+    }
+
+    #[derive(EventField, Default, Debug)]
+    struct ComplexVariable {
+        node_id: NodeId,
+        value: i32,
+        id: u32,
     }
 
     #[derive(Event)]
@@ -353,6 +378,7 @@ mod tests {
         own_namespace_index: u16,
         complex: ComplexEventField,
         sub_complex: SubComplexEventField,
+        var: ComplexVariable,
         #[opcua(ignore)]
         ignored: i32,
         #[opcua(rename = "Fancy Name")]
@@ -376,6 +402,9 @@ mod tests {
         evt.sub_complex.data = 15;
         evt.ignored = 16;
         evt.renamed = "bar".to_owned();
+        evt.sub_complex.node_id = NodeId::new(0, 15);
+        evt.var.node_id = NodeId::new(0, 16);
+        evt.var.value = 20;
 
         // Get field from middle event type
         assert_eq!(get(&id, &evt, "Float"), Variant::from(2f32));
@@ -404,6 +433,30 @@ mod tests {
         assert_eq!(
             get_nested(&id, &evt, &["SubComplex", "Float"]),
             Variant::from(4f32)
+        );
+
+        // Get node IDs
+        assert_eq!(
+            evt.get_field(
+                &id,
+                AttributeId::NodeId,
+                NumericRange::None,
+                &["SubComplex".into()]
+            ),
+            Variant::from(NodeId::new(0, 15))
+        );
+        assert_eq!(
+            evt.get_field(
+                &id,
+                AttributeId::NodeId,
+                NumericRange::None,
+                &["Var".into()]
+            ),
+            Variant::from(NodeId::new(0, 16))
+        );
+        assert_eq!(
+            evt.get_field(&id, AttributeId::Value, NumericRange::None, &["Var".into()]),
+            Variant::from(20i32)
         );
     }
 }

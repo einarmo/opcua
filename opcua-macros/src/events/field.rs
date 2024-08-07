@@ -20,12 +20,13 @@ pub fn generate_event_field_impls(event: EventFieldStruct) -> syn::Result<TokenS
     let mut final_arm = quote! {
         _ => opcua::types::Variant::Empty
     };
+    let mut pre_check_block = quote! {};
     for field in event.fields {
         if field.attr.ignore {
             continue;
         }
 
-        let is_base = field.ident.to_string() == "base" && field.attr.rename.is_none();
+        let has_rename = field.attr.rename.is_some();
 
         let name = field
             .attr
@@ -33,9 +34,27 @@ pub fn generate_event_field_impls(event: EventFieldStruct) -> syn::Result<TokenS
             .unwrap_or_else(|| field.ident.to_string().to_case(Case::Pascal));
         let ident = field.ident;
 
-        if is_base {
-            final_arm = quote! {
-                _ => self.base.get_value(attribute_id, index_range, browse_path)
+        if !has_rename {
+            match ident.to_string().as_str() {
+                "base" => {
+                    final_arm = quote! {
+                        _ => self.base.get_value(attribute_id, index_range, browse_path)
+                    }
+                }
+                "node_id" => pre_check_block.extend(quote! {
+                    if browse_path.is_empty() && attribute_id == opcua::types::AttributeId::NodeId {
+                        let val: Variant = self.node_id.clone().into();
+                        return val.range_of_owned(index_range).unwrap_or(Variant::Empty);
+                    }
+                }),
+                "value" => pre_check_block.extend(quote! {
+                    if browse_path.is_empty() && attribute_id == opcua::types::AttributeId::Value {
+                        return self.value.get_value(attribute_id, index_range, browse_path);
+                    }
+                }),
+                _ => get_arms.extend(quote! {
+                    #name => self.#ident.get_value(attribute_id, index_range, browse_path.get(1..).unwrap_or(&[])),
+                })
             }
         } else {
             get_arms.extend(quote! {
@@ -52,6 +71,7 @@ pub fn generate_event_field_impls(event: EventFieldStruct) -> syn::Result<TokenS
                 index_range: opcua::types::NumericRange,
                 browse_path: &[opcua::types::QualifiedName],
             ) -> opcua::types::Variant {
+                #pre_check_block
                 if browse_path.is_empty() {
                     return opcua::types::Variant::Empty;
                 }
