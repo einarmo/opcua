@@ -25,7 +25,7 @@ use crate::types::{
     string::*,
 };
 
-use super::node_ids::VariableId;
+use super::{node_ids::VariableId, DataTypeId};
 
 /// The kind of identifier, numeric, string, guid or byte
 #[derive(Eq, PartialEq, Clone, Debug, Hash)]
@@ -539,8 +539,6 @@ impl NodeId {
     }
 
     pub fn as_reference_type_id(&self) -> std::result::Result<ReferenceTypeId, NodeIdError> {
-        // TODO this function should not exist - filter code should work with non ns 0 reference
-        // types
         if self.is_null() {
             Err(NodeIdError)
         } else {
@@ -550,6 +548,15 @@ impl NodeId {
                 }
                 _ => Err(NodeIdError),
             }
+        }
+    }
+
+    pub fn as_data_type_id(&self) -> std::result::Result<DataTypeId, NodeIdError> {
+        match self.identifier {
+            Identifier::Numeric(id) if self.namespace == 0 => {
+                DataTypeId::try_from(id).map_err(|_| NodeIdError)
+            }
+            _ => Err(NodeIdError),
         }
     }
 

@@ -820,7 +820,7 @@ impl<'input> XmlLoad<'input> for DataTypeDefinition {
     fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError> {
         Ok(Self {
             fields: children_with_name(node, "Field")?,
-            name: value_from_attr(node, "QualifiedName")?,
+            name: value_from_attr(node, "Name")?,
             symbolic_name: value_from_attr_opt(node, "SymbolicName")?
                 .unwrap_or_else(|| SymbolicName { names: Vec::new() }),
             is_union: value_from_attr_opt(node, "IsUnion")?.unwrap_or(false),
@@ -832,7 +832,7 @@ impl<'input> XmlLoad<'input> for DataTypeDefinition {
 #[derive(Debug)]
 pub struct UADataType {
     pub base: UAType,
-    pub definitions: Option<DataTypeDefinition>,
+    pub definition: Option<DataTypeDefinition>,
     pub purpose: DataTypePurpose,
 }
 
@@ -840,7 +840,7 @@ impl<'input> XmlLoad<'input> for UADataType {
     fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError> {
         Ok(Self {
             base: UAType::load(node)?,
-            definitions: first_child_with_name_opt(node, "DataTypeDefinition")?,
+            definition: first_child_with_name_opt(node, "Definition")?,
             purpose: value_from_attr_opt(node, "Purpose")?.unwrap_or(DataTypePurpose::Normal),
         })
     }

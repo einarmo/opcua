@@ -1,15 +1,18 @@
 use std::collections::HashMap;
 
 use opcua_xml::schema::ua_node_set::{
-    AliasTable, ArrayDimensions, LocalizedText, NodeId, Reference, UADataType, UAMethod, UANode,
-    UANodeBase, UAObject, UAObjectType, UAReferenceType, UAVariable, UAVariableType, UAView,
+    AliasTable, ArrayDimensions, DataTypeDefinition, LocalizedText, NodeId, Reference, UADataType,
+    UAMethod, UANode, UANodeBase, UAObject, UAObjectType, UAReferenceType, UAVariable,
+    UAVariableType, UAView,
 };
-use proc_macro2::TokenStream;
+use proc_macro2::{Span, TokenStream};
 use syn::{parse_quote, parse_str, Expr, Ident, ItemFn, Path};
 
 use crate::{utils::RenderExpr, CodeGenError};
 
 use super::{value::render_value, XsdTypeWithPath};
+
+use quote::quote;
 
 pub struct NodeGenMethod {
     pub func: ItemFn,
@@ -76,6 +79,98 @@ impl NodeSetCodeGenerator {
             .iter()
             .find(|f| f.locale.0 == self.preferred_locale)
             .or_else(|| options.first())
+    }
+
+    fn render_data_type_definition(
+        &self,
+        def: &DataTypeDefinition,
+    ) -> Result<TokenStream, CodeGenError> {
+        let is_enum = def.fields.first().is_some_and(|f| f.value != -1);
+        if is_enum {
+            self.render_enum_def(def)
+        } else {
+            self.render_structure_def(def)
+        }
+    }
+
+    fn render_enum_def(&self, def: &DataTypeDefinition) -> Result<TokenStream, CodeGenError> {
+        let mut fields = quote! {};
+        let opcua_path = &self.opcua_path;
+        for f in &def.fields {
+            let value = f.value;
+            let display_name = self
+                .get_localized_text(&f.display_names)
+                .render(opcua_path)?;
+            let description = self
+                .get_localized_text(&f.descriptions)
+                .render(opcua_path)?;
+            let name = &f.name;
+            fields.extend(quote! {
+                #opcua_path::types::EnumField {
+                    value: #value,
+                    display_name: #display_name,
+                    description: #description,
+                    name: #name.into(),
+                },
+            });
+        }
+
+        Ok(quote! {
+            #opcua_path::types::EnumDefinition {
+                fields: Some(vec![#fields])
+            }
+        })
+    }
+
+    fn render_structure_def(&self, def: &DataTypeDefinition) -> Result<TokenStream, CodeGenError> {
+        let mut fields = quote! {};
+        let opcua_path = &self.opcua_path;
+        let mut any_optional = false;
+        for f in &def.fields {
+            let description = self
+                .get_localized_text(&f.descriptions)
+                .render(opcua_path)?;
+            let name = &f.name;
+            let data_type = f.data_type.render(opcua_path)?;
+            let value_rank = f.value_rank.0;
+            let array_dimensions = self
+                .parse_array_dimensions(&f.array_dimensions)?
+                .as_ref()
+                .render(&self.opcua_path)?;
+            let max_string_length = f.max_string_length as u32;
+            let is_optional = f.is_optional;
+            any_optional |= is_optional;
+            fields.extend(quote! {
+                #opcua_path::types::StructureField {
+                    name: #name.into(),
+                    description: #description,
+                    data_type: #data_type,
+                    value_rank: #value_rank,
+                    array_dimensions: #array_dimensions,
+                    max_string_length: #max_string_length,
+                    is_optional: #is_optional,
+                },
+            });
+        }
+        // TODO: Try to get the default encoding ID by looking at the available nodes.
+        let structure_type = Ident::new(
+            if def.is_union {
+                "Union"
+            } else if any_optional {
+                "StructureWithOptionalFields"
+            } else {
+                "Structure"
+            },
+            Span::call_site(),
+        );
+        Ok(quote! {
+            #opcua_path::types::StructureDefinition {
+                fields: Some(vec![#fields]),
+                default_encoding_id: #opcua_path::types::NodeId::null(),
+                base_data_type: #opcua_path::types::NodeId::null(),
+                structure_type: #opcua_path::types::StructureType::#structure_type,
+            }
+        })
     }
 
     fn parse_array_dimensions(
@@ -234,11 +329,19 @@ impl NodeSetCodeGenerator {
         let base = self.generate_base(&node.base.base, "DataType")?;
         let is_abstract = node.base.is_abstract;
         let opcua_path = &self.opcua_path;
+        let data_type_definition = match &node.definition {
+            Some(e) => {
+                let rendered = self.render_data_type_definition(e)?;
+                quote! { Some(#rendered.into()) }
+            }
+            None => quote! { None },
+        };
 
         Ok(parse_quote! {
             #opcua_path::server::address_space::DataType::new_full(
                 #base,
-                #is_abstract
+                #is_abstract,
+                #data_type_definition
             )
         })
     }
