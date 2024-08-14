@@ -154,6 +154,7 @@ pub fn new_node_from_attributes(
         AddNodeAttributes::DataType(a) => NodeType::DataType(Box::new(DataType {
             base: base!(a, node_id, node_class, browse_name),
             is_abstract: masked_or_default!(AttributeId::IsAbstract, a, is_abstract),
+            data_type_definition: None,
         })),
         AddNodeAttributes::View(a) => NodeType::View(Box::new(View {
             base: base!(a, node_id, node_class, browse_name),

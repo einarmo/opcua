@@ -198,6 +198,7 @@ pub mod array;
 pub mod attribute;
 pub mod basic_types;
 pub mod byte_string;
+pub mod data_type_definition;
 pub mod data_types;
 pub mod data_value;
 pub mod date_time;
@@ -223,11 +224,12 @@ pub mod variant_json;
 pub mod variant_type_id;
 
 pub use self::{
-    add_node_attributes::AddNodeAttributes, array::*, attribute::*, byte_string::*, data_types::*,
-    data_value::*, date_time::*, diagnostic_info::*, encoding::*, expanded_node_id::*,
-    extension_object::*, guid::*, impls::*, localized_text::*, node_id::*, node_ids::*,
-    numeric_range::*, operand::*, qualified_name::*, request_header::*, response_header::*,
-    service_types::*, status_code::*, string::*, variant::*, variant_type_id::*,
+    add_node_attributes::AddNodeAttributes, array::*, attribute::*, byte_string::*,
+    data_type_definition::*, data_types::*, data_value::*, date_time::*, diagnostic_info::*,
+    encoding::*, expanded_node_id::*, extension_object::*, guid::*, impls::*, localized_text::*,
+    node_id::*, node_ids::*, numeric_range::*, operand::*, qualified_name::*, request_header::*,
+    response_header::*, service_types::*, status_code::*, string::*, variant::*,
+    variant_type_id::*,
 };
 
 #[cfg(test)]

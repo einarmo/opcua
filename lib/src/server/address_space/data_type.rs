@@ -4,12 +4,9 @@
 
 //! Contains the implementation of `Method` and `MethodBuilder`.
 
-use crate::{
-    types::service_types::DataTypeAttributes,
-    types::{
-        AttributeId, AttributesMask, DataValue, NumericRange, StatusCode, TimestampsToReturn,
-        Variant,
-    },
+use crate::types::{
+    service_types::DataTypeAttributes, AttributeId, AttributesMask, DataTypeDefinition, DataValue,
+    DecodingOptions, NumericRange, StatusCode, TimestampsToReturn, Variant,
 };
 
 use super::{base::Base, node::Node, node::NodeBase};
@@ -27,6 +24,12 @@ impl DataTypeBuilder {
         self.node.set_write_mask(write_mask);
         self
     }
+
+    pub fn data_type_definition(mut self, data_type_definition: DataTypeDefinition) -> Self {
+        self.node
+            .set_data_type_definition(Some(data_type_definition));
+        self
+    }
 }
 
 /// A `DataType` is a type of node within the `AddressSpace`.
@@ -34,7 +37,7 @@ impl DataTypeBuilder {
 pub struct DataType {
     pub(super) base: Base,
     pub(super) is_abstract: bool,
-    // TODO: Handle DataTypeDefinition. Requires codegen extensions
+    pub(super) data_type_definition: Option<DataTypeDefinition>,
 }
 
 impl Default for DataType {
@@ -42,6 +45,7 @@ impl Default for DataType {
         Self {
             base: Base::new(NodeClass::DataType, &NodeId::null(), "", ""),
             is_abstract: false,
+            data_type_definition: None,
         }
     }
 }
@@ -59,6 +63,10 @@ impl Node for DataType {
     ) -> Option<DataValue> {
         match attribute_id {
             AttributeId::IsAbstract => Some(self.is_abstract().into()),
+            AttributeId::DataTypeDefinition => self.data_type_definition.as_ref().map(|dt| {
+                let v: Variant = dt.into();
+                v.into()
+            }),
             _ => self.base.get_attribute_max_age(
                 timestamps_to_return,
                 attribute_id,
@@ -83,6 +91,19 @@ impl Node for DataType {
                     Err(StatusCode::BadTypeMismatch)
                 }
             }
+            AttributeId::DataTypeDefinition => {
+                if matches!(value, Variant::Empty) {
+                    self.set_data_type_definition(None);
+                    Ok(())
+                } else if let Variant::ExtensionObject(v) = value {
+                    let def =
+                        DataTypeDefinition::from_extension_object(*v, &DecodingOptions::default())?;
+                    self.set_data_type_definition(Some(def));
+                    Ok(())
+                } else {
+                    Err(StatusCode::BadTypeMismatch)
+                }
+            }
             _ => self.base.set_attribute(attribute_id, value),
         }
     }
@@ -102,13 +123,22 @@ impl DataType {
         DataType {
             base: Base::new(NodeClass::DataType, node_id, browse_name, display_name),
             is_abstract,
+            data_type_definition: None,
         }
     }
 
     /// Create a new data type with all attributes, may change if
     /// new attributes are added to the OPC-UA standard.
-    pub fn new_full(base: Base, is_abstract: bool) -> Self {
-        Self { base, is_abstract }
+    pub fn new_full(
+        base: Base,
+        is_abstract: bool,
+        data_type_definition: Option<DataTypeDefinition>,
+    ) -> Self {
+        Self {
+            base,
+            is_abstract,
+            data_type_definition,
+        }
     }
 
     pub fn from_attributes<S>(
@@ -153,5 +183,13 @@ impl DataType {
 
     pub fn set_is_abstract(&mut self, is_abstract: bool) {
         self.is_abstract = is_abstract;
+    }
+
+    pub fn set_data_type_definition(&mut self, data_type_definition: Option<DataTypeDefinition>) {
+        self.data_type_definition = data_type_definition;
+    }
+
+    pub fn data_type_definition(&self) -> Option<&DataTypeDefinition> {
+        self.data_type_definition.as_ref()
     }
 }
