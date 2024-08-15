@@ -357,7 +357,7 @@ async fn multi_client_test() {
 async fn recoverable_error_test_server() {
     // Test that if we send a too large message to the server, we don't lose the connection
     // entirely.
-    let (mut server, _nm) = test_server();
+    let mut server = test_server();
     server = server.max_array_length(50);
     let mut tester = Tester::new(server, false).await;
     let (session, lp) = tester.connect_default().await.unwrap();
