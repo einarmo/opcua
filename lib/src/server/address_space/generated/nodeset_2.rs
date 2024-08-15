@@ -131,6 +131,79 @@ fn make_data_type_3210(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 0i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "CurrentRead".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 1i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "CurrentWrite".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "HistoryRead".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 3i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "HistoryWrite".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 4i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "SemanticChange".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 5i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "StatusWrite".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 6i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "TimestampWrite".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 8i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "NonatomicRead".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 9i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "NonatomicWrite".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 10i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "WriteFullArrayOnly".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 11i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "NoSubDataTypes".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -163,6 +236,31 @@ fn make_data_type_3212(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 0i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "SubscribeToEvents".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "HistoryRead".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 3i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "HistoryWrite".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -195,6 +293,37 @@ fn make_data_type_3214(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 0i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "SigningRequired".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 1i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "EncryptionRequired".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "SessionRequired".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 3i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "ApplyRestrictionsToBrowse".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -227,6 +356,34 @@ fn make_data_type_3216(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "RoleId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Permissions".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 94u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -252,6 +409,7 @@ fn make_data_type_3217(
                 Some(0u32),
             ),
             true,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -277,6 +435,31 @@ fn make_data_type_3218(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 0i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Structure".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 1i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "StructureWithOptionalFields".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Union".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -309,6 +492,79 @@ fn make_data_type_3220(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "Name".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Description".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 21u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DataType".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ValueRank".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 6u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ArrayDimensions".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "MaxStringLength".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "IsOptional".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 1u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -334,6 +590,52 @@ fn make_data_type_3221(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "DefaultEncodingId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "BaseDataType".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "StructureType".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 98u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Fields".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 101u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -359,6 +661,23 @@ fn make_data_type_3222(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![crate::types::StructureField {
+                        name: "Fields".into(),
+                        description: crate::types::LocalizedText::new("", ""),
+                        data_type: crate::types::NodeId::new(0u16, 102u32),
+                        value_rank: 1i32,
+                        array_dimensions: None,
+                        max_string_length: 0u32,
+                        is_optional: false,
+                    }]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -384,6 +703,61 @@ fn make_data_type_3223(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "Name".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DataType".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ValueRank".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 6u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ArrayDimensions".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Description".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 21u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -409,6 +783,43 @@ fn make_data_type_3224(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "Value".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 8u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DisplayName".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 21u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Description".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 21u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -434,6 +845,23 @@ fn make_data_type_3225(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![crate::types::StructureField {
+                        name: "Name".into(),
+                        description: crate::types::LocalizedText::new("", ""),
+                        data_type: crate::types::NodeId::new(0u16, 12u32),
+                        value_rank: -1i32,
+                        array_dimensions: None,
+                        max_string_length: 0u32,
+                        is_optional: false,
+                    }]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -459,6 +887,34 @@ fn make_data_type_3226(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "Value".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 15u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ValidBits".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 15u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -484,6 +940,7 @@ fn make_data_type_3227(
                 Some(0u32),
             ),
             true,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -509,6 +966,7 @@ fn make_data_type_3228(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -534,6 +992,7 @@ fn make_data_type_3229(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -559,6 +1018,7 @@ fn make_data_type_3230(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -584,6 +1044,7 @@ fn make_data_type_3231(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -609,6 +1070,7 @@ fn make_data_type_3232(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -634,6 +1096,7 @@ fn make_data_type_3233(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -659,6 +1122,7 @@ fn make_data_type_3234(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -684,6 +1148,7 @@ fn make_data_type_3235(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -709,6 +1174,34 @@ fn make_data_type_3236(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "Offset".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 4u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DaylightSavingInOffset".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 1u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -734,6 +1227,7 @@ fn make_data_type_3237(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -759,6 +1253,7 @@ fn make_data_type_3238(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -784,6 +1279,37 @@ fn make_data_type_3239(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 0i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Server".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 1i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Client".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "ClientAndServer".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 3i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "DiscoveryServer".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -816,6 +1342,79 @@ fn make_data_type_3241(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "ApplicationUri".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ProductUri".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ApplicationName".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 21u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ApplicationType".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 307u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "GatewayServerUri".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DiscoveryProfileUri".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DiscoveryUrls".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -841,6 +1440,7 @@ fn make_data_type_3242(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -866,6 +1466,52 @@ fn make_data_type_3243(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "RecordId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ServerName".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DiscoveryUrl".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ServerCapabilities".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -891,6 +1537,7 @@ fn make_data_type_3244(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -916,6 +1563,37 @@ fn make_data_type_3245(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 0i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Invalid".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 1i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "None".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Sign".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 3i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "SignAndEncrypt".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -948,6 +1626,37 @@ fn make_data_type_3247(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 0i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Anonymous".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 1i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "UserName".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Certificate".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 3i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "IssuedToken".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -980,6 +1689,61 @@ fn make_data_type_3249(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "PolicyId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "TokenType".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 303u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "IssuedTokenType".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "IssuerEndpointUrl".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SecurityPolicyUri".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1005,6 +1769,88 @@ fn make_data_type_3250(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "EndpointUrl".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Server".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 308u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ServerCertificate".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 311u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SecurityMode".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 302u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SecurityPolicyUri".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "UserIdentityTokens".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 304u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "TransportProfileUri".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SecurityLevel".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 3u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1030,6 +1876,88 @@ fn make_data_type_3251(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "ServerUri".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ProductUri".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ServerNames".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 21u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ServerType".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 307u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "GatewayServerUri".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DiscoveryUrls".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SemaphoreFilePath".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "IsOnline".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 1u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1055,6 +1983,7 @@ fn make_data_type_3252(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1080,6 +2009,34 @@ fn make_data_type_3253(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "MdnsServerName".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ServerCapabilities".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1105,6 +2062,25 @@ fn make_data_type_3254(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 0i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Issue".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 1i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Renew".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -1137,6 +2113,34 @@ fn make_data_type_3256(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "CertificateData".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 15u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Signature".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 15u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1162,6 +2166,7 @@ fn make_data_type_3257(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1187,6 +2192,23 @@ fn make_data_type_3258(
                 Some(0u32),
             ),
             true,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![crate::types::StructureField {
+                        name: "PolicyId".into(),
+                        description: crate::types::LocalizedText::new("", ""),
+                        data_type: crate::types::NodeId::new(0u16, 12u32),
+                        value_rank: -1i32,
+                        array_dimensions: None,
+                        max_string_length: 0u32,
+                        is_optional: false,
+                    }]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1212,6 +2234,7 @@ fn make_data_type_3259(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1237,6 +2260,43 @@ fn make_data_type_3260(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "UserName".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Password".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 15u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "EncryptionAlgorithm".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1262,6 +2322,23 @@ fn make_data_type_3261(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![crate::types::StructureField {
+                        name: "CertificateData".into(),
+                        description: crate::types::LocalizedText::new("", ""),
+                        data_type: crate::types::NodeId::new(0u16, 15u32),
+                        value_rank: -1i32,
+                        array_dimensions: None,
+                        max_string_length: 0u32,
+                        is_optional: false,
+                    }]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1287,6 +2364,34 @@ fn make_data_type_3262(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "TokenData".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 15u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "EncryptionAlgorithm".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1312,6 +2417,223 @@ fn make_data_type_3263(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 0i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "None".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 1i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "AccessLevel".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "ArrayDimensions".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 4i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "BrowseName".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 8i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "ContainsNoLoops".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 16i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "DataType".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 32i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Description".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 64i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "DisplayName".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 128i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "EventNotifier".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 256i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Executable".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 512i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Historizing".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 1024i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "InverseName".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2048i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "IsAbstract".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 4096i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "MinimumSamplingInterval".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 8192i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "NodeClass".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 16384i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "NodeId".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 32768i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Symmetric".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 65536i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "UserAccessLevel".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 131072i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "UserExecutable".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 262144i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "UserWriteMask".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 524288i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "ValueRank".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 1048576i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "WriteMask".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2097152i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Value".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 4194304i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "DataTypeDefinition".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 8388608i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "RolePermissions".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 16777216i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "AccessRestrictions".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 33554431i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "All".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 26501220i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "BaseNode".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 26501348i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Object".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 26503268i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "ObjectType".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 26571383i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Variable".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 28600438i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "VariableType".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 26632548i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Method".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 26537060i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "ReferenceType".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 26501356i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "View".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -1344,6 +2666,79 @@ fn make_data_type_3265(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "ParentNodeId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 18u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ReferenceTypeId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "RequestedNewNodeId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 18u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "BrowseName".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 20u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "NodeClass".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 257u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "NodeAttributes".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 22u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "TypeDefinition".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 18u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1369,6 +2764,70 @@ fn make_data_type_3266(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "SourceNodeId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ReferenceTypeId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "IsForward".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 1u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "TargetServerUri".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "TargetNodeId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 18u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "TargetNodeClass".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 257u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1394,6 +2853,34 @@ fn make_data_type_3267(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "NodeId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DeleteTargetReferences".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 1u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1419,6 +2906,61 @@ fn make_data_type_3268(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "SourceNodeId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ReferenceTypeId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "IsForward".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 1u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "TargetNodeId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 18u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DeleteBidirectional".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 1u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1444,6 +2986,169 @@ fn make_data_type_3269(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 0i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "AccessLevel".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 1i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "ArrayDimensions".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "BrowseName".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 3i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "ContainsNoLoops".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 4i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "DataType".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 5i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Description".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 6i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "DisplayName".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 7i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "EventNotifier".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 8i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Executable".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 9i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Historizing".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 10i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "InverseName".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 11i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "IsAbstract".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 12i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "MinimumSamplingInterval".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 13i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "NodeClass".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 14i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "NodeId".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 15i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Symmetric".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 16i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "UserAccessLevel".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 17i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "UserExecutable".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 18i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "UserWriteMask".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 19i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "ValueRank".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 20i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "WriteMask".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 21i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "ValueForVariableType".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 22i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "DataTypeDefinition".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 23i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "RolePermissions".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 24i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "AccessRestrictions".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 25i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "AccessLevelEx".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -1476,6 +3181,7 @@ fn make_data_type_3271(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1501,6 +3207,52 @@ fn make_data_type_3272(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "ReferenceTypeId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "IsInverse".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 1u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "IncludeSubtypes".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 1u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "TargetName".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 20u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1526,6 +3278,23 @@ fn make_data_type_3273(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![crate::types::StructureField {
+                        name: "Elements".into(),
+                        description: crate::types::LocalizedText::new("", ""),
+                        data_type: crate::types::NodeId::new(0u16, 537u32),
+                        value_rank: 1i32,
+                        array_dimensions: None,
+                        max_string_length: 0u32,
+                        is_optional: false,
+                    }]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1551,6 +3320,7 @@ fn make_data_type_3274(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1576,6 +3346,7 @@ fn make_data_type_3275(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1601,6 +3372,97 @@ fn make_data_type_3276(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "OperationTimeout".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 6u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "UseBinaryEncoding".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 1u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "MaxStringLength".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 6u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "MaxByteStringLength".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 6u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "MaxArrayLength".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 6u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "MaxMessageSize".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 6u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "MaxBufferSize".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 6u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ChannelLifetime".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 6u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SecurityTokenLifetime".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 6u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1626,6 +3488,121 @@ fn make_data_type_3277(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 0i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Equals".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 1i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "IsNull".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "GreaterThan".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 3i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "LessThan".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 4i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "GreaterThanOrEqual".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 5i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "LessThanOrEqual".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 6i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Like".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 7i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Not".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 8i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Between".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 9i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "InList".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 10i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "And".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 11i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Or".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 12i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Cast".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 13i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "InView".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 14i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "OfType".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 15i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "RelatedTo".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 16i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "BitwiseAnd".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 17i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "BitwiseOr".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -1658,6 +3635,34 @@ fn make_data_type_3279(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "FilterOperator".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 576u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "FilterOperands".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 22u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1683,6 +3688,23 @@ fn make_data_type_3280(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![crate::types::StructureField {
+                        name: "Elements".into(),
+                        description: crate::types::LocalizedText::new("", ""),
+                        data_type: crate::types::NodeId::new(0u16, 583u32),
+                        value_rank: 1i32,
+                        array_dimensions: None,
+                        max_string_length: 0u32,
+                        is_optional: false,
+                    }]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1708,6 +3730,7 @@ fn make_data_type_3281(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1733,6 +3756,23 @@ fn make_data_type_3282(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![crate::types::StructureField {
+                        name: "Index".into(),
+                        description: crate::types::LocalizedText::new("", ""),
+                        data_type: crate::types::NodeId::new(0u16, 7u32),
+                        value_rank: -1i32,
+                        array_dimensions: None,
+                        max_string_length: 0u32,
+                        is_optional: false,
+                    }]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1758,6 +3798,23 @@ fn make_data_type_3283(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![crate::types::StructureField {
+                        name: "Value".into(),
+                        description: crate::types::LocalizedText::new("", ""),
+                        data_type: crate::types::NodeId::new(0u16, 24u32),
+                        value_rank: -1i32,
+                        array_dimensions: None,
+                        max_string_length: 0u32,
+                        is_optional: false,
+                    }]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1783,6 +3840,61 @@ fn make_data_type_3284(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "NodeId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Alias".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "BrowsePath".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 540u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "AttributeId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 288u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "IndexRange".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 291u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1808,6 +3920,52 @@ fn make_data_type_3285(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "TypeDefinitionId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "BrowsePath".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 20u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "AttributeId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 288u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "IndexRange".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 291u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1833,6 +3991,23 @@ fn make_data_type_3286(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![crate::types::StructureField {
+                        name: "Events".into(),
+                        description: crate::types::LocalizedText::new("", ""),
+                        data_type: crate::types::NodeId::new(0u16, 920u32),
+                        value_rank: 1i32,
+                        array_dimensions: None,
+                        max_string_length: 0u32,
+                        is_optional: false,
+                    }]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1858,6 +4033,37 @@ fn make_data_type_3287(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 1i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Insert".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Replace".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 3i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Update".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 4i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Delete".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -1890,6 +4096,37 @@ fn make_data_type_3289(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 1i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Insert".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Replace".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 3i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Update".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 4i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Remove".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -1922,6 +4159,7 @@ fn make_data_type_3291(
                 Some(0u32),
             ),
             false,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1947,6 +4185,34 @@ fn make_data_type_3292(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "SelectClauses".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 601u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "WhereClause".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 586u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1972,6 +4238,61 @@ fn make_data_type_3293(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "UseServerCapabilitiesDefaults".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 1u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "TreatUncertainAsBad".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 1u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "PercentDataBad".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 3u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "PercentDataGood".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 3u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "UseSlopedExtrapolation".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 1u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -1997,6 +4318,23 @@ fn make_data_type_3294(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![crate::types::StructureField {
+                        name: "EventFields".into(),
+                        description: crate::types::LocalizedText::new("", ""),
+                        data_type: crate::types::NodeId::new(0u16, 24u32),
+                        value_rank: 1i32,
+                        array_dimensions: None,
+                        max_string_length: 0u32,
+                        is_optional: false,
+                    }]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2022,6 +4360,70 @@ fn make_data_type_3295(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "ProductUri".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ManufacturerName".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ProductName".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SoftwareVersion".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "BuildNumber".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "BuildDate".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 294u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2047,6 +4449,49 @@ fn make_data_type_3296(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 0i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "None".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 1i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Cold".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Warm".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 3i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Hot".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 4i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Transparent".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 5i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "HotAndMirrored".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -2079,6 +4524,61 @@ fn make_data_type_3298(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 0i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Running".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 1i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Failed".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "NoConfiguration".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 3i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Suspended".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 4i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Shutdown".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 5i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Test".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 6i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "CommunicationFault".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 7i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Unknown".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -2111,6 +4611,43 @@ fn make_data_type_3300(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "ServerId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ServiceLevel".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 3u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ServerState".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 852u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2136,6 +4673,23 @@ fn make_data_type_3301(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![crate::types::StructureField {
+                        name: "EndpointUrlList".into(),
+                        description: crate::types::LocalizedText::new("", ""),
+                        data_type: crate::types::NodeId::new(0u16, 12u32),
+                        value_rank: 1i32,
+                        array_dimensions: None,
+                        max_string_length: 0u32,
+                        is_optional: false,
+                    }]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2161,6 +4715,34 @@ fn make_data_type_3302(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "ServerUri".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "NetworkPaths".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 11943u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2186,6 +4768,52 @@ fn make_data_type_3303(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "SamplingInterval".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 290u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "MonitoredItemCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "MaxMonitoredItemCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DisabledMonitoredItemCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2211,6 +4839,124 @@ fn make_data_type_3304(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "ServerViewCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "CurrentSessionCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "CumulatedSessionCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SecurityRejectedSessionCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "RejectedSessionCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SessionTimeoutCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SessionAbortCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "CurrentSubscriptionCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "CumulatedSubscriptionCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "PublishingIntervalCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SecurityRejectedRequestsCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "RejectedRequestsCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2236,6 +4982,70 @@ fn make_data_type_3305(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "StartTime".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 294u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "CurrentTime".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 294u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "State".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 852u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "BuildInfo".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 338u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SecondsTillShutdown".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ShutdownReason".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 21u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2261,6 +5071,403 @@ fn make_data_type_3306(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "SessionId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SessionName".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ClientDescription".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 308u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ServerUri".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "EndpointUrl".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LocaleIds".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 295u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ActualSessionTimeout".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 290u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "MaxResponseMessageSize".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ClientConnectionTime".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 294u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ClientLastContactTime".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 294u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "CurrentSubscriptionsCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "CurrentMonitoredItemsCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "CurrentPublishRequestsInQueue".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "TotalRequestCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "UnauthorizedRequestCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ReadCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "HistoryReadCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "WriteCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "HistoryUpdateCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "CallCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "CreateMonitoredItemsCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ModifyMonitoredItemsCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SetMonitoringModeCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SetTriggeringCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DeleteMonitoredItemsCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "CreateSubscriptionCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ModifySubscriptionCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SetPublishingModeCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "PublishCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "RepublishCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "TransferSubscriptionsCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DeleteSubscriptionsCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "AddNodesCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "AddReferencesCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DeleteNodesCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DeleteReferencesCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "BrowseCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "BrowseNextCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "TranslateBrowsePathsToNodeIdsCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "QueryFirstCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "QueryNextCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "RegisterNodesCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "UnregisterNodesCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 871u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2286,6 +5493,97 @@ fn make_data_type_3307(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "SessionId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ClientUserIdOfSession".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ClientUserIdHistory".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "AuthenticationMechanism".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Encoding".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "TransportProtocol".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SecurityMode".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 302u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SecurityPolicyUri".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ClientCertificate".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 15u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2311,6 +5609,34 @@ fn make_data_type_3308(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "TotalCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ErrorCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2336,6 +5662,34 @@ fn make_data_type_3309(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "StatusCode".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 19u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DiagnosticInfo".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 25u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2361,6 +5715,295 @@ fn make_data_type_3310(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "SessionId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "SubscriptionId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Priority".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 3u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "PublishingInterval".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 290u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "MaxKeepAliveCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "MaxLifetimeCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "MaxNotificationsPerPublish".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "PublishingEnabled".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 1u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "ModifyCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "EnableCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DisableCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "RepublishRequestCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "RepublishMessageRequestCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "RepublishMessageCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "TransferRequestCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "TransferredToAltClientCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "TransferredToSameClientCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "PublishRequestCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DataChangeNotificationsCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "EventNotificationsCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "NotificationsCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LatePublishRequestCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "CurrentKeepAliveCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "CurrentLifetimeCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "UnacknowledgedMessageCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DiscardedMessageCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "MonitoredItemCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DisabledMonitoredItemCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "MonitoringQueueOverflowCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "NextSequenceNumber".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "EventQueueOverFlowCount".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 7u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2386,6 +6029,43 @@ fn make_data_type_3311(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "Affected".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "AffectedType".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Verb".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 3u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2411,6 +6091,34 @@ fn make_data_type_3312(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "Affected".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "AffectedType".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2436,6 +6144,34 @@ fn make_data_type_3313(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "Low".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 11u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "High".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 11u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2461,6 +6197,52 @@ fn make_data_type_3314(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "NamespaceUri".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "UnitId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 6u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "DisplayName".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 21u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Description".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 21u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2486,6 +6268,31 @@ fn make_data_type_3315(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 0i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Linear".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 1i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Log".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Ln".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -2518,6 +6325,34 @@ fn make_data_type_3317(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "Real".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 10u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Imaginary".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 10u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2543,6 +6378,34 @@ fn make_data_type_3318(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "Real".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 11u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Imaginary".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 11u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2568,6 +6431,61 @@ fn make_data_type_3319(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "EngineeringUnits".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 887u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "EURange".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 884u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Title".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 21u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "AxisScaleType".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12077u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "AxisSteps".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 11u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2593,6 +6511,34 @@ fn make_data_type_3320(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "X".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 11u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "Value".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 10u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2618,6 +6564,106 @@ fn make_data_type_3321(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "CreateSessionId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "CreateClientName".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "InvocationCreationTime".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 294u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LastTransitionTime".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 294u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LastMethodCall".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LastMethodSessionId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LastMethodInputArguments".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 296u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LastMethodOutputArguments".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 296u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LastMethodCallTime".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 294u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LastMethodReturnStatus".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 299u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2643,6 +6689,124 @@ fn make_data_type_3322(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "CreateSessionId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "CreateClientName".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "InvocationCreationTime".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 294u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LastTransitionTime".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 294u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LastMethodCall".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LastMethodSessionId".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 17u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LastMethodInputArguments".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 296u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LastMethodOutputArguments".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 296u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LastMethodInputValues".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 24u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LastMethodOutputValues".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 24u32),
+                            value_rank: 1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LastMethodCallTime".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 294u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "LastMethodReturnStatus".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 299u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2668,6 +6832,43 @@ fn make_data_type_3323(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::StructureDefinition {
+                    fields: Some(vec![
+                        crate::types::StructureField {
+                            name: "Message".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "UserName".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 12u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                        crate::types::StructureField {
+                            name: "AnnotationTime".into(),
+                            description: crate::types::LocalizedText::new("", ""),
+                            data_type: crate::types::NodeId::new(0u16, 294u32),
+                            value_rank: -1i32,
+                            array_dimensions: None,
+                            max_string_length: 0u32,
+                            is_optional: false,
+                        },
+                    ]),
+                    default_encoding_id: crate::types::NodeId::null(),
+                    base_data_type: crate::types::NodeId::null(),
+                    structure_type: crate::types::StructureType::Structure,
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
@@ -2693,6 +6894,43 @@ fn make_data_type_3324(
                 Some(0u32),
             ),
             false,
+            Some(
+                crate::types::EnumDefinition {
+                    fields: Some(vec![
+                        crate::types::EnumField {
+                            value: 0i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "AbsoluteValue".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 1i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "PercentOfValue".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 2i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "PercentOfRange".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 3i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "PercentOfEURange".into(),
+                        },
+                        crate::types::EnumField {
+                            value: 4i64,
+                            display_name: crate::types::LocalizedText::new("", ""),
+                            description: crate::types::LocalizedText::new("", ""),
+                            name: "Unknown".into(),
+                        },
+                    ]),
+                }
+                .into(),
+            ),
         )
         .into(),
         references: vec![
@@ -2725,6 +6963,7 @@ fn make_data_type_4(
                 Some(0u32),
             ),
             true,
+            None,
         )
         .into(),
         references: vec![crate::server::address_space::ImportedReference {
