@@ -1,5 +1,6 @@
 use std::{sync::atomic::Ordering, time::Duration};
 
+use super::utils::hostname;
 use bytes::BytesMut;
 use log::debug;
 use opcua::{
@@ -16,12 +17,10 @@ use tokio::{
     net::{TcpListener, TcpStream},
 };
 use tokio_util::codec::Decoder;
-use utils::{hostname, test_server};
-
-mod utils;
 
 use crate::utils::{
-    client_user_token, client_x509_token, default_server, Tester, CLIENT_USERPASS_ID, TEST_COUNTER,
+    client_user_token, client_x509_token, default_server, test_server, Tester, CLIENT_USERPASS_ID,
+    TEST_COUNTER,
 };
 
 #[tokio::test]

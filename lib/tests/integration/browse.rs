@@ -1,3 +1,4 @@
+use super::utils::setup;
 use opcua::{
     server::address_space::{ObjectBuilder, ReferenceDirection, VariableBuilder},
     types::{
@@ -6,9 +7,6 @@ use opcua::{
         RelativePathElement, StatusCode, VariableTypeId,
     },
 };
-use utils::setup;
-
-mod utils;
 
 fn hierarchical_desc(node_id: NodeId) -> BrowseDescription {
     BrowseDescription {

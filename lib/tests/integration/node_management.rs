@@ -1,3 +1,4 @@
+use super::utils::setup;
 use opcua::{
     server::address_space::{EventNotifier, NodeBase, NodeType, ObjectBuilder},
     types::{
@@ -6,9 +7,6 @@ use opcua::{
         ReferenceTypeId, StatusCode,
     },
 };
-use utils::setup;
-
-mod utils;
 
 #[tokio::test]
 async fn add_delete_node() {
