@@ -1,0 +1,32 @@
+[package]
+name = "opcua-client"
+version = "0.13.0" # OPCUARustVersion
+description = "OPC UA client API"
+authors = ["Adam Lock <locka99@gmail.com>", "Einar Omang <einar@omang.com>"]
+homepage = "https://github.com/locka99/opcua"
+repository = "https://github.com/locka99/opcua"
+license = "MPL-2.0"
+keywords = ["opcua","opc","ua"]
+categories = ["embedded","network-programming"]
+readme = "../README.md"
+documentation = "https://docs.rs/opcua/"
+edition = "2021"
+
+[lib]
+name = "opcua_client"
+
+[dependencies]
+arc-swap = { workspace = true }
+chrono = { workspace = true }
+futures = { workspace = true }
+lazy_static = { workspace = true }
+log = { workspace = true }
+parking_lot = { workspace = true }
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+serde = { workspace = true }
+
+
+opcua-types = { path = "../opcua-types" }
+opcua-core = { path = "../opcua-core" }
+opcua-crypto = { path = "../opcua-crypto" }

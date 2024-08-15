@@ -1,13 +1,11 @@
 use std::{sync::Arc, time::Instant};
 
 use futures::{future::Either, stream::FuturesUnordered, Future, Stream, StreamExt};
+use opcua_types::StatusCode;
 
 use crate::{
-    client::{
-        session::{session_debug, session_error},
-        Session,
-    },
-    types::StatusCode,
+    session::{session_debug, session_error},
+    Session,
 };
 
 /// An event on the subscription event loop.

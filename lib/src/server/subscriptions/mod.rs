@@ -7,6 +7,7 @@ use std::{sync::Arc, time::Instant};
 use chrono::Utc;
 use hashbrown::{Equivalent, HashMap};
 pub use monitored_item::{CreateMonitoredItem, MonitoredItem};
+use opcua_core::{trace_read_lock, trace_write_lock};
 pub use session_subscriptions::SessionSubscriptions;
 use subscription::TickReason;
 pub use subscription::{MonitoredItemHandle, Subscription, SubscriptionState};

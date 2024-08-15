@@ -12,13 +12,12 @@ use std::{
     time::Duration,
 };
 
+use log::{error, warn};
 use serde::{Deserialize, Serialize};
 
-use crate::{
-    core::config::Config,
-    crypto::SecurityPolicy,
-    types::{ApplicationType, MessageSecurityMode, UAString},
-};
+use opcua_core::config::Config;
+use opcua_crypto::SecurityPolicy;
+use opcua_types::{ApplicationType, MessageSecurityMode, UAString};
 
 use super::retry::SessionRetryPolicy;
 
@@ -338,7 +337,7 @@ impl ClientConfig {
         let mut pki_dir = std::env::current_dir().unwrap();
         pki_dir.push(Self::PKI_DIR);
 
-        let decoding_options = crate::types::DecodingOptions::default();
+        let decoding_options = opcua_types::DecodingOptions::default();
         ClientConfig {
             application_name: application_name.into(),
             application_uri: application_uri.into(),
@@ -385,10 +384,10 @@ impl ClientConfig {
 mod tests {
     use std::{self, collections::BTreeMap, path::PathBuf};
 
-    use crate::client::ClientBuilder;
-    use crate::core::config::Config;
-    use crate::crypto::SecurityPolicy;
-    use crate::types::*;
+    use crate::ClientBuilder;
+    use opcua_core::config::Config;
+    use opcua_crypto::SecurityPolicy;
+    use opcua_types::MessageSecurityMode;
 
     use super::{ClientConfig, ClientEndpoint, ClientUserToken, ANONYMOUS_USER_TOKEN_ID};
 

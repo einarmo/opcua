@@ -1,23 +1,23 @@
 use std::{str::FromStr, sync::Arc, time::Duration};
 
-use crate::{
-    client::{session::SessionInfo, transport::core::TransportPollResult},
-    core::{
-        comms::secure_channel::{Role, SecureChannel},
-        supported_message::SupportedMessage,
-    },
-    crypto::{CertificateStore, SecurityPolicy},
-    sync::RwLock,
-    types::{
-        ByteString, CloseSecureChannelRequest, DecodingOptions, NodeId, RequestHeader,
-        SecurityTokenRequestType, StatusCode,
-    },
-};
+use crate::{session::SessionInfo, transport::core::TransportPollResult};
 use arc_swap::{ArcSwap, ArcSwapOption};
+use log::{error, info};
+use opcua_core::{
+    comms::secure_channel::{Role, SecureChannel},
+    supported_message::SupportedMessage,
+    sync::RwLock,
+    trace_read_lock, trace_write_lock,
+};
+use opcua_crypto::{CertificateStore, SecurityPolicy};
+use opcua_types::{
+    ByteString, CloseSecureChannelRequest, DecodingOptions, NodeId, RequestHeader,
+    SecurityTokenRequestType, StatusCode,
+};
 
 use super::state::{Request, RequestSend, SecureChannelState};
 
-use crate::client::{
+use crate::{
     retry::SessionRetryPolicy,
     transport::{
         tcp::{TcpTransport, TransportConfiguration},

@@ -1,6 +1,7 @@
 use std::{collections::HashMap, sync::Arc, time::Duration};
 
 use async_trait::async_trait;
+use opcua_core::{trace_read_lock, trace_write_lock};
 
 use crate::{
     server::{

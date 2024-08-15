@@ -1,3 +1,5 @@
+use opcua_core::trace_write_lock;
+
 use crate::{
     server::{
         node_manager::{

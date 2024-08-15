@@ -4,14 +4,15 @@ use std::{
 };
 
 use futures::{stream::BoxStream, Stream, StreamExt, TryStreamExt};
+use log::warn;
 
 use crate::{
-    client::{
-        retry::{ExponentialBackoff, SessionRetryPolicy},
-        session::{session_error, session_warn},
-        transport::{SecureChannelEventLoop, TransportPollResult},
-    },
-    types::{AttributeId, QualifiedName, ReadValueId, StatusCode, TimestampsToReturn, VariableId},
+    retry::{ExponentialBackoff, SessionRetryPolicy},
+    session::{session_error, session_warn},
+    transport::{SecureChannelEventLoop, TransportPollResult},
+};
+use opcua_types::{
+    AttributeId, QualifiedName, ReadValueId, StatusCode, TimestampsToReturn, VariableId,
 };
 
 use super::{

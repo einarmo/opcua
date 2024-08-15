@@ -27,7 +27,7 @@ test-vendored-openssl = ["all", "vendored-openssl"]
 # Server default settings
 server = ["generated-address-space", "discovery-server-registration"]
 # Client default settings
-client = []
+client = ["opcua-client"]
 # Console logging just installs a logger that writes out to the screen, useful for general logging
 console-logging = ["env_logger"]
 # Includes all the code to populate the address space with the default node set. This is something that embedded
@@ -45,7 +45,7 @@ chrono = { workspace = true }
 bitflags = { workspace = true }
 # Enable deadlock_detection if there are any deadlocks in sync code
 parking_lot = { workspace = true }
-futures = "0.3"
+futures = { workspace = true }
 tokio = { workspace = true }
 tokio-util = { workspace = true }
 lazy_static = { workspace = true }
@@ -54,7 +54,7 @@ serde = { workspace = true }
 serde_yaml = { workspace = true }
 serde_json = { workspace = true }
 bytes = { workspace = true }
-url = "1.6"
+url = { workspace = true }
 
 derivative = "2.2"
 byteorder = { workspace = true }
@@ -64,13 +64,14 @@ uuid = { workspace = true }
 rumqttc = { version = "0.23", optional = true }
 env_logger = { version = "0.10", optional = true }
 arbitrary = { version = "1", optional = true, features = ["derive"] }
-arc-swap = "1.6.0"
+arc-swap = { workspace = true }
 async-trait = "0.1.79"
 hashbrown = "0.14.5"
 
 opcua-types = { path = "../opcua-types" }
 opcua-crypto = { path = "../opcua-crypto" }
 opcua-core = { path = "../opcua-core" }
+opcua-client = { path = "../opcua-client", optional = true }
 
 [dev-dependencies]
 tempdir = "0.3"

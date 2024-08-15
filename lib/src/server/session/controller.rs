@@ -5,6 +5,7 @@ use std::{
 };
 
 use futures::{future::Either, stream::FuturesUnordered, Future, StreamExt};
+use opcua_core::{trace_read_lock, trace_write_lock};
 use tokio::net::TcpStream;
 
 use crate::{

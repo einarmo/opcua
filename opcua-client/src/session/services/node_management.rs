@@ -1,14 +1,12 @@
 use crate::{
-    client::{
-        session::{process_service_result, process_unexpected_response, session_error},
-        Session,
-    },
-    core::supported_message::SupportedMessage,
-    types::{
-        AddNodesItem, AddNodesRequest, AddNodesResult, AddReferencesItem, AddReferencesRequest,
-        DeleteNodesItem, DeleteNodesRequest, DeleteReferencesItem, DeleteReferencesRequest,
-        StatusCode,
-    },
+    session::{process_service_result, process_unexpected_response, session_error},
+    Session,
+};
+
+use opcua_core::SupportedMessage;
+use opcua_types::{
+    AddNodesItem, AddNodesRequest, AddNodesResult, AddReferencesItem, AddReferencesRequest,
+    DeleteNodesItem, DeleteNodesRequest, DeleteReferencesItem, DeleteReferencesRequest, StatusCode,
 };
 
 impl Session {

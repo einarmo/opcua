@@ -39,6 +39,7 @@ impl From<(EndpointDescription, IdentityToken)> for SessionInfo {
 pub use client::Client;
 pub use connect::SessionConnectMode;
 pub use event_loop::{SessionActivity, SessionEventLoop, SessionPollResult};
+use log::{error, info};
 pub use services::attributes::{HistoryReadAction, HistoryUpdateAction};
 pub use services::subscriptions::{
     DataChangeCallback, EventCallback, MonitoredItem, OnSubscriptionNotification, Subscription,
@@ -49,7 +50,7 @@ pub use session::Session;
 #[allow(unused)]
 macro_rules! session_warn {
     ($session: expr, $($arg:tt)*) =>  {
-        warn!("session:{} {}", $session.session_id(), format!($($arg)*));
+        log::warn!("session:{} {}", $session.session_id(), format!($($arg)*));
     }
 }
 #[allow(unused)]
@@ -58,7 +59,7 @@ pub(crate) use session_warn;
 #[allow(unused)]
 macro_rules! session_error {
     ($session: expr, $($arg:tt)*) =>  {
-        error!("session:{} {}", $session.session_id(), format!($($arg)*));
+        log::error!("session:{} {}", $session.session_id(), format!($($arg)*));
     }
 }
 #[allow(unused)]
@@ -67,7 +68,7 @@ pub(crate) use session_error;
 #[allow(unused)]
 macro_rules! session_debug {
     ($session: expr, $($arg:tt)*) =>  {
-        debug!("session:{} {}", $session.session_id(), format!($($arg)*));
+        log::debug!("session:{} {}", $session.session_id(), format!($($arg)*));
     }
 }
 #[allow(unused)]
@@ -76,16 +77,14 @@ pub(crate) use session_debug;
 #[allow(unused)]
 macro_rules! session_trace {
     ($session: expr, $($arg:tt)*) =>  {
-        trace!("session:{} {}", $session.session_id(), format!($($arg)*));
+        log::trace!("session:{} {}", $session.session_id(), format!($($arg)*));
     }
 }
 #[allow(unused)]
 pub(crate) use session_trace;
 
-use crate::{
-    core::supported_message::SupportedMessage,
-    types::{EndpointDescription, ResponseHeader, StatusCode},
-};
+use opcua_core::SupportedMessage;
+use opcua_types::{EndpointDescription, ResponseHeader, StatusCode};
 
 use super::IdentityToken;
 

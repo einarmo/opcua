@@ -1,13 +1,12 @@
 use crate::{
-    client::{
-        session::{process_unexpected_response, session_debug, session_error},
-        Session,
-    },
-    core::supported_message::SupportedMessage,
-    types::{
-        CallMethodRequest, CallMethodResult, CallRequest, MethodId, NodeId, ObjectId, StatusCode,
-        Variant,
-    },
+    session::{process_unexpected_response, session_debug, session_error},
+    Session,
+};
+use log::error;
+use opcua_core::SupportedMessage;
+use opcua_types::{
+    CallMethodRequest, CallMethodResult, CallRequest, MethodId, NodeId, ObjectId, StatusCode,
+    Variant,
 };
 
 impl Session {

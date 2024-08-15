@@ -702,6 +702,7 @@ dependencies = [
  "lazy_static",
  "log 0.4.22",
  "opcua",
+ "opcua-client",
  "opcua-core",
  "opcua-crypto",
  "opcua-types",
@@ -733,6 +734,24 @@ dependencies = [
  "opcua",
  "tokio",
  "uci",
+]
+
+[[package]]
+name = "opcua-client"
+version = "0.13.0"
+dependencies = [
+ "arc-swap",
+ "chrono",
+ "futures",
+ "lazy_static",
+ "log 0.4.22",
+ "opcua-core",
+ "opcua-crypto",
+ "opcua-types",
+ "parking_lot",
+ "serde",
+ "tokio",
+ "tokio-util",
 ]
 
 [[package]]

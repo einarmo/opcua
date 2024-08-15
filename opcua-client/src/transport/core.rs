@@ -3,16 +3,18 @@ use std::sync::Arc;
 use std::time::Instant;
 
 use futures::future::Either;
+use log::{debug, error, info};
+use opcua_core::{trace_read_lock, trace_write_lock};
 use parking_lot::RwLock;
 
-use crate::core::comms::buffer::SendBuffer;
-use crate::core::comms::message_chunk::MessageIsFinalType;
-use crate::core::comms::{
+use opcua_core::comms::buffer::SendBuffer;
+use opcua_core::comms::message_chunk::MessageIsFinalType;
+use opcua_core::comms::{
     chunker::Chunker, message_chunk::MessageChunk, message_chunk_info::ChunkInfo,
     secure_channel::SecureChannel, tcp_codec::Message,
 };
-use crate::core::supported_message::SupportedMessage;
-use crate::types::{EncodingError, StatusCode};
+use opcua_core::supported_message::SupportedMessage;
+use opcua_types::{EncodingError, StatusCode};
 
 #[derive(Debug)]
 struct MessageChunkWithChunkInfo {

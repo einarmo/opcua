@@ -8,6 +8,7 @@ use std::{
 };
 
 use crypto::{random, security_policy::SecurityPolicy};
+use opcua_core::{trace_read_lock, trace_write_lock};
 use parking_lot::RwLock;
 use tokio::sync::Notify;
 

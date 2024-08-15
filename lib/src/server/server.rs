@@ -10,6 +10,7 @@ use std::{
 
 use arc_swap::ArcSwap;
 use futures::{future::Either, never::Never, stream::FuturesUnordered, FutureExt, StreamExt};
+use opcua_core::{trace_read_lock, trace_write_lock};
 use tokio::{
     net::TcpListener,
     sync::Notify,
