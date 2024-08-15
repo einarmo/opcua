@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 pub struct Limits {
     /// Max array length in elements

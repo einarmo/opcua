@@ -56,7 +56,7 @@ impl GeneratedOutput for GeneratedItem {
 pub struct CodeGenItemConfig {
     pub enums_single_file: bool,
     pub structs_single_file: bool,
-    pub opcua_crate_path: String,
+    pub opcua_types_path: String,
 }
 
 pub struct CodeGenerator {
@@ -245,7 +245,7 @@ impl CodeGenerator {
             }
         });
 
-        let opcua_path: Path = syn::parse_str(&self.config.opcua_crate_path)?;
+        let opcua_path: Path = syn::parse_str(&self.config.opcua_types_path)?;
 
         let mut impls = Vec::new();
         let size: usize = item.size.try_into().map_err(|_| {
@@ -254,16 +254,16 @@ impl CodeGenerator {
         let write_method = Ident::new(&format!("write_{}", item.typ), Span::call_site());
 
         impls.push(parse_quote! {
-            impl #opcua_path::types::BinaryEncoder for #enum_ident {
+            impl #opcua_path::BinaryEncoder for #enum_ident {
                 fn byte_len(&self) -> usize {
                     #size
                 }
 
-                fn encode<S: std::io::Write>(&self, stream: &mut S) -> #opcua_path::types::EncodingResult<usize> {
-                    #opcua_path::types::#write_method(stream, self.bits())
+                fn encode<S: std::io::Write>(&self, stream: &mut S) -> #opcua_path::EncodingResult<usize> {
+                    #opcua_path::#write_method(stream, self.bits())
                 }
 
-                fn decode<S: std::io::Read>(stream: &mut S, decoding_options: &#opcua_path::types::DecodingOptions) -> #opcua_path::types::EncodingResult<Self> {
+                fn decode<S: std::io::Read>(stream: &mut S, decoding_options: &#opcua_path::DecodingOptions) -> #opcua_path::EncodingResult<Self> {
                     Ok(Self::from_bits_truncate(#ty::decode(stream, decoding_options)?))
                 }
             }
@@ -407,7 +407,7 @@ impl CodeGenerator {
             })
         }
 
-        let opcua_path: Path = syn::parse_str(&self.config.opcua_crate_path)?;
+        let opcua_path: Path = syn::parse_str(&self.config.opcua_types_path)?;
 
         if item.values.iter().any(|f| f.name == "Invalid") {
             try_from_arms = quote! {
@@ -417,7 +417,7 @@ impl CodeGenerator {
         } else {
             try_from_arms = quote! {
                 #try_from_arms
-                _ => return Err(#opcua_path::types::StatusCode::BadUnexpectedError),
+                _ => return Err(#opcua_path::StatusCode::BadUnexpectedError),
             };
         }
 
@@ -427,7 +427,7 @@ impl CodeGenerator {
         // TryFrom impl
         impls.push(parse_quote! {
             impl TryFrom<#ty> for #enum_ident {
-                type Error = #opcua_path::types::StatusCode;
+                type Error = #opcua_path::StatusCode;
 
                 fn try_from(value: #ty) -> Result<Self, <Self as TryFrom<#ty>>::Error> {
                     Ok(match value {
@@ -445,17 +445,17 @@ impl CodeGenerator {
         let read_method = Ident::new(&format!("read_{}", item.typ), Span::call_site());
 
         impls.push(parse_quote! {
-            impl #opcua_path::types::BinaryEncoder for #enum_ident {
+            impl #opcua_path::BinaryEncoder for #enum_ident {
                 fn byte_len(&self) -> usize {
                     #size
                 }
 
-                fn encode<S: std::io::Write>(&self, stream: &mut S) -> #opcua_path::types::EncodingResult<usize> {
-                    #opcua_path::types::#write_method(stream, *self as #ty)
+                fn encode<S: std::io::Write>(&self, stream: &mut S) -> #opcua_path::EncodingResult<usize> {
+                    #opcua_path::#write_method(stream, *self as #ty)
                 }
 
-                fn decode<S: std::io::Read>(stream: &mut S, _: &#opcua_path::types::DecodingOptions) -> #opcua_path::types::EncodingResult<Self> {
-                    let value = #opcua_path::types::#read_method(stream)?;
+                fn decode<S: std::io::Read>(stream: &mut S, _: &#opcua_path::DecodingOptions) -> #opcua_path::EncodingResult<Self> {
+                    let value = #opcua_path::#read_method(stream)?;
                     Ok(Self::try_from(value)?)
                 }
             }
@@ -527,7 +527,7 @@ impl CodeGenerator {
         }
 
         // Generate impls
-        let opcua_path: Path = syn::parse_str(&self.config.opcua_crate_path)?;
+        let opcua_path: Path = syn::parse_str(&self.config.opcua_types_path)?;
 
         // Has message info
         // TODO: This won't work for custom types. It may be possible
@@ -543,9 +543,9 @@ impl CodeGenerator {
                 Span::call_site(),
             );
             impls.push(parse_quote! {
-                impl #opcua_path::types::MessageInfo for #struct_ident {
-                    fn object_id(&self) -> #opcua_path::types::ObjectId {
-                        #opcua_path::types::ObjectId::#encoding_ident
+                impl #opcua_path::MessageInfo for #struct_ident {
+                    fn object_id(&self) -> #opcua_path::ObjectId {
+                        #opcua_path::ObjectId::#encoding_ident
                     }
                 }
             });
@@ -590,12 +590,12 @@ impl CodeGenerator {
                 });
                 if has_context {
                     decode_impl.extend(quote! {
-                        let #ident = <#ty as #opcua_path::types::BinaryEncoder>::decode(stream, decoding_options)
+                        let #ident = <#ty as #opcua_path::BinaryEncoder>::decode(stream, decoding_options)
                             .map_err(|e| e.with_request_handle(__request_handle))?;
                     })
                 } else {
                     decode_impl.extend(quote! {
-                        let #ident = <#ty as #opcua_path::types::BinaryEncoder>::decode(stream, decoding_options)?;
+                        let #ident = <#ty as #opcua_path::BinaryEncoder>::decode(stream, decoding_options)?;
                     });
                 }
 
@@ -629,18 +629,18 @@ impl CodeGenerator {
         }
 
         impls.push(parse_quote! {
-            impl #opcua_path::types::BinaryEncoder for #struct_ident {
+            impl #opcua_path::BinaryEncoder for #struct_ident {
                 fn byte_len(&self) -> usize {
                     #len_impl
                 }
 
                 #[allow(unused_variables)]
-                fn encode<S: std::io::Write>(&self, stream: &mut S) -> #opcua_path::types::EncodingResult<usize> {
+                fn encode<S: std::io::Write>(&self, stream: &mut S) -> #opcua_path::EncodingResult<usize> {
                     #encode_impl
                 }
 
                 #[allow(unused_variables)]
-                fn decode<S: std::io::Read>(stream: &mut S, decoding_options: &#opcua_path::types::DecodingOptions) -> #opcua_path::types::EncodingResult<Self> {
+                fn decode<S: std::io::Read>(stream: &mut S, decoding_options: &#opcua_path::DecodingOptions) -> #opcua_path::EncodingResult<Self> {
                     #decode_impl
                     #decode_build
                 }

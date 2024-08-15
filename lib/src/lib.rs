@@ -6,8 +6,6 @@ extern crate log;
 extern crate tempdir;
 #[macro_use]
 extern crate bitflags;
-#[macro_use]
-extern crate serde_derive;
 #[cfg(test)]
 extern crate serde_json;
 #[macro_use]
@@ -71,7 +69,8 @@ pub mod core;
 pub mod crypto;
 #[cfg(feature = "server")]
 pub mod server;
-pub mod types;
+
+pub use opcua_types as types;
 
 // Turns hex string to array bytes. Function was extracted & adapted from the deprecated
 // crate rustc-serialize. Function panics if the string is invalid.

@@ -6,8 +6,9 @@ opcua_crate_path: crate
 targets:
   - type: types
     file_path: tools/schema/schemas/1.0.4/Opc.Ua.Types.bsd
-    output_dir: lib/src/types/service_types
+    output_dir: opcua-types/src/service_types
     enums_single_file: true
+    opcua_types_path: crate
     default_excluded:
       - AnonymousIdentityToken
   - type: nodes

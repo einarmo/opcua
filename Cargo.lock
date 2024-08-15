@@ -705,13 +705,13 @@ dependencies = [
  "libc",
  "log 0.4.22",
  "opcua",
+ "opcua-types",
  "openssl",
  "openssl-sys",
  "parking_lot",
  "regex",
  "rumqttc",
  "serde",
- "serde_derive",
  "serde_json",
  "serde_yaml",
  "tempdir",
@@ -820,6 +820,22 @@ dependencies = [
  "log 0.4.22",
  "opcua",
  "tokio",
+]
+
+[[package]]
+name = "opcua-types"
+version = "0.13.0"
+dependencies = [
+ "base64 0.21.7",
+ "bitflags",
+ "byteorder",
+ "chrono",
+ "lazy_static",
+ "log 0.4.22",
+ "regex",
+ "serde",
+ "serde_json",
+ "uuid",
 ]
 
 [[package]]

@@ -59,45 +59,30 @@ impl ExternalType {
 
 pub fn basic_types_import_map(root: &str) -> HashMap<String, ExternalType> {
     [
-        ("UAString", ExternalType::new("types::string", true)),
-        ("ByteString", ExternalType::new("types::byte_string", true)),
-        ("XmlElement", ExternalType::new("types::string", true)),
-        ("Variant", ExternalType::new("types::variant", true)),
-        ("Guid", ExternalType::new("types::guid", true)),
-        (
-            "LocalizedText",
-            ExternalType::new("types::localized_text", true),
-        ),
-        (
-            "QualifiedName",
-            ExternalType::new("types::qualified_name", true),
-        ),
-        (
-            "DiagnosticInfo",
-            ExternalType::new("types::diagnostic_info", true),
-        ),
+        ("UAString", ExternalType::new("string", true)),
+        ("ByteString", ExternalType::new("byte_string", true)),
+        ("XmlElement", ExternalType::new("string", true)),
+        ("Variant", ExternalType::new("variant", true)),
+        ("Guid", ExternalType::new("guid", true)),
+        ("LocalizedText", ExternalType::new("localized_text", true)),
+        ("QualifiedName", ExternalType::new("qualified_name", true)),
+        ("DiagnosticInfo", ExternalType::new("diagnostic_info", true)),
         (
             "ExtensionObject",
-            ExternalType::new("types::extension_object", true),
+            ExternalType::new("extension_object", true),
         ),
-        ("Duration", ExternalType::new("types::data_types", true)),
-        ("UtcTime", ExternalType::new("types::data_types", true)),
-        (
-            "RequestHeader",
-            ExternalType::new("types::request_header", true),
-        ),
-        (
-            "ResponseHeader",
-            ExternalType::new("types::response_header", true),
-        ),
+        ("Duration", ExternalType::new("data_types", true)),
+        ("UtcTime", ExternalType::new("data_types", true)),
+        ("RequestHeader", ExternalType::new("request_header", true)),
+        ("ResponseHeader", ExternalType::new("response_header", true)),
         (
             "ExpandedNodeId",
-            ExternalType::new("types::expanded_node_id", true),
+            ExternalType::new("expanded_node_id", true),
         ),
-        ("NodeId", ExternalType::new("types::node_id", true)),
-        ("DataValue", ExternalType::new("types::data_value", true)),
-        ("DateTime", ExternalType::new("types::date_time", true)),
-        ("StatusCode", ExternalType::new("types::status_code", true)),
+        ("NodeId", ExternalType::new("node_id", true)),
+        ("DataValue", ExternalType::new("data_value", true)),
+        ("DateTime", ExternalType::new("date_time", true)),
+        ("StatusCode", ExternalType::new("status_code", true)),
     ]
     .into_iter()
     .map(|(k, mut v)| {

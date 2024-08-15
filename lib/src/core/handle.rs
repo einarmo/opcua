@@ -4,6 +4,8 @@
 
 use std::sync::atomic::{AtomicU32, Ordering};
 
+use serde::Serialize;
+
 /// A simple handle factory for incrementing sequences of numbers.
 #[derive(Debug, Clone, Serialize)]
 pub struct Handle {

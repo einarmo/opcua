@@ -57,7 +57,11 @@ pub fn generate_types(
         CodeGenItemConfig {
             enums_single_file: target.enums_single_file,
             structs_single_file: target.structs_single_file,
-            opcua_crate_path: config.opcua_crate_path.clone(),
+            opcua_types_path: if let Some(path) = target.opcua_types_path.clone() {
+                path
+            } else {
+                format!("{}::types", config.opcua_crate_path)
+            },
         },
     );
 

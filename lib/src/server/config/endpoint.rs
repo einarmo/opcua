@@ -3,6 +3,8 @@ use std::{
     str::FromStr,
 };
 
+use serde::{Deserialize, Serialize};
+
 use crate::{crypto::SecurityPolicy, types::MessageSecurityMode};
 
 use super::server::{ServerUserToken, ANONYMOUS_USER_TOKEN_ID};
