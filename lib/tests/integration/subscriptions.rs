@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use super::utils::setup;
 use opcua::{
     client::OnSubscriptionNotification,
     server::address_space::{AccessLevel, UserAccessLevel, VariableBuilder},
@@ -10,9 +11,6 @@ use opcua::{
     },
 };
 use tokio::{sync::mpsc::UnboundedReceiver, time::timeout};
-use utils::setup;
-
-mod utils;
 
 #[derive(Clone)]
 struct ChannelNotifications {

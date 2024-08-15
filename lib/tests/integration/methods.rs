@@ -1,5 +1,6 @@
 use std::sync::{atomic::AtomicU64, Arc};
 
+use super::utils::setup;
 use opcua::{
     server::address_space::MethodBuilder,
     types::{
@@ -7,9 +8,6 @@ use opcua::{
         VariantTypeId,
     },
 };
-use utils::setup;
-
-mod utils;
 
 #[tokio::test]
 async fn call_trivial() {
