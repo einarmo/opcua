@@ -274,7 +274,7 @@ impl<'de> Deserialize<'de> for NodeId {
     }
 }
 
-impl BinaryEncoder<NodeId> for NodeId {
+impl BinaryEncoder for NodeId {
     fn byte_len(&self) -> usize {
         // Type determines the byte code
         let size: usize = match self.identifier {
@@ -370,7 +370,7 @@ impl BinaryEncoder<NodeId> for NodeId {
             }
             _ => {
                 error!("Unrecognized node id type {}", identifier);
-                return Err(StatusCode::BadDecodingError);
+                return Err(StatusCode::BadDecodingError.into());
             }
         };
         Ok(node_id)

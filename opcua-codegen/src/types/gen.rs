@@ -254,7 +254,7 @@ impl CodeGenerator {
         let write_method = Ident::new(&format!("write_{}", item.typ), Span::call_site());
 
         impls.push(parse_quote! {
-            impl #opcua_path::types::BinaryEncoder<#enum_ident> for #enum_ident {
+            impl #opcua_path::types::BinaryEncoder for #enum_ident {
                 fn byte_len(&self) -> usize {
                     #size
                 }
@@ -445,7 +445,7 @@ impl CodeGenerator {
         let read_method = Ident::new(&format!("read_{}", item.typ), Span::call_site());
 
         impls.push(parse_quote! {
-            impl #opcua_path::types::BinaryEncoder<#enum_ident> for #enum_ident {
+            impl #opcua_path::types::BinaryEncoder for #enum_ident {
                 fn byte_len(&self) -> usize {
                     #size
                 }
@@ -555,6 +555,8 @@ impl CodeGenerator {
         let mut encode_impl;
         let mut decode_impl = quote! {};
         let mut decode_build = quote! {};
+
+        let mut has_context = false;
         // Special case an empty struct
         if item.fields.is_empty() {
             len_impl = quote! { 0usize };
@@ -586,13 +588,32 @@ impl CodeGenerator {
                 encode_impl.extend(quote! {
                     size += self.#ident.encode(stream)?;
                 });
-                decode_impl.extend(quote! {
-                    let #ident = <#ty as #opcua_path::types::BinaryEncoder<#ty>>::decode(stream, decoding_options)?;
-                });
+                if has_context {
+                    decode_impl.extend(quote! {
+                        let #ident = <#ty as #opcua_path::types::BinaryEncoder>::decode(stream, decoding_options)
+                            .map_err(|e| e.with_request_handle(__request_handle))?;
+                    })
+                } else {
+                    decode_impl.extend(quote! {
+                        let #ident = <#ty as #opcua_path::types::BinaryEncoder>::decode(stream, decoding_options)?;
+                    });
+                }
 
                 decode_build.extend(quote! {
                     #ident,
                 });
+
+                if field.name == "request_header" {
+                    decode_impl.extend(quote! {
+                        let __request_handle = request_header.request_handle;
+                    });
+                    has_context = true;
+                } else if field.name == "response_header" {
+                    decode_impl.extend(quote! {
+                        let __request_handle = response_header.request_handle;
+                    });
+                    has_context = true;
+                }
             }
             len_impl.extend(quote! {
                 size
@@ -608,7 +629,7 @@ impl CodeGenerator {
         }
 
         impls.push(parse_quote! {
-            impl #opcua_path::types::BinaryEncoder<#struct_ident> for #struct_ident {
+            impl #opcua_path::types::BinaryEncoder for #struct_ident {
                 fn byte_len(&self) -> usize {
                     #len_impl
                 }

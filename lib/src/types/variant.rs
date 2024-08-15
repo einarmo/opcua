@@ -485,7 +485,7 @@ try_from_variant_to_array_impl!(u64, UInt64);
 try_from_variant_to_array_impl!(f32, Float);
 try_from_variant_to_array_impl!(f64, Double);
 
-impl BinaryEncoder<Variant> for Variant {
+impl BinaryEncoder for Variant {
     fn byte_len(&self) -> usize {
         let mut size: usize = 0;
 
@@ -610,13 +610,15 @@ impl BinaryEncoder<Variant> for Variant {
             let array_length = i32::decode(stream, decoding_options)?;
             if array_length < -1 {
                 error!("Invalid array_length {}", array_length);
-                return Err(StatusCode::BadDecodingError);
+                return Err(StatusCode::BadDecodingError.into());
             }
 
             // null array of type for length 0 and -1 so it doesn't fail for length 0
             if array_length <= 0 {
                 let value_type_id = VariantTypeId::from_encoding_mask(element_encoding_mask)?;
-                return Array::new_multi(value_type_id, Vec::new(), Vec::new()).map(Variant::from);
+                return Ok(
+                    Array::new_multi(value_type_id, Vec::new(), Vec::new()).map(Variant::from)?
+                );
             }
             array_length
         } else {
@@ -628,7 +630,7 @@ impl BinaryEncoder<Variant> for Variant {
             // Array length in total cannot exceed max array length
             let array_length = array_length as usize;
             if array_length > decoding_options.max_array_length {
-                return Err(StatusCode::BadEncodingLimitsExceeded);
+                return Err(StatusCode::BadEncodingLimitsExceeded.into());
             }
 
             let mut values: Vec<Variant> = Vec::with_capacity(array_length);
@@ -644,7 +646,7 @@ impl BinaryEncoder<Variant> for Variant {
                 if let Some(dimensions) = read_array(stream, decoding_options)? {
                     if dimensions.iter().any(|d| *d == 0) {
                         error!("Invalid array dimensions");
-                        Err(StatusCode::BadDecodingError)
+                        Err(StatusCode::BadDecodingError.into())
                     } else {
                         // This looks clunky but it's to prevent a panic from malicious data
                         // causing an overflow panic
@@ -654,7 +656,7 @@ impl BinaryEncoder<Variant> for Variant {
                                 array_dimensions_length = v;
                             } else {
                                 error!("Array dimension overflow!");
-                                return Err(StatusCode::BadDecodingError);
+                                return Err(StatusCode::BadDecodingError.into());
                             }
                         }
                         if array_dimensions_length != array_length as u32 {
@@ -662,23 +664,24 @@ impl BinaryEncoder<Variant> for Variant {
                                 "Array dimensions does not match array length {}",
                                 array_length
                             );
-                            Err(StatusCode::BadDecodingError)
+                            Err(StatusCode::BadDecodingError.into())
                         } else {
                             // Note Array::new_multi can fail
-                            Array::new_multi(value_type_id, values, dimensions).map(Variant::from)
+                            Ok(Array::new_multi(value_type_id, values, dimensions)
+                                .map(Variant::from)?)
                         }
                     }
                 } else {
                     error!("No array dimensions despite the bit flag being set");
-                    Err(StatusCode::BadDecodingError)
+                    Err(StatusCode::BadDecodingError.into())
                 }
             } else {
                 // Note Array::new_single can fail
-                Array::new(value_type_id, values).map(Variant::from)
+                Ok(Array::new(value_type_id, values).map(Variant::from)?)
             }
         } else if encoding_mask & EncodingMask::ARRAY_DIMENSIONS_BIT != 0 {
             error!("Array dimensions bit specified without any values");
-            Err(StatusCode::BadDecodingError)
+            Err(StatusCode::BadDecodingError.into())
         } else {
             // Read a single variant
             Variant::decode_variant_value(stream, element_encoding_mask, decoding_options)
@@ -786,7 +789,7 @@ impl Variant {
             Variant::DiagnosticInfo(value) => value.encode(stream),
             _ => {
                 warn!("Cannot encode this variant value type (probably nested array)");
-                Err(StatusCode::BadEncodingError)
+                Err(StatusCode::BadEncodingError.into())
             }
         }
     }

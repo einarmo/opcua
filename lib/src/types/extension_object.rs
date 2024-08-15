@@ -51,7 +51,7 @@ impl Default for ExtensionObject {
     }
 }
 
-impl BinaryEncoder<ExtensionObject> for ExtensionObject {
+impl BinaryEncoder for ExtensionObject {
     fn byte_len(&self) -> usize {
         let mut size = self.node_id.byte_len();
         size += match self.body {
@@ -105,7 +105,7 @@ impl BinaryEncoder<ExtensionObject> for ExtensionObject {
             }
             _ => {
                 error!("Invalid encoding type {} in stream", encoding_type);
-                return Err(StatusCode::BadDecodingError);
+                return Err(StatusCode::BadDecodingError.into());
             }
         };
         Ok(ExtensionObject { node_id, body })
@@ -144,7 +144,7 @@ impl ExtensionObject {
     pub fn from_encodable<N, T>(node_id: N, encodable: &T) -> ExtensionObject
     where
         N: Into<NodeId>,
-        T: BinaryEncoder<T>,
+        T: BinaryEncoder,
     {
         // Serialize to extension object
         let mut stream = Cursor::new(vec![0u8; encodable.byte_len()]);
@@ -160,7 +160,7 @@ impl ExtensionObject {
     /// the data. Errors result in a decoding error.
     pub fn decode_inner<T>(&self, decoding_options: &DecodingOptions) -> EncodingResult<T>
     where
-        T: BinaryEncoder<T>,
+        T: BinaryEncoder,
     {
         match self.body {
             ExtensionObjectEncoding::ByteString(ref byte_string) => {
@@ -169,12 +169,12 @@ impl ExtensionObject {
                     let mut stream = Cursor::new(value);
                     T::decode(&mut stream, decoding_options)
                 } else {
-                    Err(StatusCode::BadDecodingError)
+                    Err(StatusCode::BadDecodingError.into())
                 }
             }
             _ => {
                 error!("decode_inner called on an unsupported ExtensionObject type");
-                Err(StatusCode::BadDecodingError)
+                Err(StatusCode::BadDecodingError.into())
             }
         }
     }

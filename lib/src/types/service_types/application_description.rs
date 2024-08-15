@@ -20,7 +20,7 @@ impl crate::types::MessageInfo for ApplicationDescription {
         crate::types::ObjectId::ApplicationDescription_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<ApplicationDescription> for ApplicationDescription {
+impl crate::types::BinaryEncoder for ApplicationDescription {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.application_uri.byte_len();
@@ -33,7 +33,10 @@ impl crate::types::BinaryEncoder<ApplicationDescription> for ApplicationDescript
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.application_uri.encode(stream)?;
         size += self.product_uri.encode(stream)?;
@@ -49,30 +52,33 @@ impl crate::types::BinaryEncoder<ApplicationDescription> for ApplicationDescript
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let application_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let product_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let application_name =
-            <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-                crate::types::localized_text::LocalizedText,
-            >>::decode(stream, decoding_options)?;
-        let application_type = <super::enums::ApplicationType as crate::types::BinaryEncoder<
-            super::enums::ApplicationType,
-        >>::decode(stream, decoding_options)?;
-        let gateway_server_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let discovery_profile_uri =
-            <crate::types::string::UAString as crate::types::BinaryEncoder<
-                crate::types::string::UAString,
-            >>::decode(stream, decoding_options)?;
-        let discovery_urls =
-            <Option<Vec<crate::types::string::UAString>> as crate::types::BinaryEncoder<
-                Option<Vec<crate::types::string::UAString>>,
-            >>::decode(stream, decoding_options)?;
+        let application_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let product_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let application_name = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let application_type = <super::enums::ApplicationType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let gateway_server_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let discovery_profile_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let discovery_urls = <Option<
+            Vec<crate::types::string::UAString>,
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             application_uri,
             product_uri,

@@ -9,14 +9,16 @@
 pub struct RegisterServer2Request {
     pub request_header: crate::types::request_header::RequestHeader,
     pub server: super::registered_server::RegisteredServer,
-    pub discovery_configuration: Option<Vec<crate::types::extension_object::ExtensionObject>>,
+    pub discovery_configuration: Option<
+        Vec<crate::types::extension_object::ExtensionObject>,
+    >,
 }
 impl crate::types::MessageInfo for RegisterServer2Request {
     fn object_id(&self) -> crate::types::ObjectId {
         crate::types::ObjectId::RegisterServer2Request_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<RegisterServer2Request> for RegisterServer2Request {
+impl crate::types::BinaryEncoder for RegisterServer2Request {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -25,7 +27,10 @@ impl crate::types::BinaryEncoder<RegisterServer2Request> for RegisterServer2Requ
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.request_header.encode(stream)?;
         size += self.server.encode(stream)?;
@@ -37,18 +42,20 @@ impl crate::types::BinaryEncoder<RegisterServer2Request> for RegisterServer2Requ
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header =
-            <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-                crate::types::request_header::RequestHeader,
-            >>::decode(stream, decoding_options)?;
-        let server = <super::registered_server::RegisteredServer as crate::types::BinaryEncoder<
-            super::registered_server::RegisteredServer,
-        >>::decode(stream, decoding_options)?;
+        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let __request_handle = request_header.request_handle;
+        let server = <super::registered_server::RegisteredServer as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let discovery_configuration = <Option<
             Vec<crate::types::extension_object::ExtensionObject>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::extension_object::ExtensionObject>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             server,

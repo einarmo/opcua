@@ -23,7 +23,7 @@ use crate::types::encoding::*;
 // Float    -> f32
 // Double   -> f64
 
-impl BinaryEncoder<bool> for bool {
+impl BinaryEncoder for bool {
     fn byte_len(&self) -> usize {
         1
     }
@@ -38,7 +38,7 @@ impl BinaryEncoder<bool> for bool {
     }
 }
 
-impl BinaryEncoder<i8> for i8 {
+impl BinaryEncoder for i8 {
     fn byte_len(&self) -> usize {
         1
     }
@@ -53,7 +53,7 @@ impl BinaryEncoder<i8> for i8 {
 }
 
 /// An unsigned byt integer value between 0 and 255.
-impl BinaryEncoder<u8> for u8 {
+impl BinaryEncoder for u8 {
     fn byte_len(&self) -> usize {
         1
     }
@@ -68,7 +68,7 @@ impl BinaryEncoder<u8> for u8 {
 }
 
 /// A signed integer value between −32768 and 32767.
-impl BinaryEncoder<i16> for i16 {
+impl BinaryEncoder for i16 {
     fn byte_len(&self) -> usize {
         2
     }
@@ -83,7 +83,7 @@ impl BinaryEncoder<i16> for i16 {
 }
 
 /// An unsigned integer value between 0 and 65535.
-impl BinaryEncoder<u16> for u16 {
+impl BinaryEncoder for u16 {
     fn byte_len(&self) -> usize {
         2
     }
@@ -98,7 +98,7 @@ impl BinaryEncoder<u16> for u16 {
 }
 
 /// A signed integer value between −2147483648 and 2147483647.
-impl BinaryEncoder<i32> for i32 {
+impl BinaryEncoder for i32 {
     fn byte_len(&self) -> usize {
         4
     }
@@ -113,7 +113,7 @@ impl BinaryEncoder<i32> for i32 {
 }
 
 /// An unsigned integer value between 0 and 4294967295.
-impl BinaryEncoder<u32> for u32 {
+impl BinaryEncoder for u32 {
     fn byte_len(&self) -> usize {
         4
     }
@@ -128,7 +128,7 @@ impl BinaryEncoder<u32> for u32 {
 }
 
 /// A signed integer value between −9223372036854775808 and 9223372036854775807.
-impl BinaryEncoder<i64> for i64 {
+impl BinaryEncoder for i64 {
     fn byte_len(&self) -> usize {
         8
     }
@@ -143,7 +143,7 @@ impl BinaryEncoder<i64> for i64 {
 }
 
 /// An unsigned integer value between 0 and 18446744073709551615.
-impl BinaryEncoder<u64> for u64 {
+impl BinaryEncoder for u64 {
     fn byte_len(&self) -> usize {
         8
     }
@@ -158,7 +158,7 @@ impl BinaryEncoder<u64> for u64 {
 }
 
 /// An IEEE single precision (32 bit) floating point value.
-impl BinaryEncoder<f32> for f32 {
+impl BinaryEncoder for f32 {
     fn byte_len(&self) -> usize {
         4
     }
@@ -173,7 +173,7 @@ impl BinaryEncoder<f32> for f32 {
 }
 
 /// An IEEE double precision (64 bit) floating point value.
-impl BinaryEncoder<f64> for f64 {
+impl BinaryEncoder for f64 {
     fn byte_len(&self) -> usize {
         8
     }

@@ -13,7 +13,7 @@ use crate::core::{comms::secure_channel::SecureChannel, supported_message::Suppo
 
 pub fn serialize_test_and_return<T>(value: T) -> T
 where
-    T: BinaryEncoder<T> + Debug + PartialEq,
+    T: BinaryEncoder + Debug + PartialEq,
 {
     // Ask the struct for its byte length
     let byte_len = value.byte_len();
@@ -45,7 +45,7 @@ where
 
 pub fn serialize_test<T>(value: T)
 where
-    T: BinaryEncoder<T> + Debug + PartialEq,
+    T: BinaryEncoder + Debug + PartialEq,
 {
     let _ = serialize_test_and_return(value);
 }

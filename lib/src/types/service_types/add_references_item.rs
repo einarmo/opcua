@@ -19,7 +19,7 @@ impl crate::types::MessageInfo for AddReferencesItem {
         crate::types::ObjectId::AddReferencesItem_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<AddReferencesItem> for AddReferencesItem {
+impl crate::types::BinaryEncoder for AddReferencesItem {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.source_node_id.byte_len();
@@ -31,7 +31,10 @@ impl crate::types::BinaryEncoder<AddReferencesItem> for AddReferencesItem {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.source_node_id.encode(stream)?;
         size += self.reference_type_id.encode(stream)?;
@@ -46,24 +49,30 @@ impl crate::types::BinaryEncoder<AddReferencesItem> for AddReferencesItem {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let source_node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let reference_type_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let is_forward =
-            <bool as crate::types::BinaryEncoder<bool>>::decode(stream, decoding_options)?;
-        let target_server_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let target_node_id =
-            <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder<
-                crate::types::expanded_node_id::ExpandedNodeId,
-            >>::decode(stream, decoding_options)?;
-        let target_node_class = <super::enums::NodeClass as crate::types::BinaryEncoder<
-            super::enums::NodeClass,
-        >>::decode(stream, decoding_options)?;
+        let source_node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let reference_type_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let is_forward = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let target_server_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let target_node_id = <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let target_node_class = <super::enums::NodeClass as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             source_node_id,
             reference_type_id,

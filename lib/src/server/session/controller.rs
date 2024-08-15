@@ -176,6 +176,14 @@ impl SessionController {
                                 self.transport.set_closing();
                             }
                         }
+                        TransportPollResult::RecoverableError(s, id, handle) => {
+                            error!("Non-fatal transport error: {s}, with request id {id}, request handle {handle}");
+                            let msg = ServiceFault::new(handle, s).into();
+                            if let Err(e) = self.transport.enqueue_message_for_send(&mut self.channel, msg, id) {
+                                error!("Failed to send response: {e}");
+                                self.transport.set_closing();
+                            }
+                        }
                         TransportPollResult::Error(s) => {
                             error!("Fatal transport error: {s}");
                             if !self.transport.is_closing() {

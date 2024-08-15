@@ -20,7 +20,7 @@ impl crate::types::MessageInfo for AddNodesItem {
         crate::types::ObjectId::AddNodesItem_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<AddNodesItem> for AddNodesItem {
+impl crate::types::BinaryEncoder for AddNodesItem {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.parent_node_id.byte_len();
@@ -33,7 +33,10 @@ impl crate::types::BinaryEncoder<AddNodesItem> for AddNodesItem {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.parent_node_id.encode(stream)?;
         size += self.reference_type_id.encode(stream)?;
@@ -49,32 +52,34 @@ impl crate::types::BinaryEncoder<AddNodesItem> for AddNodesItem {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let parent_node_id =
-            <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder<
-                crate::types::expanded_node_id::ExpandedNodeId,
-            >>::decode(stream, decoding_options)?;
-        let reference_type_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let requested_new_node_id =
-            <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder<
-                crate::types::expanded_node_id::ExpandedNodeId,
-            >>::decode(stream, decoding_options)?;
-        let browse_name =
-            <crate::types::qualified_name::QualifiedName as crate::types::BinaryEncoder<
-                crate::types::qualified_name::QualifiedName,
-            >>::decode(stream, decoding_options)?;
-        let node_class = <super::enums::NodeClass as crate::types::BinaryEncoder<
-            super::enums::NodeClass,
-        >>::decode(stream, decoding_options)?;
-        let node_attributes =
-            <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
-                crate::types::extension_object::ExtensionObject,
-            >>::decode(stream, decoding_options)?;
-        let type_definition =
-            <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder<
-                crate::types::expanded_node_id::ExpandedNodeId,
-            >>::decode(stream, decoding_options)?;
+        let parent_node_id = <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let reference_type_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let requested_new_node_id = <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let browse_name = <crate::types::qualified_name::QualifiedName as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let node_class = <super::enums::NodeClass as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let node_attributes = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let type_definition = <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             parent_node_id,
             reference_type_id,

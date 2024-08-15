@@ -92,7 +92,7 @@ impl<'de> Deserialize<'de> for UAString {
     }
 }
 
-impl BinaryEncoder<UAString> for UAString {
+impl BinaryEncoder for UAString {
     fn byte_len(&self) -> usize {
         // Length plus the actual string length in bytes for a non-null string.
         4 + if self.value.is_none() {
@@ -124,13 +124,13 @@ impl BinaryEncoder<UAString> for UAString {
             Ok(UAString::null())
         } else if len < -1 {
             error!("String buf length is a negative number {}", len);
-            Err(StatusCode::BadDecodingError)
+            Err(StatusCode::BadDecodingError.into())
         } else if len as usize > decoding_options.max_string_length {
             error!(
                 "String buf length {} exceeds decoding limit {}",
                 len, decoding_options.max_string_length
             );
-            Err(StatusCode::BadDecodingError)
+            Err(StatusCode::BadDecodingError.into())
         } else {
             // Create a buffer filled with zeroes and read the string over the top
             let mut buf = vec![0u8; len as usize];

@@ -61,13 +61,14 @@ impl FilterType {
                     None,
                     filter
                         .decode_inner::<DataChangeFilter>(decoding_options)
-                        .map(FilterType::DataChangeFilter),
+                        .map(FilterType::DataChangeFilter)
+                        .map_err(|e| e.status()),
                 ),
                 ObjectId::EventFilter_Encoding_DefaultBinary => {
                     let r = filter.decode_inner::<EventFilter>(decoding_options);
                     let raw_filter = match r {
                         Ok(filter) => filter,
-                        Err(e) => return (None, Err(e)),
+                        Err(e) => return (None, Err(e.into())),
                     };
                     let (res, filter_res) = ParsedEventFilter::new(raw_filter, type_tree);
                     (Some(res), filter_res.map(FilterType::EventFilter))

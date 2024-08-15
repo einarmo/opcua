@@ -12,7 +12,7 @@ pub struct UpdateEventDetails {
     pub filter: super::event_filter::EventFilter,
     pub event_data: Option<Vec<super::history_event_field_list::HistoryEventFieldList>>,
 }
-impl crate::types::BinaryEncoder<UpdateEventDetails> for UpdateEventDetails {
+impl crate::types::BinaryEncoder for UpdateEventDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.node_id.byte_len();
@@ -22,7 +22,10 @@ impl crate::types::BinaryEncoder<UpdateEventDetails> for UpdateEventDetails {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.node_id.encode(stream)?;
         size += self.perform_insert_replace.encode(stream)?;
@@ -35,21 +38,21 @@ impl crate::types::BinaryEncoder<UpdateEventDetails> for UpdateEventDetails {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let perform_insert_replace =
-            <super::enums::PerformUpdateType as crate::types::BinaryEncoder<
-                super::enums::PerformUpdateType,
-            >>::decode(stream, decoding_options)?;
-        let filter = <super::event_filter::EventFilter as crate::types::BinaryEncoder<
-            super::event_filter::EventFilter,
-        >>::decode(stream, decoding_options)?;
+        let node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let perform_insert_replace = <super::enums::PerformUpdateType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let filter = <super::event_filter::EventFilter as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let event_data = <Option<
             Vec<super::history_event_field_list::HistoryEventFieldList>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::history_event_field_list::HistoryEventFieldList>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             node_id,
             perform_insert_replace,

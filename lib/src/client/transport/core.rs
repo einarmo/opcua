@@ -12,7 +12,7 @@ use crate::core::comms::{
     secure_channel::SecureChannel, tcp_codec::Message,
 };
 use crate::core::supported_message::SupportedMessage;
-use crate::types::StatusCode;
+use crate::types::{EncodingError, StatusCode};
 
 #[derive(Debug)]
 struct MessageChunkWithChunkInfo {
@@ -46,6 +46,7 @@ pub enum TransportPollResult {
     OutgoingMessage,
     OutgoingMessageSent,
     IncomingMessage,
+    RecoverableError(StatusCode),
     Closed(StatusCode),
 }
 
@@ -131,6 +132,12 @@ impl TransportState {
             Ok(())
         } else {
             Err(status)
+        }
+    }
+
+    pub fn message_send_failed(&mut self, request_id: u32, err: StatusCode) {
+        if let Some(message_state) = self.message_states.remove(&request_id) {
+            let _ = message_state.callback.send(Err(err));
         }
     }
 
@@ -220,7 +227,7 @@ impl TransportState {
     fn turn_received_chunks_into_message(
         &mut self,
         chunks: &[MessageChunk],
-    ) -> Result<SupportedMessage, StatusCode> {
+    ) -> Result<SupportedMessage, EncodingError> {
         // Validate that all chunks have incrementing sequence numbers and valid chunk types
         let secure_channel = trace_read_lock!(self.secure_channel);
         self.last_received_sequence_number = Chunker::validate_chunks(

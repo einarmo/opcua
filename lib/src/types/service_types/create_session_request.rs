@@ -22,7 +22,7 @@ impl crate::types::MessageInfo for CreateSessionRequest {
         crate::types::ObjectId::CreateSessionRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<CreateSessionRequest> for CreateSessionRequest {
+impl crate::types::BinaryEncoder for CreateSessionRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -37,7 +37,10 @@ impl crate::types::BinaryEncoder<CreateSessionRequest> for CreateSessionRequest 
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.request_header.encode(stream)?;
         size += self.client_description.encode(stream)?;
@@ -55,34 +58,51 @@ impl crate::types::BinaryEncoder<CreateSessionRequest> for CreateSessionRequest 
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header =
-            <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-                crate::types::request_header::RequestHeader,
-            >>::decode(stream, decoding_options)?;
-        let client_description = <super::application_description::ApplicationDescription as crate::types::BinaryEncoder<
-            super::application_description::ApplicationDescription,
-        >>::decode(stream, decoding_options)?;
-        let server_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let endpoint_url = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let session_name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let client_nonce =
-            <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-                crate::types::byte_string::ByteString,
-            >>::decode(stream, decoding_options)?;
-        let client_certificate =
-            <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-                crate::types::byte_string::ByteString,
-            >>::decode(stream, decoding_options)?;
-        let requested_session_timeout =
-            <f64 as crate::types::BinaryEncoder<f64>>::decode(stream, decoding_options)?;
-        let max_response_message_size =
-            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
+        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let __request_handle = request_header.request_handle;
+        let client_description = <super::application_description::ApplicationDescription as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
+        let server_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
+        let endpoint_url = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
+        let session_name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
+        let client_nonce = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
+        let client_certificate = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
+        let requested_session_timeout = <f64 as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
+        let max_response_message_size = <u32 as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             client_description,

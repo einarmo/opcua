@@ -19,7 +19,7 @@ impl crate::types::MessageInfo for OpenSecureChannelRequest {
         crate::types::ObjectId::OpenSecureChannelRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<OpenSecureChannelRequest> for OpenSecureChannelRequest {
+impl crate::types::BinaryEncoder for OpenSecureChannelRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -31,7 +31,10 @@ impl crate::types::BinaryEncoder<OpenSecureChannelRequest> for OpenSecureChannel
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.request_header.encode(stream)?;
         size += self.client_protocol_version.encode(stream)?;
@@ -46,25 +49,36 @@ impl crate::types::BinaryEncoder<OpenSecureChannelRequest> for OpenSecureChannel
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header =
-            <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-                crate::types::request_header::RequestHeader,
-            >>::decode(stream, decoding_options)?;
-        let client_protocol_version =
-            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
-        let request_type =
-            <super::enums::SecurityTokenRequestType as crate::types::BinaryEncoder<
-                super::enums::SecurityTokenRequestType,
-            >>::decode(stream, decoding_options)?;
-        let security_mode = <super::enums::MessageSecurityMode as crate::types::BinaryEncoder<
-            super::enums::MessageSecurityMode,
-        >>::decode(stream, decoding_options)?;
-        let client_nonce =
-            <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-                crate::types::byte_string::ByteString,
-            >>::decode(stream, decoding_options)?;
-        let requested_lifetime =
-            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
+        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let __request_handle = request_header.request_handle;
+        let client_protocol_version = <u32 as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
+        let request_type = <super::enums::SecurityTokenRequestType as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
+        let security_mode = <super::enums::MessageSecurityMode as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
+        let client_nonce = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
+        let requested_lifetime = <u32 as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             client_protocol_version,

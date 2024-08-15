@@ -188,7 +188,7 @@ impl<'de> Deserialize<'de> for ExpandedNodeId {
     // TODO set server index
 }
 
-impl BinaryEncoder<ExpandedNodeId> for ExpandedNodeId {
+impl BinaryEncoder for ExpandedNodeId {
     fn byte_len(&self) -> usize {
         let mut size = self.node_id.byte_len();
         if !self.namespace_uri.is_null() {
@@ -291,7 +291,7 @@ impl BinaryEncoder<ExpandedNodeId> for ExpandedNodeId {
             }
             _ => {
                 error!("Unrecognized expanded node id type {}", identifier);
-                return Err(StatusCode::BadDecodingError);
+                return Err(StatusCode::BadDecodingError.into());
             }
         };
 

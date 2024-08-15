@@ -16,7 +16,7 @@ pub enum SecurityHeader {
     Symmetric(SymmetricSecurityHeader),
 }
 
-impl BinaryEncoder<SecurityHeader> for SecurityHeader {
+impl BinaryEncoder for SecurityHeader {
     fn byte_len(&self) -> usize {
         match self {
             SecurityHeader::Asymmetric(value) => value.byte_len(),
@@ -41,7 +41,7 @@ pub struct SymmetricSecurityHeader {
     pub token_id: u32,
 }
 
-impl BinaryEncoder<SymmetricSecurityHeader> for SymmetricSecurityHeader {
+impl BinaryEncoder for SymmetricSecurityHeader {
     fn byte_len(&self) -> usize {
         4
     }
@@ -63,7 +63,7 @@ pub struct AsymmetricSecurityHeader {
     pub receiver_certificate_thumbprint: ByteString,
 }
 
-impl BinaryEncoder<AsymmetricSecurityHeader> for AsymmetricSecurityHeader {
+impl BinaryEncoder for AsymmetricSecurityHeader {
     fn byte_len(&self) -> usize {
         let mut size = 0;
         size += self.security_policy_uri.byte_len();
@@ -91,7 +91,7 @@ impl BinaryEncoder<AsymmetricSecurityHeader> for AsymmetricSecurityHeader {
             && sender_certificate.value.as_ref().unwrap().len() >= constants::MAX_CERTIFICATE_LENGTH
         {
             error!("Sender certificate exceeds max certificate size");
-            Err(StatusCode::BadDecodingError)
+            Err(StatusCode::BadDecodingError.into())
         } else {
             // validate receiver_certificate_thumbprint_length == 20
             let thumbprint_len = if receiver_certificate_thumbprint.value.is_some() {
@@ -112,7 +112,7 @@ impl BinaryEncoder<AsymmetricSecurityHeader> for AsymmetricSecurityHeader {
                         .unwrap()
                         .len()
                 );
-                Err(StatusCode::BadDecodingError)
+                Err(StatusCode::BadDecodingError.into())
             } else {
                 Ok(AsymmetricSecurityHeader {
                     security_policy_uri,
@@ -152,7 +152,7 @@ pub struct SequenceHeader {
     pub request_id: u32,
 }
 
-impl BinaryEncoder<SequenceHeader> for SequenceHeader {
+impl BinaryEncoder for SequenceHeader {
     fn byte_len(&self) -> usize {
         8
     }

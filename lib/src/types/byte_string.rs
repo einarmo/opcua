@@ -90,7 +90,7 @@ impl<'de> Deserialize<'de> for ByteString {
     }
 }
 
-impl BinaryEncoder<ByteString> for ByteString {
+impl BinaryEncoder for ByteString {
     fn byte_len(&self) -> usize {
         // Length plus the actual length of bytes (if not null)
         4 + if self.value.is_none() {
@@ -121,13 +121,13 @@ impl BinaryEncoder<ByteString> for ByteString {
             Ok(ByteString::null())
         } else if len < -1 {
             error!("ByteString buf length is a negative number {}", len);
-            Err(StatusCode::BadDecodingError)
+            Err(StatusCode::BadDecodingError.into())
         } else if len as usize > decoding_options.max_byte_string_length {
             error!(
                 "ByteString length {} exceeds decoding limit {}",
                 len, decoding_options.max_string_length
             );
-            Err(StatusCode::BadDecodingError)
+            Err(StatusCode::BadDecodingError.into())
         } else {
             // Create a buffer filled with zeroes and read the byte string over the top
             let mut buf: Vec<u8> = vec![0u8; len as usize];

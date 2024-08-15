@@ -16,7 +16,7 @@ use tokio::{
     net::{TcpListener, TcpStream},
 };
 use tokio_util::codec::Decoder;
-use utils::hostname;
+use utils::{hostname, test_server};
 
 mod utils;
 
@@ -351,4 +351,43 @@ async fn multi_client_test() {
             assert_eq!(val, v);
         }
     }
+}
+
+#[tokio::test]
+async fn recoverable_error_test_server() {
+    // Test that if we send a too large message to the server, we don't lose the connection
+    // entirely.
+    let mut server = test_server();
+    server = server.max_array_length(50);
+    let mut tester = Tester::new(server, false).await;
+    let (session, lp) = tester.connect_default().await.unwrap();
+    lp.spawn();
+    tokio::time::timeout(Duration::from_secs(2), session.wait_for_connection())
+        .await
+        .unwrap();
+
+    let ids = (0..100)
+        .map(|_| {
+            ReadValueId::from(ReadValueId::from(<VariableId as Into<NodeId>>::into(
+                VariableId::Server_ServiceLevel,
+            )))
+        })
+        .collect::<Vec<_>>();
+
+    let res = session
+        .read(&ids, TimestampsToReturn::Both, 0.0)
+        .await
+        .unwrap_err();
+    assert_eq!(res, StatusCode::BadDecodingError);
+
+    session
+        .read(
+            &[ReadValueId::from(<VariableId as Into<NodeId>>::into(
+                VariableId::Server_ServiceLevel,
+            ))],
+            TimestampsToReturn::Both,
+            0.0,
+        )
+        .await
+        .unwrap();
 }

@@ -6,7 +6,7 @@
 //! other primitives.
 
 use std::{
-    fmt::Debug,
+    fmt::{Debug, Display},
     io::{Cursor, Read, Result, Write},
     sync::atomic::{AtomicU64, Ordering},
 };
@@ -16,7 +16,80 @@ use chrono::Duration;
 
 use crate::types::{constants, status_code::StatusCode};
 
-pub type EncodingResult<T> = std::result::Result<T, StatusCode>;
+pub type EncodingResult<T> = std::result::Result<T, EncodingError>;
+
+#[derive(Debug, Clone, Copy)]
+pub struct EncodingError {
+    status: StatusCode,
+    request_id: Option<u32>,
+    request_handle: Option<u32>,
+}
+
+impl Display for EncodingError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.status())
+    }
+}
+
+impl From<StatusCode> for EncodingError {
+    fn from(value: StatusCode) -> Self {
+        Self {
+            status: value,
+            request_handle: None,
+            request_id: None,
+        }
+    }
+}
+
+impl EncodingError {
+    pub fn new(status: StatusCode, request_id: Option<u32>, request_handle: Option<u32>) -> Self {
+        Self {
+            status,
+            request_handle,
+            request_id,
+        }
+    }
+
+    pub fn with_context(mut self, id: Option<u32>, handle: Option<u32>) -> Self {
+        self.request_id = id;
+        self.request_handle = handle;
+        self
+    }
+
+    pub fn with_request_id(mut self, id: u32) -> Self {
+        self.request_id = Some(id);
+        self
+    }
+
+    pub fn with_request_handle(mut self, handle: u32) -> Self {
+        self.request_handle = Some(handle);
+        self
+    }
+
+    pub fn status(&self) -> StatusCode {
+        self.status
+    }
+
+    pub fn full_context(&self) -> Option<(u32, u32)> {
+        if let (Some(id), Some(handle)) = (self.request_id, self.request_handle) {
+            Some((id, handle))
+        } else {
+            None
+        }
+    }
+}
+
+impl From<EncodingError> for StatusCode {
+    fn from(value: EncodingError) -> Self {
+        value.status()
+    }
+}
+
+impl From<EncodingError> for std::io::Error {
+    fn from(value: EncodingError) -> Self {
+        value.status().into()
+    }
+}
 
 /// Depth lock holds a reference on the depth gauge. The drop ensures impl that the reference is
 /// decremented even if there is a panic unwind.
@@ -163,7 +236,7 @@ impl DecodingOptions {
 /// OPC UA Binary Encoding interface. Anything that encodes to binary must implement this. It provides
 /// functions to calculate the size in bytes of the struct (for allocating memory), encoding to a stream
 /// and decoding from a stream.
-pub trait BinaryEncoder<T> {
+pub trait BinaryEncoder: Sized {
     /// Returns the exact byte length of the structure as it would be if `encode` were called.
     /// This may be called prior to writing to ensure the correct amount of space is available.
     fn byte_len(&self) -> usize;
@@ -172,7 +245,7 @@ pub trait BinaryEncoder<T> {
     /// Decodes an instance from the read stream. The decoding options contains restrictions set by
     /// the server / client on the length of strings, arrays etc. If these limits are exceeded the
     /// implementation should return with a `BadDecodingError` as soon as possible.
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<T>;
+    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self>;
 
     // Convenience method for encoding a message straight into an array of bytes. It is preferable to reuse buffers than
     // to call this so it should be reserved for tests and trivial code.
@@ -187,7 +260,7 @@ pub trait BinaryEncoder<T> {
 pub fn process_encode_io_result(result: Result<usize>) -> EncodingResult<usize> {
     result.map_err(|err| {
         trace!("Encoding error - {:?}", err);
-        StatusCode::BadEncodingError
+        StatusCode::BadEncodingError.into()
     })
 }
 
@@ -198,13 +271,13 @@ where
 {
     result.map_err(|err| {
         trace!("Decoding error - {:?}", err);
-        StatusCode::BadDecodingError
+        StatusCode::BadDecodingError.into()
     })
 }
 
-impl<T> BinaryEncoder<Option<Vec<T>>> for Option<Vec<T>>
+impl<T> BinaryEncoder for Option<Vec<T>>
 where
-    T: BinaryEncoder<T>,
+    T: BinaryEncoder,
 {
     fn byte_len(&self) -> usize {
         let mut size = 4;
@@ -236,13 +309,13 @@ where
             Ok(None)
         } else if len < -1 {
             error!("Array length is negative value and invalid");
-            Err(StatusCode::BadDecodingError)
+            Err(StatusCode::BadDecodingError.into())
         } else if len as usize > decoding_options.max_array_length {
             error!(
                 "Array length {} exceeds decoding limit {}",
                 len, decoding_options.max_array_length
             );
-            Err(StatusCode::BadDecodingError)
+            Err(StatusCode::BadDecodingError.into())
         } else {
             let mut values: Vec<T> = Vec::with_capacity(len as usize);
             for _ in 0..len {
@@ -254,7 +327,7 @@ where
 }
 
 /// Calculates the length in bytes of an array of encoded type
-pub fn byte_len_array<T: BinaryEncoder<T>>(values: &Option<Vec<T>>) -> usize {
+pub fn byte_len_array<T: BinaryEncoder>(values: &Option<Vec<T>>) -> usize {
     let mut size = 4;
     if let Some(ref values) = values {
         size += values.iter().map(|v| v.byte_len()).sum::<usize>();
@@ -263,7 +336,7 @@ pub fn byte_len_array<T: BinaryEncoder<T>>(values: &Option<Vec<T>>) -> usize {
 }
 
 /// Write an array of the encoded type to stream, preserving distinction between null array and empty array
-pub fn write_array<S: Write, T: BinaryEncoder<T>>(
+pub fn write_array<S: Write, T: BinaryEncoder>(
     stream: &mut S,
     values: &Option<Vec<T>>,
 ) -> EncodingResult<usize> {
@@ -280,7 +353,7 @@ pub fn write_array<S: Write, T: BinaryEncoder<T>>(
 }
 
 /// Reads an array of the encoded type from a stream, preserving distinction between null array and empty array
-pub fn read_array<S: Read, T: BinaryEncoder<T>>(
+pub fn read_array<S: Read, T: BinaryEncoder>(
     stream: &mut S,
     decoding_options: &DecodingOptions,
 ) -> EncodingResult<Option<Vec<T>>> {
@@ -289,13 +362,13 @@ pub fn read_array<S: Read, T: BinaryEncoder<T>>(
         Ok(None)
     } else if len < -1 {
         error!("Array length is negative value and invalid");
-        Err(StatusCode::BadDecodingError)
+        Err(StatusCode::BadDecodingError.into())
     } else if len as usize > decoding_options.max_array_length {
         error!(
             "Array length {} exceeds decoding limit {}",
             len, decoding_options.max_array_length
         );
-        Err(StatusCode::BadDecodingError)
+        Err(StatusCode::BadDecodingError.into())
     } else {
         let mut values: Vec<T> = Vec::with_capacity(len as usize);
         for _ in 0..len {

@@ -45,7 +45,7 @@ pub struct MessageHeader {
     pub message_size: u32,
 }
 
-impl BinaryEncoder<MessageHeader> for MessageHeader {
+impl BinaryEncoder for MessageHeader {
     fn byte_len(&self) -> usize {
         MESSAGE_HEADER_LEN
     }
@@ -182,7 +182,7 @@ pub struct HelloMessage {
     pub endpoint_url: UAString,
 }
 
-impl BinaryEncoder<HelloMessage> for HelloMessage {
+impl BinaryEncoder for HelloMessage {
     fn byte_len(&self) -> usize {
         // 5 * u32 = 20
         self.message_header.byte_len() + 20 + self.endpoint_url.byte_len()
@@ -290,7 +290,7 @@ pub struct AcknowledgeMessage {
     pub max_chunk_count: u32,
 }
 
-impl BinaryEncoder<AcknowledgeMessage> for AcknowledgeMessage {
+impl BinaryEncoder for AcknowledgeMessage {
     fn byte_len(&self) -> usize {
         self.message_header.byte_len() + 20
     }
@@ -353,7 +353,7 @@ pub struct ErrorMessage {
     pub reason: UAString,
 }
 
-impl BinaryEncoder<ErrorMessage> for ErrorMessage {
+impl BinaryEncoder for ErrorMessage {
     fn byte_len(&self) -> usize {
         self.message_header.byte_len() + self.error.byte_len() + self.reason.byte_len()
     }

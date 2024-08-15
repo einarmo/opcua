@@ -10,15 +10,16 @@ pub struct CreateMonitoredItemsRequest {
     pub request_header: crate::types::request_header::RequestHeader,
     pub subscription_id: u32,
     pub timestamps_to_return: super::enums::TimestampsToReturn,
-    pub items_to_create:
-        Option<Vec<super::monitored_item_create_request::MonitoredItemCreateRequest>>,
+    pub items_to_create: Option<
+        Vec<super::monitored_item_create_request::MonitoredItemCreateRequest>,
+    >,
 }
 impl crate::types::MessageInfo for CreateMonitoredItemsRequest {
     fn object_id(&self) -> crate::types::ObjectId {
         crate::types::ObjectId::CreateMonitoredItemsRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<CreateMonitoredItemsRequest> for CreateMonitoredItemsRequest {
+impl crate::types::BinaryEncoder for CreateMonitoredItemsRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -28,7 +29,10 @@ impl crate::types::BinaryEncoder<CreateMonitoredItemsRequest> for CreateMonitore
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.request_header.encode(stream)?;
         size += self.subscription_id.encode(stream)?;
@@ -41,21 +45,25 @@ impl crate::types::BinaryEncoder<CreateMonitoredItemsRequest> for CreateMonitore
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header =
-            <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-                crate::types::request_header::RequestHeader,
-            >>::decode(stream, decoding_options)?;
-        let subscription_id =
-            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
-        let timestamps_to_return =
-            <super::enums::TimestampsToReturn as crate::types::BinaryEncoder<
-                super::enums::TimestampsToReturn,
-            >>::decode(stream, decoding_options)?;
+        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let __request_handle = request_header.request_handle;
+        let subscription_id = <u32 as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
+        let timestamps_to_return = <super::enums::TimestampsToReturn as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         let items_to_create = <Option<
             Vec<super::monitored_item_create_request::MonitoredItemCreateRequest>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::monitored_item_create_request::MonitoredItemCreateRequest>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             subscription_id,
