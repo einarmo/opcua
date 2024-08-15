@@ -347,6 +347,18 @@ impl From<Array> for Variant {
     }
 }
 
+impl<T> From<Option<T>> for Variant
+where
+    T: Into<Variant>,
+{
+    fn from(value: Option<T>) -> Self {
+        match value {
+            Some(v) => v.into(),
+            None => Variant::Empty,
+        }
+    }
+}
+
 macro_rules! cast_to_bool {
     ($value: expr) => {
         if $value == 1 {
@@ -394,7 +406,8 @@ macro_rules! from_array_to_variant_impl {
 
         impl From<Vec<$rtype>> for Variant {
             fn from(v: Vec<$rtype>) -> Self {
-                Variant::from(v.as_slice())
+                let array: Vec<Variant> = v.into_iter().map(|v| Variant::from(v)).collect();
+                Variant::try_from(($encoding_mask, array)).unwrap()
             }
         }
 
@@ -419,6 +432,9 @@ from_array_to_variant_impl!(VariantTypeId::Int64, i64);
 from_array_to_variant_impl!(VariantTypeId::UInt64, u64);
 from_array_to_variant_impl!(VariantTypeId::Float, f32);
 from_array_to_variant_impl!(VariantTypeId::Double, f64);
+from_array_to_variant_impl!(VariantTypeId::NodeId, NodeId);
+from_array_to_variant_impl!(VariantTypeId::LocalizedText, LocalizedText);
+from_array_to_variant_impl!(VariantTypeId::ExtensionObject, ExtensionObject);
 
 /// This macro tries to return a `Vec<foo>` from a `Variant::Array<Variant::Foo>>`, e.g.
 /// If the Variant holds
@@ -1529,6 +1545,7 @@ impl Variant {
         // array
         let self_data_type = self.array_data_type();
         let other_data_type = other.array_data_type();
+        println!("{:?}, {:?}", self_data_type, other_data_type);
         if self_data_type.is_none() || other_data_type.is_none() {
             false
         } else {
@@ -1539,7 +1556,7 @@ impl Variant {
     pub fn set_range_of(&mut self, range: NumericRange, other: &Variant) -> Result<(), StatusCode> {
         // Types need to be the same
         if !self.eq_array_type(other) {
-            return Err(StatusCode::BadIndexRangeNoData);
+            return Err(StatusCode::BadIndexRangeDataMismatch);
         }
 
         let other_array = if let Variant::Array(other) = other {
@@ -1594,6 +1611,15 @@ impl Variant {
         }
     }
 
+    /// This function gets a range of values from the variant if it is an array,
+    /// or returns the variant itself.
+    pub fn range_of_owned(self, range: NumericRange) -> Result<Variant, StatusCode> {
+        match range {
+            NumericRange::None => Ok(self),
+            r => self.range_of(r),
+        }
+    }
+
     /// This function gets a range of values from the variant if it is an array, or returns a clone
     /// of the variant itself.
     pub fn range_of(&self, range: NumericRange) -> Result<Variant, StatusCode> {
@@ -1613,7 +1639,7 @@ impl Variant {
                             Err(StatusCode::BadIndexRangeNoData)
                         }
                     }
-                    _ => Err(StatusCode::BadIndexRangeNoData),
+                    _ => Err(StatusCode::BadIndexRangeDataMismatch),
                 }
             }
             NumericRange::Range(min, max) => {
@@ -1636,7 +1662,7 @@ impl Variant {
                             Ok(Variant::from((array.value_type, values)))
                         }
                     }
-                    _ => Err(StatusCode::BadIndexRangeNoData),
+                    _ => Err(StatusCode::BadIndexRangeDataMismatch),
                 }
             }
             NumericRange::MultipleRanges(_ranges) => {
