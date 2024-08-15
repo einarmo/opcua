@@ -27,10 +27,7 @@ impl crate::types::BinaryEncoder<ReadRequest> for ReadRequest {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.request_header.encode(stream)?;
         size += self.max_age.encode(stream)?;
@@ -43,20 +40,19 @@ impl crate::types::BinaryEncoder<ReadRequest> for ReadRequest {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-            crate::types::request_header::RequestHeader,
-        >>::decode(stream, decoding_options)?;
-        let max_age = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let timestamps_to_return = <super::enums::TimestampsToReturn as crate::types::BinaryEncoder<
-            super::enums::TimestampsToReturn,
-        >>::decode(stream, decoding_options)?;
-        let nodes_to_read = <Option<
-            Vec<super::read_value_id::ReadValueId>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::read_value_id::ReadValueId>>,
-        >>::decode(stream, decoding_options)?;
+        let request_header =
+            <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
+                crate::types::request_header::RequestHeader,
+            >>::decode(stream, decoding_options)?;
+        let max_age = <f64 as crate::types::BinaryEncoder<f64>>::decode(stream, decoding_options)?;
+        let timestamps_to_return =
+            <super::enums::TimestampsToReturn as crate::types::BinaryEncoder<
+                super::enums::TimestampsToReturn,
+            >>::decode(stream, decoding_options)?;
+        let nodes_to_read =
+            <Option<Vec<super::read_value_id::ReadValueId>> as crate::types::BinaryEncoder<
+                Option<Vec<super::read_value_id::ReadValueId>>,
+            >>::decode(stream, decoding_options)?;
         Ok(Self {
             request_header,
             max_age,

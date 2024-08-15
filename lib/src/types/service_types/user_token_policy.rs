@@ -29,10 +29,7 @@ impl crate::types::BinaryEncoder<UserTokenPolicy> for UserTokenPolicy {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.policy_id.encode(stream)?;
         size += self.token_type.encode(stream)?;
@@ -55,12 +52,14 @@ impl crate::types::BinaryEncoder<UserTokenPolicy> for UserTokenPolicy {
         let issued_token_type = <crate::types::string::UAString as crate::types::BinaryEncoder<
             crate::types::string::UAString,
         >>::decode(stream, decoding_options)?;
-        let issuer_endpoint_url = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let security_policy_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        let issuer_endpoint_url =
+            <crate::types::string::UAString as crate::types::BinaryEncoder<
+                crate::types::string::UAString,
+            >>::decode(stream, decoding_options)?;
+        let security_policy_uri =
+            <crate::types::string::UAString as crate::types::BinaryEncoder<
+                crate::types::string::UAString,
+            >>::decode(stream, decoding_options)?;
         Ok(Self {
             policy_id,
             token_type,

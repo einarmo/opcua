@@ -31,10 +31,7 @@ impl crate::types::BinaryEncoder<AddReferencesItem> for AddReferencesItem {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.source_node_id.encode(stream)?;
         size += self.reference_type_id.encode(stream)?;
@@ -55,15 +52,15 @@ impl crate::types::BinaryEncoder<AddReferencesItem> for AddReferencesItem {
         let reference_type_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
             crate::types::node_id::NodeId,
         >>::decode(stream, decoding_options)?;
-        let is_forward = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        let is_forward =
+            <bool as crate::types::BinaryEncoder<bool>>::decode(stream, decoding_options)?;
         let target_server_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
             crate::types::string::UAString,
         >>::decode(stream, decoding_options)?;
-        let target_node_id = <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder<
-            crate::types::expanded_node_id::ExpandedNodeId,
-        >>::decode(stream, decoding_options)?;
+        let target_node_id =
+            <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder<
+                crate::types::expanded_node_id::ExpandedNodeId,
+            >>::decode(stream, decoding_options)?;
         let target_node_class = <super::enums::NodeClass as crate::types::BinaryEncoder<
             super::enums::NodeClass,
         >>::decode(stream, decoding_options)?;

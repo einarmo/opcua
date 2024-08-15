@@ -2,9 +2,9 @@ name: OPC UA for Rust
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, rewrite-master ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, rewrite-master ]
 
 env:
   CARGO_TERM_COLOR: always

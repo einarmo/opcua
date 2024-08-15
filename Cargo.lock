@@ -733,6 +733,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "opcua-codegen"
+version = "0.1.0"
+dependencies = [
+ "convert_case",
+ "log 0.4.22",
+ "opcua-xml",
+ "prettyplease",
+ "proc-macro2",
+ "quote",
+ "roxmltree",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "syn 2.0.74",
+ "thiserror",
+]
+
+[[package]]
 name = "opcua-demo-server"
 version = "0.13.0"
 dependencies = [
@@ -799,24 +817,6 @@ name = "opcua-xml"
 version = "0.1.0"
 dependencies = [
  "roxmltree",
- "thiserror",
-]
-
-[[package]]
-name = "opcua_codegen"
-version = "0.1.0"
-dependencies = [
- "convert_case",
- "log 0.4.22",
- "opcua-xml",
- "prettyplease",
- "proc-macro2",
- "quote",
- "roxmltree",
- "serde",
- "serde_json",
- "serde_yaml",
- "syn 2.0.74",
  "thiserror",
 ]
 

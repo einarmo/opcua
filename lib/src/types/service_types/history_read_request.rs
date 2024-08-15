@@ -29,10 +29,7 @@ impl crate::types::BinaryEncoder<HistoryReadRequest> for HistoryReadRequest {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.request_header.encode(stream)?;
         size += self.history_read_details.encode(stream)?;
@@ -46,18 +43,20 @@ impl crate::types::BinaryEncoder<HistoryReadRequest> for HistoryReadRequest {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-            crate::types::request_header::RequestHeader,
-        >>::decode(stream, decoding_options)?;
-        let history_read_details = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
-            crate::types::extension_object::ExtensionObject,
-        >>::decode(stream, decoding_options)?;
-        let timestamps_to_return = <super::enums::TimestampsToReturn as crate::types::BinaryEncoder<
-            super::enums::TimestampsToReturn,
-        >>::decode(stream, decoding_options)?;
-        let release_continuation_points = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        let request_header =
+            <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
+                crate::types::request_header::RequestHeader,
+            >>::decode(stream, decoding_options)?;
+        let history_read_details =
+            <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
+                crate::types::extension_object::ExtensionObject,
+            >>::decode(stream, decoding_options)?;
+        let timestamps_to_return =
+            <super::enums::TimestampsToReturn as crate::types::BinaryEncoder<
+                super::enums::TimestampsToReturn,
+            >>::decode(stream, decoding_options)?;
+        let release_continuation_points =
+            <bool as crate::types::BinaryEncoder<bool>>::decode(stream, decoding_options)?;
         let nodes_to_read = <Option<
             Vec<super::history_read_value_id::HistoryReadValueId>,
         > as crate::types::BinaryEncoder<

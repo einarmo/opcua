@@ -25,10 +25,7 @@ impl crate::types::BinaryEncoder<RedundantServerDataType> for RedundantServerDat
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.server_id.encode(stream)?;
         size += self.service_level.encode(stream)?;
@@ -43,9 +40,8 @@ impl crate::types::BinaryEncoder<RedundantServerDataType> for RedundantServerDat
         let server_id = <crate::types::string::UAString as crate::types::BinaryEncoder<
             crate::types::string::UAString,
         >>::decode(stream, decoding_options)?;
-        let service_level = <u8 as crate::types::BinaryEncoder<
-            u8,
-        >>::decode(stream, decoding_options)?;
+        let service_level =
+            <u8 as crate::types::BinaryEncoder<u8>>::decode(stream, decoding_options)?;
         let server_state = <super::enums::ServerState as crate::types::BinaryEncoder<
             super::enums::ServerState,
         >>::decode(stream, decoding_options)?;

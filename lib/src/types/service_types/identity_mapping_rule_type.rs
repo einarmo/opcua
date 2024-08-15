@@ -23,10 +23,7 @@ impl crate::types::BinaryEncoder<IdentityMappingRuleType> for IdentityMappingRul
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.criteria_type.encode(stream)?;
         size += self.criteria.encode(stream)?;
@@ -43,6 +40,9 @@ impl crate::types::BinaryEncoder<IdentityMappingRuleType> for IdentityMappingRul
         let criteria = <crate::types::string::UAString as crate::types::BinaryEncoder<
             crate::types::string::UAString,
         >>::decode(stream, decoding_options)?;
-        Ok(Self { criteria_type, criteria })
+        Ok(Self {
+            criteria_type,
+            criteria,
+        })
     }
 }

@@ -27,10 +27,7 @@ impl crate::types::BinaryEncoder<EndpointType> for EndpointType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.endpoint_url.encode(stream)?;
         size += self.security_mode.encode(stream)?;
@@ -49,12 +46,14 @@ impl crate::types::BinaryEncoder<EndpointType> for EndpointType {
         let security_mode = <super::enums::MessageSecurityMode as crate::types::BinaryEncoder<
             super::enums::MessageSecurityMode,
         >>::decode(stream, decoding_options)?;
-        let security_policy_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let transport_profile_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        let security_policy_uri =
+            <crate::types::string::UAString as crate::types::BinaryEncoder<
+                crate::types::string::UAString,
+            >>::decode(stream, decoding_options)?;
+        let transport_profile_uri =
+            <crate::types::string::UAString as crate::types::BinaryEncoder<
+                crate::types::string::UAString,
+            >>::decode(stream, decoding_options)?;
         Ok(Self {
             endpoint_url,
             security_mode,

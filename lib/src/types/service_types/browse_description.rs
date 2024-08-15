@@ -31,10 +31,7 @@ impl crate::types::BinaryEncoder<BrowseDescription> for BrowseDescription {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.node_id.encode(stream)?;
         size += self.browse_direction.encode(stream)?;
@@ -58,15 +55,12 @@ impl crate::types::BinaryEncoder<BrowseDescription> for BrowseDescription {
         let reference_type_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
             crate::types::node_id::NodeId,
         >>::decode(stream, decoding_options)?;
-        let include_subtypes = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
-        let node_class_mask = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let result_mask = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let include_subtypes =
+            <bool as crate::types::BinaryEncoder<bool>>::decode(stream, decoding_options)?;
+        let node_class_mask =
+            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
+        let result_mask =
+            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
         Ok(Self {
             node_id,
             browse_direction,

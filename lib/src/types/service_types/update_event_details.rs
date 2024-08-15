@@ -22,10 +22,7 @@ impl crate::types::BinaryEncoder<UpdateEventDetails> for UpdateEventDetails {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.node_id.encode(stream)?;
         size += self.perform_insert_replace.encode(stream)?;
@@ -41,9 +38,10 @@ impl crate::types::BinaryEncoder<UpdateEventDetails> for UpdateEventDetails {
         let node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
             crate::types::node_id::NodeId,
         >>::decode(stream, decoding_options)?;
-        let perform_insert_replace = <super::enums::PerformUpdateType as crate::types::BinaryEncoder<
-            super::enums::PerformUpdateType,
-        >>::decode(stream, decoding_options)?;
+        let perform_insert_replace =
+            <super::enums::PerformUpdateType as crate::types::BinaryEncoder<
+                super::enums::PerformUpdateType,
+            >>::decode(stream, decoding_options)?;
         let filter = <super::event_filter::EventFilter as crate::types::BinaryEncoder<
             super::event_filter::EventFilter,
         >>::decode(stream, decoding_options)?;

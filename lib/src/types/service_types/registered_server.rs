@@ -35,10 +35,7 @@ impl crate::types::BinaryEncoder<RegisteredServer> for RegisteredServer {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.server_uri.encode(stream)?;
         size += self.product_uri.encode(stream)?;
@@ -72,17 +69,16 @@ impl crate::types::BinaryEncoder<RegisteredServer> for RegisteredServer {
         let gateway_server_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
             crate::types::string::UAString,
         >>::decode(stream, decoding_options)?;
-        let discovery_urls = <Option<
-            Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::string::UAString>>,
-        >>::decode(stream, decoding_options)?;
-        let semaphore_file_path = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let is_online = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        let discovery_urls =
+            <Option<Vec<crate::types::string::UAString>> as crate::types::BinaryEncoder<
+                Option<Vec<crate::types::string::UAString>>,
+            >>::decode(stream, decoding_options)?;
+        let semaphore_file_path =
+            <crate::types::string::UAString as crate::types::BinaryEncoder<
+                crate::types::string::UAString,
+            >>::decode(stream, decoding_options)?;
+        let is_online =
+            <bool as crate::types::BinaryEncoder<bool>>::decode(stream, decoding_options)?;
         Ok(Self {
             server_uri,
             product_uri,

@@ -31,10 +31,7 @@ impl crate::types::BinaryEncoder<ServerStatusDataType> for ServerStatusDataType 
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.start_time.encode(stream)?;
         size += self.current_time.encode(stream)?;
@@ -61,12 +58,12 @@ impl crate::types::BinaryEncoder<ServerStatusDataType> for ServerStatusDataType 
         let build_info = <super::build_info::BuildInfo as crate::types::BinaryEncoder<
             super::build_info::BuildInfo,
         >>::decode(stream, decoding_options)?;
-        let seconds_till_shutdown = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let shutdown_reason = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-            crate::types::localized_text::LocalizedText,
-        >>::decode(stream, decoding_options)?;
+        let seconds_till_shutdown =
+            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
+        let shutdown_reason =
+            <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
+                crate::types::localized_text::LocalizedText,
+            >>::decode(stream, decoding_options)?;
         Ok(Self {
             start_time,
             current_time,

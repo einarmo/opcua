@@ -13,7 +13,8 @@ pub struct BrokerWriterGroupTransportDataType {
     pub requested_delivery_guarantee: super::enums::BrokerTransportQualityOfService,
 }
 impl crate::types::BinaryEncoder<BrokerWriterGroupTransportDataType>
-for BrokerWriterGroupTransportDataType {
+    for BrokerWriterGroupTransportDataType
+{
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.queue_name.byte_len();
@@ -23,10 +24,7 @@ for BrokerWriterGroupTransportDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.queue_name.encode(stream)?;
         size += self.resource_uri.encode(stream)?;
@@ -45,12 +43,14 @@ for BrokerWriterGroupTransportDataType {
         let resource_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
             crate::types::string::UAString,
         >>::decode(stream, decoding_options)?;
-        let authentication_profile_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let requested_delivery_guarantee = <super::enums::BrokerTransportQualityOfService as crate::types::BinaryEncoder<
-            super::enums::BrokerTransportQualityOfService,
-        >>::decode(stream, decoding_options)?;
+        let authentication_profile_uri =
+            <crate::types::string::UAString as crate::types::BinaryEncoder<
+                crate::types::string::UAString,
+            >>::decode(stream, decoding_options)?;
+        let requested_delivery_guarantee =
+            <super::enums::BrokerTransportQualityOfService as crate::types::BinaryEncoder<
+                super::enums::BrokerTransportQualityOfService,
+            >>::decode(stream, decoding_options)?;
         Ok(Self {
             queue_name,
             resource_uri,

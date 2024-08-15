@@ -17,17 +17,17 @@ impl crate::types::BinaryEncoder<AccessLevelExType> for AccessLevelExType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i32::decode(stream, decoding_options)?))
+        Ok(Self::from_bits_truncate(i32::decode(
+            stream,
+            decoding_options,
+        )?))
     }
 }
 impl Default for AccessLevelExType {
@@ -43,10 +43,7 @@ impl<'de> serde::de::Deserialize<'de> for AccessLevelExType {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i32;
-            fn expecting(
-                &self,
-                formatter: &mut core::fmt::Formatter,
-            ) -> core::fmt::Result {
+            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
                 write!(formatter, "an i32")
             }
         }
@@ -76,17 +73,17 @@ impl crate::types::BinaryEncoder<AccessLevelType> for AccessLevelType {
     fn byte_len(&self) -> usize {
         1usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_u8(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(u8::decode(stream, decoding_options)?))
+        Ok(Self::from_bits_truncate(u8::decode(
+            stream,
+            decoding_options,
+        )?))
     }
 }
 impl Default for AccessLevelType {
@@ -102,10 +99,7 @@ impl<'de> serde::de::Deserialize<'de> for AccessLevelType {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = u8;
-            fn expecting(
-                &self,
-                formatter: &mut core::fmt::Formatter,
-            ) -> core::fmt::Result {
+            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
                 write!(formatter, "an u8")
             }
         }
@@ -134,17 +128,17 @@ impl crate::types::BinaryEncoder<AccessRestrictionType> for AccessRestrictionTyp
     fn byte_len(&self) -> usize {
         2usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i16(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i16::decode(stream, decoding_options)?))
+        Ok(Self::from_bits_truncate(i16::decode(
+            stream,
+            decoding_options,
+        )?))
     }
 }
 impl Default for AccessRestrictionType {
@@ -160,10 +154,7 @@ impl<'de> serde::de::Deserialize<'de> for AccessRestrictionType {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i16;
-            fn expecting(
-                &self,
-                formatter: &mut core::fmt::Formatter,
-            ) -> core::fmt::Result {
+            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
                 write!(formatter, "an i16")
             }
         }
@@ -194,25 +185,20 @@ pub enum ApplicationType {
 impl TryFrom<i32> for ApplicationType {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Server,
-                1i32 => Self::Client,
-                2i32 => Self::ClientAndServer,
-                3i32 => Self::DiscoveryServer,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Server,
+            1i32 => Self::Client,
+            2i32 => Self::ClientAndServer,
+            3i32 => Self::DiscoveryServer,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<ApplicationType> for ApplicationType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -240,17 +226,17 @@ impl crate::types::BinaryEncoder<AttributeWriteMask> for AttributeWriteMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i32::decode(stream, decoding_options)?))
+        Ok(Self::from_bits_truncate(i32::decode(
+            stream,
+            decoding_options,
+        )?))
     }
 }
 impl Default for AttributeWriteMask {
@@ -266,10 +252,7 @@ impl<'de> serde::de::Deserialize<'de> for AttributeWriteMask {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i32;
-            fn expecting(
-                &self,
-                formatter: &mut core::fmt::Formatter,
-            ) -> core::fmt::Result {
+            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
                 write!(formatter, "an i32")
             }
         }
@@ -299,24 +282,19 @@ pub enum AxisScaleEnumeration {
 impl TryFrom<i32> for AxisScaleEnumeration {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Linear,
-                1i32 => Self::Log,
-                2i32 => Self::Ln,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Linear,
+            1i32 => Self::Log,
+            2i32 => Self::Ln,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<AxisScaleEnumeration> for AxisScaleEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -339,27 +317,23 @@ pub enum BrokerTransportQualityOfService {
 impl TryFrom<i32> for BrokerTransportQualityOfService {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::NotSpecified,
-                1i32 => Self::BestEffort,
-                2i32 => Self::AtLeastOnce,
-                3i32 => Self::AtMostOnce,
-                4i32 => Self::ExactlyOnce,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::NotSpecified,
+            1i32 => Self::BestEffort,
+            2i32 => Self::AtLeastOnce,
+            3i32 => Self::AtMostOnce,
+            4i32 => Self::ExactlyOnce,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<BrokerTransportQualityOfService>
-for BrokerTransportQualityOfService {
+    for BrokerTransportQualityOfService
+{
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -381,25 +355,20 @@ pub enum BrowseDirection {
 impl TryFrom<i32> for BrowseDirection {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Forward,
-                1i32 => Self::Inverse,
-                2i32 => Self::Both,
-                3i32 => Self::Invalid,
-                _ => Self::Invalid,
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Forward,
+            1i32 => Self::Inverse,
+            2i32 => Self::Both,
+            3i32 => Self::Invalid,
+            _ => Self::Invalid,
+        })
     }
 }
 impl crate::types::BinaryEncoder<BrowseDirection> for BrowseDirection {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -427,31 +396,26 @@ pub enum BrowseResultMask {
 impl TryFrom<i32> for BrowseResultMask {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::None,
-                1i32 => Self::ReferenceTypeId,
-                2i32 => Self::IsForward,
-                4i32 => Self::NodeClass,
-                8i32 => Self::BrowseName,
-                16i32 => Self::DisplayName,
-                32i32 => Self::TypeDefinition,
-                63i32 => Self::All,
-                3i32 => Self::ReferenceTypeInfo,
-                60i32 => Self::TargetInfo,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::None,
+            1i32 => Self::ReferenceTypeId,
+            2i32 => Self::IsForward,
+            4i32 => Self::NodeClass,
+            8i32 => Self::BrowseName,
+            16i32 => Self::DisplayName,
+            32i32 => Self::TypeDefinition,
+            63i32 => Self::All,
+            3i32 => Self::ReferenceTypeInfo,
+            60i32 => Self::TargetInfo,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<BrowseResultMask> for BrowseResultMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -462,8 +426,7 @@ impl crate::types::BinaryEncoder<BrowseResultMask> for BrowseResultMask {
         Ok(Self::try_from(value)?)
     }
 }
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "PascalCase")]
 #[repr(i32)]
 pub enum DataChangeTrigger {
@@ -474,24 +437,19 @@ pub enum DataChangeTrigger {
 impl TryFrom<i32> for DataChangeTrigger {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Status,
-                1i32 => Self::StatusValue,
-                2i32 => Self::StatusValueTimestamp,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Status,
+            1i32 => Self::StatusValue,
+            2i32 => Self::StatusValueTimestamp,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<DataChangeTrigger> for DataChangeTrigger {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -512,17 +470,17 @@ impl crate::types::BinaryEncoder<DataSetFieldContentMask> for DataSetFieldConten
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i32::decode(stream, decoding_options)?))
+        Ok(Self::from_bits_truncate(i32::decode(
+            stream,
+            decoding_options,
+        )?))
     }
 }
 impl Default for DataSetFieldContentMask {
@@ -538,10 +496,7 @@ impl<'de> serde::de::Deserialize<'de> for DataSetFieldContentMask {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i32;
-            fn expecting(
-                &self,
-                formatter: &mut core::fmt::Formatter,
-            ) -> core::fmt::Result {
+            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
                 write!(formatter, "an i32")
             }
         }
@@ -569,17 +524,17 @@ impl crate::types::BinaryEncoder<DataSetFieldFlags> for DataSetFieldFlags {
     fn byte_len(&self) -> usize {
         2usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i16(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i16::decode(stream, decoding_options)?))
+        Ok(Self::from_bits_truncate(i16::decode(
+            stream,
+            decoding_options,
+        )?))
     }
 }
 impl Default for DataSetFieldFlags {
@@ -595,10 +550,7 @@ impl<'de> serde::de::Deserialize<'de> for DataSetFieldFlags {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i16;
-            fn expecting(
-                &self,
-                formatter: &mut core::fmt::Formatter,
-            ) -> core::fmt::Result {
+            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
                 write!(formatter, "an i16")
             }
         }
@@ -628,24 +580,19 @@ pub enum DataSetOrderingType {
 impl TryFrom<i32> for DataSetOrderingType {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Undefined,
-                1i32 => Self::AscendingWriterId,
-                2i32 => Self::AscendingWriterIdSingle,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Undefined,
+            1i32 => Self::AscendingWriterId,
+            2i32 => Self::AscendingWriterIdSingle,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<DataSetOrderingType> for DataSetOrderingType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -666,24 +613,19 @@ pub enum DeadbandType {
 impl TryFrom<i32> for DeadbandType {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::None,
-                1i32 => Self::Absolute,
-                2i32 => Self::Percent,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::None,
+            1i32 => Self::Absolute,
+            2i32 => Self::Percent,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<DeadbandType> for DeadbandType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -706,26 +648,21 @@ pub enum DiagnosticsLevel {
 impl TryFrom<i32> for DiagnosticsLevel {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Basic,
-                1i32 => Self::Advanced,
-                2i32 => Self::Info,
-                3i32 => Self::Log,
-                4i32 => Self::Debug,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Basic,
+            1i32 => Self::Advanced,
+            2i32 => Self::Info,
+            3i32 => Self::Log,
+            4i32 => Self::Debug,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<DiagnosticsLevel> for DiagnosticsLevel {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -745,17 +682,17 @@ impl crate::types::BinaryEncoder<EventNotifierType> for EventNotifierType {
     fn byte_len(&self) -> usize {
         1usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_u8(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(u8::decode(stream, decoding_options)?))
+        Ok(Self::from_bits_truncate(u8::decode(
+            stream,
+            decoding_options,
+        )?))
     }
 }
 impl Default for EventNotifierType {
@@ -771,10 +708,7 @@ impl<'de> serde::de::Deserialize<'de> for EventNotifierType {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = u8;
-            fn expecting(
-                &self,
-                formatter: &mut core::fmt::Formatter,
-            ) -> core::fmt::Result {
+            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
                 write!(formatter, "an u8")
             }
         }
@@ -806,26 +740,21 @@ pub enum ExceptionDeviationFormat {
 impl TryFrom<i32> for ExceptionDeviationFormat {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::AbsoluteValue,
-                1i32 => Self::PercentOfValue,
-                2i32 => Self::PercentOfRange,
-                3i32 => Self::PercentOfEURange,
-                4i32 => Self::Unknown,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::AbsoluteValue,
+            1i32 => Self::PercentOfValue,
+            2i32 => Self::PercentOfRange,
+            3i32 => Self::PercentOfEURange,
+            4i32 => Self::Unknown,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<ExceptionDeviationFormat> for ExceptionDeviationFormat {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -836,8 +765,7 @@ impl crate::types::BinaryEncoder<ExceptionDeviationFormat> for ExceptionDeviatio
         Ok(Self::try_from(value)?)
     }
 }
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "PascalCase")]
 #[repr(i32)]
 pub enum FilterOperator {
@@ -863,39 +791,34 @@ pub enum FilterOperator {
 impl TryFrom<i32> for FilterOperator {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Equals,
-                1i32 => Self::IsNull,
-                2i32 => Self::GreaterThan,
-                3i32 => Self::LessThan,
-                4i32 => Self::GreaterThanOrEqual,
-                5i32 => Self::LessThanOrEqual,
-                6i32 => Self::Like,
-                7i32 => Self::Not,
-                8i32 => Self::Between,
-                9i32 => Self::InList,
-                10i32 => Self::And,
-                11i32 => Self::Or,
-                12i32 => Self::Cast,
-                13i32 => Self::InView,
-                14i32 => Self::OfType,
-                15i32 => Self::RelatedTo,
-                16i32 => Self::BitwiseAnd,
-                17i32 => Self::BitwiseOr,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Equals,
+            1i32 => Self::IsNull,
+            2i32 => Self::GreaterThan,
+            3i32 => Self::LessThan,
+            4i32 => Self::GreaterThanOrEqual,
+            5i32 => Self::LessThanOrEqual,
+            6i32 => Self::Like,
+            7i32 => Self::Not,
+            8i32 => Self::Between,
+            9i32 => Self::InList,
+            10i32 => Self::And,
+            11i32 => Self::Or,
+            12i32 => Self::Cast,
+            13i32 => Self::InView,
+            14i32 => Self::OfType,
+            15i32 => Self::RelatedTo,
+            16i32 => Self::BitwiseAnd,
+            17i32 => Self::BitwiseOr,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<FilterOperator> for FilterOperator {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -917,25 +840,20 @@ pub enum HistoryUpdateType {
 impl TryFrom<i32> for HistoryUpdateType {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                1i32 => Self::Insert,
-                2i32 => Self::Replace,
-                3i32 => Self::Update,
-                4i32 => Self::Delete,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            1i32 => Self::Insert,
+            2i32 => Self::Replace,
+            3i32 => Self::Update,
+            4i32 => Self::Delete,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<HistoryUpdateType> for HistoryUpdateType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -959,27 +877,22 @@ pub enum IdentityCriteriaType {
 impl TryFrom<i32> for IdentityCriteriaType {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                1i32 => Self::UserName,
-                2i32 => Self::Thumbprint,
-                3i32 => Self::Role,
-                4i32 => Self::GroupId,
-                5i32 => Self::Anonymous,
-                6i32 => Self::AuthenticatedUser,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            1i32 => Self::UserName,
+            2i32 => Self::Thumbprint,
+            3i32 => Self::Role,
+            4i32 => Self::GroupId,
+            5i32 => Self::Anonymous,
+            6i32 => Self::AuthenticatedUser,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<IdentityCriteriaType> for IdentityCriteriaType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1001,25 +914,20 @@ pub enum IdType {
 impl TryFrom<i32> for IdType {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Numeric,
-                1i32 => Self::String,
-                2i32 => Self::Guid,
-                3i32 => Self::Opaque,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Numeric,
+            1i32 => Self::String,
+            2i32 => Self::Guid,
+            3i32 => Self::Opaque,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<IdType> for IdType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1035,22 +943,21 @@ bitflags::bitflags! {
     i32 { const None = 0i32; const DataSetWriterId = 1i32; const MetaDataVersion = 2i32;
     const SequenceNumber = 4i32; const Timestamp = 8i32; const Status = 16i32; }
 }
-impl crate::types::BinaryEncoder<JsonDataSetMessageContentMask>
-for JsonDataSetMessageContentMask {
+impl crate::types::BinaryEncoder<JsonDataSetMessageContentMask> for JsonDataSetMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i32::decode(stream, decoding_options)?))
+        Ok(Self::from_bits_truncate(i32::decode(
+            stream,
+            decoding_options,
+        )?))
     }
 }
 impl Default for JsonDataSetMessageContentMask {
@@ -1066,10 +973,7 @@ impl<'de> serde::de::Deserialize<'de> for JsonDataSetMessageContentMask {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i32;
-            fn expecting(
-                &self,
-                formatter: &mut core::fmt::Formatter,
-            ) -> core::fmt::Result {
+            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
                 write!(formatter, "an i32")
             }
         }
@@ -1095,22 +999,21 @@ bitflags::bitflags! {
     DataSetMessageHeader = 2i32; const SingleDataSetMessage = 4i32; const PublisherId =
     8i32; const DataSetClassId = 16i32; const ReplyTo = 32i32; }
 }
-impl crate::types::BinaryEncoder<JsonNetworkMessageContentMask>
-for JsonNetworkMessageContentMask {
+impl crate::types::BinaryEncoder<JsonNetworkMessageContentMask> for JsonNetworkMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i32::decode(stream, decoding_options)?))
+        Ok(Self::from_bits_truncate(i32::decode(
+            stream,
+            decoding_options,
+        )?))
     }
 }
 impl Default for JsonNetworkMessageContentMask {
@@ -1126,10 +1029,7 @@ impl<'de> serde::de::Deserialize<'de> for JsonNetworkMessageContentMask {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i32;
-            fn expecting(
-                &self,
-                formatter: &mut core::fmt::Formatter,
-            ) -> core::fmt::Result {
+            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
                 write!(formatter, "an i32")
             }
         }
@@ -1160,25 +1060,20 @@ pub enum MessageSecurityMode {
 impl TryFrom<i32> for MessageSecurityMode {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Invalid,
-                1i32 => Self::None,
-                2i32 => Self::Sign,
-                3i32 => Self::SignAndEncrypt,
-                _ => Self::Invalid,
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Invalid,
+            1i32 => Self::None,
+            2i32 => Self::Sign,
+            3i32 => Self::SignAndEncrypt,
+            _ => Self::Invalid,
+        })
     }
 }
 impl crate::types::BinaryEncoder<MessageSecurityMode> for MessageSecurityMode {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1201,27 +1096,21 @@ pub enum ModelChangeStructureVerbMask {
 impl TryFrom<i32> for ModelChangeStructureVerbMask {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                1i32 => Self::NodeAdded,
-                2i32 => Self::NodeDeleted,
-                4i32 => Self::ReferenceAdded,
-                8i32 => Self::ReferenceDeleted,
-                16i32 => Self::DataTypeChanged,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            1i32 => Self::NodeAdded,
+            2i32 => Self::NodeDeleted,
+            4i32 => Self::ReferenceAdded,
+            8i32 => Self::ReferenceDeleted,
+            16i32 => Self::DataTypeChanged,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
-impl crate::types::BinaryEncoder<ModelChangeStructureVerbMask>
-for ModelChangeStructureVerbMask {
+impl crate::types::BinaryEncoder<ModelChangeStructureVerbMask> for ModelChangeStructureVerbMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1232,8 +1121,7 @@ for ModelChangeStructureVerbMask {
         Ok(Self::try_from(value)?)
     }
 }
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "PascalCase")]
 #[repr(i32)]
 pub enum MonitoringMode {
@@ -1244,24 +1132,19 @@ pub enum MonitoringMode {
 impl TryFrom<i32> for MonitoringMode {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Disabled,
-                1i32 => Self::Sampling,
-                2i32 => Self::Reporting,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Disabled,
+            1i32 => Self::Sampling,
+            2i32 => Self::Reporting,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<MonitoringMode> for MonitoringMode {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1282,24 +1165,19 @@ pub enum NamingRuleType {
 impl TryFrom<i32> for NamingRuleType {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                1i32 => Self::Mandatory,
-                2i32 => Self::Optional,
-                3i32 => Self::Constraint,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            1i32 => Self::Mandatory,
+            2i32 => Self::Optional,
+            3i32 => Self::Constraint,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<NamingRuleType> for NamingRuleType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1352,56 +1230,51 @@ pub enum NodeAttributesMask {
 impl TryFrom<i32> for NodeAttributesMask {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::None,
-                1i32 => Self::AccessLevel,
-                2i32 => Self::ArrayDimensions,
-                4i32 => Self::BrowseName,
-                8i32 => Self::ContainsNoLoops,
-                16i32 => Self::DataType,
-                32i32 => Self::Description,
-                64i32 => Self::DisplayName,
-                128i32 => Self::EventNotifier,
-                256i32 => Self::Executable,
-                512i32 => Self::Historizing,
-                1024i32 => Self::InverseName,
-                2048i32 => Self::IsAbstract,
-                4096i32 => Self::MinimumSamplingInterval,
-                8192i32 => Self::NodeClass,
-                16384i32 => Self::NodeId,
-                32768i32 => Self::Symmetric,
-                65536i32 => Self::UserAccessLevel,
-                131072i32 => Self::UserExecutable,
-                262144i32 => Self::UserWriteMask,
-                524288i32 => Self::ValueRank,
-                1048576i32 => Self::WriteMask,
-                2097152i32 => Self::Value,
-                4194304i32 => Self::DataTypeDefinition,
-                8388608i32 => Self::RolePermissions,
-                16777216i32 => Self::AccessRestrictions,
-                33554431i32 => Self::All,
-                26501220i32 => Self::BaseNode,
-                26501348i32 => Self::Object,
-                26503268i32 => Self::ObjectType,
-                26571383i32 => Self::Variable,
-                28600438i32 => Self::VariableType,
-                26632548i32 => Self::Method,
-                26537060i32 => Self::ReferenceType,
-                26501356i32 => Self::View,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::None,
+            1i32 => Self::AccessLevel,
+            2i32 => Self::ArrayDimensions,
+            4i32 => Self::BrowseName,
+            8i32 => Self::ContainsNoLoops,
+            16i32 => Self::DataType,
+            32i32 => Self::Description,
+            64i32 => Self::DisplayName,
+            128i32 => Self::EventNotifier,
+            256i32 => Self::Executable,
+            512i32 => Self::Historizing,
+            1024i32 => Self::InverseName,
+            2048i32 => Self::IsAbstract,
+            4096i32 => Self::MinimumSamplingInterval,
+            8192i32 => Self::NodeClass,
+            16384i32 => Self::NodeId,
+            32768i32 => Self::Symmetric,
+            65536i32 => Self::UserAccessLevel,
+            131072i32 => Self::UserExecutable,
+            262144i32 => Self::UserWriteMask,
+            524288i32 => Self::ValueRank,
+            1048576i32 => Self::WriteMask,
+            2097152i32 => Self::Value,
+            4194304i32 => Self::DataTypeDefinition,
+            8388608i32 => Self::RolePermissions,
+            16777216i32 => Self::AccessRestrictions,
+            33554431i32 => Self::All,
+            26501220i32 => Self::BaseNode,
+            26501348i32 => Self::Object,
+            26503268i32 => Self::ObjectType,
+            26571383i32 => Self::Variable,
+            28600438i32 => Self::VariableType,
+            26632548i32 => Self::Method,
+            26537060i32 => Self::ReferenceType,
+            26501356i32 => Self::View,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<NodeAttributesMask> for NodeAttributesMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1428,30 +1301,25 @@ pub enum NodeClass {
 impl TryFrom<i32> for NodeClass {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Unspecified,
-                1i32 => Self::Object,
-                2i32 => Self::Variable,
-                4i32 => Self::Method,
-                8i32 => Self::ObjectType,
-                16i32 => Self::VariableType,
-                32i32 => Self::ReferenceType,
-                64i32 => Self::DataType,
-                128i32 => Self::View,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Unspecified,
+            1i32 => Self::Object,
+            2i32 => Self::Variable,
+            4i32 => Self::Method,
+            8i32 => Self::ObjectType,
+            16i32 => Self::VariableType,
+            32i32 => Self::ReferenceType,
+            64i32 => Self::DataType,
+            128i32 => Self::View,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<NodeClass> for NodeClass {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1476,27 +1344,22 @@ pub enum NodeIdType {
 impl TryFrom<u8> for NodeIdType {
     type Error = crate::types::StatusCode;
     fn try_from(value: u8) -> Result<Self, <Self as TryFrom<u8>>::Error> {
-        Ok(
-            match value {
-                0u8 => Self::TwoByte,
-                1u8 => Self::FourByte,
-                2u8 => Self::Numeric,
-                3u8 => Self::String,
-                4u8 => Self::Guid,
-                5u8 => Self::ByteString,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0u8 => Self::TwoByte,
+            1u8 => Self::FourByte,
+            2u8 => Self::Numeric,
+            3u8 => Self::String,
+            4u8 => Self::Guid,
+            5u8 => Self::ByteString,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<NodeIdType> for NodeIdType {
     fn byte_len(&self) -> usize {
         1usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_u8(stream, *self as u8)
     }
     fn decode<S: std::io::Read>(
@@ -1518,25 +1381,20 @@ pub enum OpenFileMode {
 impl TryFrom<i32> for OpenFileMode {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                1i32 => Self::Read,
-                2i32 => Self::Write,
-                4i32 => Self::EraseExisting,
-                8i32 => Self::Append,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            1i32 => Self::Read,
+            2i32 => Self::Write,
+            4i32 => Self::EraseExisting,
+            8i32 => Self::Append,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<OpenFileMode> for OpenFileMode {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1557,24 +1415,19 @@ pub enum OverrideValueHandling {
 impl TryFrom<i32> for OverrideValueHandling {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Disabled,
-                1i32 => Self::LastUsableValue,
-                2i32 => Self::OverrideValue,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Disabled,
+            1i32 => Self::LastUsableValue,
+            2i32 => Self::OverrideValue,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<OverrideValueHandling> for OverrideValueHandling {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1596,25 +1449,20 @@ pub enum PerformUpdateType {
 impl TryFrom<i32> for PerformUpdateType {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                1i32 => Self::Insert,
-                2i32 => Self::Replace,
-                3i32 => Self::Update,
-                4i32 => Self::Remove,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            1i32 => Self::Insert,
+            2i32 => Self::Replace,
+            3i32 => Self::Update,
+            4i32 => Self::Remove,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<PerformUpdateType> for PerformUpdateType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1638,17 +1486,17 @@ impl crate::types::BinaryEncoder<PermissionType> for PermissionType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i32::decode(stream, decoding_options)?))
+        Ok(Self::from_bits_truncate(i32::decode(
+            stream,
+            decoding_options,
+        )?))
     }
 }
 impl Default for PermissionType {
@@ -1664,10 +1512,7 @@ impl<'de> serde::de::Deserialize<'de> for PermissionType {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i32;
-            fn expecting(
-                &self,
-                formatter: &mut core::fmt::Formatter,
-            ) -> core::fmt::Result {
+            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
                 write!(formatter, "an i32")
             }
         }
@@ -1696,24 +1541,20 @@ pub enum PubSubDiagnosticsCounterClassification {
 impl TryFrom<i32> for PubSubDiagnosticsCounterClassification {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Information,
-                1i32 => Self::Error,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Information,
+            1i32 => Self::Error,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<PubSubDiagnosticsCounterClassification>
-for PubSubDiagnosticsCounterClassification {
+    for PubSubDiagnosticsCounterClassification
+{
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1735,25 +1576,20 @@ pub enum PubSubState {
 impl TryFrom<i32> for PubSubState {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Disabled,
-                1i32 => Self::Paused,
-                2i32 => Self::Operational,
-                3i32 => Self::Error,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Disabled,
+            1i32 => Self::Paused,
+            2i32 => Self::Operational,
+            3i32 => Self::Error,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<PubSubState> for PubSubState {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1777,27 +1613,22 @@ pub enum RedundancySupport {
 impl TryFrom<i32> for RedundancySupport {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::None,
-                1i32 => Self::Cold,
-                2i32 => Self::Warm,
-                3i32 => Self::Hot,
-                4i32 => Self::Transparent,
-                5i32 => Self::HotAndMirrored,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::None,
+            1i32 => Self::Cold,
+            2i32 => Self::Warm,
+            3i32 => Self::Hot,
+            4i32 => Self::Transparent,
+            5i32 => Self::HotAndMirrored,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<RedundancySupport> for RedundancySupport {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1817,23 +1648,18 @@ pub enum SecurityTokenRequestType {
 impl TryFrom<i32> for SecurityTokenRequestType {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Issue,
-                1i32 => Self::Renew,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Issue,
+            1i32 => Self::Renew,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<SecurityTokenRequestType> for SecurityTokenRequestType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1859,29 +1685,24 @@ pub enum ServerState {
 impl TryFrom<i32> for ServerState {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Running,
-                1i32 => Self::Failed,
-                2i32 => Self::NoConfiguration,
-                3i32 => Self::Suspended,
-                4i32 => Self::Shutdown,
-                5i32 => Self::Test,
-                6i32 => Self::CommunicationFault,
-                7i32 => Self::Unknown,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Running,
+            1i32 => Self::Failed,
+            2i32 => Self::NoConfiguration,
+            3i32 => Self::Suspended,
+            4i32 => Self::Shutdown,
+            5i32 => Self::Test,
+            6i32 => Self::CommunicationFault,
+            7i32 => Self::Unknown,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<ServerState> for ServerState {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1892,8 +1713,7 @@ impl crate::types::BinaryEncoder<ServerState> for ServerState {
         Ok(Self::try_from(value)?)
     }
 }
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "PascalCase")]
 #[repr(i32)]
 pub enum StructureType {
@@ -1904,24 +1724,19 @@ pub enum StructureType {
 impl TryFrom<i32> for StructureType {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Structure,
-                1i32 => Self::StructureWithOptionalFields,
-                2i32 => Self::Union,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Structure,
+            1i32 => Self::StructureWithOptionalFields,
+            2i32 => Self::Union,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<StructureType> for StructureType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1932,8 +1747,7 @@ impl crate::types::BinaryEncoder<StructureType> for StructureType {
         Ok(Self::try_from(value)?)
     }
 }
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "PascalCase")]
 #[repr(i32)]
 pub enum TimestampsToReturn {
@@ -1946,26 +1760,21 @@ pub enum TimestampsToReturn {
 impl TryFrom<i32> for TimestampsToReturn {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Source,
-                1i32 => Self::Server,
-                2i32 => Self::Both,
-                3i32 => Self::Neither,
-                4i32 => Self::Invalid,
-                _ => Self::Invalid,
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Source,
+            1i32 => Self::Server,
+            2i32 => Self::Both,
+            3i32 => Self::Neither,
+            4i32 => Self::Invalid,
+            _ => Self::Invalid,
+        })
     }
 }
 impl crate::types::BinaryEncoder<TimestampsToReturn> for TimestampsToReturn {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1989,27 +1798,22 @@ pub enum TrustListMasks {
 impl TryFrom<i32> for TrustListMasks {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::None,
-                1i32 => Self::TrustedCertificates,
-                2i32 => Self::TrustedCrls,
-                4i32 => Self::IssuerCertificates,
-                8i32 => Self::IssuerCrls,
-                15i32 => Self::All,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::None,
+            1i32 => Self::TrustedCertificates,
+            2i32 => Self::TrustedCrls,
+            4i32 => Self::IssuerCertificates,
+            8i32 => Self::IssuerCrls,
+            15i32 => Self::All,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<TrustListMasks> for TrustListMasks {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -2026,22 +1830,21 @@ bitflags::bitflags! {
     Status = 4i32; const MajorVersion = 8i32; const MinorVersion = 16i32; const
     SequenceNumber = 32i32; }
 }
-impl crate::types::BinaryEncoder<UadpDataSetMessageContentMask>
-for UadpDataSetMessageContentMask {
+impl crate::types::BinaryEncoder<UadpDataSetMessageContentMask> for UadpDataSetMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i32::decode(stream, decoding_options)?))
+        Ok(Self::from_bits_truncate(i32::decode(
+            stream,
+            decoding_options,
+        )?))
     }
 }
 impl Default for UadpDataSetMessageContentMask {
@@ -2057,10 +1860,7 @@ impl<'de> serde::de::Deserialize<'de> for UadpDataSetMessageContentMask {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i32;
-            fn expecting(
-                &self,
-                formatter: &mut core::fmt::Formatter,
-            ) -> core::fmt::Result {
+            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
                 write!(formatter, "an i32")
             }
         }
@@ -2088,22 +1888,21 @@ bitflags::bitflags! {
     const PicoSeconds = 256i32; const DataSetClassId = 512i32; const PromotedFields =
     1024i32; }
 }
-impl crate::types::BinaryEncoder<UadpNetworkMessageContentMask>
-for UadpNetworkMessageContentMask {
+impl crate::types::BinaryEncoder<UadpNetworkMessageContentMask> for UadpNetworkMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i32::decode(stream, decoding_options)?))
+        Ok(Self::from_bits_truncate(i32::decode(
+            stream,
+            decoding_options,
+        )?))
     }
 }
 impl Default for UadpNetworkMessageContentMask {
@@ -2119,10 +1918,7 @@ impl<'de> serde::de::Deserialize<'de> for UadpNetworkMessageContentMask {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i32;
-            fn expecting(
-                &self,
-                formatter: &mut core::fmt::Formatter,
-            ) -> core::fmt::Result {
+            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
                 write!(formatter, "an i32")
             }
         }
@@ -2153,25 +1949,20 @@ pub enum UserTokenType {
 impl TryFrom<i32> for UserTokenType {
     type Error = crate::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(
-            match value {
-                0i32 => Self::Anonymous,
-                1i32 => Self::UserName,
-                2i32 => Self::Certificate,
-                3i32 => Self::IssuedToken,
-                _ => return Err(crate::types::StatusCode::BadUnexpectedError),
-            },
-        )
+        Ok(match value {
+            0i32 => Self::Anonymous,
+            1i32 => Self::UserName,
+            2i32 => Self::Certificate,
+            3i32 => Self::IssuedToken,
+            _ => return Err(crate::types::StatusCode::BadUnexpectedError),
+        })
     }
 }
 impl crate::types::BinaryEncoder<UserTokenType> for UserTokenType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         crate::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(

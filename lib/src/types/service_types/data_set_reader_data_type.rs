@@ -19,9 +19,7 @@ pub struct DataSetReaderDataType {
     pub header_layout_uri: crate::types::string::UAString,
     pub security_mode: super::enums::MessageSecurityMode,
     pub security_group_id: crate::types::string::UAString,
-    pub security_key_services: Option<
-        Vec<super::endpoint_description::EndpointDescription>,
-    >,
+    pub security_key_services: Option<Vec<super::endpoint_description::EndpointDescription>>,
     pub data_set_reader_properties: Option<Vec<super::key_value_pair::KeyValuePair>>,
     pub transport_settings: crate::types::extension_object::ExtensionObject,
     pub message_settings: crate::types::extension_object::ExtensionObject,
@@ -55,10 +53,7 @@ impl crate::types::BinaryEncoder<DataSetReaderDataType> for DataSetReaderDataTyp
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.name.encode(stream)?;
         size += self.enabled.encode(stream)?;
@@ -87,30 +82,27 @@ impl crate::types::BinaryEncoder<DataSetReaderDataType> for DataSetReaderDataTyp
         let name = <crate::types::string::UAString as crate::types::BinaryEncoder<
             crate::types::string::UAString,
         >>::decode(stream, decoding_options)?;
-        let enabled = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
+        let enabled =
+            <bool as crate::types::BinaryEncoder<bool>>::decode(stream, decoding_options)?;
         let publisher_id = <crate::types::variant::Variant as crate::types::BinaryEncoder<
             crate::types::variant::Variant,
         >>::decode(stream, decoding_options)?;
-        let writer_group_id = <u16 as crate::types::BinaryEncoder<
-            u16,
-        >>::decode(stream, decoding_options)?;
-        let data_set_writer_id = <u16 as crate::types::BinaryEncoder<
-            u16,
-        >>::decode(stream, decoding_options)?;
-        let data_set_meta_data = <super::data_set_meta_data_type::DataSetMetaDataType as crate::types::BinaryEncoder<
-            super::data_set_meta_data_type::DataSetMetaDataType,
-        >>::decode(stream, decoding_options)?;
-        let data_set_field_content_mask = <super::enums::DataSetFieldContentMask as crate::types::BinaryEncoder<
-            super::enums::DataSetFieldContentMask,
-        >>::decode(stream, decoding_options)?;
-        let message_receive_timeout = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let key_frame_count = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let writer_group_id =
+            <u16 as crate::types::BinaryEncoder<u16>>::decode(stream, decoding_options)?;
+        let data_set_writer_id =
+            <u16 as crate::types::BinaryEncoder<u16>>::decode(stream, decoding_options)?;
+        let data_set_meta_data =
+            <super::data_set_meta_data_type::DataSetMetaDataType as crate::types::BinaryEncoder<
+                super::data_set_meta_data_type::DataSetMetaDataType,
+            >>::decode(stream, decoding_options)?;
+        let data_set_field_content_mask =
+            <super::enums::DataSetFieldContentMask as crate::types::BinaryEncoder<
+                super::enums::DataSetFieldContentMask,
+            >>::decode(stream, decoding_options)?;
+        let message_receive_timeout =
+            <f64 as crate::types::BinaryEncoder<f64>>::decode(stream, decoding_options)?;
+        let key_frame_count =
+            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
         let header_layout_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
             crate::types::string::UAString,
         >>::decode(stream, decoding_options)?;
@@ -125,20 +117,22 @@ impl crate::types::BinaryEncoder<DataSetReaderDataType> for DataSetReaderDataTyp
         > as crate::types::BinaryEncoder<
             Option<Vec<super::endpoint_description::EndpointDescription>>,
         >>::decode(stream, decoding_options)?;
-        let data_set_reader_properties = <Option<
-            Vec<super::key_value_pair::KeyValuePair>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::key_value_pair::KeyValuePair>>,
-        >>::decode(stream, decoding_options)?;
-        let transport_settings = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
-            crate::types::extension_object::ExtensionObject,
-        >>::decode(stream, decoding_options)?;
-        let message_settings = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
-            crate::types::extension_object::ExtensionObject,
-        >>::decode(stream, decoding_options)?;
-        let subscribed_data_set = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
-            crate::types::extension_object::ExtensionObject,
-        >>::decode(stream, decoding_options)?;
+        let data_set_reader_properties =
+            <Option<Vec<super::key_value_pair::KeyValuePair>> as crate::types::BinaryEncoder<
+                Option<Vec<super::key_value_pair::KeyValuePair>>,
+            >>::decode(stream, decoding_options)?;
+        let transport_settings =
+            <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
+                crate::types::extension_object::ExtensionObject,
+            >>::decode(stream, decoding_options)?;
+        let message_settings =
+            <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
+                crate::types::extension_object::ExtensionObject,
+            >>::decode(stream, decoding_options)?;
+        let subscribed_data_set =
+            <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
+                crate::types::extension_object::ExtensionObject,
+            >>::decode(stream, decoding_options)?;
         Ok(Self {
             name,
             enabled,

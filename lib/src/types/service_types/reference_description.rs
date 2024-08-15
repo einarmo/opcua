@@ -33,10 +33,7 @@ impl crate::types::BinaryEncoder<ReferenceDescription> for ReferenceDescription 
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.reference_type_id.encode(stream)?;
         size += self.is_forward.encode(stream)?;
@@ -55,24 +52,27 @@ impl crate::types::BinaryEncoder<ReferenceDescription> for ReferenceDescription 
         let reference_type_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
             crate::types::node_id::NodeId,
         >>::decode(stream, decoding_options)?;
-        let is_forward = <bool as crate::types::BinaryEncoder<
-            bool,
-        >>::decode(stream, decoding_options)?;
-        let node_id = <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder<
-            crate::types::expanded_node_id::ExpandedNodeId,
-        >>::decode(stream, decoding_options)?;
-        let browse_name = <crate::types::qualified_name::QualifiedName as crate::types::BinaryEncoder<
-            crate::types::qualified_name::QualifiedName,
-        >>::decode(stream, decoding_options)?;
-        let display_name = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-            crate::types::localized_text::LocalizedText,
-        >>::decode(stream, decoding_options)?;
+        let is_forward =
+            <bool as crate::types::BinaryEncoder<bool>>::decode(stream, decoding_options)?;
+        let node_id =
+            <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder<
+                crate::types::expanded_node_id::ExpandedNodeId,
+            >>::decode(stream, decoding_options)?;
+        let browse_name =
+            <crate::types::qualified_name::QualifiedName as crate::types::BinaryEncoder<
+                crate::types::qualified_name::QualifiedName,
+            >>::decode(stream, decoding_options)?;
+        let display_name =
+            <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
+                crate::types::localized_text::LocalizedText,
+            >>::decode(stream, decoding_options)?;
         let node_class = <super::enums::NodeClass as crate::types::BinaryEncoder<
             super::enums::NodeClass,
         >>::decode(stream, decoding_options)?;
-        let type_definition = <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder<
-            crate::types::expanded_node_id::ExpandedNodeId,
-        >>::decode(stream, decoding_options)?;
+        let type_definition =
+            <crate::types::expanded_node_id::ExpandedNodeId as crate::types::BinaryEncoder<
+                crate::types::expanded_node_id::ExpandedNodeId,
+            >>::decode(stream, decoding_options)?;
         Ok(Self {
             reference_type_id,
             is_forward,

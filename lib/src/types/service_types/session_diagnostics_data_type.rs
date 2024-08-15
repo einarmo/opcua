@@ -45,7 +45,8 @@ pub struct SessionDiagnosticsDataType {
     pub delete_references_count: super::service_counter_data_type::ServiceCounterDataType,
     pub browse_count: super::service_counter_data_type::ServiceCounterDataType,
     pub browse_next_count: super::service_counter_data_type::ServiceCounterDataType,
-    pub translate_browse_paths_to_node_ids_count: super::service_counter_data_type::ServiceCounterDataType,
+    pub translate_browse_paths_to_node_ids_count:
+        super::service_counter_data_type::ServiceCounterDataType,
     pub query_first_count: super::service_counter_data_type::ServiceCounterDataType,
     pub query_next_count: super::service_counter_data_type::ServiceCounterDataType,
     pub register_nodes_count: super::service_counter_data_type::ServiceCounterDataType,
@@ -56,8 +57,7 @@ impl crate::types::MessageInfo for SessionDiagnosticsDataType {
         crate::types::ObjectId::SessionDiagnosticsDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<SessionDiagnosticsDataType>
-for SessionDiagnosticsDataType {
+impl crate::types::BinaryEncoder<SessionDiagnosticsDataType> for SessionDiagnosticsDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.session_id.byte_len();
@@ -106,10 +106,7 @@ for SessionDiagnosticsDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.session_id.encode(stream)?;
         size += self.session_name.encode(stream)?;
@@ -149,7 +146,9 @@ for SessionDiagnosticsDataType {
         size += self.delete_references_count.encode(stream)?;
         size += self.browse_count.encode(stream)?;
         size += self.browse_next_count.encode(stream)?;
-        size += self.translate_browse_paths_to_node_ids_count.encode(stream)?;
+        size += self
+            .translate_browse_paths_to_node_ids_count
+            .encode(stream)?;
         size += self.query_first_count.encode(stream)?;
         size += self.query_next_count.encode(stream)?;
         size += self.register_nodes_count.encode(stream)?;
@@ -176,38 +175,33 @@ for SessionDiagnosticsDataType {
         let endpoint_url = <crate::types::string::UAString as crate::types::BinaryEncoder<
             crate::types::string::UAString,
         >>::decode(stream, decoding_options)?;
-        let locale_ids = <Option<
-            Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::string::UAString>>,
-        >>::decode(stream, decoding_options)?;
-        let actual_session_timeout = <f64 as crate::types::BinaryEncoder<
-            f64,
-        >>::decode(stream, decoding_options)?;
-        let max_response_message_size = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let client_connection_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
-        let client_last_contact_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-            crate::types::date_time::DateTime,
-        >>::decode(stream, decoding_options)?;
-        let current_subscriptions_count = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let current_monitored_items_count = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
-        let current_publish_requests_in_queue = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let locale_ids =
+            <Option<Vec<crate::types::string::UAString>> as crate::types::BinaryEncoder<
+                Option<Vec<crate::types::string::UAString>>,
+            >>::decode(stream, decoding_options)?;
+        let actual_session_timeout =
+            <f64 as crate::types::BinaryEncoder<f64>>::decode(stream, decoding_options)?;
+        let max_response_message_size =
+            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
+        let client_connection_time =
+            <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
+                crate::types::date_time::DateTime,
+            >>::decode(stream, decoding_options)?;
+        let client_last_contact_time =
+            <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
+                crate::types::date_time::DateTime,
+            >>::decode(stream, decoding_options)?;
+        let current_subscriptions_count =
+            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
+        let current_monitored_items_count =
+            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
+        let current_publish_requests_in_queue =
+            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
         let total_request_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
             super::service_counter_data_type::ServiceCounterDataType,
         >>::decode(stream, decoding_options)?;
-        let unauthorized_request_count = <u32 as crate::types::BinaryEncoder<
-            u32,
-        >>::decode(stream, decoding_options)?;
+        let unauthorized_request_count =
+            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
         let read_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
             super::service_counter_data_type::ServiceCounterDataType,
         >>::decode(stream, decoding_options)?;

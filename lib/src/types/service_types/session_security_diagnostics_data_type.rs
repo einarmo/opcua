@@ -23,7 +23,8 @@ impl crate::types::MessageInfo for SessionSecurityDiagnosticsDataType {
     }
 }
 impl crate::types::BinaryEncoder<SessionSecurityDiagnosticsDataType>
-for SessionSecurityDiagnosticsDataType {
+    for SessionSecurityDiagnosticsDataType
+{
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.session_id.byte_len();
@@ -38,10 +39,7 @@ for SessionSecurityDiagnosticsDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.session_id.encode(stream)?;
         size += self.client_user_id_of_session.encode(stream)?;
@@ -62,17 +60,18 @@ for SessionSecurityDiagnosticsDataType {
         let session_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
             crate::types::node_id::NodeId,
         >>::decode(stream, decoding_options)?;
-        let client_user_id_of_session = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let client_user_id_history = <Option<
-            Vec<crate::types::string::UAString>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<crate::types::string::UAString>>,
-        >>::decode(stream, decoding_options)?;
-        let authentication_mechanism = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        let client_user_id_of_session =
+            <crate::types::string::UAString as crate::types::BinaryEncoder<
+                crate::types::string::UAString,
+            >>::decode(stream, decoding_options)?;
+        let client_user_id_history =
+            <Option<Vec<crate::types::string::UAString>> as crate::types::BinaryEncoder<
+                Option<Vec<crate::types::string::UAString>>,
+            >>::decode(stream, decoding_options)?;
+        let authentication_mechanism =
+            <crate::types::string::UAString as crate::types::BinaryEncoder<
+                crate::types::string::UAString,
+            >>::decode(stream, decoding_options)?;
         let encoding = <crate::types::string::UAString as crate::types::BinaryEncoder<
             crate::types::string::UAString,
         >>::decode(stream, decoding_options)?;
@@ -82,12 +81,14 @@ for SessionSecurityDiagnosticsDataType {
         let security_mode = <super::enums::MessageSecurityMode as crate::types::BinaryEncoder<
             super::enums::MessageSecurityMode,
         >>::decode(stream, decoding_options)?;
-        let security_policy_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let client_certificate = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-            crate::types::byte_string::ByteString,
-        >>::decode(stream, decoding_options)?;
+        let security_policy_uri =
+            <crate::types::string::UAString as crate::types::BinaryEncoder<
+                crate::types::string::UAString,
+            >>::decode(stream, decoding_options)?;
+        let client_certificate =
+            <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
+                crate::types::byte_string::ByteString,
+            >>::decode(stream, decoding_options)?;
         Ok(Self {
             session_id,
             client_user_id_of_session,
