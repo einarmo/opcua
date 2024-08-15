@@ -9,18 +9,19 @@ use std::{
     time::{Duration, Instant},
 };
 
-use crate::crypto::{
+use log::{debug, error, trace};
+use opcua_crypto::{
     aeskey::AesKey,
     pkey::{KeySize, PrivateKey, PublicKey},
     random,
     x509::X509,
     CertificateStore, SecurityPolicy,
 };
-use crate::sync::*;
-use crate::types::{
+use opcua_types::{
     service_types::ChannelSecurityToken, status_code::StatusCode, write_bytes, write_u8,
     BinaryEncoder, ByteString, DecodingOptions, MessageSecurityMode,
 };
+use parking_lot::RwLock;
 
 use super::{
     message_chunk::{MessageChunk, MessageChunkHeader, MessageChunkType},
@@ -547,8 +548,7 @@ impl SecureChannel {
     }
 
     fn log_crypto_data(message: &str, data: &[u8]) {
-        use crate::core::debug;
-        debug::log_buffer(message, data);
+        crate::debug::log_buffer(message, data);
     }
 
     /// Applies security to a message chunk and yields a encrypted/signed block to be streamed

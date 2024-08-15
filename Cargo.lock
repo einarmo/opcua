@@ -697,18 +697,14 @@ dependencies = [
  "chrono",
  "derivative",
  "env_logger",
- "foreign-types",
  "futures",
- "gethostname",
  "hashbrown",
  "lazy_static",
- "libc",
  "log 0.4.22",
  "opcua",
+ "opcua-core",
  "opcua-crypto",
  "opcua-types",
- "openssl",
- "openssl-sys",
  "parking_lot",
  "regex",
  "rumqttc",
@@ -759,6 +755,24 @@ dependencies = [
  "syn 2.0.74",
  "thiserror",
  "uuid",
+]
+
+[[package]]
+name = "opcua-core"
+version = "0.13.0"
+dependencies = [
+ "bytes",
+ "chrono",
+ "lazy_static",
+ "log 0.4.22",
+ "opcua-crypto",
+ "opcua-types",
+ "parking_lot",
+ "serde",
+ "serde_yaml",
+ "tokio",
+ "tokio-util",
+ "url",
 ]
 
 [[package]]

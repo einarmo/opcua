@@ -8,12 +8,13 @@
 
 use std::io::{Read, Write};
 
-use crate::types::{
+use log::{debug, trace};
+use opcua_types::{
     encoding::*, node_id::NodeId, node_ids::ObjectId, request_header::RequestHeader,
     response_header::ResponseHeader, service_types::*, MessageInfo,
 };
 
-pub use crate::core::comms::tcp_types::AcknowledgeMessage;
+pub use crate::comms::tcp_types::AcknowledgeMessage;
 
 /// This macro helps avoid tedious repetition as new messages are added
 /// The first form just handles the trailing comma after the last entry to save some pointless

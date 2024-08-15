@@ -1,7 +1,7 @@
-use crate::crypto::SecurityPolicy;
-use crate::types::*;
+use opcua_crypto::SecurityPolicy;
+use opcua_types::{ByteString, MessageSecurityMode};
 
-use crate::core::comms::secure_channel::*;
+use crate::comms::secure_channel::*;
 
 #[test]
 pub fn secure_channel_nonce_basic128rsa15() {

@@ -1,13 +1,16 @@
 use std::io::{Cursor, Write};
 
+use log::trace;
+use opcua_types::{
+    ByteString, DataValue, DateTime, DecodingOptions, DiagnosticBits, ExtensionObject,
+    MessageSecurityMode, NodeId, OpenSecureChannelRequest, ReadResponse, RequestHeader,
+    ResponseHeader, SecurityTokenRequestType, UAString,
+};
+
 use crate::{
-    core::{
-        comms::{chunker::*, message_chunk::*, secure_channel::*, tcp_types::MIN_CHUNK_SIZE},
-        supported_message::SupportedMessage,
-        tests::*,
-    },
-    crypto::{x509::X509, SecurityPolicy},
-    types::DecodingOptions,
+    comms::{chunker::*, message_chunk::*, secure_channel::*, tcp_types::MIN_CHUNK_SIZE},
+    supported_message::SupportedMessage,
+    tests::*,
 };
 
 fn sample_secure_channel_request_data_security_none() -> MessageChunk {

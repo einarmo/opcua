@@ -6,7 +6,8 @@
 
 use std::io::{Cursor, Error, ErrorKind, Read, Result, Write};
 
-use crate::types::{
+use log::error;
+use opcua_types::{
     encoding::*, service_types::EndpointDescription, status_code::StatusCode, string::UAString,
 };
 
@@ -398,14 +399,12 @@ impl ErrorMessage {
 mod tests {
     use std::io::Cursor;
 
-    use crate::{
-        core::comms::tcp_types::{
-            AcknowledgeMessage, BinaryEncoder, HelloMessage, MessageHeader, MessageType,
-        },
-        types::{
-            ApplicationDescription, ByteString, DecodingOptions, EndpointDescription,
-            MessageSecurityMode, UAString,
-        },
+    use crate::comms::tcp_types::{
+        AcknowledgeMessage, BinaryEncoder, HelloMessage, MessageHeader, MessageType,
+    };
+    use opcua_types::{
+        ApplicationDescription, ByteString, DecodingOptions, EndpointDescription,
+        MessageSecurityMode, UAString,
     };
 
     fn hello_data() -> Vec<u8> {

@@ -7,10 +7,11 @@ use std::io::{Read, Write};
 use std::path::Path;
 use std::result::Result;
 
+use log::error;
 use serde;
 use serde_yaml;
 
-use crate::types::{
+use opcua_types::{
     service_types::{ApplicationDescription, ApplicationType},
     LocalizedText, UAString,
 };

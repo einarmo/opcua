@@ -2,14 +2,19 @@ use std::cmp::PartialEq;
 use std::fmt::Debug;
 use std::io::Cursor;
 
-use crate::crypto::{
+use opcua_crypto::{
     pkey::PrivateKey,
     security_policy::SecurityPolicy,
     x509::{X509Data, X509},
 };
-use crate::types::{status_code::StatusCode, *};
+use opcua_types::{
+    status_code::StatusCode, BinaryEncoder, ByteString, ChannelSecurityToken, DateTime,
+    DecodingOptions, DiagnosticBits, DiagnosticInfo, ExtensionObject, GetEndpointsRequest,
+    MessageSecurityMode, NodeId, OpenSecureChannelResponse, RequestHeader, ResponseHeader,
+    UAString,
+};
 
-use crate::core::{comms::secure_channel::SecureChannel, supported_message::SupportedMessage};
+use crate::{comms::secure_channel::SecureChannel, supported_message::SupportedMessage};
 
 pub fn serialize_test_and_return<T>(value: T) -> T
 where
