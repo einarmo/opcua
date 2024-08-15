@@ -1,19 +1,14 @@
 use crate::{
-    client::{
-        session::{
-            process_service_result, process_unexpected_response, session_debug, session_error,
-        },
-        Session,
-    },
-    core::supported_message::SupportedMessage,
-    types::{
-        DataValue, DeleteAtTimeDetails, DeleteEventDetails, DeleteRawModifiedDetails,
-        ExtensionObject, HistoryReadRequest, HistoryReadResult, HistoryReadValueId,
-        HistoryUpdateRequest, HistoryUpdateResult, ObjectId, ReadAtTimeDetails, ReadEventDetails,
-        ReadProcessedDetails, ReadRawModifiedDetails, ReadRequest, ReadValueId, StatusCode,
-        TimestampsToReturn, UpdateDataDetails, UpdateEventDetails, UpdateStructureDataDetails,
-        WriteRequest, WriteValue,
-    },
+    session::{process_service_result, process_unexpected_response, session_debug, session_error},
+    Session,
+};
+use opcua_core::SupportedMessage;
+use opcua_types::{
+    DataValue, DeleteAtTimeDetails, DeleteEventDetails, DeleteRawModifiedDetails, ExtensionObject,
+    HistoryReadRequest, HistoryReadResult, HistoryReadValueId, HistoryUpdateRequest,
+    HistoryUpdateResult, ObjectId, ReadAtTimeDetails, ReadEventDetails, ReadProcessedDetails,
+    ReadRawModifiedDetails, ReadRequest, ReadValueId, StatusCode, TimestampsToReturn,
+    UpdateDataDetails, UpdateEventDetails, UpdateStructureDataDetails, WriteRequest, WriteValue,
 };
 
 /// Enumeration used with Session::history_read()

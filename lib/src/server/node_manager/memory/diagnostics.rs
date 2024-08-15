@@ -5,6 +5,7 @@ use std::{
 };
 
 use async_trait::async_trait;
+use opcua_core::trace_read_lock;
 use serde::{Deserialize, Serialize};
 
 use crate::{

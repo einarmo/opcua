@@ -3,26 +3,24 @@ use std::{
     time::{Duration, Instant},
 };
 
+use log::{debug, info, trace};
 use tokio::sync::mpsc::error::SendTimeoutError;
 
-use crate::{
-    client::{session::process_unexpected_response, transport::OutgoingMessage},
-    core::{
-        comms::secure_channel::SecureChannel, handle::AtomicHandle,
-        supported_message::SupportedMessage,
-    },
-    crypto::SecurityPolicy,
-    sync::RwLock,
-    types::{
-        DateTime, DiagnosticBits, MessageSecurityMode, NodeId, OpenSecureChannelRequest,
-        RequestHeader, SecurityTokenRequestType, StatusCode,
-    },
-};
+use crate::{session::process_unexpected_response, transport::OutgoingMessage};
 use arc_swap::ArcSwap;
+use opcua_core::{
+    comms::secure_channel::SecureChannel, handle::AtomicHandle,
+    supported_message::SupportedMessage, sync::RwLock, trace_write_lock,
+};
+use opcua_crypto::SecurityPolicy;
+use opcua_types::{
+    DateTime, DiagnosticBits, MessageSecurityMode, NodeId, OpenSecureChannelRequest, RequestHeader,
+    SecurityTokenRequestType, StatusCode,
+};
 
 pub(crate) type RequestSend = tokio::sync::mpsc::Sender<OutgoingMessage>;
 
-lazy_static! {
+lazy_static::lazy_static! {
     static ref NEXT_SESSION_ID: AtomicU32 = AtomicU32::new(1);
 }
 

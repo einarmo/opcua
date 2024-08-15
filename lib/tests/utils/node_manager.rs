@@ -20,13 +20,13 @@ use opcua::{
         ContinuationPoint, CreateMonitoredItem,
     },
     sync::{Mutex, RwLock},
-    trace_read_lock, trace_write_lock,
     types::{
         AttributeId, DataValue, DateTime, ExpandedNodeId, MonitoringMode, NodeClass, NodeId,
         PerformUpdateType, QualifiedName, ReadRawModifiedDetails, ReferenceTypeId, StatusCode,
         TimestampsToReturn, Variant,
     },
 };
+use opcua_core::{trace_read_lock, trace_write_lock};
 
 #[allow(unused)]
 pub type TestNodeManager = InMemoryNodeManager<TestNodeManagerImpl>;

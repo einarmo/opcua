@@ -1,16 +1,20 @@
 use std::sync::Arc;
 
 use super::core::{OutgoingMessage, TransportPollResult, TransportState};
-use crate::core::comms::{
-    buffer::SendBuffer,
-    secure_channel::SecureChannel,
-    tcp_codec::{Message, TcpCodec},
-    tcp_types::HelloMessage,
-    url::hostname_port_from_url,
-};
-use crate::core::supported_message::SupportedMessage;
-use crate::types::{encoding::BinaryEncoder, StatusCode};
 use futures::StreamExt;
+use log::{debug, error};
+use opcua_core::supported_message::SupportedMessage;
+use opcua_core::{
+    comms::{
+        buffer::SendBuffer,
+        secure_channel::SecureChannel,
+        tcp_codec::{Message, TcpCodec},
+        tcp_types::HelloMessage,
+        url::hostname_port_from_url,
+    },
+    trace_read_lock,
+};
+use opcua_types::{encoding::BinaryEncoder, StatusCode};
 use parking_lot::RwLock;
 use tokio::io::{AsyncWriteExt, ReadHalf, WriteHalf};
 use tokio::net::TcpStream;
@@ -90,7 +94,7 @@ impl TcpTransport {
     > {
         let (host, port) = hostname_port_from_url(
             endpoint_url,
-            crate::core::constants::DEFAULT_OPC_UA_SERVER_PORT,
+            opcua_core::constants::DEFAULT_OPC_UA_SERVER_PORT,
         )?;
 
         let addr = {

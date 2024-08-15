@@ -1,11 +1,10 @@
 use std::sync::Arc;
 
+use log::info;
 use tokio::{pin, select};
 
-use crate::{
-    client::transport::{SecureChannelEventLoop, TransportPollResult},
-    types::{NodeId, StatusCode},
-};
+use crate::transport::{SecureChannelEventLoop, TransportPollResult};
+use opcua_types::{NodeId, StatusCode};
 
 use super::Session;
 

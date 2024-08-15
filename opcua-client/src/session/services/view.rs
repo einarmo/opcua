@@ -1,16 +1,12 @@
 use crate::{
-    client::{
-        session::{
-            process_service_result, process_unexpected_response, session_debug, session_error,
-        },
-        Session,
-    },
-    core::supported_message::SupportedMessage,
-    types::{
-        BrowseDescription, BrowseNextRequest, BrowsePath, BrowsePathResult, BrowseRequest,
-        BrowseResult, ByteString, DateTime, NodeId, RegisterNodesRequest, StatusCode,
-        TranslateBrowsePathsToNodeIdsRequest, UnregisterNodesRequest, ViewDescription,
-    },
+    session::{process_service_result, process_unexpected_response, session_debug, session_error},
+    Session,
+};
+use opcua_core::SupportedMessage;
+use opcua_types::{
+    BrowseDescription, BrowseNextRequest, BrowsePath, BrowsePathResult, BrowseRequest,
+    BrowseResult, ByteString, DateTime, NodeId, RegisterNodesRequest, StatusCode,
+    TranslateBrowsePathsToNodeIdsRequest, UnregisterNodesRequest, ViewDescription,
 };
 
 impl Session {

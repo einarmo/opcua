@@ -9,14 +9,17 @@ use std::{
 use arc_swap::ArcSwap;
 
 use crate::{
-    client::{
-        retry::SessionRetryPolicy, transport::tcp::TransportConfiguration, AsyncSecureChannel,
-        ClientConfig,
-    },
-    core::{handle::AtomicHandle, supported_message::SupportedMessage},
-    crypto::CertificateStore,
+    retry::SessionRetryPolicy, transport::tcp::TransportConfiguration, AsyncSecureChannel,
+    ClientConfig,
+};
+use opcua_core::{
+    handle::AtomicHandle,
+    supported_message::SupportedMessage,
     sync::{Mutex, RwLock},
-    types::{ApplicationDescription, DecodingOptions, NodeId, RequestHeader, StatusCode, UAString},
+};
+use opcua_crypto::CertificateStore;
+use opcua_types::{
+    ApplicationDescription, DecodingOptions, NodeId, RequestHeader, StatusCode, UAString,
 };
 
 use super::{services::subscriptions::state::SubscriptionState, SessionEventLoop, SessionInfo};
@@ -28,7 +31,7 @@ pub enum SessionState {
     Connecting,
 }
 
-lazy_static! {
+lazy_static::lazy_static! {
     static ref NEXT_SESSION_ID: AtomicU32 = AtomicU32::new(1);
 }
 

@@ -1,23 +1,24 @@
 use std::sync::Arc;
 
-use crypto::{certificate_store::CertificateStore, user_identity::make_user_name_identity_token};
+use log::error;
+use opcua_core::{
+    comms::{secure_channel::SecureChannel, url::hostname_from_url},
+    supported_message::SupportedMessage,
+    trace_read_lock, trace_write_lock,
+};
+use opcua_crypto::{
+    self, certificate_store::CertificateStore, user_identity::make_user_name_identity_token,
+    SecurityPolicy,
+};
+use opcua_types::{
+    ActivateSessionRequest, AnonymousIdentityToken, ByteString, CancelRequest, CloseSessionRequest,
+    CreateSessionRequest, ExtensionObject, IntegerId, NodeId, ObjectId, SignatureData, StatusCode,
+    UAString, UserNameIdentityToken, UserTokenPolicy, UserTokenType, X509IdentityToken,
+};
 
 use crate::{
-    client::{
-        session::{process_service_result, process_unexpected_response},
-        IdentityToken, Session,
-    },
-    core::{
-        comms::{secure_channel::SecureChannel, url::hostname_from_url},
-        supported_message::SupportedMessage,
-    },
-    crypto::{self, SecurityPolicy},
-    types::{
-        ActivateSessionRequest, AnonymousIdentityToken, ByteString, CancelRequest,
-        CloseSessionRequest, CreateSessionRequest, ExtensionObject, IntegerId, NodeId, ObjectId,
-        SignatureData, StatusCode, UAString, UserNameIdentityToken, UserTokenPolicy, UserTokenType,
-        X509IdentityToken,
-    },
+    session::{process_service_result, process_unexpected_response},
+    IdentityToken, Session,
 };
 
 impl Session {
@@ -83,7 +84,7 @@ impl Session {
 
             if security_policy != SecurityPolicy::None {
                 if let Ok(server_certificate) =
-                    crypto::X509::from_byte_string(&response.server_certificate)
+                    opcua_crypto::X509::from_byte_string(&response.server_certificate)
                 {
                     // Validate server certificate against hostname and application_uri
                     let hostname =
@@ -168,7 +169,7 @@ impl Session {
 
                 let server_cert = server_cert.unwrap().as_byte_string();
                 let signing_key = client_pkey.as_ref().unwrap();
-                crypto::create_signature_data(
+                opcua_crypto::create_signature_data(
                     signing_key,
                     security_policy,
                     &server_cert,
@@ -279,7 +280,7 @@ impl Session {
                                 );
                                 StatusCode::BadSecurityPolicyRejected
                             })?;
-                        let user_token_signature = crypto::create_signature_data(
+                        let user_token_signature = opcua_crypto::create_signature_data(
                             &private_key,
                             security_policy,
                             &server_cert.as_byte_string(),

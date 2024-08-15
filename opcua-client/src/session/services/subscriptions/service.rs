@@ -4,24 +4,23 @@ use std::{
 };
 
 use crate::{
-    client::{
-        session::{
-            process_service_result, process_unexpected_response,
-            services::subscriptions::{CreateMonitoredItem, ModifyMonitoredItem, Subscription},
-            session_debug, session_error, session_trace, session_warn,
-        },
-        Session,
+    session::{
+        process_service_result, process_unexpected_response,
+        services::subscriptions::{CreateMonitoredItem, ModifyMonitoredItem, Subscription},
+        session_debug, session_error, session_trace, session_warn,
     },
-    core::supported_message::SupportedMessage,
-    types::{
-        CreateMonitoredItemsRequest, CreateSubscriptionRequest, DeleteMonitoredItemsRequest,
-        DeleteSubscriptionsRequest, ModifyMonitoredItemsRequest, ModifySubscriptionRequest,
-        MonitoredItemCreateRequest, MonitoredItemCreateResult, MonitoredItemModifyRequest,
-        MonitoredItemModifyResult, MonitoringMode, MonitoringParameters, NotificationMessage,
-        PublishRequest, RepublishRequest, SetMonitoringModeRequest, SetPublishingModeRequest,
-        SetTriggeringRequest, StatusCode, TimestampsToReturn, TransferResult,
-        TransferSubscriptionsRequest,
-    },
+    Session,
+};
+use log::{debug, log_enabled};
+use opcua_core::{trace_lock, trace_read_lock, SupportedMessage};
+use opcua_types::{
+    CreateMonitoredItemsRequest, CreateSubscriptionRequest, DeleteMonitoredItemsRequest,
+    DeleteSubscriptionsRequest, ModifyMonitoredItemsRequest, ModifySubscriptionRequest,
+    MonitoredItemCreateRequest, MonitoredItemCreateResult, MonitoredItemModifyRequest,
+    MonitoredItemModifyResult, MonitoringMode, MonitoringParameters, NotificationMessage,
+    PublishRequest, RepublishRequest, SetMonitoringModeRequest, SetPublishingModeRequest,
+    SetTriggeringRequest, StatusCode, TimestampsToReturn, TransferResult,
+    TransferSubscriptionsRequest,
 };
 
 use super::OnSubscriptionNotification;

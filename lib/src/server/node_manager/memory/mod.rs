@@ -6,6 +6,7 @@ mod simple;
 pub use core::{CoreNodeManager, CoreNodeManagerBuilder, CoreNodeManagerImpl};
 pub use diagnostics::{DiagnosticsNodeManager, DiagnosticsNodeManagerBuilder, NamespaceMetadata};
 pub use implementation::*;
+use opcua_core::{trace_read_lock, trace_write_lock};
 pub use simple::*;
 
 use std::{

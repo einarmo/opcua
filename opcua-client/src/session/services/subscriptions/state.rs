@@ -3,7 +3,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use crate::types::{
+use opcua_types::{
     DecodingOptions, MonitoringMode, NotificationMessage, SubscriptionAcknowledgement,
 };
 
