@@ -65,9 +65,9 @@ macro_rules! trace_write_lock {
 pub mod client;
 #[cfg(feature = "console-logging")]
 pub mod console_logging;
-pub mod core;
 #[cfg(feature = "server")]
 pub mod server;
 
+pub use opcua_core as core;
 pub use opcua_crypto as crypto;
 pub use opcua_types as types;

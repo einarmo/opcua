@@ -14,9 +14,10 @@
 use std::io;
 
 use bytes::{BufMut, BytesMut};
+use log::error;
 use tokio_util::codec::{Decoder, Encoder};
 
-use crate::types::{
+use opcua_types::{
     encoding::{BinaryEncoder, DecodingOptions},
     status_code::StatusCode,
 };

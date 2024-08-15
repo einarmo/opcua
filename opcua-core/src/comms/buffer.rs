@@ -3,15 +3,15 @@ use std::{
     io::{BufRead, Cursor},
 };
 
+use log::{error, trace};
 use tokio::io::AsyncWriteExt;
 
 use crate::{
-    core::{
-        comms::{chunker::Chunker, message_chunk::MessageChunk, secure_channel::SecureChannel},
-        supported_message::SupportedMessage,
-    },
-    types::{BinaryEncoder, EncodingError, StatusCode},
+    comms::{chunker::Chunker, message_chunk::MessageChunk, secure_channel::SecureChannel},
+    supported_message::SupportedMessage,
 };
+
+use opcua_types::{BinaryEncoder, EncodingError, StatusCode};
 
 use super::tcp_types::{AcknowledgeMessage, ErrorMessage};
 
@@ -211,10 +211,10 @@ mod tests {
 
     use super::SendBuffer;
 
-    use crate::core::comms::secure_channel::{Role, SecureChannel};
-    use crate::crypto::CertificateStore;
-    use crate::types::StatusCode;
-    use crate::types::{
+    use crate::comms::secure_channel::{Role, SecureChannel};
+    use opcua_crypto::CertificateStore;
+    use opcua_types::StatusCode;
+    use opcua_types::{
         DateTime, DecodingOptions, NodeId, ReadRequest, ReadValueId, RequestHeader,
         TimestampsToReturn,
     };
@@ -234,7 +234,6 @@ mod tests {
 
     #[tokio::test]
     async fn test_buffer_simple() {
-        crate::console_logging::init();
         // Write a small message to the buffer
         let message = ReadRequest {
             request_header: RequestHeader::new(&NodeId::null(), &DateTime::null(), 101),
@@ -264,7 +263,6 @@ mod tests {
 
     #[tokio::test]
     async fn test_buffer_chunking() {
-        crate::console_logging::init();
         // Write a large enough message that it is split into chunks.
         let message = ReadRequest {
             request_header: RequestHeader::new(&NodeId::null(), &DateTime::null(), 101),
@@ -304,7 +302,6 @@ mod tests {
 
     #[test]
     fn test_buffer_too_large_message() {
-        crate::console_logging::init();
         // Write a very large message exceeding the max message size.
         let message = ReadRequest {
             request_header: RequestHeader::new(&NodeId::null(), &DateTime::null(), 101),
@@ -329,7 +326,6 @@ mod tests {
 
     #[test]
     fn test_buffer_too_many_chunks() {
-        crate::console_logging::init();
         // Write a large enough message that we exceed the maximum chunk count.
         let message = ReadRequest {
             request_header: RequestHeader::new(&NodeId::null(), &DateTime::null(), 101),
@@ -354,7 +350,6 @@ mod tests {
 
     #[tokio::test]
     async fn test_buffer_read_partial() {
-        crate::console_logging::init();
         // Write a large message to the buffer.
         let message = ReadRequest {
             request_header: RequestHeader::new(&NodeId::null(), &DateTime::null(), 101),

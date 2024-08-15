@@ -1,4 +1,4 @@
-use crate::core::tests::*;
+use crate::tests::*;
 
 fn request_header() -> RequestHeader {
     RequestHeader {

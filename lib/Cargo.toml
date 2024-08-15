@@ -44,27 +44,22 @@ log = "0.4"
 chrono = { workspace = true }
 bitflags = { workspace = true }
 # Enable deadlock_detection if there are any deadlocks in sync code
-parking_lot = { version = "0.12", features = ["send_guard"] }
+parking_lot = { workspace = true }
 futures = "0.3"
-tokio = { version = "1", features = ["full"] }
-tokio-util = { version = "0.7", features = ["codec"] }
+tokio = { workspace = true }
+tokio-util = { workspace = true }
 lazy_static = { workspace = true }
 regex = { workspace = true }
 serde = { workspace = true }
-serde_yaml = "0.9"
+serde_yaml = { workspace = true }
 serde_json = { workspace = true }
-bytes = "1.3"
+bytes = { workspace = true }
 url = "1.6"
 
 derivative = "2.2"
 byteorder = { workspace = true }
 base64 = { workspace = true }
 uuid = { workspace = true }
-openssl = "0.10"
-openssl-sys = "0.9"
-gethostname = "0.4"
-libc = "0.2"
-foreign-types = "0.3"
 # dependencies below are only required when certain features are enabled
 rumqttc = { version = "0.23", optional = true }
 env_logger = { version = "0.10", optional = true }
@@ -75,6 +70,7 @@ hashbrown = "0.14.5"
 
 opcua-types = { path = "../opcua-types" }
 opcua-crypto = { path = "../opcua-crypto" }
+opcua-core = { path = "../opcua-core" }
 
 [dev-dependencies]
 tempdir = "0.3"
