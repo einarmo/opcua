@@ -16,5 +16,8 @@ members = [
     "samples/chess-server",
     "samples/discovery-client",
     "samples/event-client",
-    "tools/certificate-creator"
-, "samples/async-server"]
+    "tools/certificate-creator",
+    "samples/async-server",
+    "opcua-codegen",
+    "opcua-xml"
+]
