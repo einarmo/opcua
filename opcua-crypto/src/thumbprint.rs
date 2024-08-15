@@ -5,7 +5,7 @@
 //! Functionality for holding a message digest.
 use serde::{Deserialize, Serialize};
 
-use crate::types::ByteString;
+use opcua_types::ByteString;
 
 /// The thumbprint holds a 20 byte representation of a certificate that can be used as a hash,
 /// handshake comparison, a filename hint or similar purpose where a shortened representation

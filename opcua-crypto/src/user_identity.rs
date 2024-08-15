@@ -10,7 +10,8 @@
 use std::io::{Cursor, Write};
 use std::str::FromStr;
 
-use crate::types::{
+use log::{error, warn};
+use opcua_types::{
     encoding::{read_u32, write_u32},
     service_types::{SignatureData, UserNameIdentityToken, UserTokenPolicy, X509IdentityToken},
     status_code::StatusCode,

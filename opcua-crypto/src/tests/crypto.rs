@@ -1,23 +1,21 @@
 use std::fs::File;
 use std::io::Write;
 
+use opcua_types::StatusCode;
+
 use crate::{
-    crypto::{
-        aeskey::AesKey,
-        certificate_store::*,
-        hash,
-        pkey::{KeySize, PrivateKey, RsaPadding},
-        random,
-        tests::{
-            make_certificate_store, make_test_cert_1024, make_test_cert_2048, APPLICATION_HOSTNAME,
-            APPLICATION_URI,
-        },
-        user_identity::{legacy_password_decrypt, legacy_password_encrypt},
-        x509::{X509Data, X509},
-        SecurityPolicy, SHA1_SIZE, SHA256_SIZE,
+    aeskey::AesKey,
+    certificate_store::*,
+    from_hex, hash,
+    pkey::{KeySize, PrivateKey, RsaPadding},
+    random,
+    tests::{
+        make_certificate_store, make_test_cert_1024, make_test_cert_2048, APPLICATION_HOSTNAME,
+        APPLICATION_URI,
     },
-    from_hex,
-    types::status_code::StatusCode,
+    user_identity::{legacy_password_decrypt, legacy_password_encrypt},
+    x509::{X509Data, X509},
+    SecurityPolicy, SHA1_SIZE, SHA256_SIZE,
 };
 
 #[test]
@@ -229,8 +227,6 @@ fn test_asymmetric_encrypt_and_decrypt(
 
 #[test]
 fn asymmetric_encrypt_and_decrypt() {
-    crate::console_logging::init();
-
     let (cert, key) = make_test_cert_2048();
     // Try all security policies, ensure they encrypt / decrypt for various sizes
     for security_policy in &[
@@ -383,7 +379,7 @@ fn sign_verify_sha256_pss() {
 
 #[test]
 fn sign_hmac_sha1() {
-    use crate::crypto::hash;
+    use crate::hash;
 
     let key = b"key";
     let data = b"";

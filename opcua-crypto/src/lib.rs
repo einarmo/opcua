@@ -8,7 +8,8 @@
 
 use std::fmt;
 
-use crate::types::{service_types::SignatureData, status_code::StatusCode, ByteString, UAString};
+use log::{error, trace};
+use opcua_types::{service_types::SignatureData, status_code::StatusCode, ByteString, UAString};
 pub use {
     aeskey::*, certificate_store::*, hash::*, pkey::*, security_policy::*, thumbprint::*,
     user_identity::*, x509::*,
@@ -178,4 +179,45 @@ impl std::error::Error for HostnameError {}
 pub fn hostname() -> Result<String, HostnameError> {
     use gethostname::gethostname;
     gethostname().into_string().map_err(|_| HostnameError {})
+}
+
+// Turns hex string to array bytes. Function was extracted & adapted from the deprecated
+// crate rustc-serialize. Function panics if the string is invalid.
+//
+// https://github.com/rust-lang-deprecated/rustc-serialize/blob/master/src/hex.rs
+#[cfg(test)]
+fn from_hex(v: &str) -> Vec<u8> {
+    // This may be an overestimate if there is any whitespace
+    let mut b = Vec::with_capacity(v.len() / 2);
+    let mut modulus = 0;
+    let mut buf = 0;
+
+    for (idx, byte) in v.bytes().enumerate() {
+        buf <<= 4;
+
+        match byte {
+            b'A'..=b'F' => buf |= byte - b'A' + 10,
+            b'a'..=b'f' => buf |= byte - b'a' + 10,
+            b'0'..=b'9' => buf |= byte - b'0',
+            b' ' | b'\r' | b'\n' | b'\t' => {
+                buf >>= 4;
+                continue;
+            }
+            _ => {
+                let ch = v[idx..].chars().next().unwrap();
+                panic!("Invalid hex character {} at {}", ch, idx);
+            }
+        }
+
+        modulus += 1;
+        if modulus == 2 {
+            modulus = 0;
+            b.push(buf);
+        }
+    }
+
+    match modulus {
+        0 => b.into_iter().collect(),
+        _ => panic!("Invalid hex length"),
+    }
 }

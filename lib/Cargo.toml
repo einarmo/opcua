@@ -37,7 +37,7 @@ generated-address-space = []
 # which brings in a dependency to opcua-client. Omitting the feature saves some memory.
 discovery-server-registration = ["client"]
 # OpenSSL can be compiled and statically linked to with this feature
-vendored-openssl = ["openssl/vendored"]
+vendored-openssl = ["opcua-crypto/vendored-openssl"]
 
 [dependencies]
 log = "0.4"
@@ -74,6 +74,7 @@ async-trait = "0.1.79"
 hashbrown = "0.14.5"
 
 opcua-types = { path = "../opcua-types" }
+opcua-crypto = { path = "../opcua-crypto" }
 
 [dev-dependencies]
 tempdir = "0.3"

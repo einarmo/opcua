@@ -6,7 +6,7 @@
 
 use openssl::rand;
 
-use crate::types::byte_string::ByteString;
+use opcua_types::byte_string::ByteString;
 
 /// Fills the slice with cryptographically strong pseudo-random bytes
 pub fn bytes(bytes: &mut [u8]) {

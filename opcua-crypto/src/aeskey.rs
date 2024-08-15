@@ -6,9 +6,10 @@
 
 use std::result::Result;
 
+use log::{error, trace};
 use openssl::symm::{Cipher, Crypter, Mode};
 
-use crate::types::status_code::StatusCode;
+use opcua_types::status_code::StatusCode;
 
 use super::SecurityPolicy;
 
