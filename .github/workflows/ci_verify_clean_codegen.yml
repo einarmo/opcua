@@ -1,0 +1,18 @@
+name: CI verify cleanly generated code
+'on':
+  workflow_call: null
+jobs:
+  types:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (GitHub)
+        uses: actions/checkout@v4
+      - name: Run code gen
+        run: cargo run --bin opcua-codegen code_gen_config.yml
+      - name: Format generated code
+        run: rustfmt lib/src/types/service_types/mod.rs
+      - name: Format address space
+        run: rustfmt lib/src/server/address_space/generated/mod.rs
+      - name: Verify generated code matches committed code
+        run: git status --porcelain
+

@@ -12,7 +12,7 @@ use std::{
 
 use super::{
     byte_string::ByteString, encoding::*, node_id::NodeId, node_ids::ObjectId,
-    status_code::StatusCode, string::XmlElement,
+    status_code::StatusCode, string::XmlElement, MessageInfo,
 };
 
 #[derive(Debug)]
@@ -153,6 +153,13 @@ impl ExtensionObject {
             node_id: node_id.into(),
             body: ExtensionObjectEncoding::ByteString(ByteString::from(stream.into_inner())),
         }
+    }
+
+    pub fn from_message<T>(encodable: &T) -> ExtensionObject
+    where
+        T: BinaryEncoder + MessageInfo,
+    {
+        Self::from_encodable(encodable.object_id(), encodable)
     }
 
     /// Decodes the inner content of the extension object and returns it. The node id is ignored

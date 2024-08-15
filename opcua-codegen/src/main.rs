@@ -1,12 +1,16 @@
 use opcua_codegen::{run_codegen, CodeGenConfig, CodeGenError};
 
 fn main() -> Result<(), CodeGenError> {
+    run_cli()
+}
+
+fn run_cli() -> Result<(), CodeGenError> {
     let args = std::env::args();
 
     if args.len() != 2 {
         println!(
             r#"Usage:
-opcua-codegen [config].yml        
+opcua-codegen [config].yml
 "#
         );
         return Ok(());
@@ -19,7 +23,7 @@ opcua-codegen [config].yml
     let config: CodeGenConfig =
         serde_yaml::from_str(&config_text).expect("Failed to parse config file");
 
-    run_codegen(&config).unwrap();
+    run_codegen(&config)?;
 
     Ok(())
 }

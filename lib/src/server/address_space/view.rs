@@ -123,6 +123,14 @@ impl View {
         }
     }
 
+    pub fn new_full(base: Base, event_notifier: EventNotifier, contains_no_loops: bool) -> Self {
+        Self {
+            base,
+            event_notifier,
+            contains_no_loops,
+        }
+    }
+
     pub fn from_attributes<S>(
         node_id: &NodeId,
         browse_name: S,

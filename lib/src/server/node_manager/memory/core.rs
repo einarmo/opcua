@@ -5,7 +5,7 @@ use hashbrown::HashMap;
 
 use crate::{
     server::{
-        address_space::{read_node_value, AddressSpace},
+        address_space::{read_node_value, AddressSpace, CoreNamespace},
         node_manager::{
             NodeManagersRef, ParsedReadValueId, RequestContext, ServerContext, SyncSampler,
         },
@@ -40,15 +40,15 @@ impl InMemoryNodeManagerImplBuilder for CoreNodeManagerBuilder {
     fn build(self, context: ServerContext, address_space: &mut AddressSpace) -> Self::Impl {
         {
             let mut type_tree = context.type_tree.write();
-            address_space.add_namespace(
+            address_space.import_node_set::<CoreNamespace>(type_tree.namespaces_mut());
+            /* address_space.add_namespace(
                 "http://opcfoundation.org/UA/",
                 type_tree
                     .namespaces_mut()
                     .add_namespace("http://opcfoundation.org/UA/"),
-            );
+            ); */
         }
 
-        crate::server::address_space::populate_address_space(address_space);
         CoreNodeManagerImpl::new(context.node_managers.clone())
     }
 }

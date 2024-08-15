@@ -3,7 +3,9 @@ use std::collections::VecDeque;
 use hashbrown::{Equivalent, HashMap, HashSet};
 
 use crate::{
-    server::node_manager::{ParsedReadValueId, ParsedWriteValue, RequestContext, TypeTree},
+    server::node_manager::{
+        NamespaceMap, ParsedReadValueId, ParsedWriteValue, RequestContext, TypeTree,
+    },
     types::{
         BrowseDirection, DataValue, LocalizedText, NodeClass, NodeId, QualifiedName,
         ReferenceTypeId, StatusCode, TimestampsToReturn,
@@ -11,8 +13,8 @@ use crate::{
 };
 
 use super::{
-    read_node_value, validate_node_read, validate_node_write, HasNodeId, NodeType, ObjectBuilder,
-    Variable,
+    read_node_value, validate_node_read, validate_node_write, HasNodeId, ImportedItem,
+    ImportedReference, NodeSetImport, NodeSetNamespaceMapper, NodeType, ObjectBuilder, Variable,
 };
 
 #[derive(PartialEq, Eq, Clone, Debug, Hash)]
@@ -138,6 +140,44 @@ impl References {
         for (source, target, typ) in references {
             self.insert_reference(source, target, typ);
         }
+    }
+
+    pub fn import_reference(&mut self, source_node: NodeId, rf: ImportedReference) {
+        if source_node == rf.target_id {
+            panic!(
+                "Node id from == node id to {}, self reference is not allowed",
+                source_node
+            );
+        }
+
+        let mut source = source_node;
+        let mut target = rf.target_id;
+        if !rf.is_forward {
+            (source, target) = (target, source);
+        }
+
+        let forward_refs = match self.by_source.get_mut(&source) {
+            Some(r) => r,
+            None => self.by_source.entry(source.clone()).or_default(),
+        };
+
+        if !forward_refs.insert(Reference {
+            reference_type: rf.type_id.clone(),
+            target_node: target.clone(),
+        }) {
+            // If the reference is already added, no reason to try adding it to the inverse.
+            return;
+        }
+
+        let inverse_refs = match self.by_target.get_mut(&target) {
+            Some(r) => r,
+            None => self.by_target.entry(target).or_default(),
+        };
+
+        inverse_refs.insert(Reference {
+            reference_type: rf.type_id,
+            target_node: source,
+        });
     }
 
     pub fn delete_reference(
@@ -365,8 +405,28 @@ impl AddressSpace {
         }
     }
 
+    pub fn import_node_set<T: NodeSetImport>(&mut self, namespaces: &mut NamespaceMap) {
+        let mut map = NodeSetNamespaceMapper::new(namespaces);
+        let owned_namespaces = T::register_namespaces(&mut map);
+        for ns in owned_namespaces {
+            let idx = map
+                .namespaces()
+                .known_namespaces()
+                .get(&ns)
+                .expect("Node import returned owned namespace not added to the namespace map");
+            self.add_namespace(&ns, *idx);
+        }
+        let mut count = 0;
+        for item in T::load(&map) {
+            count += 1;
+            self.import_node(item);
+        }
+        info!("Imported {count} nodes");
+    }
+
     pub fn load_into_type_tree(&self, type_tree: &mut TypeTree) {
         let mut found_ids = VecDeque::new();
+        println!("Begin loading into type tree");
         // Populate types first so that we have reference types to browse in the next stage.
         for node in self.node_map.values() {
             let nc = node.node_class();
@@ -394,8 +454,10 @@ impl AddressSpace {
             };
 
             type_tree.add_type_node(&node_id, &parent_id, nc);
-            found_ids.push_back((node_id.clone(), node_id, Vec::new(), nc));
+            found_ids.push_back((node_id, node_id, Vec::new(), nc));
         }
+
+        let mut seen_nodes = HashSet::new();
 
         // Recursively browse each discovered type for non-type children
         while let Some((node, root_type, path, node_class)) = found_ids.pop_front() {
@@ -430,13 +492,23 @@ impl AddressSpace {
                 let mut path = path.clone();
                 path.push(node_type.as_node().browse_name());
 
-                found_ids.push_back((child.target_node.clone(), root_type, path, nc));
+                if !seen_nodes.insert(child.target_node) {
+                    warn!(
+                        "Found node {} more than once when browsing hierarchically",
+                        child.target_node
+                    );
+                    continue;
+                }
+
+                found_ids.push_back((child.target_node, root_type, path, nc));
             }
 
             if !path.is_empty() {
                 type_tree.add_type_property(&node, &root_type, &path, node_class);
             }
         }
+
+        println!("End loading into type tree");
     }
 
     pub fn add_namespace(&mut self, namespace: &str, index: u16) {
@@ -466,6 +538,23 @@ impl AddressSpace {
                 self.references.insert::<T, S>(&node_id, references);
             }
             self.node_map.insert(node_id, node_type);
+
+            true
+        }
+    }
+
+    pub fn import_node(&mut self, node: ImportedItem) -> bool {
+        let node_id = node.node.node_id().clone();
+
+        self.assert_namespace(&node_id);
+        if self.node_exists(&node_id) {
+            error!("This node {} already exists", node_id);
+            false
+        } else {
+            self.node_map.insert(node_id.clone(), node.node);
+            for r in node.references {
+                self.references.import_reference(node_id.clone(), r);
+            }
 
             true
         }
@@ -750,11 +839,10 @@ mod tests {
     use crate::{
         server::{
             address_space::{
-                types::{NodeBase, Object, Variable},
-                EventNotifier, MethodBuilder, NodeType, ObjectBuilder, ObjectTypeBuilder,
-                VariableBuilder,
+                CoreNamespace, EventNotifier, MethodBuilder, NodeBase, NodeType, Object,
+                ObjectBuilder, ObjectTypeBuilder, Variable, VariableBuilder,
             },
-            node_manager::TypeTree,
+            node_manager::{NamespaceMap, TypeTree},
         },
         types::{
             argument::Argument, Array, BrowseDirection, DataTypeId, DecodingOptions, LocalizedText,
@@ -768,7 +856,8 @@ mod tests {
     fn make_sample_address_space() -> AddressSpace {
         let mut address_space = AddressSpace::new();
         address_space.add_namespace("http://opcfoundation.org/UA/", 0);
-        crate::server::address_space::populate_address_space(&mut address_space);
+        let mut namespaces = NamespaceMap::default();
+        address_space.import_node_set::<CoreNamespace>(&mut namespaces);
         add_sample_vars_to_address_space(&mut address_space);
         address_space
     }
@@ -943,7 +1032,7 @@ mod tests {
                 BrowseDirection::Forward,
             )
             .collect();
-        assert_eq!(references.len(), 2);
+        assert_eq!(references.len(), 3);
 
         let r1 = &references[0];
         assert_eq!(r1.reference_type, &ReferenceTypeId::Organizes.into());

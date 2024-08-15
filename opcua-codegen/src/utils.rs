@@ -1,5 +1,7 @@
-use proc_macro2::Span;
-use syn::{parse_quote, File, Ident};
+use proc_macro2::{Span, TokenStream};
+use syn::{parse_quote, File, Ident, Path};
+
+use crate::CodeGenError;
 
 pub fn create_module_file(modules: Vec<String>) -> File {
     let mut items = Vec::new();
@@ -26,4 +28,25 @@ pub trait GeneratedOutput {
     fn module(&self) -> &str;
 
     fn name(&self) -> &str;
+}
+
+pub trait RenderExpr {
+    fn render(&self, opcua_path: &Path) -> Result<TokenStream, CodeGenError>;
+}
+
+impl<T> RenderExpr for Option<&T>
+where
+    T: RenderExpr,
+{
+    fn render(&self, opcua_path: &Path) -> Result<TokenStream, CodeGenError> {
+        Ok(match self {
+            Some(t) => {
+                let rendered = t.render(opcua_path)?;
+                parse_quote! {
+                    Some(#rendered)
+                }
+            }
+            None => parse_quote! { None },
+        })
+    }
 }

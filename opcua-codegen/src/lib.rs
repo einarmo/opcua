@@ -1,4 +1,5 @@
 mod error;
+pub mod nodeset;
 mod types;
 mod utils;
 
@@ -9,25 +10,27 @@ use std::{
 };
 
 pub use error::CodeGenError;
-use opcua_xml::load_bsd_file;
+use nodeset::{generate_target, make_root_module, NodeSetCodeGenTarget};
 use serde::{Deserialize, Serialize};
+use syn::File;
 pub use types::{
     base_ignored_types, base_json_serialized_types, base_native_type_mappings,
     basic_types_import_map, BsdTypeLoader, CodeGenItemConfig, GeneratedItem, ItemDefinition,
     LoadedType, LoadedTypes, StructureField, StructureFieldType, StructuredType,
 };
-use types::{CodeGenerator, ExternalType};
+use types::{generate_types, ExternalType};
 pub use utils::{create_module_file, GeneratedOutput};
 
 pub fn write_to_directory<T: GeneratedOutput>(
     dir: &str,
     header: &str,
     mut items: Vec<T>,
-) -> Result<(), CodeGenError> {
+) -> Result<Vec<String>, CodeGenError> {
     let mut modules = Vec::new();
     let mut modules_seen = HashSet::new();
-    std::fs::remove_dir_all(dir)?;
-    std::fs::create_dir_all(dir)?;
+    let _ = std::fs::remove_dir_all(dir);
+    std::fs::create_dir_all(dir)
+        .map_err(|e| CodeGenError::io(&format!("Failed to create dir {}", dir), e))?;
 
     items.sort_by(|a, b| a.name().to_lowercase().cmp(&b.name().to_lowercase()));
 
@@ -38,84 +41,63 @@ pub fn write_to_directory<T: GeneratedOutput>(
         let mut file = std::fs::File::options()
             .append(true)
             .create(true)
-            .open(format!("{}/{}.rs", dir, module))?;
+            .open(format!("{}/{}.rs", dir, module))
+            .map_err(|e| {
+                CodeGenError::io(&format!("Failed to open file {}/{}.rs", dir, module), e)
+            })?;
         if is_new {
-            file.write_all(header.as_bytes())?;
+            file.write_all(header.as_bytes()).map_err(|e| {
+                CodeGenError::io(&format!("Failed to write to file {}/{}.rs", dir, module), e)
+            })?;
         }
         // Do it this way so that we keep a stable ordering.
         if modules_seen.insert(module.clone()) {
-            modules.push(module);
+            modules.push(module.clone());
         }
-        file.write_all(&prettyplease::unparse(&gen.to_file()).as_bytes())?;
+        file.write_all(&prettyplease::unparse(&gen.to_file()).as_bytes())
+            .map_err(|e| {
+                CodeGenError::io(&format!("Failed to write to file {}/{}.rs", dir, module), e)
+            })?;
     }
 
+    Ok(modules)
+}
+
+pub fn write_module_file(dir: &str, header: &str, file: File) -> Result<(), CodeGenError> {
     let mut mod_file = std::fs::File::options()
         .append(true)
         .create(true)
-        .open(format!("{}/{}", dir, "mod.rs"))?;
-    let module_file = create_module_file(modules);
-    mod_file.write_all(&prettyplease::unparse(&module_file).as_bytes())?;
+        .open(format!("{}/{}", dir, "mod.rs"))
+        .map_err(|e| CodeGenError::io(&format!("Failed to open file {}/mod.rs", dir), e))?;
+    mod_file
+        .write_all(header.as_bytes())
+        .map_err(|e| CodeGenError::io(&format!("Failed to write to file {}/mod.rs", dir), e))?;
+    mod_file
+        .write_all(&prettyplease::unparse(&file).as_bytes())
+        .map_err(|e| CodeGenError::io(&format!("Failed to write to file {}/mod.rs", dir), e))?;
 
     Ok(())
 }
 
-pub fn generate_types(
-    config: &CodeGenConfig,
-    target: &TypeCodeGenTarget,
-) -> Result<Vec<GeneratedItem>, CodeGenError> {
-    let path = std::path::Path::new(&target.file_path);
-    let data = std::fs::read_to_string(&target.file_path)?;
-    let type_dictionary = load_bsd_file(&data)?;
-
-    let types = match path.extension().and_then(|p| p.to_str()) {
-        Some("bsd") => {
-            let type_loader = BsdTypeLoader::new(
-                target
-                    .ignore
-                    .iter()
-                    .cloned()
-                    .chain(base_ignored_types().into_iter())
-                    .collect(),
-                base_native_type_mappings(),
-                type_dictionary,
-            )?;
-            type_loader.from_bsd()?
-        }
-        Some(r) => {
-            return Err(CodeGenError::Other(format!(
-                "Invalid code gen file, unknown extension {r}"
-            )))
-        }
-        None => {
-            return Err(CodeGenError::Other(
-                "Invalid code gen file, no extension".to_owned(),
-            ))
-        }
-    };
-
-    let mut types_import_map = basic_types_import_map(&config.opcua_crate_path);
-    for (k, v) in &target.types_import_map {
-        types_import_map.insert(k.clone(), v.clone());
-    }
-
-    let generator = CodeGenerator::new(
-        target
-            .json_serialized_types
-            .iter()
-            .cloned()
-            .chain(base_json_serialized_types().into_iter())
-            .collect(),
-        types_import_map,
-        types,
-        target.default_excluded.clone(),
-        CodeGenItemConfig {
-            enums_single_file: target.enums_single_file,
-            structs_single_file: target.structs_single_file,
-            opcua_crate_path: config.opcua_crate_path.clone(),
-        },
+fn make_header(path: &str, extra: &str) -> String {
+    let mut header = format!(
+        r#"// This file was autogenerated from {} by opcua-codegen
+//
+// DO NOT EDIT THIS FILE
+"#,
+        path
     );
 
-    generator.generate_types()
+    if !extra.is_empty() {
+        header = format!(
+            r#"{}
+//
+{header}"#,
+            extra.trim()
+        );
+    }
+
+    header
 }
 
 pub fn run_codegen(config: &CodeGenConfig) -> Result<(), CodeGenError> {
@@ -126,24 +108,24 @@ pub fn run_codegen(config: &CodeGenConfig) -> Result<(), CodeGenError> {
                 let types = generate_types(config, t)?;
                 println!("Writing {} types to {}", types.len(), t.output_dir);
 
-                let mut header = format!(
-                    r#"// This file was autogenerated from {} by opcua-codegen
-//
-// DO NOT EDIT THIS FILE
-"#,
-                    t.file_path
-                );
+                let header = make_header(&t.file_path, &config.extra_header);
 
-                if !config.extra_header.is_empty() {
-                    header = format!(
-                        r#"{}
-//
-{header}"#,
-                        config.extra_header.trim()
-                    );
-                }
+                let modules = write_to_directory(&t.output_dir, &header, types)?;
+                let module_file = create_module_file(modules);
+                write_module_file(&t.output_dir, &header, module_file)?;
+            }
+            CodeGenTarget::Nodes(n) => {
+                println!("Running node set code generation for {}", n.file_path);
+                let chunks =
+                    generate_target(&n, &config.opcua_crate_path, &config.preferred_locale)?;
+                let module_file = make_root_module(&chunks, &config.opcua_crate_path, &n)?;
 
-                write_to_directory(&t.output_dir, &header, types)?;
+                println!("Writing {} files to {}", chunks.len() + 1, n.output_dir);
+
+                let header = make_header(&n.file_path, &config.extra_header);
+
+                write_to_directory(&n.output_dir, &header, chunks)?;
+                write_module_file(&n.output_dir, &header, module_file)?;
             }
         }
     }
@@ -174,11 +156,22 @@ pub struct TypeCodeGenTarget {
 #[serde(rename_all = "snake_case")]
 pub enum CodeGenTarget {
     Types(TypeCodeGenTarget),
+    Nodes(NodeSetCodeGenTarget),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CodeGenConfig {
+    #[serde(default)]
     pub extra_header: String,
+    #[serde(default = "defaults::opcua_crate_path")]
     pub opcua_crate_path: String,
+    #[serde(default)]
+    pub preferred_locale: String,
     pub targets: Vec<CodeGenTarget>,
+}
+
+mod defaults {
+    pub fn opcua_crate_path() -> String {
+        "opcua".to_owned()
+    }
 }

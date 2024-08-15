@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
 use convert_case::{Case, Casing};
-use opcua_xml::schema::{EnumeratedType, TypeDictionary};
+use opcua_xml::schema::opc_binary_schema::{EnumeratedType, TypeDictionary};
 
 use crate::{error::CodeGenError, StructureField, StructureFieldType, StructuredType};
 
@@ -69,7 +69,7 @@ impl BsdTypeLoader {
 
     fn load_structure(
         &self,
-        item: opcua_xml::schema::StructuredType,
+        item: opcua_xml::schema::opc_binary_schema::StructuredType,
     ) -> Result<StructuredType, CodeGenError> {
         let mut fields_to_add = Vec::new();
         let mut fields_to_hide = Vec::new();
@@ -156,14 +156,14 @@ impl BsdTypeLoader {
         for node in std::mem::take(&mut self.xml.elements) {
             match node {
                 // Ignore opaque types for now, should these be mapped to structs with raw binary data?
-                opcua_xml::schema::TypeDictionaryItem::Opaque(_) => continue,
-                opcua_xml::schema::TypeDictionaryItem::Enumerated(e) => {
+                opcua_xml::schema::opc_binary_schema::TypeDictionaryItem::Opaque(_) => continue,
+                opcua_xml::schema::opc_binary_schema::TypeDictionaryItem::Enumerated(e) => {
                     if self.ignored.contains(&e.opaque.description.name) {
                         continue;
                     }
                     types.push(LoadedType::Enum(self.load_enum(e)?));
                 }
-                opcua_xml::schema::TypeDictionaryItem::Structured(s) => {
+                opcua_xml::schema::opc_binary_schema::TypeDictionaryItem::Structured(s) => {
                     if self.ignored.contains(&s.description.name) {
                         continue;
                     }
