@@ -1,0 +1,35 @@
+[package]
+name = "opcua-crypto"
+version = "0.13.0" # OPCUARustVersion
+description = "OPC UA cryptography library"
+authors = ["Adam Lock <locka99@gmail.com>", "Einar Omang <einar@omang.com>"]
+homepage = "https://github.com/locka99/opcua"
+repository = "https://github.com/locka99/opcua"
+license = "MPL-2.0"
+keywords = ["opcua","opc","ua"]
+categories = ["embedded","network-programming"]
+readme = "../README.md"
+documentation = "https://docs.rs/opcua/"
+edition = "2021"
+
+[lib]
+name = "opcua_crypto"
+
+[features]
+# OpenSSL can be compiled and statically linked to with this feature
+vendored-openssl = ["openssl/vendored"]
+
+[dependencies]
+log = { workspace = true }
+gethostname = { workspace = true }
+openssl = { workspace = true }
+openssl-sys = { workspace = true }
+chrono = { workspace = true }
+foreign-types = { workspace = true }
+serde = { workspace = true }
+
+opcua-types = { path = "../opcua-types" }
+
+
+[dev-dependencies]
+tempdir = "0.3"

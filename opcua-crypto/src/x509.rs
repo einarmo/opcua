@@ -13,6 +13,7 @@ use std::{
 };
 
 use chrono::{DateTime, NaiveDateTime, Utc};
+use log::{error, info, trace};
 use openssl::{
     asn1::*,
     hash,
@@ -22,7 +23,7 @@ use openssl::{
     x509::{self, extension::*},
 };
 
-use crate::types::{service_types::ApplicationDescription, status_code::StatusCode, ByteString};
+use opcua_types::{service_types::ApplicationDescription, status_code::StatusCode, ByteString};
 
 use super::{
     hostname,
@@ -627,8 +628,6 @@ mod tests {
     /// This test checks that a cert will validate dns or ip entries in the subject alt host names
     #[test]
     fn alt_hostnames() {
-        crate::console_logging::init();
-
         let alt_host_names = ["uri:foo", "host2", "www.google.com", "192.168.1.1", "::1"];
 
         // Create a cert with alt hostnames which are both IP and DNS entries

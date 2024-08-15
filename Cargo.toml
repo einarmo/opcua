@@ -14,7 +14,7 @@ members = [
     "opcua-codegen",
     "opcua-xml",
     "opcua-types"
-]
+, "opcua-crypto"]
 
 [workspace.dependencies]
 bitflags = "2.4"
@@ -27,3 +27,8 @@ uuid = { version = "1.2", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
 byteorder = "1.4"
 base64 = "0.21"
+gethostname = "0.4"
+openssl = "0.10"
+openssl-sys = "0.9"
+foreign-types = "0.3"
+

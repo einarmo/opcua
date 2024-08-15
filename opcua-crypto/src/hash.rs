@@ -6,9 +6,10 @@
 
 use std::result::Result;
 
+use log::{error, trace};
 use openssl::{hash, pkey, sign};
 
-use crate::types::status_code::StatusCode;
+use opcua_types::status_code::StatusCode;
 
 use super::{SHA1_SIZE, SHA256_SIZE};
 

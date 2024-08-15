@@ -7,7 +7,6 @@ use crate::{
         tests::*,
     },
     crypto::{x509::X509, SecurityPolicy},
-    from_hex,
     types::DecodingOptions,
 };
 
@@ -470,6 +469,46 @@ fn security_policy_symmetric_encrypt_decrypt() {
 
     // Compare the data, not the signature
     assert_eq!(&src[..80], &src2[..80]);
+}
+
+// Turns hex string to array bytes. Function was extracted & adapted from the deprecated
+// crate rustc-serialize. Function panics if the string is invalid.
+//
+// https://github.com/rust-lang-deprecated/rustc-serialize/blob/master/src/hex.rs
+fn from_hex(v: &str) -> Vec<u8> {
+    // This may be an overestimate if there is any whitespace
+    let mut b = Vec::with_capacity(v.len() / 2);
+    let mut modulus = 0;
+    let mut buf = 0;
+
+    for (idx, byte) in v.bytes().enumerate() {
+        buf <<= 4;
+
+        match byte {
+            b'A'..=b'F' => buf |= byte - b'A' + 10,
+            b'a'..=b'f' => buf |= byte - b'a' + 10,
+            b'0'..=b'9' => buf |= byte - b'0',
+            b' ' | b'\r' | b'\n' | b'\t' => {
+                buf >>= 4;
+                continue;
+            }
+            _ => {
+                let ch = v[idx..].chars().next().unwrap();
+                panic!("Invalid hex character {} at {}", ch, idx);
+            }
+        }
+
+        modulus += 1;
+        if modulus == 2 {
+            modulus = 0;
+            b.push(buf);
+        }
+    }
+
+    match modulus {
+        0 => b.into_iter().collect(),
+        _ => panic!("Invalid hex length"),
+    }
 }
 
 #[test]

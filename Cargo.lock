@@ -705,6 +705,7 @@ dependencies = [
  "libc",
  "log 0.4.22",
  "opcua",
+ "opcua-crypto",
  "opcua-types",
  "openssl",
  "openssl-sys",
@@ -758,6 +759,21 @@ dependencies = [
  "syn 2.0.74",
  "thiserror",
  "uuid",
+]
+
+[[package]]
+name = "opcua-crypto"
+version = "0.13.0"
+dependencies = [
+ "chrono",
+ "foreign-types",
+ "gethostname",
+ "log 0.4.22",
+ "opcua-types",
+ "openssl",
+ "openssl-sys",
+ "serde",
+ "tempdir",
 ]
 
 [[package]]

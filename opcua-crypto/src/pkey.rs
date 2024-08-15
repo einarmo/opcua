@@ -9,9 +9,10 @@ use std::{
     result::Result,
 };
 
+use log::{debug, error, trace};
 use openssl::{hash, pkey, rsa, sign};
 
-use crate::types::status_code::StatusCode;
+use opcua_types::status_code::StatusCode;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum RsaPadding {
@@ -373,7 +374,8 @@ impl PublicKey {
 /// https://stackoverflow.com/questions/17784022/how-to-encrypt-data-using-rsa-with-sha-256-as-hash-function-and-mgf1-as-mask-ge
 mod oaep_sha256 {
     use foreign_types::ForeignType;
-    use libc::*;
+    use log::trace;
+    // use libc::*;
     use openssl::{
         error,
         pkey::{Private, Public},
@@ -395,7 +397,7 @@ mod oaep_sha256 {
             EVP_PKEY_OP_TYPE_CRYPT,
             EVP_PKEY_CTRL_RSA_OAEP_MD,
             0,
-            md as *mut c_void,
+            md as *mut std::ffi::c_void,
         );
     }
 
@@ -417,7 +419,7 @@ mod oaep_sha256 {
                     let _ret = EVP_PKEY_decrypt_init(ctx);
                     set_evp_ctrl_oaep_sha256(ctx);
 
-                    let mut out_len: size_t = to.len();
+                    let mut out_len = to.len();
                     let ret = EVP_PKEY_decrypt(
                         ctx,
                         to.as_mut_ptr(),
@@ -470,7 +472,7 @@ mod oaep_sha256 {
                     let _ret = EVP_PKEY_encrypt_init(ctx);
                     set_evp_ctrl_oaep_sha256(ctx);
 
-                    let mut out_len: size_t = to.len();
+                    let mut out_len = to.len();
                     let ret = EVP_PKEY_encrypt(
                         ctx,
                         to.as_mut_ptr(),

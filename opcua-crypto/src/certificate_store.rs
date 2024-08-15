@@ -9,9 +9,10 @@ use std::fs::{metadata, File};
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
+use log::{debug, error, info, trace, warn};
 use openssl::{pkey, x509};
 
-use crate::types::status_code::StatusCode;
+use opcua_types::status_code::StatusCode;
 
 use super::{
     pkey::PrivateKey,
