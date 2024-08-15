@@ -15,9 +15,7 @@ use opcua::{
 };
 // Write is not implemented in the core library itself, only in the test node manager,
 // we still test here to test write functionality in the address space.
-use utils::{array_value, read_value_id, setup};
-
-mod utils;
+use super::utils::{array_value, read_value_id, setup};
 
 fn write_value(
     attribute_id: AttributeId,

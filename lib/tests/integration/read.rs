@@ -1,3 +1,4 @@
+use super::utils::{array_value, read_value_id, read_value_ids, setup};
 use chrono::TimeDelta;
 use opcua::{
     client::HistoryReadAction,
@@ -13,9 +14,6 @@ use opcua::{
         Variant, WriteMask,
     },
 };
-use utils::{array_value, read_value_id, read_value_ids, setup};
-
-mod utils;
 
 #[tokio::test]
 async fn read() {
