@@ -3,6 +3,8 @@
 // Copyright (C) 2017-2024 Adam Lock
 
 //! Functionality for holding a message digest.
+use serde::{Deserialize, Serialize};
+
 use crate::types::ByteString;
 
 /// The thumbprint holds a 20 byte representation of a certificate that can be used as a hash,

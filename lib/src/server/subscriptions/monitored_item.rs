@@ -1,5 +1,7 @@
 use std::collections::{BTreeSet, VecDeque};
 
+use serde::Serialize;
+
 use crate::{
     server::{
         info::ServerInfo,

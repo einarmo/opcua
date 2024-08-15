@@ -149,6 +149,7 @@ pub struct TypeCodeGenTarget {
     pub enums_single_file: bool,
     #[serde(default)]
     pub structs_single_file: bool,
+    pub opcua_types_path: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

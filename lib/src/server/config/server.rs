@@ -9,6 +9,8 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use serde::{Deserialize, Serialize};
+
 use crate::{
     core::{comms::url::url_matches_except_host, config::Config},
     crypto::{CertificateStore, SecurityPolicy, Thumbprint},
