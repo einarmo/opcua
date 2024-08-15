@@ -13,9 +13,7 @@ pub struct UadpWriterGroupMessageDataType {
     pub sampling_offset: f64,
     pub publishing_offset: Option<Vec<f64>>,
 }
-impl crate::types::BinaryEncoder<UadpWriterGroupMessageDataType>
-    for UadpWriterGroupMessageDataType
-{
+impl crate::types::BinaryEncoder for UadpWriterGroupMessageDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.group_version.byte_len();
@@ -26,7 +24,10 @@ impl crate::types::BinaryEncoder<UadpWriterGroupMessageDataType>
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.group_version.encode(stream)?;
         size += self.data_set_ordering.encode(stream)?;
@@ -40,21 +41,25 @@ impl crate::types::BinaryEncoder<UadpWriterGroupMessageDataType>
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let group_version =
-            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
-        let data_set_ordering =
-            <super::enums::DataSetOrderingType as crate::types::BinaryEncoder<
-                super::enums::DataSetOrderingType,
-            >>::decode(stream, decoding_options)?;
-        let network_message_content_mask =
-            <super::enums::UadpNetworkMessageContentMask as crate::types::BinaryEncoder<
-                super::enums::UadpNetworkMessageContentMask,
-            >>::decode(stream, decoding_options)?;
-        let sampling_offset =
-            <f64 as crate::types::BinaryEncoder<f64>>::decode(stream, decoding_options)?;
-        let publishing_offset = <Option<Vec<f64>> as crate::types::BinaryEncoder<
-            Option<Vec<f64>>,
-        >>::decode(stream, decoding_options)?;
+        let group_version = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let data_set_ordering = <super::enums::DataSetOrderingType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let network_message_content_mask = <super::enums::UadpNetworkMessageContentMask as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let sampling_offset = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let publishing_offset = <Option<
+            Vec<f64>,
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             group_version,
             data_set_ordering,

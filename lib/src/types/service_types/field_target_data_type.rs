@@ -20,7 +20,7 @@ impl crate::types::MessageInfo for FieldTargetDataType {
         crate::types::ObjectId::FieldTargetDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<FieldTargetDataType> for FieldTargetDataType {
+impl crate::types::BinaryEncoder for FieldTargetDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.data_set_field_id.byte_len();
@@ -33,7 +33,10 @@ impl crate::types::BinaryEncoder<FieldTargetDataType> for FieldTargetDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.data_set_field_id.encode(stream)?;
         size += self.receiver_index_range.encode(stream)?;
@@ -49,28 +52,34 @@ impl crate::types::BinaryEncoder<FieldTargetDataType> for FieldTargetDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let data_set_field_id = <crate::types::guid::Guid as crate::types::BinaryEncoder<
-            crate::types::guid::Guid,
-        >>::decode(stream, decoding_options)?;
-        let receiver_index_range =
-            <crate::types::string::UAString as crate::types::BinaryEncoder<
-                crate::types::string::UAString,
-            >>::decode(stream, decoding_options)?;
-        let target_node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let attribute_id =
-            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
-        let write_index_range = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let override_value_handling =
-            <super::enums::OverrideValueHandling as crate::types::BinaryEncoder<
-                super::enums::OverrideValueHandling,
-            >>::decode(stream, decoding_options)?;
-        let override_value = <crate::types::variant::Variant as crate::types::BinaryEncoder<
-            crate::types::variant::Variant,
-        >>::decode(stream, decoding_options)?;
+        let data_set_field_id = <crate::types::guid::Guid as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let receiver_index_range = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let target_node_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let attribute_id = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let write_index_range = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let override_value_handling = <super::enums::OverrideValueHandling as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let override_value = <crate::types::variant::Variant as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             data_set_field_id,
             receiver_index_range,

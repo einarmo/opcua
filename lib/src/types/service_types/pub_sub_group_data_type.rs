@@ -11,7 +11,9 @@ pub struct PubSubGroupDataType {
     pub enabled: bool,
     pub security_mode: super::enums::MessageSecurityMode,
     pub security_group_id: crate::types::string::UAString,
-    pub security_key_services: Option<Vec<super::endpoint_description::EndpointDescription>>,
+    pub security_key_services: Option<
+        Vec<super::endpoint_description::EndpointDescription>,
+    >,
     pub max_network_message_size: u32,
     pub group_properties: Option<Vec<super::key_value_pair::KeyValuePair>>,
 }
@@ -20,7 +22,7 @@ impl crate::types::MessageInfo for PubSubGroupDataType {
         crate::types::ObjectId::PubSubGroupDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<PubSubGroupDataType> for PubSubGroupDataType {
+impl crate::types::BinaryEncoder for PubSubGroupDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.name.byte_len();
@@ -33,7 +35,10 @@ impl crate::types::BinaryEncoder<PubSubGroupDataType> for PubSubGroupDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.name.encode(stream)?;
         size += self.enabled.encode(stream)?;
@@ -49,28 +54,32 @@ impl crate::types::BinaryEncoder<PubSubGroupDataType> for PubSubGroupDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let enabled =
-            <bool as crate::types::BinaryEncoder<bool>>::decode(stream, decoding_options)?;
-        let security_mode = <super::enums::MessageSecurityMode as crate::types::BinaryEncoder<
-            super::enums::MessageSecurityMode,
-        >>::decode(stream, decoding_options)?;
-        let security_group_id = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        let name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let enabled = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let security_mode = <super::enums::MessageSecurityMode as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let security_group_id = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let security_key_services = <Option<
             Vec<super::endpoint_description::EndpointDescription>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::endpoint_description::EndpointDescription>>,
-        >>::decode(stream, decoding_options)?;
-        let max_network_message_size =
-            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
-        let group_properties =
-            <Option<Vec<super::key_value_pair::KeyValuePair>> as crate::types::BinaryEncoder<
-                Option<Vec<super::key_value_pair::KeyValuePair>>,
-            >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let max_network_message_size = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let group_properties = <Option<
+            Vec<super::key_value_pair::KeyValuePair>,
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             name,
             enabled,

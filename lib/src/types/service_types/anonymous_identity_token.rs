@@ -16,7 +16,10 @@ impl crate::types::BinaryEncoder for AnonymousIdentityToken {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.policy_id.encode(stream)?;
         Ok(size)

@@ -21,7 +21,7 @@ impl crate::types::MessageInfo for EndpointDescription {
         crate::types::ObjectId::EndpointDescription_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<EndpointDescription> for EndpointDescription {
+impl crate::types::BinaryEncoder for EndpointDescription {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.endpoint_url.byte_len();
@@ -35,7 +35,10 @@ impl crate::types::BinaryEncoder<EndpointDescription> for EndpointDescription {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.endpoint_url.encode(stream)?;
         size += self.server.encode(stream)?;
@@ -52,34 +55,37 @@ impl crate::types::BinaryEncoder<EndpointDescription> for EndpointDescription {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let endpoint_url = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let server = <super::application_description::ApplicationDescription as crate::types::BinaryEncoder<
-            super::application_description::ApplicationDescription,
-        >>::decode(stream, decoding_options)?;
-        let server_certificate =
-            <crate::types::byte_string::ByteString as crate::types::BinaryEncoder<
-                crate::types::byte_string::ByteString,
-            >>::decode(stream, decoding_options)?;
-        let security_mode = <super::enums::MessageSecurityMode as crate::types::BinaryEncoder<
-            super::enums::MessageSecurityMode,
-        >>::decode(stream, decoding_options)?;
-        let security_policy_uri =
-            <crate::types::string::UAString as crate::types::BinaryEncoder<
-                crate::types::string::UAString,
-            >>::decode(stream, decoding_options)?;
+        let endpoint_url = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let server = <super::application_description::ApplicationDescription as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let server_certificate = <crate::types::byte_string::ByteString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let security_mode = <super::enums::MessageSecurityMode as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let security_policy_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let user_identity_tokens = <Option<
             Vec<super::user_token_policy::UserTokenPolicy>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::user_token_policy::UserTokenPolicy>>,
-        >>::decode(stream, decoding_options)?;
-        let transport_profile_uri =
-            <crate::types::string::UAString as crate::types::BinaryEncoder<
-                crate::types::string::UAString,
-            >>::decode(stream, decoding_options)?;
-        let security_level =
-            <u8 as crate::types::BinaryEncoder<u8>>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let transport_profile_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let security_level = <u8 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             endpoint_url,
             server,

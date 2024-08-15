@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for RedundantServerDataType {
         crate::types::ObjectId::RedundantServerDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<RedundantServerDataType> for RedundantServerDataType {
+impl crate::types::BinaryEncoder for RedundantServerDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.server_id.byte_len();
@@ -25,7 +25,10 @@ impl crate::types::BinaryEncoder<RedundantServerDataType> for RedundantServerDat
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.server_id.encode(stream)?;
         size += self.service_level.encode(stream)?;
@@ -37,14 +40,18 @@ impl crate::types::BinaryEncoder<RedundantServerDataType> for RedundantServerDat
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let server_id = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let service_level =
-            <u8 as crate::types::BinaryEncoder<u8>>::decode(stream, decoding_options)?;
-        let server_state = <super::enums::ServerState as crate::types::BinaryEncoder<
-            super::enums::ServerState,
-        >>::decode(stream, decoding_options)?;
+        let server_id = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let service_level = <u8 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let server_state = <super::enums::ServerState as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             server_id,
             service_level,

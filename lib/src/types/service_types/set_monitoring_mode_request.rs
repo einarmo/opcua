@@ -17,7 +17,7 @@ impl crate::types::MessageInfo for SetMonitoringModeRequest {
         crate::types::ObjectId::SetMonitoringModeRequest_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<SetMonitoringModeRequest> for SetMonitoringModeRequest {
+impl crate::types::BinaryEncoder for SetMonitoringModeRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -27,7 +27,10 @@ impl crate::types::BinaryEncoder<SetMonitoringModeRequest> for SetMonitoringMode
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.request_header.encode(stream)?;
         size += self.subscription_id.encode(stream)?;
@@ -40,18 +43,25 @@ impl crate::types::BinaryEncoder<SetMonitoringModeRequest> for SetMonitoringMode
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let request_header =
-            <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder<
-                crate::types::request_header::RequestHeader,
-            >>::decode(stream, decoding_options)?;
-        let subscription_id =
-            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
-        let monitoring_mode = <super::enums::MonitoringMode as crate::types::BinaryEncoder<
-            super::enums::MonitoringMode,
-        >>::decode(stream, decoding_options)?;
-        let monitored_item_ids = <Option<Vec<u32>> as crate::types::BinaryEncoder<
-            Option<Vec<u32>>,
-        >>::decode(stream, decoding_options)?;
+        let request_header = <crate::types::request_header::RequestHeader as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let __request_handle = request_header.request_handle;
+        let subscription_id = <u32 as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
+        let monitoring_mode = <super::enums::MonitoringMode as crate::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )
+            .map_err(|e| e.with_request_handle(__request_handle))?;
+        let monitored_item_ids = <Option<
+            Vec<u32>,
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)
+            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
             subscription_id,

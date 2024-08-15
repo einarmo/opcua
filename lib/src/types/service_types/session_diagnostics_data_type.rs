@@ -45,8 +45,7 @@ pub struct SessionDiagnosticsDataType {
     pub delete_references_count: super::service_counter_data_type::ServiceCounterDataType,
     pub browse_count: super::service_counter_data_type::ServiceCounterDataType,
     pub browse_next_count: super::service_counter_data_type::ServiceCounterDataType,
-    pub translate_browse_paths_to_node_ids_count:
-        super::service_counter_data_type::ServiceCounterDataType,
+    pub translate_browse_paths_to_node_ids_count: super::service_counter_data_type::ServiceCounterDataType,
     pub query_first_count: super::service_counter_data_type::ServiceCounterDataType,
     pub query_next_count: super::service_counter_data_type::ServiceCounterDataType,
     pub register_nodes_count: super::service_counter_data_type::ServiceCounterDataType,
@@ -57,7 +56,7 @@ impl crate::types::MessageInfo for SessionDiagnosticsDataType {
         crate::types::ObjectId::SessionDiagnosticsDataType_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<SessionDiagnosticsDataType> for SessionDiagnosticsDataType {
+impl crate::types::BinaryEncoder for SessionDiagnosticsDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.session_id.byte_len();
@@ -106,7 +105,10 @@ impl crate::types::BinaryEncoder<SessionDiagnosticsDataType> for SessionDiagnost
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.session_id.encode(stream)?;
         size += self.session_name.encode(stream)?;
@@ -146,9 +148,7 @@ impl crate::types::BinaryEncoder<SessionDiagnosticsDataType> for SessionDiagnost
         size += self.delete_references_count.encode(stream)?;
         size += self.browse_count.encode(stream)?;
         size += self.browse_next_count.encode(stream)?;
-        size += self
-            .translate_browse_paths_to_node_ids_count
-            .encode(stream)?;
+        size += self.translate_browse_paths_to_node_ids_count.encode(stream)?;
         size += self.query_first_count.encode(stream)?;
         size += self.query_next_count.encode(stream)?;
         size += self.register_nodes_count.encode(stream)?;
@@ -160,132 +160,177 @@ impl crate::types::BinaryEncoder<SessionDiagnosticsDataType> for SessionDiagnost
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let session_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder<
-            crate::types::node_id::NodeId,
-        >>::decode(stream, decoding_options)?;
-        let session_name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let client_description = <super::application_description::ApplicationDescription as crate::types::BinaryEncoder<
-            super::application_description::ApplicationDescription,
-        >>::decode(stream, decoding_options)?;
-        let server_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let endpoint_url = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let locale_ids =
-            <Option<Vec<crate::types::string::UAString>> as crate::types::BinaryEncoder<
-                Option<Vec<crate::types::string::UAString>>,
-            >>::decode(stream, decoding_options)?;
-        let actual_session_timeout =
-            <f64 as crate::types::BinaryEncoder<f64>>::decode(stream, decoding_options)?;
-        let max_response_message_size =
-            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
-        let client_connection_time =
-            <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-                crate::types::date_time::DateTime,
-            >>::decode(stream, decoding_options)?;
-        let client_last_contact_time =
-            <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-                crate::types::date_time::DateTime,
-            >>::decode(stream, decoding_options)?;
-        let current_subscriptions_count =
-            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
-        let current_monitored_items_count =
-            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
-        let current_publish_requests_in_queue =
-            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
-        let total_request_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let unauthorized_request_count =
-            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
-        let read_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let history_read_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let write_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let history_update_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let call_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let create_monitored_items_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let modify_monitored_items_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let set_monitoring_mode_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let set_triggering_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let delete_monitored_items_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let create_subscription_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let modify_subscription_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let set_publishing_mode_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let publish_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let republish_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let transfer_subscriptions_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let delete_subscriptions_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let add_nodes_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let add_references_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let delete_nodes_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let delete_references_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let browse_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let browse_next_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let translate_browse_paths_to_node_ids_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let query_first_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let query_next_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let register_nodes_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
-        let unregister_nodes_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder<
-            super::service_counter_data_type::ServiceCounterDataType,
-        >>::decode(stream, decoding_options)?;
+        let session_id = <crate::types::node_id::NodeId as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let session_name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let client_description = <super::application_description::ApplicationDescription as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let server_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let endpoint_url = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let locale_ids = <Option<
+            Vec<crate::types::string::UAString>,
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let actual_session_timeout = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let max_response_message_size = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let client_connection_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let client_last_contact_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let current_subscriptions_count = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let current_monitored_items_count = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let current_publish_requests_in_queue = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let total_request_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let unauthorized_request_count = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let read_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let history_read_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let write_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let history_update_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let call_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let create_monitored_items_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let modify_monitored_items_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let set_monitoring_mode_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let set_triggering_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let delete_monitored_items_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let create_subscription_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let modify_subscription_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let set_publishing_mode_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let publish_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let republish_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let transfer_subscriptions_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let delete_subscriptions_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let add_nodes_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let add_references_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let delete_nodes_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let delete_references_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let browse_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let browse_next_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let translate_browse_paths_to_node_ids_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let query_first_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let query_next_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let register_nodes_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let unregister_nodes_count = <super::service_counter_data_type::ServiceCounterDataType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             session_id,
             session_name,

@@ -18,7 +18,7 @@ impl crate::types::MessageInfo for AxisInformation {
         crate::types::ObjectId::AxisInformation_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<AxisInformation> for AxisInformation {
+impl crate::types::BinaryEncoder for AxisInformation {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.engineering_units.byte_len();
@@ -29,7 +29,10 @@ impl crate::types::BinaryEncoder<AxisInformation> for AxisInformation {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.engineering_units.encode(stream)?;
         size += self.eu_range.encode(stream)?;
@@ -43,27 +46,25 @@ impl crate::types::BinaryEncoder<AxisInformation> for AxisInformation {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let engineering_units =
-            <super::eu_information::EUInformation as crate::types::BinaryEncoder<
-                super::eu_information::EUInformation,
-            >>::decode(stream, decoding_options)?;
-        let eu_range =
-            <super::range::Range as crate::types::BinaryEncoder<super::range::Range>>::decode(
-                stream,
-                decoding_options,
-            )?;
-        let title = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder<
-            crate::types::localized_text::LocalizedText,
-        >>::decode(stream, decoding_options)?;
-        let axis_scale_type =
-            <super::enums::AxisScaleEnumeration as crate::types::BinaryEncoder<
-                super::enums::AxisScaleEnumeration,
-            >>::decode(stream, decoding_options)?;
-        let axis_steps =
-            <Option<Vec<f64>> as crate::types::BinaryEncoder<Option<Vec<f64>>>>::decode(
-                stream,
-                decoding_options,
-            )?;
+        let engineering_units = <super::eu_information::EUInformation as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let eu_range = <super::range::Range as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let title = <crate::types::localized_text::LocalizedText as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let axis_scale_type = <super::enums::AxisScaleEnumeration as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let axis_steps = <Option<
+            Vec<f64>,
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             engineering_units,
             eu_range,

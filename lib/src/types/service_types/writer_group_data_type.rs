@@ -11,7 +11,9 @@ pub struct WriterGroupDataType {
     pub enabled: bool,
     pub security_mode: super::enums::MessageSecurityMode,
     pub security_group_id: crate::types::string::UAString,
-    pub security_key_services: Option<Vec<super::endpoint_description::EndpointDescription>>,
+    pub security_key_services: Option<
+        Vec<super::endpoint_description::EndpointDescription>,
+    >,
     pub max_network_message_size: u32,
     pub group_properties: Option<Vec<super::key_value_pair::KeyValuePair>>,
     pub writer_group_id: u16,
@@ -22,9 +24,11 @@ pub struct WriterGroupDataType {
     pub header_layout_uri: crate::types::string::UAString,
     pub transport_settings: crate::types::extension_object::ExtensionObject,
     pub message_settings: crate::types::extension_object::ExtensionObject,
-    pub data_set_writers: Option<Vec<super::data_set_writer_data_type::DataSetWriterDataType>>,
+    pub data_set_writers: Option<
+        Vec<super::data_set_writer_data_type::DataSetWriterDataType>,
+    >,
 }
-impl crate::types::BinaryEncoder<WriterGroupDataType> for WriterGroupDataType {
+impl crate::types::BinaryEncoder for WriterGroupDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.name.byte_len();
@@ -46,7 +50,10 @@ impl crate::types::BinaryEncoder<WriterGroupDataType> for WriterGroupDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.name.encode(stream)?;
         size += self.enabled.encode(stream)?;
@@ -71,55 +78,66 @@ impl crate::types::BinaryEncoder<WriterGroupDataType> for WriterGroupDataType {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let enabled =
-            <bool as crate::types::BinaryEncoder<bool>>::decode(stream, decoding_options)?;
-        let security_mode = <super::enums::MessageSecurityMode as crate::types::BinaryEncoder<
-            super::enums::MessageSecurityMode,
-        >>::decode(stream, decoding_options)?;
-        let security_group_id = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        let name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let enabled = <bool as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let security_mode = <super::enums::MessageSecurityMode as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let security_group_id = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let security_key_services = <Option<
             Vec<super::endpoint_description::EndpointDescription>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::endpoint_description::EndpointDescription>>,
-        >>::decode(stream, decoding_options)?;
-        let max_network_message_size =
-            <u32 as crate::types::BinaryEncoder<u32>>::decode(stream, decoding_options)?;
-        let group_properties =
-            <Option<Vec<super::key_value_pair::KeyValuePair>> as crate::types::BinaryEncoder<
-                Option<Vec<super::key_value_pair::KeyValuePair>>,
-            >>::decode(stream, decoding_options)?;
-        let writer_group_id =
-            <u16 as crate::types::BinaryEncoder<u16>>::decode(stream, decoding_options)?;
-        let publishing_interval =
-            <f64 as crate::types::BinaryEncoder<f64>>::decode(stream, decoding_options)?;
-        let keep_alive_time =
-            <f64 as crate::types::BinaryEncoder<f64>>::decode(stream, decoding_options)?;
-        let priority = <u8 as crate::types::BinaryEncoder<u8>>::decode(stream, decoding_options)?;
-        let locale_ids =
-            <Option<Vec<crate::types::string::UAString>> as crate::types::BinaryEncoder<
-                Option<Vec<crate::types::string::UAString>>,
-            >>::decode(stream, decoding_options)?;
-        let header_layout_uri = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
-        let transport_settings =
-            <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
-                crate::types::extension_object::ExtensionObject,
-            >>::decode(stream, decoding_options)?;
-        let message_settings =
-            <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder<
-                crate::types::extension_object::ExtensionObject,
-            >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let max_network_message_size = <u32 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let group_properties = <Option<
+            Vec<super::key_value_pair::KeyValuePair>,
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let writer_group_id = <u16 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let publishing_interval = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let keep_alive_time = <f64 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let priority = <u8 as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let locale_ids = <Option<
+            Vec<crate::types::string::UAString>,
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let header_layout_uri = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let transport_settings = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let message_settings = <crate::types::extension_object::ExtensionObject as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         let data_set_writers = <Option<
             Vec<super::data_set_writer_data_type::DataSetWriterDataType>,
-        > as crate::types::BinaryEncoder<
-            Option<Vec<super::data_set_writer_data_type::DataSetWriterDataType>>,
-        >>::decode(stream, decoding_options)?;
+        > as crate::types::BinaryEncoder>::decode(stream, decoding_options)?;
         Ok(Self {
             name,
             enabled,

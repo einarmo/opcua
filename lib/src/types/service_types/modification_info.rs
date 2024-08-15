@@ -16,7 +16,7 @@ impl crate::types::MessageInfo for ModificationInfo {
         crate::types::ObjectId::ModificationInfo_Encoding_DefaultBinary
     }
 }
-impl crate::types::BinaryEncoder<ModificationInfo> for ModificationInfo {
+impl crate::types::BinaryEncoder for ModificationInfo {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.modification_time.byte_len();
@@ -25,7 +25,10 @@ impl crate::types::BinaryEncoder<ModificationInfo> for ModificationInfo {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> crate::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> crate::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.modification_time.encode(stream)?;
         size += self.update_type.encode(stream)?;
@@ -37,16 +40,18 @@ impl crate::types::BinaryEncoder<ModificationInfo> for ModificationInfo {
         stream: &mut S,
         decoding_options: &crate::types::DecodingOptions,
     ) -> crate::types::EncodingResult<Self> {
-        let modification_time =
-            <crate::types::date_time::DateTime as crate::types::BinaryEncoder<
-                crate::types::date_time::DateTime,
-            >>::decode(stream, decoding_options)?;
-        let update_type = <super::enums::HistoryUpdateType as crate::types::BinaryEncoder<
-            super::enums::HistoryUpdateType,
-        >>::decode(stream, decoding_options)?;
-        let user_name = <crate::types::string::UAString as crate::types::BinaryEncoder<
-            crate::types::string::UAString,
-        >>::decode(stream, decoding_options)?;
+        let modification_time = <crate::types::date_time::DateTime as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let update_type = <super::enums::HistoryUpdateType as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
+        let user_name = <crate::types::string::UAString as crate::types::BinaryEncoder>::decode(
+            stream,
+            decoding_options,
+        )?;
         Ok(Self {
             modification_time,
             update_type,
