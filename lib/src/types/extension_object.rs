@@ -157,7 +157,7 @@ impl ExtensionObject {
 
     pub fn from_message<T>(encodable: &T) -> ExtensionObject
     where
-        T: BinaryEncoder<T> + MessageInfo,
+        T: BinaryEncoder + MessageInfo,
     {
         Self::from_encodable(encodable.object_id(), encodable)
     }

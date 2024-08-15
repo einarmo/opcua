@@ -10,8 +10,7 @@ pub(super) fn imported_nodes<'a>(
 ) -> Box<dyn Iterator<Item = crate::server::address_space::ImportedItem> + 'a> {
     Box::new(
         [
-            &make_object_2676
-                as &dyn Fn(_) -> crate::server::address_space::ImportedItem,
+            &make_object_2676 as &dyn Fn(_) -> crate::server::address_space::ImportedItem,
             &make_object_2685,
             &make_object_2686,
             &make_object_2687,
@@ -112,8 +111,8 @@ pub(super) fn imported_nodes<'a>(
             &make_object_3377,
             &make_object_3378,
         ]
-            .into_iter()
-            .map(|f| f(ns_map)),
+        .into_iter()
+        .map(|f| f(ns_map)),
     )
 }
 #[allow(unused)]
@@ -122,31 +121,39 @@ fn make_object_2676(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15265u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Status"),
-                    crate::types::LocalizedText::new("", "Status"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15265u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Status"),
+                crate::types::LocalizedText::new("", "Status"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15266u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14643u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14232u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15266u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14643u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14232u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -156,28 +163,34 @@ fn make_object_2685(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 17741u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "TransportSettings"),
-                    crate::types::LocalizedText::new("", "TransportSettings"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 17741u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "TransportSettings"),
+                crate::types::LocalizedText::new("", "TransportSettings"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17997u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 80u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17725u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17997u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 80u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17725u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -187,28 +200,34 @@ fn make_object_2686(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 17742u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "MessageSettings"),
-                    crate::types::LocalizedText::new("", "MessageSettings"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 17742u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "MessageSettings"),
+                crate::types::LocalizedText::new("", "MessageSettings"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17998u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 80u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17725u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17998u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 80u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17725u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -218,40 +237,54 @@ fn make_object_2687(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 17743u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "<DataSetWriterName>"),
-                    crate::types::LocalizedText::new("", "<DataSetWriterName>"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 17743u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "<DataSetWriterName>"),
+                crate::types::LocalizedText::new("", "<DataSetWriterName>"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17744u32), type_id : crate
-            ::types::NodeId::new(0u16, 46u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17745u32), type_id : crate
-            ::types::NodeId::new(0u16, 46u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17490u32), type_id : crate
-            ::types::NodeId::new(0u16, 46u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17749u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15298u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 11508u32), type_id : crate
-            ::types::NodeId::new(0u16, 37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17725u32), type_id : crate
-            ::types::NodeId::new(0u16, 15296u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17744u32),
+                type_id: crate::types::NodeId::new(0u16, 46u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17745u32),
+                type_id: crate::types::NodeId::new(0u16, 46u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17490u32),
+                type_id: crate::types::NodeId::new(0u16, 46u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17749u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15298u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 11508u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17725u32),
+                type_id: crate::types::NodeId::new(0u16, 15296u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -261,31 +294,39 @@ fn make_object_2691(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 17749u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Status"),
-                    crate::types::LocalizedText::new("", "Status"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 17749u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Status"),
+                crate::types::LocalizedText::new("", "Status"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17750u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14643u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17743u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17750u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14643u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17743u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -295,49 +336,69 @@ fn make_object_2693(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 17812u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Diagnostics"),
-                    crate::types::LocalizedText::new("", "Diagnostics"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 17812u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Diagnostics"),
+                crate::types::LocalizedText::new("", "Diagnostics"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17813u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17814u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17819u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17824u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17825u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17826u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17858u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19834u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 80u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17725u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17813u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17814u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17819u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17824u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17825u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17826u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17858u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19834u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 80u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17725u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -347,55 +408,79 @@ fn make_object_2705(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 17826u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Counters"),
-                    crate::types::LocalizedText::new("", "Counters"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 17826u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Counters"),
+                crate::types::LocalizedText::new("", "Counters"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17827u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17832u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17837u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17842u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17847u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17853u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17859u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17874u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17900u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17812u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17827u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17832u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17837u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17842u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17847u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17853u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17859u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17874u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17900u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17812u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -405,34 +490,44 @@ fn make_object_2742(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 17858u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "LiveValues"),
-                    crate::types::LocalizedText::new("", "LiveValues"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 17858u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "LiveValues"),
+                crate::types::LocalizedText::new("", "LiveValues"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17913u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17927u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17812u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17913u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17927u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17812u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -442,61 +537,89 @@ fn make_object_2757(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 18076u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "<DataSetReaderName>"),
-                    crate::types::LocalizedText::new("", "<DataSetReaderName>"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 18076u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "<DataSetReaderName>"),
+                crate::types::LocalizedText::new("", "<DataSetReaderName>"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18077u32), type_id : crate
-            ::types::NodeId::new(0u16, 46u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18078u32), type_id : crate
-            ::types::NodeId::new(0u16, 46u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18079u32), type_id : crate
-            ::types::NodeId::new(0u16, 46u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18080u32), type_id : crate
-            ::types::NodeId::new(0u16, 46u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18081u32), type_id : crate
-            ::types::NodeId::new(0u16, 46u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18082u32), type_id : crate
-            ::types::NodeId::new(0u16, 46u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17560u32), type_id : crate
-            ::types::NodeId::new(0u16, 46u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17562u32), type_id : crate
-            ::types::NodeId::new(0u16, 46u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17492u32), type_id : crate
-            ::types::NodeId::new(0u16, 46u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18088u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21006u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15306u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 11508u32), type_id : crate
-            ::types::NodeId::new(0u16, 37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17999u32), type_id : crate
-            ::types::NodeId::new(0u16, 15297u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18077u32),
+                type_id: crate::types::NodeId::new(0u16, 46u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18078u32),
+                type_id: crate::types::NodeId::new(0u16, 46u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18079u32),
+                type_id: crate::types::NodeId::new(0u16, 46u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18080u32),
+                type_id: crate::types::NodeId::new(0u16, 46u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18081u32),
+                type_id: crate::types::NodeId::new(0u16, 46u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18082u32),
+                type_id: crate::types::NodeId::new(0u16, 46u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17560u32),
+                type_id: crate::types::NodeId::new(0u16, 46u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17562u32),
+                type_id: crate::types::NodeId::new(0u16, 46u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17492u32),
+                type_id: crate::types::NodeId::new(0u16, 46u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18088u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21006u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15306u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 11508u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17999u32),
+                type_id: crate::types::NodeId::new(0u16, 15297u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -506,31 +629,39 @@ fn make_object_2767(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 18088u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Status"),
-                    crate::types::LocalizedText::new("", "Status"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 18088u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Status"),
+                crate::types::LocalizedText::new("", "Status"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18089u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14643u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18076u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18089u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14643u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18076u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -540,28 +671,34 @@ fn make_object_2769(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 21006u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "SubscribedDataSet"),
-                    crate::types::LocalizedText::new("", "SubscribedDataSet"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 21006u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "SubscribedDataSet"),
+                crate::types::LocalizedText::new("", "SubscribedDataSet"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15108u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18076u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15108u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18076u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -571,49 +708,69 @@ fn make_object_2770(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 21015u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Diagnostics"),
-                    crate::types::LocalizedText::new("", "Diagnostics"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 21015u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Diagnostics"),
+                crate::types::LocalizedText::new("", "Diagnostics"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21016u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21017u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21022u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21027u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21028u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21029u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21060u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19903u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 80u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17999u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21016u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21017u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21022u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21027u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21028u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21029u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21060u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19903u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 80u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17999u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -623,49 +780,69 @@ fn make_object_2782(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 21029u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Counters"),
-                    crate::types::LocalizedText::new("", "Counters"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 21029u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Counters"),
+                crate::types::LocalizedText::new("", "Counters"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21030u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21035u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21040u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21045u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21050u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21055u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21061u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21015u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21030u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21035u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21040u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21045u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21050u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21055u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21061u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21015u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -675,34 +852,44 @@ fn make_object_2811(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 21060u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "LiveValues"),
-                    crate::types::LocalizedText::new("", "LiveValues"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 21060u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "LiveValues"),
+                crate::types::LocalizedText::new("", "LiveValues"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21076u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21078u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21015u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21076u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21078u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21015u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -712,28 +899,34 @@ fn make_object_2816(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 21080u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "TransportSettings"),
-                    crate::types::LocalizedText::new("", "TransportSettings"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 21080u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "TransportSettings"),
+                crate::types::LocalizedText::new("", "TransportSettings"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21090u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 80u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17999u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21090u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 80u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17999u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -743,28 +936,34 @@ fn make_object_2817(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 21081u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "MessageSettings"),
-                    crate::types::LocalizedText::new("", "MessageSettings"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 21081u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "MessageSettings"),
+                crate::types::LocalizedText::new("", "MessageSettings"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21091u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 80u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17999u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21091u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 80u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17999u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -774,28 +973,34 @@ fn make_object_2832(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15303u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "TransportSettings"),
-                    crate::types::LocalizedText::new("", "TransportSettings"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15303u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "TransportSettings"),
+                crate::types::LocalizedText::new("", "TransportSettings"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15305u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 80u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15298u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15305u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 80u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15298u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -805,28 +1010,34 @@ fn make_object_2833(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 21095u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "MessageSettings"),
-                    crate::types::LocalizedText::new("", "MessageSettings"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 21095u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "MessageSettings"),
+                crate::types::LocalizedText::new("", "MessageSettings"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21096u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 80u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15298u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21096u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 80u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15298u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -836,31 +1047,39 @@ fn make_object_2834(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15299u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Status"),
-                    crate::types::LocalizedText::new("", "Status"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15299u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Status"),
+                crate::types::LocalizedText::new("", "Status"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15300u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14643u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15298u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15300u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14643u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15298u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -870,49 +1089,69 @@ fn make_object_2836(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 19550u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Diagnostics"),
-                    crate::types::LocalizedText::new("", "Diagnostics"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 19550u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Diagnostics"),
+                crate::types::LocalizedText::new("", "Diagnostics"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19551u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19552u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19557u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19562u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19563u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19564u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19595u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19968u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 80u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15298u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19551u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19552u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19557u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19562u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19563u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19564u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19595u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19968u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 80u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15298u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -922,49 +1161,69 @@ fn make_object_2848(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 19564u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Counters"),
-                    crate::types::LocalizedText::new("", "Counters"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 19564u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Counters"),
+                crate::types::LocalizedText::new("", "Counters"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19565u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19570u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19575u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19580u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19585u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19590u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19596u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19550u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19565u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19570u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19575u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19580u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19585u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19590u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19596u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19550u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -974,28 +1233,34 @@ fn make_object_2877(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 19595u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "LiveValues"),
-                    crate::types::LocalizedText::new("", "LiveValues"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 19595u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "LiveValues"),
+                crate::types::LocalizedText::new("", "LiveValues"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19550u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19550u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1005,28 +1270,34 @@ fn make_object_2893(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15311u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "TransportSettings"),
-                    crate::types::LocalizedText::new("", "TransportSettings"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15311u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "TransportSettings"),
+                crate::types::LocalizedText::new("", "TransportSettings"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15319u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 80u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15306u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15319u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 80u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15306u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1036,28 +1307,34 @@ fn make_object_2894(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 21103u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "MessageSettings"),
-                    crate::types::LocalizedText::new("", "MessageSettings"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 21103u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "MessageSettings"),
+                crate::types::LocalizedText::new("", "MessageSettings"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21104u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 80u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15306u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21104u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 80u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15306u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1067,31 +1344,39 @@ fn make_object_2895(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15307u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Status"),
-                    crate::types::LocalizedText::new("", "Status"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15307u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Status"),
+                crate::types::LocalizedText::new("", "Status"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15308u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14643u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15306u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15308u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14643u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15306u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1101,49 +1386,69 @@ fn make_object_2897(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 19609u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Diagnostics"),
-                    crate::types::LocalizedText::new("", "Diagnostics"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 19609u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Diagnostics"),
+                crate::types::LocalizedText::new("", "Diagnostics"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19610u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19611u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19616u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19621u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19622u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19623u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19654u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 20027u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 80u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15306u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19610u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19611u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19616u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19621u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19622u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19623u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19654u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 20027u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 80u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15306u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1153,49 +1458,69 @@ fn make_object_2909(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 19623u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Counters"),
-                    crate::types::LocalizedText::new("", "Counters"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 19623u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Counters"),
+                crate::types::LocalizedText::new("", "Counters"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19624u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19629u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19634u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19639u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19644u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19649u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19655u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19609u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19624u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19629u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19634u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19639u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19644u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19649u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19655u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19609u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1205,28 +1530,34 @@ fn make_object_2938(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 19654u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "LiveValues"),
-                    crate::types::LocalizedText::new("", "LiveValues"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 19654u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "LiveValues"),
+                crate::types::LocalizedText::new("", "LiveValues"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19609u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19609u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1236,28 +1567,34 @@ fn make_object_2939(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15316u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "SubscribedDataSet"),
-                    crate::types::LocalizedText::new("", "SubscribedDataSet"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15316u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "SubscribedDataSet"),
+                crate::types::LocalizedText::new("", "SubscribedDataSet"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15108u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15306u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15108u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15306u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1267,46 +1604,64 @@ fn make_object_2974(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 19691u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Counters"),
-                    crate::types::LocalizedText::new("", "Counters"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 19691u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Counters"),
+                crate::types::LocalizedText::new("", "Counters"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19692u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19697u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19702u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19707u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19712u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19717u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19677u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19692u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19697u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19702u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19707u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19712u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19717u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19677u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1316,28 +1671,34 @@ fn make_object_2999(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 19722u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "LiveValues"),
-                    crate::types::LocalizedText::new("", "LiveValues"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 19722u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "LiveValues"),
+                crate::types::LocalizedText::new("", "LiveValues"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19677u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19677u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1347,40 +1708,54 @@ fn make_object_3010(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 19777u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "LiveValues"),
-                    crate::types::LocalizedText::new("", "LiveValues"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 19777u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "LiveValues"),
+                crate::types::LocalizedText::new("", "LiveValues"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19778u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19780u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19782u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19784u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19732u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19778u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19780u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19782u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19784u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19732u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1390,31 +1765,39 @@ fn make_object_3020(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 19831u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "LiveValues"),
-                    crate::types::LocalizedText::new("", "LiveValues"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 19831u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "LiveValues"),
+                crate::types::LocalizedText::new("", "LiveValues"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19832u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19786u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19832u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19786u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1424,37 +1807,49 @@ fn make_object_3024(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 19848u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Counters"),
-                    crate::types::LocalizedText::new("", "Counters"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 19848u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Counters"),
+                crate::types::LocalizedText::new("", "Counters"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19880u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19885u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19890u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19834u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19880u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19885u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19890u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19834u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1464,40 +1859,54 @@ fn make_object_3037(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 19879u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "LiveValues"),
-                    crate::types::LocalizedText::new("", "LiveValues"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 19879u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "LiveValues"),
+                crate::types::LocalizedText::new("", "LiveValues"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19895u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19897u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19899u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19901u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19834u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19895u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19897u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19899u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19901u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19834u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1507,37 +1916,49 @@ fn make_object_3047(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 19917u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Counters"),
-                    crate::types::LocalizedText::new("", "Counters"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 19917u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Counters"),
+                crate::types::LocalizedText::new("", "Counters"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19949u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19954u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19959u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19903u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19949u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19954u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19959u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19903u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1547,34 +1968,44 @@ fn make_object_3060(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 19948u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "LiveValues"),
-                    crate::types::LocalizedText::new("", "LiveValues"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 19948u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "LiveValues"),
+                crate::types::LocalizedText::new("", "LiveValues"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19964u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19966u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19903u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19964u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19966u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19903u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1584,31 +2015,39 @@ fn make_object_3066(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 19982u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Counters"),
-                    crate::types::LocalizedText::new("", "Counters"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 19982u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Counters"),
+                crate::types::LocalizedText::new("", "Counters"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 20014u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19968u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 20014u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19968u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1618,40 +2057,54 @@ fn make_object_3071(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 20013u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "LiveValues"),
-                    crate::types::LocalizedText::new("", "LiveValues"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 20013u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "LiveValues"),
+                crate::types::LocalizedText::new("", "LiveValues"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 20019u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 20021u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 20023u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 20025u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 19968u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 20019u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 20021u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 20023u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 20025u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 19968u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1661,34 +2114,44 @@ fn make_object_3081(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 20041u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Counters"),
-                    crate::types::LocalizedText::new("", "Counters"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 20041u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Counters"),
+                crate::types::LocalizedText::new("", "Counters"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 20073u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 20078u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 20027u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 20073u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 20078u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 20027u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1698,46 +2161,64 @@ fn make_object_3090(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 20072u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "LiveValues"),
-                    crate::types::LocalizedText::new("", "LiveValues"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 20072u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "LiveValues"),
+                crate::types::LocalizedText::new("", "LiveValues"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 20083u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 20085u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 20087u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 20089u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 20091u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 20093u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 58u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 20027u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 20083u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 20085u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 20087u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 20089u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 20091u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 20093u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 58u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 20027u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1747,31 +2228,39 @@ fn make_object_3141(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15072u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "DiscoveryAddress"),
-                    crate::types::LocalizedText::new("", "DiscoveryAddress"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15072u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "DiscoveryAddress"),
+                crate::types::LocalizedText::new("", "DiscoveryAddress"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15154u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21145u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 78u32), type_id : crate ::types::NodeId::new(0u16,
-            37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15064u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15154u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21145u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 78u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15064u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1781,28 +2270,34 @@ fn make_object_3175(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 23457u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "<Alias>"),
-                    crate::types::LocalizedText::new("", "<Alias>"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 23457u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "<Alias>"),
+                crate::types::LocalizedText::new("", "<Alias>"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 23455u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 11508u32), type_id : crate
-            ::types::NodeId::new(0u16, 37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 23456u32), type_id : crate
-            ::types::NodeId::new(0u16, 35u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 23455u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 11508u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 23456u32),
+                type_id: crate::types::NodeId::new(0u16, 35u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1812,31 +2307,39 @@ fn make_object_3176(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 23458u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "<SubAliasNameCategories>"),
-                    crate::types::LocalizedText::new("", "<SubAliasNameCategories>"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 23458u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "<SubAliasNameCategories>"),
+                crate::types::LocalizedText::new("", "<SubAliasNameCategories>"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 23459u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 23456u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 11508u32), type_id : crate
-            ::types::NodeId::new(0u16, 37u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 23456u32), type_id : crate
-            ::types::NodeId::new(0u16, 35u32), is_forward : false, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 23459u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 23456u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 11508u32),
+                type_id: crate::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 23456u32),
+                type_id: crate::types::NodeId::new(0u16, 35u32),
+                is_forward: false,
+            },
         ],
     }
 }
@@ -1846,28 +2349,34 @@ fn make_object_3185(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 23470u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Aliases"),
-                    crate::types::LocalizedText::new("", "Aliases"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 23470u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Aliases"),
+                crate::types::LocalizedText::new("", "Aliases"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 23476u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 85u32), type_id : crate ::types::NodeId::new(0u16,
-            35u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 23456u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 23476u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 85u32),
+                type_id: crate::types::NodeId::new(0u16, 35u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 23456u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -1877,28 +2386,34 @@ fn make_object_3189(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 23479u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "TagVariables"),
-                    crate::types::LocalizedText::new("", "TagVariables"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 23479u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "TagVariables"),
+                crate::types::LocalizedText::new("", "TagVariables"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 23485u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 23470u32), type_id : crate
-            ::types::NodeId::new(0u16, 35u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 23456u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 23485u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 23470u32),
+                type_id: crate::types::NodeId::new(0u16, 35u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 23456u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -1908,28 +2423,34 @@ fn make_object_3193(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 23488u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Topics"),
-                    crate::types::LocalizedText::new("", "Topics"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 23488u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Topics"),
+                crate::types::LocalizedText::new("", "Topics"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 23494u32), type_id : crate
-            ::types::NodeId::new(0u16, 47u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 23470u32), type_id : crate
-            ::types::NodeId::new(0u16, 35u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 23456u32), type_id : crate
-            ::types::NodeId::new(0u16, 40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 23494u32),
+                type_id: crate::types::NodeId::new(0u16, 47u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 23470u32),
+                type_id: crate::types::NodeId::new(0u16, 35u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 23456u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -1939,28 +2460,34 @@ fn make_object_3326(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 14846u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 14846u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14533u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14873u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14533u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14873u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -1970,28 +2497,34 @@ fn make_object_3327(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 17537u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 17537u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 16313u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17538u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 16313u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17538u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2001,28 +2534,34 @@ fn make_object_3328(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 17549u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 17549u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17548u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 17550u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17548u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 17550u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2032,28 +2571,34 @@ fn make_object_3329(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15671u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15671u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15528u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15734u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15528u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15734u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2063,28 +2608,34 @@ fn make_object_3330(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 18815u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 18815u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18806u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18824u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18806u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18824u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2094,28 +2645,34 @@ fn make_object_3331(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 18816u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 18816u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18807u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18827u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18807u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18827u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2125,28 +2682,34 @@ fn make_object_3332(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 18817u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 18817u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18808u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18830u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18808u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18830u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2156,28 +2719,34 @@ fn make_object_3333(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 18818u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 18818u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18809u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18833u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18809u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18833u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2187,28 +2756,34 @@ fn make_object_3334(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 18819u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 18819u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18810u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18836u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18810u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18836u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2218,28 +2793,34 @@ fn make_object_3335(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 18820u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 18820u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18811u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18839u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18811u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18839u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2249,28 +2830,34 @@ fn make_object_3336(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 18821u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 18821u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18812u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18842u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18812u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18842u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2280,28 +2867,34 @@ fn make_object_3337(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 18822u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 18822u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18813u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18845u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18813u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18845u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2311,28 +2904,34 @@ fn make_object_3338(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 18823u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 18823u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18814u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 18848u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18814u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 18848u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2342,28 +2941,34 @@ fn make_object_3339(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15736u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15736u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15634u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15738u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15634u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15738u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2373,28 +2978,34 @@ fn make_object_3340(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 23507u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 23507u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 23498u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 23514u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 23498u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 23514u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2404,28 +3015,34 @@ fn make_object_3341(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 12680u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 12680u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 12554u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 12681u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 12554u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 12681u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2435,28 +3052,34 @@ fn make_object_3342(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15676u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15676u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15534u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15741u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15534u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15741u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2466,28 +3089,34 @@ fn make_object_3343(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 125u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 125u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14525u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14855u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14525u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14855u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2497,28 +3126,34 @@ fn make_object_3344(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 126u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 126u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15487u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15599u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15487u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15599u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2528,28 +3163,34 @@ fn make_object_3345(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 127u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 127u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15488u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15602u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15488u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15602u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2559,28 +3200,34 @@ fn make_object_3346(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15421u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15421u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15005u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15501u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15005u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15501u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2590,28 +3237,34 @@ fn make_object_3347(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15422u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15422u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15006u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15521u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15006u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15521u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2621,28 +3274,34 @@ fn make_object_3348(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 124u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 124u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14523u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14849u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14523u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14849u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2652,28 +3311,34 @@ fn make_object_3349(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 14839u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 14839u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14524u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14852u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14524u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14852u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2683,28 +3348,34 @@ fn make_object_3350(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 14847u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 14847u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14593u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14876u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14593u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14876u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2714,28 +3385,34 @@ fn make_object_3351(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15677u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15677u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15578u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15766u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15578u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15766u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2745,28 +3422,34 @@ fn make_object_3352(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15678u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15678u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15580u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15769u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15580u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15769u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2776,28 +3459,34 @@ fn make_object_3353(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 14323u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 14323u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14273u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14324u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14273u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14324u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2807,28 +3496,34 @@ fn make_object_3354(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15679u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15679u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15581u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15772u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15581u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15772u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2838,28 +3533,34 @@ fn make_object_3355(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15681u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15681u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15582u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15775u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15582u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15775u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2869,28 +3570,34 @@ fn make_object_3356(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15682u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15682u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15597u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15778u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15597u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15778u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2900,28 +3607,34 @@ fn make_object_3357(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15683u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15683u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15598u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15781u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15598u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15781u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2931,28 +3644,34 @@ fn make_object_3358(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15688u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15688u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15605u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15784u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15605u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15784u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2962,28 +3681,34 @@ fn make_object_3359(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15689u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15689u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15609u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15787u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15609u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15787u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -2993,28 +3718,34 @@ fn make_object_3360(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 21150u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 21150u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15480u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21156u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15480u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21156u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3024,28 +3755,34 @@ fn make_object_3361(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15691u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15691u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15611u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15793u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15611u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15793u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3055,28 +3792,34 @@ fn make_object_3362(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15693u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15693u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15616u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15854u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15616u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15854u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3086,28 +3829,34 @@ fn make_object_3363(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15694u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15694u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15617u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15857u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15617u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15857u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3117,28 +3866,34 @@ fn make_object_3364(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15695u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15695u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15618u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15860u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15618u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15860u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3148,28 +3903,34 @@ fn make_object_3365(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 21151u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 21151u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15502u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21159u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15502u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21159u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3179,28 +3940,34 @@ fn make_object_3366(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 21152u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 21152u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15510u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21162u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15510u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21162u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3210,28 +3977,34 @@ fn make_object_3367(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 21153u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 21153u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15520u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21165u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15520u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21165u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3241,28 +4014,34 @@ fn make_object_3368(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15701u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15701u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15621u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15866u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15621u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15866u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3272,28 +4051,34 @@ fn make_object_3369(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15702u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15702u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15622u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15869u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15622u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15869u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3303,28 +4088,34 @@ fn make_object_3370(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15703u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15703u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15623u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15872u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15623u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15872u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3334,28 +4125,34 @@ fn make_object_3371(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15705u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15705u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15628u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15877u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15628u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15877u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3365,28 +4162,34 @@ fn make_object_3372(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15706u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15706u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15629u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15880u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15629u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15880u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3396,28 +4199,34 @@ fn make_object_3373(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15707u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15707u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15630u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15883u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15630u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15883u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3427,28 +4236,34 @@ fn make_object_3374(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15712u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15712u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15631u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15886u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15631u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15886u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3458,28 +4273,34 @@ fn make_object_3375(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 14848u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 14848u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 14744u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21002u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 14744u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21002u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3489,28 +4310,34 @@ fn make_object_3376(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15713u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15713u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15635u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15889u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15635u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15889u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3520,28 +4347,34 @@ fn make_object_3377(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 21154u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 21154u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15530u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 21168u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15530u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 21168u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3551,28 +4384,34 @@ fn make_object_3378(
 ) -> crate::server::address_space::ImportedItem {
     crate::server::address_space::ImportedItem {
         node: crate::server::address_space::Object::new_full(
-                crate::server::address_space::Base::new_full(
-                    crate::types::NodeId::new(0u16, 15715u32),
-                    crate::types::NodeClass::Object,
-                    crate::types::QualifiedName::new(0u16, "Default Binary"),
-                    crate::types::LocalizedText::new("", "Default Binary"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
-            )
-            .into(),
+            crate::server::address_space::Base::new_full(
+                crate::types::NodeId::new(0u16, 15715u32),
+                crate::types::NodeClass::Object,
+                crate::types::QualifiedName::new(0u16, "Default Binary"),
+                crate::types::LocalizedText::new("", "Default Binary"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            crate::server::address_space::EventNotifier::from_bits_truncate(0u8),
+        )
+        .into(),
         references: vec![
-            crate ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15645u32), type_id : crate
-            ::types::NodeId::new(0u16, 38u32), is_forward : false, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 15895u32), type_id : crate
-            ::types::NodeId::new(0u16, 39u32), is_forward : true, }, crate
-            ::server::address_space::ImportedReference { target_id : crate
-            ::types::NodeId::new(0u16, 76u32), type_id : crate ::types::NodeId::new(0u16,
-            40u32), is_forward : true, }
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15645u32),
+                type_id: crate::types::NodeId::new(0u16, 38u32),
+                is_forward: false,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 15895u32),
+                type_id: crate::types::NodeId::new(0u16, 39u32),
+                is_forward: true,
+            },
+            crate::server::address_space::ImportedReference {
+                target_id: crate::types::NodeId::new(0u16, 76u32),
+                type_id: crate::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }

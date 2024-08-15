@@ -7,9 +7,7 @@ pub use address_space::{AddressSpace, Reference, ReferenceDirection, ReferenceRe
 pub use base::Base;
 pub use data_type::{DataType, DataTypeBuilder};
 pub use generic::new_node_from_attributes;
-pub use import::{
-    ImportedItem, ImportedReference, NodeSetImport, NodeSetNamespaceMapper,
-};
+pub use import::{ImportedItem, ImportedReference, NodeSetImport, NodeSetNamespaceMapper};
 pub use method::{Method, MethodBuilder};
 pub use node::{HasNodeId, Node, NodeBase, NodeType};
 pub use object::{Object, ObjectBuilder};
