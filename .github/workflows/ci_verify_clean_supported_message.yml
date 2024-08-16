@@ -14,6 +14,6 @@ jobs:
         run: node gen_supported_message
         working-directory: tools/schema/
       - name: Format generated code
-        run: rustfmt lib/src/core/supported_message.rs
+        run: rustfmt opcua-core/src/supported_message.rs
       - name: Verify generated code matches committed code
         run: git status --porcelain
