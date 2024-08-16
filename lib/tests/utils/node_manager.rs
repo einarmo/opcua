@@ -7,7 +7,7 @@ use opcua::{
             new_node_from_attributes, AddressSpace, HasNodeId, NodeType, ReferenceDirection,
         },
         node_manager::{
-            add_namespaces, get_node_metadata,
+            get_node_metadata,
             memory::{
                 InMemoryNodeManager, InMemoryNodeManagerBuilder, InMemoryNodeManagerImpl,
                 NamespaceMetadata,
@@ -27,6 +27,7 @@ use opcua::{
     },
 };
 use opcua_core::{trace_read_lock, trace_write_lock};
+use opcua_server::address_space::add_namespaces;
 
 #[allow(unused)]
 pub type TestNodeManager = InMemoryNodeManager<TestNodeManagerImpl>;

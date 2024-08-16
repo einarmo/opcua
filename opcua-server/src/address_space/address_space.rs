@@ -2,10 +2,9 @@ use std::collections::VecDeque;
 
 use hashbrown::{Equivalent, HashMap, HashSet};
 use log::{debug, error, info, warn};
+use opcua_nodes::{NamespaceMap, NodeInsertTarget, ReferenceDirection};
 
-use crate::node_manager::{
-    NamespaceMap, ParsedReadValueId, ParsedWriteValue, RequestContext, TypeTree,
-};
+use crate::node_manager::{ParsedReadValueId, ParsedWriteValue, RequestContext, TypeTree};
 use opcua_types::{
     BrowseDirection, DataValue, LocalizedText, NodeClass, NodeId, QualifiedName, ReferenceTypeId,
     StatusCode, TimestampsToReturn,
@@ -20,12 +19,6 @@ use super::{
 pub struct Reference {
     pub reference_type: NodeId,
     pub target_node: NodeId,
-}
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum ReferenceDirection {
-    Forward,
-    Inverse,
 }
 
 // Note, must have same hash and eq implementation as Reference.
@@ -76,12 +69,11 @@ impl References {
         }
     }
 
-    pub fn insert<'a, T, S>(
+    pub fn insert<'a, S>(
         &mut self,
         source: &NodeId,
         references: &'a [(&'a NodeId, &S, ReferenceDirection)],
     ) where
-        T: Into<NodeType>,
         S: Into<NodeId> + Clone,
     {
         for (target, typ, direction) in references {
@@ -534,7 +526,7 @@ impl AddressSpace {
         } else {
             // If references are supplied, add them now
             if let Some(references) = references {
-                self.references.insert::<T, S>(&node_id, references);
+                self.references.insert::<S>(&node_id, references);
             }
             self.node_map.insert(node_id, node_type);
 
@@ -833,6 +825,32 @@ impl AddressSpace {
     }
 }
 
+impl NodeInsertTarget for AddressSpace {
+    fn insert<'a>(
+        &mut self,
+        node: impl Into<NodeType>,
+        references: Option<&'a [(&'a NodeId, &NodeId, opcua_nodes::ReferenceDirection)]>,
+    ) -> bool {
+        let node_type = node.into();
+        let node_id = node_type.node_id().clone();
+
+        self.assert_namespace(&node_id);
+
+        if self.node_exists(&node_id) {
+            error!("This node {} already exists", node_id);
+            false
+        } else {
+            // If references are supplied, add them now
+            if let Some(references) = references {
+                self.references.insert(&node_id, references);
+            }
+            self.node_map.insert(node_id, node_type);
+
+            true
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{
@@ -840,8 +858,9 @@ mod tests {
             CoreNamespace, EventNotifier, MethodBuilder, NodeBase, NodeType, Object, ObjectBuilder,
             ObjectTypeBuilder, Variable, VariableBuilder,
         },
-        node_manager::{NamespaceMap, TypeTree},
+        node_manager::TypeTree,
     };
+    use opcua_nodes::NamespaceMap;
     use opcua_types::{
         argument::Argument, Array, BrowseDirection, DataTypeId, DecodingOptions, LocalizedText,
         NodeClass, NodeId, NumericRange, ObjectId, ObjectTypeId, QualifiedName, ReferenceTypeId,

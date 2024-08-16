@@ -1,11 +1,13 @@
-use crate::node_manager::{ParsedReadValueId, ParsedWriteValue, RequestContext, TypeTree};
+use crate::node_manager::{
+    ParsedReadValueId, ParsedWriteValue, RequestContext, ServerContext, TypeTree,
+};
 use log::debug;
 use opcua_types::{
     AttributeId, DataTypeId, DataValue, NumericRange, QualifiedName, StatusCode,
     TimestampsToReturn, Variant, WriteMask,
 };
 
-use super::{HasNodeId, NodeType, UserAccessLevel, Variable};
+use super::{AddressSpace, HasNodeId, NodeType, UserAccessLevel, Variable};
 
 pub fn is_readable(context: &RequestContext, node: &NodeType) -> Result<(), StatusCode> {
     if !user_access_level(context, node).contains(UserAccessLevel::CURRENT_READ) {
@@ -255,4 +257,19 @@ pub fn read_node_value(
         }
     }
     result_value
+}
+
+pub fn add_namespaces(
+    context: &ServerContext,
+    address_space: &mut AddressSpace,
+    namespaces: &[&str],
+) -> Vec<u16> {
+    let mut type_tree = context.type_tree.write();
+    let mut res = Vec::new();
+    for ns in namespaces {
+        let idx = type_tree.namespaces_mut().add_namespace(ns);
+        address_space.add_namespace(ns, idx);
+        res.push(idx);
+    }
+    res
 }

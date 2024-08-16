@@ -22,7 +22,7 @@ pub fn add_methods(manager: Arc<SimpleNodeManager>, ns: u16) {
     ObjectBuilder::new(&object_id, "Functions", "Functions")
         .event_notifier(EventNotifier::SUBSCRIBE_TO_EVENTS)
         .organized_by(ObjectId::ObjectsFolder)
-        .insert(&mut address_space);
+        .insert(&mut *address_space);
 
     // NoOp has 0 inputs and 0 outputs
     let fn_node_id = NodeId::new(ns, "NoOp");
@@ -30,7 +30,7 @@ pub fn add_methods(manager: Arc<SimpleNodeManager>, ns: u16) {
         .component_of(object_id.clone())
         .executable(true)
         .user_executable(true)
-        .insert(&mut address_space);
+        .insert(&mut *address_space);
     manager.inner().add_method_callback(fn_node_id, |_| {
         debug!("NoOp method called");
         Ok(Vec::new())
@@ -43,11 +43,11 @@ pub fn add_methods(manager: Arc<SimpleNodeManager>, ns: u16) {
         .executable(true)
         .user_executable(true)
         .output_args(
-            &mut address_space,
+            &mut *address_space,
             &NodeId::new(ns, "HelloWorldOutput"),
             &[("Result", DataTypeId::String).into()],
         )
-        .insert(&mut address_space);
+        .insert(&mut *address_space);
     manager.inner().add_method_callback(fn_node_id, |_| {
         debug!("HelloWorld method called");
         Ok(vec![Variant::from("Hello World!".to_owned())])
@@ -60,16 +60,16 @@ pub fn add_methods(manager: Arc<SimpleNodeManager>, ns: u16) {
         .executable(true)
         .user_executable(true)
         .input_args(
-            &mut address_space,
+            &mut *address_space,
             &NodeId::new(ns, "HelloXInput"),
             &[("YourName", DataTypeId::String).into()],
         )
         .output_args(
-            &mut address_space,
+            &mut *address_space,
             &NodeId::new(ns, "HelloXOutput"),
             &[("Result", DataTypeId::String).into()],
         )
-        .insert(&mut address_space);
+        .insert(&mut *address_space);
     manager.inner().add_method_callback(fn_node_id, |args| {
         // We don't actually need to do much validation here, since it should all have happened elsewhere,
         // but we don't want to panic if something goes wrong.
@@ -89,11 +89,11 @@ pub fn add_methods(manager: Arc<SimpleNodeManager>, ns: u16) {
         .executable(true)
         .user_executable(true)
         .input_args(
-            &mut address_space,
+            &mut *address_space,
             &NodeId::new(ns, "BoopInput"),
             &[("Ping", DataTypeId::String).into()],
         )
-        .insert(&mut address_space);
+        .insert(&mut *address_space);
 
     manager.inner().add_method_callback(fn_node_id, |args| {
         let Some(Variant::String(_)) = args.get(0) else {

@@ -82,7 +82,7 @@ async fn main() {
                 .organized_by(&board_node_id)
                 .data_type(DataTypeId::Byte)
                 .value(0u8)
-                .insert(&mut address_space);
+                .insert(&mut *address_space);
 
             // Another variable is a highlighting flag for the square
             let browse_name = format!("{}.highlight", square);
@@ -91,7 +91,7 @@ async fn main() {
                 .organized_by(&board_node_id)
                 .data_type(DataTypeId::Boolean)
                 .value(false)
-                .insert(&mut address_space);
+                .insert(&mut *address_space);
         });
     };
 

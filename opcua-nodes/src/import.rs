@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
-use crate::node_manager::NamespaceMap;
 use opcua_types::NodeId;
+
+use crate::NamespaceMap;
 
 use super::NodeType;
 

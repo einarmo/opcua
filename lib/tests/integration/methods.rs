@@ -23,9 +23,9 @@ async fn call_trivial() {
             .executable(true)
             .user_executable(true)
             .component_of(ObjectId::ObjectsFolder)
-            .input_args(&mut sp, &input_id, &[])
-            .output_args(&mut sp, &output_id, &[])
-            .insert(&mut sp);
+            .input_args(&mut *sp, &input_id, &[])
+            .output_args(&mut *sp, &output_id, &[])
+            .insert(&mut *sp);
     }
 
     let called_ref = called.clone();
@@ -60,15 +60,19 @@ async fn call_args() {
             .user_executable(true)
             .component_of(ObjectId::ObjectsFolder)
             .input_args(
-                &mut sp,
+                &mut *sp,
                 &input_id,
                 &[
                     ("Lhs", DataTypeId::Int64).into(),
                     ("Rhs", DataTypeId::Int64).into(),
                 ],
             )
-            .output_args(&mut sp, &output_id, &[("Result", DataTypeId::Int64).into()])
-            .insert(&mut sp);
+            .output_args(
+                &mut *sp,
+                &output_id,
+                &[("Result", DataTypeId::Int64).into()],
+            )
+            .insert(&mut *sp);
     }
 
     nm.inner().add_method_cb(id.clone(), |args| {
@@ -125,15 +129,19 @@ async fn call_fail() {
             .user_executable(false)
             .component_of(ObjectId::ObjectsFolder)
             .input_args(
-                &mut sp,
+                &mut *sp,
                 &input_id,
                 &[
                     ("Lhs", DataTypeId::Int64).into(),
                     ("Rhs", DataTypeId::Int64).into(),
                 ],
             )
-            .output_args(&mut sp, &output_id, &[("Result", DataTypeId::Int64).into()])
-            .insert(&mut sp);
+            .output_args(
+                &mut *sp,
+                &output_id,
+                &[("Result", DataTypeId::Int64).into()],
+            )
+            .insert(&mut *sp);
     }
 
     nm.inner().add_method_cb(id.clone(), |args| {

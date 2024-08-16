@@ -3,11 +3,10 @@ use std::{
     collections::{HashMap, HashSet},
 };
 
+use opcua_nodes::NamespaceMap;
 use opcua_types::{
     DataTypeId, NodeClass, NodeId, ObjectTypeId, QualifiedName, ReferenceTypeId, VariableTypeId,
 };
-
-use super::build::NamespaceMap;
 
 #[derive(PartialEq, Eq, Hash)]
 struct TypePropertyKey {
