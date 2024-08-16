@@ -36,6 +36,7 @@ pub struct NodeSetCodeGenTarget {
     pub own_namespaces: Vec<String>,
     pub imported_namespaces: Vec<String>,
     pub name: String,
+    pub extra_header: String,
 }
 
 pub fn make_type_dict(
@@ -107,7 +108,7 @@ impl GeneratedOutput for NodeSetChunk {
     }
 }
 
-pub fn make_root_fun(chunk: &[NodeGenMethod], opcua_path: &Path) -> ItemFn {
+pub fn make_root_fun(chunk: &[NodeGenMethod]) -> ItemFn {
     let mut names = chunk.iter().map(|c| Ident::new(&c.name, Span::call_site()));
 
     // Create a list of the functions, but as &dyn Fn, to make it easy to make an iterator.
@@ -116,11 +117,11 @@ pub fn make_root_fun(chunk: &[NodeGenMethod], opcua_path: &Path) -> ItemFn {
     // and the runtime cost of a little indirection is so small it doesn't matter.
     let first = names.next().unwrap();
     parse_quote! {
-        pub(super) fn imported_nodes<'a>(ns_map: &'a #opcua_path::server::address_space::NodeSetNamespaceMapper<'_>) -> Box<dyn Iterator<
-            Item = #opcua_path::server::address_space::ImportedItem
+        pub(super) fn imported_nodes<'a>(ns_map: &'a opcua::server::address_space::NodeSetNamespaceMapper<'_>) -> Box<dyn Iterator<
+            Item = opcua::server::address_space::ImportedItem
         > + 'a> {
             Box::new([
-                &#first as &dyn Fn(_) -> #opcua_path::server::address_space::ImportedItem,
+                &#first as &dyn Fn(_) -> opcua::server::address_space::ImportedItem,
                 #(&#names),*
             ].into_iter().map(|f| f(ns_map)))
         }
@@ -129,7 +130,6 @@ pub fn make_root_fun(chunk: &[NodeGenMethod], opcua_path: &Path) -> ItemFn {
 
 pub fn generate_target(
     config: &NodeSetCodeGenTarget,
-    opcua_path: &str,
     preferred_locale: &str,
 ) -> Result<Vec<NodeSetChunk>, CodeGenError> {
     println!("Loading node set from {}", config.file_path);
@@ -144,8 +144,7 @@ pub fn generate_target(
 
     let types = make_type_dict(&config)?;
 
-    let mut generator =
-        NodeSetCodeGenerator::new(opcua_path, preferred_locale, nodes.aliases, types)?;
+    let mut generator = NodeSetCodeGenerator::new(preferred_locale, nodes.aliases, types)?;
 
     let mut fns = Vec::with_capacity(nodes.nodes.len());
     for node in &nodes.nodes {
@@ -156,15 +155,13 @@ pub fn generate_target(
 
     let mut iter = fns.into_iter();
 
-    let opcua_path = parse_str(opcua_path)?;
-
     let mut outputs = Vec::new();
     let mut chunk = Vec::new();
     while let Some(it) = iter.next() {
         chunk.push(it);
         if chunk.len() == config.max_nodes_per_file {
             outputs.push(NodeSetChunk {
-                root_fun: make_root_fun(&chunk, &opcua_path),
+                root_fun: make_root_fun(&chunk),
                 items: chunk.into_iter().map(|c| c.func).collect(),
                 name: format!("nodeset_{}", outputs.len() + 1),
             });
@@ -174,7 +171,7 @@ pub fn generate_target(
 
     if !chunk.is_empty() {
         outputs.push(NodeSetChunk {
-            root_fun: make_root_fun(&chunk, &opcua_path),
+            root_fun: make_root_fun(&chunk),
             items: chunk.into_iter().map(|c| c.func).collect(),
             name: format!("nodeset_{}", outputs.len() + 1),
         });
@@ -185,7 +182,6 @@ pub fn generate_target(
 
 pub fn make_root_module(
     chunks: &[NodeSetChunk],
-    opcua_path: &str,
     config: &NodeSetCodeGenTarget,
 ) -> Result<File, CodeGenError> {
     let mut items: Vec<Item> = Vec::new();
@@ -203,8 +199,6 @@ pub fn make_root_module(
     items.push(parse_quote! {
         pub struct #name_ident;
     });
-
-    let opcua_path: Path = parse_str(opcua_path)?;
 
     let mut namespace_adds = quote! {};
     for (idx, ns) in config
@@ -227,14 +221,14 @@ pub fn make_root_module(
     }
 
     items.push(parse_quote! {
-        impl #opcua_path::server::address_space::NodeSetImport for #name_ident {
-            fn load<'a>(map: &'a #opcua_path::server::address_space::NodeSetNamespaceMapper) -> impl Iterator<Item = #opcua_path::server::address_space::ImportedItem> + 'a {
+        impl opcua::server::address_space::NodeSetImport for #name_ident {
+            fn load<'a>(map: &'a opcua::server::address_space::NodeSetNamespaceMapper) -> impl Iterator<Item = opcua::server::address_space::ImportedItem> + 'a {
                 [
                     #(#names::imported_nodes(map)),*
                 ].into_iter().flat_map(|f| f)
             }
 
-            fn register_namespaces(map: &mut #opcua_path::server::address_space::NodeSetNamespaceMapper) -> Vec<String> {
+            fn register_namespaces(map: &mut opcua::server::address_space::NodeSetNamespaceMapper) -> Vec<String> {
                 #namespace_adds
 
                 vec![#namespace_out]

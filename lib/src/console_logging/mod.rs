@@ -22,7 +22,7 @@ impl<T: fmt::Display> fmt::Display for Pad<T> {
 }
 
 pub fn init() {
-    lazy_static! {
+    lazy_static::lazy_static! {
         static ref INITIALISED: AtomicBool = AtomicBool::new(false);
     }
 

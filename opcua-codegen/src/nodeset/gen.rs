@@ -6,7 +6,7 @@ use opcua_xml::schema::ua_node_set::{
     UAVariableType, UAView,
 };
 use proc_macro2::{Span, TokenStream};
-use syn::{parse_quote, parse_str, Expr, Ident, ItemFn, Path};
+use syn::{parse_quote, parse_str, Expr, Ident, ItemFn};
 
 use crate::{utils::RenderExpr, CodeGenError};
 
@@ -20,8 +20,6 @@ pub struct NodeGenMethod {
 }
 
 pub struct NodeSetCodeGenerator {
-    opcua_path: Path,
-    opcua_path_str: String,
     preferred_locale: String,
     empty_text: LocalizedText,
     aliases: HashMap<String, String>,
@@ -31,7 +29,6 @@ pub struct NodeSetCodeGenerator {
 
 impl NodeSetCodeGenerator {
     pub fn new(
-        opcua_path_str: &str,
         preferred_locale: &str,
         alias_table: Option<AliasTable>,
         types: HashMap<String, XsdTypeWithPath>,
@@ -42,11 +39,7 @@ impl NodeSetCodeGenerator {
                 aliases.insert(alias.alias, alias.id.0);
             }
         }
-        let opcua_path: Path = parse_str(opcua_path_str)?;
-
         Ok(Self {
-            opcua_path,
-            opcua_path_str: opcua_path_str.to_owned(),
             preferred_locale: preferred_locale.to_owned(),
             empty_text: LocalizedText::default(),
             aliases,
@@ -57,9 +50,9 @@ impl NodeSetCodeGenerator {
 
     fn resolve_node_id(&self, node_id: &NodeId) -> Result<TokenStream, CodeGenError> {
         if let Some(aliased) = self.aliases.get(&node_id.0) {
-            NodeId(aliased.to_owned()).render(&self.opcua_path)
+            NodeId(aliased.to_owned()).render()
         } else {
-            node_id.render(&self.opcua_path)
+            node_id.render()
         }
     }
 
@@ -95,18 +88,13 @@ impl NodeSetCodeGenerator {
 
     fn render_enum_def(&self, def: &DataTypeDefinition) -> Result<TokenStream, CodeGenError> {
         let mut fields = quote! {};
-        let opcua_path = &self.opcua_path;
         for f in &def.fields {
             let value = f.value;
-            let display_name = self
-                .get_localized_text(&f.display_names)
-                .render(opcua_path)?;
-            let description = self
-                .get_localized_text(&f.descriptions)
-                .render(opcua_path)?;
+            let display_name = self.get_localized_text(&f.display_names).render()?;
+            let description = self.get_localized_text(&f.descriptions).render()?;
             let name = &f.name;
             fields.extend(quote! {
-                #opcua_path::types::EnumField {
+                opcua::types::EnumField {
                     value: #value,
                     display_name: #display_name,
                     description: #description,
@@ -116,7 +104,7 @@ impl NodeSetCodeGenerator {
         }
 
         Ok(quote! {
-            #opcua_path::types::EnumDefinition {
+            opcua::types::EnumDefinition {
                 fields: Some(vec![#fields])
             }
         })
@@ -124,24 +112,21 @@ impl NodeSetCodeGenerator {
 
     fn render_structure_def(&self, def: &DataTypeDefinition) -> Result<TokenStream, CodeGenError> {
         let mut fields = quote! {};
-        let opcua_path = &self.opcua_path;
         let mut any_optional = false;
         for f in &def.fields {
-            let description = self
-                .get_localized_text(&f.descriptions)
-                .render(opcua_path)?;
+            let description = self.get_localized_text(&f.descriptions).render()?;
             let name = &f.name;
-            let data_type = f.data_type.render(opcua_path)?;
+            let data_type = f.data_type.render()?;
             let value_rank = f.value_rank.0;
             let array_dimensions = self
                 .parse_array_dimensions(&f.array_dimensions)?
                 .as_ref()
-                .render(&self.opcua_path)?;
+                .render()?;
             let max_string_length = f.max_string_length as u32;
             let is_optional = f.is_optional;
             any_optional |= is_optional;
             fields.extend(quote! {
-                #opcua_path::types::StructureField {
+                opcua::types::StructureField {
                     name: #name.into(),
                     description: #description,
                     data_type: #data_type,
@@ -164,11 +149,11 @@ impl NodeSetCodeGenerator {
             Span::call_site(),
         );
         Ok(quote! {
-            #opcua_path::types::StructureDefinition {
+            opcua::types::StructureDefinition {
                 fields: Some(vec![#fields]),
-                default_encoding_id: #opcua_path::types::NodeId::null(),
-                base_data_type: #opcua_path::types::NodeId::null(),
-                structure_type: #opcua_path::types::StructureType::#structure_type,
+                default_encoding_id: opcua::types::NodeId::null(),
+                base_data_type: opcua::types::NodeId::null(),
+                structure_type: opcua::types::StructureType::#structure_type,
             }
         })
     }
@@ -192,24 +177,16 @@ impl NodeSetCodeGenerator {
     }
 
     fn generate_base(&self, node: &UANodeBase, node_class: &str) -> Result<Expr, CodeGenError> {
-        let name = self
-            .get_localized_text(&node.display_names)
-            .render(&self.opcua_path)?;
-        let description = self
-            .get_localized_text_opt(&node.description)
-            .render(&self.opcua_path)?;
-        let browse_name = node.browse_name.render(&self.opcua_path)?;
-        let node_class: Expr = syn::parse_str(&format!(
-            "{}::types::NodeClass::{}",
-            self.opcua_path_str, node_class
-        ))?;
+        let name = self.get_localized_text(&node.display_names).render()?;
+        let description = self.get_localized_text_opt(&node.description).render()?;
+        let browse_name = node.browse_name.render()?;
+        let node_class: Expr = syn::parse_str(&format!("opcua::types::NodeClass::{}", node_class))?;
         let write_mask = node.write_mask.0;
         let user_write_mask = node.user_write_mask.0;
         let node_id = self.resolve_node_id(&node.node_id)?;
 
-        let opcua_path = &self.opcua_path;
         Ok(parse_quote! {
-            #opcua_path::server::address_space::Base::new_full(
+            opcua::server::address_space::Base::new_full(
                 #node_id, #node_class, #browse_name, #name, #description,
                 Some(#write_mask), Some(#user_write_mask)
             )
@@ -218,34 +195,31 @@ impl NodeSetCodeGenerator {
 
     fn generate_object(&self, node: &UAObject) -> Result<Expr, CodeGenError> {
         let base = self.generate_base(&node.base.base, "Object")?;
-        let opcua_path = &self.opcua_path;
         let event_notifier = node.event_notifier.0;
         Ok(parse_quote! {
-            #opcua_path::server::address_space::Object::new_full(
+            opcua::server::address_space::Object::new_full(
                 #base,
-                #opcua_path::server::address_space::EventNotifier::from_bits_truncate(#event_notifier),
+                opcua::server::address_space::EventNotifier::from_bits_truncate(#event_notifier),
             )
         })
     }
 
     fn generate_variable(&self, node: &UAVariable) -> Result<Expr, CodeGenError> {
         let base = self.generate_base(&node.base.base, "Variable")?;
-        let opcua_path = &self.opcua_path;
         let data_type = self.resolve_node_id(&node.data_type)?;
         let historizing = node.historizing;
         let value_rank = node.value_rank.0;
-        let value = render_value(node.value.as_ref(), opcua_path, &self.types)?;
+        let value = render_value(node.value.as_ref(), &self.types)?;
         let access_level = node.access_level.0;
         let user_access_level = node.user_access_level.0;
         let array_dimensions = self
             .parse_array_dimensions(&node.array_dimensions)?
             .as_ref()
-            .render(&self.opcua_path)?;
-        let minimum_sampling_interval =
-            node.minimum_sampling_interval.0.render(&self.opcua_path)?;
+            .render()?;
+        let minimum_sampling_interval = node.minimum_sampling_interval.0.render()?;
 
         Ok(parse_quote! {
-            #opcua_path::server::address_space::Variable::new_full(
+            opcua::server::address_space::Variable::new_full(
                 #base,
                 #data_type,
                 #historizing,
@@ -263,10 +237,9 @@ impl NodeSetCodeGenerator {
         let base = self.generate_base(&node.base.base, "Method")?;
         let executable = node.executable;
         let user_executable = node.user_executable;
-        let opcua_path = &self.opcua_path;
 
         Ok(parse_quote! {
-            #opcua_path::server::address_space::Method::new_full(
+            opcua::server::address_space::Method::new_full(
                 #base,
                 #executable,
                 #user_executable,
@@ -276,14 +249,13 @@ impl NodeSetCodeGenerator {
 
     fn generate_view(&self, node: &UAView) -> Result<Expr, CodeGenError> {
         let base = self.generate_base(&node.base.base, "View")?;
-        let opcua_path = &self.opcua_path;
         let event_notifier = node.event_notifier.0;
         let contains_no_loops = node.contains_no_loops;
 
         Ok(parse_quote! {
-            #opcua_path::server::address_space::View::new_full(
+            opcua::server::address_space::View::new_full(
                 #base,
-                #opcua_path::server::address_space::EventNotifier::from_bits_truncate(#event_notifier),
+                opcua::server::address_space::EventNotifier::from_bits_truncate(#event_notifier),
                 #contains_no_loops,
             )
         })
@@ -291,11 +263,10 @@ impl NodeSetCodeGenerator {
 
     fn generate_object_type(&self, node: &UAObjectType) -> Result<Expr, CodeGenError> {
         let base = self.generate_base(&node.base.base, "ObjectType")?;
-        let opcua_path = &self.opcua_path;
         let is_abstract = node.base.is_abstract;
 
         Ok(parse_quote! {
-            #opcua_path::server::address_space::ObjectType::new_full(
+            opcua::server::address_space::ObjectType::new_full(
                 #base,
                 #is_abstract,
             )
@@ -304,17 +275,16 @@ impl NodeSetCodeGenerator {
 
     fn generate_variable_type(&self, node: &UAVariableType) -> Result<Expr, CodeGenError> {
         let base = self.generate_base(&node.base.base, "VariableType")?;
-        let opcua_path = &self.opcua_path;
         let data_type = self.resolve_node_id(&node.data_type)?;
         let is_abstract = node.base.is_abstract;
         let value_rank = node.value_rank.0;
-        let value = render_value(node.value.as_ref(), opcua_path, &self.types)?;
+        let value = render_value(node.value.as_ref(), &self.types)?;
         let array_dimensions = self
             .parse_array_dimensions(&node.array_dimensions)?
             .as_ref()
-            .render(&self.opcua_path)?;
+            .render()?;
         Ok(parse_quote! {
-            #opcua_path::server::address_space::VariableType::new_full(
+            opcua::server::address_space::VariableType::new_full(
                 #base,
                 #data_type,
                 #is_abstract,
@@ -328,7 +298,6 @@ impl NodeSetCodeGenerator {
     fn generate_data_type(&self, node: &UADataType) -> Result<Expr, CodeGenError> {
         let base = self.generate_base(&node.base.base, "DataType")?;
         let is_abstract = node.base.is_abstract;
-        let opcua_path = &self.opcua_path;
         let data_type_definition = match &node.definition {
             Some(e) => {
                 let rendered = self.render_data_type_definition(e)?;
@@ -338,7 +307,7 @@ impl NodeSetCodeGenerator {
         };
 
         Ok(parse_quote! {
-            #opcua_path::server::address_space::DataType::new_full(
+            opcua::server::address_space::DataType::new_full(
                 #base,
                 #is_abstract,
                 #data_type_definition
@@ -350,13 +319,10 @@ impl NodeSetCodeGenerator {
         let base = self.generate_base(&node.base.base, "ReferenceType")?;
         let symmetric = node.symmetric;
         let is_abstract = node.base.is_abstract;
-        let inverse_name = self
-            .get_localized_text_opt(&node.inverse_names)
-            .render(&self.opcua_path)?;
-        let opcua_path = &self.opcua_path;
+        let inverse_name = self.get_localized_text_opt(&node.inverse_names).render()?;
 
         Ok(parse_quote! {
-            #opcua_path::server::address_space::ReferenceType::new_full(
+            opcua::server::address_space::ReferenceType::new_full(
                 #base,
                 #symmetric,
                 #is_abstract,
@@ -370,9 +336,8 @@ impl NodeSetCodeGenerator {
         let type_id = self.resolve_node_id(&reference.reference_type)?;
         let is_forward = reference.is_forward;
 
-        let opcua_path = &self.opcua_path;
         Ok(parse_quote! {
-            #opcua_path::server::address_space::ImportedReference {
+            opcua::server::address_space::ImportedReference {
                 target_id: #target_id,
                 type_id: #type_id,
                 is_forward: #is_forward,
@@ -402,7 +367,6 @@ impl NodeSetCodeGenerator {
         let func_name_str = format!("make_{}_{}", name, self.node_counter);
         let func_name: Ident = parse_str(&func_name_str)?;
         self.node_counter += 1;
-        let opcua_path = &self.opcua_path;
 
         let references = self.generate_references(node.base())?;
         let node = match &node {
@@ -418,10 +382,10 @@ impl NodeSetCodeGenerator {
 
         let func: ItemFn = parse_quote! {
             #[allow(unused)]
-            fn #func_name(ns_map: &#opcua_path::server::address_space::NodeSetNamespaceMapper<'_>)
-                -> #opcua_path::server::address_space::ImportedItem
+            fn #func_name(ns_map: &opcua::server::address_space::NodeSetNamespaceMapper<'_>)
+                -> opcua::server::address_space::ImportedItem
             {
-                #opcua_path::server::address_space::ImportedItem {
+                opcua::server::address_space::ImportedItem {
                     node: #node.into(),
                     references: vec![#(#references),*]
                 }
