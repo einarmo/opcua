@@ -19,7 +19,7 @@ name = "opcua_server"
 default = ["discovery-server-registration", "generated-address-space"]
 # Includes all the code to populate the address space with the default node set. This is something that embedded
 # systems may or may not require.
-generated-address-space = []
+generated-address-space = ["opcua-core-namespace"]
 
 # Allows a server to register itself with a local discovery server. It does so by becoming a client to the LDS,
 # which brings in a dependency to opcua-client. Omitting the feature saves some memory.
@@ -48,3 +48,4 @@ opcua-core = { path = "../opcua-core" }
 opcua-nodes = { path = "../opcua-nodes" }
 
 opcua-client = { path = "../opcua-client", optional = true }
+opcua-core-namespace = { path = "../opcua-core-namespace", optional = true }

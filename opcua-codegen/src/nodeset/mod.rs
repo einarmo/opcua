@@ -117,11 +117,11 @@ pub fn make_root_fun(chunk: &[NodeGenMethod]) -> ItemFn {
     // and the runtime cost of a little indirection is so small it doesn't matter.
     let first = names.next().unwrap();
     parse_quote! {
-        pub(super) fn imported_nodes<'a>(ns_map: &'a opcua::server::address_space::NodeSetNamespaceMapper<'_>) -> Box<dyn Iterator<
-            Item = opcua::server::address_space::ImportedItem
+        pub(super) fn imported_nodes<'a>(ns_map: &'a opcua::nodes::NodeSetNamespaceMapper<'_>) -> Box<dyn Iterator<
+            Item = opcua::nodes::ImportedItem
         > + 'a> {
             Box::new([
-                &#first as &dyn Fn(_) -> opcua::server::address_space::ImportedItem,
+                &#first as &dyn Fn(_) -> opcua::nodes::ImportedItem,
                 #(&#names),*
             ].into_iter().map(|f| f(ns_map)))
         }
@@ -221,14 +221,14 @@ pub fn make_root_module(
     }
 
     items.push(parse_quote! {
-        impl opcua::server::address_space::NodeSetImport for #name_ident {
-            fn load<'a>(map: &'a opcua::server::address_space::NodeSetNamespaceMapper) -> impl Iterator<Item = opcua::server::address_space::ImportedItem> + 'a {
+        impl opcua::nodes::NodeSetImport for #name_ident {
+            fn load<'a>(map: &'a opcua::nodes::NodeSetNamespaceMapper) -> impl Iterator<Item = opcua::nodes::ImportedItem> + 'a {
                 [
                     #(#names::imported_nodes(map)),*
                 ].into_iter().flat_map(|f| f)
             }
 
-            fn register_namespaces(map: &mut opcua::server::address_space::NodeSetNamespaceMapper) -> Vec<String> {
+            fn register_namespaces(map: &mut opcua::nodes::NodeSetNamespaceMapper) -> Vec<String> {
                 #namespace_adds
 
                 vec![#namespace_out]

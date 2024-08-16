@@ -14,11 +14,11 @@ targets:
       - AnonymousIdentityToken
   - type: nodes
     file_path: tools/schema/schemas/1.0.4/Opc.Ua.NodeSet2.xml
-    output_dir: opcua-server/src/address_space/generated
+    output_dir: opcua-core-namespace/src/generated
     max_nodes_per_file: 100
     extra_header: |
       #[allow(unused)]
-      mod opcua { pub use opcua_types as types; pub use crate as server; }
+      mod opcua { pub use opcua_types as types; pub use opcua_nodes as nodes; }
     types:
       - file_path: tools/schema/schemas/1.0.4/Opc.Ua.Types.xsd
         root_path: opcua::types
