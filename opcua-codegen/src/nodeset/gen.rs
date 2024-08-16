@@ -186,7 +186,7 @@ impl NodeSetCodeGenerator {
         let node_id = self.resolve_node_id(&node.node_id)?;
 
         Ok(parse_quote! {
-            opcua::server::address_space::Base::new_full(
+            opcua::nodes::Base::new_full(
                 #node_id, #node_class, #browse_name, #name, #description,
                 Some(#write_mask), Some(#user_write_mask)
             )
@@ -197,9 +197,9 @@ impl NodeSetCodeGenerator {
         let base = self.generate_base(&node.base.base, "Object")?;
         let event_notifier = node.event_notifier.0;
         Ok(parse_quote! {
-            opcua::server::address_space::Object::new_full(
+            opcua::nodes::Object::new_full(
                 #base,
-                opcua::server::address_space::EventNotifier::from_bits_truncate(#event_notifier),
+                opcua::nodes::EventNotifier::from_bits_truncate(#event_notifier),
             )
         })
     }
@@ -219,7 +219,7 @@ impl NodeSetCodeGenerator {
         let minimum_sampling_interval = node.minimum_sampling_interval.0.render()?;
 
         Ok(parse_quote! {
-            opcua::server::address_space::Variable::new_full(
+            opcua::nodes::Variable::new_full(
                 #base,
                 #data_type,
                 #historizing,
@@ -239,7 +239,7 @@ impl NodeSetCodeGenerator {
         let user_executable = node.user_executable;
 
         Ok(parse_quote! {
-            opcua::server::address_space::Method::new_full(
+            opcua::nodes::Method::new_full(
                 #base,
                 #executable,
                 #user_executable,
@@ -253,9 +253,9 @@ impl NodeSetCodeGenerator {
         let contains_no_loops = node.contains_no_loops;
 
         Ok(parse_quote! {
-            opcua::server::address_space::View::new_full(
+            opcua::nodes::View::new_full(
                 #base,
-                opcua::server::address_space::EventNotifier::from_bits_truncate(#event_notifier),
+                opcua::nodes::EventNotifier::from_bits_truncate(#event_notifier),
                 #contains_no_loops,
             )
         })
@@ -266,7 +266,7 @@ impl NodeSetCodeGenerator {
         let is_abstract = node.base.is_abstract;
 
         Ok(parse_quote! {
-            opcua::server::address_space::ObjectType::new_full(
+            opcua::nodes::ObjectType::new_full(
                 #base,
                 #is_abstract,
             )
@@ -284,7 +284,7 @@ impl NodeSetCodeGenerator {
             .as_ref()
             .render()?;
         Ok(parse_quote! {
-            opcua::server::address_space::VariableType::new_full(
+            opcua::nodes::VariableType::new_full(
                 #base,
                 #data_type,
                 #is_abstract,
@@ -307,7 +307,7 @@ impl NodeSetCodeGenerator {
         };
 
         Ok(parse_quote! {
-            opcua::server::address_space::DataType::new_full(
+            opcua::nodes::DataType::new_full(
                 #base,
                 #is_abstract,
                 #data_type_definition
@@ -322,7 +322,7 @@ impl NodeSetCodeGenerator {
         let inverse_name = self.get_localized_text_opt(&node.inverse_names).render()?;
 
         Ok(parse_quote! {
-            opcua::server::address_space::ReferenceType::new_full(
+            opcua::nodes::ReferenceType::new_full(
                 #base,
                 #symmetric,
                 #is_abstract,
@@ -337,7 +337,7 @@ impl NodeSetCodeGenerator {
         let is_forward = reference.is_forward;
 
         Ok(parse_quote! {
-            opcua::server::address_space::ImportedReference {
+            opcua::nodes::ImportedReference {
                 target_id: #target_id,
                 type_id: #type_id,
                 is_forward: #is_forward,
@@ -382,10 +382,10 @@ impl NodeSetCodeGenerator {
 
         let func: ItemFn = parse_quote! {
             #[allow(unused)]
-            fn #func_name(ns_map: &opcua::server::address_space::NodeSetNamespaceMapper<'_>)
-                -> opcua::server::address_space::ImportedItem
+            fn #func_name(ns_map: &opcua::nodes::NodeSetNamespaceMapper<'_>)
+                -> opcua::nodes::ImportedItem
             {
-                opcua::server::address_space::ImportedItem {
+                opcua::nodes::ImportedItem {
                     node: #node.into(),
                     references: vec![#(#references),*]
                 }

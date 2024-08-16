@@ -677,6 +677,7 @@ dependencies = [
  "opcua-client",
  "opcua-core",
  "opcua-crypto",
+ "opcua-nodes",
  "opcua-server",
  "opcua-types",
  "serde_json",
@@ -761,6 +762,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "opcua-core-namespace"
+version = "0.13.0"
+dependencies = [
+ "opcua-nodes",
+ "opcua-types",
+]
+
+[[package]]
 name = "opcua-crypto"
 version = "0.13.0"
 dependencies = [
@@ -841,6 +850,7 @@ dependencies = [
  "log 0.4.22",
  "opcua-client",
  "opcua-core",
+ "opcua-core-namespace",
  "opcua-crypto",
  "opcua-nodes",
  "opcua-types",

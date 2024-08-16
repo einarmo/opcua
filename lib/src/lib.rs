@@ -12,6 +12,8 @@ pub use opcua_client as client;
 #[cfg(feature = "console-logging")]
 pub mod console_logging;
 #[cfg(feature = "server")]
+pub use opcua_nodes as nodes;
+#[cfg(feature = "server")]
 pub use opcua_server as server;
 
 pub use opcua_core as core;
