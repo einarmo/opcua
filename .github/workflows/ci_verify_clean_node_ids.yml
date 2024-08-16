@@ -14,6 +14,6 @@ jobs:
         run: node gen_node_ids
         working-directory: tools/schema/
       - name: Format generated code
-        run: rustfmt lib/src/types/node_ids.rs
+        run: rustfmt opcua-types/src/node_ids.rs
       - name: Verify generated code matches committed code
         run: git status --porcelain
