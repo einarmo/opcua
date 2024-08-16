@@ -14,7 +14,7 @@ members = [
     "opcua-codegen",
     "opcua-xml",
     "opcua-types"
-, "opcua-crypto", "opcua-core", "opcua-client", "opcua-server"]
+, "opcua-crypto", "opcua-core", "opcua-client", "opcua-server", "opcua-nodes"]
 
 [workspace.dependencies]
 async-trait = "0.1.79"

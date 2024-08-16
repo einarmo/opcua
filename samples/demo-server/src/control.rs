@@ -36,7 +36,7 @@ pub fn add_control_switches(
             .value(false)
             .writable()
             .organized_by(&control_folder_id)
-            .insert(&mut address_space);
+            .insert(&mut *address_space);
     }
 
     let mgr_ref = manager.clone();

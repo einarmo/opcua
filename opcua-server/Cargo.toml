@@ -45,5 +45,6 @@ tokio-util = { workspace = true }
 opcua-types = { path = "../opcua-types" }
 opcua-crypto = { path = "../opcua-crypto" }
 opcua-core = { path = "../opcua-core" }
+opcua-nodes = { path = "../opcua-nodes" }
 
 opcua-client = { path = "../opcua-client", optional = true }

@@ -35,7 +35,7 @@ use super::{
 
 pub use {
     attributes::{ParsedReadValueId, ParsedWriteValue, ReadNode, WriteNode},
-    build::{add_namespaces, NamespaceMap, NodeManagerBuilder},
+    build::NodeManagerBuilder,
     context::RequestContext,
     history::{HistoryNode, HistoryResult, HistoryUpdateDetails, HistoryUpdateNode},
     method::MethodCall,

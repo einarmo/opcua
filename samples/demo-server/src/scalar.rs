@@ -199,7 +199,7 @@ fn add_static_scalar_variables(manager: &SimpleNodeManager, ns: u16, static_fold
             .value(scalar_default_value(*sn))
             .organized_by(&scalar_folder_id)
             .writable()
-            .insert(&mut address_space);
+            .insert(&mut *address_space);
     }
 }
 
@@ -226,7 +226,7 @@ fn add_static_array_variables(manager: &SimpleNodeManager, ns: u16, static_folde
             .value((value_type, values))
             .organized_by(&array_folder_id)
             .writable()
-            .insert(&mut address_space);
+            .insert(&mut *address_space);
     });
 }
 
@@ -246,7 +246,7 @@ fn add_dynamic_scalar_variables(manager: &SimpleNodeManager, ns: u16, dynamic_fo
             .data_type(*sn)
             .value(scalar_default_value(*sn))
             .organized_by(&scalar_folder_id)
-            .insert(&mut address_space);
+            .insert(&mut *address_space);
     });
 }
 
@@ -271,7 +271,7 @@ fn add_dynamic_array_variables(manager: &SimpleNodeManager, ns: u16, dynamic_fol
             .value_rank(1)
             .value((value_type, values))
             .organized_by(&array_folder_id)
-            .insert(&mut address_space);
+            .insert(&mut *address_space);
     });
 }
 
@@ -334,7 +334,7 @@ pub fn add_stress_variables(
                 .data_type(DataTypeId::Int32)
                 .value(0i32)
                 .organized_by(&folder_id)
-                .insert(&mut address_space);
+                .insert(&mut *address_space);
         });
     }
 

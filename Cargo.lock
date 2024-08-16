@@ -819,6 +819,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "opcua-nodes"
+version = "0.13.0"
+dependencies = [
+ "bitflags",
+ "log 0.4.22",
+ "opcua-types",
+]
+
+[[package]]
 name = "opcua-server"
 version = "0.13.0"
 dependencies = [
@@ -833,6 +842,7 @@ dependencies = [
  "opcua-client",
  "opcua-core",
  "opcua-crypto",
+ "opcua-nodes",
  "opcua-types",
  "parking_lot",
  "regex",
