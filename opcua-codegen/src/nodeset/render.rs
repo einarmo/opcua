@@ -5,16 +5,16 @@ use opcua_xml::schema::ua_node_set::{LocalizedText, NodeId, QualifiedName};
 use proc_macro2::TokenStream;
 use quote::quote;
 use regex::Regex;
-use syn::{parse_quote, Expr, Path};
+use syn::{parse_quote, Expr};
 
 use crate::{utils::RenderExpr, CodeGenError};
 
 impl RenderExpr for LocalizedText {
-    fn render(&self, opcua_path: &Path) -> Result<TokenStream, CodeGenError> {
+    fn render(&self) -> Result<TokenStream, CodeGenError> {
         let locale = &self.locale.0;
         let text = &self.text;
         Ok(quote! {
-            #opcua_path::types::LocalizedText::new(#locale, #text)
+            opcua::types::LocalizedText::new(#locale, #text)
         })
     }
 }
@@ -26,7 +26,7 @@ fn nodeid_regex() -> &'static Regex {
 }
 
 impl RenderExpr for NodeId {
-    fn render(&self, opcua_path: &Path) -> Result<TokenStream, CodeGenError> {
+    fn render(&self) -> Result<TokenStream, CodeGenError> {
         let id = &self.0;
         let captures = nodeid_regex()
             .captures(id)
@@ -61,13 +61,13 @@ impl RenderExpr for NodeId {
                 let uuid = uuid::Uuid::parse_str(&v)
                     .map_err(|e| CodeGenError::Other(format!("Invalid nodeId: {}, {e}", id)))?;
                 let bytes = uuid.as_bytes();
-                parse_quote! { #opcua_path::types::Uuid::from_slice(&[#(#bytes)*,]).unwrap() }
+                parse_quote! { opcua::types::Uuid::from_slice(&[#(#bytes)*,]).unwrap() }
             }
             "b=" => {
                 let bytes = base64::engine::general_purpose::STANDARD
                     .decode(v)
                     .map_err(|e| CodeGenError::Other(format!("Invalid nodeId: {}, {e}", id)))?;
-                parse_quote! { #opcua_path::types::ByteString::from(vec![#(#bytes)*,]) }
+                parse_quote! { opcua::types::ByteString::from(vec![#(#bytes)*,]) }
             }
             _ => return Err(CodeGenError::Other(format!("Invalid nodeId: {}", id))),
         };
@@ -81,7 +81,7 @@ impl RenderExpr for NodeId {
         };
 
         Ok(quote! {
-            #opcua_path::types::NodeId::new(#ns_item, #id_item)
+            opcua::types::NodeId::new(#ns_item, #id_item)
         })
     }
 }
@@ -93,7 +93,7 @@ fn qualified_name_regex() -> &'static Regex {
 }
 
 impl RenderExpr for QualifiedName {
-    fn render(&self, opcua_path: &Path) -> Result<TokenStream, CodeGenError> {
+    fn render(&self) -> Result<TokenStream, CodeGenError> {
         let name = &self.0;
         let captures = qualified_name_regex()
             .captures(name)
@@ -119,13 +119,13 @@ impl RenderExpr for QualifiedName {
         };
 
         Ok(quote! {
-            #opcua_path::types::QualifiedName::new(#ns_item, #name_str)
+            opcua::types::QualifiedName::new(#ns_item, #name_str)
         })
     }
 }
 
 impl RenderExpr for Vec<u32> {
-    fn render(&self, _opcua_path: &Path) -> Result<TokenStream, CodeGenError> {
+    fn render(&self) -> Result<TokenStream, CodeGenError> {
         let r = self;
         Ok(quote! {
             vec![#(#r),*]
@@ -134,7 +134,7 @@ impl RenderExpr for Vec<u32> {
 }
 
 impl RenderExpr for f64 {
-    fn render(&self, _opcua_path: &Path) -> Result<TokenStream, CodeGenError> {
+    fn render(&self) -> Result<TokenStream, CodeGenError> {
         let r = self;
         Ok(quote! {
             #r

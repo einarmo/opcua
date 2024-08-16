@@ -57,7 +57,7 @@ impl ExternalType {
     }
 }
 
-pub fn basic_types_import_map(root: &str) -> HashMap<String, ExternalType> {
+pub fn basic_types_import_map() -> HashMap<String, ExternalType> {
     [
         ("UAString", ExternalType::new("string", true)),
         ("ByteString", ExternalType::new("byte_string", true)),
@@ -86,7 +86,7 @@ pub fn basic_types_import_map(root: &str) -> HashMap<String, ExternalType> {
     ]
     .into_iter()
     .map(|(k, mut v)| {
-        v.path = format!("{}::{}", root, v.path);
+        v.path = format!("opcua::types::{}", v.path);
         (k.to_owned(), v)
     })
     .collect()

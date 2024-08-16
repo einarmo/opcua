@@ -2,22 +2,26 @@ extra_header: |
   // OPCUA for Rust
   // SPDX-License-Identifier: MPL-2.0
   // Copyright (C) 2017-2024 Adam Lock, Einar Omang
-opcua_crate_path: crate
 targets:
   - type: types
     file_path: tools/schema/schemas/1.0.4/Opc.Ua.Types.bsd
     output_dir: opcua-types/src/service_types
     enums_single_file: true
-    opcua_types_path: crate
+    extra_header: |
+      #[allow(unused)]
+      mod opcua { pub use crate as types; }
     default_excluded:
       - AnonymousIdentityToken
   - type: nodes
     file_path: tools/schema/schemas/1.0.4/Opc.Ua.NodeSet2.xml
-    output_dir: lib/src/server/address_space/generated
+    output_dir: opcua-server/src/address_space/generated
     max_nodes_per_file: 100
+    extra_header: |
+      #[allow(unused)]
+      mod opcua { pub use opcua_types as types; pub use crate as server; }
     types:
       - file_path: tools/schema/schemas/1.0.4/Opc.Ua.Types.xsd
-        root_path: crate::types
+        root_path: opcua::types
     own_namespaces:
       - "http://opcfoundation.org/UA/"
     imported_namespaces: []

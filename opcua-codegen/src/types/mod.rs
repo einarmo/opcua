@@ -12,12 +12,9 @@ pub use loader::{BsdTypeLoader, LoadedType, LoadedTypes};
 use opcua_xml::load_bsd_file;
 pub use structure::{StructureField, StructureFieldType, StructuredType};
 
-use crate::{CodeGenConfig, CodeGenError, TypeCodeGenTarget};
+use crate::{CodeGenError, TypeCodeGenTarget};
 
-pub fn generate_types(
-    config: &CodeGenConfig,
-    target: &TypeCodeGenTarget,
-) -> Result<Vec<GeneratedItem>, CodeGenError> {
+pub fn generate_types(target: &TypeCodeGenTarget) -> Result<Vec<GeneratedItem>, CodeGenError> {
     println!("Loading types from {}", target.file_path);
     let data = std::fs::read_to_string(&target.file_path)
         .map_err(|e| CodeGenError::io(&format!("Failed to read file {}", target.file_path), e))?;
@@ -39,7 +36,7 @@ pub fn generate_types(
     let types = type_loader.from_bsd()?;
     println!("Generated code for {} types", types.len());
 
-    let mut types_import_map = basic_types_import_map(&config.opcua_crate_path);
+    let mut types_import_map = basic_types_import_map();
     for (k, v) in &target.types_import_map {
         types_import_map.insert(k.clone(), v.clone());
     }
@@ -57,11 +54,6 @@ pub fn generate_types(
         CodeGenItemConfig {
             enums_single_file: target.enums_single_file,
             structs_single_file: target.structs_single_file,
-            opcua_types_path: if let Some(path) = target.opcua_types_path.clone() {
-                path
-            } else {
-                format!("{}::types", config.opcua_crate_path)
-            },
         },
     );
 

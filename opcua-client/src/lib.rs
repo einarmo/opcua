@@ -38,8 +38,9 @@
 //! ```no_run
 //! use std::sync::Arc;
 //! use std::time::Duration;
-//! use opcua::client::{ClientBuilder, IdentityToken, Session, DataChangeCallback, MonitoredItem};
-//! use opcua::types::{
+//! // You can also refer to these through aliases `opcua::client` and `opcua::types`.
+//! use opcua_client::{ClientBuilder, IdentityToken, Session, DataChangeCallback, MonitoredItem};
+//! use opcua_types::{
 //!     EndpointDescription, MessageSecurityMode, UserTokenPolicy, StatusCode,
 //!     NodeId, TimestampsToReturn, MonitoredItemCreateRequest, DataValue
 //! };

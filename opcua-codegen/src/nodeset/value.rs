@@ -27,36 +27,30 @@ macro_rules! from_vec {
 
 pub fn render_value(
     value: Option<&Value>,
-    opcua_path: &Path,
     types: &HashMap<String, XsdTypeWithPath>,
 ) -> Result<TokenStream, CodeGenError> {
-    ValueBuilder { opcua_path, types }.render_value(value)
+    ValueBuilder { types }.render_value(value)
 }
 
 struct ValueBuilder<'a> {
     types: &'a HashMap<String, XsdTypeWithPath>,
-    opcua_path: &'a Path,
 }
 
 impl<'a> ValueBuilder<'a> {
     pub fn render_value(&self, value: Option<&Value>) -> Result<TokenStream, CodeGenError> {
-        let opcua_path = self.opcua_path;
-
         if let Some(value) = value {
             let rendered = self.render_variant(&value.0)?;
             Ok(quote! {
-                #opcua_path::types::DataValue::new_now(#rendered)
+                opcua::types::DataValue::new_now(#rendered)
             })
         } else {
             Ok(quote! {
-                #opcua_path::types::DataValue::null()
+                opcua::types::DataValue::null()
             })
         }
     }
 
     fn render_variant(&self, value: &Variant) -> Result<TokenStream, CodeGenError> {
-        let opcua_path = self.opcua_path;
-
         let inner = match &value {
             Variant::Boolean(v) => v.to_token_stream(),
             Variant::ListOfBoolean(v) => from_vec!(v),
@@ -85,19 +79,19 @@ impl<'a> ValueBuilder<'a> {
             Variant::DateTime(v) => {
                 let us = v.timestamp_micros();
                 quote::quote! {
-                    #opcua_path::types::DateTimeUtc::from_timestamp_micros(#us).unwrap()
+                    opcua::types::DateTimeUtc::from_timestamp_micros(#us).unwrap()
                 }
             }
             Variant::ListOfDateTime(v) => {
                 let uss = v.iter().map(|v| v.timestamp_micros());
                 quote::quote! {
-                    vec![#(#opcua_path::types::DateTimeUtc::from_timestamp_micros(#uss).unwrap()),*]
+                    vec![#(opcua::types::DateTimeUtc::from_timestamp_micros(#uss).unwrap()),*]
                 }
             }
             Variant::Guid(v) => {
                 let bytes = v.as_bytes();
                 quote::quote! {
-                    #opcua_path::types::Uuid::from_slice(&[#(#bytes),*]).unwrap()
+                    opcua::types::Uuid::from_slice(&[#(#bytes),*]).unwrap()
                 }
             }
             Variant::ListOfGuid(v) => {
@@ -106,7 +100,7 @@ impl<'a> ValueBuilder<'a> {
                 for it in bytes {
                     items.extend(quote::quote! {
                         #items,
-                        #opcua_path::types::Uuid::from_slice(&[#(#it),*]).unwrap(),
+                        opcua::types::Uuid::from_slice(&[#(#it),*]).unwrap(),
                     });
                 }
                 quote::quote! {
@@ -116,26 +110,26 @@ impl<'a> ValueBuilder<'a> {
             Variant::ByteString(v) => {
                 let cleaned = v.replace('\n', "");
                 quote::quote! {
-                    #opcua_path::types::ByteString::from_base64(#cleaned).unwrap()
+                    opcua::types::ByteString::from_base64(#cleaned).unwrap()
                 }
             }
             Variant::ListOfByteString(v) => {
                 let cleaned = v.iter().map(|v| v.replace('\n', ""));
                 quote::quote! {
-                    #(#opcua_path::types::ByteString::from_base64(#cleaned).unwrap()),*
+                    #(opcua::types::ByteString::from_base64(#cleaned).unwrap()),*
                 }
             }
             Variant::XmlElement(_) | Variant::ListOfXmlElement(_) => {
                 println!("XmlElement not yet supported in codegen");
                 return Ok(quote::quote! {
-                    #opcua_path::types::Variant::Empty
+                    opcua::types::Variant::Empty
                 });
             }
             Variant::QualifiedName(v) => {
                 let index = v.namespace_index.unwrap_or_default();
                 let name = v.name.as_ref().map(|v| v.as_str()).unwrap_or("");
                 quote::quote! {
-                    #opcua_path::types::QualifiedName::new(#index, #name)
+                    opcua::types::QualifiedName::new(#index, #name)
                 }
             }
             Variant::ListOfQualifiedName(v) => {
@@ -144,7 +138,7 @@ impl<'a> ValueBuilder<'a> {
                     let index = it.namespace_index.unwrap_or_default();
                     let name = it.name.as_ref().map(|v| v.as_str()).unwrap_or("");
                     items.extend(quote::quote! {
-                        #opcua_path::types::QualifiedName::new(#index, #name),
+                        opcua::types::QualifiedName::new(#index, #name),
                     });
                 }
                 quote::quote! {
@@ -155,7 +149,7 @@ impl<'a> ValueBuilder<'a> {
                 let locale = v.locale.as_ref().map(|v| v.as_str()).unwrap_or("");
                 let text = v.text.as_ref().map(|v| v.as_str()).unwrap_or("");
                 quote::quote! {
-                    #opcua_path::types::LocalizedText::new(#locale, #text)
+                    opcua::types::LocalizedText::new(#locale, #text)
                 }
             }
             Variant::ListOfLocalizedText(v) => {
@@ -164,7 +158,7 @@ impl<'a> ValueBuilder<'a> {
                     let locale = it.locale.as_ref().map(|v| v.as_str()).unwrap_or("");
                     let text = it.text.as_ref().map(|v| v.as_str()).unwrap_or("");
                     items.extend(quote::quote! {
-                        #opcua_path::types::LocalizedText::new(#locale, #text),
+                        opcua::types::LocalizedText::new(#locale, #text),
                     })
                 }
                 quote::quote! {
@@ -175,7 +169,7 @@ impl<'a> ValueBuilder<'a> {
                 let id = opcua_xml::schema::ua_node_set::NodeId(
                     v.identifier.clone().unwrap_or_default(),
                 );
-                id.render(opcua_path)?
+                id.render()?
             }
             Variant::ListOfNodeId(v) => {
                 let mut items = quote::quote! {};
@@ -183,7 +177,7 @@ impl<'a> ValueBuilder<'a> {
                     let id = opcua_xml::schema::ua_node_set::NodeId(
                         it.identifier.clone().unwrap_or_default(),
                     );
-                    let rendered = id.render(opcua_path)?;
+                    let rendered = id.render()?;
                     items.extend(quote::quote! {
                         #rendered,
                     })
@@ -196,9 +190,9 @@ impl<'a> ValueBuilder<'a> {
                 let id = opcua_xml::schema::ua_node_set::NodeId(
                     v.identifier.clone().unwrap_or_default(),
                 );
-                let r = id.render(opcua_path)?;
+                let r = id.render()?;
                 quote::quote! {
-                    #opcua_path::types::ExpandedNodeId::new(#r)
+                    opcua::types::ExpandedNodeId::new(#r)
                 }
             }
             Variant::ListOfExpandedNodeId(v) => {
@@ -207,9 +201,9 @@ impl<'a> ValueBuilder<'a> {
                     let id = opcua_xml::schema::ua_node_set::NodeId(
                         it.identifier.clone().unwrap_or_default(),
                     );
-                    let rendered = id.render(opcua_path)?;
+                    let rendered = id.render()?;
                     items.extend(quote::quote! {
-                        #opcua_path::types::ExpandedNodeId::new(#rendered),
+                        opcua::types::ExpandedNodeId::new(#rendered),
                     })
                 }
                 quote::quote! {
@@ -232,7 +226,7 @@ impl<'a> ValueBuilder<'a> {
             Variant::Variant(v) => {
                 let inner = self.render_variant(&v)?;
                 quote::quote! {
-                    #opcua_path::types::Variant::Variant(Box::new(#inner))
+                    opcua::types::Variant::Variant(Box::new(#inner))
                 }
             }
             Variant::ListOfVariant(v) => {
@@ -240,7 +234,7 @@ impl<'a> ValueBuilder<'a> {
                 for it in v {
                     let inner = self.render_variant(&it)?;
                     items.extend(quote::quote! {
-                        #opcua_path::types::Variant::Variant(Box::new(#inner))
+                        opcua::types::Variant::Variant(Box::new(#inner))
                     });
                 }
                 quote::quote! {
@@ -250,34 +244,33 @@ impl<'a> ValueBuilder<'a> {
             Variant::StatusCode(v) => {
                 let code = v.code;
                 quote::quote! {
-                    #opcua_path::types::StatusCode::from(#code)
+                    opcua::types::StatusCode::from(#code)
                 }
             }
             Variant::ListOfStatusCode(v) => {
                 let codes = v.iter().map(|v| v.code);
                 quote::quote! {
-                    vec![#(#opcua_path::types::StatusCode::from(#codes)),*]
+                    vec![#(opcua::types::StatusCode::from(#codes)),*]
                 }
             }
         };
 
         Ok(quote::quote! {
-            #opcua_path::types::Variant::from(#inner)
+            opcua::types::Variant::from(#inner)
         })
     }
 
     fn render_extension_object(&self, obj: &ExtensionObject) -> Result<TokenStream, CodeGenError> {
-        let opcua_path = self.opcua_path;
         let Some(body) = &obj.body else {
             return Ok(quote::quote! {
-                #opcua_path::types::ExtensionObject::null()
+                opcua::types::ExtensionObject::null()
             });
         };
 
         let content = self.render_extension_object_inner(&body.data)?;
 
         Ok(quote! {
-            #opcua_path::types::ExtensionObject::from_message(&#content)
+            opcua::types::ExtensionObject::from_message(&#content)
         })
     }
 
@@ -534,7 +527,6 @@ impl<'a> ValueBuilder<'a> {
         }
 
         // Some simple types contain fields, and need special handling.
-        let opcua_path = self.opcua_path;
         match ty {
             "Guid" => {
                 if let Some(data) = node
@@ -548,7 +540,7 @@ impl<'a> ValueBuilder<'a> {
                     })?;
                     let bytes = uuid.as_bytes();
                     return Ok(quote! {
-                        #opcua_path::types::Uuid::from_slice(&[#(#bytes),*]).unwrap()
+                        opcua::types::Uuid::from_slice(&[#(#bytes),*]).unwrap()
                     });
                 }
             }
@@ -561,14 +553,14 @@ impl<'a> ValueBuilder<'a> {
                     0
                 };
                 return Ok(quote! {
-                    #opcua_path::types::QualifiedName::new(#index, #name)
+                    opcua::types::QualifiedName::new(#index, #name)
                 });
             }
             "LocalizedText" => {
                 let locale = node.child_content("Locale").unwrap_or("");
                 let text = node.child_content("Text").unwrap_or("");
                 return Ok(quote! {
-                    #opcua_path::types::LocalizedText::new(#locale, #text)
+                    opcua::types::LocalizedText::new(#locale, #text)
                 });
             }
             "NodeId" => {
@@ -576,23 +568,23 @@ impl<'a> ValueBuilder<'a> {
                 let id = opcua_xml::schema::ua_node_set::NodeId(
                     id.map(|m| m.to_owned()).unwrap_or_default(),
                 );
-                return id.render(opcua_path);
+                return id.render();
             }
             "ExpandedNodeId" => {
                 let id = node.child_content("Identifier");
                 let id = opcua_xml::schema::ua_node_set::NodeId(
                     id.map(|m| m.to_owned()).unwrap_or_default(),
                 );
-                let rendered = id.render(opcua_path)?;
+                let rendered = id.render()?;
                 return Ok(quote! {
-                    #opcua_path::types::ExpandedNodeId::new(#rendered)
+                    opcua::types::ExpandedNodeId::new(#rendered)
                 });
             }
             "StatusCode" => {
                 let code = node.child_content("Code").unwrap_or("0");
                 let code = code.parse::<u32>()?;
                 return Ok(quote! {
-                    #opcua_path::types::StatusCode::from(#code)
+                    opcua::types::StatusCode::from(#code)
                 });
             }
             "Variant" => {
@@ -635,13 +627,13 @@ impl<'a> ValueBuilder<'a> {
                     })?
                     .timestamp_micros();
                 Ok(quote! {
-                    #opcua_path::types::DateTimeUtc::from_timestamp_micros(#ts).unwrap()
+                    opcua::types::DateTimeUtc::from_timestamp_micros(#ts).unwrap()
                 })
             }
             "base64Binary" => {
                 let cleaned = data.replace('\n', "");
                 Ok(quote! {
-                    #opcua_path::types::ByteString::from_base64(#cleaned).unwrap()
+                    opcua::types::ByteString::from_base64(#cleaned).unwrap()
                 })
             }
             _ => unreachable!(),
