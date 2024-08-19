@@ -7,7 +7,7 @@ use opcua_types::{AttributeId, DataValue, ServerState, VariableId};
 
 use super::{
     info::ServerInfo,
-    node_manager::{NodeManagers, DefaultTypeTree},
+    node_manager::{DefaultTypeTree, NodeManagers},
     session::manager::SessionManager,
     SubscriptionCache,
 };

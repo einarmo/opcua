@@ -540,7 +540,10 @@ mod tests {
         type_tree
     }
 
-    fn filter(elements: Vec<ContentFilterElement>, type_tree: &DefaultTypeTree) -> ParsedContentFilter {
+    fn filter(
+        elements: Vec<ContentFilterElement>,
+        type_tree: &DefaultTypeTree,
+    ) -> ParsedContentFilter {
         let (_, f) = ParsedContentFilter::parse(
             ContentFilter {
                 elements: Some(elements),
