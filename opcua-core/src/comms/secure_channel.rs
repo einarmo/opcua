@@ -9,7 +9,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use log::{debug, error, trace};
+use log::{error, trace};
 use opcua_crypto::{
     aeskey::AesKey,
     pkey::{KeySize, PrivateKey, PublicKey},
@@ -253,7 +253,7 @@ impl SecureChannel {
                         receiver_certificate_thumbprint,
                     )
                 };
-                debug!(
+                trace!(
                     "AsymmetricSecurityHeader = {:?}",
                     asymmetric_security_header
                 );
@@ -547,6 +547,33 @@ impl SecureChannel {
         Ok(data)
     }
 
+    /// Removes padding and signature from a message
+    /// with security mode `SignAndEncrypt`
+    fn remove_signature_and_padding(
+        mut data: Vec<u8>,
+        decrypted_size: usize,
+        signature_size: usize,
+        decoding_options: &DecodingOptions,
+    ) -> Result<Vec<u8>, StatusCode> {
+        let padding_start = decrypted_size - signature_size - 1;
+        let padding_size = data[padding_start];
+
+        for i in ((padding_start - padding_size as usize)..padding_start).rev() {
+            if data[i] != padding_size {
+                error!(
+                    "Failed to verify padding, got {} when looking at byte {}, expected {}",
+                    data[i], i, padding_size
+                );
+                return Err(StatusCode::BadDecodingError);
+            }
+        }
+        // Remove one extra byte for the padding size.
+        let message_size = decrypted_size - signature_size - padding_size as usize - 1;
+        Self::update_message_size(&mut data, message_size, decoding_options)?;
+        data.truncate(message_size);
+        Ok(data)
+    }
+
     fn log_crypto_data(message: &str, data: &[u8]) {
         crate::debug::log_buffer(message, data);
     }
@@ -750,11 +777,20 @@ impl SecureChannel {
             )?;
 
             // Now we need to strip off signature
-            Self::update_message_size_and_truncate(
-                decrypted_data,
-                decrypted_size - signature_size,
-                &self.decoding_options,
-            )?
+            if self.security_mode == MessageSecurityMode::SignAndEncrypt {
+                Self::remove_signature_and_padding(
+                    decrypted_data,
+                    decrypted_size,
+                    signature_size,
+                    &self.decoding_options,
+                )?
+            } else {
+                Self::update_message_size_and_truncate(
+                    decrypted_data,
+                    decrypted_size - signature_size,
+                    &self.decoding_options,
+                )?
+            }
         } else {
             src.to_vec()
         };

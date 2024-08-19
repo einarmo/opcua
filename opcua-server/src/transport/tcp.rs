@@ -175,7 +175,7 @@ impl TcpTransport {
             ),
         );
         self.send_buffer.revise(
-            acknowledge.send_buffer_size as usize,
+            acknowledge.receive_buffer_size as usize,
             acknowledge.max_message_size as usize,
             acknowledge.max_chunk_count as usize,
         );

@@ -65,6 +65,7 @@ async fn main() -> Result<(), ()> {
         .product_uri("urn:SimpleClient")
         .trust_server_certs(true)
         .create_sample_keypair(true)
+        .max_incoming_chunk_size(8192)
         .session_retry_limit(3)
         .client()
         .unwrap();
@@ -73,8 +74,8 @@ async fn main() -> Result<(), ()> {
         .new_session_from_endpoint(
             (
                 args.url.as_ref(),
-                SecurityPolicy::None.to_str(),
-                MessageSecurityMode::None,
+                SecurityPolicy::Aes128Sha256RsaOaep.to_str(),
+                MessageSecurityMode::Sign,
                 UserTokenPolicy::anonymous(),
             ),
             IdentityToken::Anonymous,

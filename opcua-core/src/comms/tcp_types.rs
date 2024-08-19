@@ -26,7 +26,7 @@ pub const CHUNK_INTERMEDIATE: u8 = b'C';
 pub const CHUNK_FINAL_ERROR: u8 = b'A';
 
 /// Minimum size in bytes than any single message chunk can be
-pub const MIN_CHUNK_SIZE: usize = 8196;
+pub const MIN_CHUNK_SIZE: usize = 8192;
 
 /// Size in bytes of an OPC UA message header
 pub const MESSAGE_HEADER_LEN: usize = 8;
@@ -521,13 +521,13 @@ mod tests {
             endpoint_url: UAString::null(),
         };
         assert!(!h.is_valid_buffer_sizes());
-        h.receive_buffer_size = 8195;
+        h.receive_buffer_size = 8191;
         assert!(!h.is_valid_buffer_sizes());
-        h.send_buffer_size = 8195;
+        h.send_buffer_size = 8191;
         assert!(!h.is_valid_buffer_sizes());
-        h.receive_buffer_size = 8196;
+        h.receive_buffer_size = 8192;
         assert!(!h.is_valid_buffer_sizes());
-        h.send_buffer_size = 8196;
+        h.send_buffer_size = 8192;
         assert!(h.is_valid_buffer_sizes());
     }
 }
