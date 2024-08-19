@@ -13,13 +13,13 @@ The following is a list of tasks, with progress indicated where relevant.
      - The web server is removed. Likely forever, a better solution is to use the `metrics` library to hook into the rust metrics ecosystem.
      - A smattering of TODO's, most are somehow blocked by other tasks.
  - Merge most recent PRs on the main repo, especially the one migrating away from OpenSSL.
- - Split the library into parts again.
+ - **100%** Split the library into parts again.
    - Initially into types, client, core, and server.
    - This is needed for other features.
- - Write a codegen/macro library. Initially this should just replace all the JS codegen, later on it will do _more_.
+ - **70%** Write a codegen/macro library. Initially this should just replace all the JS codegen, later on it will do _more_.
    - It would be best if this could be written in such a way that it can either be used as a core for a macro library, or as a standalone build.rs codegen module.
- - Implement sophisticated event support, using a macro to create event types.
- - Investigate decoding. There are several things that would be interesting to do here.
+ - **70%** Implement sophisticated event support, using a macro to create event types.
+ - **100%?** Investigate decoding. There are several things that would be interesting to do here.
    - Capture request-id/request-handle for error reporting during decoding. This will allow us to fatally fail much less often, but will require major changes to codegen.
    - See if there is a way to avoid needing to pass the ID when decoding ExtensionObjects. This info should be available, either in the object itself or as part of the type being decoded.
  - Flesh out the server and client SDK with tooling for ease if use.

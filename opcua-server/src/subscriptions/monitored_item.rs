@@ -48,7 +48,7 @@ impl FilterType {
     pub fn from_filter(
         filter: &ExtensionObject,
         decoding_options: &DecodingOptions,
-        type_tree: &TypeTree,
+        type_tree: &dyn TypeTree,
     ) -> (Option<EventFilterResult>, Result<FilterType, StatusCode>) {
         // Check if the filter is a supported filter type
         let filter_type_id = &filter.node_id;
@@ -157,7 +157,7 @@ impl CreateMonitoredItem {
         sub_id: u32,
         info: &ServerInfo,
         timestamps_to_return: TimestampsToReturn,
-        type_tree: &TypeTree,
+        type_tree: &dyn TypeTree,
     ) -> Self {
         let (filter_res, filter) = FilterType::from_filter(
             &req.requested_parameters.filter,
@@ -341,7 +341,7 @@ impl MonitoredItem {
         info: &ServerInfo,
         timestamps_to_return: TimestampsToReturn,
         request: &MonitoredItemModifyRequest,
-        type_tree: &TypeTree,
+        type_tree: &dyn TypeTree,
     ) -> (Option<EventFilterResult>, StatusCode) {
         self.timestamps_to_return = timestamps_to_return;
         let (filter_res, filter) = FilterType::from_filter(

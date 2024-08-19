@@ -3,7 +3,7 @@ use std::{path::PathBuf, sync::Arc};
 use log::warn;
 use tokio_util::sync::CancellationToken;
 
-use crate::constants;
+use crate::{constants, node_manager::TypeTreeForUser};
 use opcua_core::config::Config;
 use opcua_crypto::SecurityPolicy;
 use opcua_types::MessageSecurityMode;
@@ -24,6 +24,7 @@ pub struct ServerBuilder {
     pub(crate) config: ServerConfig,
     pub(crate) node_managers: Vec<Box<dyn NodeManagerBuilder>>,
     pub(crate) authenticator: Option<Arc<dyn AuthManager>>,
+    pub(crate) type_tree_getter: Option<Arc<dyn TypeTreeForUser>>,
     pub(crate) token: CancellationToken,
 }
 
@@ -34,6 +35,7 @@ impl Default for ServerBuilder {
             node_managers: Default::default(),
             authenticator: None,
             token: CancellationToken::new(),
+            type_tree_getter: None,
         };
         builder
             .with_node_manager(InMemoryNodeManagerBuilder::new(CoreNodeManagerBuilder))
@@ -253,6 +255,22 @@ impl ServerBuilder {
     /// Set a custom authenticator.
     pub fn with_authenticator(mut self, authenticator: Arc<dyn AuthManager>) -> Self {
         self.authenticator = Some(authenticator);
+        self
+    }
+
+    /// Set a custom type tree getter. Most servers do not need to touch this.
+    ///
+    /// The type tree getter gets a type tree for a specific user, letting you have different type trees
+    /// for different users, which is relevant for some servers.
+    ///
+    /// This is currently used for constructing event filters, and when building external references.
+    /// You only need to set this if you intend to have types that are not in the global `DefaultTypeTree`.
+    ///
+    /// Note that built in node managers do not use the type tree getter, if you want to have
+    /// per-user types you need to implement a node manager that can correctly filter
+    /// during browse, etc. This only lets you use the custom type tree for each individual user.
+    pub fn with_type_tree_getter(mut self, type_tree_getter: Arc<dyn TypeTreeForUser>) -> Self {
+        self.type_tree_getter = Some(type_tree_getter);
         self
     }
 

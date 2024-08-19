@@ -11,6 +11,7 @@ use arc_swap::ArcSwap;
 use log::{debug, error, warn};
 
 use crate::authenticator::Password;
+use crate::node_manager::TypeTreeForUser;
 use opcua_core::comms::url::{hostname_from_url, url_matches_except_host};
 use opcua_core::handle::AtomicHandle;
 use opcua_core::sync::RwLock;
@@ -36,7 +37,7 @@ use super::identity_token::{
     IdentityToken, POLICY_ID_ANONYMOUS, POLICY_ID_USER_PASS_NONE, POLICY_ID_USER_PASS_RSA_15,
     POLICY_ID_USER_PASS_RSA_OAEP, POLICY_ID_X509,
 };
-use super::node_manager::TypeTree;
+use super::node_manager::DefaultTypeTree;
 use super::{OperationalLimits, ServerCapabilities, SubscriptionCache, ANONYMOUS_USER_TOKEN_ID};
 
 /// Server state is any configuration associated with the server as a whole that individual sessions might
@@ -73,7 +74,9 @@ pub struct ServerInfo {
     /// Authenticator to use when verifying user identities, and checking for user access.
     pub authenticator: Arc<dyn AuthManager>,
     /// Structure containing type metadata shared by the entire server.
-    pub type_tree: Arc<RwLock<TypeTree>>,
+    pub type_tree: Arc<RwLock<DefaultTypeTree>>,
+    /// Wrapper to get a type tree for a specific user.
+    pub type_tree_getter: Arc<dyn TypeTreeForUser>,
     /// Generator for subscription IDs.
     pub subscription_id_handle: AtomicHandle,
     /// Generator for monitored item IDs.

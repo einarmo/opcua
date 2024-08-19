@@ -125,6 +125,7 @@ impl<T> Request<T> {
             token: self.token.clone(),
             current_node_manager_index: 0,
             type_tree: self.info.type_tree.clone(),
+            type_tree_getter: self.info.type_tree_getter.clone(),
             subscriptions: self.subscriptions.clone(),
             session_id: self.session_id,
             info: self.info.clone(),
@@ -369,6 +370,7 @@ impl MessageHandler {
             type_tree: self.info.type_tree.clone(),
             subscriptions: self.subscriptions.clone(),
             info: self.info.clone(),
+            type_tree_getter: self.info.type_tree_getter.clone(),
         };
 
         // Ignore the result

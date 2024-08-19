@@ -12,8 +12,8 @@ use opcua::{
                 InMemoryNodeManager, InMemoryNodeManagerBuilder, InMemoryNodeManagerImpl,
                 NamespaceMetadata,
             },
-            AddNodeItem, AddReferenceItem, DeleteNodeItem, DeleteReferenceItem, HistoryNode,
-            HistoryUpdateNode, MethodCall, MonitoredItemRef, MonitoredItemUpdateRef,
+            AddNodeItem, AddReferenceItem, DefaultTypeTree, DeleteNodeItem, DeleteReferenceItem,
+            HistoryNode, HistoryUpdateNode, MethodCall, MonitoredItemRef, MonitoredItemUpdateRef,
             NodeManagerBuilder, NodeManagersRef, ParsedReadValueId, RequestContext, ServerContext,
             TypeTree, TypeTreeNode, WriteNode,
         },
@@ -300,7 +300,8 @@ impl InMemoryNodeManagerImpl for TestNodeManagerImpl {
         let type_tree = trace_read_lock!(context.type_tree);
 
         for write in nodes_to_write {
-            let node = match address_space.validate_node_write(context, write.value(), &type_tree) {
+            let node = match address_space.validate_node_write(context, write.value(), &*type_tree)
+            {
                 Ok(v) => v,
                 Err(e) => {
                     write.set_status(e);
@@ -927,7 +928,7 @@ impl TestNodeManagerImpl {
     pub fn add_node<'a>(
         &self,
         address_space: &RwLock<AddressSpace>,
-        type_tree: &RwLock<TypeTree>,
+        type_tree: &RwLock<DefaultTypeTree>,
         node: NodeType,
         parent_id: &'a NodeId,
         reference_type_id: &'a NodeId,
@@ -971,7 +972,7 @@ impl TestNodeManagerImpl {
     fn insert_node_inner(
         &self,
         address_space: &mut AddressSpace,
-        type_tree: &mut TypeTree,
+        type_tree: &mut DefaultTypeTree,
         node: NodeType,
         parent_id: &NodeId,
         refs: Vec<(&NodeId, NodeId, ReferenceDirection)>,

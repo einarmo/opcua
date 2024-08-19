@@ -38,10 +38,10 @@ use opcua_types::{
 use super::{
     build::NodeManagerBuilder,
     view::{AddReferenceResult, ExternalReference, ExternalReferenceRequest, NodeMetadata},
-    AddNodeItem, AddReferenceItem, BrowseNode, BrowsePathItem, DeleteNodeItem, DeleteReferenceItem,
-    DynNodeManager, HistoryNode, HistoryUpdateDetails, HistoryUpdateNode, MethodCall,
-    MonitoredItemRef, MonitoredItemUpdateRef, NodeManager, ReadNode, RegisterNodeItem,
-    RequestContext, ServerContext, TypeTree, WriteNode,
+    AddNodeItem, AddReferenceItem, BrowseNode, BrowsePathItem, DefaultTypeTree, DeleteNodeItem,
+    DeleteReferenceItem, DynNodeManager, HistoryNode, HistoryUpdateDetails, HistoryUpdateNode,
+    MethodCall, MonitoredItemRef, MonitoredItemUpdateRef, NodeManager, ReadNode, RegisterNodeItem,
+    RequestContext, ServerContext, WriteNode,
 };
 
 use crate::address_space::AddressSpace;
@@ -218,7 +218,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
 
     fn get_reference<'a>(
         address_space: &AddressSpace,
-        type_tree: &TypeTree,
+        type_tree: &DefaultTypeTree,
         target_node: &'a NodeType,
         result_mask: BrowseDescriptionResultMask,
     ) -> NodeMetadata {
@@ -263,7 +263,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
     /// Browses a single node, returns any external references found.
     fn browse_node<'a>(
         address_space: &'a AddressSpace,
-        type_tree: &TypeTree,
+        type_tree: &DefaultTypeTree,
         node: &mut BrowseNode,
         namespaces: &hashbrown::HashMap<u16, String>,
     ) {
@@ -338,7 +338,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
 
     fn translate_browse_paths(
         address_space: &AddressSpace,
-        type_tree: &TypeTree,
+        type_tree: &DefaultTypeTree,
         context: &RequestContext,
         namespaces: &hashbrown::HashMap<u16, String>,
         item: &mut BrowsePathItem,
@@ -528,7 +528,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
                 .find_references(
                     method.object_id(),
                     Some((ReferenceTypeId::HasComponent, false)),
-                    &type_tree,
+                    &*type_tree,
                     BrowseDirection::Forward,
                 )
                 .find(|r| r.target_node == method.method_id())
@@ -555,7 +555,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
             let input_arguments = address_space.find_node_by_browse_name(
                 method.method_id(),
                 Some((ReferenceTypeId::HasProperty, false)),
-                &type_tree,
+                &*type_tree,
                 BrowseDirection::Forward,
                 "InputArguments",
             );
@@ -639,7 +639,7 @@ impl<TImpl: InMemoryNodeManagerImpl> NodeManager for InMemoryNodeManager<TImpl> 
         self.inner.name()
     }
 
-    async fn init(&self, type_tree: &mut TypeTree, context: ServerContext) {
+    async fn init(&self, type_tree: &mut DefaultTypeTree, context: ServerContext) {
         let mut address_space = trace_write_lock!(self.address_space);
 
         self.inner.init(&mut address_space, context).await;

@@ -293,7 +293,7 @@ impl SessionSubscriptions {
         info: &ServerInfo,
         timestamps_to_return: TimestampsToReturn,
         requests: Vec<MonitoredItemModifyRequest>,
-        type_tree: &TypeTree,
+        type_tree: &dyn TypeTree,
     ) -> Result<Vec<MonitoredItemUpdateRef>, StatusCode> {
         let Some(sub) = self.subscriptions.get_mut(&subscription_id) else {
             return Err(StatusCode::BadSubscriptionIdInvalid);

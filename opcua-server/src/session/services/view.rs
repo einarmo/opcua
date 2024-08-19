@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use log::{error, info};
-use opcua_core::{trace_read_lock, trace_write_lock};
+use opcua_core::trace_write_lock;
 
 use crate::{
     node_manager::{
@@ -90,14 +90,14 @@ pub async fn browse(node_managers: NodeManagers, request: Request<BrowseRequest>
 
     // Any remaining nodes may have an external ref continuation point, process these before proceeding.
     {
-        let type_tree = trace_read_lock!(context.type_tree);
+        let type_tree = context.get_type_tree_for_user();
         for node in nodes.iter_mut() {
             if let Some(mut p) = node.take_continuation_point::<ExternalReferencesContPoint>() {
                 while node.remaining() > 0 {
                     let Some(rf) = p.items.pop_front() else {
                         break;
                     };
-                    node.add(&type_tree, rf);
+                    node.add(type_tree.get(), rf);
                 }
 
                 if !p.items.is_empty() {
@@ -134,9 +134,9 @@ pub async fn browse(node_managers: NodeManagers, request: Request<BrowseRequest>
     // Finally, process all remaining nodes, including external references
     {
         let mut session = request.session.write();
-        let type_tree = trace_read_lock!(context.type_tree);
+        let type_tree = context.get_type_tree_for_user();
         for mut node in nodes {
-            node.resolve_external_references(&type_tree, &node_map);
+            node.resolve_external_references(type_tree.get(), &node_map);
 
             let (result, input_index) =
                 node.into_result(node_manager_count - 1, node_manager_count, &mut session);
@@ -253,14 +253,14 @@ pub async fn browse_next(
 
         // Any remaining nodes may have an external ref continuation point, process these before proceeding.
         {
-            let type_tree = trace_read_lock!(context.type_tree);
+            let type_tree = context.get_type_tree_for_user();
             for node in nodes.iter_mut() {
                 if let Some(mut p) = node.take_continuation_point::<ExternalReferencesContPoint>() {
                     while node.remaining() > 0 {
                         let Some(rf) = p.items.pop_front() else {
                             break;
                         };
-                        node.add(&type_tree, rf);
+                        node.add(type_tree.get(), rf);
                     }
 
                     if !p.items.is_empty() {
@@ -299,9 +299,9 @@ pub async fn browse_next(
         // This may still produce a continuation point, for external references.
         {
             let mut session = request.session.write();
-            let type_tree = trace_read_lock!(context.type_tree);
+            let type_tree = context.get_type_tree_for_user();
             for mut node in nodes.into_iter().chain(batch_nodes.into_iter()) {
-                node.resolve_external_references(&type_tree, &node_map);
+                node.resolve_external_references(type_tree.get(), &node_map);
 
                 let (result, input_index) =
                     node.into_result(node_manager_count - 1, node_manager_count, &mut session);

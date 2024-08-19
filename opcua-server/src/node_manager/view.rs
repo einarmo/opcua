@@ -263,7 +263,7 @@ impl BrowseNode {
     }
 
     /// Return `true` if nodes with the given reference type ID should be returned.
-    pub fn allows_reference_type(&self, ty: &NodeId, type_tree: &TypeTree) -> bool {
+    pub fn allows_reference_type(&self, ty: &NodeId, type_tree: &dyn TypeTree) -> bool {
         if self.reference_type_id.is_null() {
             return true;
         }
@@ -300,7 +300,11 @@ impl BrowseNode {
     }
 
     /// Return `true` if the given reference should be returned.
-    pub fn matches_filter(&self, type_tree: &TypeTree, reference: &ReferenceDescription) -> bool {
+    pub fn matches_filter(
+        &self,
+        type_tree: &dyn TypeTree,
+        reference: &ReferenceDescription,
+    ) -> bool {
         if reference.node_id.is_null() {
             warn!("Skipping reference with null NodeId");
             return false;
@@ -341,7 +345,7 @@ impl BrowseNode {
     /// This will clear any fields not required by ResultMask.
     pub fn add(
         &mut self,
-        type_tree: &TypeTree,
+        type_tree: &dyn TypeTree,
         mut reference: ReferenceDescription,
     ) -> AddReferenceResult {
         // First, validate that the reference is valid at all.
@@ -508,7 +512,7 @@ impl BrowseNode {
 
     pub(crate) fn resolve_external_references(
         &mut self,
-        type_tree: &TypeTree,
+        type_tree: &dyn TypeTree,
         resolved_nodes: &HashMap<&NodeId, &NodeMetadata>,
     ) {
         let mut cont_point = ExternalReferencesContPoint {

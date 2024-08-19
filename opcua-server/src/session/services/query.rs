@@ -1,5 +1,5 @@
 use log::info;
-use opcua_core::{trace_read_lock, trace_write_lock};
+use opcua_core::trace_write_lock;
 
 use crate::{
     node_manager::{NodeManagers, ParsedNodeTypeDescription, QueryRequest},
@@ -53,8 +53,8 @@ pub async fn query_first(
     }
 
     let (filter_result, filter) = {
-        let type_tree = trace_read_lock!(request.info.type_tree);
-        ParsedContentFilter::parse(request.request.filter, &type_tree, false, false)
+        let type_tree = context.get_type_tree_for_user();
+        ParsedContentFilter::parse(request.request.filter, type_tree.get(), false, false)
     };
 
     let content_filter = match filter {

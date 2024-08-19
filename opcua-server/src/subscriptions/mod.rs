@@ -28,12 +28,12 @@ use opcua_types::{
     TransferSubscriptionsResponse,
 };
 
+use crate::node_manager::TypeTree;
+
 use super::{
     authenticator::UserToken,
     info::ServerInfo,
-    node_manager::{
-        MonitoredItemRef, MonitoredItemUpdateRef, RequestContext, ServerContext, TypeTree,
-    },
+    node_manager::{MonitoredItemRef, MonitoredItemUpdateRef, RequestContext, ServerContext},
     session::instance::Session,
     Event, SubscriptionLimits,
 };
@@ -164,6 +164,7 @@ impl SubscriptionCache {
                 type_tree: context.type_tree.clone(),
                 subscriptions: context.subscriptions.clone(),
                 info: context.info.clone(),
+                type_tree_getter: context.type_tree_getter.clone(),
             };
 
             for mgr in context.node_managers.iter() {
@@ -490,7 +491,7 @@ impl SubscriptionCache {
         info: &ServerInfo,
         timestamps_to_return: TimestampsToReturn,
         requests: Vec<MonitoredItemModifyRequest>,
-        type_tree: &TypeTree,
+        type_tree: &dyn TypeTree,
     ) -> Result<Vec<MonitoredItemUpdateRef>, StatusCode> {
         let Some(cache) = ({
             let lck = trace_read_lock!(self.inner);

@@ -15,8 +15,8 @@ use crate::{
         build::NodeManagerBuilder,
         from_opaque_node_id,
         view::{AddReferenceResult, NodeMetadata},
-        BrowseNode, DynNodeManager, NodeManager, NodeManagersRef, ReadNode, RequestContext,
-        ServerContext, SyncSampler, TypeTree,
+        BrowseNode, DefaultTypeTree, DynNodeManager, NodeManager, NodeManagersRef, ReadNode,
+        RequestContext, ServerContext, SyncSampler,
     },
 };
 use opcua_types::{
@@ -133,7 +133,7 @@ impl DiagnosticsNodeManager {
     fn browse_namespaces(
         &self,
         node_to_browse: &mut BrowseNode,
-        type_tree: &TypeTree,
+        type_tree: &DefaultTypeTree,
         namespaces: &BTreeMap<String, NamespaceMetadata>,
     ) {
         // Only hierarchical references in this case, so we can check for that first.
@@ -179,7 +179,7 @@ impl DiagnosticsNodeManager {
     fn browse_namespace_metadata_node(
         &self,
         node_to_browse: &mut BrowseNode,
-        type_tree: &TypeTree,
+        type_tree: &DefaultTypeTree,
         meta: &NamespaceMetadata,
     ) {
         let mut cp = BrowseContinuationPoint::default();
@@ -271,7 +271,7 @@ impl DiagnosticsNodeManager {
     fn browse_namespace_property_node(
         &self,
         node_to_browse: &mut BrowseNode,
-        type_tree: &TypeTree,
+        type_tree: &DefaultTypeTree,
         meta: &NamespaceMetadata,
     ) {
         let mut cp = BrowseContinuationPoint::default();
@@ -322,7 +322,7 @@ impl DiagnosticsNodeManager {
     fn browse_namespace_node(
         &self,
         node_to_browse: &mut BrowseNode,
-        type_tree: &TypeTree,
+        type_tree: &DefaultTypeTree,
         namespaces: &BTreeMap<String, NamespaceMetadata>,
         ns_node: &NamespaceNode,
     ) {
@@ -564,7 +564,7 @@ impl NodeManager for DiagnosticsNodeManager {
         }]
     }
 
-    async fn init(&self, _type_tree: &mut TypeTree, context: ServerContext) {
+    async fn init(&self, _type_tree: &mut DefaultTypeTree, context: ServerContext) {
         let interval = context
             .info
             .config

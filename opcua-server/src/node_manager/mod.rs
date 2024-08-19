@@ -36,18 +36,19 @@ use super::{
 pub use {
     attributes::{ParsedReadValueId, ParsedWriteValue, ReadNode, WriteNode},
     build::NodeManagerBuilder,
-    context::RequestContext,
+    context::{RequestContext, TypeTreeForUser, TypeTreeReadContext},
     history::{HistoryNode, HistoryResult, HistoryUpdateDetails, HistoryUpdateNode},
     method::MethodCall,
     monitored_items::{MonitoredItemRef, MonitoredItemUpdateRef},
     node_management::{AddNodeItem, AddReferenceItem, DeleteNodeItem, DeleteReferenceItem},
     query::{ParsedNodeTypeDescription, ParsedQueryDataDescription, QueryRequest},
-    type_tree::{TypePropertyInverseRef, TypeTree, TypeTreeNode},
+    type_tree::{DefaultTypeTree, TypePropertyInverseRef, TypeTree, TypeTreeNode},
     utils::*,
     view::{BrowseNode, BrowsePathItem, RegisterNodeItem},
 };
 
 pub(crate) use context::resolve_external_references;
+pub(crate) use context::DefaultTypeTreeGetter;
 pub(crate) use history::HistoryReadDetails;
 pub(crate) use query::QueryContinuationPoint;
 pub(crate) use view::{BrowseContinuationPoint, ExternalReferencesContPoint};
@@ -235,7 +236,9 @@ pub struct ServerContext {
     pub info: Arc<ServerInfo>,
     /// Global authenticator object.
     pub authenticator: Arc<dyn AuthManager>,
-    pub type_tree: Arc<RwLock<TypeTree>>,
+    pub type_tree: Arc<RwLock<DefaultTypeTree>>,
+    /// Wrapper to get a type tree for a specific user.
+    pub type_tree_getter: Arc<dyn TypeTreeForUser>,
 }
 
 /// This trait is a workaround for the lack of
@@ -301,7 +304,7 @@ pub trait NodeManager: IntoAnyArc + Any {
 
     /// Perform any necessary loading of nodes, should populate the type tree if
     /// needed.
-    async fn init(&self, type_tree: &mut TypeTree, context: ServerContext);
+    async fn init(&self, type_tree: &mut DefaultTypeTree, context: ServerContext);
 
     /// Resolve a list of references given by a different node manager.
     async fn resolve_external_references(

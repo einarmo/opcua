@@ -107,7 +107,7 @@ pub fn validate_node_read(
 pub fn validate_value_to_write(
     variable: &Variable,
     value: &Variant,
-    type_tree: &TypeTree,
+    type_tree: &dyn TypeTree,
 ) -> Result<(), StatusCode> {
     let value_rank = variable.value_rank();
     let node_data_type = variable.data_type();
@@ -154,7 +154,7 @@ pub fn validate_node_write(
     node: &NodeType,
     context: &RequestContext,
     node_to_write: &ParsedWriteValue,
-    type_tree: &TypeTree,
+    type_tree: &dyn TypeTree,
 ) -> Result<(), StatusCode> {
     is_writable(context, node, node_to_write.attribute_id)?;
 
