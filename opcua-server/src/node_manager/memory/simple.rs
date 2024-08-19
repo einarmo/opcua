@@ -6,8 +6,8 @@ use opcua_core::{trace_read_lock, trace_write_lock};
 use crate::{
     address_space::{read_node_value, AddressSpace, NodeBase, NodeType},
     node_manager::{
-        MethodCall, MonitoredItemRef, MonitoredItemUpdateRef, NodeManagerBuilder, NodeManagersRef,
-        ParsedReadValueId, RequestContext, ServerContext, SyncSampler, TypeTree, WriteNode,
+        DefaultTypeTree, MethodCall, MonitoredItemRef, MonitoredItemUpdateRef, NodeManagerBuilder,
+        NodeManagersRef, ParsedReadValueId, RequestContext, ServerContext, SyncSampler, WriteNode,
     },
     CreateMonitoredItem,
 };
@@ -322,10 +322,10 @@ impl SimpleNodeManagerImpl {
         cbs: &HashMap<NodeId, WriteCB>,
         context: &RequestContext,
         address_space: &mut AddressSpace,
-        type_tree: &TypeTree,
+        type_tree: &DefaultTypeTree,
         write: &mut WriteNode,
     ) {
-        let node = match address_space.validate_node_write(context, write.value(), &type_tree) {
+        let node = match address_space.validate_node_write(context, write.value(), &*type_tree) {
             Ok(v) => v,
             Err(e) => {
                 write.set_status(e);

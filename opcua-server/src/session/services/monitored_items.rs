@@ -1,5 +1,3 @@
-use opcua_core::trace_read_lock;
-
 use crate::{
     node_manager::{MonitoredItemRef, NodeManagers},
     session::{controller::Response, message_handler::Request},
@@ -39,7 +37,7 @@ pub async fn create_monitored_items(
     }
 
     let mut items: Vec<_> = {
-        let type_tree = trace_read_lock!(request.info.type_tree);
+        let type_tree = context.get_type_tree_for_user();
         items_to_create
             .into_iter()
             .map(|r| {
@@ -49,7 +47,7 @@ pub async fn create_monitored_items(
                     request.request.subscription_id,
                     &request.info,
                     request.request.timestamps_to_return,
-                    &type_tree,
+                    type_tree.get(),
                 )
             })
             .collect()
@@ -129,7 +127,7 @@ pub async fn modify_monitored_items(
 
     // Call modify first, then only pass successful modify's to the node managers.
     let results = {
-        let type_tree = trace_read_lock!(request.info.type_tree);
+        let type_tree = context.get_type_tree_for_user();
 
         match request.subscriptions.modify_monitored_items(
             request.session_id,
@@ -137,7 +135,7 @@ pub async fn modify_monitored_items(
             &request.info,
             request.request.timestamps_to_return,
             items_to_modify,
-            &type_tree,
+            type_tree.get(),
         ) {
             Ok(r) => r,
             Err(e) => return service_fault!(request, e),

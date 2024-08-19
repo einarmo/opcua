@@ -22,7 +22,10 @@ use tokio_util::sync::CancellationToken;
 use opcua_core::{config::Config, handle::AtomicHandle};
 use opcua_crypto::CertificateStore;
 
-use crate::{node_manager::ServerContext, session::controller::SessionController};
+use crate::{
+    node_manager::{DefaultTypeTreeGetter, ServerContext},
+    session::controller::SessionController,
+};
 use opcua_types::{DateTime, LocalizedText, ServerState, UAString};
 
 use super::{
@@ -31,7 +34,7 @@ use super::{
     config::ServerConfig,
     discovery::periodic_discovery_server_registration,
     info::ServerInfo,
-    node_manager::{NodeManagers, NodeManagersRef, TypeTree},
+    node_manager::{DefaultTypeTree, NodeManagers, NodeManagersRef},
     server_handle::ServerHandle,
     session::{controller::ControllerCommand, manager::SessionManager},
     subscriptions::SubscriptionCache,
@@ -119,7 +122,7 @@ impl Server {
 
         let service_level = Arc::new(AtomicU8::new(255));
 
-        let type_tree = Arc::new(RwLock::new(TypeTree::new()));
+        let type_tree = Arc::new(RwLock::new(DefaultTypeTree::new()));
 
         let info = ServerInfo {
             authenticator: builder
@@ -147,6 +150,9 @@ impl Server {
             capabilities: ServerCapabilities::default(),
             service_level: service_level.clone(),
             port: AtomicU16::new(0),
+            type_tree_getter: builder
+                .type_tree_getter
+                .unwrap_or_else(|| Arc::new(DefaultTypeTreeGetter)),
         };
 
         let certificate_store = Arc::new(RwLock::new(certificate_store));
@@ -161,6 +167,7 @@ impl Server {
             info: info.clone(),
             authenticator: info.authenticator.clone(),
             type_tree: type_tree.clone(),
+            type_tree_getter: info.type_tree_getter.clone(),
         };
 
         let mut final_node_managers = Vec::new();
@@ -253,6 +260,7 @@ impl Server {
             info: self.info.clone(),
             authenticator: self.info.authenticator.clone(),
             type_tree: self.info.type_tree.clone(),
+            type_tree_getter: self.info.type_tree_getter.clone(),
         };
 
         self.initialize_node_managers(&context).await?;

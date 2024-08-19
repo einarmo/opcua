@@ -113,7 +113,7 @@ async fn add_delete_reference() {
         sp.find_references(
             &id1,
             None::<(NodeId, bool)>,
-            &type_tree,
+            &*type_tree,
             opcua::types::BrowseDirection::Forward,
         )
         .find(|r| {

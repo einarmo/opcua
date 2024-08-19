@@ -2,13 +2,14 @@ use std::collections::HashSet;
 
 use hashbrown::HashMap;
 
-use crate::node_manager::TypeTree;
 use opcua_types::{
     AttributeId, ContentFilter, ContentFilterElementResult, ContentFilterResult, ElementOperand,
     EventFilter, EventFilterResult, FilterOperator, LiteralOperand, NodeClass, NodeId,
     NumericRange, ObjectTypeId, Operand, QualifiedName, RelativePath, SimpleAttributeOperand,
     StatusCode, UAString,
 };
+
+use crate::node_manager::TypeTree;
 
 #[derive(Debug, Clone)]
 pub struct ParsedAttributeOperand {
@@ -39,7 +40,7 @@ impl ParsedOperand {
     pub(crate) fn parse(
         operand: Operand,
         num_elements: usize,
-        type_tree: &TypeTree,
+        type_tree: &dyn TypeTree,
         allow_attribute_operand: bool,
     ) -> Result<Self, StatusCode> {
         match operand {
@@ -86,7 +87,7 @@ pub struct ParsedEventFilter {
 impl ParsedEventFilter {
     pub fn new(
         raw: EventFilter,
-        type_tree: &TypeTree,
+        type_tree: &dyn TypeTree,
     ) -> (EventFilterResult, Result<Self, StatusCode>) {
         validate(raw, type_tree)
     }
@@ -106,7 +107,7 @@ impl ParsedContentFilter {
 
     pub(crate) fn parse(
         filter: ContentFilter,
-        type_tree: &TypeTree,
+        type_tree: &dyn TypeTree,
         allow_attribute_operand: bool,
         allow_complex_operators: bool,
     ) -> (ContentFilterResult, Result<ParsedContentFilter, StatusCode>) {
@@ -128,7 +129,7 @@ pub struct ParsedContentFilterElement {
 /// This validates the event filter as best it can to make sure it doesn't contain nonsense.
 fn validate(
     event_filter: EventFilter,
-    type_tree: &TypeTree,
+    type_tree: &dyn TypeTree,
 ) -> (EventFilterResult, Result<ParsedEventFilter, StatusCode>) {
     let num_select_clauses = event_filter
         .select_clauses
@@ -168,7 +169,7 @@ fn validate(
 
 fn validate_select_clause(
     clause: SimpleAttributeOperand,
-    type_tree: &TypeTree,
+    type_tree: &dyn TypeTree,
 ) -> Result<ParsedSimpleAttributeOperand, StatusCode> {
     let Some(path) = clause.browse_path else {
         return Err(StatusCode::BadNodeIdUnknown);
@@ -234,7 +235,7 @@ fn validate_select_clause(
 
 fn validate_where_clause(
     where_clause: ContentFilter,
-    type_tree: &TypeTree,
+    type_tree: &dyn TypeTree,
     allow_attribute_operand: bool,
     allow_complex_operators: bool,
 ) -> (ContentFilterResult, Result<ParsedContentFilter, StatusCode>) {
@@ -436,7 +437,7 @@ fn has_cycles(
 
 #[cfg(test)]
 mod tests {
-    use crate::{events::validation::validate_where_clause, node_manager::TypeTree};
+    use crate::{events::validation::validate_where_clause, node_manager::DefaultTypeTree};
     use opcua_types::{
         AttributeId, ContentFilter, ContentFilterElement, ContentFilterResult, FilterOperator,
         NodeClass, NodeId, ObjectTypeId, Operand, SimpleAttributeOperand, StatusCode,
@@ -444,7 +445,7 @@ mod tests {
 
     #[test]
     fn test_validate_empty_where_clause() {
-        let type_tree = TypeTree::new();
+        let type_tree = DefaultTypeTree::new();
         // check for at least one filter operand
         let where_clause = ContentFilter { elements: None };
         let (result, filter) = validate_where_clause(where_clause, &type_tree, false, false);
@@ -460,7 +461,7 @@ mod tests {
 
     #[test]
     fn test_validate_operator_len() {
-        let type_tree = TypeTree::new();
+        let type_tree = DefaultTypeTree::new();
 
         // Make a where clause where every single operator is included but each has the wrong number of operands.
         // We should expect them all to be in error
@@ -511,7 +512,7 @@ mod tests {
 
     #[test]
     fn test_validate_bad_filter_operand() {
-        let type_tree = TypeTree::new();
+        let type_tree = DefaultTypeTree::new();
 
         // check for filter operator invalid, by giving it a bogus extension object for an element
         use opcua_types::{service_types::ContentFilterElement, ExtensionObject};
@@ -535,7 +536,7 @@ mod tests {
 
     #[test]
     fn test_validate_select_operands() {
-        let mut type_tree = TypeTree::new();
+        let mut type_tree = DefaultTypeTree::new();
 
         type_tree.add_type_node(
             &NodeId::new(1, "event"),
@@ -589,7 +590,7 @@ mod tests {
 
     #[test]
     fn test_validate_circular_filter() {
-        let type_tree = TypeTree::new();
+        let type_tree = DefaultTypeTree::new();
 
         let where_clause = ContentFilter {
             elements: Some(vec![

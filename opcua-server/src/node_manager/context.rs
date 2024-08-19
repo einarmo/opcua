@@ -6,13 +6,46 @@ use crate::{
     session::instance::Session,
     SubscriptionCache,
 };
-use opcua_core::sync::RwLock;
+use opcua_core::{sync::RwLock, trace_read_lock};
 use opcua_types::{BrowseDescriptionResultMask, NodeId};
+use parking_lot::lock_api::{RawRwLock, RwLockReadGuard};
 
 use super::{
     view::{ExternalReferenceRequest, NodeMetadata},
-    NodeManagers, TypeTree,
+    DefaultTypeTree, NodeManagers, TypeTree,
 };
+
+/// Trait for providing a dynamic type tree for a user.
+/// This is a bit complex, it doesn't return a type tree directly,
+/// instead it returns something that wraps a type tree, for example
+/// a `RwLockReadGuard<'_, RawRwLock, dyn TypeTree>`
+pub trait TypeTreeForUser: Send + Sync {
+    fn get_type_tree_for_user<'a>(
+        &'a self,
+        ctx: &'a RequestContext,
+    ) -> Box<dyn TypeTreeReadContext + 'a>;
+}
+
+pub(crate) struct DefaultTypeTreeGetter;
+
+impl TypeTreeForUser for DefaultTypeTreeGetter {
+    fn get_type_tree_for_user<'a>(
+        &'a self,
+        ctx: &'a RequestContext,
+    ) -> Box<dyn TypeTreeReadContext + 'a> {
+        Box::new(trace_read_lock!(ctx.type_tree))
+    }
+}
+
+pub trait TypeTreeReadContext {
+    fn get(&self) -> &dyn TypeTree;
+}
+
+impl<R: RawRwLock, T: TypeTree> TypeTreeReadContext for RwLockReadGuard<'_, R, T> {
+    fn get(&self) -> &dyn TypeTree {
+        &**self
+    }
+}
 
 #[derive(Clone)]
 /// Context object passed during writes, contains useful context the node
@@ -29,12 +62,20 @@ pub struct RequestContext {
     /// Index of the current node manager.
     pub current_node_manager_index: usize,
     /// Global type tree object.
-    pub type_tree: Arc<RwLock<TypeTree>>,
+    pub type_tree: Arc<RwLock<DefaultTypeTree>>,
+    /// Wrapper to get a type tree
+    pub type_tree_getter: Arc<dyn TypeTreeForUser>,
     /// Subscription cache, containing all subscriptions on the server.
     pub subscriptions: Arc<SubscriptionCache>,
     /// Server info object, containing configuration and other shared server
     /// state.
     pub info: Arc<ServerInfo>,
+}
+
+impl RequestContext {
+    pub fn get_type_tree_for_user<'a>(&'a self) -> Box<dyn TypeTreeReadContext + 'a> {
+        self.type_tree_getter.get_type_tree_for_user(self)
+    }
 }
 
 /// Resolve a list of references.

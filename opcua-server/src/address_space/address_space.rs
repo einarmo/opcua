@@ -4,7 +4,9 @@ use hashbrown::{Equivalent, HashMap, HashSet};
 use log::{debug, error, info, warn};
 use opcua_nodes::{NamespaceMap, NodeInsertTarget, ReferenceDirection};
 
-use crate::node_manager::{ParsedReadValueId, ParsedWriteValue, RequestContext, TypeTree};
+use crate::node_manager::{
+    DefaultTypeTree, ParsedReadValueId, ParsedWriteValue, RequestContext, TypeTree,
+};
 use opcua_types::{
     BrowseDirection, DataValue, LocalizedText, NodeClass, NodeId, QualifiedName, ReferenceTypeId,
     StatusCode, TimestampsToReturn,
@@ -260,7 +262,7 @@ impl References {
         &'a self,
         source_node: &'b NodeId,
         filter: Option<(impl Into<NodeId>, bool)>,
-        type_tree: &'b TypeTree,
+        type_tree: &'b dyn TypeTree,
         direction: BrowseDirection,
     ) -> impl Iterator<Item = ReferenceRef<'a>> + 'b {
         ReferenceIterator::new(
@@ -276,7 +278,7 @@ impl References {
 // Handy feature to let us easily return a concrete type from `find_references`.
 struct ReferenceIterator<'a, 'b> {
     filter: Option<(NodeId, bool)>,
-    type_tree: &'b TypeTree,
+    type_tree: &'b dyn TypeTree,
     iter_s: Option<hashbrown::hash_set::Iter<'a, Reference>>,
     iter_t: Option<hashbrown::hash_set::Iter<'a, Reference>>,
 }
@@ -333,7 +335,7 @@ impl<'a, 'b> ReferenceIterator<'a, 'b> {
         direction: BrowseDirection,
         references: &'a References,
         filter: Option<(NodeId, bool)>,
-        type_tree: &'b TypeTree,
+        type_tree: &'b dyn TypeTree,
     ) -> Self {
         Self {
             filter,
@@ -415,7 +417,7 @@ impl AddressSpace {
         info!("Imported {count} nodes");
     }
 
-    pub fn load_into_type_tree(&self, type_tree: &mut TypeTree) {
+    pub fn load_into_type_tree(&self, type_tree: &mut DefaultTypeTree) {
         let mut found_ids = VecDeque::new();
         println!("Begin loading into type tree");
         // Populate types first so that we have reference types to browse in the next stage.
@@ -613,7 +615,7 @@ impl AddressSpace {
         &'a self,
         source_node: &'b NodeId,
         filter: Option<(impl Into<NodeId>, bool)>,
-        type_tree: &'b TypeTree,
+        type_tree: &'b dyn TypeTree,
         direction: BrowseDirection,
     ) -> impl Iterator<Item = ReferenceRef<'a>> + 'b {
         self.references
@@ -624,7 +626,7 @@ impl AddressSpace {
         &'a self,
         source_node: &'b NodeId,
         filter: Option<(impl Into<NodeId>, bool)>,
-        type_tree: &'b TypeTree,
+        type_tree: &'b dyn TypeTree,
         direction: BrowseDirection,
         browse_name: impl Into<QualifiedName>,
     ) -> Option<&'a NodeType> {
@@ -644,7 +646,7 @@ impl AddressSpace {
         &'a self,
         source_node: &'b NodeId,
         filter: Option<(impl Into<NodeId>, bool)>,
-        type_tree: &'b TypeTree,
+        type_tree: &'b dyn TypeTree,
         direction: BrowseDirection,
         browse_path: &[QualifiedName],
     ) -> Option<&'a NodeType> {
@@ -743,7 +745,7 @@ impl AddressSpace {
         &'a mut self,
         context: &RequestContext,
         node_to_write: &ParsedWriteValue,
-        type_tree: &TypeTree,
+        type_tree: &dyn TypeTree,
     ) -> Result<&'a mut NodeType, StatusCode> {
         let Some(node) = self.find_mut(&node_to_write.node_id) else {
             debug!(
@@ -858,7 +860,7 @@ mod tests {
             CoreNamespace, EventNotifier, MethodBuilder, NodeBase, NodeType, Object, ObjectBuilder,
             ObjectTypeBuilder, Variable, VariableBuilder,
         },
-        node_manager::TypeTree,
+        node_manager::{DefaultTypeTree, TypeTree},
     };
     use opcua_nodes::NamespaceMap;
     use opcua_types::{
@@ -1024,7 +1026,7 @@ mod tests {
             .find_references(
                 &NodeId::root_folder_id(),
                 Some((ReferenceTypeId::Organizes, false)),
-                &TypeTree::new(),
+                &DefaultTypeTree::new(),
                 BrowseDirection::Forward,
             )
             .collect();
@@ -1034,7 +1036,7 @@ mod tests {
             .find_references(
                 &NodeId::root_folder_id(),
                 None::<(NodeId, bool)>,
-                &TypeTree::new(),
+                &DefaultTypeTree::new(),
                 BrowseDirection::Forward,
             )
             .collect();
@@ -1044,7 +1046,7 @@ mod tests {
             .find_references(
                 &NodeId::objects_folder_id(),
                 Some((ReferenceTypeId::Organizes, false)),
-                &TypeTree::new(),
+                &DefaultTypeTree::new(),
                 BrowseDirection::Forward,
             )
             .collect();
@@ -1067,7 +1069,7 @@ mod tests {
             .find_references(
                 &NodeId::root_folder_id(),
                 Some((ReferenceTypeId::Organizes, false)),
-                &TypeTree::new(),
+                &DefaultTypeTree::new(),
                 BrowseDirection::Inverse,
             )
             .collect();
@@ -1077,7 +1079,7 @@ mod tests {
             .find_references(
                 &NodeId::objects_folder_id(),
                 Some((ReferenceTypeId::Organizes, false)),
-                &TypeTree::new(),
+                &DefaultTypeTree::new(),
                 BrowseDirection::Inverse,
             )
             .collect();
@@ -1087,7 +1089,7 @@ mod tests {
     #[test]
     fn find_reference_subtypes() {
         let address_space = make_sample_address_space();
-        let mut type_tree = TypeTree::new();
+        let mut type_tree = DefaultTypeTree::new();
         address_space.load_into_type_tree(&mut type_tree);
 
         let reference_types = vec![
@@ -1285,7 +1287,7 @@ mod tests {
         let result = address_space.find_node_by_browse_path(
             &object_id,
             None::<(NodeId, bool)>,
-            &TypeTree::new(),
+            &DefaultTypeTree::new(),
             BrowseDirection::Forward,
             &["Objects".into(), "Sample".into(), "v1".into()],
         );
@@ -1296,7 +1298,7 @@ mod tests {
         let result = address_space.find_node_by_browse_path(
             &object_id,
             None::<(NodeId, bool)>,
-            &TypeTree::new(),
+            &DefaultTypeTree::new(),
             BrowseDirection::Forward,
             &["Objects".into(), "Sample".into(), "vxxx".into()],
         );
@@ -1460,7 +1462,7 @@ mod tests {
             .find_references(
                 &fn_node_id,
                 Some((ReferenceTypeId::HasProperty, false)),
-                &TypeTree::new(),
+                &DefaultTypeTree::new(),
                 BrowseDirection::Forward,
             )
             .collect();

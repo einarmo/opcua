@@ -380,7 +380,7 @@ mod tests {
     use crate::{
         address_space::{AddressSpace, CoreNamespace, ObjectTypeBuilder, VariableBuilder},
         events::evaluate::like_to_regex,
-        node_manager::TypeTree,
+        node_manager::DefaultTypeTree,
         BaseEventType, Event, ParsedContentFilter,
     };
     use opcua_types::{
@@ -513,9 +513,9 @@ mod tests {
         }
     }
 
-    fn type_tree() -> TypeTree {
+    fn type_tree() -> DefaultTypeTree {
         let mut address_space = AddressSpace::new();
-        let mut type_tree = TypeTree::new();
+        let mut type_tree = DefaultTypeTree::new();
         address_space.import_node_set::<CoreNamespace>(type_tree.namespaces_mut());
         address_space.add_namespace(
             "my:namespace:uri",
@@ -540,7 +540,10 @@ mod tests {
         type_tree
     }
 
-    fn filter(elements: Vec<ContentFilterElement>, type_tree: &TypeTree) -> ParsedContentFilter {
+    fn filter(
+        elements: Vec<ContentFilterElement>,
+        type_tree: &DefaultTypeTree,
+    ) -> ParsedContentFilter {
         let (_, f) = ParsedContentFilter::parse(
             ContentFilter {
                 elements: Some(elements),

@@ -44,7 +44,7 @@ pub struct TypePropertyInverseRef {
 ///
 /// Each node manager is responsible for populating the type tree with
 /// its types.
-pub struct TypeTree {
+pub struct DefaultTypeTree {
     nodes: HashMap<NodeId, NodeClass>,
     subtypes_by_source: HashMap<NodeId, HashSet<NodeId>>,
     subtypes_by_target: HashMap<NodeId, NodeId>,
@@ -62,10 +62,24 @@ pub enum TypeTreeNode<'a> {
     Property(&'a TypePropertyInverseRef),
 }
 
-impl TypeTree {
+pub trait TypeTree {
+    fn is_subtype_of(&self, child: &NodeId, ancestor: &NodeId) -> bool;
+
+    fn get_node<'a>(&'a self, node: &NodeId) -> Option<TypeTreeNode<'a>>;
+
+    fn get(&self, node: &NodeId) -> Option<NodeClass>;
+
+    fn find_type_prop_by_browse_path(
+        &self,
+        type_id: &NodeId,
+        path: &[QualifiedName],
+    ) -> Option<&TypeProperty>;
+}
+
+impl TypeTree for DefaultTypeTree {
     /// Return `true` if `child` is a subtype of `ancestor`, or if `child` and
     /// `ancestor` is the same node, i.e. subtype in the OPC-UA sense.
-    pub fn is_subtype_of(&self, child: &NodeId, ancestor: &NodeId) -> bool {
+    fn is_subtype_of(&self, child: &NodeId, ancestor: &NodeId) -> bool {
         let mut node = child;
         loop {
             if node == ancestor {
@@ -94,7 +108,7 @@ impl TypeTree {
     }
 
     /// Get a reference to a node in the type tree.
-    pub fn get_node<'a>(&'a self, node: &NodeId) -> Option<TypeTreeNode<'a>> {
+    fn get_node<'a>(&'a self, node: &NodeId) -> Option<TypeTreeNode<'a>> {
         if let Some(n) = self.nodes.get(node) {
             return Some(TypeTreeNode::Type(*n));
         }
@@ -105,10 +119,21 @@ impl TypeTree {
     }
 
     /// Get a type from the type tree.
-    pub fn get(&self, node: &NodeId) -> Option<NodeClass> {
+    fn get(&self, node: &NodeId) -> Option<NodeClass> {
         self.nodes.get(node).cloned()
     }
 
+    /// Find a property by browse and type ID.
+    fn find_type_prop_by_browse_path(
+        &self,
+        type_id: &NodeId,
+        path: &[QualifiedName],
+    ) -> Option<&TypeProperty> {
+        self.type_properties.get(type_id).and_then(|p| p.get(path))
+    }
+}
+
+impl DefaultTypeTree {
     /// Create a new type tree with just the root nodes added.
     pub fn new() -> Self {
         let mut type_tree = Self {
@@ -180,15 +205,6 @@ impl TypeTree {
                 path: path_owned,
             },
         );
-    }
-
-    /// Find a property by browse and type ID.
-    pub fn find_type_prop_by_browse_path(
-        &self,
-        type_id: &NodeId,
-        path: &[QualifiedName],
-    ) -> Option<&TypeProperty> {
-        self.type_properties.get(type_id).and_then(|p| p.get(path))
     }
 
     /// Remove a node from the type tree.

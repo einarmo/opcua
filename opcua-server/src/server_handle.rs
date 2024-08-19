@@ -7,7 +7,7 @@ use opcua_types::{AttributeId, DataValue, ServerState, VariableId};
 
 use super::{
     info::ServerInfo,
-    node_manager::{NodeManagers, TypeTree},
+    node_manager::{DefaultTypeTree, NodeManagers},
     session::manager::SessionManager,
     SubscriptionCache,
 };
@@ -21,7 +21,7 @@ pub struct ServerHandle {
     subscriptions: Arc<SubscriptionCache>,
     node_managers: NodeManagers,
     session_manager: Arc<RwLock<SessionManager>>,
-    type_tree: Arc<RwLock<TypeTree>>,
+    type_tree: Arc<RwLock<DefaultTypeTree>>,
     token: CancellationToken,
 }
 
@@ -32,7 +32,7 @@ impl ServerHandle {
         subscriptions: Arc<SubscriptionCache>,
         node_managers: NodeManagers,
         session_manager: Arc<RwLock<SessionManager>>,
-        type_tree: Arc<RwLock<TypeTree>>,
+        type_tree: Arc<RwLock<DefaultTypeTree>>,
         token: CancellationToken,
     ) -> Self {
         Self {
@@ -81,7 +81,7 @@ impl ServerHandle {
     }
 
     /// Get a reference to the type tree, containing shared information about types in the server.
-    pub fn type_tree(&self) -> &RwLock<TypeTree> {
+    pub fn type_tree(&self) -> &RwLock<DefaultTypeTree> {
         &self.type_tree
     }
 
