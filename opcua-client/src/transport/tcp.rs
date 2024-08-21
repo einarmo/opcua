@@ -66,7 +66,6 @@ impl TcpTransport {
             config.max_message_size,
             config.max_chunk_count,
         );
-        log::debug!("Received ack {ack:?}");
         buffer.revise(
             ack.receive_buffer_size as usize,
             ack.max_message_size as usize,
@@ -157,7 +156,6 @@ impl TcpTransport {
             })?;
         let ack = match framed_read.next().await {
             Some(Ok(Message::Acknowledge(ack))) => {
-                // TODO revise our sizes and other things according to the ACK
                 if ack.send_buffer_size > hello.receive_buffer_size {
                     log::warn!("Acknowledged send buffer size is greater than receive buffer size in hello message!")
                 }
