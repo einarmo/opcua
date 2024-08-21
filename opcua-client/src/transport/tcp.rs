@@ -3,7 +3,7 @@ use std::sync::Arc;
 use super::core::{OutgoingMessage, TransportPollResult, TransportState};
 use futures::StreamExt;
 use log::{debug, error};
-use opcua_core::supported_message::SupportedMessage;
+use opcua_core::supported_message::{AcknowledgeMessage, SupportedMessage};
 use opcua_core::{
     comms::{
         buffer::SendBuffer,
@@ -56,11 +56,21 @@ impl TcpTransport {
         config: TransportConfiguration,
         endpoint_url: &str,
     ) -> Result<Self, StatusCode> {
-        let (framed_read, writer) =
+        let (framed_read, writer, ack) =
             match Self::connect_inner(&secure_channel, &config, endpoint_url).await {
                 Ok(k) => k,
                 Err(status) => return Err(status),
             };
+        let mut buffer = SendBuffer::new(
+            config.send_buffer_size,
+            config.max_message_size,
+            config.max_chunk_count,
+        );
+        buffer.revise(
+            ack.receive_buffer_size as usize,
+            ack.max_message_size as usize,
+            ack.max_chunk_count as usize,
+        );
 
         Ok(Self {
             state: TransportState::new(
@@ -71,11 +81,7 @@ impl TcpTransport {
             ),
             read: framed_read,
             write: writer,
-            send_buffer: SendBuffer::new(
-                config.send_buffer_size,
-                config.max_message_size,
-                config.max_chunk_count,
-            ),
+            send_buffer: buffer,
             should_close: false,
             closed: TransportCloseState::Open,
         })
@@ -89,6 +95,7 @@ impl TcpTransport {
         (
             FramedRead<ReadHalf<TcpStream>, TcpCodec>,
             WriteHalf<TcpStream>,
+            AcknowledgeMessage,
         ),
         StatusCode,
     > {
@@ -134,6 +141,7 @@ impl TcpTransport {
             config.max_message_size,
             config.max_chunk_count,
         );
+        log::trace!("Send hello message: {hello:?}");
         let mut framed_read = {
             let secure_channel = trace_read_lock!(secure_channel);
             FramedRead::new(reader, TcpCodec::new(secure_channel.decoding_options()))
@@ -146,10 +154,16 @@ impl TcpTransport {
                 error!("Cannot send hello to server, err = {:?}", err);
                 StatusCode::BadCommunicationError
             })?;
-        match framed_read.next().await {
+        let ack = match framed_read.next().await {
             Some(Ok(Message::Acknowledge(ack))) => {
-                // TODO revise our sizes and other things according to the ACK
+                if ack.send_buffer_size > hello.receive_buffer_size {
+                    log::warn!("Acknowledged send buffer size is greater than receive buffer size in hello message!")
+                }
+                if ack.receive_buffer_size > hello.send_buffer_size {
+                    log::warn!("Acknowledged receive buffer size is greater than send buffer size in hello message!")
+                }
                 log::trace!("Received acknowledgement: {:?}", ack);
+                ack
             }
             other => {
                 error!(
@@ -158,9 +172,9 @@ impl TcpTransport {
                 );
                 return Err(StatusCode::BadConnectionClosed);
             }
-        }
+        };
 
-        Ok((framed_read, writer))
+        Ok((framed_read, writer, ack))
     }
 
     fn handle_incoming_message(

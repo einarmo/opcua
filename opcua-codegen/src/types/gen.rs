@@ -405,14 +405,25 @@ impl CodeGenerator {
         }
 
         if item.values.iter().any(|f| f.name == "Invalid") {
+            let invalid_msg = format!(
+                "Got unexpected value for enum {}: {{}}. Falling back on Invalid",
+                item.name
+            );
             try_from_arms = quote! {
                 #try_from_arms
-                _ => Self::Invalid,
+                r => {
+                    log::warn!(#invalid_msg, r);
+                    Self::Invalid
+                },
             };
         } else {
+            let invalid_msg = format!("Got unexpected value for enum {}: {{}}", item.name);
             try_from_arms = quote! {
                 #try_from_arms
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!(#invalid_msg, r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError)
+                }
             };
         }
 

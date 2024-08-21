@@ -201,7 +201,10 @@ impl TryFrom<i32> for ApplicationType {
                 1i32 => Self::Client,
                 2i32 => Self::ClientAndServer,
                 3i32 => Self::DiscoveryServer,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!("Got unexpected value for enum ApplicationType: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -305,7 +308,12 @@ impl TryFrom<i32> for AxisScaleEnumeration {
                 0i32 => Self::Linear,
                 1i32 => Self::Log,
                 2i32 => Self::Ln,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum AxisScaleEnumeration: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -347,7 +355,13 @@ impl TryFrom<i32> for BrokerTransportQualityOfService {
                 2i32 => Self::AtLeastOnce,
                 3i32 => Self::AtMostOnce,
                 4i32 => Self::ExactlyOnce,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum BrokerTransportQualityOfService: {}",
+                        r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -387,7 +401,13 @@ impl TryFrom<i32> for BrowseDirection {
                 1i32 => Self::Inverse,
                 2i32 => Self::Both,
                 3i32 => Self::Invalid,
-                _ => Self::Invalid,
+                r => {
+                    log::warn!(
+                        "Got unexpected value for enum BrowseDirection: {}. Falling back on Invalid",
+                        r
+                    );
+                    Self::Invalid
+                }
             },
         )
     }
@@ -439,7 +459,10 @@ impl TryFrom<i32> for BrowseResultMask {
                 63i32 => Self::All,
                 3i32 => Self::ReferenceTypeInfo,
                 60i32 => Self::TargetInfo,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!("Got unexpected value for enum BrowseResultMask: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -479,7 +502,12 @@ impl TryFrom<i32> for DataChangeTrigger {
                 0i32 => Self::Status,
                 1i32 => Self::StatusValue,
                 2i32 => Self::StatusValueTimestamp,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum DataChangeTrigger: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -633,7 +661,12 @@ impl TryFrom<i32> for DataSetOrderingType {
                 0i32 => Self::Undefined,
                 1i32 => Self::AscendingWriterId,
                 2i32 => Self::AscendingWriterIdSingle,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum DataSetOrderingType: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -671,7 +704,10 @@ impl TryFrom<i32> for DeadbandType {
                 0i32 => Self::None,
                 1i32 => Self::Absolute,
                 2i32 => Self::Percent,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!("Got unexpected value for enum DeadbandType: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -713,7 +749,10 @@ impl TryFrom<i32> for DiagnosticsLevel {
                 2i32 => Self::Info,
                 3i32 => Self::Log,
                 4i32 => Self::Debug,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!("Got unexpected value for enum DiagnosticsLevel: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -813,7 +852,12 @@ impl TryFrom<i32> for ExceptionDeviationFormat {
                 2i32 => Self::PercentOfRange,
                 3i32 => Self::PercentOfEURange,
                 4i32 => Self::Unknown,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum ExceptionDeviationFormat: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -883,7 +927,10 @@ impl TryFrom<i32> for FilterOperator {
                 15i32 => Self::RelatedTo,
                 16i32 => Self::BitwiseAnd,
                 17i32 => Self::BitwiseOr,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!("Got unexpected value for enum FilterOperator: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -923,7 +970,12 @@ impl TryFrom<i32> for HistoryUpdateType {
                 2i32 => Self::Replace,
                 3i32 => Self::Update,
                 4i32 => Self::Delete,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum HistoryUpdateType: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -967,7 +1019,12 @@ impl TryFrom<i32> for IdentityCriteriaType {
                 4i32 => Self::GroupId,
                 5i32 => Self::Anonymous,
                 6i32 => Self::AuthenticatedUser,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum IdentityCriteriaType: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1007,7 +1064,10 @@ impl TryFrom<i32> for IdType {
                 1i32 => Self::String,
                 2i32 => Self::Guid,
                 3i32 => Self::Opaque,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!("Got unexpected value for enum IdType: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1164,7 +1224,13 @@ impl TryFrom<i32> for MessageSecurityMode {
                 1i32 => Self::None,
                 2i32 => Self::Sign,
                 3i32 => Self::SignAndEncrypt,
-                _ => Self::Invalid,
+                r => {
+                    log::warn!(
+                        "Got unexpected value for enum MessageSecurityMode: {}. Falling back on Invalid",
+                        r
+                    );
+                    Self::Invalid
+                }
             },
         )
     }
@@ -1206,7 +1272,13 @@ impl TryFrom<i32> for ModelChangeStructureVerbMask {
                 4i32 => Self::ReferenceAdded,
                 8i32 => Self::ReferenceDeleted,
                 16i32 => Self::DataTypeChanged,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum ModelChangeStructureVerbMask: {}",
+                        r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1246,7 +1318,10 @@ impl TryFrom<i32> for MonitoringMode {
                 0i32 => Self::Disabled,
                 1i32 => Self::Sampling,
                 2i32 => Self::Reporting,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!("Got unexpected value for enum MonitoringMode: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1284,7 +1359,10 @@ impl TryFrom<i32> for NamingRuleType {
                 1i32 => Self::Mandatory,
                 2i32 => Self::Optional,
                 3i32 => Self::Constraint,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!("Got unexpected value for enum NamingRuleType: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1386,7 +1464,12 @@ impl TryFrom<i32> for NodeAttributesMask {
                 26632548i32 => Self::Method,
                 26537060i32 => Self::ReferenceType,
                 26501356i32 => Self::View,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum NodeAttributesMask: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1436,7 +1519,10 @@ impl TryFrom<i32> for NodeClass {
                 32i32 => Self::ReferenceType,
                 64i32 => Self::DataType,
                 128i32 => Self::View,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!("Got unexpected value for enum NodeClass: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1481,7 +1567,10 @@ impl TryFrom<u8> for NodeIdType {
                 3u8 => Self::String,
                 4u8 => Self::Guid,
                 5u8 => Self::ByteString,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!("Got unexpected value for enum NodeIdType: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1521,7 +1610,10 @@ impl TryFrom<i32> for OpenFileMode {
                 2i32 => Self::Write,
                 4i32 => Self::EraseExisting,
                 8i32 => Self::Append,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!("Got unexpected value for enum OpenFileMode: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1559,7 +1651,12 @@ impl TryFrom<i32> for OverrideValueHandling {
                 0i32 => Self::Disabled,
                 1i32 => Self::LastUsableValue,
                 2i32 => Self::OverrideValue,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum OverrideValueHandling: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1599,7 +1696,12 @@ impl TryFrom<i32> for PerformUpdateType {
                 2i32 => Self::Replace,
                 3i32 => Self::Update,
                 4i32 => Self::Remove,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum PerformUpdateType: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1697,7 +1799,13 @@ impl TryFrom<i32> for PubSubDiagnosticsCounterClassification {
             match value {
                 0i32 => Self::Information,
                 1i32 => Self::Error,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum PubSubDiagnosticsCounterClassification: {}",
+                        r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1737,7 +1845,10 @@ impl TryFrom<i32> for PubSubState {
                 1i32 => Self::Paused,
                 2i32 => Self::Operational,
                 3i32 => Self::Error,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!("Got unexpected value for enum PubSubState: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1781,7 +1892,12 @@ impl TryFrom<i32> for RedundancySupport {
                 3i32 => Self::Hot,
                 4i32 => Self::Transparent,
                 5i32 => Self::HotAndMirrored,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum RedundancySupport: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1817,7 +1933,12 @@ impl TryFrom<i32> for SecurityTokenRequestType {
             match value {
                 0i32 => Self::Issue,
                 1i32 => Self::Renew,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum SecurityTokenRequestType: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1865,7 +1986,10 @@ impl TryFrom<i32> for ServerState {
                 5i32 => Self::Test,
                 6i32 => Self::CommunicationFault,
                 7i32 => Self::Unknown,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!("Got unexpected value for enum ServerState: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1905,7 +2029,10 @@ impl TryFrom<i32> for StructureType {
                 0i32 => Self::Structure,
                 1i32 => Self::StructureWithOptionalFields,
                 2i32 => Self::Union,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!("Got unexpected value for enum StructureType: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -1949,7 +2076,13 @@ impl TryFrom<i32> for TimestampsToReturn {
                 2i32 => Self::Both,
                 3i32 => Self::Neither,
                 4i32 => Self::Invalid,
-                _ => Self::Invalid,
+                r => {
+                    log::warn!(
+                        "Got unexpected value for enum TimestampsToReturn: {}. Falling back on Invalid",
+                        r
+                    );
+                    Self::Invalid
+                }
             },
         )
     }
@@ -1993,7 +2126,10 @@ impl TryFrom<i32> for TrustListMasks {
                 4i32 => Self::IssuerCertificates,
                 8i32 => Self::IssuerCrls,
                 15i32 => Self::All,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!("Got unexpected value for enum TrustListMasks: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
@@ -2153,7 +2289,10 @@ impl TryFrom<i32> for UserTokenType {
                 1i32 => Self::UserName,
                 2i32 => Self::Certificate,
                 3i32 => Self::IssuedToken,
-                _ => return Err(opcua::types::StatusCode::BadUnexpectedError),
+                r => {
+                    log::error!("Got unexpected value for enum UserTokenType: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
             },
         )
     }
