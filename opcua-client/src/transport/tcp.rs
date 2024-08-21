@@ -142,7 +142,7 @@ impl TcpTransport {
             config.max_message_size,
             config.max_chunk_count,
         );
-        log::debug!("Send hello message: {hello:?}");
+        log::trace!("Send hello message: {hello:?}");
         let mut framed_read = {
             let secure_channel = trace_read_lock!(secure_channel);
             FramedRead::new(reader, TcpCodec::new(secure_channel.decoding_options()))

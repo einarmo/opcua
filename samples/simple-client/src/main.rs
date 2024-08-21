@@ -65,7 +65,6 @@ async fn main() -> Result<(), ()> {
         .product_uri("urn:SimpleClient")
         .trust_server_certs(true)
         .create_sample_keypair(true)
-        .max_incoming_chunk_size(8192)
         .session_retry_limit(3)
         .client()
         .unwrap();

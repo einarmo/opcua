@@ -547,33 +547,6 @@ impl SecureChannel {
         Ok(data)
     }
 
-    /// Removes padding and signature from a message
-    /// with security mode `SignAndEncrypt`
-    fn remove_signature_and_padding(
-        mut data: Vec<u8>,
-        decrypted_size: usize,
-        signature_size: usize,
-        decoding_options: &DecodingOptions,
-    ) -> Result<Vec<u8>, StatusCode> {
-        let padding_start = decrypted_size - signature_size - 1;
-        let padding_size = data[padding_start];
-
-        for i in ((padding_start - padding_size as usize)..padding_start).rev() {
-            if data[i] != padding_size {
-                error!(
-                    "Failed to verify padding, got {} when looking at byte {}, expected {}",
-                    data[i], i, padding_size
-                );
-                return Err(StatusCode::BadDecodingError);
-            }
-        }
-        // Remove one extra byte for the padding size.
-        let message_size = decrypted_size - signature_size - padding_size as usize - 1;
-        Self::update_message_size(&mut data, message_size, decoding_options)?;
-        data.truncate(message_size);
-        Ok(data)
-    }
-
     fn log_crypto_data(message: &str, data: &[u8]) {
         crate::debug::log_buffer(message, data);
     }
@@ -776,21 +749,12 @@ impl SecureChannel {
                 &mut decrypted_data,
             )?;
 
-            // Now we need to strip off signature
-            if self.security_mode == MessageSecurityMode::SignAndEncrypt {
-                Self::remove_signature_and_padding(
-                    decrypted_data,
-                    decrypted_size,
-                    signature_size,
-                    &self.decoding_options,
-                )?
-            } else {
-                Self::update_message_size_and_truncate(
-                    decrypted_data,
-                    decrypted_size - signature_size,
-                    &self.decoding_options,
-                )?
-            }
+            // Value returned from symmetric_decrypt_and_verify is the end of the actual decrypted data.
+            Self::update_message_size_and_truncate(
+                decrypted_data,
+                decrypted_size,
+                &self.decoding_options,
+            )?
         } else {
             src.to_vec()
         };
@@ -1243,7 +1207,7 @@ impl SecureChannel {
                     &dst[signed_range.end..],
                 )?;
 
-                Ok(encrypted_range.end)
+                Ok(signed_range.end)
             }
             MessageSecurityMode::SignAndEncrypt => {
                 self.expect_supported_security_policy();
@@ -1289,12 +1253,20 @@ impl SecureChannel {
                     signature_range
                 );
                 let verification_key = self.verification_key();
+                let signature_start = signature_range.start;
                 self.security_policy.symmetric_verify_signature(
                     verification_key,
                     &dst[signed_range],
                     &dst[signature_range],
                 )?;
-                Ok(encrypted_range.end)
+
+                let key_size = key.key_length();
+
+                // Verify that the padding is correct and get the padded range.
+                let padding_range = self.verify_padding(dst, key_size, signature_start)?;
+
+                // Decrypted range minus padding and signature.
+                Ok(padding_range.start)
             }
             MessageSecurityMode::Invalid => {
                 // Use the security policy to decrypt the block using the token
