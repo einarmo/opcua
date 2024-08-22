@@ -1050,7 +1050,7 @@ mod tests {
                 BrowseDirection::Forward,
             )
             .collect();
-        assert_eq!(references.len(), 3);
+        assert_eq!(references.len(), 4);
 
         let r1 = &references[0];
         assert_eq!(r1.reference_type, &ReferenceTypeId::Organizes.into());
