@@ -37,7 +37,7 @@ async fn browse() {
     let refs = it.references.clone().unwrap_or_default();
     // Exact number may vary with new versions of the standard. This number may need to be changed
     // in the future. Keep the test as a sanity check.
-    assert_eq!(refs.len(), 19);
+    assert_eq!(refs.len(), 24);
 
     let server_cap_node = refs
         .iter()
@@ -77,7 +77,7 @@ async fn browse_filter() {
     let refs = it.references.clone().unwrap_or_default();
     // Exact number may vary with new versions of the standard. This number may need to be changed
     // in the future. Keep the test as a sanity check.
-    assert_eq!(refs.len(), 8);
+    assert_eq!(refs.len(), 12);
     for rf in &refs {
         assert!(rf.is_forward);
         assert_eq!(rf.node_class, NodeClass::Object);
@@ -159,7 +159,7 @@ async fn browse_multiple() {
     let refs = it.references.clone().unwrap_or_default();
     // The objects folder has three references, our custom node, the server node, and the aliases folder.
     // Note that future versions of the standard has more nodes here.
-    assert_eq!(3, refs.len());
+    assert_eq!(4, refs.len());
     let rf = refs.iter().find(|r| r.node_id.node_id == id1).unwrap();
     assert_eq!(rf.display_name, "TestObj1".into());
 
