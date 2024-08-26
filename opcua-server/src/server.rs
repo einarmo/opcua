@@ -25,6 +25,7 @@ use opcua_crypto::CertificateStore;
 use crate::{
     node_manager::{DefaultTypeTreeGetter, ServerContext},
     session::controller::SessionController,
+    ServerStatusWrapper,
 };
 use opcua_types::{DateTime, LocalizedText, ServerState, UAString};
 
@@ -68,6 +69,8 @@ pub struct Server {
     token: CancellationToken,
     /// Notify that is woken up if a new session is added to the session manager.
     session_notify: Arc<Notify>,
+    /// Wrapper managing the `ServerStatus` server variable.
+    status: Arc<ServerStatusWrapper>,
 }
 
 impl Server {
@@ -161,6 +164,10 @@ impl Server {
         let subscriptions = Arc::new(SubscriptionCache::new(config.limits.subscriptions));
 
         let node_managers_ref = NodeManagersRef::new_empty();
+        let status_wrapper = Arc::new(ServerStatusWrapper::new(
+            builder.build_info,
+            subscriptions.clone(),
+        ));
         let context = ServerContext {
             node_managers: node_managers_ref.clone(),
             subscriptions: subscriptions.clone(),
@@ -168,6 +175,7 @@ impl Server {
             authenticator: info.authenticator.clone(),
             type_tree: type_tree.clone(),
             type_tree_getter: info.type_tree_getter.clone(),
+            status: status_wrapper.clone(),
         };
 
         let mut final_node_managers = Vec::new();
@@ -191,6 +199,7 @@ impl Server {
             node_managers.clone(),
             session_manager.clone(),
             type_tree.clone(),
+            status_wrapper.clone(),
             builder.token.clone(),
         );
         Ok((
@@ -205,6 +214,7 @@ impl Server {
                 node_managers,
                 token: builder.token,
                 session_notify,
+                status: status_wrapper.clone(),
             },
             handle,
         ))
@@ -261,12 +271,12 @@ impl Server {
             authenticator: self.info.authenticator.clone(),
             type_tree: self.info.type_tree.clone(),
             type_tree_getter: self.info.type_tree_getter.clone(),
+            status: self.status.clone(),
         };
 
         self.initialize_node_managers(&context).await?;
 
-        self.info
-            .set_state(ServerState::Running, &self.subscriptions);
+        self.status.set_server_started();
         self.info.start_time.store(Arc::new(DateTime::now()));
 
         let addr = listener

@@ -421,12 +421,7 @@ impl DiagnosticsNodeManager {
                     .as_ref()
                     .map(|r| {
                         r.iter()
-                            .map(|v| {
-                                ExtensionObject::from_encodable(
-                                    ObjectId::RolePermissionType_Encoding_DefaultBinary,
-                                    v,
-                                )
-                            })
+                            .map(ExtensionObject::from_message)
                             .collect::<Vec<_>>()
                     })
                     .into(),
@@ -435,12 +430,7 @@ impl DiagnosticsNodeManager {
                     .as_ref()
                     .map(|r| {
                         r.iter()
-                            .map(|v| {
-                                ExtensionObject::from_encodable(
-                                    ObjectId::RolePermissionType_Encoding_DefaultBinary,
-                                    v,
-                                )
-                            })
+                            .map(ExtensionObject::from_message)
                             .collect::<Vec<_>>()
                     })
                     .into(),
@@ -504,7 +494,7 @@ impl DiagnosticsNodeManager {
             AttributeId::AccessLevel | AttributeId::UserAccessLevel => {
                 AccessLevel::CURRENT_READ.bits().into()
             }
-            AttributeId::AccessLevelEx => AccessLevelExType::CurrentRead.bits().into(),
+            AttributeId::AccessLevelEx => (AccessLevelExType::CurrentRead.bits() as u32).into(),
             AttributeId::MinimumSamplingInterval => 0.0.into(),
             AttributeId::Historizing => false.into(),
             AttributeId::WriteMask | AttributeId::UserWriteMask => 0u32.into(),
