@@ -7,14 +7,17 @@ use hashbrown::HashMap;
 use crate::{
     address_space::{read_node_value, AddressSpace, CoreNamespace},
     node_manager::{
-        MonitoredItemRef, MonitoredItemUpdateRef, NodeManagersRef, ParsedReadValueId, RequestContext, ServerContext, SyncSampler
+        MonitoredItemRef, MonitoredItemUpdateRef, NodeManagersRef, ParsedReadValueId,
+        RequestContext, ServerContext, SyncSampler,
     },
     subscriptions::CreateMonitoredItem,
     ServerCapabilities, ServerStatusWrapper,
 };
 use opcua_core::sync::RwLock;
 use opcua_types::{
-    AccessRestrictionType, DataValue, DateTime, ExtensionObject, IdType, Identifier, MonitoringMode, NumericRange, ObjectId, ReferenceTypeId, StatusCode, TimeZoneDataType, TimestampsToReturn, VariableId, Variant
+    AccessRestrictionType, DataValue, DateTime, ExtensionObject, IdType, Identifier,
+    MonitoringMode, NumericRange, ObjectId, ReferenceTypeId, StatusCode, TimeZoneDataType,
+    TimestampsToReturn, VariableId, Variant,
 };
 
 use super::{
@@ -135,8 +138,12 @@ impl InMemoryNodeManagerImpl for CoreNodeManagerImpl {
             node.set_status(StatusCode::Good);
 
             if let Some(var_id) = self.status.get_managed_id(&node.item_to_monitor().node_id) {
-                self.status.subscribe_to_component(var_id, node.monitoring_mode(),
-                    node.handle(), Duration::from_millis(node.sampling_interval() as u64));
+                self.status.subscribe_to_component(
+                    var_id,
+                    node.monitoring_mode(),
+                    node.handle(),
+                    Duration::from_millis(node.sampling_interval() as u64),
+                );
             }
         }
     }
@@ -153,7 +160,7 @@ impl InMemoryNodeManagerImpl for CoreNodeManagerImpl {
                     item.node_id(),
                     item.attribute(),
                     item.handle(),
-                    mode
+                    mode,
                 );
             }
         }
@@ -170,7 +177,7 @@ impl InMemoryNodeManagerImpl for CoreNodeManagerImpl {
                     item.node_id(),
                     item.attribute(),
                     item.handle(),
-                    Duration::from_millis(item.update().revised_sampling_interval as u64)
+                    Duration::from_millis(item.update().revised_sampling_interval as u64),
                 );
             }
         }
@@ -426,7 +433,6 @@ impl CoreNodeManagerImpl {
             VariableId::OPCUANamespaceMetadata_StaticNodeIdTypes => {
                 vec![IdType::Numeric as u8].into()
             }
-            
 
             VariableId::Server_NamespaceArray => {
                 // This actually calls into other node managers to obtain the value, in fact
