@@ -15,7 +15,7 @@ use opcua::server::node_manager::memory::{
     SimpleNodeManagerImpl,
 };
 use opcua::server::{ServerBuilder, SubscriptionCache};
-use opcua::types::{DataValue, NodeId, UAString};
+use opcua::types::{BuildInfo, DataValue, DateTime, NodeId, UAString};
 
 #[tokio::main]
 async fn main() {
@@ -27,6 +27,15 @@ async fn main() {
 
     let (server, handle) = ServerBuilder::new()
         .with_config_from("../server.conf")
+        .build_info(BuildInfo {
+            product_uri: "https://github.com/locka99/opcua".into(),
+            manufacturer_name: "Rust OPC-UA".into(),
+            product_name: "Rust OPC-UA sample server".into(),
+            // Here you could use something to inject the build time, version, number at compile time
+            software_version: "0.1.0".into(),
+            build_number: "1".into(),
+            build_date: DateTime::now(),
+        })
         .with_node_manager(simple_node_manager(
             NamespaceMetadata {
                 namespace_uri: "urn:SimpleServer".to_owned(),

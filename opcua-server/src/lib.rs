@@ -10,6 +10,7 @@ mod info;
 pub mod node_manager;
 mod server;
 mod server_handle;
+mod server_status;
 mod session;
 mod subscriptions;
 mod transport;
@@ -19,6 +20,7 @@ pub use config::*;
 pub use events::*;
 pub use server::Server;
 pub use server_handle::ServerHandle;
+pub use server_status::ServerStatusWrapper;
 pub use session::continuation_points::ContinuationPoint;
 pub use subscriptions::{
     CreateMonitoredItem, MonitoredItem, MonitoredItemHandle, SessionSubscriptions, Subscription,

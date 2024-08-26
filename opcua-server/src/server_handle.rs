@@ -1,9 +1,15 @@
-use std::sync::{atomic::AtomicU8, Arc};
+use std::{
+    sync::{atomic::AtomicU8, Arc},
+    time::{Duration, Instant},
+};
 
+use log::info;
 use tokio_util::sync::CancellationToken;
 
 use opcua_core::sync::RwLock;
-use opcua_types::{AttributeId, DataValue, ServerState, VariableId};
+use opcua_types::{AttributeId, DataValue, LocalizedText, ServerState, VariableId};
+
+use crate::ServerStatusWrapper;
 
 use super::{
     info::ServerInfo,
@@ -23,6 +29,7 @@ pub struct ServerHandle {
     session_manager: Arc<RwLock<SessionManager>>,
     type_tree: Arc<RwLock<DefaultTypeTree>>,
     token: CancellationToken,
+    status: Arc<ServerStatusWrapper>,
 }
 
 impl ServerHandle {
@@ -33,6 +40,7 @@ impl ServerHandle {
         node_managers: NodeManagers,
         session_manager: Arc<RwLock<SessionManager>>,
         type_tree: Arc<RwLock<DefaultTypeTree>>,
+        status: Arc<ServerStatusWrapper>,
         token: CancellationToken,
     ) -> Self {
         Self {
@@ -42,6 +50,7 @@ impl ServerHandle {
             node_managers,
             session_manager,
             type_tree,
+            status,
             token,
         }
     }
@@ -88,7 +97,7 @@ impl ServerHandle {
     /// Set the server state. Note that this does not do anything beyond just setting
     /// the state and notifying clients.
     pub fn set_server_state(&self, state: ServerState) {
-        self.info.set_state(state, &self.subscriptions);
+        self.status.set_state(state);
     }
 
     /// Get the cancellation token.
@@ -103,5 +112,19 @@ impl ServerHandle {
 
     pub fn get_namespace_index(&self, namespace: &str) -> Option<u16> {
         self.type_tree.read().namespaces().get_index(namespace)
+    }
+
+    /// Tell the server to stop after `time` has elapsed. This will
+    /// update the `SecondsTillShutdown` variable on the server as needed.
+    pub fn shutdown_after(&self, time: Duration, reason: impl Into<LocalizedText>) {
+        let deadline = Instant::now() + time;
+        self.status
+            .schedule_shutdown(reason.into(), Instant::now() + time);
+        let token = self.token.clone();
+        info!("Shutting down server in {time:?}");
+        tokio::task::spawn(async move {
+            tokio::time::sleep_until(deadline.into()).await;
+            token.cancel();
+        });
     }
 }

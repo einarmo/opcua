@@ -1,20 +1,23 @@
-use std::time::Duration;
+use std::{sync::Arc, time::Duration};
 
 use async_trait::async_trait;
+use chrono::Offset;
 use hashbrown::HashMap;
 
 use crate::{
     address_space::{read_node_value, AddressSpace, CoreNamespace},
     node_manager::{
-        NodeManagersRef, ParsedReadValueId, RequestContext, ServerContext, SyncSampler,
+        MonitoredItemRef, MonitoredItemUpdateRef, NodeManagersRef, ParsedReadValueId,
+        RequestContext, ServerContext, SyncSampler,
     },
     subscriptions::CreateMonitoredItem,
-    ServerCapabilities,
+    ServerCapabilities, ServerStatusWrapper,
 };
 use opcua_core::sync::RwLock;
 use opcua_types::{
-    AccessRestrictionType, DataValue, IdType, Identifier, NumericRange, ObjectId, ReferenceTypeId,
-    StatusCode, TimestampsToReturn, VariableId, Variant,
+    AccessRestrictionType, DataValue, DateTime, ExtensionObject, IdType, Identifier,
+    MonitoringMode, NumericRange, ObjectId, ReferenceTypeId, StatusCode, TimeZoneDataType,
+    TimestampsToReturn, VariableId, Variant,
 };
 
 use super::{
@@ -25,6 +28,7 @@ use super::{
 pub struct CoreNodeManagerImpl {
     sampler: SyncSampler,
     node_managers: NodeManagersRef,
+    status: Arc<ServerStatusWrapper>,
 }
 
 /// Node manager for the core namespace.
@@ -47,7 +51,7 @@ impl InMemoryNodeManagerImplBuilder for CoreNodeManagerBuilder {
             ); */
         }
 
-        CoreNodeManagerImpl::new(context.node_managers.clone())
+        CoreNodeManagerImpl::new(context.node_managers.clone(), context.status.clone())
     }
 }
 
@@ -132,14 +136,71 @@ impl InMemoryNodeManagerImpl for CoreNodeManagerImpl {
                 node.set_initial_value(value);
             }
             node.set_status(StatusCode::Good);
+
+            if let Some(var_id) = self.status.get_managed_id(&node.item_to_monitor().node_id) {
+                self.status.subscribe_to_component(
+                    var_id,
+                    node.monitoring_mode(),
+                    node.handle(),
+                    Duration::from_millis(node.sampling_interval() as u64),
+                );
+            }
+        }
+    }
+
+    async fn set_monitoring_mode(
+        &self,
+        _context: &RequestContext,
+        mode: MonitoringMode,
+        items: &[&MonitoredItemRef],
+    ) {
+        for item in items {
+            if self.status.get_managed_id(item.node_id()).is_some() {
+                self.status.sampler().set_sampler_mode(
+                    item.node_id(),
+                    item.attribute(),
+                    item.handle(),
+                    mode,
+                );
+            }
+        }
+    }
+
+    async fn modify_monitored_items(
+        &self,
+        _context: &RequestContext,
+        items: &[&MonitoredItemUpdateRef],
+    ) {
+        for item in items {
+            if self.status.get_managed_id(item.node_id()).is_some() {
+                self.status.sampler().update_sampler(
+                    item.node_id(),
+                    item.attribute(),
+                    item.handle(),
+                    Duration::from_millis(item.update().revised_sampling_interval as u64),
+                );
+            }
+        }
+    }
+
+    async fn delete_monitored_items(&self, _context: &RequestContext, items: &[&MonitoredItemRef]) {
+        for item in items {
+            if self.status.get_managed_id(item.node_id()).is_some() {
+                self.status.sampler().remove_sampler(
+                    item.node_id(),
+                    item.attribute(),
+                    item.handle(),
+                );
+            }
         }
     }
 }
 
 impl CoreNodeManagerImpl {
-    pub(super) fn new(node_managers: NodeManagersRef) -> Self {
+    pub(super) fn new(node_managers: NodeManagersRef, status: Arc<ServerStatusWrapper>) -> Self {
         Self {
             sampler: SyncSampler::new(),
+            status,
             node_managers,
         }
     }
@@ -304,6 +365,59 @@ impl CoreNodeManagerImpl {
             // Misc server status
             VariableId::Server_ServiceLevel => {
                 context.info.service_level.load(std::sync::atomic::Ordering::Relaxed).into()
+            }
+            VariableId::Server_LocalTime => {
+                let offset = chrono::Local::now().offset().fix().local_minus_utc() / 60;
+                ExtensionObject::from_message(&TimeZoneDataType {
+                    offset: offset.try_into().ok()?,
+                    // TODO: Figure out how to set this. Chrono does not provide a way to
+                    // tell whether daylight savings is in effect for the local time zone.
+                    daylight_saving_in_offset: false,
+                }).into()
+            }
+
+            // ServerStatus
+            VariableId::Server_ServerStatus => {
+                self.status.full_status_obj().into()
+            }
+            VariableId::Server_ServerStatus_BuildInfo => {
+                ExtensionObject::from_message(&self.status.build_info()).into()
+            }
+            VariableId::Server_ServerStatus_BuildInfo_BuildDate => {
+                self.status.build_info().build_date.into()
+            }
+            VariableId::Server_ServerStatus_BuildInfo_BuildNumber => {
+                self.status.build_info().build_number.into()
+            }
+            VariableId::Server_ServerStatus_BuildInfo_ManufacturerName => {
+                self.status.build_info().manufacturer_name.into()
+            }
+            VariableId::Server_ServerStatus_BuildInfo_ProductName => {
+                self.status.build_info().product_name.into()
+            }
+            VariableId::Server_ServerStatus_BuildInfo_ProductUri => {
+                self.status.build_info().product_uri.into()
+            }
+            VariableId::Server_ServerStatus_BuildInfo_SoftwareVersion => {
+                self.status.build_info().software_version.into()
+            }
+            VariableId::Server_ServerStatus_CurrentTime => {
+                DateTime::now().into()
+            }
+            VariableId::Server_ServerStatus_SecondsTillShutdown => {
+                match self.status.seconds_till_shutdown() {
+                    Some(x) => x.into(),
+                    None => Variant::Empty
+                }
+            }
+            VariableId::Server_ServerStatus_ShutdownReason => {
+                self.status.shutdown_reason().into()
+            }
+            VariableId::Server_ServerStatus_StartTime => {
+                self.status.start_time().into()
+            }
+            VariableId::Server_ServerStatus_State => {
+                (self.status.state() as i32).into()
             }
 
             // Namespace metadata

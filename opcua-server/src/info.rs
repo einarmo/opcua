@@ -26,8 +26,8 @@ use opcua_types::{
     status_code::StatusCode,
 };
 use opcua_types::{
-    AttributeId, ByteString, DataValue, DateTime, DecodingOptions, ExtensionObject, LocalizedText,
-    MessageSecurityMode, UAString, VariableId,
+    ByteString, DateTime, DecodingOptions, ExtensionObject, LocalizedText, MessageSecurityMode,
+    UAString,
 };
 
 use crate::config::{ServerConfig, ServerEndpoint};
@@ -38,7 +38,7 @@ use super::identity_token::{
     POLICY_ID_USER_PASS_RSA_OAEP, POLICY_ID_X509,
 };
 use super::node_manager::DefaultTypeTree;
-use super::{OperationalLimits, ServerCapabilities, SubscriptionCache, ANONYMOUS_USER_TOKEN_ID};
+use super::{OperationalLimits, ServerCapabilities, ANONYMOUS_USER_TOKEN_ID};
 
 /// Server state is any configuration associated with the server as a whole that individual sessions might
 /// be interested in.
@@ -339,20 +339,6 @@ impl ServerInfo {
     /// Get the current server state.
     pub fn state(&self) -> ServerStateType {
         **self.state.load()
-    }
-
-    /// Set the server state. Note that this does not actually affect the server, it is purely
-    /// informative.
-    pub(crate) fn set_state(&self, state: ServerStateType, subs: &SubscriptionCache) {
-        self.state.store(Arc::new(state));
-        subs.notify_data_change(
-            [(
-                DataValue::new_now(state as i32),
-                &VariableId::Server_ServerStatus.into(),
-                AttributeId::Value,
-            )]
-            .into_iter(),
-        );
     }
 
     /// Check if the server state indicates the server is running.

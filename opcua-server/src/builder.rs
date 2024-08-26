@@ -6,7 +6,7 @@ use tokio_util::sync::CancellationToken;
 use crate::{constants, node_manager::TypeTreeForUser};
 use opcua_core::config::Config;
 use opcua_crypto::SecurityPolicy;
-use opcua_types::MessageSecurityMode;
+use opcua_types::{BuildInfo, MessageSecurityMode};
 
 use super::{
     authenticator::AuthManager,
@@ -26,6 +26,7 @@ pub struct ServerBuilder {
     pub(crate) authenticator: Option<Arc<dyn AuthManager>>,
     pub(crate) type_tree_getter: Option<Arc<dyn TypeTreeForUser>>,
     pub(crate) token: CancellationToken,
+    pub(crate) build_info: BuildInfo,
 }
 
 impl Default for ServerBuilder {
@@ -36,6 +37,7 @@ impl Default for ServerBuilder {
             authenticator: None,
             token: CancellationToken::new(),
             type_tree_getter: None,
+            build_info: BuildInfo::default(),
         };
         builder
             .with_node_manager(InMemoryNodeManagerBuilder::new(CoreNodeManagerBuilder))
@@ -271,6 +273,13 @@ impl ServerBuilder {
     /// during browse, etc. This only lets you use the custom type tree for each individual user.
     pub fn with_type_tree_getter(mut self, type_tree_getter: Arc<dyn TypeTreeForUser>) -> Self {
         self.type_tree_getter = Some(type_tree_getter);
+        self
+    }
+
+    /// Set information about the application exposed to the user in the
+    /// `ServerStatus/BuildInfo` variable on the server.
+    pub fn build_info(mut self, build_info: BuildInfo) -> Self {
+        self.build_info = build_info;
         self
     }
 

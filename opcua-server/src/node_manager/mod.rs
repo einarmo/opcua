@@ -26,6 +26,8 @@ mod type_tree;
 mod utils;
 mod view;
 
+use crate::ServerStatusWrapper;
+
 use self::view::ExternalReferenceRequest;
 
 use super::{
@@ -239,6 +241,8 @@ pub struct ServerContext {
     pub type_tree: Arc<RwLock<DefaultTypeTree>>,
     /// Wrapper to get a type tree for a specific user.
     pub type_tree_getter: Arc<dyn TypeTreeForUser>,
+    /// Wrapper managing the `ServerStatus` server variable.
+    pub status: Arc<ServerStatusWrapper>,
 }
 
 /// This trait is a workaround for the lack of
