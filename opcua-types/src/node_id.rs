@@ -24,6 +24,7 @@ use crate::{
     node_ids::{ObjectId, ReferenceTypeId},
     status_code::StatusCode,
     string::*,
+    MethodId,
 };
 
 use super::{node_ids::VariableId, DataTypeId};
@@ -556,6 +557,15 @@ impl NodeId {
         match self.identifier {
             Identifier::Numeric(id) if self.namespace == 0 => {
                 DataTypeId::try_from(id).map_err(|_| NodeIdError)
+            }
+            _ => Err(NodeIdError),
+        }
+    }
+
+    pub fn as_method_id(&self) -> std::result::Result<MethodId, NodeIdError> {
+        match self.identifier {
+            Identifier::Numeric(id) if self.namespace == 0 => {
+                MethodId::try_from(id).map_err(|_| NodeIdError)
             }
             _ => Err(NodeIdError),
         }

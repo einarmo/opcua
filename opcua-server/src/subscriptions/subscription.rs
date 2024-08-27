@@ -184,11 +184,16 @@ impl Subscription {
         self.monitored_items.contains_key(id)
     }
 
+    /// Iterate over the monitored items in the subscription.
+    pub fn items(&self) -> impl Iterator<Item = &MonitoredItem> {
+        self.monitored_items.values()
+    }
+
     pub(super) fn drain<'a>(&'a mut self) -> impl Iterator<Item = (u32, MonitoredItem)> + 'a {
         self.monitored_items.drain()
     }
 
-    pub(super) fn set_resend_data(&mut self) {
+    pub fn set_resend_data(&mut self) {
         self.resend_data = true;
     }
 

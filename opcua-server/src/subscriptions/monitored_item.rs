@@ -609,6 +609,10 @@ impl MonitoredItem {
     pub fn discard_oldest(&self) -> bool {
         self.discard_oldest
     }
+
+    pub fn client_handle(&self) -> u32 {
+        self.client_handle
+    }
 }
 
 #[cfg(test)]
