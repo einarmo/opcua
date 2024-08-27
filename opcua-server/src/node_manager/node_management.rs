@@ -1,8 +1,10 @@
 use opcua_types::{
     AddNodeAttributes, AddNodesItem, AddNodesResult, AddReferencesItem, DecodingOptions,
-    DeleteNodesItem, DeleteReferencesItem, ExpandedNodeId, NodeClass, NodeId, QualifiedName,
-    StatusCode,
+    DeleteNodesItem, DeleteReferencesItem, DiagnosticBits, DiagnosticInfo, ExpandedNodeId,
+    NodeClass, NodeId, QualifiedName, StatusCode,
 };
+
+use super::IntoResult;
 
 #[derive(Debug, Clone)]
 /// Container for a single node being added in an `AddNode` service call.
@@ -14,13 +16,19 @@ pub struct AddNodeItem {
     node_class: NodeClass,
     node_attributes: AddNodeAttributes,
     type_definition_id: ExpandedNodeId,
+    diagnostic_bits: DiagnosticBits,
 
     result_node_id: NodeId,
     status: StatusCode,
+    diagnostic_info: Option<DiagnosticInfo>,
 }
 
 impl AddNodeItem {
-    pub(crate) fn new(item: AddNodesItem, options: &DecodingOptions) -> Self {
+    pub(crate) fn new(
+        item: AddNodesItem,
+        options: &DecodingOptions,
+        diagnostic_bits: DiagnosticBits,
+    ) -> Self {
         let mut status = StatusCode::BadNotSupported;
         let attributes =
             match AddNodeAttributes::from_extension_object(item.node_attributes, options) {
@@ -62,6 +70,8 @@ impl AddNodeItem {
             type_definition_id: item.type_definition,
             result_node_id: NodeId::null(),
             status,
+            diagnostic_info: None,
+            diagnostic_bits,
         }
     }
 
@@ -132,11 +142,29 @@ impl AddNodeItem {
         self.status
     }
 
-    pub(crate) fn into_result(self) -> AddNodesResult {
-        AddNodesResult {
-            status_code: self.status,
-            added_node_id: self.result_node_id,
-        }
+    /// Header diagnostic bits for requesting operation-level diagnostics.
+    pub fn diagnostic_bits(&self) -> DiagnosticBits {
+        self.diagnostic_bits
+    }
+
+    /// Set diagnostic infos, you don't need to do this if
+    /// `diagnostic_bits` are not set.
+    pub fn set_diagnostic_info(&mut self, diagnostic_info: DiagnosticInfo) {
+        self.diagnostic_info = Some(diagnostic_info);
+    }
+}
+
+impl IntoResult for AddNodeItem {
+    type Result = AddNodesResult;
+
+    fn into_result(self) -> (Self::Result, Option<DiagnosticInfo>) {
+        (
+            AddNodesResult {
+                status_code: self.status,
+                added_node_id: self.result_node_id,
+            },
+            self.diagnostic_info,
+        )
     }
 }
 
@@ -147,13 +175,15 @@ pub struct AddReferenceItem {
     reference_type_id: NodeId,
     target_node_id: ExpandedNodeId,
     is_forward: bool,
+    diagnostic_bits: DiagnosticBits,
 
     source_status: StatusCode,
     target_status: StatusCode,
+    diagnostic_info: Option<DiagnosticInfo>,
 }
 
 impl AddReferenceItem {
-    pub(crate) fn new(item: AddReferencesItem) -> Self {
+    pub(crate) fn new(item: AddReferencesItem, diagnostic_bits: DiagnosticBits) -> Self {
         let mut status = StatusCode::BadNotSupported;
         if item.source_node_id.is_null() {
             status = StatusCode::BadSourceNodeIdInvalid;
@@ -174,6 +204,8 @@ impl AddReferenceItem {
             is_forward: item.is_forward,
             source_status: status,
             target_status: status,
+            diagnostic_bits,
+            diagnostic_info: None,
         }
     }
 
@@ -227,6 +259,25 @@ impl AddReferenceItem {
     pub fn source_status(&self) -> StatusCode {
         self.source_status
     }
+
+    /// Header diagnostic bits for requesting operation-level diagnostics.
+    pub fn diagnostic_bits(&self) -> DiagnosticBits {
+        self.diagnostic_bits
+    }
+
+    /// Set diagnostic infos, you don't need to do this if
+    /// `diagnostic_bits` are not set.
+    pub fn set_diagnostic_info(&mut self, diagnostic_info: DiagnosticInfo) {
+        self.diagnostic_info = Some(diagnostic_info);
+    }
+}
+
+impl IntoResult for AddReferenceItem {
+    type Result = StatusCode;
+
+    fn into_result(self) -> (Self::Result, Option<DiagnosticInfo>) {
+        (self.result_status(), self.diagnostic_info)
+    }
 }
 
 #[derive(Debug)]
@@ -234,12 +285,14 @@ impl AddReferenceItem {
 pub struct DeleteNodeItem {
     node_id: NodeId,
     delete_target_references: bool,
+    diagnostic_bits: DiagnosticBits,
 
     status: StatusCode,
+    diagnostic_info: Option<DiagnosticInfo>,
 }
 
 impl DeleteNodeItem {
-    pub(crate) fn new(item: DeleteNodesItem) -> Self {
+    pub(crate) fn new(item: DeleteNodesItem, diagnostic_bits: DiagnosticBits) -> Self {
         let mut status = StatusCode::BadNodeIdUnknown;
         if item.node_id.is_null() {
             status = StatusCode::BadNodeIdInvalid;
@@ -249,6 +302,8 @@ impl DeleteNodeItem {
             node_id: item.node_id,
             delete_target_references: item.delete_target_references,
             status,
+            diagnostic_bits,
+            diagnostic_info: None,
         }
     }
 
@@ -271,6 +326,25 @@ impl DeleteNodeItem {
     pub fn node_id(&self) -> &NodeId {
         &self.node_id
     }
+
+    /// Header diagnostic bits for requesting operation-level diagnostics.
+    pub fn diagnostic_bits(&self) -> DiagnosticBits {
+        self.diagnostic_bits
+    }
+
+    /// Set diagnostic infos, you don't need to do this if
+    /// `diagnostic_bits` are not set.
+    pub fn set_diagnostic_info(&mut self, diagnostic_info: DiagnosticInfo) {
+        self.diagnostic_info = Some(diagnostic_info);
+    }
+}
+
+impl IntoResult for DeleteNodeItem {
+    type Result = StatusCode;
+
+    fn into_result(self) -> (Self::Result, Option<DiagnosticInfo>) {
+        (self.status(), self.diagnostic_info)
+    }
 }
 
 #[derive(Debug)]
@@ -281,13 +355,15 @@ pub struct DeleteReferenceItem {
     is_forward: bool,
     target_node_id: ExpandedNodeId,
     delete_bidirectional: bool,
+    diagnostic_bits: DiagnosticBits,
 
     source_status: StatusCode,
     target_status: StatusCode,
+    diagnostic_info: Option<DiagnosticInfo>,
 }
 
 impl DeleteReferenceItem {
-    pub(crate) fn new(item: DeleteReferencesItem) -> Self {
+    pub(crate) fn new(item: DeleteReferencesItem, diagnostic_bits: DiagnosticBits) -> Self {
         let mut status = StatusCode::BadNotSupported;
         if item.source_node_id.is_null() {
             status = StatusCode::BadSourceNodeIdInvalid;
@@ -308,9 +384,11 @@ impl DeleteReferenceItem {
             is_forward: item.is_forward,
             target_node_id: item.target_node_id,
             delete_bidirectional: item.delete_bidirectional,
+            diagnostic_bits,
 
             source_status: status,
             target_status: status,
+            diagnostic_info: None,
         }
     }
 
@@ -367,5 +445,24 @@ impl DeleteReferenceItem {
     /// Whether to delete the reference in both directions.
     pub fn delete_bidirectional(&self) -> bool {
         self.delete_bidirectional
+    }
+
+    /// Header diagnostic bits for requesting operation-level diagnostics.
+    pub fn diagnostic_bits(&self) -> DiagnosticBits {
+        self.diagnostic_bits
+    }
+
+    /// Set diagnostic infos, you don't need to do this if
+    /// `diagnostic_bits` are not set.
+    pub fn set_diagnostic_info(&mut self, diagnostic_info: DiagnosticInfo) {
+        self.diagnostic_info = Some(diagnostic_info);
+    }
+}
+
+impl IntoResult for DeleteReferenceItem {
+    type Result = StatusCode;
+
+    fn into_result(self) -> (Self::Result, Option<DiagnosticInfo>) {
+        (self.result_status(), self.diagnostic_info)
     }
 }

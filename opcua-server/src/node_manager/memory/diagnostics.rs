@@ -68,14 +68,13 @@ struct BrowseContinuationPoint {
     nodes: VecDeque<ReferenceDescription>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 struct NamespaceNode {
     namespace: String,
     property: Option<String>,
 }
 
-#[derive(Serialize, Deserialize)]
-#[serde(untagged)]
+#[derive(Serialize, Deserialize, Debug)]
 enum DiagnosticsNode {
     Namespace(NamespaceNode),
 }
@@ -603,6 +602,7 @@ impl NodeManager for DiagnosticsNodeManager {
                 }
             } else if node.node_id().namespace == self.namespace_index {
                 let Some(node_desc) = from_opaque_node_id::<DiagnosticsNode>(node.node_id()) else {
+                    log::warn!("Unknown node...");
                     node.set_status(StatusCode::BadNodeIdUnknown);
                     continue;
                 };
@@ -632,6 +632,7 @@ impl NodeManager for DiagnosticsNodeManager {
         for node in nodes_to_read {
             let Some(node_desc) = from_opaque_node_id::<DiagnosticsNode>(&node.node().node_id)
             else {
+                log::warn!("Unknown node...");
                 node.set_error(StatusCode::BadNodeIdUnknown);
                 continue;
             };

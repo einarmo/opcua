@@ -49,3 +49,4 @@ opcua-nodes = { path = "../opcua-nodes" }
 
 opcua-client = { path = "../opcua-client", optional = true }
 opcua-core-namespace = { path = "../opcua-core-namespace", optional = true }
+postcard = { version = "1.0.10", features = ["use-std"] }

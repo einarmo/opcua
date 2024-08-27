@@ -1,7 +1,9 @@
 use opcua_types::{
-    AttributeId, DataValue, DateTime, NodeId, NumericRange, QualifiedName, ReadValueId, StatusCode,
-    WriteValue,
+    AttributeId, DataValue, DateTime, DiagnosticBits, DiagnosticInfo, NodeId, NumericRange,
+    QualifiedName, ReadValueId, StatusCode, WriteValue,
 };
+
+use super::IntoResult;
 
 #[derive(Debug, Clone)]
 /// Parsed and validated version of a raw ReadValueId from OPC-UA.
@@ -59,11 +61,14 @@ impl Default for ParsedReadValueId {
 pub struct ReadNode {
     node: ParsedReadValueId,
     pub(crate) result: DataValue,
+    diagnostic_bits: DiagnosticBits,
+
+    diagnostic_info: Option<DiagnosticInfo>,
 }
 
 impl ReadNode {
     /// Create a `ReadNode` from a `ReadValueId`.
-    pub(crate) fn new(node: ReadValueId) -> Self {
+    pub(crate) fn new(node: ReadValueId, diagnostic_bits: DiagnosticBits) -> Self {
         let mut status = StatusCode::BadNodeIdUnknown;
 
         let node = match ParsedReadValueId::parse(node) {
@@ -81,6 +86,8 @@ impl ReadNode {
                 server_timestamp: Some(DateTime::now()),
                 ..Default::default()
             },
+            diagnostic_bits,
+            diagnostic_info: None,
         }
     }
 
@@ -110,8 +117,23 @@ impl ReadNode {
         }
     }
 
-    pub(crate) fn take_result(self) -> DataValue {
-        self.result
+    /// Header diagnostic bits for requesting operation-level diagnostics.
+    pub fn diagnostic_bits(&self) -> DiagnosticBits {
+        self.diagnostic_bits
+    }
+
+    /// Set diagnostic infos, you don't need to do this if
+    /// `diagnostic_bits` are not set.
+    pub fn set_diagnostic_info(&mut self, diagnostic_info: DiagnosticInfo) {
+        self.diagnostic_info = Some(diagnostic_info);
+    }
+}
+
+impl IntoResult for ReadNode {
+    type Result = DataValue;
+
+    fn into_result(self) -> (Self::Result, Option<DiagnosticInfo>) {
+        (self.result, self.diagnostic_info)
     }
 }
 
@@ -169,12 +191,15 @@ impl Default for ParsedWriteValue {
 #[derive(Debug)]
 pub struct WriteNode {
     value: ParsedWriteValue,
+    diagnostic_bits: DiagnosticBits,
+
     status: StatusCode,
+    diagnostic_info: Option<DiagnosticInfo>,
 }
 
 impl WriteNode {
     /// Create a `WriteNode` from a raw OPC-UA `WriteValue`.
-    pub(crate) fn new(value: WriteValue) -> Self {
+    pub(crate) fn new(value: WriteValue, diagnostic_bits: DiagnosticBits) -> Self {
         let mut status = StatusCode::BadNodeIdUnknown;
 
         let value = match ParsedWriteValue::parse(value) {
@@ -185,7 +210,12 @@ impl WriteNode {
             }
         };
 
-        Self { value, status }
+        Self {
+            value,
+            status,
+            diagnostic_bits,
+            diagnostic_info: None,
+        }
     }
 
     /// Get the current status.
@@ -201,5 +231,24 @@ impl WriteNode {
     /// Get the value to write.
     pub fn value(&self) -> &ParsedWriteValue {
         &self.value
+    }
+
+    /// Header diagnostic bits for requesting operation-level diagnostics.
+    pub fn diagnostic_bits(&self) -> DiagnosticBits {
+        self.diagnostic_bits
+    }
+
+    /// Set diagnostic infos, you don't need to do this if
+    /// `diagnostic_bits` are not set.
+    pub fn set_diagnostic_info(&mut self, diagnostic_info: DiagnosticInfo) {
+        self.diagnostic_info = Some(diagnostic_info);
+    }
+}
+
+impl IntoResult for WriteNode {
+    type Result = StatusCode;
+
+    fn into_result(self) -> (Self::Result, Option<DiagnosticInfo>) {
+        (self.status(), self.diagnostic_info)
     }
 }

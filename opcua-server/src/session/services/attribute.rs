@@ -2,8 +2,8 @@ use opcua_core::trace_write_lock;
 
 use crate::{
     node_manager::{
-        HistoryNode, HistoryReadDetails, HistoryUpdateDetails, HistoryUpdateNode, NodeManagers,
-        ReadNode, WriteNode,
+        consume_results, HistoryNode, HistoryReadDetails, HistoryUpdateDetails, HistoryUpdateNode,
+        NodeManagers, ReadNode, WriteNode,
     },
     session::{controller::Response, message_handler::Request},
 };
@@ -28,7 +28,7 @@ pub async fn read(node_managers: NodeManagers, request: Request<ReadRequest>) ->
 
     let mut results: Vec<_> = nodes_to_read
         .into_iter()
-        .map(|n| ReadNode::new(n))
+        .map(|n| ReadNode::new(n, request.request.request_header.return_diagnostics))
         .collect();
 
     for (idx, node_manager) in node_managers.into_iter().enumerate() {
@@ -60,13 +60,14 @@ pub async fn read(node_managers: NodeManagers, request: Request<ReadRequest>) ->
         }
     }
 
-    let results = results.into_iter().map(|r| r.take_result()).collect();
+    let (results, diagnostic_infos) =
+        consume_results(results, request.request.request_header.return_diagnostics);
 
     Response {
         message: ReadResponse {
             response_header: ResponseHeader::new_good(request.request_handle),
-            results: Some(results),
-            diagnostic_infos: None,
+            results,
+            diagnostic_infos,
         }
         .into(),
         request_id: request.request_id,
@@ -83,7 +84,7 @@ pub async fn write(node_managers: NodeManagers, request: Request<WriteRequest>) 
 
     let mut results: Vec<_> = nodes_to_write
         .into_iter()
-        .map(|n| WriteNode::new(n))
+        .map(|n| WriteNode::new(n, request.request.request_header.return_diagnostics))
         .collect();
 
     for (idx, node_manager) in node_managers.into_iter().enumerate() {
@@ -107,13 +108,14 @@ pub async fn write(node_managers: NodeManagers, request: Request<WriteRequest>) 
         }
     }
 
-    let results = results.into_iter().map(|r| r.status()).collect();
+    let (results, diagnostic_infos) =
+        consume_results(results, request.request.request_header.return_diagnostics);
 
     Response {
         message: WriteResponse {
             response_header: ResponseHeader::new_good(request.request_handle),
-            results: Some(results),
-            diagnostic_infos: None,
+            results,
+            diagnostic_infos,
         }
         .into(),
         request_id: request.request_id,

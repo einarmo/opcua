@@ -1,5 +1,5 @@
 use crate::{
-    node_manager::{MethodCall, NodeManagers},
+    node_manager::{consume_results, MethodCall, NodeManagers},
     session::{controller::Response, message_handler::Request},
 };
 use opcua_types::{CallRequest, CallResponse, ResponseHeader, StatusCode};
@@ -12,7 +12,10 @@ pub async fn call(node_managers: NodeManagers, request: Request<CallRequest>) ->
         request.info.operational_limits.max_nodes_per_method_call
     );
 
-    let mut calls: Vec<_> = method_calls.into_iter().map(MethodCall::new).collect();
+    let mut calls: Vec<_> = method_calls
+        .into_iter()
+        .map(|c| MethodCall::new(c, request.request.request_header.return_diagnostics))
+        .collect();
 
     for (idx, node_manager) in node_managers.into_iter().enumerate() {
         context.current_node_manager_index = idx;
@@ -34,11 +37,14 @@ pub async fn call(node_managers: NodeManagers, request: Request<CallRequest>) ->
         }
     }
 
+    let (results, diagnostic_infos) =
+        consume_results(calls, request.request.request_header.return_diagnostics);
+
     Response {
         message: CallResponse {
             response_header: ResponseHeader::new_good(request.request_handle),
-            results: Some(calls.into_iter().map(|c| c.into_result()).collect()),
-            diagnostic_infos: None,
+            results,
+            diagnostic_infos,
         }
         .into(),
         request_id: request.request_id,

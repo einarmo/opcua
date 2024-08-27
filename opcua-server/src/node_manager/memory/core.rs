@@ -17,9 +17,9 @@ use crate::{
 };
 use opcua_core::{sync::RwLock, trace_lock};
 use opcua_types::{
-    AccessRestrictionType, DataValue, DateTime, ExtensionObject, IdType, Identifier, MethodId,
-    MonitoringMode, NumericRange, ObjectId, ReferenceTypeId, StatusCode, TimeZoneDataType,
-    TimestampsToReturn, VariableId, Variant, VariantTypeId,
+    DataValue, DateTime, ExtensionObject, IdType, Identifier, MethodId, MonitoringMode,
+    NumericRange, ObjectId, ReferenceTypeId, StatusCode, TimeZoneDataType, TimestampsToReturn,
+    VariableId, Variant, VariantTypeId,
 };
 
 use super::{
@@ -89,8 +89,10 @@ impl InMemoryNodeManagerImpl for CoreNodeManagerImpl {
 
     fn namespaces(&self) -> Vec<NamespaceMetadata> {
         vec![NamespaceMetadata {
+            // If necessary we could read this from the address space here,
+            // but I don't think we need to, the diagnostics node manager
+            // has an exception for the base namespace.
             is_namespace_subset: Some(false),
-            // TODO: Should be possible to fill this
             namespace_publication_date: None,
             namespace_version: None,
             namespace_uri: "http://opcfoundation.org/UA/".to_owned(),
@@ -437,20 +439,6 @@ impl CoreNodeManagerImpl {
             }
             VariableId::Server_ServerStatus_State => {
                 (self.status.state() as i32).into()
-            }
-
-            // Namespace metadata
-            VariableId::OPCUANamespaceMetadata_IsNamespaceSubset => {
-                false.into()
-            }
-            VariableId::OPCUANamespaceMetadata_DefaultAccessRestrictions => {
-                AccessRestrictionType::None.bits().into()
-            }
-            VariableId::OPCUANamespaceMetadata_NamespaceUri => {
-                "http://opcfoundation.org/UA/".to_owned().into()
-            }
-            VariableId::OPCUANamespaceMetadata_StaticNodeIdTypes => {
-                vec![IdType::Numeric as u8].into()
             }
 
             VariableId::Server_NamespaceArray => {
