@@ -108,10 +108,10 @@ pub fn generate_event_impls(event: EventStruct) -> syn::Result<TokenStream> {
 
     if event.attribute.namespace.is_some() {
         ctors.extend(quote! {
-            pub fn event_type_id(namespaces: &opcua::server::node_manager::NamespaceMap) -> opcua::types::NodeId {
+            pub fn event_type_id(namespaces: &opcua::nodes::NamespaceMap) -> opcua::types::NodeId {
                 Self::event_type_id_from_index(#get_namespace)
             }
-    
+
             pub fn event_type_id_from_index(namespace: u16) -> opcua::types::NodeId {
                 opcua::types::NodeId::new(namespace, #identifier_body)
             }
