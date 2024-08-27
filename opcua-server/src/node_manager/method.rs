@@ -1,4 +1,9 @@
-use opcua_types::{CallMethodRequest, CallMethodResult, NodeId, StatusCode, Variant};
+use opcua_types::{
+    CallMethodRequest, CallMethodResult, DiagnosticBits, DiagnosticInfo, NodeId, StatusCode,
+    Variant,
+};
+
+use super::IntoResult;
 
 #[derive(Debug)]
 /// Container for a single method call in a `Call` service call.
@@ -6,14 +11,16 @@ pub struct MethodCall {
     object_id: NodeId,
     method_id: NodeId,
     arguments: Vec<Variant>,
+    diagnostic_bits: DiagnosticBits,
 
     status: StatusCode,
     argument_results: Vec<StatusCode>,
     outputs: Vec<Variant>,
+    diagnostic_info: Option<DiagnosticInfo>,
 }
 
 impl MethodCall {
-    pub(crate) fn new(request: CallMethodRequest) -> Self {
+    pub(crate) fn new(request: CallMethodRequest, diagnostic_bits: DiagnosticBits) -> Self {
         Self {
             object_id: request.object_id,
             method_id: request.method_id,
@@ -21,6 +28,8 @@ impl MethodCall {
             status: StatusCode::BadMethodInvalid,
             argument_results: Vec::new(),
             outputs: Vec::new(),
+            diagnostic_bits,
+            diagnostic_info: None,
         }
     }
 
@@ -63,17 +72,35 @@ impl MethodCall {
         self.status
     }
 
-    pub(crate) fn into_result(self) -> CallMethodResult {
-        CallMethodResult {
-            status_code: self.status,
-            input_argument_diagnostic_infos: None,
-            input_argument_results: if !self.argument_results.is_empty() {
-                Some(self.argument_results)
-            } else {
-                None
+    /// Header diagnostic bits for requesting operation-level diagnostics.
+    pub fn diagnostic_bits(&self) -> DiagnosticBits {
+        self.diagnostic_bits
+    }
+
+    /// Set diagnostic infos, you don't need to do this if
+    /// `diagnostic_bits` are not set.
+    pub fn set_diagnostic_info(&mut self, diagnostic_info: DiagnosticInfo) {
+        self.diagnostic_info = Some(diagnostic_info);
+    }
+}
+
+impl IntoResult for MethodCall {
+    type Result = CallMethodResult;
+
+    fn into_result(self) -> (Self::Result, Option<DiagnosticInfo>) {
+        (
+            CallMethodResult {
+                status_code: self.status,
+                input_argument_diagnostic_infos: None,
+                input_argument_results: if !self.argument_results.is_empty() {
+                    Some(self.argument_results)
+                } else {
+                    None
+                },
+                output_arguments: Some(self.outputs),
             },
-            output_arguments: Some(self.outputs),
-        }
+            self.diagnostic_info,
+        )
     }
 }
 

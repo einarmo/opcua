@@ -1,6 +1,7 @@
 use crate::{
     node_manager::{
-        AddNodeItem, AddReferenceItem, DeleteNodeItem, DeleteReferenceItem, NodeManagers,
+        consume_results, AddNodeItem, AddReferenceItem, DeleteNodeItem, DeleteReferenceItem,
+        NodeManagers,
     },
     session::{controller::Response, message_handler::Request},
 };
@@ -25,7 +26,13 @@ pub async fn add_nodes(node_managers: NodeManagers, request: Request<AddNodesReq
     let decoding_options = request.info.decoding_options();
     let mut to_add: Vec<_> = nodes_to_add
         .into_iter()
-        .map(|it| AddNodeItem::new(it, &decoding_options))
+        .map(|it| {
+            AddNodeItem::new(
+                it,
+                &decoding_options,
+                request.request.request_header.return_diagnostics,
+            )
+        })
         .collect();
 
     for (idx, node_manager) in node_managers.iter().enumerate() {
@@ -55,11 +62,14 @@ pub async fn add_nodes(node_managers: NodeManagers, request: Request<AddNodesReq
         }
     }
 
+    let (results, diagnostic_infos) =
+        consume_results(to_add, request.request.request_header.return_diagnostics);
+
     Response {
         message: AddNodesResponse {
             response_header: ResponseHeader::new_good(request.request_handle),
-            results: Some(to_add.into_iter().map(|c| c.into_result()).collect()),
-            diagnostic_infos: None,
+            results,
+            diagnostic_infos,
         }
         .into(),
         request_id: request.request_id,
@@ -83,7 +93,7 @@ pub async fn add_references(
 
     let mut to_add: Vec<_> = references_to_add
         .into_iter()
-        .map(|it| AddReferenceItem::new(it))
+        .map(|it| AddReferenceItem::new(it, request.request.request_header.return_diagnostics))
         .collect();
 
     for (idx, node_manager) in node_managers.iter().enumerate() {
@@ -117,11 +127,14 @@ pub async fn add_references(
         }
     }
 
+    let (results, diagnostic_infos) =
+        consume_results(to_add, request.request.request_header.return_diagnostics);
+
     Response {
         message: AddReferencesResponse {
             response_header: ResponseHeader::new_good(request.request_handle),
-            results: Some(to_add.into_iter().map(|r| r.result_status()).collect()),
-            diagnostic_infos: None,
+            results,
+            diagnostic_infos,
         }
         .into(),
         request_id: request.request_id,
@@ -145,7 +158,7 @@ pub async fn delete_nodes(
 
     let mut to_delete: Vec<_> = nodes_to_delete
         .into_iter()
-        .map(|v| DeleteNodeItem::new(v))
+        .map(|v| DeleteNodeItem::new(v, request.request.request_header.return_diagnostics))
         .collect();
 
     for (idx, node_manager) in node_managers.iter().enumerate() {
@@ -181,11 +194,14 @@ pub async fn delete_nodes(
             .await;
     }
 
+    let (results, diagnostic_infos) =
+        consume_results(to_delete, request.request.request_header.return_diagnostics);
+
     Response {
         message: DeleteNodesResponse {
             response_header: ResponseHeader::new_good(request.request_handle),
-            results: Some(to_delete.into_iter().map(|r| r.status()).collect()),
-            diagnostic_infos: None,
+            results,
+            diagnostic_infos,
         }
         .into(),
         request_id: request.request_id,
@@ -209,7 +225,7 @@ pub async fn delete_references(
 
     let mut to_delete: Vec<_> = references_to_delete
         .into_iter()
-        .map(|it| DeleteReferenceItem::new(it))
+        .map(|it| DeleteReferenceItem::new(it, request.request.request_header.return_diagnostics))
         .collect();
 
     for (idx, node_manager) in node_managers.iter().enumerate() {
@@ -243,11 +259,14 @@ pub async fn delete_references(
         }
     }
 
+    let (results, diagnostic_infos) =
+        consume_results(to_delete, request.request.request_header.return_diagnostics);
+
     Response {
         message: DeleteReferencesResponse {
             response_header: ResponseHeader::new_good(request.request_handle),
-            results: Some(to_delete.into_iter().map(|r| r.result_status()).collect()),
-            diagnostic_infos: None,
+            results,
+            diagnostic_infos,
         }
         .into(),
         request_id: request.request_id,
