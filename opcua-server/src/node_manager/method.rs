@@ -76,3 +76,34 @@ impl MethodCall {
         }
     }
 }
+
+/// Convenient macro for performing an _implicit_ cast of
+/// each argument to the expected method argument type, and returning
+/// the arguments as a tuple.
+///
+/// This macro will produce `Result<(Arg1, Arg2, ...), StatusCode>`.
+///
+/// The types in the argument list must be enum variants of the `Variant` type.
+///
+/// # Example
+///
+/// ```ignore
+/// let (arg1, arg2) = load_method_args!(method_call, Int32, String)?;
+/// ```
+#[macro_export]
+macro_rules! load_method_args {
+    ($call:expr, $($type:ident),+) => {
+        {
+            let mut arguments = $call.arguments().iter();
+            (move || {
+                Ok(($(
+                    match arguments.next().map(|v| v.convert(VariantTypeId::$type)) {
+                        Some(Variant::$type(val)) => val,
+                        _ => return Err(StatusCode::BadInvalidArgument),
+                    }
+                ),*))
+            })()
+        }
+
+    };
+}

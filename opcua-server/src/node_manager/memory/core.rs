@@ -3,21 +3,23 @@ use std::{sync::Arc, time::Duration};
 use async_trait::async_trait;
 use chrono::Offset;
 use hashbrown::HashMap;
+use opcua_nodes::NodeType;
 
 use crate::{
     address_space::{read_node_value, AddressSpace, CoreNamespace},
+    load_method_args,
     node_manager::{
-        MonitoredItemRef, MonitoredItemUpdateRef, NodeManagersRef, ParsedReadValueId,
+        MethodCall, MonitoredItemRef, MonitoredItemUpdateRef, NodeManagersRef, ParsedReadValueId,
         RequestContext, ServerContext, SyncSampler,
     },
     subscriptions::CreateMonitoredItem,
     ServerCapabilities, ServerStatusWrapper,
 };
-use opcua_core::sync::RwLock;
+use opcua_core::{sync::RwLock, trace_lock};
 use opcua_types::{
-    AccessRestrictionType, DataValue, DateTime, ExtensionObject, IdType, Identifier,
+    AccessRestrictionType, DataValue, DateTime, ExtensionObject, IdType, Identifier, MethodId,
     MonitoringMode, NumericRange, ObjectId, ReferenceTypeId, StatusCode, TimeZoneDataType,
-    TimestampsToReturn, VariableId, Variant,
+    TimestampsToReturn, VariableId, Variant, VariantTypeId,
 };
 
 use super::{
@@ -80,6 +82,9 @@ impl InMemoryNodeManagerImpl for CoreNodeManagerImpl {
             Duration::from_millis(sampler_interval),
             context.subscriptions.clone(),
         );
+        // Some core methods should be generally executable
+        Self::set_method_executable(address_space, MethodId::Server_GetMonitoredItems);
+        Self::set_method_executable(address_space, MethodId::Server_ResendData);
     }
 
     fn namespaces(&self) -> Vec<NamespaceMetadata> {
@@ -115,6 +120,20 @@ impl InMemoryNodeManagerImpl for CoreNodeManagerImpl {
                 self.read_node_value(context, &address_space, n, max_age, timestamps_to_return)
             })
             .collect()
+    }
+
+    async fn call(
+        &self,
+        context: &RequestContext,
+        _address_space: &RwLock<AddressSpace>,
+        methods_to_call: &mut [&mut &mut MethodCall],
+    ) -> Result<(), StatusCode> {
+        for method in methods_to_call {
+            if let Err(e) = self.call_builtin_method(method, context) {
+                method.set_status(e);
+            }
+        }
+        Ok(())
     }
 
     async fn create_value_monitored_items(
@@ -485,5 +504,54 @@ impl CoreNodeManagerImpl {
                 ReferenceTypeId::Organizes,
             )
         }
+    }
+
+    fn set_method_executable(address_space: &mut AddressSpace, method: MethodId) {
+        let Some(NodeType::Method(m)) = address_space.find_mut(method) else {
+            return;
+        };
+        m.set_executable(true);
+        m.set_user_executable(true);
+    }
+
+    fn call_builtin_method(
+        &self,
+        call: &mut MethodCall,
+        context: &RequestContext,
+    ) -> Result<(), StatusCode> {
+        let Ok(id) = call.method_id().as_method_id() else {
+            return Ok(());
+        };
+
+        match id {
+            MethodId::Server_GetMonitoredItems => {
+                let id = load_method_args!(call, UInt32)?;
+                let subs = context
+                    .subscriptions
+                    .get_session_subscriptions(context.session_id)
+                    .ok_or(StatusCode::BadSessionIdInvalid)?;
+                let subs = trace_lock!(subs);
+                let sub = subs.get(id).ok_or(StatusCode::BadSubscriptionIdInvalid)?;
+                let (ids, handles): (Vec<_>, Vec<_>) =
+                    sub.items().map(|i| (i.id(), i.client_handle())).unzip();
+                call.set_outputs(vec![ids.into(), handles.into()]);
+                call.set_status(StatusCode::Good);
+            }
+            MethodId::Server_ResendData => {
+                let id = load_method_args!(call, UInt32)?;
+                let subs = context
+                    .subscriptions
+                    .get_session_subscriptions(context.session_id)
+                    .ok_or(StatusCode::BadSessionIdInvalid)?;
+                let mut subs = trace_lock!(subs);
+                let sub = subs
+                    .get_mut(id)
+                    .ok_or(StatusCode::BadSubscriptionIdInvalid)?;
+                sub.set_resend_data();
+                call.set_status(StatusCode::Good);
+            }
+            _ => return Err(StatusCode::BadNotSupported),
+        }
+        Ok(())
     }
 }

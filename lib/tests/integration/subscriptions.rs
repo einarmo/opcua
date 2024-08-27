@@ -1,8 +1,9 @@
 use std::time::Duration;
 
+use crate::utils::ChannelNotifications;
+
 use super::utils::setup;
 use opcua::{
-    client::OnSubscriptionNotification,
     server::address_space::{AccessLevel, UserAccessLevel, VariableBuilder},
     types::{
         AttributeId, DataTypeId, DataValue, DateTime, MonitoredItemCreateRequest,
@@ -11,49 +12,6 @@ use opcua::{
     },
 };
 use tokio::{sync::mpsc::UnboundedReceiver, time::timeout};
-
-#[derive(Clone)]
-struct ChannelNotifications {
-    data_values: tokio::sync::mpsc::UnboundedSender<(ReadValueId, DataValue)>,
-    events: tokio::sync::mpsc::UnboundedSender<(ReadValueId, Option<Vec<Variant>>)>,
-}
-
-impl ChannelNotifications {
-    pub fn new() -> (
-        Self,
-        UnboundedReceiver<(ReadValueId, DataValue)>,
-        UnboundedReceiver<(ReadValueId, Option<Vec<Variant>>)>,
-    ) {
-        let (data_values, data_recv) = tokio::sync::mpsc::unbounded_channel();
-        let (events, events_recv) = tokio::sync::mpsc::unbounded_channel();
-        (
-            Self {
-                data_values,
-                events,
-            },
-            data_recv,
-            events_recv,
-        )
-    }
-}
-
-impl OnSubscriptionNotification for ChannelNotifications {
-    fn on_data_value(&mut self, notification: DataValue, item: &opcua::client::MonitoredItem) {
-        let _ = self
-            .data_values
-            .send((item.item_to_monitor().clone(), notification));
-    }
-
-    fn on_event(
-        &mut self,
-        event_fields: Option<Vec<Variant>>,
-        item: &opcua::client::MonitoredItem,
-    ) {
-        let _ = self
-            .events
-            .send((item.item_to_monitor().clone(), event_fields));
-    }
-}
 
 #[tokio::test]
 async fn simple_subscriptions() {

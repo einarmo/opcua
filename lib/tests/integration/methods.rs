@@ -1,4 +1,9 @@
-use std::sync::{atomic::AtomicU64, Arc};
+use std::{
+    sync::{atomic::AtomicU64, Arc},
+    time::Duration,
+};
+
+use crate::utils::ChannelNotifications;
 
 use super::utils::setup;
 use opcua::{
@@ -7,6 +12,9 @@ use opcua::{
         AttributeId, CallMethodRequest, DataTypeId, NodeId, ObjectId, StatusCode, Variant,
         VariantTypeId,
     },
+};
+use opcua_types::{
+    MonitoredItemCreateRequest, MonitoringParameters, ReadValueId, TimestampsToReturn, VariableId,
 };
 
 #[tokio::test]
@@ -243,4 +251,47 @@ async fn call_limits() {
         .await
         .unwrap_err();
     assert_eq!(e, StatusCode::BadTooManyOperations);
+}
+
+#[tokio::test]
+async fn call_get_monitored_items() {
+    let (_tester, _nm, session) = setup().await;
+
+    let (notifs, _data, _) = ChannelNotifications::new();
+
+    // Create a subscription
+    let sub_id = session
+        .create_subscription(Duration::from_millis(100), 100, 20, 1000, 0, true, notifs)
+        .await
+        .unwrap();
+
+    // Create a monitored item on that subscription
+    session
+        .create_monitored_items(
+            sub_id,
+            TimestampsToReturn::Both,
+            vec![MonitoredItemCreateRequest {
+                item_to_monitor: ReadValueId {
+                    node_id: VariableId::Server_ServerStatus_State.into(),
+                    attribute_id: AttributeId::Value as u32,
+                    ..Default::default()
+                },
+                monitoring_mode: opcua::types::MonitoringMode::Reporting,
+                requested_parameters: MonitoringParameters {
+                    sampling_interval: 0.0,
+                    queue_size: 10,
+                    discard_oldest: true,
+                    client_handle: 15,
+                    ..Default::default()
+                },
+            }],
+        )
+        .await
+        .unwrap();
+
+    let (ids, handles) = session.call_get_monitored_items(sub_id).await.unwrap();
+
+    assert_eq!(ids.len(), 1);
+    assert_eq!(handles.len(), 1);
+    assert_eq!(15, handles[0]);
 }
