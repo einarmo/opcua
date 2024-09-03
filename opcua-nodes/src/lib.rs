@@ -1,11 +1,14 @@
 use bitflags::bitflags;
 
+mod events;
 mod generic;
 mod import;
 mod namespaces;
+mod type_tree;
 
 pub use base::Base;
 pub use data_type::{DataType, DataTypeBuilder};
+pub use events::*;
 pub use generic::new_node_from_attributes;
 pub use import::{ImportedItem, ImportedReference, NodeSetImport, NodeSetNamespaceMapper};
 pub use method::{Method, MethodBuilder};
@@ -15,9 +18,14 @@ pub use object::{Object, ObjectBuilder};
 pub use object_type::{ObjectType, ObjectTypeBuilder};
 use opcua_types::NodeId;
 pub use reference_type::{ReferenceType, ReferenceTypeBuilder};
+pub use type_tree::{
+    DefaultTypeTree, TypeProperty, TypePropertyInverseRef, TypeTree, TypeTreeNode,
+};
 pub use variable::{Variable, VariableBuilder};
 pub use variable_type::{VariableType, VariableTypeBuilder};
 pub use view::{View, ViewBuilder};
+
+pub use opcua_macros::{Event, EventField};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum ReferenceDirection {

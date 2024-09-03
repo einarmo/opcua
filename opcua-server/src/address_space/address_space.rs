@@ -2,11 +2,9 @@ use std::collections::VecDeque;
 
 use hashbrown::{Equivalent, HashMap, HashSet};
 use log::{debug, error, info, warn};
-use opcua_nodes::{NamespaceMap, NodeInsertTarget, ReferenceDirection};
+use opcua_nodes::{DefaultTypeTree, NamespaceMap, NodeInsertTarget, ReferenceDirection, TypeTree};
 
-use crate::node_manager::{
-    DefaultTypeTree, ParsedReadValueId, ParsedWriteValue, RequestContext, TypeTree,
-};
+use crate::node_manager::{ParsedReadValueId, ParsedWriteValue, RequestContext};
 use opcua_types::{
     BrowseDirection, DataValue, LocalizedText, NodeClass, NodeId, QualifiedName, ReferenceTypeId,
     StatusCode, TimestampsToReturn,
@@ -852,14 +850,11 @@ impl NodeInsertTarget for AddressSpace {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        address_space::{
-            CoreNamespace, EventNotifier, MethodBuilder, NodeBase, NodeType, Object, ObjectBuilder,
-            ObjectTypeBuilder, Variable, VariableBuilder,
-        },
-        node_manager::{DefaultTypeTree, TypeTree},
+    use crate::address_space::{
+        CoreNamespace, EventNotifier, MethodBuilder, NodeBase, NodeType, Object, ObjectBuilder,
+        ObjectTypeBuilder, Variable, VariableBuilder,
     };
-    use opcua_nodes::NamespaceMap;
+    use opcua_nodes::{DefaultTypeTree, NamespaceMap, TypeTree};
     use opcua_types::{
         argument::Argument, Array, BrowseDirection, DataTypeId, DecodingOptions, LocalizedText,
         NodeClass, NodeId, NumericRange, ObjectId, ObjectTypeId, QualifiedName, ReferenceTypeId,

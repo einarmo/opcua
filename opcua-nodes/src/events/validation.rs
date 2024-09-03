@@ -9,7 +9,7 @@ use opcua_types::{
     StatusCode, UAString,
 };
 
-use crate::node_manager::TypeTree;
+use crate::TypeTree;
 
 #[derive(Debug, Clone)]
 pub struct ParsedAttributeOperand {
@@ -105,7 +105,7 @@ impl ParsedContentFilter {
         }
     }
 
-    pub(crate) fn parse(
+    pub fn parse(
         filter: ContentFilter,
         type_tree: &dyn TypeTree,
         allow_attribute_operand: bool,
@@ -437,7 +437,7 @@ fn has_cycles(
 
 #[cfg(test)]
 mod tests {
-    use crate::{events::validation::validate_where_clause, node_manager::DefaultTypeTree};
+    use crate::{events::validation::validate_where_clause, DefaultTypeTree};
     use opcua_types::{
         AttributeId, ContentFilter, ContentFilterElement, ContentFilterResult, FilterOperator,
         NodeClass, NodeId, ObjectTypeId, Operand, SimpleAttributeOperand, StatusCode,

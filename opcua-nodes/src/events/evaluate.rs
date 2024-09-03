@@ -378,15 +378,11 @@ mod tests {
     use regex::Regex;
 
     use crate::{
-        address_space::{AddressSpace, CoreNamespace, ObjectTypeBuilder, VariableBuilder},
-        events::evaluate::like_to_regex,
-        node_manager::DefaultTypeTree,
-        BaseEventType, Event, ParsedContentFilter,
+        events::evaluate::like_to_regex, BaseEventType, DefaultTypeTree, Event, ParsedContentFilter,
     };
     use opcua_types::{
-        AttributeId, ByteString, ContentFilter, ContentFilterElement, DataTypeId, DateTime,
-        FilterOperator, LocalizedText, NodeId, ObjectId, ObjectTypeId, Operand, UAString,
-        VariableTypeId,
+        AttributeId, ByteString, ContentFilter, ContentFilterElement, DateTime, FilterOperator,
+        LocalizedText, NodeClass, NodeId, ObjectTypeId, Operand, UAString,
     };
 
     fn compare_regex(r1: Regex, r2: Regex) {
@@ -457,8 +453,7 @@ mod tests {
     }
 
     mod opcua {
-        pub use crate as server;
-        pub use opcua_nodes as nodes;
+        pub use crate as nodes;
         pub use opcua_types as types;
     }
 
@@ -487,28 +482,20 @@ mod tests {
     }
 
     fn type_tree() -> DefaultTypeTree {
-        let mut address_space = AddressSpace::new();
         let mut type_tree = DefaultTypeTree::new();
-        address_space.import_node_set::<CoreNamespace>(type_tree.namespaces_mut());
-        address_space.add_namespace(
-            "my:namespace:uri",
-            type_tree.namespaces_mut().add_namespace("my:namespace:uri"),
-        );
 
         let event_type_id = NodeId::new(1, 123);
-        ObjectTypeBuilder::new(&event_type_id, "TestEventType", "TestEventType")
-            .is_abstract(false)
-            .subtype_of(ObjectTypeId::BaseEventType)
-            .insert(&mut address_space);
-
-        VariableBuilder::new(&NodeId::new(1, "field"), "Field", "Field")
-            .property_of(&event_type_id)
-            .data_type(DataTypeId::UInt32)
-            .has_type_definition(VariableTypeId::PropertyType)
-            .has_modelling_rule(ObjectId::ModellingRule_Mandatory)
-            .insert(&mut address_space);
-
-        address_space.load_into_type_tree(&mut type_tree);
+        type_tree.add_type_node(
+            &event_type_id,
+            &ObjectTypeId::BaseEventType.into(),
+            NodeClass::ObjectType,
+        );
+        type_tree.add_type_property(
+            &NodeId::new(1, "field"),
+            &event_type_id,
+            &[&"Field".into()],
+            NodeClass::Variable,
+        );
 
         type_tree
     }

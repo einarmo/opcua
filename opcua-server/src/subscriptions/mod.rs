@@ -9,6 +9,7 @@ use hashbrown::{Equivalent, HashMap};
 use log::error;
 pub use monitored_item::{CreateMonitoredItem, MonitoredItem};
 use opcua_core::{trace_read_lock, trace_write_lock};
+use opcua_nodes::{Event, TypeTree};
 pub use session_subscriptions::SessionSubscriptions;
 use subscription::TickReason;
 pub use subscription::{MonitoredItemHandle, Subscription, SubscriptionState};
@@ -28,14 +29,12 @@ use opcua_types::{
     TransferSubscriptionsResponse,
 };
 
-use crate::node_manager::TypeTree;
-
 use super::{
     authenticator::UserToken,
     info::ServerInfo,
     node_manager::{MonitoredItemRef, MonitoredItemUpdateRef, RequestContext, ServerContext},
     session::instance::Session,
-    Event, SubscriptionLimits,
+    SubscriptionLimits,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]

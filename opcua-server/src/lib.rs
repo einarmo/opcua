@@ -4,7 +4,6 @@ mod builder;
 mod config;
 #[cfg(feature = "discovery-server-registration")]
 mod discovery;
-pub mod events;
 mod identity_token;
 mod info;
 pub mod node_manager;
@@ -17,7 +16,6 @@ mod transport;
 
 pub use builder::ServerBuilder;
 pub use config::*;
-pub use events::*;
 pub use opcua_types::event_field::EventField;
 pub use server::Server;
 pub use server_handle::ServerHandle;
@@ -27,8 +25,6 @@ pub use subscriptions::{
     CreateMonitoredItem, MonitoredItem, MonitoredItemHandle, SessionSubscriptions, Subscription,
     SubscriptionCache, SubscriptionState,
 };
-
-pub use opcua_macros::{Event, EventField};
 
 /// Contains constaints for default configuration values.
 /// These are for the most part possible to override through server configuration.

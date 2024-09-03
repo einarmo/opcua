@@ -12,6 +12,7 @@ use arc_swap::ArcSwap;
 use futures::{future::Either, never::Never, stream::FuturesUnordered, FutureExt, StreamExt};
 use log::{error, info, warn};
 use opcua_core::{sync::RwLock, trace_read_lock, trace_write_lock};
+use opcua_nodes::DefaultTypeTree;
 use tokio::{
     net::TcpListener,
     sync::Notify,
@@ -35,7 +36,7 @@ use super::{
     config::ServerConfig,
     discovery::periodic_discovery_server_registration,
     info::ServerInfo,
-    node_manager::{DefaultTypeTree, NodeManagers, NodeManagersRef},
+    node_manager::{NodeManagers, NodeManagersRef},
     server_handle::ServerHandle,
     session::{controller::ControllerCommand, manager::SessionManager},
     subscriptions::SubscriptionCache,

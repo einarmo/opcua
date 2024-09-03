@@ -892,8 +892,11 @@ name = "opcua-nodes"
 version = "0.13.0"
 dependencies = [
  "bitflags",
+ "hashbrown",
  "log",
+ "opcua-macros",
  "opcua-types",
+ "regex",
 ]
 
 [[package]]
@@ -912,7 +915,6 @@ dependencies = [
  "opcua-core",
  "opcua-core-namespace",
  "opcua-crypto",
- "opcua-macros",
  "opcua-nodes",
  "opcua-types",
  "parking_lot",

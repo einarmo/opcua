@@ -1,7 +1,6 @@
-use crate::node_manager::{
-    ParsedReadValueId, ParsedWriteValue, RequestContext, ServerContext, TypeTree,
-};
+use crate::node_manager::{ParsedReadValueId, ParsedWriteValue, RequestContext, ServerContext};
 use log::debug;
+use opcua_nodes::TypeTree;
 use opcua_types::{
     AttributeId, DataTypeId, DataValue, NumericRange, QualifiedName, StatusCode,
     TimestampsToReturn, Variant, WriteMask,

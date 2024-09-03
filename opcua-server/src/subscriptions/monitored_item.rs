@@ -1,14 +1,11 @@
 use std::collections::{BTreeSet, VecDeque};
 
 use log::error;
+use opcua_nodes::{Event, ParsedEventFilter, TypeTree};
 use serde::Serialize;
 
 use super::MonitoredItemHandle;
-use crate::{
-    info::ServerInfo,
-    node_manager::{ParsedReadValueId, TypeTree},
-    Event, ParsedEventFilter,
-};
+use crate::{info::ServerInfo, node_manager::ParsedReadValueId};
 use opcua_types::{
     DataChangeFilter, DataValue, DateTime, DecodingOptions, EventFieldList, EventFilter,
     EventFilterResult, ExtensionObject, MonitoredItemCreateRequest, MonitoredItemModifyRequest,

@@ -4,6 +4,7 @@ use std::{
 };
 
 use log::info;
+use opcua_nodes::DefaultTypeTree;
 use tokio_util::sync::CancellationToken;
 
 use opcua_core::sync::RwLock;
@@ -12,9 +13,7 @@ use opcua_types::{AttributeId, DataValue, LocalizedText, ServerState, VariableId
 use crate::ServerStatusWrapper;
 
 use super::{
-    info::ServerInfo,
-    node_manager::{DefaultTypeTree, NodeManagers},
-    session::manager::SessionManager,
+    info::ServerInfo, node_manager::NodeManagers, session::manager::SessionManager,
     SubscriptionCache,
 };
 

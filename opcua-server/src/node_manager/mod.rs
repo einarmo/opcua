@@ -7,6 +7,7 @@ use std::{
 use async_trait::async_trait;
 use memory::NamespaceMetadata;
 use opcua_core::sync::RwLock;
+use opcua_nodes::DefaultTypeTree;
 use opcua_types::{
     ExpandedNodeId, MonitoringMode, NodeId, ReadAnnotationDataDetails, ReadAtTimeDetails,
     ReadEventDetails, ReadProcessedDetails, ReadRawModifiedDetails, StatusCode, TimestampsToReturn,
@@ -22,7 +23,6 @@ mod method;
 mod monitored_items;
 mod node_management;
 mod query;
-mod type_tree;
 mod utils;
 mod view;
 
@@ -44,7 +44,6 @@ pub use {
     monitored_items::{MonitoredItemRef, MonitoredItemUpdateRef},
     node_management::{AddNodeItem, AddReferenceItem, DeleteNodeItem, DeleteReferenceItem},
     query::{ParsedNodeTypeDescription, ParsedQueryDataDescription, QueryRequest},
-    type_tree::{DefaultTypeTree, TypePropertyInverseRef, TypeTree, TypeTreeNode},
     utils::*,
     view::{BrowseNode, BrowsePathItem, RegisterNodeItem},
 };

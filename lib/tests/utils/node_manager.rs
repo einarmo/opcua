@@ -12,10 +12,10 @@ use opcua::{
                 InMemoryNodeManager, InMemoryNodeManagerBuilder, InMemoryNodeManagerImpl,
                 NamespaceMetadata,
             },
-            AddNodeItem, AddReferenceItem, DefaultTypeTree, DeleteNodeItem, DeleteReferenceItem,
-            HistoryNode, HistoryUpdateNode, MethodCall, MonitoredItemRef, MonitoredItemUpdateRef,
+            AddNodeItem, AddReferenceItem, DeleteNodeItem, DeleteReferenceItem, HistoryNode,
+            HistoryUpdateNode, MethodCall, MonitoredItemRef, MonitoredItemUpdateRef,
             NodeManagerBuilder, NodeManagersRef, ParsedReadValueId, RequestContext, ServerContext,
-            TypeTree, TypeTreeNode, WriteNode,
+            WriteNode,
         },
         ContinuationPoint, CreateMonitoredItem,
     },
@@ -27,6 +27,7 @@ use opcua::{
     },
 };
 use opcua_core::{trace_read_lock, trace_write_lock};
+use opcua_nodes::{DefaultTypeTree, TypeTree, TypeTreeNode};
 use opcua_server::address_space::add_namespaces;
 
 #[allow(unused)]

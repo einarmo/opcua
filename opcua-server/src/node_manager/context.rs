@@ -7,12 +7,13 @@ use crate::{
     SubscriptionCache,
 };
 use opcua_core::{sync::RwLock, trace_read_lock};
+use opcua_nodes::TypeTree;
 use opcua_types::{BrowseDescriptionResultMask, NodeId};
 use parking_lot::lock_api::{RawRwLock, RwLockReadGuard};
 
 use super::{
     view::{ExternalReferenceRequest, NodeMetadata},
-    DefaultTypeTree, NodeManagers, TypeTree,
+    DefaultTypeTree, NodeManagers,
 };
 
 /// Trait for providing a dynamic type tree for a user.
