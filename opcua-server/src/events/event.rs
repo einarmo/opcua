@@ -1,20 +1,19 @@
+use opcua_nodes::NamespaceMap;
 use opcua_types::{
-    AttributeId, ByteString, DateTime, ExtensionObject, LocalizedText, NodeId, NumericRange,
-    ObjectId, ObjectTypeId, QualifiedName, TimeZoneDataType, UAString, Variant,
+    event_field::EventField, AttributeId, ByteString, DateTime, LocalizedText, NodeId,
+    NumericRange, ObjectTypeId, QualifiedName, TimeZoneDataType, UAString, Variant,
 };
 
-pub trait Event {
+pub trait Event: EventField {
     fn get_field(
         &self,
         type_definition_id: &NodeId,
-        browse_path: &[QualifiedName],
         attribute_id: AttributeId,
         index_range: NumericRange,
+        browse_path: &[QualifiedName],
     ) -> Variant;
 
     fn time(&self) -> &DateTime;
-
-    fn matches_type_id(&self, id: &NodeId) -> bool;
 }
 
 #[derive(Debug, Default)]
@@ -56,73 +55,75 @@ pub struct BaseEventType {
     pub condition_class_id: Option<NodeId>,
     /// Condition class name specifies the name of the condition class of this event, if set.
     pub condition_class_name: Option<LocalizedText>,
-    /// ConditionSubClassId specifies additional class[es] that apply to the Event.
+    /// ConditionSubClassId specifies additional classes that apply to the Event.
     /// It is the NodeId of the corresponding subtype of BaseConditionClassType.
     pub condition_sub_class_id: Option<Vec<NodeId>>,
     /// Condition sub class name specifies the names of additional classes that apply to the event.
     pub condition_sub_class_name: Option<Vec<LocalizedText>>,
 }
 
-macro_rules! take_value {
-    ($v:expr, $r:ident) => {{
-        let variant: Variant = $v.clone().into();
-        variant.range_of_owned($r).unwrap_or(Variant::Empty)
-    }};
-}
-
 impl Event for BaseEventType {
-    fn get_field(
-        &self,
-        type_definition_id: &NodeId,
-        browse_path: &[QualifiedName],
-        attribute_id: AttributeId,
-        index_range: NumericRange,
-    ) -> Variant {
-        if !self.matches_type_id(type_definition_id)
-            || browse_path.len() != 1
-            || attribute_id != AttributeId::Value
-        {
-            // Field is not from base event type.
-            return Variant::Empty;
-        }
-        let field = &browse_path[0];
-        if field.namespace_index != 0 {
-            return Variant::Empty;
-        }
-
-        match field.name.as_ref() {
-            "EventId" => take_value!(self.event_id, index_range),
-            "EventType" => take_value!(self.event_type, index_range),
-            "SourceNode" => take_value!(self.source_node, index_range),
-            "SourceName" => take_value!(self.source_name, index_range),
-            "Time" => take_value!(self.time, index_range),
-            "ReceiveTime" => take_value!(self.receive_time, index_range),
-            "LocalTime" => take_value!(
-                self.local_time
-                    .as_ref()
-                    .map(|t| ExtensionObject::from_encodable(
-                        ObjectId::TimeZoneDataType_Encoding_DefaultBinary,
-                        t
-                    )),
-                index_range
-            ),
-            "Message" => take_value!(self.message, index_range),
-            "Severity" => take_value!(self.severity, index_range),
-            "ConditionClassId" => take_value!(self.condition_class_id, index_range),
-            "ConditionClassName" => take_value!(self.condition_class_name, index_range),
-            "ConditionSubClassId" => take_value!(self.condition_sub_class_id, index_range),
-            "ConditionSubClassName" => take_value!(self.condition_sub_class_name, index_range),
-            _ => Variant::Empty,
-        }
-    }
-
     fn time(&self) -> &DateTime {
         &self.time
     }
 
-    fn matches_type_id(&self, id: &NodeId) -> bool {
-        let own_type_id: NodeId = ObjectTypeId::BaseEventType.into();
-        id == &own_type_id
+    fn get_field(
+        &self,
+        type_definition_id: &NodeId,
+        attribute_id: AttributeId,
+        index_range: NumericRange,
+        browse_path: &[QualifiedName],
+    ) -> Variant {
+        if type_definition_id == &ObjectTypeId::BaseEventType {
+            self.get_value(attribute_id, index_range, browse_path)
+        } else {
+            Variant::Empty
+        }
+    }
+}
+
+impl EventField for BaseEventType {
+    fn get_value(
+        &self,
+        attribute_id: AttributeId,
+        index_range: NumericRange,
+        remaining_path: &[QualifiedName],
+    ) -> Variant {
+        if remaining_path.len() != 1 || attribute_id != AttributeId::Value {
+            // Field is not from base event type.
+            return Variant::Empty;
+        }
+        let field = &remaining_path[0];
+        if field.namespace_index != 0 {
+            return Variant::Empty;
+        }
+        match field.name.as_ref() {
+            "EventId" => self.event_id.get_value(attribute_id, index_range, &[]),
+            "EventType" => self.event_type.get_value(attribute_id, index_range, &[]),
+            "SourceNode" => self.source_node.get_value(attribute_id, index_range, &[]),
+            "SourceName" => self.source_name.get_value(attribute_id, index_range, &[]),
+            "Time" => self.time.get_value(attribute_id, index_range, &[]),
+            "ReceiveTime" => self.receive_time.get_value(attribute_id, index_range, &[]),
+            "LocalTime" => self.local_time.get_value(attribute_id, index_range, &[]),
+            "Message" => self.message.get_value(attribute_id, index_range, &[]),
+            "Severity" => self.severity.get_value(attribute_id, index_range, &[]),
+            "ConditionClassId" => self
+                .condition_class_id
+                .get_value(attribute_id, index_range, &[]),
+            "ConditionClassName" => {
+                self.condition_class_name
+                    .get_value(attribute_id, index_range, &[])
+            }
+            "ConditionSubClassId" => {
+                self.condition_sub_class_id
+                    .get_value(attribute_id, index_range, &[])
+            }
+            "ConditionSubClassName" => {
+                self.condition_sub_class_name
+                    .get_value(attribute_id, index_range, &[])
+            }
+            _ => Variant::Empty,
+        }
     }
 }
 
@@ -152,6 +153,16 @@ impl BaseEventType {
         }
     }
 
+    pub fn new_event(
+        type_id: impl Into<NodeId>,
+        event_id: ByteString,
+        message: impl Into<LocalizedText>,
+        _namespace: &NamespaceMap,
+        time: DateTime,
+    ) -> Self {
+        Self::new(type_id, event_id, message, time)
+    }
+
     pub fn set_source_node(mut self, source_node: NodeId) -> Self {
         self.source_node = source_node;
         self
@@ -170,5 +181,273 @@ impl BaseEventType {
     pub fn set_severity(mut self, severity: u16) -> Self {
         self.severity = severity;
         self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use opcua_crypto::random;
+    use opcua_macros::EventField;
+    use opcua_nodes::NamespaceMap;
+
+    mod opcua {
+        pub use crate as server;
+        pub use opcua_nodes as nodes;
+        pub use opcua_types as types;
+    }
+
+    use crate::{BaseEventType, Event};
+    use opcua_types::{
+        AttributeId, DecodingOptions, EUInformation, KeyValuePair, LocalizedText, NodeId,
+        NumericRange, ObjectTypeId, QualifiedName, StatusCode, UAString, Variant,
+    };
+    #[derive(Event)]
+    #[opcua(identifier = "s=myevent", namespace = "uri:my:namespace")]
+    struct BasicValueEvent {
+        base: BaseEventType,
+        own_namespace_index: u16,
+        // Some primitives
+        float: f32,
+        double: f64,
+        string: String,
+        status: StatusCode,
+        // Option
+        int: Option<i64>,
+        int2: Option<u64>,
+        // Vec
+        vec: Vec<i64>,
+        // OptVec
+        optvec: Option<Vec<i32>>,
+        // Complex type with message info
+        kvp: KeyValuePair,
+        euinfo: EUInformation,
+    }
+
+    fn namespace_map() -> NamespaceMap {
+        let mut map = NamespaceMap::new();
+        map.add_namespace("uri:my:namespace");
+        map
+    }
+
+    fn get(id: &NodeId, evt: &dyn Event, field: &str) -> Variant {
+        evt.get_field(&id, AttributeId::Value, NumericRange::None, &[field.into()])
+    }
+
+    fn get_nested(id: &NodeId, evt: &dyn Event, fields: &[&str]) -> Variant {
+        let fields: Vec<QualifiedName> = fields.iter().map(|f| (*f).into()).collect();
+        evt.get_field(&id, AttributeId::Value, NumericRange::None, &fields)
+    }
+
+    #[test]
+    fn test_basic_values() {
+        let namespaces = namespace_map();
+        let mut evt = BasicValueEvent::new_event_now(
+            BasicValueEvent::event_type_id(&namespaces),
+            random::byte_string(128),
+            "Some message",
+            &namespaces,
+        );
+        evt.float = 1.0;
+        evt.double = 2.0;
+        evt.string = "foo".to_owned();
+        evt.status = StatusCode::BadMaxAgeInvalid;
+        evt.kvp = KeyValuePair {
+            key: "Key".into(),
+            value: 123.into(),
+        };
+        evt.int = None;
+        evt.int2 = Some(5);
+        evt.vec = vec![1, 2, 3];
+        evt.optvec = Some(vec![3, 2, 1]);
+        evt.euinfo = EUInformation {
+            namespace_uri: "uri:my:namespace".into(),
+            unit_id: 15,
+            display_name: "Some unit".into(),
+            description: "Some unit desc".into(),
+        };
+        let id = BasicValueEvent::event_type_id(&namespaces);
+
+        // Get for some other event
+        assert_eq!(
+            evt.get_field(
+                &ObjectTypeId::ProgressEventType.into(),
+                AttributeId::Value,
+                NumericRange::None,
+                &["Message".into()]
+            ),
+            Variant::Empty
+        );
+        // Get a field that doesn't exist
+        assert_eq!(
+            evt.get_field(
+                &id,
+                AttributeId::Value,
+                NumericRange::None,
+                &["FooBar".into()]
+            ),
+            Variant::Empty
+        );
+        // Get a child of a field without children
+        assert_eq!(
+            evt.get_field(
+                &id,
+                AttributeId::Value,
+                NumericRange::None,
+                &["Float".into(), "Child".into()]
+            ),
+            Variant::Empty
+        );
+        // Get a non-value attribute
+        assert_eq!(
+            evt.get_field(
+                &id,
+                AttributeId::NodeId,
+                NumericRange::None,
+                &["Float".into()]
+            ),
+            Variant::Empty
+        );
+
+        // Test equality for each field
+        assert_eq!(get(&id, &evt, "Float"), Variant::from(1f32));
+        assert_eq!(get(&id, &evt, "Double"), Variant::from(2.0));
+        assert_eq!(get(&id, &evt, "String"), Variant::from("foo"));
+        assert_eq!(
+            get(&id, &evt, "Status"),
+            Variant::from(StatusCode::BadMaxAgeInvalid)
+        );
+        let kvp: KeyValuePair = match get(&id, &evt, "Kvp") {
+            Variant::ExtensionObject(o) => o.decode_inner(&DecodingOptions::test()).unwrap(),
+            _ => panic!("Wrong variant type"),
+        };
+        assert_eq!(kvp.key, "Key".into());
+        assert_eq!(kvp.value, 123.into());
+
+        assert_eq!(get(&id, &evt, "Int"), Variant::Empty);
+        assert_eq!(get(&id, &evt, "Int2"), Variant::from(5u64));
+        assert_eq!(get(&id, &evt, "Vec"), Variant::from(vec![1i64, 2i64, 3i64]));
+        assert_eq!(
+            get(&id, &evt, "Optvec"),
+            Variant::from(vec![3i32, 2i32, 1i32])
+        );
+        let euinfo: EUInformation = match get(&id, &evt, "Euinfo") {
+            Variant::ExtensionObject(o) => o.decode_inner(&DecodingOptions::test()).unwrap(),
+            _ => panic!("Wrong variant type"),
+        };
+        assert_eq!(euinfo.namespace_uri.as_ref(), "uri:my:namespace");
+        assert_eq!(euinfo.unit_id, 15);
+        assert_eq!(euinfo.display_name, "Some unit".into());
+        assert_eq!(euinfo.description, "Some unit desc".into());
+    }
+
+    #[derive(EventField, Default, Debug)]
+    struct ComplexEventField {
+        float: f32,
+    }
+
+    #[derive(EventField, Default, Debug)]
+    struct SubComplexEventField {
+        base: ComplexEventField,
+        node_id: NodeId,
+        #[opcua(rename = "gnirtS")]
+        string: UAString,
+        #[opcua(ignore)]
+        data: i32,
+    }
+
+    #[derive(EventField, Default, Debug)]
+    struct ComplexVariable {
+        node_id: NodeId,
+        value: i32,
+        id: u32,
+    }
+
+    #[derive(Event)]
+    #[opcua(identifier = "s=mynestedevent", namespace = "uri:my:namespace")]
+    struct NestedEvent {
+        base: BasicValueEvent,
+        own_namespace_index: u16,
+        complex: ComplexEventField,
+        sub_complex: SubComplexEventField,
+        var: ComplexVariable,
+        #[opcua(ignore)]
+        ignored: i32,
+        #[opcua(rename = "Fancy Name")]
+        renamed: String,
+    }
+
+    #[test]
+    fn test_nested_values() {
+        let namespaces = namespace_map();
+        let mut evt = NestedEvent::new_event_now(
+            NestedEvent::event_type_id(&namespaces),
+            random::byte_string(128),
+            "Some message",
+            &namespaces,
+        );
+        let id = NestedEvent::event_type_id(&namespaces);
+        evt.base.float = 2f32;
+        evt.complex.float = 3f32;
+        evt.sub_complex.base.float = 4f32;
+        evt.sub_complex.string = "foo".into();
+        evt.sub_complex.data = 15;
+        evt.ignored = 16;
+        evt.renamed = "bar".to_owned();
+        evt.sub_complex.node_id = NodeId::new(0, 15);
+        evt.var.node_id = NodeId::new(0, 16);
+        evt.var.value = 20;
+
+        // Get field from middle event type
+        assert_eq!(get(&id, &evt, "Float"), Variant::from(2f32));
+        // Get from grandparent
+        assert_eq!(
+            get(&id, &evt, "Message"),
+            Variant::from(LocalizedText::from("Some message"))
+        );
+        // Ignored fields should be skipped
+        assert_eq!(get(&id, &evt, "Ignored"), Variant::Empty);
+        assert_eq!(
+            get_nested(&id, &evt, &["SubComplex", "Data"]),
+            Variant::Empty
+        );
+        // Get renamed
+        assert_eq!(get(&id, &evt, "Fancy Name"), Variant::from("bar"));
+        assert_eq!(
+            get_nested(&id, &evt, &["SubComplex", "gnirtS"]),
+            Variant::from("foo")
+        );
+        // Get complex
+        assert_eq!(
+            get_nested(&id, &evt, &["Complex", "Float"]),
+            Variant::from(3f32)
+        );
+        assert_eq!(
+            get_nested(&id, &evt, &["SubComplex", "Float"]),
+            Variant::from(4f32)
+        );
+
+        // Get node IDs
+        assert_eq!(
+            evt.get_field(
+                &id,
+                AttributeId::NodeId,
+                NumericRange::None,
+                &["SubComplex".into()]
+            ),
+            Variant::from(NodeId::new(0, 15))
+        );
+        assert_eq!(
+            evt.get_field(
+                &id,
+                AttributeId::NodeId,
+                NumericRange::None,
+                &["Var".into()]
+            ),
+            Variant::from(NodeId::new(0, 16))
+        );
+        assert_eq!(
+            evt.get_field(&id, AttributeId::Value, NumericRange::None, &["Var".into()]),
+            Variant::from(20i32)
+        );
     }
 }

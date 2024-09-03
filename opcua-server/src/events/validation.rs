@@ -186,7 +186,7 @@ fn validate_select_clause(
     // From the standard:  If the SimpleAttributeOperand is used in an EventFilter
     // and the typeDefinitionId is BaseEventType the Server shall evaluate the
     // browsePath without considering the typeDefinitionId.
-    if clause.type_definition_id == ObjectTypeId::BaseEventType.into() {
+    if clause.type_definition_id == (0, ObjectTypeId::BaseEventType as u32) {
         // Do a simpler form of the attribute ID check in this case.
         if attribute_id != AttributeId::NodeId && attribute_id != AttributeId::Value {
             return Err(StatusCode::BadAttributeIdInvalid);

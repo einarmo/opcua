@@ -213,7 +213,7 @@ pub async fn history_read(
         let mut batch: Vec<_> = nodes
             .iter_mut()
             .filter(|n| {
-                if n.node_id() == &ObjectId::Server.into()
+                if n.node_id() == &ObjectId::Server
                     && matches!(details, HistoryReadDetails::Events(_))
                 {
                     manager.owns_server_events() && n.status() == StatusCode::BadNodeIdUnknown
@@ -344,7 +344,7 @@ pub async fn history_update(
         let mut batch: Vec<_> = nodes
             .iter_mut()
             .filter(|n| {
-                if n.details().node_id() == &ObjectId::Server.into()
+                if n.details().node_id() == &ObjectId::Server
                     && matches!(
                         n.details(),
                         HistoryUpdateDetails::UpdateEvent(_) | HistoryUpdateDetails::DeleteEvent(_)

@@ -12,6 +12,7 @@ members = [
     "tools/certificate-creator",
     "samples/async-server",
     "opcua-codegen",
+    "opcua-macros",
     "opcua-xml",
     "opcua-types"
 , "opcua-crypto", "opcua-core", "opcua-client", "opcua-server", "opcua-nodes", "opcua-core-namespace"]

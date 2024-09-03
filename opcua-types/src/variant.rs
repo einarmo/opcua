@@ -449,7 +449,6 @@ from_array_to_variant_impl!(VariantTypeId::LocalizedText, LocalizedText);
 from_array_to_variant_impl!(VariantTypeId::QualifiedName, QualifiedName);
 from_array_to_variant_impl!(VariantTypeId::StatusCode, StatusCode);
 from_array_to_variant_impl!(VariantTypeId::ExtensionObject, ExtensionObject);
-from_array_to_variant_impl!(VariantTypeId::Variant, Variant);
 from_array_to_variant_impl!(VariantTypeId::DateTime, DateTimeUtc);
 
 /// This macro tries to return a `Vec<foo>` from a `Variant::Array<Variant::Foo>>`, e.g.

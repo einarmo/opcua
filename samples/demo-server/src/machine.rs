@@ -117,7 +117,7 @@ fn add_machinery_model(address_space: &mut AddressSpace, ns: u16) {
     ObjectTypeBuilder::new(&machine_type_id, "MachineCounterType", "MachineCounterType")
         .is_abstract(false)
         .subtype_of(ObjectTypeId::BaseObjectType)
-        .generates_event(MachineCycledEventType::event_type_id(ns))
+        .generates_event(MachineCycledEventType::event_type_id_from_index(ns))
         .insert(address_space);
 
     // Add some variables to the type
@@ -130,7 +130,7 @@ fn add_machinery_model(address_space: &mut AddressSpace, ns: u16) {
         .insert(address_space);
 
     // Create a counter cycled event type
-    let machine_cycled_event_type_id = MachineCycledEventType::event_type_id(ns);
+    let machine_cycled_event_type_id = MachineCycledEventType::event_type_id_from_index(ns);
     ObjectTypeBuilder::new(
         &machine_cycled_event_type_id,
         "MachineCycledEventType",
@@ -174,36 +174,11 @@ fn add_machine(
     machine_id
 }
 
+#[derive(Event)]
+#[opcua(identifier = "s=MachineCycledEventId", namespace = "urn:DemoServer")]
 pub struct MachineCycledEventType {
     base: BaseEventType,
-    ns: u16,
-}
-
-impl Event for MachineCycledEventType {
-    fn get_field(
-        &self,
-        type_definition_id: &NodeId,
-        browse_path: &[opcua::types::QualifiedName],
-        attribute_id: opcua::types::AttributeId,
-        index_range: opcua::types::NumericRange,
-    ) -> opcua::types::Variant {
-        self.base
-            .get_field(type_definition_id, browse_path, attribute_id, index_range)
-    }
-
-    fn time(&self) -> &opcua::types::DateTime {
-        self.base.time()
-    }
-
-    fn matches_type_id(&self, id: &NodeId) -> bool {
-        self.base.matches_type_id(id) || id != &Self::event_type_id(self.ns)
-    }
-}
-
-impl MachineCycledEventType {
-    pub fn event_type_id(ns: u16) -> NodeId {
-        NodeId::new(ns, "MachineCycledEventId")
-    }
+    own_namespace_index: u16,
 }
 
 lazy_static! {
@@ -212,7 +187,7 @@ lazy_static! {
 
 impl MachineCycledEventType {
     fn new(machine_name: &str, ns: u16, source_node: impl Into<NodeId>, time: DateTime) -> Self {
-        let event_type_id = MachineCycledEventType::event_type_id(ns);
+        let event_type_id = MachineCycledEventType::event_type_id_from_index(ns);
         let source_node: NodeId = source_node.into();
         MachineCycledEventType {
             base: BaseEventType::new(
@@ -224,7 +199,7 @@ impl MachineCycledEventType {
             .set_source_node(source_node.clone())
             .set_source_name(UAString::from(machine_name))
             .set_severity(rand::random::<u16>() % 999u16 + 1u16),
-            ns,
+            own_namespace_index: ns,
         }
     }
 }
