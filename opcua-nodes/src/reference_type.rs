@@ -10,6 +10,8 @@ use opcua_types::{
     StatusCode, TimestampsToReturn, Variant,
 };
 
+use crate::FromAttributesError;
+
 use super::{base::Base, node::Node, node::NodeBase};
 
 node_builder_impl!(ReferenceTypeBuilder, ReferenceType);
@@ -158,13 +160,14 @@ impl ReferenceType {
         node_id: &NodeId,
         browse_name: S,
         attributes: ReferenceTypeAttributes,
-    ) -> Result<Self, ()>
+    ) -> Result<Self, FromAttributesError>
     where
         S: Into<QualifiedName>,
     {
         let mandatory_attributes =
             AttributesMask::DISPLAY_NAME | AttributesMask::IS_ABSTRACT | AttributesMask::SYMMETRIC;
-        let mask = AttributesMask::from_bits(attributes.specified_attributes).ok_or(())?;
+        let mask = AttributesMask::from_bits(attributes.specified_attributes)
+            .ok_or(FromAttributesError::InvalidMask)?;
         if mask.contains(mandatory_attributes) {
             let mut node = Self::new(
                 node_id,
@@ -195,7 +198,7 @@ impl ReferenceType {
             Ok(node)
         } else {
             error!("ReferenceType cannot be created from attributes - missing mandatory values");
-            Err(())
+            Err(FromAttributesError::MissingMandatoryValues)
         }
     }
 

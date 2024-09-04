@@ -21,7 +21,7 @@ pub struct NodeSet2 {
 pub fn load_nodeset2_file(document: &str) -> Result<NodeSet2, XmlError> {
     let document = Document::parse(document).map_err(|e| XmlError {
         span: 0..1,
-        error: crate::error::XmlErrorInner::XML(e),
+        error: crate::error::XmlErrorInner::Xml(e),
     })?;
     let root = document.root();
     Ok(NodeSet2 {
@@ -46,14 +46,14 @@ pub enum UANode {
 impl UANode {
     pub fn from_node(node: &Node<'_, '_>) -> Result<Option<Self>, XmlError> {
         Ok(Some(match node.tag_name().name() {
-            "UAObject" => Self::Object(XmlLoad::load(&node)?),
-            "UAVariable" => Self::Variable(XmlLoad::load(&node)?),
-            "UAMethod" => Self::Method(XmlLoad::load(&node)?),
-            "UAView" => Self::View(XmlLoad::load(&node)?),
-            "UAObjectType" => Self::ObjectType(XmlLoad::load(&node)?),
-            "UAVariableType" => Self::VariableType(XmlLoad::load(&node)?),
-            "UADataType" => Self::DataType(XmlLoad::load(&node)?),
-            "UAReferenceType" => Self::ReferenceType(XmlLoad::load(&node)?),
+            "UAObject" => Self::Object(XmlLoad::load(node)?),
+            "UAVariable" => Self::Variable(XmlLoad::load(node)?),
+            "UAMethod" => Self::Method(XmlLoad::load(node)?),
+            "UAView" => Self::View(XmlLoad::load(node)?),
+            "UAObjectType" => Self::ObjectType(XmlLoad::load(node)?),
+            "UAVariableType" => Self::VariableType(XmlLoad::load(node)?),
+            "UADataType" => Self::DataType(XmlLoad::load(node)?),
+            "UAReferenceType" => Self::ReferenceType(XmlLoad::load(node)?),
             _ => return Ok(None),
         }))
     }

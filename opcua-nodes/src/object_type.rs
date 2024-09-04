@@ -10,6 +10,8 @@ use opcua_types::{
     StatusCode, TimestampsToReturn, Variant,
 };
 
+use crate::FromAttributesError;
+
 use super::{base::Base, node::Node, node::NodeBase};
 
 node_builder_impl!(ObjectTypeBuilder, ObjectType);
@@ -116,12 +118,13 @@ impl ObjectType {
         node_id: &NodeId,
         browse_name: S,
         attributes: ObjectTypeAttributes,
-    ) -> Result<Self, ()>
+    ) -> Result<Self, FromAttributesError>
     where
         S: Into<QualifiedName>,
     {
         let mandatory_attributes = AttributesMask::DISPLAY_NAME | AttributesMask::IS_ABSTRACT;
-        let mask = AttributesMask::from_bits(attributes.specified_attributes).ok_or(())?;
+        let mask = AttributesMask::from_bits(attributes.specified_attributes)
+            .ok_or(FromAttributesError::InvalidMask)?;
         if mask.contains(mandatory_attributes) {
             let mut node = Self::new(
                 node_id,
@@ -141,7 +144,7 @@ impl ObjectType {
             Ok(node)
         } else {
             error!("ObjectType cannot be created from attributes - missing mandatory values");
-            Err(())
+            Err(FromAttributesError::MissingMandatoryValues)
         }
     }
 

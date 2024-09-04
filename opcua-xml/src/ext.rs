@@ -58,14 +58,14 @@ pub fn first_child_with_name_opt<'input, T: XmlLoad<'input>>(
     T::load(&child).map(|v| Some(v))
 }
 
-pub fn uint_attr<'input>(node: &Node<'_, 'input>, name: &str) -> Result<Option<u64>, XmlError> {
+pub fn uint_attr(node: &Node<'_, '_>, name: &str) -> Result<Option<u64>, XmlError> {
     node.attribute(name)
         .map(|a| a.parse())
         .transpose()
         .map_err(|e| XmlError::parse_int(node, name, e))
 }
 
-pub fn int_attr<'input>(node: &Node<'_, 'input>, name: &str) -> Result<Option<i64>, XmlError> {
+pub fn int_attr(node: &Node<'_, '_>, name: &str) -> Result<Option<i64>, XmlError> {
     node.attribute(name)
         .map(|a| a.parse())
         .transpose()

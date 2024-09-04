@@ -53,7 +53,7 @@ pub struct ReferenceRef<'a> {
 // Note that there is a potentially significant benefit to using hashbrown directly here,
 // (which is what the std HashMap is built on!), since it lets us remove references from
 // the hash sets without cloning given node IDs.
-
+#[derive(Default)]
 pub struct References {
     /// References by source node ID.
     by_source: HashMap<NodeId, HashSet<Reference>>,
@@ -119,7 +119,7 @@ impl References {
         };
 
         inverse_refs.insert(Reference {
-            reference_type: reference_type,
+            reference_type,
             target_node: source_node.clone(),
         });
     }
@@ -181,7 +181,7 @@ impl References {
         let reference_type = reference_type.into();
         let rf = ReferenceKey {
             reference_type: &reference_type,
-            target_node: target_node,
+            target_node,
         };
         found |= self
             .by_source
@@ -191,7 +191,7 @@ impl References {
 
         let rf = ReferenceKey {
             reference_type: &reference_type,
-            target_node: &source_node,
+            target_node: source_node,
         };
 
         found |= self
@@ -286,16 +286,14 @@ impl<'a, 'b> Iterator for ReferenceIterator<'a, 'b> {
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            let Some(inner) = self.next_inner() else {
-                return None;
-            };
+            let inner = self.next_inner()?;
 
             if let Some(filter) = &self.filter {
                 if !filter.1 && inner.reference_type != &filter.0
                     || filter.1
                         && !self
                             .type_tree
-                            .is_subtype_of(&inner.reference_type, &filter.0)
+                            .is_subtype_of(inner.reference_type, &filter.0)
                 {
                     continue;
                 }
@@ -381,6 +379,7 @@ impl<'a, 'b> ReferenceIterator<'a, 'b> {
 }
 
 /// Represents an in-memory address space.
+#[derive(Default)]
 pub struct AddressSpace {
     node_map: HashMap<NodeId, NodeType>,
     namespaces: HashMap<u16, String>,
@@ -443,7 +442,7 @@ impl AddressSpace {
                 continue;
             };
 
-            type_tree.add_type_node(&node_id, &parent_id, nc);
+            type_tree.add_type_node(node_id, &parent_id, nc);
             found_ids.push_back((node_id, node_id, Vec::new(), nc));
         }
 
@@ -452,7 +451,7 @@ impl AddressSpace {
         // Recursively browse each discovered type for non-type children
         while let Some((node, root_type, path, node_class)) = found_ids.pop_front() {
             for child in self.find_references(
-                &node,
+                node,
                 Some((ReferenceTypeId::HierarchicalReferences, true)),
                 type_tree,
                 BrowseDirection::Forward,
@@ -494,7 +493,7 @@ impl AddressSpace {
             }
 
             if !path.is_empty() {
-                type_tree.add_type_property(&node, &root_type, &path, node_class);
+                type_tree.add_type_property(node, root_type, &path, node_class);
             }
         }
     }
@@ -645,9 +644,7 @@ impl AddressSpace {
         direction: BrowseDirection,
         browse_path: &[QualifiedName],
     ) -> Option<&'a NodeType> {
-        let Some(mut node) = self.find_node(&source_node) else {
-            return None;
-        };
+        let mut node = self.find_node(source_node)?;
         let filter: Option<(NodeId, bool)> = filter.map(|(id, c)| (id.into(), c));
         for path_elem in browse_path {
             let mut found = false;

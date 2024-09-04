@@ -59,7 +59,7 @@ impl<TFieldAttr: Parse + ItemAttr + Default, TAttr: Parse + ItemAttr + Default>
                     .path()
                     .segments
                     .first()
-                    .is_some_and(|s| s.ident.to_string() == "opcua")
+                    .is_some_and(|s| s.ident == "opcua")
             {
                 let data: TAttr = attr.parse_args()?;
                 final_attr.combine(data);
@@ -89,7 +89,7 @@ impl<T: Parse + ItemAttr + Default> StructField<T> {
                     .path()
                     .segments
                     .first()
-                    .is_some_and(|s| s.ident.to_string() == "opcua")
+                    .is_some_and(|s| s.ident == "opcua")
             {
                 let data: T = attr.parse_args()?;
                 final_attr.combine(data);

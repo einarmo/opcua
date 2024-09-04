@@ -189,7 +189,7 @@ fn add_static_scalar_variables(manager: &SimpleNodeManager, ns: u16, static_fold
 
     // Create a folder under static folder
     let scalar_folder_id = NodeId::new(ns, "static_scalar");
-    address_space.add_folder(&scalar_folder_id, "Scalar", "Scalar", &static_folder_id);
+    address_space.add_folder(&scalar_folder_id, "Scalar", "Scalar", static_folder_id);
 
     for sn in SCALAR_TYPES.iter() {
         let name = scalar_name(*sn);
@@ -210,7 +210,7 @@ fn add_static_array_variables(manager: &SimpleNodeManager, ns: u16, static_folde
 
     // Create a folder under static folder
     let array_folder_id = NodeId::new(ns, "static_array");
-    address_space.add_folder(&array_folder_id, "Array", "Array", &static_folder_id);
+    address_space.add_folder(&array_folder_id, "Array", "Array", static_folder_id);
 
     SCALAR_TYPES.iter().for_each(|sn| {
         let node_id = scalar_node_id(ns, *sn, false, true);
@@ -237,7 +237,7 @@ fn add_dynamic_scalar_variables(manager: &SimpleNodeManager, ns: u16, dynamic_fo
 
     // Create a folder under static folder
     let scalar_folder_id = NodeId::new(ns, "dynamic_scalar");
-    address_space.add_folder(&scalar_folder_id, "Scalar", "Scalar", &dynamic_folder_id);
+    address_space.add_folder(&scalar_folder_id, "Scalar", "Scalar", dynamic_folder_id);
 
     SCALAR_TYPES.iter().for_each(|sn| {
         let node_id = scalar_node_id(ns, *sn, true, false);
@@ -257,7 +257,7 @@ fn add_dynamic_array_variables(manager: &SimpleNodeManager, ns: u16, dynamic_fol
 
     // Create a folder under static folder
     let array_folder_id = NodeId::new(ns, "dynamic_array");
-    address_space.add_folder(&array_folder_id, "Array", "Array", &dynamic_folder_id);
+    address_space.add_folder(&array_folder_id, "Array", "Array", dynamic_folder_id);
 
     SCALAR_TYPES.iter().for_each(|sn| {
         let node_id = scalar_node_id(ns, *sn, true, true);
@@ -330,7 +330,7 @@ pub fn add_stress_variables(
 
         node_ids.iter().enumerate().for_each(|(i, node_id)| {
             let name = format!("v{:04}", i);
-            VariableBuilder::new(&node_id, &name, &name)
+            VariableBuilder::new(node_id, &name, &name)
                 .data_type(DataTypeId::Int32)
                 .value(0i32)
                 .organized_by(&folder_id)

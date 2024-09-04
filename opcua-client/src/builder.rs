@@ -1,6 +1,6 @@
 use std::{path::PathBuf, time::Duration};
 
-use opcua_core::config::Config;
+use opcua_core::config::{Config, ConfigError};
 
 use super::{Client, ClientConfig, ClientEndpoint, ClientUserToken, ANONYMOUS_USER_TOKEN_ID};
 
@@ -16,7 +16,7 @@ impl ClientBuilder {
     }
 
     /// Creates a `ClientBuilder` using a configuration file as the initial state.
-    pub fn from_config(path: impl Into<PathBuf>) -> Result<ClientBuilder, ()> {
+    pub fn from_config(path: impl Into<PathBuf>) -> Result<ClientBuilder, ConfigError> {
         Ok(ClientBuilder {
             config: ClientConfig::load(&path.into())?,
         })

@@ -24,7 +24,7 @@ impl SubscriptionState {
     /// # Arguments
     ///
     /// * `min_publishing_interval` - The minimum accepted publishing interval, any lower values
-    /// will be set to this.
+    ///   will be set to this.
     pub(crate) fn new(min_publish_interval: Duration) -> Self {
         Self {
             subscriptions: HashMap::new(),
@@ -46,7 +46,7 @@ impl SubscriptionState {
             .filter(|s| s.publishing_enabled())
             .map(|s| s.publishing_interval().max(self.min_publish_interval))
             .min()
-            .or_else(|| self.keep_alive_timeout)
+            .or(self.keep_alive_timeout)
             .map(|e| self.last_publish + e);
 
         next
@@ -68,7 +68,7 @@ impl SubscriptionState {
     }
 
     pub(crate) fn re_queue_acknowledgements(&mut self, acks: Vec<SubscriptionAcknowledgement>) {
-        self.acknowledgements.extend(acks.into_iter());
+        self.acknowledgements.extend(acks);
     }
 
     /// List of subscription IDs.

@@ -84,7 +84,7 @@ pub fn new_node_from_attributes(
             event_notifier: if (1 << mask(AttributeId::EventNotifier)) & a.specified_attributes != 0
             {
                 EventNotifier::from_bits(a.event_notifier)
-                    .ok_or_else(|| StatusCode::BadNodeAttributesInvalid)?
+                    .ok_or(StatusCode::BadNodeAttributesInvalid)?
             } else {
                 EventNotifier::empty()
             },
@@ -161,7 +161,7 @@ pub fn new_node_from_attributes(
             event_notifier: if (1 << mask(AttributeId::EventNotifier)) & a.specified_attributes != 0
             {
                 EventNotifier::from_bits(a.event_notifier)
-                    .ok_or_else(|| StatusCode::BadNodeAttributesInvalid)?
+                    .ok_or(StatusCode::BadNodeAttributesInvalid)?
             } else {
                 EventNotifier::empty()
             },

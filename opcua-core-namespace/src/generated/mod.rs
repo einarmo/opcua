@@ -118,7 +118,7 @@ impl opcua::nodes::NodeSetImport for CoreNamespace {
             nodeset_50::imported_nodes(map),
         ]
         .into_iter()
-        .flat_map(|f| f)
+        .flatten()
     }
     fn register_namespaces(map: &mut opcua::nodes::NodeSetNamespaceMapper) -> Vec<String> {
         map.add_namespace("http://opcfoundation.org/UA/", 0u16);

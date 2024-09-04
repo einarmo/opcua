@@ -44,6 +44,7 @@ pub struct TypePropertyInverseRef {
 ///
 /// Each node manager is responsible for populating the type tree with
 /// its types.
+#[derive(Default)]
 pub struct DefaultTypeTree {
     nodes: HashMap<NodeId, NodeClass>,
     subtypes_by_source: HashMap<NodeId, HashSet<NodeId>>,

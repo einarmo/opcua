@@ -116,17 +116,15 @@ impl ServerStatusWrapper {
                 id.into(),
                 AttributeId::Value,
                 move || {
-                    if let Some(v) = shutdown.get() {
-                        Some(DataValue::new_at(v.reason.clone(), v.time))
-                    } else {
-                        None
-                    }
+                    shutdown
+                        .get()
+                        .map(|v| DataValue::new_at(v.reason.clone(), v.time))
                 },
                 mode,
                 handle,
                 sampling_interval,
             ),
-            _ => return,
+            _ => (),
         }
     }
 
@@ -184,33 +182,27 @@ impl ServerStatusWrapper {
     }
 
     pub fn state(&self) -> ServerState {
-        self.status.lock().state.clone()
+        self.status.lock().state
     }
 
     pub fn start_time(&self) -> DateTime {
-        self.status.lock().start_time.clone()
+        self.status.lock().start_time
     }
 
     pub fn seconds_till_shutdown(&self) -> Option<u32> {
-        if let Some(v) = self.shutdown.get() {
+        self.shutdown.get().map(|v| {
             let now = Instant::now();
             let left = if now < v.deadline {
                 (v.deadline - now).as_secs()
             } else {
                 0
             };
-            Some(left as u32)
-        } else {
-            None
-        }
+            left as u32
+        })
     }
 
     pub fn shutdown_reason(&self) -> Option<LocalizedText> {
-        if let Some(v) = self.shutdown.get() {
-            Some(v.reason.clone())
-        } else {
-            None
-        }
+        self.shutdown.get().map(|v| v.reason.clone())
     }
 
     pub fn full_status_obj(&self) -> ExtensionObject {

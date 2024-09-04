@@ -61,7 +61,7 @@ impl NodeSetCodeGenerator {
             .iter()
             .find(|f| f.locale.0 == self.preferred_locale)
             .or_else(|| options.first())
-            .unwrap_or_else(|| &self.empty_text)
+            .unwrap_or(&self.empty_text)
     }
 
     fn get_localized_text_opt<'a: 'b, 'b>(

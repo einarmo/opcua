@@ -46,7 +46,7 @@ pub fn generate_types(target: &TypeCodeGenTarget) -> Result<Vec<GeneratedItem>, 
             .json_serialized_types
             .iter()
             .cloned()
-            .chain(base_json_serialized_types().into_iter())
+            .chain(base_json_serialized_types())
             .collect(),
         types_import_map,
         types,

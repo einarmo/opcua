@@ -33,6 +33,12 @@ pub enum ReferenceDirection {
     Inverse,
 }
 
+#[derive(Debug)]
+pub enum FromAttributesError {
+    InvalidMask,
+    MissingMandatoryValues,
+}
+
 pub trait NodeInsertTarget {
     fn insert<'a>(
         &mut self,
@@ -302,9 +308,9 @@ macro_rules! node_base_impl {
         use crate::NodeType;
         use opcua_types::{NodeClass, WriteMask};
 
-        impl Into<NodeType> for $node_struct {
-            fn into(self) -> NodeType {
-                NodeType::$node_struct(Box::new(self))
+        impl From<$node_struct> for NodeType {
+            fn from(value: $node_struct) -> Self {
+                Self::$node_struct(Box::new(value))
             }
         }
 

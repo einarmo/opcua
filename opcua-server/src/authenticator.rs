@@ -152,7 +152,7 @@ impl AuthManager for DefaultAuthenticator {
         let token_password = password.get();
         for user_token_id in &endpoint.user_token_ids {
             if let Some(server_user_token) = self.users.get(user_token_id) {
-                if server_user_token.is_user_pass() && server_user_token.user == username.as_ref() {
+                if server_user_token.is_user_pass() && server_user_token.user == username {
                     // test for empty password
                     let valid = if server_user_token.pass.is_none() {
                         // Empty password for user

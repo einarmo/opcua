@@ -186,6 +186,9 @@ impl BinaryEncoder for MessageChunk {
     }
 }
 
+#[derive(Debug)]
+pub struct MessageChunkTooSmall;
+
 impl MessageChunk {
     pub fn new(
         sequence_number: u32,
@@ -242,13 +245,13 @@ impl MessageChunk {
         message_type: MessageChunkType,
         secure_channel: &SecureChannel,
         message_size: usize,
-    ) -> Result<usize, ()> {
+    ) -> Result<usize, MessageChunkTooSmall> {
         if message_size < MIN_CHUNK_SIZE {
             error!(
                 "message size {} is less than minimum allowed by the spec",
                 message_size
             );
-            Err(())
+            Err(MessageChunkTooSmall)
         } else {
             let security_header = secure_channel.make_security_header(message_type);
 

@@ -227,7 +227,7 @@ impl HistoryNode {
         HistoryReadResult {
             status_code: self.status,
             continuation_point: cp,
-            history_data: self.result.unwrap_or_else(|| ExtensionObject::null()),
+            history_data: self.result.unwrap_or_else(ExtensionObject::null),
         }
     }
 }

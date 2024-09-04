@@ -22,9 +22,9 @@ pub enum RsaPadding {
     Pkcs1Pss,
 }
 
-impl Into<rsa::Padding> for RsaPadding {
-    fn into(self) -> rsa::Padding {
-        match self {
+impl From<RsaPadding> for rsa::Padding {
+    fn from(value: RsaPadding) -> Self {
+        match value {
             RsaPadding::Pkcs1 => rsa::Padding::PKCS1,
             RsaPadding::OaepSha1 => rsa::Padding::PKCS1_OAEP,
             RsaPadding::Pkcs1Pss => rsa::Padding::PKCS1_PSS,
@@ -428,7 +428,7 @@ mod oaep_sha256 {
                         from.len(),
                     );
                     if ret > 0 && out_len > 0 {
-                        result = Ok(out_len as usize);
+                        result = Ok(out_len);
                     } else {
                         trace!(
                             "oaep_sha256::decrypt EVP_PKEY_decrypt, ret = {}, out_len = {}",
@@ -481,7 +481,7 @@ mod oaep_sha256 {
                         from.len(),
                     );
                     if ret > 0 && out_len > 0 {
-                        result = Ok(out_len as usize);
+                        result = Ok(out_len);
                     } else {
                         trace!(
                             "oaep_sha256::encrypt EVP_PKEY_encrypt, ret = {}, out_len = {}",

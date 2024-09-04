@@ -95,9 +95,7 @@ impl TransportState {
                         continue;
                     }
                     outgoing = self.outgoing_recv.recv() => {
-                        let Some(outgoing) = outgoing else {
-                            return None;
-                        };
+                        let outgoing = outgoing?;
                         let request_id = send_buffer.next_request_id();
                         if let Some(callback) = outgoing.callback {
                             self.message_states.insert(request_id, MessageState {

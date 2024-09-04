@@ -90,7 +90,7 @@ impl GeneratedOutput for NodeSetChunk {
     fn to_file(self) -> syn::File {
         let mut fns = Vec::new();
         fns.push(self.root_fun);
-        fns.extend(self.items.into_iter());
+        fns.extend(self.items);
 
         syn::File {
             shebang: None,
@@ -142,7 +142,7 @@ pub fn generate_target(
         .ok_or_else(|| CodeGenError::Other("Missing UANodeSet in xml schema".to_owned()))?;
     println!("Found {} nodes in node set", nodes.nodes.len());
 
-    let types = make_type_dict(&config)?;
+    let types = make_type_dict(config)?;
 
     let mut generator = NodeSetCodeGenerator::new(preferred_locale, nodes.aliases, types)?;
 
@@ -153,11 +153,11 @@ pub fn generate_target(
     fns.sort_by(|a, b| a.name.cmp(&b.name));
     println!("Generated {} node creation methods", fns.len());
 
-    let mut iter = fns.into_iter();
+    let iter = fns.into_iter();
 
     let mut outputs = Vec::new();
     let mut chunk = Vec::new();
-    while let Some(it) = iter.next() {
+    for it in iter {
         chunk.push(it);
         if chunk.len() == config.max_nodes_per_file {
             outputs.push(NodeSetChunk {
@@ -225,7 +225,7 @@ pub fn make_root_module(
             fn load<'a>(map: &'a opcua::nodes::NodeSetNamespaceMapper) -> impl Iterator<Item = opcua::nodes::ImportedItem> + 'a {
                 [
                     #(#names::imported_nodes(map)),*
-                ].into_iter().flat_map(|f| f)
+                ].into_iter().flatten()
             }
 
             fn register_namespaces(map: &mut opcua::nodes::NodeSetNamespaceMapper) -> Vec<String> {

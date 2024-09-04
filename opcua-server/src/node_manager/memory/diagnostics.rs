@@ -369,9 +369,9 @@ impl DiagnosticsNodeManager {
         node_to_read.set_result(DataValue {
             value: Some(v),
             status: Some(StatusCode::Good),
-            source_timestamp: Some(start_time.clone()),
+            source_timestamp: Some(start_time),
             source_picoseconds: None,
-            server_timestamp: Some(start_time.clone()),
+            server_timestamp: Some(start_time),
             server_picoseconds: None,
         });
     }
@@ -506,9 +506,9 @@ impl DiagnosticsNodeManager {
         node_to_read.set_result(DataValue {
             value: Some(v),
             status: Some(StatusCode::Good),
-            source_timestamp: Some(start_time.clone()),
+            source_timestamp: Some(start_time),
             source_picoseconds: None,
-            server_timestamp: Some(start_time.clone()),
+            server_timestamp: Some(start_time),
             server_picoseconds: None,
         });
     }
@@ -578,7 +578,7 @@ impl NodeManager for DiagnosticsNodeManager {
 
         for node in nodes_to_browse {
             if let Some(mut point) = node.take_continuation_point::<BrowseContinuationPoint>() {
-                if node.remaining() <= 0 {
+                if node.remaining() == 0 {
                     break;
                 }
                 let Some(ref_desc) = point.nodes.pop_back() else {

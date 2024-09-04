@@ -11,7 +11,7 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum XmlErrorInner {
     #[error("Failed to load XML: {0}")]
-    XML(#[from] roxmltree::Error),
+    Xml(#[from] roxmltree::Error),
     #[error("Expected child: {0}")]
     MissingField(String),
     #[error("Expected attribute: {0}")]

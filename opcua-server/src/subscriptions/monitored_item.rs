@@ -497,7 +497,7 @@ impl MonitoredItem {
 
     pub(super) fn add_current_value_to_queue(&mut self) {
         // Check if the last value is already enqueued
-        let last_value = self.notification_queue.get(0);
+        let last_value = self.notification_queue.front();
         if let Some(Notification::MonitoredItemNotification(it)) = last_value {
             if Some(&it.value) == self.last_data_value.as_ref() {
                 return;

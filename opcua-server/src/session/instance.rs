@@ -72,6 +72,7 @@ pub struct Session {
 
 impl Session {
     /// Create a new session object.
+    #[allow(clippy::too_many_arguments)]
     pub(crate) fn create(
         info: &ServerInfo,
         authentication_token: NodeId,
@@ -98,7 +99,7 @@ impl Session {
             authentication_token,
             session_nonce,
             session_name,
-            session_timeout: if session_timeout <= 0 {
+            session_timeout: if session_timeout == 0 {
                 Duration::from_millis(info.config.max_session_timeout_ms)
             } else {
                 Duration::from_millis(session_timeout)

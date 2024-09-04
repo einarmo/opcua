@@ -78,8 +78,8 @@ impl NodeManagerCollection for NodeManagers {
 
 impl NodeManagers {
     /// Iterate by reference over the node managers.
-    pub fn iter<'a>(&'a self) -> impl Iterator<Item = &'a Arc<DynNodeManager>> {
-        (&self).into_iter()
+    pub fn iter(&self) -> impl Iterator<Item = &'_ Arc<DynNodeManager>> {
+        self.into_iter()
     }
 
     /// Get the length of the node manager collection.
@@ -109,7 +109,7 @@ impl NodeManagers {
         for m in self {
             let r = &**m;
             if r.type_id() == TypeId::of::<T>() {
-                if let Some(k) = m.clone().into_any_arc().downcast().ok() {
+                if let Ok(k) = m.clone().into_any_arc().downcast() {
                     return Some(k);
                 }
             }
@@ -200,7 +200,7 @@ impl NodeManagersRef {
     }
 
     /// Iterate over node managers. If the server is dropped this iterator will be _empty_.
-    pub fn iter<'a>(&'a self) -> impl Iterator<Item = Arc<DynNodeManager>> {
+    pub fn iter(&self) -> impl Iterator<Item = Arc<DynNodeManager>> {
         let node_managers = self.upgrade();
         let len = node_managers.as_ref().map(|l| l.len()).unwrap_or_default();
         (0..len).filter_map(move |i| node_managers.as_ref().map(move |r| r[i].clone()))

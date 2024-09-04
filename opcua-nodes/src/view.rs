@@ -9,6 +9,8 @@ use opcua_types::{
     StatusCode, TimestampsToReturn, Variant,
 };
 
+use crate::FromAttributesError;
+
 use super::{base::Base, node::Node, node::NodeBase, EventNotifier};
 
 node_builder_impl!(ViewBuilder, View);
@@ -132,7 +134,7 @@ impl View {
         node_id: &NodeId,
         browse_name: S,
         attributes: ViewAttributes,
-    ) -> Result<Self, ()>
+    ) -> Result<Self, FromAttributesError>
     where
         S: Into<QualifiedName>,
     {
@@ -161,7 +163,7 @@ impl View {
             Ok(node)
         } else {
             error!("View cannot be created from attributes - missing mandatory values");
-            Err(())
+            Err(FromAttributesError::MissingMandatoryValues)
         }
     }
 

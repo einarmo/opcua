@@ -583,12 +583,7 @@ impl Client {
         let response = channel.send(request, self.config.request_timeout).await?;
         if let SupportedMessage::FindServersResponse(response) = response {
             process_service_result(&response.response_header)?;
-            let servers = if let Some(servers) = response.servers {
-                servers
-            } else {
-                Vec::new()
-            };
-            Ok(servers)
+            Ok(response.servers.unwrap_or_default())
         } else {
             Err(process_unexpected_response(response))
         }
@@ -765,7 +760,7 @@ impl Client {
 
         let Some(endpoint) = endpoints
             .iter()
-            .filter(|e| self.is_supported_endpoint(*e))
+            .filter(|e| self.is_supported_endpoint(e))
             .max_by(|a, b| a.security_level.cmp(&b.security_level))
         else {
             error!("Cannot find an endpoint that we call register server on");

@@ -56,7 +56,7 @@ pub async fn browse(node_managers: NodeManagers, request: Request<BrowseRequest>
 
         if let Err(e) = node_manager.browse(&context, &mut nodes).await {
             for node in &mut nodes {
-                if node_manager.owns_node(&node.node_id()) {
+                if node_manager.owns_node(node.node_id()) {
                     node.set_status(e);
                 }
             }
@@ -482,7 +482,7 @@ pub async fn register_nodes(
 
     let mut items: Vec<_> = nodes_to_register
         .into_iter()
-        .map(|n| RegisterNodeItem::new(n))
+        .map(RegisterNodeItem::new)
         .collect();
 
     for mgr in &node_managers {

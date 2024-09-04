@@ -11,7 +11,7 @@ use opcua_types::{
     StatusCode, TimestampsToReturn, VariableTypeId, Variant, VariantTypeId,
 };
 
-use crate::NodeInsertTarget;
+use crate::{FromAttributesError, NodeInsertTarget};
 
 use super::{
     base::Base,
@@ -198,14 +198,15 @@ impl Method {
         node_id: &NodeId,
         browse_name: S,
         attributes: MethodAttributes,
-    ) -> Result<Self, ()>
+    ) -> Result<Self, FromAttributesError>
     where
         S: Into<QualifiedName>,
     {
         let mandatory_attributes = AttributesMask::DISPLAY_NAME
             | AttributesMask::EXECUTABLE
             | AttributesMask::USER_EXECUTABLE;
-        let mask = AttributesMask::from_bits(attributes.specified_attributes).ok_or(())?;
+        let mask = AttributesMask::from_bits(attributes.specified_attributes)
+            .ok_or(FromAttributesError::InvalidMask)?;
         if mask.contains(mandatory_attributes) {
             let mut node = Self::new(
                 node_id,
@@ -226,7 +227,7 @@ impl Method {
             Ok(node)
         } else {
             error!("Method cannot be created from attributes - missing mandatory values");
-            Err(())
+            Err(FromAttributesError::MissingMandatoryValues)
         }
     }
 

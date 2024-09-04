@@ -226,6 +226,7 @@ impl Server {
         self.subscriptions.clone()
     }
 
+    #[allow(clippy::await_holding_lock)]
     async fn initialize_node_managers(&self, context: &ServerContext) -> Result<(), String> {
         info!("Initializing node managers");
         {
@@ -233,10 +234,13 @@ impl Server {
                 return Err("No node managers defined, server is invalid".to_string());
             }
 
+            // Normally we would strongly attempt to avoid holding a lock over an await point,
+            // but during initialization we essentially own the type tree, so this shouldn't deadlock
+            // unless a manager for whatever reason attempts to lock the type tree again.
             let mut type_tree = trace_write_lock!(self.info.type_tree);
 
             for mgr in self.node_managers.iter() {
-                mgr.init(&mut *type_tree, context.clone()).await;
+                mgr.init(&mut type_tree, context.clone()).await;
             }
         }
         Ok(())

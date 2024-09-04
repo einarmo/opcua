@@ -17,8 +17,8 @@ use opcua_types::{
 
 use super::{
     connect::{SessionConnectMode, SessionConnector},
+    implementation::SessionState,
     services::subscriptions::event_loop::{SubscriptionActivity, SubscriptionEventLoop},
-    session::SessionState,
     Session,
 };
 

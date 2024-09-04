@@ -1,10 +1,9 @@
 // OPCUA for Rust
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
-
+//! Helpers for NotificationMessage types
 use log::{debug, trace};
 
-///! Helpers for NotificationMessage types
 use crate::{
     date_time::DateTime,
     diagnostic_info::DiagnosticInfo,

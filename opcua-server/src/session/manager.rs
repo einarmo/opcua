@@ -7,7 +7,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use log::{error, info};
+use log::{error, info, warn};
 use opcua_core::{comms::secure_channel::SecureChannel, trace_read_lock, trace_write_lock};
 use opcua_crypto::{random, security_policy::SecurityPolicy, CertificateStore};
 use parking_lot::RwLock;
@@ -52,8 +52,8 @@ impl SessionManager {
         Self::find_by_token_int(&self.sessions, authentication_token)
     }
 
-    fn find_by_token_int<'a>(
-        sessions: &'a HashMap<NodeId, Arc<RwLock<Session>>>,
+    fn find_by_token_int(
+        sessions: &HashMap<NodeId, Arc<RwLock<Session>>>,
         authentication_token: &NodeId,
     ) -> Option<Arc<RwLock<Session>>> {
         sessions
@@ -165,7 +165,7 @@ impl SessionManager {
 
         Ok(CreateSessionResponse {
             response_header: ResponseHeader::new_good(&request.request_header),
-            session_id: session_id,
+            session_id,
             authentication_token,
             revised_session_timeout: session_timeout as f64,
             server_nonce,
@@ -177,92 +177,13 @@ impl SessionManager {
         })
     }
 
-    pub(crate) async fn activate_session(
-        &mut self,
-        channel: &mut SecureChannel,
-        request: &ActivateSessionRequest,
-    ) -> Result<ActivateSessionResponse, StatusCode> {
-        let Some(session) = self.find_by_token(&request.request_header.authentication_token) else {
-            return Err(StatusCode::BadSessionIdInvalid);
-        };
-
-        let mut session = trace_write_lock!(session);
-        session.validate_timed_out()?;
-
-        let security_policy = channel.security_policy();
-        let security_mode = channel.security_mode();
-        let secure_channel_id = channel.secure_channel_id();
-        let server_nonce = security_policy.random_nonce();
-        let endpoint_url = session.endpoint_url().as_ref();
-
-        if !self
-            .info
-            .endpoint_exists(endpoint_url, security_policy, security_mode)
-        {
-            error!("activate_session, Endpoint dues not exist for requested url & mode {}, {:?} / {:?}",
-                endpoint_url, security_policy, security_mode);
-            return Err(StatusCode::BadTcpEndpointUrlInvalid);
-        }
-
-        if security_policy != SecurityPolicy::None {
-            Self::verify_client_signature(
-                security_policy,
-                &self.info,
-                &session,
-                &request.client_signature,
-            )?;
-        }
-
-        let user_token = self
-            .info
-            .authenticate_endpoint(
-                request,
-                endpoint_url,
-                security_policy,
-                security_mode,
-                &request.user_identity_token,
-                session.session_nonce(),
-            )
-            .await?;
-
-        if !session.is_activated() && session.secure_channel_id() != secure_channel_id {
-            error!("activate session, rejected secure channel id {} for inactive session does not match one used to create session, {}", secure_channel_id, session.secure_channel_id());
-            return Err(StatusCode::BadSecureChannelIdInvalid);
-        } else {
-            // TODO additional secure channel validation here for client certificate and user identity
-            //  token
-        }
-
-        // TODO: If the user identity changed here, we need to re-check permissions for any created monitored items.
-        // It may be possible to just create a "fake" UserAccessLevel for each monitored item and pass it to the auth manager.
-        // The standard also mentions that a server may need to
-        // "Tear down connections to an underlying system and re-establish them using the new credentials". We need some way to
-        // handle this eventuality, perhaps a dedicated node-manager endpoint that can be called here.
-        session.activate(
-            secure_channel_id,
-            server_nonce,
-            IdentityToken::new(&request.user_identity_token, &self.info.decoding_options()),
-            request.locale_ids.clone(),
-            user_token,
-        );
-
-        // TODO: Audit
-
-        Ok(ActivateSessionResponse {
-            response_header: ResponseHeader::new_good(&request.request_header),
-            server_nonce: session.session_nonce().clone(),
-            results: None,
-            diagnostic_infos: None,
-        })
-    }
-
     fn verify_client_signature(
         security_policy: SecurityPolicy,
         info: &ServerInfo,
         session: &Session,
         client_signature: &SignatureData,
     ) -> Result<(), StatusCode> {
-        if let Some(ref client_certificate) = session.client_certificate() {
+        if let Some(client_certificate) = session.client_certificate() {
             if let Some(ref server_certificate) = info.server_certificate {
                 let r = opcua_crypto::verify_signature_data(
                     client_signature,
@@ -286,44 +207,6 @@ impl SessionManager {
         }
     }
 
-    pub(crate) async fn close_session(
-        &mut self,
-        channel: &mut SecureChannel,
-        handler: &mut MessageHandler,
-        request: &CloseSessionRequest,
-    ) -> Result<CloseSessionResponse, StatusCode> {
-        let Some(session) = self.find_by_token(&request.request_header.authentication_token) else {
-            return Err(StatusCode::BadSessionIdInvalid);
-        };
-
-        let session = trace_read_lock!(session);
-        let id = session.session_id_numeric();
-        let token = session.user_token().cloned();
-
-        let secure_channel_id = channel.secure_channel_id();
-        if !session.is_activated() && session.secure_channel_id() != secure_channel_id {
-            error!("close_session rejected, secure channel id {} for inactive session does not match one used to create session, {}", secure_channel_id, session.secure_channel_id());
-            return Err(StatusCode::BadSecureChannelIdInvalid);
-        }
-        let session_id = session.session_id().clone();
-
-        let session = self.sessions.remove(&session_id).unwrap();
-        {
-            let mut session_lck = trace_write_lock!(session);
-            session_lck.close();
-        }
-
-        if request.delete_subscriptions {
-            handler
-                .delete_session_subscriptions(id, session, token.unwrap())
-                .await;
-        }
-
-        Ok(CloseSessionResponse {
-            response_header: ResponseHeader::new_good(&request.request_header),
-        })
-    }
-
     pub(crate) fn expire_session(&mut self, id: &NodeId) {
         let Some(session) = self.sessions.remove(id) else {
             return;
@@ -338,8 +221,7 @@ impl SessionManager {
     pub(crate) fn check_session_expiry(&self) -> (Instant, Vec<NodeId>) {
         let now = Instant::now();
         let mut expired = Vec::new();
-        let mut expiry =
-            now + Duration::from_millis(self.info.config.max_session_timeout_ms as u64);
+        let mut expiry = now + Duration::from_millis(self.info.config.max_session_timeout_ms);
         for (id, session) in &self.sessions {
             let deadline = session.read().deadline();
             if deadline < now {
@@ -351,4 +233,142 @@ impl SessionManager {
 
         (expiry, expired)
     }
+}
+
+// This is a non-self method to avoid holding the manager
+// across an away point.
+pub(crate) async fn close_session(
+    mgr_lck: &RwLock<SessionManager>,
+    channel: &mut SecureChannel,
+    handler: &mut MessageHandler,
+    request: &CloseSessionRequest,
+) -> Result<CloseSessionResponse, StatusCode> {
+    let (session, id, token) = {
+        let mut mgr = trace_write_lock!(mgr_lck);
+        let Some(session) = mgr.find_by_token(&request.request_header.authentication_token) else {
+            return Err(StatusCode::BadSessionIdInvalid);
+        };
+        let (id, token, session_id) = {
+            let session = trace_read_lock!(session);
+            let id = session.session_id_numeric();
+            let token = session.user_token().cloned();
+
+            let secure_channel_id = channel.secure_channel_id();
+            if !session.is_activated() && session.secure_channel_id() != secure_channel_id {
+                error!("close_session rejected, secure channel id {} for inactive session does not match one used to create session, {}", secure_channel_id, session.secure_channel_id());
+                return Err(StatusCode::BadSecureChannelIdInvalid);
+            }
+            let session_id = session.session_id().clone();
+            (id, token, session_id)
+        };
+
+        let session = mgr.sessions.remove(&session_id).unwrap();
+        {
+            let mut session_lck = trace_write_lock!(session);
+            session_lck.close();
+        }
+        (session, id, token)
+    };
+
+    if request.delete_subscriptions {
+        if let Some(token) = token {
+            handler
+                .delete_session_subscriptions(id, session, token)
+                .await;
+        } else {
+            warn!("Attempted to delete subscriptions for a session without token, this should be impossible");
+        }
+    }
+
+    Ok(CloseSessionResponse {
+        response_header: ResponseHeader::new_good(&request.request_header),
+    })
+}
+
+pub(crate) async fn activate_session(
+    mgr_lck: &RwLock<SessionManager>,
+    channel: &mut SecureChannel,
+    request: &ActivateSessionRequest,
+) -> Result<ActivateSessionResponse, StatusCode> {
+    let security_policy = channel.security_policy();
+    let security_mode = channel.security_mode();
+    let secure_channel_id = channel.secure_channel_id();
+    let server_nonce = security_policy.random_nonce();
+    let (endpoint_url, session_nonce, session_lck, info) = {
+        let mgr = trace_read_lock!(mgr_lck);
+        let Some(session_lck) = mgr.find_by_token(&request.request_header.authentication_token)
+        else {
+            return Err(StatusCode::BadSessionIdInvalid);
+        };
+
+        let (endpoint_url, session_nonce) = {
+            let session = trace_read_lock!(session_lck);
+            session.validate_timed_out()?;
+
+            let endpoint_url = session.endpoint_url().to_string();
+
+            if !mgr
+                .info
+                .endpoint_exists(&endpoint_url, security_policy, security_mode)
+            {
+                error!("activate_session, Endpoint dues not exist for requested url & mode {}, {:?} / {:?}",
+                endpoint_url, security_policy, security_mode);
+                return Err(StatusCode::BadTcpEndpointUrlInvalid);
+            }
+
+            if security_policy != SecurityPolicy::None {
+                SessionManager::verify_client_signature(
+                    security_policy,
+                    &mgr.info,
+                    &session,
+                    &request.client_signature,
+                )?;
+            }
+            (endpoint_url, session.session_nonce().clone())
+        };
+        (endpoint_url, session_nonce, session_lck, mgr.info.clone())
+    };
+
+    let user_token = info
+        .authenticate_endpoint(
+            request,
+            &endpoint_url,
+            security_policy,
+            security_mode,
+            &request.user_identity_token,
+            &session_nonce,
+        )
+        .await?;
+
+    let mut session = trace_write_lock!(session_lck);
+
+    if !session.is_activated() && session.secure_channel_id() != secure_channel_id {
+        error!("activate session, rejected secure channel id {} for inactive session does not match one used to create session, {}", secure_channel_id, session.secure_channel_id());
+        return Err(StatusCode::BadSecureChannelIdInvalid);
+    } else {
+        // TODO additional secure channel validation here for client certificate and user identity
+        //  token
+    }
+
+    // TODO: If the user identity changed here, we need to re-check permissions for any created monitored items.
+    // It may be possible to just create a "fake" UserAccessLevel for each monitored item and pass it to the auth manager.
+    // The standard also mentions that a server may need to
+    // "Tear down connections to an underlying system and re-establish them using the new credentials". We need some way to
+    // handle this eventuality, perhaps a dedicated node-manager endpoint that can be called here.
+    session.activate(
+        secure_channel_id,
+        server_nonce,
+        IdentityToken::new(&request.user_identity_token, &info.decoding_options()),
+        request.locale_ids.clone(),
+        user_token,
+    );
+
+    // TODO: Audit
+
+    Ok(ActivateSessionResponse {
+        response_header: ResponseHeader::new_good(&request.request_header),
+        server_nonce: session.session_nonce().clone(),
+        results: None,
+        diagnostic_infos: None,
+    })
 }

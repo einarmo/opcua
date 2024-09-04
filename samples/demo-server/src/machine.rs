@@ -25,7 +25,6 @@ use opcua::{
     },
     Event,
 };
-use rand;
 use tokio_util::sync::CancellationToken;
 
 pub fn add_machinery(

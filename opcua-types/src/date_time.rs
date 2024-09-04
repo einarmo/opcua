@@ -29,7 +29,7 @@ pub type DateTimeUtc = chrono::DateTime<Utc>;
 
 /// A date/time value. This is a wrapper around the chrono type with extra functionality
 /// for obtaining ticks in OPC UA measurements, endtimes, epoch etc.
-#[derive(PartialEq, Debug, Clone, Copy, Ord, Eq)]
+#[derive(PartialEq, Debug, Clone, Copy, Eq)]
 pub struct DateTime {
     date_time: DateTimeUtc,
 }
@@ -111,6 +111,12 @@ impl PartialOrd for DateTime {
     }
 }
 
+impl Ord for DateTime {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.partial_cmp(other).unwrap()
+    }
+}
+
 // From ymd_hms
 impl From<(u16, u16, u16, u16, u16, u16)> for DateTime {
     fn from(dt: (u16, u16, u16, u16, u16, u16)) -> Self {
@@ -123,10 +129,10 @@ impl From<(u16, u16, u16, u16, u16, u16)> for DateTime {
 impl From<(u16, u16, u16, u16, u16, u16, u32)> for DateTime {
     fn from(dt: (u16, u16, u16, u16, u16, u16, u32)) -> Self {
         let (year, month, day, hour, minute, second, nanos) = dt;
-        if month < 1 || month > 12 {
+        if !(1..=12).contains(&month) {
             panic!("Invalid month");
         }
-        if day < 1 || day > 31 {
+        if !(1..=31).contains(&day) {
             panic!("Invalid day");
         }
         if hour > 23 {
@@ -180,15 +186,15 @@ impl From<i64> for DateTime {
     }
 }
 
-impl Into<i64> for DateTime {
-    fn into(self) -> i64 {
-        self.checked_ticks()
+impl From<DateTime> for i64 {
+    fn from(value: DateTime) -> Self {
+        value.checked_ticks()
     }
 }
 
-impl Into<DateTimeUtc> for DateTime {
-    fn into(self) -> DateTimeUtc {
-        self.as_chrono()
+impl From<DateTime> for DateTimeUtc {
+    fn from(value: DateTime) -> Self {
+        value.as_chrono()
     }
 }
 
@@ -199,11 +205,12 @@ impl fmt::Display for DateTime {
 }
 
 impl FromStr for DateTime {
-    type Err = ();
+    type Err = chrono::ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         DateTimeUtc::from_str(s).map(DateTime::from).map_err(|e| {
             error!("Cannot parse date {}, error = {}", s, e);
+            e
         })
     }
 }
@@ -292,8 +299,8 @@ impl DateTime {
     }
 
     /// Parses an RFC 3339 and ISO 8601 date and time string such as 1996-12-19T16:39:57-08:00, then returns a new DateTime
-    pub fn parse_from_rfc3339(s: &str) -> Result<DateTime, ()> {
-        let date_time = chrono::DateTime::parse_from_rfc3339(s).map_err(|_| ())?;
+    pub fn parse_from_rfc3339(s: &str) -> Result<DateTime, chrono::ParseError> {
+        let date_time = chrono::DateTime::parse_from_rfc3339(s)?;
         // Internally, the min date is going to get clipped to the epoch.
         let mut date_time = date_time.with_timezone(&Utc);
         if date_time < Self::epoch_chrono() {

@@ -18,7 +18,7 @@ mod game;
 
 // These are squares on the board which will become variables with the same
 // name
-const BOARD_SQUARES: [&'static str; 64] = [
+const BOARD_SQUARES: [&str; 64] = [
     "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8", "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
     "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6", "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5",
     "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4", "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
@@ -97,7 +97,7 @@ async fn main() {
 
     {
         let game = game.lock();
-        update_board_state(&game, &node_manager, 2, &handle.subscriptions());
+        update_board_state(&game, &node_manager, 2, handle.subscriptions());
     }
 
     // Spawn a thread for the game which will update server state
@@ -107,30 +107,32 @@ async fn main() {
 
     tokio::task::spawn(async move {
         let sleep_time = Duration::from_millis(1500);
-        let mut game = game.lock();
         loop {
-            game.set_position();
-            let bestmove = game.bestmove().unwrap();
+            {
+                let mut game = game.lock();
+                game.set_position();
+                let bestmove = game.bestmove().unwrap();
 
-            // uci is a wonderfully terrible specification as evidenced by the way various chess engines
-            // return no-bestmove answers
-            let end_game = bestmove == "(none)"
-                || bestmove == "a1a1"
-                || bestmove == "NULL"
-                || bestmove == "0000";
-            if end_game || game.half_move_clock >= 50 {
-                println!(
-                    "Resetting the game - best move = {}, half move clock = {}",
-                    bestmove, game.half_move_clock
-                );
-                // Reset the board
-                game.reset();
-            } else {
-                println!("best move = {}", bestmove);
-                game.make_move(bestmove);
-                game.print_board();
+                // uci is a wonderfully terrible specification as evidenced by the way various chess engines
+                // return no-bestmove answers
+                let end_game = bestmove == "(none)"
+                    || bestmove == "a1a1"
+                    || bestmove == "NULL"
+                    || bestmove == "0000";
+                if end_game || game.half_move_clock >= 50 {
+                    println!(
+                        "Resetting the game - best move = {}, half move clock = {}",
+                        bestmove, game.half_move_clock
+                    );
+                    // Reset the board
+                    game.reset();
+                } else {
+                    println!("best move = {}", bestmove);
+                    game.make_move(bestmove);
+                    game.print_board();
 
-                update_board_state(&game, &node_manager, ns, &handle.subscriptions());
+                    update_board_state(&game, &node_manager, ns, handle.subscriptions());
+                }
             }
 
             tokio::time::sleep(sleep_time).await;

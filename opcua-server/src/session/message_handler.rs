@@ -95,6 +95,7 @@ macro_rules! service_fault {
 
 impl<T> Request<T> {
     /// Create a new request.
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         request: Box<T>,
         info: Arc<ServerInfo>,

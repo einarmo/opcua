@@ -32,7 +32,7 @@ pub fn write_to_directory<T: GeneratedOutput>(
     std::fs::create_dir_all(dir)
         .map_err(|e| CodeGenError::io(&format!("Failed to create dir {}", dir), e))?;
 
-    items.sort_by(|a, b| a.name().to_lowercase().cmp(&b.name().to_lowercase()));
+    items.sort_by_key(|a| a.name().to_lowercase());
 
     for gen in items {
         let module = gen.module().to_owned();
@@ -54,7 +54,7 @@ pub fn write_to_directory<T: GeneratedOutput>(
         if modules_seen.insert(module.clone()) {
             modules.push(module.clone());
         }
-        file.write_all(&prettyplease::unparse(&gen.to_file()).as_bytes())
+        file.write_all(prettyplease::unparse(&gen.to_file()).as_bytes())
             .map_err(|e| {
                 CodeGenError::io(&format!("Failed to write to file {}/{}.rs", dir, module), e)
             })?;
@@ -73,7 +73,7 @@ pub fn write_module_file(dir: &str, header: &str, file: File) -> Result<(), Code
         .write_all(header.as_bytes())
         .map_err(|e| CodeGenError::io(&format!("Failed to write to file {}/mod.rs", dir), e))?;
     mod_file
-        .write_all(&prettyplease::unparse(&file).as_bytes())
+        .write_all(prettyplease::unparse(&file).as_bytes())
         .map_err(|e| CodeGenError::io(&format!("Failed to write to file {}/mod.rs", dir), e))?;
 
     Ok(())
@@ -91,7 +91,7 @@ fn make_header(path: &str, extra: &[&str]) -> String {
     for extra in extra {
         if !extra.is_empty() {
             header.push('\n');
-            header.extend(extra.trim().chars());
+            header.push_str(extra.trim());
         }
     }
 
@@ -114,8 +114,8 @@ pub fn run_codegen(config: &CodeGenConfig) -> Result<(), CodeGenError> {
             }
             CodeGenTarget::Nodes(n) => {
                 println!("Running node set code generation for {}", n.file_path);
-                let chunks = generate_target(&n, &config.preferred_locale)?;
-                let module_file = make_root_module(&chunks, &n)?;
+                let chunks = generate_target(n, &config.preferred_locale)?;
+                let module_file = make_root_module(&chunks, n)?;
 
                 println!("Writing {} files to {}", chunks.len() + 1, n.output_dir);
 

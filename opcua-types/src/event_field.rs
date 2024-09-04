@@ -31,7 +31,7 @@ where
         index_range: NumericRange,
         remaining_path: &[QualifiedName],
     ) -> Variant {
-        if remaining_path.len() != 0
+        if !remaining_path.is_empty()
             || attribute_id != AttributeId::Value
             || index_range != NumericRange::None
         {
@@ -68,7 +68,7 @@ where
         index_range: NumericRange,
         remaining_path: &[QualifiedName],
     ) -> Variant {
-        if remaining_path.len() != 0 {
+        if !remaining_path.is_empty() {
             return Variant::Empty;
         }
 
@@ -188,7 +188,7 @@ impl EventField for Variant {
         index_range: NumericRange,
         remaining_path: &[QualifiedName],
     ) -> Variant {
-        if remaining_path.len() != 0 || attribute_id != AttributeId::Value {
+        if !remaining_path.is_empty() || attribute_id != AttributeId::Value {
             return Variant::Empty;
         }
         self.clone()

@@ -52,6 +52,12 @@ pub struct SyncSampler {
     token: CancellationToken,
 }
 
+impl Default for SyncSampler {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl SyncSampler {
     /// Create a new sync sampler.
     pub fn new() -> Self {
@@ -185,9 +191,7 @@ impl SyncSampler {
                     if sampler.last_sample + sampler.sampling_interval > now {
                         return None;
                     }
-                    let Some(value) = (sampler.sampler)() else {
-                        return None;
-                    };
+                    let value = (sampler.sampler)()?;
                     sampler.last_sample = now;
                     Some((value, node_id, *attribute))
                 });

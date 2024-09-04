@@ -86,7 +86,7 @@ pub(crate) async fn resolve_external_references(
     references: &[(&NodeId, BrowseDescriptionResultMask)],
 ) -> Vec<Option<NodeMetadata>> {
     let mut res: Vec<_> = references
-        .into_iter()
+        .iter()
         .map(|(n, mask)| ExternalReferenceRequest::new(n, *mask))
         .collect();
 

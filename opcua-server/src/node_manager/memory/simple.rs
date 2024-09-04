@@ -126,7 +126,7 @@ impl InMemoryNodeManagerImpl for SimpleNodeManagerImpl {
             .iter()
             .map(|n| {
                 self.read_node_value(
-                    &*cbs,
+                    &cbs,
                     context,
                     &address_space,
                     n,
@@ -143,8 +143,6 @@ impl InMemoryNodeManagerImpl for SimpleNodeManagerImpl {
         address_space: &RwLock<AddressSpace>,
         items: &mut [&mut &mut CreateMonitoredItem],
     ) {
-        let cbs = trace_read_lock!(self.read_cbs);
-
         let to_read: Vec<_> = items.iter().map(|r| r.item_to_monitor()).collect();
         let values = self
             .read_values(
@@ -156,7 +154,9 @@ impl InMemoryNodeManagerImpl for SimpleNodeManagerImpl {
             )
             .await;
 
-        for (value, node) in values.into_iter().zip(items.into_iter()) {
+        let cbs = trace_read_lock!(self.read_cbs);
+
+        for (value, node) in values.into_iter().zip(items.iter_mut()) {
             if value.status() != StatusCode::BadAttributeIdInvalid {
                 node.set_initial_value(value);
             }
@@ -235,7 +235,7 @@ impl InMemoryNodeManagerImpl for SimpleNodeManagerImpl {
         let cbs = trace_read_lock!(self.write_cbs);
 
         for write in nodes_to_write {
-            self.write_node_value(&*cbs, context, &mut address_space, &type_tree, *write);
+            self.write_node_value(&cbs, context, &mut address_space, &type_tree, write);
         }
 
         Ok(())
@@ -303,12 +303,10 @@ impl SimpleNodeManagerImpl {
                 timestamps_to_return,
                 max_age,
             ) {
-                Err(e) => {
-                    return DataValue {
-                        status: Some(e),
-                        ..Default::default()
-                    }
-                }
+                Err(e) => DataValue {
+                    status: Some(e),
+                    ..Default::default()
+                },
                 Ok(v) => v,
             }
         } else {
@@ -325,7 +323,7 @@ impl SimpleNodeManagerImpl {
         type_tree: &DefaultTypeTree,
         write: &mut WriteNode,
     ) {
-        let node = match address_space.validate_node_write(context, write.value(), &*type_tree) {
+        let node = match address_space.validate_node_write(context, write.value(), type_tree) {
             Ok(v) => v,
             Err(e) => {
                 write.set_status(e);

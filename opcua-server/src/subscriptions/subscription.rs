@@ -129,6 +129,7 @@ pub(crate) enum TickReason {
 }
 
 impl Subscription {
+    #[allow(clippy::too_many_arguments)]
     pub(super) fn new(
         id: u32,
         publishing_enabled: bool,
@@ -169,6 +170,11 @@ impl Subscription {
         self.monitored_items.len()
     }
 
+    /// Return whether the subscription has no monitored items.
+    pub fn is_empty(&self) -> bool {
+        self.monitored_items.is_empty()
+    }
+
     pub(super) fn get_mut(&mut self, id: &u32) -> Option<&mut MonitoredItem> {
         self.monitored_items.get_mut(id)
     }
@@ -188,7 +194,7 @@ impl Subscription {
         self.monitored_items.values()
     }
 
-    pub(super) fn drain<'a>(&'a mut self) -> impl Iterator<Item = (u32, MonitoredItem)> + 'a {
+    pub(super) fn drain(&mut self) -> impl Iterator<Item = (u32, MonitoredItem)> + '_ {
         self.monitored_items.drain()
     }
 
@@ -246,6 +252,7 @@ impl Subscription {
         // Note that the exact layout here is written to be as close as possible to the state transition
         // table. Avoid changing it to clean it up or remove redundant checks. To make it easier to debug,
         // it should be as one-to-one with the original document as possible.
+        #[allow(clippy::nonminimal_bool)]
         match (self.state, tick_reason) {
             (SubscriptionState::Creating, _) => HandledState::Create3,
             (SubscriptionState::Normal, TickReason::ReceivePublishRequest)
@@ -475,7 +482,7 @@ impl Subscription {
             tick_reason,
             SubscriptionStateParams {
                 notifications_available: self.notifications_available(self.resend_data),
-                more_notifications: self.notifications.len() > 0,
+                more_notifications: !self.notifications.is_empty(),
                 publishing_req_queued,
             },
         );
@@ -602,6 +609,7 @@ impl Subscription {
         )
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn tick_monitored_item(
         monitored_item: &mut MonitoredItem,
         now: &DateTimeUtc,
@@ -684,7 +692,7 @@ impl Subscription {
 
         self.handle_triggers(now, triggers, &mut notifications, &mut messages);
 
-        if notifications.len() > 0 {
+        if !notifications.is_empty() {
             messages.push(Self::make_notification_message(
                 self.sequence_number.next(),
                 notifications,

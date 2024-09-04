@@ -108,7 +108,7 @@ impl CodeGenerator {
             LoadedType::Struct(s) => {
                 for k in &s.fields {
                     let has_default = match &k.typ {
-                        crate::StructureFieldType::Field(f) => self.is_default_recursive(&f),
+                        crate::StructureFieldType::Field(f) => self.is_default_recursive(f),
                         crate::StructureFieldType::Array(_) => true,
                     };
                     if !has_default {
@@ -296,7 +296,7 @@ impl CodeGenerator {
 
                     deserializer
                         .#deser_method(BitFieldVisitor)
-                        .map(|v| #enum_ident::from_bits_truncate(v))
+                        .map(#enum_ident::from_bits_truncate)
                 }
             }
         });
@@ -520,9 +520,9 @@ impl CodeGenerator {
 
         for field in item.visible_fields() {
             let typ: Type = match &field.typ {
-                crate::StructureFieldType::Field(f) => syn::parse_str(&self.get_type_path(&f))?,
+                crate::StructureFieldType::Field(f) => syn::parse_str(&self.get_type_path(f))?,
                 crate::StructureFieldType::Array(f) => {
-                    let path: Path = syn::parse_str(&self.get_type_path(&f))?;
+                    let path: Path = syn::parse_str(&self.get_type_path(f))?;
                     parse_quote! { Option<Vec<#path>> }
                 }
             };

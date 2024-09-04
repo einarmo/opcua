@@ -58,7 +58,7 @@ impl RenderExpr for NodeId {
                 parse_quote! { #v }
             }
             "g=" => {
-                let uuid = uuid::Uuid::parse_str(&v)
+                let uuid = uuid::Uuid::parse_str(v)
                     .map_err(|e| CodeGenError::Other(format!("Invalid nodeId: {}, {e}", id)))?;
                 let bytes = uuid.as_bytes();
                 parse_quote! { opcua::types::Uuid::from_slice(&[#(#bytes)*,]).unwrap() }

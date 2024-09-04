@@ -284,10 +284,10 @@ impl SignatureData {
     }
 }
 
-impl Into<MonitoredItemCreateRequest> for NodeId {
-    fn into(self) -> MonitoredItemCreateRequest {
-        MonitoredItemCreateRequest::new(
-            self.into(),
+impl From<NodeId> for MonitoredItemCreateRequest {
+    fn from(value: NodeId) -> Self {
+        Self::new(
+            value.into(),
             MonitoringMode::Reporting,
             MonitoringParameters::default(),
         )
@@ -323,12 +323,12 @@ impl Default for ApplicationDescription {
     }
 }
 
-impl Into<CallMethodRequest> for (NodeId, NodeId, Option<Vec<Variant>>) {
-    fn into(self) -> CallMethodRequest {
-        CallMethodRequest {
-            object_id: self.0,
-            method_id: self.1,
-            input_arguments: self.2,
+impl From<(NodeId, NodeId, Option<Vec<Variant>>)> for CallMethodRequest {
+    fn from(value: (NodeId, NodeId, Option<Vec<Variant>>)) -> Self {
+        Self {
+            object_id: value.0,
+            method_id: value.1,
+            input_arguments: value.2,
         }
     }
 }

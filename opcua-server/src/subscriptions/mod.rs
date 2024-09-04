@@ -186,12 +186,10 @@ impl SubscriptionCache {
         session_id: u32,
         subscription_id: u32,
     ) -> Option<usize> {
-        let Some(cache) = ({
+        let cache = ({
             let lck = trace_read_lock!(self.inner);
             lck.session_subscriptions.get(&session_id).cloned()
-        }) else {
-            return None;
-        };
+        })?;
         let cache_lck = cache.lock();
         cache_lck.get_monitored_item_count(subscription_id)
     }
@@ -397,7 +395,7 @@ impl SubscriptionCache {
         let mut by_subscription = HashMap::<u32, Vec<_>>::new();
         for (evt, notifier) in items {
             let notifier_key = MonitoredItemKeyRef {
-                id: &notifier,
+                id: notifier,
                 attribute_id: AttributeId::EventNotifier,
             };
             if let Some(items) = lck.monitored_items.get(&notifier_key) {
@@ -514,7 +512,7 @@ impl SubscriptionCache {
         PersistentSessionKey::new(
             lck.user_token().unwrap(),
             lck.message_security_mode(),
-            &lck.application_description().application_uri.as_ref(),
+            lck.application_description().application_uri.as_ref(),
         )
     }
 

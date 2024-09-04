@@ -18,6 +18,7 @@ use crate::{
         DecodingOptions, EncodingResult,
     },
     status_code::StatusCode,
+    OutOfRange,
 };
 
 /// To avoid naming conflict hell, the OPC UA String type is typed `UAString` so it does not collide
@@ -187,7 +188,7 @@ impl Default for UAString {
     }
 }
 
-impl<'a, 'b> PartialEq<str> for UAString {
+impl PartialEq<str> for UAString {
     fn eq(&self, other: &str) -> bool {
         match self.value {
             None => false,
@@ -237,16 +238,16 @@ impl UAString {
     /// from min up to and inclusive of max. Note that min must have an index within the string
     /// but max is allowed to be beyond the end in which case the remainder of the string is
     /// returned (see docs for NumericRange).
-    pub fn substring(&self, min: usize, max: usize) -> Result<UAString, ()> {
+    pub fn substring(&self, min: usize, max: usize) -> Result<UAString, OutOfRange> {
         if let Some(ref v) = self.value() {
             if min >= v.len() {
-                Err(())
+                Err(OutOfRange)
             } else {
                 let max = if max >= v.len() { v.len() - 1 } else { max };
                 Ok(UAString::from(&v[min..=max]))
             }
         } else {
-            Err(())
+            Err(OutOfRange)
         }
     }
 }

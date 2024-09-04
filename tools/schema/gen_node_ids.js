@@ -67,16 +67,16 @@ impl<'a> From<&'a ${key}Id> for NodeId {
     }
 }
 
-impl Into<NodeId> for ${key}Id {
-    fn into(self) -> NodeId {
-        NodeId::new(0, self as u32)
+impl From<${key}Id> for NodeId {
+    fn from(value: ${key}Id) -> Self {
+        Self::new(0, self as u32)
     }
 }
 
-impl Into<ExpandedNodeId> for ${key}Id {
-    fn into(self) -> ExpandedNodeId {
-        ExpandedNodeId {
-            node_id: NodeId::new(0, self as u32),
+impl From<${key}Id> for ExpandedNodeId {
+    fn from(value: ${key}Id) -> Self {
+        Self {
+            node_id: NodeId::new(0, value as u32),
             namespace_uri: UAString::null(),
             server_index: 0,
         }

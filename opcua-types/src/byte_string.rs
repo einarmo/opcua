@@ -20,7 +20,7 @@ use crate::{
         DecodingOptions, EncodingResult,
     },
     status_code::StatusCode,
-    Guid,
+    Guid, OutOfRange,
 };
 
 /// A sequence of octets.
@@ -179,9 +179,9 @@ impl TryFrom<&ByteString> for Guid {
     }
 }
 
-impl Into<String> for ByteString {
-    fn into(self) -> String {
-        self.as_base64()
+impl From<ByteString> for String {
+    fn from(value: ByteString) -> Self {
+        value.as_base64()
     }
 }
 
@@ -239,17 +239,17 @@ impl ByteString {
     /// from min up to and inclusive of max. Note that min must have an index within the string
     /// but max is allowed to be beyond the end in which case the remainder of the string is
     /// returned (see docs for NumericRange).
-    pub fn substring(&self, min: usize, max: usize) -> Result<ByteString, ()> {
+    pub fn substring(&self, min: usize, max: usize) -> Result<ByteString, OutOfRange> {
         if let Some(ref v) = self.value {
             if min >= v.len() {
-                Err(())
+                Err(OutOfRange)
             } else {
                 let max = if max >= v.len() { v.len() - 1 } else { max };
                 let v = v[min..=max].to_vec();
                 Ok(ByteString::from(v))
             }
         } else {
-            Err(())
+            Err(OutOfRange)
         }
     }
 }

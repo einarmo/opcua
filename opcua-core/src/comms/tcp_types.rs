@@ -381,7 +381,7 @@ impl BinaryEncoder for ErrorMessage {
 
 impl ErrorMessage {
     pub fn from_status_code(status_code: StatusCode) -> ErrorMessage {
-        Self::new(status_code, &status_code.sub_code().description())
+        Self::new(status_code, status_code.sub_code().description())
     }
 
     pub fn new(status_code: StatusCode, reason: &str) -> ErrorMessage {
