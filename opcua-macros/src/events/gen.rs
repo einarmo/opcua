@@ -125,7 +125,7 @@ pub fn generate_event_impls(event: EventStruct) -> syn::Result<TokenStream> {
     }
 
     Ok(quote! {
-        impl opcua::server::Event for #ident {
+        impl opcua::nodes::Event for #ident {
             fn get_field(
                 &self,
                 type_definition_id: &opcua::types::NodeId,
@@ -133,7 +133,7 @@ pub fn generate_event_impls(event: EventStruct) -> syn::Result<TokenStream> {
                 index_range: opcua::types::NumericRange,
                 browse_path: &[opcua::types::QualifiedName],
             ) -> opcua::types::Variant {
-                use opcua::server::EventField;
+                use opcua::nodes::EventField;
 
                 if type_definition_id != &opcua::types::ObjectTypeId::BaseEventType && !{
                     #type_id_body
@@ -151,7 +151,7 @@ pub fn generate_event_impls(event: EventStruct) -> syn::Result<TokenStream> {
             }
         }
 
-        impl opcua::server::EventField for #ident {
+        impl opcua::nodes::EventField for #ident {
             fn get_value(
                 &self,
                 attribute_id: opcua::types::AttributeId,

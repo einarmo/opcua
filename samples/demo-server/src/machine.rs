@@ -12,16 +12,18 @@ use std::{
 
 use opcua::{
     crypto::random,
+    nodes::BaseEventType,
     server::{
         address_space::{
             AddressSpace, EventNotifier, ObjectBuilder, ObjectTypeBuilder, VariableBuilder,
         },
         node_manager::memory::SimpleNodeManager,
-        BaseEventType, Event, SubscriptionCache,
+        SubscriptionCache,
     },
     types::{
         DataTypeId, DataValue, DateTime, NodeId, ObjectId, ObjectTypeId, UAString, VariableTypeId,
     },
+    Event,
 };
 use rand;
 use tokio_util::sync::CancellationToken;
@@ -226,7 +228,9 @@ fn raise_machine_cycled_event(
 
     // create an event object in a folder with the
 
-    subscriptions.notify_events([(&event as &dyn Event, &ObjectId::Server.into())].into_iter());
+    subscriptions.notify_events(
+        [(&event as &dyn opcua::nodes::Event, &ObjectId::Server.into())].into_iter(),
+    );
 }
 
 fn increment_counter(

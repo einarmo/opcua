@@ -1,11 +1,9 @@
-use crate::{
-    session::{
-        continuation_points::{ContinuationPoint, EmptyContinuationPoint},
-        instance::Session,
-    },
-    ParsedContentFilter,
+use crate::session::{
+    continuation_points::{ContinuationPoint, EmptyContinuationPoint},
+    instance::Session,
 };
 use opcua_crypto::random;
+use opcua_nodes::ParsedContentFilter;
 use opcua_types::{
     AttributeId, ByteString, ExpandedNodeId, NodeTypeDescription, NumericRange, ParsingResult,
     QueryDataDescription, QueryDataSet, RelativePath, StatusCode,

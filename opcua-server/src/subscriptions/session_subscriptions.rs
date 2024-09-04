@@ -10,12 +10,13 @@ use super::{
     CreateMonitoredItem, NonAckedPublish, PendingPublish, PersistentSessionKey,
 };
 use hashbrown::{HashMap, HashSet};
+use opcua_nodes::{Event, TypeTree};
 
 use crate::{
     info::ServerInfo,
-    node_manager::{MonitoredItemRef, MonitoredItemUpdateRef, TypeTree},
+    node_manager::{MonitoredItemRef, MonitoredItemUpdateRef},
     session::instance::Session,
-    Event, SubscriptionLimits,
+    SubscriptionLimits,
 };
 use opcua_core::sync::RwLock;
 use opcua_types::{

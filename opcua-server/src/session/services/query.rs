@@ -1,10 +1,10 @@
 use log::info;
 use opcua_core::trace_write_lock;
+use opcua_nodes::ParsedContentFilter;
 
 use crate::{
     node_manager::{NodeManagers, ParsedNodeTypeDescription, QueryRequest},
     session::{controller::Response, message_handler::Request},
-    ParsedContentFilter,
 };
 use opcua_types::{
     ByteString, QueryFirstRequest, QueryFirstResponse, QueryNextRequest, QueryNextResponse,

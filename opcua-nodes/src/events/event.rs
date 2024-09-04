@@ -1,4 +1,4 @@
-use opcua_nodes::NamespaceMap;
+use crate::NamespaceMap;
 use opcua_types::{
     event_field::EventField, AttributeId, ByteString, DateTime, LocalizedText, NodeId,
     NumericRange, ObjectTypeId, QualifiedName, TimeZoneDataType, UAString, Variant,
@@ -186,20 +186,17 @@ impl BaseEventType {
 
 #[cfg(test)]
 mod tests {
-    use opcua_crypto::random;
-    use opcua_macros::EventField;
-    use opcua_nodes::NamespaceMap;
+    use crate::NamespaceMap;
 
     mod opcua {
-        pub use crate as server;
-        pub use opcua_nodes as nodes;
+        pub use crate as nodes;
         pub use opcua_types as types;
     }
 
-    use crate::{BaseEventType, Event};
+    use crate::{BaseEventType, Event, EventField};
     use opcua_types::{
-        AttributeId, DecodingOptions, EUInformation, KeyValuePair, LocalizedText, NodeId,
-        NumericRange, ObjectTypeId, QualifiedName, StatusCode, UAString, Variant,
+        AttributeId, ByteString, DecodingOptions, EUInformation, KeyValuePair, LocalizedText,
+        NodeId, NumericRange, ObjectTypeId, QualifiedName, StatusCode, UAString, Variant,
     };
     #[derive(Event)]
     #[opcua(identifier = "s=myevent", namespace = "uri:my:namespace")]
@@ -243,7 +240,7 @@ mod tests {
         let namespaces = namespace_map();
         let mut evt = BasicValueEvent::new_event_now(
             BasicValueEvent::event_type_id(&namespaces),
-            random::byte_string(128),
+            ByteString::from_base64("dGVzdA==").unwrap(),
             "Some message",
             &namespaces,
         );
@@ -381,7 +378,7 @@ mod tests {
         let namespaces = namespace_map();
         let mut evt = NestedEvent::new_event_now(
             NestedEvent::event_type_id(&namespaces),
-            random::byte_string(128),
+            ByteString::from_base64("dGVzdA==").unwrap(),
             "Some message",
             &namespaces,
         );

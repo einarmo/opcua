@@ -9,6 +9,7 @@ use std::sync::Arc;
 
 use arc_swap::ArcSwap;
 use log::{debug, error, warn};
+use opcua_nodes::DefaultTypeTree;
 
 use crate::authenticator::Password;
 use crate::node_manager::TypeTreeForUser;
@@ -37,7 +38,6 @@ use super::identity_token::{
     IdentityToken, POLICY_ID_ANONYMOUS, POLICY_ID_USER_PASS_NONE, POLICY_ID_USER_PASS_RSA_15,
     POLICY_ID_USER_PASS_RSA_OAEP, POLICY_ID_X509,
 };
-use super::node_manager::DefaultTypeTree;
 use super::{OperationalLimits, ServerCapabilities, ANONYMOUS_USER_TOKEN_ID};
 
 /// Server state is any configuration associated with the server as a whole that individual sessions might

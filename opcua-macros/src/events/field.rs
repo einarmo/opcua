@@ -64,7 +64,7 @@ pub fn generate_event_field_impls(event: EventFieldStruct) -> syn::Result<TokenS
     }
 
     Ok(quote! {
-        impl opcua::server::EventField for #ident {
+        impl opcua::nodes::EventField for #ident {
             fn get_value(
                 &self,
                 attribute_id: opcua::types::AttributeId,

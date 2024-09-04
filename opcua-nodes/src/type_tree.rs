@@ -3,7 +3,7 @@ use std::{
     collections::{HashMap, HashSet},
 };
 
-use opcua_nodes::NamespaceMap;
+use crate::NamespaceMap;
 use opcua_types::{
     DataTypeId, NodeClass, NodeId, ObjectTypeId, QualifiedName, ReferenceTypeId, VariableTypeId,
 };

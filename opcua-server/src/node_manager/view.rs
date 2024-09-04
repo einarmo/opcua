@@ -9,13 +9,12 @@ use crate::{
 };
 use log::warn;
 use opcua_crypto::random;
+use opcua_nodes::TypeTree;
 use opcua_types::{
     BrowseDescription, BrowseDescriptionResultMask, BrowseDirection, BrowsePath, BrowseResult,
     ByteString, ExpandedNodeId, LocalizedText, NodeClass, NodeClassMask, NodeId, QualifiedName,
     ReferenceDescription, RelativePathElement, StatusCode,
 };
-
-use super::type_tree::TypeTree;
 
 #[derive(Debug, Clone)]
 /// Object describing a node with sufficient context to construct

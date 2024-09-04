@@ -1,7 +1,7 @@
 use super::utils::setup;
 use opcua::{
+    nodes::TypeTree,
     server::address_space::{ObjectBuilder, ReferenceDirection, VariableBuilder},
-    server::node_manager::TypeTree,
     types::{
         BrowseDescription, BrowseDirection, BrowsePath, BrowseResultMask, ByteString, DataTypeId,
         NodeClass, NodeClassMask, NodeId, ObjectId, ObjectTypeId, ReferenceTypeId, RelativePath,

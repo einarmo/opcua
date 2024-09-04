@@ -3,10 +3,9 @@ use std::{
     time::{Duration, Instant},
 };
 
-use crate::Event;
-
 use log::{debug, trace, warn};
 use opcua_core::handle::Handle;
+use opcua_nodes::Event;
 use opcua_types::{DataValue, DateTime, DateTimeUtc, NotificationMessage, StatusCode};
 
 use super::monitored_item::{MonitoredItem, Notification};
