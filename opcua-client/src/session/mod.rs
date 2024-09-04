@@ -1,8 +1,8 @@
 mod client;
 mod connect;
 mod event_loop;
+mod implementation;
 mod services;
-mod session;
 
 /// Information about the server endpoint, security policy, security mode and user identity that the session will
 /// will use to establish a connection.
@@ -39,13 +39,13 @@ impl From<(EndpointDescription, IdentityToken)> for SessionInfo {
 pub use client::Client;
 pub use connect::SessionConnectMode;
 pub use event_loop::{SessionActivity, SessionEventLoop, SessionPollResult};
+pub use implementation::Session;
 use log::{error, info};
 pub use services::attributes::{HistoryReadAction, HistoryUpdateAction};
 pub use services::subscriptions::{
     DataChangeCallback, EventCallback, MonitoredItem, OnSubscriptionNotification, Subscription,
     SubscriptionCallbacks,
 };
-pub use session::Session;
 
 #[allow(unused)]
 macro_rules! session_warn {

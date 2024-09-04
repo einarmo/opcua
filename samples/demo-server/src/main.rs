@@ -22,8 +22,6 @@ extern crate log;
 
 use std::path::PathBuf;
 
-use tokio;
-
 use opcua::server::{
     node_manager::memory::{simple_node_manager, NamespaceMetadata, SimpleNodeManager},
     ServerBuilder,

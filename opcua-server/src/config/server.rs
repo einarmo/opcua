@@ -453,7 +453,7 @@ impl ServerConfig {
     ) -> Option<&ServerEndpoint> {
         let endpoint = self.endpoints.iter().find(|&(_, e)| {
             // Test end point's security_policy_uri and matching url
-            if url_matches_except_host(&e.endpoint_url(&base_endpoint_url), endpoint_url) {
+            if url_matches_except_host(&e.endpoint_url(base_endpoint_url), endpoint_url) {
                 if e.security_policy() == security_policy
                     && e.message_security_mode() == security_mode
                 {

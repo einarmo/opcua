@@ -39,13 +39,13 @@ impl SubscriptionEventLoop {
     ///
     ///  * `session` - A shared reference to an [AsyncSession].
     ///  * `trigger_publish_recv` - A channel used to transmit external publish triggers.
-    ///  This is used to trigger publish outside of the normal schedule, for example when
-    ///  a new subscription is created.
+    ///    This is used to trigger publish outside of the normal schedule, for example when
+    ///    a new subscription is created.
     pub fn new(
         session: Arc<Session>,
         trigger_publish_recv: tokio::sync::watch::Receiver<Instant>,
     ) -> Self {
-        let last_external_trigger = trigger_publish_recv.borrow().clone();
+        let last_external_trigger = *trigger_publish_recv.borrow();
         Self {
             max_inflight_publish: session.max_inflight_publish,
             last_external_trigger,
@@ -94,7 +94,7 @@ impl SubscriptionEventLoop {
                                 // On an external trigger, we always publish.
                                 futures.push(slf.static_publish());
                                 next = slf.session.next_publish_time(true);
-                                slf.last_external_trigger = v.clone();
+                                slf.last_external_trigger = *v;
                             }
                         }
                         _ = next_tick_fut => {

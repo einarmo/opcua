@@ -331,7 +331,7 @@ impl Game {
             result.push(file.as_char());
             result.push(rank.as_char());
         } else {
-            result.push_str("-");
+            result.push('-');
         }
         result.push(' ');
 
@@ -416,16 +416,24 @@ impl Game {
                         self.white_can_castle_queenside = false;
                         Piece::WhiteRook
                     };
-                    if (f1 as i32) < (f2 as i32) {
-                        self.squares[Self::rank_file_str_index(&format!("f{}", r1.as_char()))] =
-                            rook_piece;
-                        self.squares[Self::rank_file_str_index(&format!("h{}", r1.as_char()))] =
-                            Piece::Empty;
-                    } else if (f1 as i32) > (f2 as i32) {
-                        self.squares[Self::rank_file_str_index(&format!("d{}", r1.as_char()))] =
-                            rook_piece;
-                        self.squares[Self::rank_file_str_index(&format!("a{}", r1.as_char()))] =
-                            Piece::Empty;
+                    match (f1 as i32).cmp(&(f2 as i32)) {
+                        std::cmp::Ordering::Less => {
+                            self.squares
+                                [Self::rank_file_str_index(&format!("f{}", r1.as_char()))] =
+                                rook_piece;
+                            self.squares
+                                [Self::rank_file_str_index(&format!("h{}", r1.as_char()))] =
+                                Piece::Empty;
+                        }
+                        std::cmp::Ordering::Equal => (),
+                        std::cmp::Ordering::Greater => {
+                            self.squares
+                                [Self::rank_file_str_index(&format!("d{}", r1.as_char()))] =
+                                rook_piece;
+                            self.squares
+                                [Self::rank_file_str_index(&format!("a{}", r1.as_char()))] =
+                                Piece::Empty;
+                        }
                     }
                 }
             } else {

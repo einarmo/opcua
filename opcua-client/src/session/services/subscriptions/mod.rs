@@ -48,11 +48,15 @@ pub trait OnSubscriptionNotification: Send + Sync {
     fn on_event(&mut self, event_fields: Option<Vec<Variant>>, item: &MonitoredItem) {}
 }
 
+type StatusChangeCallbackFun = dyn FnMut(StatusChangeNotification) + Send + Sync;
+type DataChangeCallbackFun = dyn FnMut(DataValue, &MonitoredItem) + Send + Sync;
+type EventCallbackFun = dyn FnMut(Option<Vec<Variant>>, &MonitoredItem) + Send + Sync;
+
 /// A convenient wrapper around a set of callback functions that implements [OnSubscriptionNotification]
 pub struct SubscriptionCallbacks {
-    status_change: Box<dyn FnMut(StatusChangeNotification) + Send + Sync>,
-    data_value: Box<dyn FnMut(DataValue, &MonitoredItem) + Send + Sync>,
-    event: Box<dyn FnMut(Option<Vec<Variant>>, &MonitoredItem) + Send + Sync>,
+    status_change: Box<StatusChangeCallbackFun>,
+    data_value: Box<DataChangeCallbackFun>,
+    event: Box<EventCallbackFun>,
 }
 
 impl SubscriptionCallbacks {
@@ -69,33 +73,30 @@ impl SubscriptionCallbacks {
         event: impl FnMut(Option<Vec<Variant>>, &MonitoredItem) + Send + Sync + 'static,
     ) -> Self {
         Self {
-            status_change: Box::new(status_change)
-                as Box<dyn FnMut(StatusChangeNotification) + Send + Sync>,
-            data_value: Box::new(data_value)
-                as Box<dyn FnMut(DataValue, &MonitoredItem) + Send + Sync>,
-            event: Box::new(event)
-                as Box<dyn FnMut(Option<Vec<Variant>>, &MonitoredItem) + Send + Sync>,
+            status_change: Box::new(status_change) as Box<StatusChangeCallbackFun>,
+            data_value: Box::new(data_value) as Box<DataChangeCallbackFun>,
+            event: Box::new(event) as Box<EventCallbackFun>,
         }
     }
 }
 
 impl OnSubscriptionNotification for SubscriptionCallbacks {
     fn on_subscription_status_change(&mut self, notification: StatusChangeNotification) {
-        (&mut self.status_change)(notification);
+        (self.status_change)(notification);
     }
 
     fn on_data_value(&mut self, notification: DataValue, item: &MonitoredItem) {
-        (&mut self.data_value)(notification, item);
+        (self.data_value)(notification, item);
     }
 
     fn on_event(&mut self, event_fields: Option<Vec<Variant>>, item: &MonitoredItem) {
-        (&mut self.event)(event_fields, item);
+        (self.event)(event_fields, item);
     }
 }
 
 /// A wrapper around a data change callback that implements [OnSubscriptionNotification]
 pub struct DataChangeCallback {
-    data_value: Box<dyn FnMut(DataValue, &MonitoredItem) + Send + Sync>,
+    data_value: Box<DataChangeCallbackFun>,
 }
 
 impl DataChangeCallback {
@@ -114,13 +115,13 @@ impl DataChangeCallback {
 
 impl OnSubscriptionNotification for DataChangeCallback {
     fn on_data_value(&mut self, notification: DataValue, item: &MonitoredItem) {
-        (&mut self.data_value)(notification, item);
+        (self.data_value)(notification, item);
     }
 }
 
 /// A wrapper around an event callback that implements [OnSubscriptionNotification]
 pub struct EventCallback {
-    event: Box<dyn FnMut(Option<Vec<Variant>>, &MonitoredItem) + Send + Sync>,
+    event: Box<EventCallbackFun>,
 }
 
 impl EventCallback {
@@ -141,7 +142,7 @@ impl EventCallback {
 
 impl OnSubscriptionNotification for EventCallback {
     fn on_event(&mut self, event_fields: Option<Vec<Variant>>, item: &MonitoredItem) {
-        (&mut self.event)(event_fields, item);
+        (self.event)(event_fields, item);
     }
 }
 
@@ -263,6 +264,7 @@ pub struct Subscription {
 
 impl Subscription {
     /// Creates a new subscription using the supplied parameters and the supplied data change callback.
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         subscription_id: u32,
         publishing_interval: Duration,

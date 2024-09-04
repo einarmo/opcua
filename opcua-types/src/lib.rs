@@ -235,5 +235,8 @@ pub use self::{
     variant_type_id::*,
 };
 
+#[derive(Debug, Clone)]
+/// Error type used for certain custom substring methods.
+pub struct OutOfRange;
 #[cfg(test)]
 mod tests;

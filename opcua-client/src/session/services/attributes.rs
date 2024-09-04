@@ -115,12 +115,7 @@ impl Session {
             if let SupportedMessage::ReadResponse(response) = response {
                 session_debug!(self, "read(), success");
                 process_service_result(&response.response_header)?;
-                let results = if let Some(results) = response.results {
-                    results
-                } else {
-                    Vec::new()
-                };
-                Ok(results)
+                Ok(response.results.unwrap_or_default())
             } else {
                 session_error!(self, "read() value failed");
                 Err(process_unexpected_response(response))
@@ -179,12 +174,7 @@ impl Session {
         if let SupportedMessage::HistoryReadResponse(response) = response {
             session_debug!(self, "history_read(), success");
             process_service_result(&response.response_header)?;
-            let results = if let Some(results) = response.results {
-                results
-            } else {
-                Vec::new()
-            };
-            Ok(results)
+            Ok(response.results.unwrap_or_default())
         } else {
             session_error!(self, "history_read() value failed");
             Err(process_unexpected_response(response))
@@ -277,12 +267,7 @@ impl Session {
             if let SupportedMessage::HistoryUpdateResponse(response) = response {
                 session_debug!(self, "history_update(), success");
                 process_service_result(&response.response_header)?;
-                let results = if let Some(results) = response.results {
-                    results
-                } else {
-                    Vec::new()
-                };
-                Ok(results)
+                Ok(response.results.unwrap_or_default())
             } else {
                 session_error!(self, "history_update() failed {:?}", response);
                 Err(process_unexpected_response(response))

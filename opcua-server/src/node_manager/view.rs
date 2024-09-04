@@ -110,6 +110,8 @@ impl ExternalReference {
 
 #[derive(Debug)]
 /// Result of adding a reference to a browse node.
+// TODO: Consider whether or not to box the reference desc here...
+#[allow(clippy::large_enum_variant)]
 pub enum AddReferenceResult {
     /// The reference was added
     Added,
@@ -277,25 +279,18 @@ impl BrowseNode {
             if !type_tree.is_subtype_of(ty, &self.reference_type_id) {
                 return false;
             }
-        } else {
-            if ty != &self.reference_type_id {
-                return false;
-            }
+        } else if ty != &self.reference_type_id {
+            return false;
         }
         true
     }
 
     /// Return `true` if nodes with the given node class should be returned.
     pub fn allows_node_class(&self, node_class: NodeClass) -> bool {
-        if !self.node_class_mask.is_empty()
-            && !self
+        self.node_class_mask.is_empty()
+            || self
                 .node_class_mask
                 .contains(NodeClassMask::from_bits_truncate(node_class as u32))
-        {
-            false
-        } else {
-            true
-        }
     }
 
     /// Return `true` if the given reference should be returned.
@@ -488,7 +483,7 @@ impl BrowseNode {
     /// Returns whether this node is completed in this invocation of the Browse or
     /// BrowseNext service. If this returns true, no new nodes should be added.
     pub fn is_completed(&self) -> bool {
-        self.remaining() <= 0 || self.next_continuation_point.is_some()
+        self.remaining() == 0 || self.next_continuation_point.is_some()
     }
 
     /// Add an external reference to the result. This will be resolved by
@@ -611,7 +606,7 @@ impl<'a> BrowsePathItem<'a> {
             depth: 0,
             node_manager_index: usize::MAX,
             path: if let Some(elements) = path.relative_path.elements.as_ref() {
-                &*elements
+                elements
             } else {
                 &[]
             },
@@ -642,7 +637,7 @@ impl<'a> BrowsePathItem<'a> {
         self.results.push(BrowsePathResultElement {
             node,
             depth: self.depth + relative_depth,
-            unmatched_browse_name: unmatched_browse_name,
+            unmatched_browse_name,
         })
     }
 

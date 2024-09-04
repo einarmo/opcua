@@ -73,6 +73,7 @@ impl SessionSubscriptions {
         self.subscriptions.is_empty() && self.publish_request_queue.is_empty()
     }
 
+    #[allow(clippy::result_large_err)]
     pub(super) fn insert(
         &mut self,
         subscription: Subscription,
@@ -263,9 +264,9 @@ impl SessionSubscriptions {
                         r,
                     )
                 })
-                .unwrap_or_else(|| ExtensionObject::null());
+                .unwrap_or_else(ExtensionObject::null);
             if item.status_code().is_good() {
-                let new_item = MonitoredItem::new(&item);
+                let new_item = MonitoredItem::new(item);
                 results.push(MonitoredItemCreateResult {
                     status_code: StatusCode::Good,
                     monitored_item_id: new_item.id(),
@@ -311,7 +312,7 @@ impl SessionSubscriptions {
                             &f,
                         )
                     })
-                    .unwrap_or_else(|| ExtensionObject::null());
+                    .unwrap_or_else(ExtensionObject::null);
 
                 results.push(MonitoredItemUpdateRef::new(
                     MonitoredItemHandle {
@@ -412,8 +413,8 @@ impl SessionSubscriptions {
             return Err(StatusCode::BadMonitoredItemIdInvalid);
         }
 
-        let (to_add, add_results) = Self::filter_links(links_to_add, &sub);
-        let (to_remove, remove_results) = Self::filter_links(links_to_remove, &sub);
+        let (to_add, add_results) = Self::filter_links(links_to_add, sub);
+        let (to_remove, remove_results) = Self::filter_links(links_to_remove, sub);
 
         let item = sub.get_mut(&triggering_item_id).unwrap();
 
@@ -436,7 +437,7 @@ impl SessionSubscriptions {
                 subscription_id,
                 monitored_item_id: *id,
             };
-            if let Some(item) = sub.remove(&id) {
+            if let Some(item) = sub.remove(id) {
                 results.push((
                     StatusCode::Good,
                     MonitoredItemRef::new(
@@ -530,9 +531,7 @@ impl SessionSubscriptions {
     fn revise_max_notifications_per_publish(&self, inp: u32) -> u64 {
         if self.limits.max_notifications_per_publish == 0 {
             inp as u64
-        } else if inp as u64 > self.limits.max_notifications_per_publish {
-            self.limits.max_notifications_per_publish
-        } else if inp == 0 {
+        } else if inp == 0 || inp as u64 > self.limits.max_notifications_per_publish {
             self.limits.max_notifications_per_publish
         } else {
             inp as u64

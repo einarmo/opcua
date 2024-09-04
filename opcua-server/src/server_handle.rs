@@ -32,6 +32,7 @@ pub struct ServerHandle {
 }
 
 impl ServerHandle {
+    #[allow(clippy::too_many_arguments)]
     pub(crate) fn new(
         info: Arc<ServerInfo>,
         service_level: Arc<AtomicU8>,

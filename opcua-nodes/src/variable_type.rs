@@ -12,6 +12,8 @@ use opcua_types::{
     StatusCode, TimestampsToReturn, Variant,
 };
 
+use crate::FromAttributesError;
+
 use super::{base::Base, node::Node, node::NodeBase};
 
 node_builder_impl!(VariableTypeBuilder, VariableType);
@@ -198,7 +200,7 @@ impl VariableType {
         node_id: &NodeId,
         browse_name: S,
         attributes: VariableTypeAttributes,
-    ) -> Result<Self, ()>
+    ) -> Result<Self, FromAttributesError>
     where
         S: Into<QualifiedName>,
     {
@@ -206,7 +208,8 @@ impl VariableType {
             | AttributesMask::IS_ABSTRACT
             | AttributesMask::DATA_TYPE
             | AttributesMask::VALUE_RANK;
-        let mask = AttributesMask::from_bits(attributes.specified_attributes).ok_or(())?;
+        let mask = AttributesMask::from_bits(attributes.specified_attributes)
+            .ok_or(FromAttributesError::InvalidMask)?;
         if mask.contains(mandatory_attributes) {
             let mut node = Self::new(
                 node_id,
@@ -234,7 +237,7 @@ impl VariableType {
             Ok(node)
         } else {
             error!("VariableType cannot be created from attributes - missing mandatory values");
-            Err(())
+            Err(FromAttributesError::MissingMandatoryValues)
         }
     }
 

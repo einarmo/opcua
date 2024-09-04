@@ -16,5 +16,5 @@ pub fn from_opaque_node_id<T: DeserializeOwned + std::fmt::Debug>(id: &NodeId) -
         Identifier::ByteString(b) => b.value.as_ref()?,
         _ => return None,
     };
-    postcard::from_bytes(&v).ok()
+    postcard::from_bytes(v).ok()
 }

@@ -208,7 +208,7 @@ impl XmlElement {
         &'a self,
         name: &'a str,
     ) -> impl Iterator<Item = &XmlElement> + 'a {
-        self.children.iter().filter(move |c| &c.tag == name)
+        self.children.iter().filter(move |c| c.tag == name)
     }
 
     pub fn first_child_with_name<'a>(&'a self, name: &'a str) -> Option<&'a XmlElement> {

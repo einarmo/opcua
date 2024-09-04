@@ -166,7 +166,7 @@ impl<'de> Deserialize<'de> for ExpandedNodeId {
                 }
                 let v = Guid::from_str(v)
                     .map_err(|_| de::Error::custom("Error parsing Guid identifier"))?;
-                NodeId::new(namespace, v).into()
+                NodeId::new(namespace, v)
             }
             3 => {
                 // Bytestring
@@ -316,9 +316,9 @@ impl BinaryEncoder for ExpandedNodeId {
     }
 }
 
-impl<'a> Into<ExpandedNodeId> for &'a NodeId {
-    fn into(self) -> ExpandedNodeId {
-        self.clone().into()
+impl From<&NodeId> for ExpandedNodeId {
+    fn from(value: &NodeId) -> Self {
+        value.clone().into()
     }
 }
 

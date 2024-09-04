@@ -5,7 +5,7 @@ fn main() -> Result<(), CodeGenError> {
 }
 
 fn run_cli() -> Result<(), CodeGenError> {
-    let args = std::env::args();
+    let mut args = std::env::args();
 
     if args.len() != 2 {
         println!(
@@ -16,7 +16,7 @@ opcua-codegen [config].yml
         return Ok(());
     }
 
-    let config_path = args.skip(1).next().unwrap();
+    let config_path = args.nth(1).unwrap();
 
     let config_text =
         std::fs::read_to_string(config_path).expect("Failed to read config from file");

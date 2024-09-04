@@ -62,7 +62,7 @@ pub async fn delete_subscriptions_inner(
             continue;
         }
 
-        mgr.delete_monitored_items(&context, &owned).await;
+        mgr.delete_monitored_items(context, &owned).await;
     }
 
     Ok(results.into_iter().map(|r| r.0).collect())

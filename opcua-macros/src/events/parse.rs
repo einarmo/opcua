@@ -175,5 +175,5 @@ pub fn parse_event_struct(input: DeriveInput) -> syn::Result<EventStruct> {
         );
     }
 
-    return Ok(parsed);
+    Ok(parsed)
 }

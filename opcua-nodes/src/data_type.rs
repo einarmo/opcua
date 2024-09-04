@@ -10,6 +10,8 @@ use opcua_types::{
     DecodingOptions, NumericRange, StatusCode, TimestampsToReturn, Variant,
 };
 
+use crate::FromAttributesError;
+
 use super::{base::Base, node::Node, node::NodeBase};
 
 node_builder_impl!(DataTypeBuilder, DataType);
@@ -146,11 +148,12 @@ impl DataType {
         node_id: &NodeId,
         browse_name: S,
         attributes: DataTypeAttributes,
-    ) -> Result<Self, ()>
+    ) -> Result<Self, FromAttributesError>
     where
         S: Into<QualifiedName>,
     {
-        let mask = AttributesMask::from_bits(attributes.specified_attributes).ok_or(())?;
+        let mask = AttributesMask::from_bits(attributes.specified_attributes)
+            .ok_or(FromAttributesError::InvalidMask)?;
         if mask.contains(AttributesMask::DISPLAY_NAME | AttributesMask::IS_ABSTRACT) {
             let mut node = Self::new(
                 node_id,
@@ -170,7 +173,7 @@ impl DataType {
             Ok(node)
         } else {
             error!("DataType cannot be created from attributes - missing mandatory values");
-            Err(())
+            Err(FromAttributesError::MissingMandatoryValues)
         }
     }
 

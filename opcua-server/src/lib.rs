@@ -118,7 +118,7 @@ pub mod constants {
     pub const MAX_QUEUED_NOTIFICATIONS: usize = 20;
 
     /// Receive buffer size default.
-    pub const RECEIVE_BUFFER_SIZE: usize = std::u16::MAX as usize;
+    pub const RECEIVE_BUFFER_SIZE: usize = u16::MAX as usize;
     /// Send buffer size default.
-    pub const SEND_BUFFER_SIZE: usize = std::u16::MAX as usize;
+    pub const SEND_BUFFER_SIZE: usize = u16::MAX as usize;
 }

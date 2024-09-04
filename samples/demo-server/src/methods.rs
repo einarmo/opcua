@@ -73,7 +73,7 @@ pub fn add_methods(manager: Arc<SimpleNodeManager>, ns: u16) {
     manager.inner().add_method_callback(fn_node_id, |args| {
         // We don't actually need to do much validation here, since it should all have happened elsewhere,
         // but we don't want to panic if something goes wrong.
-        let Some(Variant::String(s)) = args.get(0) else {
+        let Some(Variant::String(s)) = args.first() else {
             return Err(StatusCode::BadTypeMismatch);
         };
 
@@ -96,7 +96,7 @@ pub fn add_methods(manager: Arc<SimpleNodeManager>, ns: u16) {
         .insert(&mut *address_space);
 
     manager.inner().add_method_callback(fn_node_id, |args| {
-        let Some(Variant::String(_)) = args.get(0) else {
+        let Some(Variant::String(_)) = args.first() else {
             return Err(StatusCode::BadInvalidArgument);
         };
         Ok(Vec::new())

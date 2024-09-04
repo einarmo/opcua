@@ -53,7 +53,7 @@ impl<'de> serde::de::Deserialize<'de> for AccessLevelExType {
         }
         deserializer
             .deserialize_i32(BitFieldVisitor)
-            .map(|v| AccessLevelExType::from_bits_truncate(v))
+            .map(AccessLevelExType::from_bits_truncate)
     }
 }
 impl serde::ser::Serialize for AccessLevelExType {
@@ -112,7 +112,7 @@ impl<'de> serde::de::Deserialize<'de> for AccessLevelType {
         }
         deserializer
             .deserialize_u8(BitFieldVisitor)
-            .map(|v| AccessLevelType::from_bits_truncate(v))
+            .map(AccessLevelType::from_bits_truncate)
     }
 }
 impl serde::ser::Serialize for AccessLevelType {
@@ -170,7 +170,7 @@ impl<'de> serde::de::Deserialize<'de> for AccessRestrictionType {
         }
         deserializer
             .deserialize_i16(BitFieldVisitor)
-            .map(|v| AccessRestrictionType::from_bits_truncate(v))
+            .map(AccessRestrictionType::from_bits_truncate)
     }
 }
 impl serde::ser::Serialize for AccessRestrictionType {
@@ -279,7 +279,7 @@ impl<'de> serde::de::Deserialize<'de> for AttributeWriteMask {
         }
         deserializer
             .deserialize_i32(BitFieldVisitor)
-            .map(|v| AttributeWriteMask::from_bits_truncate(v))
+            .map(AttributeWriteMask::from_bits_truncate)
     }
 }
 impl serde::ser::Serialize for AttributeWriteMask {
@@ -575,7 +575,7 @@ impl<'de> serde::de::Deserialize<'de> for DataSetFieldContentMask {
         }
         deserializer
             .deserialize_i32(BitFieldVisitor)
-            .map(|v| DataSetFieldContentMask::from_bits_truncate(v))
+            .map(DataSetFieldContentMask::from_bits_truncate)
     }
 }
 impl serde::ser::Serialize for DataSetFieldContentMask {
@@ -632,7 +632,7 @@ impl<'de> serde::de::Deserialize<'de> for DataSetFieldFlags {
         }
         deserializer
             .deserialize_i16(BitFieldVisitor)
-            .map(|v| DataSetFieldFlags::from_bits_truncate(v))
+            .map(DataSetFieldFlags::from_bits_truncate)
     }
 }
 impl serde::ser::Serialize for DataSetFieldFlags {
@@ -819,7 +819,7 @@ impl<'de> serde::de::Deserialize<'de> for EventNotifierType {
         }
         deserializer
             .deserialize_u8(BitFieldVisitor)
-            .map(|v| EventNotifierType::from_bits_truncate(v))
+            .map(EventNotifierType::from_bits_truncate)
     }
 }
 impl serde::ser::Serialize for EventNotifierType {
@@ -1134,7 +1134,7 @@ impl<'de> serde::de::Deserialize<'de> for JsonDataSetMessageContentMask {
         }
         deserializer
             .deserialize_i32(BitFieldVisitor)
-            .map(|v| JsonDataSetMessageContentMask::from_bits_truncate(v))
+            .map(JsonDataSetMessageContentMask::from_bits_truncate)
     }
 }
 impl serde::ser::Serialize for JsonDataSetMessageContentMask {
@@ -1193,7 +1193,7 @@ impl<'de> serde::de::Deserialize<'de> for JsonNetworkMessageContentMask {
         }
         deserializer
             .deserialize_i32(BitFieldVisitor)
-            .map(|v| JsonNetworkMessageContentMask::from_bits_truncate(v))
+            .map(JsonNetworkMessageContentMask::from_bits_truncate)
     }
 }
 impl serde::ser::Serialize for JsonNetworkMessageContentMask {
@@ -1772,7 +1772,7 @@ impl<'de> serde::de::Deserialize<'de> for PermissionType {
         }
         deserializer
             .deserialize_i32(BitFieldVisitor)
-            .map(|v| PermissionType::from_bits_truncate(v))
+            .map(PermissionType::from_bits_truncate)
     }
 }
 impl serde::ser::Serialize for PermissionType {
@@ -2197,7 +2197,7 @@ impl<'de> serde::de::Deserialize<'de> for UadpDataSetMessageContentMask {
         }
         deserializer
             .deserialize_i32(BitFieldVisitor)
-            .map(|v| UadpDataSetMessageContentMask::from_bits_truncate(v))
+            .map(UadpDataSetMessageContentMask::from_bits_truncate)
     }
 }
 impl serde::ser::Serialize for UadpDataSetMessageContentMask {
@@ -2258,7 +2258,7 @@ impl<'de> serde::de::Deserialize<'de> for UadpNetworkMessageContentMask {
         }
         deserializer
             .deserialize_i32(BitFieldVisitor)
-            .map(|v| UadpNetworkMessageContentMask::from_bits_truncate(v))
+            .map(UadpNetworkMessageContentMask::from_bits_truncate)
     }
 }
 impl serde::ser::Serialize for UadpNetworkMessageContentMask {

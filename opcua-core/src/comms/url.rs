@@ -12,7 +12,7 @@ use opcua_types::status_code::StatusCode;
 pub const OPC_TCP_SCHEME: &str = "opc.tcp";
 
 /// Creates a `Url` from the input string, supplying a default port if necessary.
-fn opc_url_from_str(s: &str) -> Result<Url, ()> {
+fn opc_url_from_str(s: &str) -> Result<Url, url::ParseError> {
     Url::parse(s)
         .map(|mut url| {
             if url.port().is_none() {
@@ -23,11 +23,12 @@ fn opc_url_from_str(s: &str) -> Result<Url, ()> {
         })
         .map_err(|err| {
             error!("Cannot parse url \"{}\", error = {:?}", s, err);
+            err
         })
 }
 
 /// Replace the hostname in the supplied url and return a new url
-pub fn url_with_replaced_hostname(url: &str, hostname: &str) -> Result<String, ()> {
+pub fn url_with_replaced_hostname(url: &str, hostname: &str) -> Result<String, url::ParseError> {
     let mut url = opc_url_from_str(url)?;
     let _ = url.set_host(Some(hostname));
     Ok(url.into_string())
@@ -53,7 +54,9 @@ pub fn url_matches_except_host(url1: &str, url2: &str) -> bool {
 }
 
 /// Takes an endpoint url and strips off the path and args to leave just the protocol, host & port.
-pub fn server_url_from_endpoint_url(endpoint_url: &str) -> std::result::Result<String, ()> {
+pub fn server_url_from_endpoint_url(
+    endpoint_url: &str,
+) -> std::result::Result<String, url::ParseError> {
     opc_url_from_str(endpoint_url).map(|mut url| {
         url.set_query(None);
         if let Some(port) = url.port() {
@@ -78,16 +81,24 @@ pub fn is_opc_ua_binary_url(url: &str) -> bool {
     }
 }
 
-pub fn hostname_from_url(url: &str) -> Result<String, ()> {
+pub enum HostnameFromUrlError {
+    Parse(url::ParseError),
+    MissingHost,
+}
+
+impl From<url::ParseError> for HostnameFromUrlError {
+    fn from(value: url::ParseError) -> Self {
+        Self::Parse(value)
+    }
+}
+
+pub fn hostname_from_url(url: &str) -> Result<String, HostnameFromUrlError> {
     // Validate and split out the endpoint we have
-    if let Ok(url) = Url::parse(url) {
-        if let Some(host) = url.host_str() {
-            Ok(host.to_string())
-        } else {
-            Err(())
-        }
+    let url = Url::parse(url)?;
+    if let Some(host) = url.host_str() {
+        Ok(host.to_string())
     } else {
-        Err(())
+        Err(HostnameFromUrlError::MissingHost)
     }
 }
 

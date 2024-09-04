@@ -9,7 +9,7 @@ pub struct MonitoredItemRef {
     attribute: AttributeId,
 }
 
-impl<'a> MonitoredItemRef {
+impl MonitoredItemRef {
     pub(crate) fn new(
         handle: MonitoredItemHandle,
         node_id: NodeId,
@@ -47,7 +47,7 @@ pub struct MonitoredItemUpdateRef {
     update: MonitoredItemModifyResult,
 }
 
-impl<'a> MonitoredItemUpdateRef {
+impl MonitoredItemUpdateRef {
     pub(crate) fn new(
         handle: MonitoredItemHandle,
         node_id: NodeId,

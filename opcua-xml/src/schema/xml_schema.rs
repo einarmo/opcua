@@ -14,7 +14,7 @@ use crate::{
 pub fn load_xsd_schema(document: &str) -> Result<XmlSchema, XmlError> {
     let document = Document::parse(document).map_err(|e| XmlError {
         span: 0..1,
-        error: crate::error::XmlErrorInner::XML(e),
+        error: crate::error::XmlErrorInner::Xml(e),
     })?;
     let root = document.root();
     first_child_with_name(&root, "schema")
@@ -54,18 +54,18 @@ pub enum Facet {
 impl<'input> XmlLoad<'input> for Option<Facet> {
     fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError> {
         Ok(Some(match node.tag_name().name() {
-            "minExclusive" => Facet::MinExclusive(FacetValue::load(&node)?),
-            "minInclusive" => Facet::MinInclusive(FacetValue::load(&node)?),
-            "maxExclusive" => Facet::MaxExclusive(FacetValue::load(&node)?),
-            "maxInclusive" => Facet::MaxInclusive(FacetValue::load(&node)?),
-            "totalDigits" => Facet::TotalDigits(FacetValue::load(&node)?),
-            "fractionDigits" => Facet::FractionDigits(FacetValue::load(&node)?),
-            "length" => Facet::Length(FacetValue::load(&node)?),
-            "minLength" => Facet::MinLength(FacetValue::load(&node)?),
-            "maxLength" => Facet::MaxLength(FacetValue::load(&node)?),
-            "enumeration" => Facet::Enumeration(FacetValue::load(&node)?),
-            "whiteSpace" => Facet::WhiteSpace(FacetValue::load(&node)?),
-            "pattern" => Facet::Pattern(FacetValue::load(&node)?),
+            "minExclusive" => Facet::MinExclusive(FacetValue::load(node)?),
+            "minInclusive" => Facet::MinInclusive(FacetValue::load(node)?),
+            "maxExclusive" => Facet::MaxExclusive(FacetValue::load(node)?),
+            "maxInclusive" => Facet::MaxInclusive(FacetValue::load(node)?),
+            "totalDigits" => Facet::TotalDigits(FacetValue::load(node)?),
+            "fractionDigits" => Facet::FractionDigits(FacetValue::load(node)?),
+            "length" => Facet::Length(FacetValue::load(node)?),
+            "minLength" => Facet::MinLength(FacetValue::load(node)?),
+            "maxLength" => Facet::MaxLength(FacetValue::load(node)?),
+            "enumeration" => Facet::Enumeration(FacetValue::load(node)?),
+            "whiteSpace" => Facet::WhiteSpace(FacetValue::load(node)?),
+            "pattern" => Facet::Pattern(FacetValue::load(node)?),
             _ => return Ok(None),
         }))
     }

@@ -906,6 +906,7 @@ impl SecureChannel {
         Ok(padding_range)
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn asymmetric_decrypt_and_verify(
         &self,
         security_policy: SecurityPolicy,

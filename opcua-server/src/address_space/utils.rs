@@ -75,7 +75,7 @@ pub fn user_access_level(context: &RequestContext, node: &NodeType) -> UserAcces
     context.authenticator.effective_user_access_level(
         &context.token,
         user_access_level,
-        &node.node_id(),
+        node.node_id(),
     )
 }
 
@@ -167,7 +167,7 @@ pub fn validate_node_write(
 
     // TODO: We should do type validation for every attribute, not just value.
     if let (NodeType::Variable(var), AttributeId::Value) = (node, node_to_write.attribute_id) {
-        validate_value_to_write(var, &value, type_tree)?;
+        validate_value_to_write(var, value, type_tree)?;
     }
 
     Ok(())
@@ -208,7 +208,7 @@ pub fn read_node_value(
                 let access_level = context.authenticator.effective_user_access_level(
                     &context.token,
                     access_level,
-                    &node.node_id(),
+                    node.node_id(),
                 );
                 Some(Variant::from(access_level.bits()))
             }
@@ -224,7 +224,7 @@ pub fn read_node_value(
             Some(Variant::Boolean(val)) => Some(Variant::from(
                 val && context
                     .authenticator
-                    .is_user_executable(&context.token, &node.node_id()),
+                    .is_user_executable(&context.token, node.node_id()),
             )),
             r => r,
         }

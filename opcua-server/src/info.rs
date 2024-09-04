@@ -127,8 +127,8 @@ impl ServerInfo {
             let endpoints = self
                 .config
                 .endpoints
-                .iter()
-                .map(|(_, e)| self.new_endpoint_description(e, true))
+                .values()
+                .map(|e| self.new_endpoint_description(e, true))
                 .collect();
             Some(endpoints)
         } else {
@@ -414,10 +414,10 @@ impl ServerInfo {
                     error!("User identity token type unsupported");
                     Err(StatusCode::BadIdentityTokenInvalid)
                 }
-                IdentityToken::AnonymousIdentityToken(token) => {
+                IdentityToken::Anonymous(token) => {
                     self.authenticate_anonymous_token(endpoint, &token).await
                 }
-                IdentityToken::UserNameIdentityToken(token) => {
+                IdentityToken::UserName(token) => {
                     self.authenticate_username_identity_token(
                         endpoint,
                         &token,
@@ -426,7 +426,7 @@ impl ServerInfo {
                     )
                     .await
                 }
-                IdentityToken::X509IdentityToken(token) => {
+                IdentityToken::X509(token) => {
                     self.authenticate_x509_identity_token(
                         endpoint,
                         &token,

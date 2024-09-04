@@ -13,6 +13,8 @@ use opcua_types::{
     TimestampsToReturn, Variant,
 };
 
+use crate::FromAttributesError;
+
 use super::base::Base;
 use super::{AccessLevel, Node, NodeBase, UserAccessLevel};
 
@@ -325,6 +327,7 @@ impl Variable {
     ///
     /// Note: This uses the given value and data type directly, you must ensure that the
     /// type of the value matches the data type.
+    #[allow(clippy::too_many_arguments)]
     pub fn new_full(
         base: Base,
         data_type: NodeId,
@@ -353,7 +356,7 @@ impl Variable {
         node_id: &NodeId,
         browse_name: S,
         attributes: VariableAttributes,
-    ) -> Result<Self, ()>
+    ) -> Result<Self, FromAttributesError>
     where
         S: Into<QualifiedName>,
     {
@@ -364,7 +367,8 @@ impl Variable {
             | AttributesMask::HISTORIZING
             | AttributesMask::VALUE
             | AttributesMask::VALUE_RANK;
-        let mask = AttributesMask::from_bits(attributes.specified_attributes).ok_or(())?;
+        let mask = AttributesMask::from_bits(attributes.specified_attributes)
+            .ok_or(FromAttributesError::InvalidMask)?;
         if mask.contains(mandatory_attributes) {
             let mut node = Self::new_data_value(
                 node_id,
@@ -400,7 +404,7 @@ impl Variable {
             Ok(node)
         } else {
             error!("Variable cannot be created from attributes - missing mandatory values");
-            Err(())
+            Err(FromAttributesError::MissingMandatoryValues)
         }
     }
 
@@ -429,7 +433,7 @@ impl Variable {
                     if let Some(ref array_dimensions) = array.dimensions {
                         // Multidimensional arrays encode/decode dimensions with Int32 in Part 6, but arrayDimensions in Part 3
                         // wants them as u32. Go figure... So convert Int32 to u32
-                        Some(array_dimensions.iter().map(|v| *v).collect::<Vec<u32>>())
+                        Some(array_dimensions.to_vec())
                     } else {
                         Some(vec![array.values.len() as u32])
                     }

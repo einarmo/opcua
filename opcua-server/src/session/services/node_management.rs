@@ -44,7 +44,7 @@ pub async fn add_nodes(node_managers: NodeManagers, request: Request<AddNodesReq
                     return false;
                 }
                 if c.requested_new_node_id().is_null() {
-                    node_manager.handle_new_node(&c.parent_node_id())
+                    node_manager.handle_new_node(c.parent_node_id())
                 } else {
                     node_manager.owns_node(c.requested_new_node_id())
                 }

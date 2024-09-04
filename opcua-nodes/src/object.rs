@@ -10,6 +10,8 @@ use opcua_types::{
     ObjectTypeId, StatusCode, TimestampsToReturn, Variant,
 };
 
+use crate::FromAttributesError;
+
 use super::{base::Base, node::Node, node::NodeBase, EventNotifier};
 
 node_builder_impl!(ObjectBuilder, Object);
@@ -142,13 +144,14 @@ impl Object {
         node_id: &NodeId,
         browse_name: S,
         attributes: ObjectAttributes,
-    ) -> Result<Self, ()>
+    ) -> Result<Self, FromAttributesError>
     where
         S: Into<QualifiedName>,
     {
         let mandatory_attributes = AttributesMask::DISPLAY_NAME | AttributesMask::EVENT_NOTIFIER;
 
-        let mask = AttributesMask::from_bits(attributes.specified_attributes).ok_or(())?;
+        let mask = AttributesMask::from_bits(attributes.specified_attributes)
+            .ok_or(FromAttributesError::InvalidMask)?;
         if mask.contains(mandatory_attributes) {
             let event_notifier = EventNotifier::from_bits_truncate(attributes.event_notifier);
             let mut node = Self::new(
@@ -169,7 +172,7 @@ impl Object {
             Ok(node)
         } else {
             error!("Object cannot be created from attributes - missing mandatory values");
-            Err(())
+            Err(FromAttributesError::MissingMandatoryValues)
         }
     }
 

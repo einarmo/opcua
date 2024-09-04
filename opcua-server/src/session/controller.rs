@@ -33,7 +33,11 @@ use crate::{
     transport::tcp::{Request, TcpTransport, TransportConfig, TransportPollResult},
 };
 
-use super::{instance::Session, manager::SessionManager, message_handler::MessageHandler};
+use super::{
+    instance::Session,
+    manager::{activate_session, close_session, SessionManager},
+    message_handler::MessageHandler,
+};
 
 pub(crate) struct Response {
     pub message: SupportedMessage,
@@ -63,6 +67,8 @@ pub(crate) enum ControllerCommand {
     Close,
 }
 
+type PendingMessageResponse = dyn Future<Output = Result<Response, String>> + Send + Sync + 'static;
+
 /// Master type managing a single connection.
 pub(crate) struct SessionController {
     channel: SecureChannel,
@@ -71,9 +77,7 @@ pub(crate) struct SessionController {
     session_manager: Arc<RwLock<SessionManager>>,
     certificate_store: Arc<RwLock<CertificateStore>>,
     message_handler: MessageHandler,
-    pending_messages: FuturesUnordered<
-        Pin<Box<dyn Future<Output = Result<Response, String>> + Send + Sync + 'static>>,
-    >,
+    pending_messages: FuturesUnordered<Pin<Box<PendingMessageResponse>>>,
     info: Arc<ServerInfo>,
     deadline: Instant,
 }
@@ -220,7 +224,7 @@ impl SessionController {
                         Ok(_) => RequestProcessResult::Ok,
                         Err(e) => {
                             error!("Failed to send open secure channel response: {e}");
-                            return RequestProcessResult::Close;
+                            RequestProcessResult::Close
                         }
                     },
                     Err(e) => {
@@ -229,14 +233,12 @@ impl SessionController {
                             ServiceFault::new(&r.request_header, e).into(),
                             id,
                         );
-                        return RequestProcessResult::Close;
+                        RequestProcessResult::Close
                     }
                 }
             }
 
-            SupportedMessage::CloseSecureChannelRequest(_r) => {
-                return RequestProcessResult::Close;
-            }
+            SupportedMessage::CloseSecureChannelRequest(_r) => RequestProcessResult::Close,
 
             SupportedMessage::CreateSessionRequest(request) => {
                 let mut mgr = trace_write_lock!(self.session_manager);
@@ -246,18 +248,19 @@ impl SessionController {
             }
 
             SupportedMessage::ActivateSessionRequest(request) => {
-                let mut mgr = trace_write_lock!(self.session_manager);
-                let res = mgr.activate_session(&mut self.channel, &request).await;
-                drop(mgr);
+                let res =
+                    activate_session(&self.session_manager, &mut self.channel, &request).await;
                 self.process_service_result(res, request.request_header.request_handle, id)
             }
 
             SupportedMessage::CloseSessionRequest(request) => {
-                let mut mgr = trace_write_lock!(self.session_manager);
-                let res = mgr
-                    .close_session(&mut self.channel, &mut self.message_handler, &request)
-                    .await;
-                drop(mgr);
+                let res = close_session(
+                    &self.session_manager,
+                    &mut self.channel,
+                    &mut self.message_handler,
+                    &request,
+                )
+                .await;
                 self.process_service_result(res, request.request_header.request_handle, id)
             }
             SupportedMessage::GetEndpointsRequest(request) => {
@@ -431,7 +434,7 @@ impl SessionController {
             session_lock.validate_timed_out()?;
             Ok(token.clone())
         })()
-        .map_err(|e| ServiceFault::new(header, e).into())?;
+        .map_err(|e| ServiceFault::new(header, e))?;
         Ok((id, session, user_token))
     }
 

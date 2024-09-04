@@ -59,13 +59,13 @@ macro_rules! supported_messages_enum {
             }
         }
 
-        impl Into<SupportedMessage> for AcknowledgeMessage{
-            fn into(self) -> SupportedMessage { SupportedMessage::AcknowledgeMessage(Box::new(self)) }
+        impl From<AcknowledgeMessage> for SupportedMessage{
+            fn from(value: AcknowledgeMessage) -> Self { Self::AcknowledgeMessage(Box::new(value)) }
         }
 
         $(
-        impl Into<SupportedMessage> for $x {
-            fn into(self) -> SupportedMessage { SupportedMessage::$x(Box::new(self)) }
+        impl From<$x> for SupportedMessage {
+            fn from(value: $x) -> Self { Self::$x(Box::new(value)) }
         }
         )*
 
@@ -97,6 +97,7 @@ impl SupportedMessage {
     }
 
     pub fn is_request(&self) -> bool {
+        #[allow(clippy::match_like_matches_macro)]
         match self {
             SupportedMessage::OpenSecureChannelRequest(_) => true,
             SupportedMessage::CloseSecureChannelRequest(_) => true,
@@ -185,6 +186,7 @@ impl SupportedMessage {
     }
 
     pub fn is_response(&self) -> bool {
+        #[allow(clippy::match_like_matches_macro)]
         match self {
             SupportedMessage::ServiceFault(_) => true,
             SupportedMessage::OpenSecureChannelResponse(_) => true,

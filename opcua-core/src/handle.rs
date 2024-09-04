@@ -21,6 +21,7 @@ impl Handle {
 
     /// Returns the next handle to be issued, internally incrementing each time so the handle
     /// is always different until it wraps back to the start.
+    #[allow(clippy::should_implement_trait)]
     pub fn next(&mut self) -> u32 {
         let next = self.next;
         // Increment next

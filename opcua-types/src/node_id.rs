@@ -426,9 +426,9 @@ impl From<&NodeId> for NodeId {
     }
 }
 
-impl Into<String> for NodeId {
-    fn into(self) -> String {
-        self.to_string()
+impl From<NodeId> for String {
+    fn from(value: NodeId) -> Self {
+        value.to_string()
     }
 }
 

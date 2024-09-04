@@ -450,9 +450,7 @@ impl CoreNodeManagerImpl {
                 let nss: HashMap<_, _> = self.node_managers.iter().flat_map(|n| n.namespaces_for_user(context)).map(|ns| (ns.namespace_index, ns.namespace_uri)).collect();
                 // Make sure that holes are filled with empty strings, so that the
                 // namespace array actually has correct indices.
-                let Some(&max) = nss.keys().max() else {
-                    return None;
-                };
+                let &max = nss.keys().max()?;
                 let namespaces: Vec<_> = (0..(max + 1)).map(|idx| nss.get(&idx).cloned().unwrap_or_default()).collect();
                 namespaces.into()
             }
@@ -488,7 +486,7 @@ impl CoreNodeManagerImpl {
         for aggregate in &capabilities.history.aggregates {
             address_space.insert_reference(
                 &ObjectId::HistoryServerCapabilities_AggregateFunctions.into(),
-                &aggregate,
+                aggregate,
                 ReferenceTypeId::Organizes,
             )
         }

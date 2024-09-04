@@ -127,7 +127,7 @@ impl<'a> ValueBuilder<'a> {
             }
             Variant::QualifiedName(v) => {
                 let index = v.namespace_index.unwrap_or_default();
-                let name = v.name.as_ref().map(|v| v.as_str()).unwrap_or("");
+                let name = v.name.as_deref().unwrap_or("");
                 quote::quote! {
                     opcua::types::QualifiedName::new(#index, #name)
                 }
@@ -136,7 +136,7 @@ impl<'a> ValueBuilder<'a> {
                 let mut items = quote::quote! {};
                 for it in v {
                     let index = it.namespace_index.unwrap_or_default();
-                    let name = it.name.as_ref().map(|v| v.as_str()).unwrap_or("");
+                    let name = it.name.as_deref().unwrap_or("");
                     items.extend(quote::quote! {
                         opcua::types::QualifiedName::new(#index, #name),
                     });
@@ -146,8 +146,8 @@ impl<'a> ValueBuilder<'a> {
                 }
             }
             Variant::LocalizedText(v) => {
-                let locale = v.locale.as_ref().map(|v| v.as_str()).unwrap_or("");
-                let text = v.text.as_ref().map(|v| v.as_str()).unwrap_or("");
+                let locale = v.locale.as_deref().unwrap_or("");
+                let text = v.text.as_deref().unwrap_or("");
                 quote::quote! {
                     opcua::types::LocalizedText::new(#locale, #text)
                 }
@@ -155,8 +155,8 @@ impl<'a> ValueBuilder<'a> {
             Variant::ListOfLocalizedText(v) => {
                 let mut items = quote::quote! {};
                 for it in v {
-                    let locale = it.locale.as_ref().map(|v| v.as_str()).unwrap_or("");
-                    let text = it.text.as_ref().map(|v| v.as_str()).unwrap_or("");
+                    let locale = it.locale.as_deref().unwrap_or("");
+                    let text = it.text.as_deref().unwrap_or("");
                     items.extend(quote::quote! {
                         opcua::types::LocalizedText::new(#locale, #text),
                     })
@@ -224,7 +224,7 @@ impl<'a> ValueBuilder<'a> {
                 }
             }
             Variant::Variant(v) => {
-                let inner = self.render_variant(&v)?;
+                let inner = self.render_variant(v)?;
                 quote::quote! {
                     opcua::types::Variant::Variant(Box::new(#inner))
                 }
@@ -232,7 +232,7 @@ impl<'a> ValueBuilder<'a> {
             Variant::ListOfVariant(v) => {
                 let mut items = quote::quote! {};
                 for it in v {
-                    let inner = self.render_variant(&it)?;
+                    let inner = self.render_variant(it)?;
                     items.extend(quote::quote! {
                         opcua::types::Variant::Variant(Box::new(#inner))
                     });
@@ -295,21 +295,17 @@ impl<'a> ValueBuilder<'a> {
         // Is the type a ListOf type? We don't support that at all in this position, since the standard
         // doesn't actually define data types for the ListOf items.
         if ty.starts_with("ListOf") {
-            return Err(CodeGenError::Other(format!(
-            "Got ListOf type inside extension object, this is not supported, use ListOfExtensionObject instead."
-        )));
+            return Err(CodeGenError::Other("Got ListOf type inside extension object, this is not supported, use ListOfExtensionObject instead.".to_string()));
         }
 
         let Some(typ) = self.types.get(ty) else {
             return Err(CodeGenError::Other(format!("Unknown type {ty}")));
         };
         // First, we need to evaluate the type
-        let type_ref = self
-            .make_type_ref(typ)
-            .map_err(|e| CodeGenError::Other(e))?;
+        let type_ref = self.make_type_ref(typ).map_err(CodeGenError::Other)?;
 
         // Now for rendering the type itself,
-        self.render_complex_type(&type_ref, &data)
+        self.render_complex_type(&type_ref, data)
     }
 
     fn render_complex_type(
@@ -399,10 +395,10 @@ impl<'a> ValueBuilder<'a> {
             .get(type_name)
             .map(|t| self.make_type_ref(t))
             .transpose()
-            .map_err(|e| CodeGenError::Other(e))?;
+            .map_err(CodeGenError::Other)?;
 
         if is_array {
-            let items: Vec<_> = node.children.iter().filter(|c| &c.tag == name).collect();
+            let items: Vec<_> = node.children.iter().filter(|c| c.tag == name).collect();
             if items.is_empty() {
                 Ok(quote! {
                     None
@@ -411,7 +407,7 @@ impl<'a> ValueBuilder<'a> {
                 let mut it = quote! {};
                 for item in items {
                     if is_primitive {
-                        let rendered = self.render_primitive(item, type_name)?;
+                        let rendered = Self::render_primitive(item, type_name)?;
                         it.extend(quote! {
                             #rendered,
                         })
@@ -438,7 +434,7 @@ impl<'a> ValueBuilder<'a> {
                 });
             };
             if is_primitive {
-                self.render_primitive(item, type_name)
+                Self::render_primitive(item, type_name)
             } else {
                 let Some(r) = &ty else {
                     return Err(CodeGenError::Other(format!("Type {type_name} not found")));
@@ -476,42 +472,41 @@ impl<'a> ValueBuilder<'a> {
         ) || type_name.starts_with("ListOf")
     }
 
-    fn render_primitive(&self, node: &XmlElement, ty: &str) -> Result<TokenStream, CodeGenError> {
-        if ty.starts_with("ListOf") {
-            let field_type = match ty {
-                "ListOfBoolean" => "boolean",
-                "ListOfSByte" => "byte",
-                "ListOfByte" => "unsignedByte",
-                "ListOfInt16" => "short",
-                "ListOfUInt16" => "unsignedShort",
-                "ListOfInt32" => "int",
-                "ListOfUInt32" => "unsignedInt",
-                "ListOfInt64" => "long",
-                "ListOfUInt64" => "unsignedLong",
-                "ListOfFloat" => "float",
-                "ListOfDouble" => "double",
-                "ListOfString" => "string",
-                "ListOfDateTime" => "dateTime",
-                "ListOfGuid" => "Guid",
-                "ListOfByteString" => "base64Binary",
-                "ListOfQualifiedName" => "QualifiedName",
-                "ListOfLocalizedText" => "LocalizedText",
-                "ListOfNodeId" => "NodeId",
-                "ListOfExpandedNodeId" => "ExpandedNodeId",
-                "ListOfExtensionObject" => "ExtensionObject",
-                "ListOfVariant" => "Variant",
-                "ListOfStatusCode" => "StatusCode",
+    fn render_primitive(node: &XmlElement, ty: &str) -> Result<TokenStream, CodeGenError> {
+        if let Some(element_name) = ty.strip_prefix("ListOf") {
+            let field_type = match element_name {
+                "Boolean" => "boolean",
+                "SByte" => "byte",
+                "Byte" => "unsignedByte",
+                "Int16" => "short",
+                "UInt16" => "unsignedShort",
+                "Int32" => "int",
+                "UInt32" => "unsignedInt",
+                "Int64" => "long",
+                "UInt64" => "unsignedLong",
+                "Float" => "float",
+                "Double" => "double",
+                "String" => "string",
+                "DateTime" => "dateTime",
+                "Guid" => "Guid",
+                "ByteString" => "base64Binary",
+                "QualifiedName" => "QualifiedName",
+                "LocalizedText" => "LocalizedText",
+                "NodeId" => "NodeId",
+                "ExpandedNodeId" => "ExpandedNodeId",
+                "ExtensionObject" => "ExtensionObject",
+                "Variant" => "Variant",
+                "StatusCode" => "StatusCode",
                 _ => {
                     return Err(CodeGenError::Other(format!(
                         "ListOf type {ty} is not supported, use ListOfExtensionObject instead"
                     )))
                 }
             };
-            let field_name = &ty[6..];
             let mut items = quote! {};
             let mut any = false;
-            for elem in node.children_with_name(field_name) {
-                let rendered = self.render_primitive(elem, field_type)?;
+            for elem in node.children_with_name(element_name) {
+                let rendered = Self::render_primitive(elem, field_type)?;
                 items.extend(quote! {
                     #rendered,
                 });
@@ -535,7 +530,7 @@ impl<'a> ValueBuilder<'a> {
                     .find(|f| f.tag == "String")
                     .and_then(|f| f.text.as_ref())
                 {
-                    let uuid = uuid::Uuid::parse_str(&data).map_err(|e| {
+                    let uuid = uuid::Uuid::parse_str(data).map_err(|e| {
                         CodeGenError::Other(format!("Failed to parse uuid {data}: {e}"))
                     })?;
                     let bytes = uuid.as_bytes();
@@ -621,7 +616,7 @@ impl<'a> ValueBuilder<'a> {
                 #data.into()
             }),
             "dateTime" => {
-                let ts = chrono::DateTime::parse_from_rfc3339(&data)
+                let ts = chrono::DateTime::parse_from_rfc3339(data)
                     .map_err(|e| {
                         CodeGenError::Other(format!("Failed to parse datetime {data}: {e}"))
                     })?
@@ -650,7 +645,7 @@ impl<'a> ValueBuilder<'a> {
                 let Some(SimpleDerivation::Restriction(r)) = &s.content else {
                     return Err(format!(
                         "Type {} is simple but does not contain a restriction",
-                        s.name.as_ref().map(|v| v.as_str()).unwrap_or("")
+                        s.name.as_deref().unwrap_or("")
                     ));
                 };
                 let mut variants = Vec::with_capacity(r.facets.len());
@@ -660,14 +655,14 @@ impl<'a> ValueBuilder<'a> {
                     }
                 }
                 Ok(TypeRef::Enum(EnumRef {
-                    name: s.name.as_ref().map(|v| v.as_str()).unwrap_or(""),
+                    name: s.name.as_deref().unwrap_or(""),
                     variants,
                     path: &ty.path,
                 }))
             }
             XsdFileType::Complex(c) => {
                 let Some(name) = c.name.as_ref() else {
-                    return Err(format!("Type has no name"));
+                    return Err("Type has no name".to_string());
                 };
                 let (parent, sequence) = match &c.content {
                     // A complex type containing a complexcontent containing an extension is
@@ -750,10 +745,10 @@ impl<'a> ValueBuilder<'a> {
 
                 // Sort the fields to ensure consistent ordering.
                 let mut fields: Vec<_> = elements.into_iter().collect();
-                fields.sort_by(|a, b| a.0.cmp(&b.0));
+                fields.sort_by(|a, b| a.0.cmp(b.0));
 
                 Ok(TypeRef::Struct(StructRef {
-                    name: &name,
+                    name,
                     fields,
                     path: &ty.path,
                 }))

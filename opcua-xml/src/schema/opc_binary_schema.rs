@@ -36,7 +36,7 @@ impl ByteOrder {
             Some("BigEndian") => Some(ByteOrder::BigEndian),
             Some(r) => {
                 return Err(XmlError::other(
-                    &node,
+                    node,
                     &format!("Expected LittleEndian or BigEndian for {attr}, got {r}"),
                 ))
             }
@@ -248,7 +248,7 @@ impl<'input> XmlLoad<'input> for TypeDictionary {
 pub fn load_bsd_file(document: &str) -> Result<TypeDictionary, XmlError> {
     let document = Document::parse(document).map_err(|e| XmlError {
         span: 0..1,
-        error: crate::error::XmlErrorInner::XML(e),
+        error: crate::error::XmlErrorInner::Xml(e),
     })?;
     TypeDictionary::load(&document.root().first_child_with_name("TypeDictionary")?)
 }

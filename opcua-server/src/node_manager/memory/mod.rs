@@ -121,9 +121,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
         subscriptions.maybe_notify(
             output.into_iter(),
             |node_id, attribute_id, index_range, data_encoding| {
-                let Some(node) = address_space.find(node_id) else {
-                    return None;
-                };
+                let node = address_space.find(node_id)?;
                 let node_ref = node.as_node();
 
                 node_ref.get_attribute(
@@ -189,9 +187,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
         subscriptions.maybe_notify(
             output.into_iter(),
             |node_id, attribute_id, index_range, data_encoding| {
-                let Some(node) = address_space.find(node_id) else {
-                    return None;
-                };
+                let node = address_space.find(node_id)?;
                 let node_ref = node.as_node();
 
                 node_ref.get_attribute(
@@ -216,10 +212,10 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
         self.set_values(subscriptions, [(id, index_range, value)].into_iter())
     }
 
-    fn get_reference<'a>(
+    fn get_reference(
         address_space: &AddressSpace,
         type_tree: &DefaultTypeTree,
-        target_node: &'a NodeType,
+        target_node: &NodeType,
         result_mask: BrowseDescriptionResultMask,
     ) -> NodeMetadata {
         let node_ref = target_node.as_node();
@@ -261,8 +257,8 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
     }
 
     /// Browses a single node, returns any external references found.
-    fn browse_node<'a>(
-        address_space: &'a AddressSpace,
+    fn browse_node(
+        address_space: &AddressSpace,
         type_tree: &DefaultTypeTree,
         node: &mut BrowseNode,
         namespaces: &hashbrown::HashMap<u16, String>,
@@ -293,7 +289,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
                 );
                 continue;
             }
-            let target_node = address_space.find_node(&reference.target_node);
+            let target_node = address_space.find_node(reference.target_node);
             let Some(target_node) = target_node else {
                 if namespaces.contains_key(&reference.target_node.namespace) {
                     warn!(
@@ -372,7 +368,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
                 };
 
                 for rf in address_space.find_references(
-                    &node_id,
+                    node_id,
                     reference_filter,
                     type_tree,
                     if element.is_inverse {
@@ -639,7 +635,9 @@ impl<TImpl: InMemoryNodeManagerImpl> NodeManager for InMemoryNodeManager<TImpl> 
         self.inner.name()
     }
 
+    #[allow(clippy::await_holding_lock)]
     async fn init(&self, type_tree: &mut DefaultTypeTree, context: ServerContext) {
+        // During init we effectively own the address space, so this should be safe.
         let mut address_space = trace_write_lock!(self.address_space);
 
         self.inner.init(&mut address_space, context).await;
@@ -663,16 +661,16 @@ impl<TImpl: InMemoryNodeManagerImpl> NodeManager for InMemoryNodeManager<TImpl> 
         let address_space = trace_read_lock!(self.address_space);
         let type_tree = trace_read_lock!(context.type_tree);
 
-        for item in items.into_iter() {
-            let target_node = address_space.find_node(&item.node_id());
+        for item in items {
+            let target_node = address_space.find_node(item.node_id());
 
             let Some(target_node) = target_node else {
                 continue;
             };
 
             item.set(Self::get_reference(
-                &*address_space,
-                &*type_tree,
+                &address_space,
+                &type_tree,
                 target_node,
                 item.result_mask(),
             ));
@@ -696,7 +694,7 @@ impl<TImpl: InMemoryNodeManagerImpl> NodeManager for InMemoryNodeManager<TImpl> 
 
             if let Some(mut point) = node.take_continuation_point::<BrowseContinuationPoint>() {
                 loop {
-                    if node.remaining() <= 0 {
+                    if node.remaining() == 0 {
                         break;
                     }
                     let Some(ref_desc) = point.nodes.pop_back() else {
@@ -709,7 +707,7 @@ impl<TImpl: InMemoryNodeManagerImpl> NodeManager for InMemoryNodeManager<TImpl> 
                     node.set_next_continuation_point(point);
                 }
             } else {
-                Self::browse_node(&address_space, &*type_tree, node, &self.namespaces);
+                Self::browse_node(&address_space, &type_tree, node, &self.namespaces);
             }
         }
 
@@ -734,7 +732,7 @@ impl<TImpl: InMemoryNodeManagerImpl> NodeManager for InMemoryNodeManager<TImpl> 
 
                 node.set_result(address_space.read(
                     context,
-                    &node.node(),
+                    node.node(),
                     max_age,
                     timestamps_to_return,
                 ));
@@ -771,8 +769,8 @@ impl<TImpl: InMemoryNodeManagerImpl> NodeManager for InMemoryNodeManager<TImpl> 
 
         for node in nodes {
             Self::translate_browse_paths(
-                &*address_space,
-                &*type_tree,
+                &address_space,
+                &type_tree,
                 context,
                 &self.namespaces,
                 node,
@@ -807,60 +805,61 @@ impl<TImpl: InMemoryNodeManagerImpl> NodeManager for InMemoryNodeManager<TImpl> 
         context: &RequestContext,
         items: &mut [&mut CreateMonitoredItem],
     ) -> Result<(), StatusCode> {
-        let address_space = trace_read_lock!(self.address_space);
         let mut value_items = Vec::new();
         let mut event_items = Vec::new();
 
-        for node in items {
-            if node.item_to_monitor().attribute_id == AttributeId::Value {
-                value_items.push(node);
-                continue;
-            }
-
-            let n = match address_space.validate_node_read(context, node.item_to_monitor()) {
-                Ok(n) => n,
-                Err(e) => {
-                    node.set_status(e);
+        {
+            let address_space = trace_read_lock!(self.address_space);
+            for node in items {
+                if node.item_to_monitor().attribute_id == AttributeId::Value {
+                    value_items.push(node);
                     continue;
                 }
-            };
 
-            let read_result = read_node_value(
-                n,
-                context,
-                node.item_to_monitor(),
-                0.0,
-                node.timestamps_to_return(),
-            );
-
-            // Event monitored items are global, so all we need to do is to validate that the
-            // node allows subscribing to events.
-            if node.item_to_monitor().attribute_id == AttributeId::EventNotifier {
-                let Some(Variant::Byte(notifier)) = &read_result.value else {
-                    node.set_status(StatusCode::BadAttributeIdInvalid);
-                    continue;
+                let n = match address_space.validate_node_read(context, node.item_to_monitor()) {
+                    Ok(n) => n,
+                    Err(e) => {
+                        node.set_status(e);
+                        continue;
+                    }
                 };
-                let notifier = EventNotifier::from_bits_truncate(*notifier);
-                if !notifier.contains(EventNotifier::SUBSCRIBE_TO_EVENTS) {
-                    node.set_status(StatusCode::BadAttributeIdInvalid);
+
+                let read_result = read_node_value(
+                    n,
+                    context,
+                    node.item_to_monitor(),
+                    0.0,
+                    node.timestamps_to_return(),
+                );
+
+                // Event monitored items are global, so all we need to do is to validate that the
+                // node allows subscribing to events.
+                if node.item_to_monitor().attribute_id == AttributeId::EventNotifier {
+                    let Some(Variant::Byte(notifier)) = &read_result.value else {
+                        node.set_status(StatusCode::BadAttributeIdInvalid);
+                        continue;
+                    };
+                    let notifier = EventNotifier::from_bits_truncate(*notifier);
+                    if !notifier.contains(EventNotifier::SUBSCRIBE_TO_EVENTS) {
+                        node.set_status(StatusCode::BadAttributeIdInvalid);
+                        continue;
+                    }
+
+                    // No further action beyond just validation.
+                    node.set_status(StatusCode::Good);
+                    event_items.push(node);
                     continue;
                 }
 
-                // No further action beyond just validation.
+                // This specific status code here means that the value does not exist, so it is
+                // more appropriate to not set an initial value.
+                if read_result.status() != StatusCode::BadAttributeIdInvalid {
+                    node.set_initial_value(read_result);
+                }
+
                 node.set_status(StatusCode::Good);
-                event_items.push(node);
-                continue;
             }
-
-            // This specific status code here means that the value does not exist, so it is
-            // more appropriate to not set an initial value.
-            if read_result.status() != StatusCode::BadAttributeIdInvalid {
-                node.set_initial_value(read_result);
-            }
-
-            node.set_status(StatusCode::Good);
         }
-        drop(address_space);
 
         if !value_items.is_empty() {
             self.inner

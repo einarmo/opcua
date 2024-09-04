@@ -213,7 +213,7 @@ impl AsyncSecureChannel {
                 "connect, security policy \"{}\" is unknown",
                 self.session_info.endpoint.security_policy_uri.as_ref()
             );
-            return Err(StatusCode::BadSecurityPolicyRejected);
+            Err(StatusCode::BadSecurityPolicyRejected)
         } else {
             let (cert, key) = {
                 let certificate_store = trace_write_lock!(self.certificate_store);
@@ -262,7 +262,6 @@ impl AsyncSecureChannel {
         if let Some(request) = request {
             if let Err(e) = request.send_no_response().await {
                 error!("Failed to send disconnect message, queue full: {e}");
-                return;
             }
         }
     }

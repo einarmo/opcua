@@ -146,7 +146,7 @@ pub struct DepthGauge {
 impl Clone for DepthGauge {
     fn clone(&self) -> Self {
         Self {
-            max_depth: self.max_depth.clone(),
+            max_depth: self.max_depth,
             current_depth: AtomicU64::new(0),
         }
     }
@@ -228,7 +228,7 @@ impl DecodingOptions {
         Self::default()
     }
 
-    pub fn depth_lock<'a>(&'a self) -> core::result::Result<DepthLock<'a>, StatusCode> {
+    pub fn depth_lock(&self) -> core::result::Result<DepthLock<'_>, StatusCode> {
         DepthLock::obtain(&self.decoding_depth_gauge)
     }
 }
@@ -381,7 +381,7 @@ pub fn read_array<S: Read, T: BinaryEncoder>(
 /// Writes a series of identical bytes to the stream
 pub fn write_bytes(stream: &mut dyn Write, value: u8, count: usize) -> EncodingResult<usize> {
     for _ in 0..count {
-        let _ = stream
+        stream
             .write_u8(value)
             .map_err(|_| StatusCode::BadEncodingError)?;
     }

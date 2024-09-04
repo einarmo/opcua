@@ -471,16 +471,16 @@ impl<'a> From<&'a DataTypeId> for NodeId {
     }
 }
 
-impl Into<NodeId> for DataTypeId {
-    fn into(self) -> NodeId {
-        NodeId::new(0, self as u32)
+impl From<DataTypeId> for NodeId {
+    fn from(value: DataTypeId) -> Self {
+        Self::new(0, value as u32)
     }
 }
 
-impl Into<ExpandedNodeId> for DataTypeId {
-    fn into(self) -> ExpandedNodeId {
-        ExpandedNodeId {
-            node_id: NodeId::new(0, self as u32),
+impl From<DataTypeId> for ExpandedNodeId {
+    fn from(value: DataTypeId) -> Self {
+        Self {
+            node_id: NodeId::new(0, value as u32),
             namespace_uri: UAString::null(),
             server_index: 0,
         }
@@ -1026,16 +1026,16 @@ impl<'a> From<&'a ReferenceTypeId> for NodeId {
     }
 }
 
-impl Into<NodeId> for ReferenceTypeId {
-    fn into(self) -> NodeId {
-        NodeId::new(0, self as u32)
+impl From<ReferenceTypeId> for NodeId {
+    fn from(value: ReferenceTypeId) -> Self {
+        Self::new(0, value as u32)
     }
 }
 
-impl Into<ExpandedNodeId> for ReferenceTypeId {
-    fn into(self) -> ExpandedNodeId {
-        ExpandedNodeId {
-            node_id: NodeId::new(0, self as u32),
+impl From<ReferenceTypeId> for ExpandedNodeId {
+    fn from(value: ReferenceTypeId) -> Self {
+        Self {
+            node_id: NodeId::new(0, value as u32),
             namespace_uri: UAString::null(),
             server_index: 0,
         }
@@ -1398,16 +1398,16 @@ impl<'a> From<&'a ObjectTypeId> for NodeId {
     }
 }
 
-impl Into<NodeId> for ObjectTypeId {
-    fn into(self) -> NodeId {
-        NodeId::new(0, self as u32)
+impl From<ObjectTypeId> for NodeId {
+    fn from(value: ObjectTypeId) -> Self {
+        Self::new(0, value as u32)
     }
 }
 
-impl Into<ExpandedNodeId> for ObjectTypeId {
-    fn into(self) -> ExpandedNodeId {
-        ExpandedNodeId {
-            node_id: NodeId::new(0, self as u32),
+impl From<ObjectTypeId> for ExpandedNodeId {
+    fn from(value: ObjectTypeId) -> Self {
+        Self {
+            node_id: NodeId::new(0, value as u32),
             namespace_uri: UAString::null(),
             server_index: 0,
         }
@@ -1760,16 +1760,16 @@ impl<'a> From<&'a VariableTypeId> for NodeId {
     }
 }
 
-impl Into<NodeId> for VariableTypeId {
-    fn into(self) -> NodeId {
-        NodeId::new(0, self as u32)
+impl From<VariableTypeId> for NodeId {
+    fn from(value: VariableTypeId) -> Self {
+        Self::new(0, value as u32)
     }
 }
 
-impl Into<ExpandedNodeId> for VariableTypeId {
-    fn into(self) -> ExpandedNodeId {
-        ExpandedNodeId {
-            node_id: NodeId::new(0, self as u32),
+impl From<VariableTypeId> for ExpandedNodeId {
+    fn from(value: VariableTypeId) -> Self {
+        Self {
+            node_id: NodeId::new(0, value as u32),
             namespace_uri: UAString::null(),
             server_index: 0,
         }
@@ -2961,16 +2961,16 @@ impl<'a> From<&'a ObjectId> for NodeId {
     }
 }
 
-impl Into<NodeId> for ObjectId {
-    fn into(self) -> NodeId {
-        NodeId::new(0, self as u32)
+impl From<ObjectId> for NodeId {
+    fn from(value: ObjectId) -> Self {
+        Self::new(0, value as u32)
     }
 }
 
-impl Into<ExpandedNodeId> for ObjectId {
-    fn into(self) -> ExpandedNodeId {
-        ExpandedNodeId {
-            node_id: NodeId::new(0, self as u32),
+impl From<ObjectId> for ExpandedNodeId {
+    fn from(value: ObjectId) -> Self {
+        Self {
+            node_id: NodeId::new(0, value as u32),
             namespace_uri: UAString::null(),
             server_index: 0,
         }
@@ -12619,16 +12619,16 @@ impl<'a> From<&'a VariableId> for NodeId {
     }
 }
 
-impl Into<NodeId> for VariableId {
-    fn into(self) -> NodeId {
-        NodeId::new(0, self as u32)
+impl From<VariableId> for NodeId {
+    fn from(value: VariableId) -> Self {
+        Self::new(0, value as u32)
     }
 }
 
-impl Into<ExpandedNodeId> for VariableId {
-    fn into(self) -> ExpandedNodeId {
-        ExpandedNodeId {
-            node_id: NodeId::new(0, self as u32),
+impl From<VariableId> for ExpandedNodeId {
+    fn from(value: VariableId) -> Self {
+        Self {
+            node_id: NodeId::new(0, value as u32),
             namespace_uri: UAString::null(),
             server_index: 0,
         }
@@ -22524,16 +22524,16 @@ impl<'a> From<&'a MethodId> for NodeId {
     }
 }
 
-impl Into<NodeId> for MethodId {
-    fn into(self) -> NodeId {
-        NodeId::new(0, self as u32)
+impl From<MethodId> for NodeId {
+    fn from(value: MethodId) -> Self {
+        Self::new(0, value as u32)
     }
 }
 
-impl Into<ExpandedNodeId> for MethodId {
-    fn into(self) -> ExpandedNodeId {
-        ExpandedNodeId {
-            node_id: NodeId::new(0, self as u32),
+impl From<MethodId> for ExpandedNodeId {
+    fn from(value: MethodId) -> Self {
+        Self {
+            node_id: NodeId::new(0, value as u32),
             namespace_uri: UAString::null(),
             server_index: 0,
         }

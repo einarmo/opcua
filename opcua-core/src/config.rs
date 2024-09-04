@@ -7,7 +7,6 @@ use std::io::{Read, Write};
 use std::path::Path;
 use std::result::Result;
 
-use log::error;
 use serde;
 use serde_yaml;
 
@@ -16,53 +15,51 @@ use opcua_types::{
     LocalizedText, UAString,
 };
 
+/// Error returned from saving or loading config objects.
+#[derive(Debug)]
+pub enum ConfigError {
+    // TODO: Make the config validation actually return something useful.
+    /// Configuration is invalid.
+    ConfigInvalid,
+    /// Reading or writing file failed.
+    IO(std::io::Error),
+    /// Failed to serialize or deserialize config object.
+    Yaml(serde_yaml::Error),
+}
+
+impl From<std::io::Error> for ConfigError {
+    fn from(value: std::io::Error) -> Self {
+        Self::IO(value)
+    }
+}
+
+impl From<serde_yaml::Error> for ConfigError {
+    fn from(value: serde_yaml::Error) -> Self {
+        Self::Yaml(value)
+    }
+}
+
 /// A trait that handles the loading / saving and validity of configuration information for a
 /// client and/or server.
 pub trait Config: serde::Serialize {
-    fn save(&self, path: &Path) -> Result<(), ()> {
-        if self.is_valid() {
-            let s = serde_yaml::to_string(&self).unwrap();
-            if let Ok(mut f) = File::create(path) {
-                let result = f.write_all(s.as_bytes());
-                if result.is_ok() {
-                    return Ok(());
-                } else {
-                    error!("Could not save config - error = {:?}", result.unwrap_err())
-                }
-            } else {
-                error!("Cannot create the path to save the config");
-            }
-        } else {
-            error!("Config isn't valid and won't be saved");
+    fn save(&self, path: &Path) -> Result<(), ConfigError> {
+        if !self.is_valid() {
+            return Err(ConfigError::ConfigInvalid);
         }
-        Err(())
+        let s = serde_yaml::to_string(&self)?;
+        let mut f = File::create(path)?;
+        f.write_all(s.as_bytes())?;
+        Ok(())
     }
 
-    fn load<A>(path: &Path) -> Result<A, ()>
+    fn load<A>(path: &Path) -> Result<A, ConfigError>
     where
         for<'de> A: Config + serde::Deserialize<'de>,
     {
-        if let Ok(mut f) = File::open(path) {
-            let mut s = String::new();
-            if f.read_to_string(&mut s).is_ok() {
-                serde_yaml::from_str(&s).map_err(|err| {
-                    error!(
-                        "Cannot deserialize configuration from {}, error reason: {}",
-                        path.display(),
-                        err.to_string()
-                    );
-                })
-            } else {
-                error!(
-                    "Cannot read configuration file {} to string",
-                    path.display()
-                );
-                Err(())
-            }
-        } else {
-            error!("Cannot open configuration file {}", path.display());
-            Err(())
-        }
+        let mut f = File::open(path)?;
+        let mut s = String::new();
+        f.read_to_string(&mut s)?;
+        Ok(serde_yaml::from_str(&s)?)
     }
 
     fn is_valid(&self) -> bool;

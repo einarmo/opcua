@@ -108,7 +108,7 @@ pub trait InMemoryNodeManagerImpl: Send + Sync + 'static {
             )
             .await;
 
-        for (value, node) in values.into_iter().zip(items.into_iter()) {
+        for (value, node) in values.into_iter().zip(items.iter_mut()) {
             if value.status() != StatusCode::BadAttributeIdInvalid {
                 node.set_initial_value(value);
             }
