@@ -103,7 +103,7 @@ impl<'a> EventGenerator<'a> {
             TypeKind::ObjectType => self.render_object_type(&ty),
             TypeKind::VariableType => self.render_variable_type(&ty),
             r => {
-                return Err(CodeGenError::Other(format!(
+                Err(CodeGenError::Other(format!(
                     "Got unexpected type kind to render: {r:?}"
                 )))
             }
@@ -121,24 +121,22 @@ impl<'a> EventGenerator<'a> {
             Ok(quote! {
                 opcua::types::#ident
             })
-        } else {
-            if let Some(mapped) = self.type_mappings.get(data_type.name) {
-                if mapped == "UAString" {
-                    Ok(quote! {
-                        opcua::types::UAString
-                    })
-                } else {
-                    let ident = Ident::new(mapped, Span::call_site());
-                    Ok(quote! {
-                        #ident
-                    })
-                }
-            } else {
-                let ident = Ident::new(&data_type.name, Span::call_site());
+        } else if let Some(mapped) = self.type_mappings.get(data_type.name) {
+            if mapped == "UAString" {
                 Ok(quote! {
-                    opcua::types::#ident
+                    opcua::types::UAString
+                })
+            } else {
+                let ident = Ident::new(mapped, Span::call_site());
+                Ok(quote! {
+                    #ident
                 })
             }
+        } else {
+            let ident = Ident::new(data_type.name, Span::call_site());
+            Ok(quote! {
+                opcua::types::#ident
+            })
         }
     }
 
@@ -151,7 +149,7 @@ impl<'a> EventGenerator<'a> {
             let typ = match field.type_id {
                 FieldKind::Object(v) => {
                     let typ = self.types.get(v).unwrap();
-                    Ident::new(&typ.name, Span::call_site()).into_token_stream()
+                    Ident::new(typ.name, Span::call_site()).into_token_stream()
                 }
                 FieldKind::Variable(v) => {
                     let typ = self.types.get(v).unwrap();
@@ -162,7 +160,7 @@ impl<'a> EventGenerator<'a> {
 
                         self.get_data_type(data_type_id)?
                     } else {
-                        Ident::new(&typ.name, Span::call_site()).into_token_stream()
+                        Ident::new(typ.name, Span::call_site()).into_token_stream()
                     }
                 }
                 FieldKind::Method => {
@@ -205,7 +203,7 @@ impl<'a> EventGenerator<'a> {
         if let Some(parent) = ty.parent {
             if !self.is_simple(parent) {
                 let parent_typ = self.types.get(parent).unwrap();
-                let parent_ident = Ident::new(&parent_typ.name, Span::call_site());
+                let parent_ident = Ident::new(parent_typ.name, Span::call_site());
                 fields.extend(quote! {
                     pub base: #parent_ident,
                 });
@@ -217,7 +215,7 @@ impl<'a> EventGenerator<'a> {
         });
         self.render_fields(ty, &mut fields)?;
 
-        let ident = Ident::new(&ty.name, Span::call_site());
+        let ident = Ident::new(ty.name, Span::call_site());
 
         Ok(EventItem {
             def: parse_quote! {
@@ -236,7 +234,7 @@ impl<'a> EventGenerator<'a> {
         if let Some(parent) = ty.parent {
             if !self.is_simple(parent) {
                 let parent_typ = self.types.get(parent).unwrap();
-                let parent_ident = Ident::new(&parent_typ.name, Span::call_site());
+                let parent_ident = Ident::new(parent_typ.name, Span::call_site());
                 fields.extend(quote! {
                     pub base: #parent_ident,
                 });
@@ -247,7 +245,7 @@ impl<'a> EventGenerator<'a> {
             pub node_id: opcua::types::NodeId,
         });
 
-        let ident = Ident::new(&ty.name, Span::call_site());
+        let ident = Ident::new(ty.name, Span::call_site());
 
         if !value_in_parent {
             let data_type_id = ty.data_type_id.ok_or_else(|| {
@@ -286,7 +284,7 @@ impl<'a> EventGenerator<'a> {
             });
         } else {
             let parent_typ = self.types.get(parent).unwrap();
-            let parent_ident = Ident::new(&parent_typ.name, Span::call_site());
+            let parent_ident = Ident::new(parent_typ.name, Span::call_site());
             fields.extend(quote! {
                 pub base: #parent_ident,
             });
@@ -313,7 +311,7 @@ impl<'a> EventGenerator<'a> {
         };
         self.render_fields(ty, &mut fields)?;
 
-        let ident = Ident::new(&ty.name, Span::call_site());
+        let ident = Ident::new(ty.name, Span::call_site());
 
         Ok(EventItem {
             def: parse_quote! {

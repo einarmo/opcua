@@ -40,7 +40,7 @@ pub fn split_node_id(id: &str) -> Result<(&str, &str, u16), CodeGenError> {
     let t = captures.name("t").unwrap();
     let idf = t.as_str();
     if idf.len() < 2 {
-        return Err(CodeGenError::Other(format!("Invalid nodeId: {}", id)))?;
+        Err(CodeGenError::Other(format!("Invalid nodeId: {}", id)))?;
     }
     let k = &idf[..2];
     let v = &idf[2..];

@@ -125,7 +125,7 @@ pub fn run_codegen(config: &CodeGenConfig) -> Result<(), CodeGenError> {
                 })?;
                 println!("Found {} nodes in node set", nodes.nodes.len());
 
-                let chunks = generate_target(n, &nodes, &config.preferred_locale)?;
+                let chunks = generate_target(n, nodes, &config.preferred_locale)?;
                 let module_file = make_root_module(&chunks, n)?;
 
                 println!("Writing {} files to {}", chunks.len() + 1, n.output_dir);
@@ -137,7 +137,7 @@ pub fn run_codegen(config: &CodeGenConfig) -> Result<(), CodeGenError> {
 
                 if let Some(events_target) = &n.events {
                     println!("Generating events to {}", events_target.output_dir);
-                    let events = generate_events(&nodes)?;
+                    let events = generate_events(nodes)?;
                     let cnt = events.len();
                     let header = make_header(
                         &n.file_path,

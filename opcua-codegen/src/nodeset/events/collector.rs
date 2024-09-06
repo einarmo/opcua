@@ -19,6 +19,7 @@ pub struct CollectedField<'a> {
 }
 
 #[derive(Debug, Copy, Clone)]
+#[allow(clippy::enum_variant_names)] // Enum variants are partially OPC-UA nodeclasses.
 pub enum TypeKind {
     EventType,
     ObjectType,
@@ -181,13 +182,13 @@ impl<'a> TypeCollector<'a> {
             .iter()
             .flat_map(|f| f.iter())
         {
-            let rf_type_id = self.lookup_node_id(&rf.type_id);
+            let rf_type_id = self.lookup_node_id(rf.type_id);
             match rf_type_id {
                 // HasSubtype
                 "i=45" => {
                     self.collect_type(
                         collected,
-                        self.lookup_node_id(&rf.target),
+                        self.lookup_node_id(rf.target),
                         Some(type_id),
                         kind,
                     )?;
@@ -231,7 +232,7 @@ impl<'a> TypeCollector<'a> {
                                     "Property {target} is missing type definition"
                                 )));
                             };
-                            FieldKind::Object(&type_def)
+                            FieldKind::Object(type_def)
                         }
                         UANode::Variable(v) => {
                             let Some(type_def) = type_def else {
@@ -240,7 +241,7 @@ impl<'a> TypeCollector<'a> {
                                 )));
                             };
                             data_type_id = Some(self.lookup_node_id(v.data_type.0.as_str()));
-                            FieldKind::Variable(&type_def)
+                            FieldKind::Variable(type_def)
                         }
                         UANode::Method(_) => FieldKind::Method,
                         _ => {
@@ -276,7 +277,7 @@ impl<'a> TypeCollector<'a> {
                 parent,
                 fields,
                 kind,
-                name: &split_qualified_name(&node.base().browse_name.0)?.0,
+                name: split_qualified_name(&node.base().browse_name.0)?.0,
                 data_type_id,
             },
         );

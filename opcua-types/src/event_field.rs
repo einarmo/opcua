@@ -206,7 +206,7 @@ impl EventField for NumericRange {
         index_range: NumericRange,
         remaining_path: &[QualifiedName],
     ) -> Variant {
-        if remaining_path.len() != 0 || attribute_id != AttributeId::Value {
+        if !remaining_path.is_empty() || attribute_id != AttributeId::Value {
             return Variant::Empty;
         }
         let val: Variant = self.clone().as_string().into();
