@@ -25,27 +25,33 @@ fn nodeid_regex() -> &'static Regex {
     NODEID_REGEX.get_or_init(|| Regex::new(r"^(ns=(?P<ns>[0-9]+);)?(?P<t>[isgb]=.+)$").unwrap())
 }
 
+pub fn split_node_id(id: &str) -> Result<(&str, &str, u16), CodeGenError> {
+    let captures = nodeid_regex()
+        .captures(id)
+        .ok_or_else(|| CodeGenError::Other(format!("Invalid nodeId: {}", id)))?;
+    let namespace = if let Some(ns) = captures.name("ns") {
+        ns.as_str()
+            .parse::<u16>()
+            .map_err(|_| CodeGenError::Other(format!("Invalid nodeId: {}", id)))?
+    } else {
+        0
+    };
+
+    let t = captures.name("t").unwrap();
+    let idf = t.as_str();
+    if idf.len() < 2 {
+        Err(CodeGenError::Other(format!("Invalid nodeId: {}", id)))?;
+    }
+    let k = &idf[..2];
+    let v = &idf[2..];
+
+    Ok((k, v, namespace))
+}
+
 impl RenderExpr for NodeId {
     fn render(&self) -> Result<TokenStream, CodeGenError> {
         let id = &self.0;
-        let captures = nodeid_regex()
-            .captures(id)
-            .ok_or_else(|| CodeGenError::Other(format!("Invalid nodeId: {}", id)))?;
-        let namespace = if let Some(ns) = captures.name("ns") {
-            ns.as_str()
-                .parse::<u16>()
-                .map_err(|_| CodeGenError::Other(format!("Invalid nodeId: {}", id)))?
-        } else {
-            0
-        };
-
-        let t = captures.name("t").unwrap();
-        let idf = t.as_str();
-        if idf.len() < 2 {
-            return Err(CodeGenError::Other(format!("Invalid nodeId: {}", id)))?;
-        }
-        let k = &idf[..2];
-        let v = &idf[2..];
+        let (k, v, namespace) = split_node_id(id)?;
         // Do as much parsing as possible here, to optimize performance and get the errors as early as possible.
         let id_item: Expr = match k {
             "i=" => {
@@ -92,23 +98,26 @@ fn qualified_name_regex() -> &'static Regex {
     QUALIFIED_NAME_REGEX.get_or_init(|| Regex::new(r"^((?P<ns>[0-9]+):)?(?P<name>.*)$").unwrap())
 }
 
+pub fn split_qualified_name(name: &str) -> Result<(&str, u16), CodeGenError> {
+    let captures = qualified_name_regex()
+        .captures(name)
+        .ok_or_else(|| CodeGenError::Other(format!("Invalid qualifiedname: {}", name)))?;
+
+    let namespace = if let Some(ns) = captures.name("ns") {
+        ns.as_str()
+            .parse::<u16>()
+            .map_err(|_| CodeGenError::Other(format!("Invalid nodeId: {}", name)))?
+    } else {
+        0
+    };
+
+    Ok((captures.name("name").unwrap().as_str(), namespace))
+}
+
 impl RenderExpr for QualifiedName {
     fn render(&self) -> Result<TokenStream, CodeGenError> {
         let name = &self.0;
-        let captures = qualified_name_regex()
-            .captures(name)
-            .ok_or_else(|| CodeGenError::Other(format!("Invalid qualifiedname: {}", name)))?;
-
-        let namespace = if let Some(ns) = captures.name("ns") {
-            ns.as_str()
-                .parse::<u16>()
-                .map_err(|_| CodeGenError::Other(format!("Invalid nodeId: {}", name)))?
-        } else {
-            0
-        };
-
-        let name = captures.name("name").unwrap();
-        let name_str = name.as_str();
+        let (name, namespace) = split_qualified_name(name)?;
 
         let ns_item = if namespace == 0 {
             quote! { 0u16 }
@@ -119,7 +128,7 @@ impl RenderExpr for QualifiedName {
         };
 
         Ok(quote! {
-            opcua::types::QualifiedName::new(#ns_item, #name_str)
+            opcua::types::QualifiedName::new(#ns_item, #name)
         })
     }
 }

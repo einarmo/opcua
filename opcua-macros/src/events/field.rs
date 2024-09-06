@@ -18,9 +18,10 @@ pub fn generate_event_field_impls(event: EventFieldStruct) -> syn::Result<TokenS
     let ident = event.ident;
     let mut get_arms = quote! {};
     let mut final_arm = quote! {
-        _ => opcua::types::Variant::Empty
+        opcua::types::Variant::Empty
     };
     let mut pre_check_block = quote! {};
+    let mut placeholder_fields = quote! {};
     for field in event.fields {
         if field.attr.ignore {
             continue;
@@ -34,17 +35,23 @@ pub fn generate_event_field_impls(event: EventFieldStruct) -> syn::Result<TokenS
             .unwrap_or_else(|| field.ident.to_string().to_case(Case::Pascal));
         let ident = field.ident;
 
-        if !has_rename {
+        if field.attr.placeholder {
+            placeholder_fields.extend(quote! {
+                if let Some(value) = self.#ident.try_get_value(field, attribute_id, index_range.clone(), browse_path.get(1..).unwrap_or(&[])) {
+                    return value;
+                }
+            })
+        } else if !has_rename {
             match ident.to_string().as_str() {
                 "base" => {
                     final_arm = quote! {
-                        _ => self.base.get_value(attribute_id, index_range, browse_path)
+                        self.base.get_value(attribute_id, index_range, browse_path)
                     }
                 }
                 "node_id" => pre_check_block.extend(quote! {
                     if browse_path.is_empty() && attribute_id == opcua::types::AttributeId::NodeId {
-                        let val: Variant = self.node_id.clone().into();
-                        return val.range_of_owned(index_range).unwrap_or(Variant::Empty);
+                        let val: opcua::types::Variant = self.node_id.clone().into();
+                        return val.range_of_owned(index_range).unwrap_or(opcua::types::Variant::Empty);
                     }
                 }),
                 "value" => pre_check_block.extend(quote! {
@@ -62,6 +69,12 @@ pub fn generate_event_field_impls(event: EventFieldStruct) -> syn::Result<TokenS
             });
         }
     }
+    final_arm = quote! {
+        _ => {
+            #placeholder_fields
+            #final_arm
+        }
+    };
 
     Ok(quote! {
         impl opcua::nodes::EventField for #ident {

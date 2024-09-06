@@ -26,3 +26,8 @@ targets:
       - "http://opcfoundation.org/UA/"
     imported_namespaces: []
     name: CoreNamespace
+    events:
+      output_dir: opcua-core-namespace/src/events
+      extra_header: |
+        #[allow(unused)]
+        mod opcua { pub use opcua_types as types; pub use opcua_nodes as nodes; pub use opcua_nodes::{Event, EventField}; }

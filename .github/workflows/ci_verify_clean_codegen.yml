@@ -13,6 +13,7 @@ jobs:
         run: rustfmt opcua-types/src/service_types/mod.rs
       - name: Format address space
         run: rustfmt opcua-core-namespace/src/generated/mod.rs
+      - name: Format events
+        run: rustfmt opcua-core-namespace/src/events/generated.rs
       - name: Verify generated code matches committed code
         run: git status --porcelain
-

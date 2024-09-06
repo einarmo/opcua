@@ -19,24 +19,24 @@ pub struct NodeGenMethod {
     pub name: String,
 }
 
-pub struct NodeSetCodeGenerator {
+pub struct NodeSetCodeGenerator<'a> {
     preferred_locale: String,
     empty_text: LocalizedText,
-    aliases: HashMap<String, String>,
+    aliases: HashMap<&'a str, &'a str>,
     node_counter: usize,
     types: HashMap<String, XsdTypeWithPath>,
 }
 
-impl NodeSetCodeGenerator {
+impl<'a> NodeSetCodeGenerator<'a> {
     pub fn new(
         preferred_locale: &str,
-        alias_table: Option<AliasTable>,
+        alias_table: Option<&'a AliasTable>,
         types: HashMap<String, XsdTypeWithPath>,
     ) -> Result<Self, CodeGenError> {
         let mut aliases = HashMap::new();
         if let Some(alias_table) = alias_table {
-            for alias in alias_table.aliases {
-                aliases.insert(alias.alias, alias.id.0);
+            for alias in &alias_table.aliases {
+                aliases.insert(alias.alias.as_str(), alias.id.0.as_str());
             }
         }
         Ok(Self {
@@ -49,14 +49,14 @@ impl NodeSetCodeGenerator {
     }
 
     fn resolve_node_id(&self, node_id: &NodeId) -> Result<TokenStream, CodeGenError> {
-        if let Some(aliased) = self.aliases.get(&node_id.0) {
+        if let Some(&aliased) = self.aliases.get(node_id.0.as_str()) {
             NodeId(aliased.to_owned()).render()
         } else {
             node_id.render()
         }
     }
 
-    fn get_localized_text<'a: 'b, 'b>(&'a self, options: &'b [LocalizedText]) -> &'b LocalizedText {
+    fn get_localized_text<'c: 'b, 'b>(&'c self, options: &'b [LocalizedText]) -> &'b LocalizedText {
         options
             .iter()
             .find(|f| f.locale.0 == self.preferred_locale)
@@ -64,8 +64,8 @@ impl NodeSetCodeGenerator {
             .unwrap_or(&self.empty_text)
     }
 
-    fn get_localized_text_opt<'a: 'b, 'b>(
-        &'a self,
+    fn get_localized_text_opt<'c: 'b, 'b>(
+        &'c self,
         options: &'b [LocalizedText],
     ) -> Option<&'b LocalizedText> {
         options

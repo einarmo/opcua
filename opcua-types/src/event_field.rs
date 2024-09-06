@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::{
     Array, AsVariantRef, AttributeId, ByteString, DataValue, DateTime, DiagnosticInfo,
     ExpandedNodeId, ExtensionObject, Guid, LocalizedText, NodeId, NumericRange, QualifiedName,
@@ -194,5 +196,80 @@ impl EventField for Variant {
         self.clone()
             .range_of_owned(index_range)
             .unwrap_or(Variant::Empty)
+    }
+}
+
+impl EventField for NumericRange {
+    fn get_value(
+        &self,
+        attribute_id: AttributeId,
+        index_range: NumericRange,
+        remaining_path: &[QualifiedName],
+    ) -> Variant {
+        if !remaining_path.is_empty() || attribute_id != AttributeId::Value {
+            return Variant::Empty;
+        }
+        let val: Variant = self.clone().as_string().into();
+        val.range_of_owned(index_range).unwrap_or(Variant::Empty)
+    }
+}
+
+#[derive(Debug)]
+pub struct PlaceholderEventField<T> {
+    items: HashMap<QualifiedName, T>,
+}
+
+impl<T> Default for PlaceholderEventField<T> {
+    fn default() -> Self {
+        Self {
+            items: Default::default(),
+        }
+    }
+}
+
+impl<T> PlaceholderEventField<T> {
+    pub fn new() -> Self {
+        Self {
+            items: HashMap::new(),
+        }
+    }
+
+    pub fn get_field(&self, name: &QualifiedName) -> Option<&T> {
+        self.items.get(name)
+    }
+
+    pub fn get_field_mut(&mut self, name: &QualifiedName) -> Option<&mut T> {
+        self.items.get_mut(name)
+    }
+
+    pub fn remove_field(&mut self, name: &QualifiedName) -> Option<T> {
+        self.items.remove(name)
+    }
+
+    pub fn insert_field(&mut self, name: QualifiedName, field: T) -> Option<T> {
+        self.items.insert(name, field)
+    }
+
+    pub fn items_mut(&mut self) -> &mut HashMap<QualifiedName, T> {
+        &mut self.items
+    }
+
+    pub fn items(&self) -> &HashMap<QualifiedName, T> {
+        &self.items
+    }
+}
+
+impl<T: EventField> PlaceholderEventField<T> {
+    pub fn try_get_value(
+        &self,
+        key: &QualifiedName,
+        attribute_id: AttributeId,
+        index_range: NumericRange,
+        remaining_path: &[QualifiedName],
+    ) -> Option<Variant> {
+        println!("Get nested {key:?}");
+        let field = self.get_field(key)?;
+        println!("Found field");
+        Some(field.get_value(attribute_id, index_range, remaining_path))
     }
 }

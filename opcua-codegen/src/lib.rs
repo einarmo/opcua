@@ -10,7 +10,8 @@ use std::{
 };
 
 pub use error::CodeGenError;
-use nodeset::{generate_target, make_root_module, NodeSetCodeGenTarget};
+use nodeset::{generate_events, generate_target, make_root_module, NodeSetCodeGenTarget};
+use opcua_xml::load_nodeset2_file;
 use serde::{Deserialize, Serialize};
 use syn::File;
 pub use types::{
@@ -114,7 +115,17 @@ pub fn run_codegen(config: &CodeGenConfig) -> Result<(), CodeGenError> {
             }
             CodeGenTarget::Nodes(n) => {
                 println!("Running node set code generation for {}", n.file_path);
-                let chunks = generate_target(n, &config.preferred_locale)?;
+                println!("Loading node set from {}", n.file_path);
+                let node_set = std::fs::read_to_string(&n.file_path).map_err(|e| {
+                    CodeGenError::io(&format!("Failed to read file {}", n.file_path), e)
+                })?;
+                let node_set = load_nodeset2_file(&node_set)?;
+                let nodes = node_set.node_set.as_ref().ok_or_else(|| {
+                    CodeGenError::Other("Missing UANodeSet in xml schema".to_owned())
+                })?;
+                println!("Found {} nodes in node set", nodes.nodes.len());
+
+                let chunks = generate_target(n, nodes, &config.preferred_locale)?;
                 let module_file = make_root_module(&chunks, n)?;
 
                 println!("Writing {} files to {}", chunks.len() + 1, n.output_dir);
@@ -123,6 +134,23 @@ pub fn run_codegen(config: &CodeGenConfig) -> Result<(), CodeGenError> {
 
                 write_to_directory(&n.output_dir, &header, chunks)?;
                 write_module_file(&n.output_dir, &header, module_file)?;
+
+                if let Some(events_target) = &n.events {
+                    println!("Generating events to {}", events_target.output_dir);
+                    let events = generate_events(nodes)?;
+                    let cnt = events.len();
+                    let header = make_header(
+                        &n.file_path,
+                        &[&config.extra_header, &events_target.extra_header],
+                    );
+                    let modules = write_to_directory(&events_target.output_dir, &header, events)?;
+                    write_module_file(
+                        &events_target.output_dir,
+                        &header,
+                        create_module_file(modules),
+                    )?;
+                    println!("Created {} event types", cnt);
+                }
             }
         }
     }

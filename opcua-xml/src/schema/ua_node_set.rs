@@ -377,7 +377,7 @@ impl<'input> XmlLoad<'input> for NodeIdAlias {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct AliasTable {
     pub aliases: Vec<NodeIdAlias>,
 }

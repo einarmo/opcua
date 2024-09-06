@@ -184,6 +184,22 @@ impl BaseEventType {
     }
 }
 
+pub use method_event_field::MethodEventField;
+
+mod method_event_field {
+    use opcua_macros::EventField;
+    use opcua_types::NodeId;
+
+    mod opcua {
+        pub use crate as nodes;
+        pub use opcua_types as types;
+    }
+    #[derive(Default, EventField, Debug)]
+    pub struct MethodEventField {
+        pub node_id: NodeId,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::NamespaceMap;
@@ -194,6 +210,7 @@ mod tests {
     }
 
     use crate::{BaseEventType, Event, EventField};
+    use opcua_types::event_field::PlaceholderEventField;
     use opcua_types::{
         AttributeId, ByteString, DecodingOptions, EUInformation, KeyValuePair, LocalizedText,
         NodeId, NumericRange, ObjectTypeId, QualifiedName, StatusCode, UAString, Variant,
@@ -357,6 +374,8 @@ mod tests {
         node_id: NodeId,
         value: i32,
         id: u32,
+        #[opcua(placeholder)]
+        extra: PlaceholderEventField<i32>,
     }
 
     #[derive(Event)]
@@ -371,6 +390,8 @@ mod tests {
         ignored: i32,
         #[opcua(rename = "Fancy Name")]
         renamed: String,
+        #[opcua(placeholder)]
+        extra_fields: PlaceholderEventField<SubComplexEventField>,
     }
 
     #[test]
@@ -445,6 +466,55 @@ mod tests {
         assert_eq!(
             evt.get_field(&id, AttributeId::Value, NumericRange::None, &["Var".into()]),
             Variant::from(20i32)
+        );
+
+        let name = QualifiedName::new(1, "Extra1");
+        // Get from placeholders
+        evt.extra_fields
+            .insert_field(name.clone(), SubComplexEventField::default());
+        evt.extra_fields.get_field_mut(&name).unwrap().base.float = 20f32;
+        let name = QualifiedName::new(1, "Extra2");
+        evt.extra_fields
+            .insert_field(name.clone(), SubComplexEventField::default());
+        evt.extra_fields.get_field_mut(&name).unwrap().base.float = 21f32;
+
+        assert_eq!(
+            evt.get_field(
+                &id,
+                AttributeId::Value,
+                NumericRange::None,
+                &[QualifiedName::new(1, "Extra1"), "Float".into()]
+            ),
+            Variant::from(20f32)
+        );
+        assert_eq!(
+            evt.get_field(
+                &id,
+                AttributeId::Value,
+                NumericRange::None,
+                &[QualifiedName::new(1, "Extra2"), "Float".into()]
+            ),
+            Variant::from(21f32)
+        );
+        assert_eq!(
+            evt.get_field(
+                &id,
+                AttributeId::Value,
+                NumericRange::None,
+                &[QualifiedName::new(1, "Extra3"), "Float".into()]
+            ),
+            Variant::Empty
+        );
+
+        evt.var.extra.insert_field("Magic".into(), 15);
+        assert_eq!(
+            evt.get_field(
+                &id,
+                AttributeId::Value,
+                NumericRange::None,
+                &["Var".into(), "Magic".into()]
+            ),
+            Variant::from(15)
         );
     }
 }

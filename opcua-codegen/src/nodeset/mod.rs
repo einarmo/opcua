@@ -1,13 +1,15 @@
+mod events;
 mod gen;
 mod render;
 mod value;
 
 use std::collections::HashMap;
 
+pub use events::generate_events;
 pub use gen::{NodeGenMethod, NodeSetCodeGenerator};
-use opcua_xml::{
-    load_nodeset2_file,
-    schema::xml_schema::{load_xsd_schema, XsdFileItem, XsdFileType},
+use opcua_xml::schema::{
+    ua_node_set::UANodeSet,
+    xml_schema::{load_xsd_schema, XsdFileItem, XsdFileType},
 };
 use proc_macro2::Span;
 use quote::quote;
@@ -36,6 +38,13 @@ pub struct NodeSetCodeGenTarget {
     pub own_namespaces: Vec<String>,
     pub imported_namespaces: Vec<String>,
     pub name: String,
+    pub extra_header: String,
+    pub events: Option<EventsTarget>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct EventsTarget {
+    pub output_dir: String,
     pub extra_header: String,
 }
 
@@ -130,21 +139,12 @@ pub fn make_root_fun(chunk: &[NodeGenMethod]) -> ItemFn {
 
 pub fn generate_target(
     config: &NodeSetCodeGenTarget,
+    nodes: &UANodeSet,
     preferred_locale: &str,
 ) -> Result<Vec<NodeSetChunk>, CodeGenError> {
-    println!("Loading node set from {}", config.file_path);
-    let node_set = std::fs::read_to_string(&config.file_path)
-        .map_err(|e| CodeGenError::io(&format!("Failed to read file {}", config.file_path), e))?;
-    let node_set = load_nodeset2_file(&node_set)?;
-
-    let nodes = node_set
-        .node_set
-        .ok_or_else(|| CodeGenError::Other("Missing UANodeSet in xml schema".to_owned()))?;
-    println!("Found {} nodes in node set", nodes.nodes.len());
-
     let types = make_type_dict(config)?;
 
-    let mut generator = NodeSetCodeGenerator::new(preferred_locale, nodes.aliases, types)?;
+    let mut generator = NodeSetCodeGenerator::new(preferred_locale, nodes.aliases.as_ref(), types)?;
 
     let mut fns = Vec::with_capacity(nodes.nodes.len());
     for node in &nodes.nodes {

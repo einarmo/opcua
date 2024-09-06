@@ -7,13 +7,20 @@ pub fn generate_event_impls(event: EventStruct) -> syn::Result<TokenStream> {
     let ident = event.ident;
     let mut get_arms = quote! {};
     let mut init_items = quote! {};
+    let mut placeholder_fields = quote! {};
     for field in event.fields {
         let name = field
             .attr
             .rename
             .unwrap_or_else(|| field.ident.to_string().to_case(Case::Pascal));
         let ident = field.ident;
-        if !field.attr.ignore {
+        if field.attr.placeholder {
+            placeholder_fields.extend(quote! {
+                if let Some(value) = self.#ident.try_get_value(field, attribute_id, index_range.clone(), browse_path.get(1..).unwrap_or(&[])) {
+                    return value;
+                }
+            })
+        } else if !field.attr.ignore {
             get_arms.extend(quote! {
                 #name => self.#ident.get_value(attribute_id, index_range, browse_path.get(1..).unwrap_or(&[])),
             });
@@ -164,7 +171,10 @@ pub fn generate_event_impls(event: EventStruct) -> syn::Result<TokenStream> {
                 let field = &browse_path[0];
                 match field.name.as_ref() {
                     #get_arms
-                    _ => self.base.get_value(attribute_id, index_range, browse_path)
+                    _ => {
+                        #placeholder_fields
+                        self.base.get_value(attribute_id, index_range, browse_path)
+                    }
                 }
             }
         }
