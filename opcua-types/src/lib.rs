@@ -235,6 +235,10 @@ pub use self::{
     variant_type_id::*,
 };
 
+// Various aliases
+pub type UriString = UAString;
+pub type AudioDataType = ByteString;
+
 #[derive(Debug, Clone)]
 /// Error type used for certain custom substring methods.
 pub struct OutOfRange;

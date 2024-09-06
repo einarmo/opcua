@@ -6,7 +6,10 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
+mod opcua {
+    pub use crate as types;
+}
+#[derive(Debug, Clone, PartialEq)]
 pub struct AddNodesItem {
     pub parent_node_id: opcua::types::expanded_node_id::ExpandedNodeId,
     pub reference_type_id: opcua::types::node_id::NodeId,
@@ -34,10 +37,7 @@ impl opcua::types::BinaryEncoder for AddNodesItem {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
-        &self,
-        stream: &mut S,
-    ) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.parent_node_id.encode(stream)?;
         size += self.reference_type_id.encode(stream)?;
@@ -57,18 +57,20 @@ impl opcua::types::BinaryEncoder for AddNodesItem {
             stream,
             decoding_options,
         )?;
-        let reference_type_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+        let reference_type_id =
+            <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )?;
         let requested_new_node_id = <opcua::types::expanded_node_id::ExpandedNodeId as opcua::types::BinaryEncoder>::decode(
             stream,
             decoding_options,
         )?;
-        let browse_name = <opcua::types::qualified_name::QualifiedName as opcua::types::BinaryEncoder>::decode(
-            stream,
-            decoding_options,
-        )?;
+        let browse_name =
+            <opcua::types::qualified_name::QualifiedName as opcua::types::BinaryEncoder>::decode(
+                stream,
+                decoding_options,
+            )?;
         let node_class = <super::enums::NodeClass as opcua::types::BinaryEncoder>::decode(
             stream,
             decoding_options,

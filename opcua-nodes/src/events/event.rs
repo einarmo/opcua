@@ -184,6 +184,22 @@ impl BaseEventType {
     }
 }
 
+pub use method_event_field::MethodEventField;
+
+mod method_event_field {
+    use opcua_macros::EventField;
+    use opcua_types::NodeId;
+
+    mod opcua {
+        pub use crate as nodes;
+        pub use opcua_types as types;
+    }
+    #[derive(Default, EventField, Debug)]
+    pub struct MethodEventField {
+        pub node_id: NodeId,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::NamespaceMap;

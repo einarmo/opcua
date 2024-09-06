@@ -43,8 +43,8 @@ pub fn generate_event_field_impls(event: EventFieldStruct) -> syn::Result<TokenS
                 }
                 "node_id" => pre_check_block.extend(quote! {
                     if browse_path.is_empty() && attribute_id == opcua::types::AttributeId::NodeId {
-                        let val: Variant = self.node_id.clone().into();
-                        return val.range_of_owned(index_range).unwrap_or(Variant::Empty);
+                        let val: opcua::types::Variant = self.node_id.clone().into();
+                        return val.range_of_owned(index_range).unwrap_or(opcua::types::Variant::Empty);
                     }
                 }),
                 "value" => pre_check_block.extend(quote! {

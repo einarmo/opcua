@@ -196,3 +196,18 @@ impl EventField for Variant {
             .unwrap_or(Variant::Empty)
     }
 }
+
+impl EventField for NumericRange {
+    fn get_value(
+        &self,
+        attribute_id: AttributeId,
+        index_range: NumericRange,
+        remaining_path: &[QualifiedName],
+    ) -> Variant {
+        if remaining_path.len() != 0 || attribute_id != AttributeId::Value {
+            return Variant::Empty;
+        }
+        let val: Variant = self.clone().as_string().into();
+        val.range_of_owned(index_range).unwrap_or(Variant::Empty)
+    }
+}

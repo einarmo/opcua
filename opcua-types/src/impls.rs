@@ -23,6 +23,7 @@ use crate::{
     status_code::StatusCode,
     string::UAString,
     variant::Variant,
+    AddNodesItem, NumericRange, ServerState,
 };
 
 use super::{PerformUpdateType, SecurityTokenRequestType};
@@ -471,5 +472,31 @@ impl Default for SecurityTokenRequestType {
 impl Default for PerformUpdateType {
     fn default() -> Self {
         Self::Insert
+    }
+}
+
+impl Default for AddNodesItem {
+    fn default() -> Self {
+        Self {
+            parent_node_id: Default::default(),
+            reference_type_id: Default::default(),
+            requested_new_node_id: Default::default(),
+            browse_name: Default::default(),
+            node_class: crate::NodeClass::Object,
+            node_attributes: Default::default(),
+            type_definition: Default::default(),
+        }
+    }
+}
+
+impl Default for NumericRange {
+    fn default() -> Self {
+        Self::None
+    }
+}
+
+impl Default for ServerState {
+    fn default() -> Self {
+        Self::Shutdown
     }
 }

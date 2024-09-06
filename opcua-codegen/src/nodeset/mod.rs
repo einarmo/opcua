@@ -1,6 +1,9 @@
+mod events;
 mod gen;
 mod render;
 mod value;
+
+pub use events::test;
 
 use std::collections::HashMap;
 
