@@ -102,11 +102,9 @@ impl<'a> EventGenerator<'a> {
             TypeKind::EventType => self.render_event(&ty, id),
             TypeKind::ObjectType => self.render_object_type(&ty),
             TypeKind::VariableType => self.render_variable_type(&ty),
-            r => {
-                Err(CodeGenError::Other(format!(
-                    "Got unexpected type kind to render: {r:?}"
-                )))
-            }
+            r => Err(CodeGenError::Other(format!(
+                "Got unexpected type kind to render: {r:?}"
+            ))),
         }
     }
 
