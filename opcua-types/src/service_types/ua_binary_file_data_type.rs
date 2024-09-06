@@ -21,6 +21,11 @@ pub struct UABinaryFileDataType {
     pub file_header: Option<Vec<super::key_value_pair::KeyValuePair>>,
     pub body: opcua::types::variant::Variant,
 }
+impl opcua::types::MessageInfo for UABinaryFileDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::UABinaryFileDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for UABinaryFileDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

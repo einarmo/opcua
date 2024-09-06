@@ -13,6 +13,11 @@ pub struct UpdateEventDetails {
     pub filter: super::event_filter::EventFilter,
     pub event_data: Option<Vec<super::history_event_field_list::HistoryEventFieldList>>,
 }
+impl opcua::types::MessageInfo for UpdateEventDetails {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::UpdateEventDetails_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for UpdateEventDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

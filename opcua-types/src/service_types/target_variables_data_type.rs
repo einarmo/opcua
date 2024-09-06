@@ -13,6 +13,11 @@ pub struct TargetVariablesDataType {
         Vec<super::field_target_data_type::FieldTargetDataType>,
     >,
 }
+impl opcua::types::MessageInfo for TargetVariablesDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::TargetVariablesDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for TargetVariablesDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

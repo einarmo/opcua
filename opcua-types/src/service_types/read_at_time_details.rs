@@ -12,6 +12,11 @@ pub struct ReadAtTimeDetails {
     pub req_times: Option<Vec<opcua::types::date_time::DateTime>>,
     pub use_simple_bounds: bool,
 }
+impl opcua::types::MessageInfo for ReadAtTimeDetails {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReadAtTimeDetails_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for ReadAtTimeDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

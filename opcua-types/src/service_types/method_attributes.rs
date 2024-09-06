@@ -17,6 +17,11 @@ pub struct MethodAttributes {
     pub executable: bool,
     pub user_executable: bool,
 }
+impl opcua::types::MessageInfo for MethodAttributes {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::MethodAttributes_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for MethodAttributes {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

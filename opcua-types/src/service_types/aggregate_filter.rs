@@ -14,6 +14,11 @@ pub struct AggregateFilter {
     pub processing_interval: f64,
     pub aggregate_configuration: super::aggregate_configuration::AggregateConfiguration,
 }
+impl opcua::types::MessageInfo for AggregateFilter {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::AggregateFilter_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for AggregateFilter {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

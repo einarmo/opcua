@@ -25,7 +25,7 @@ use crate::{
     variant::Variant,
 };
 
-use super::{EventFilter, PerformUpdateType, SecurityTokenRequestType};
+use super::{PerformUpdateType, SecurityTokenRequestType};
 
 /// Implemented by messages
 pub trait MessageInfo {
@@ -471,11 +471,5 @@ impl Default for SecurityTokenRequestType {
 impl Default for PerformUpdateType {
     fn default() -> Self {
         Self::Insert
-    }
-}
-
-impl MessageInfo for EventFilter {
-    fn object_id(&self) -> ObjectId {
-        ObjectId::EventFilter_Encoding_DefaultBinary
     }
 }

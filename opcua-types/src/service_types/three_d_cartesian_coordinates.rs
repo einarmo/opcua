@@ -13,6 +13,11 @@ pub struct ThreeDCartesianCoordinates {
     pub y: f64,
     pub z: f64,
 }
+impl opcua::types::MessageInfo for ThreeDCartesianCoordinates {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ThreeDCartesianCoordinates_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for ThreeDCartesianCoordinates {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

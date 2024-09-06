@@ -16,6 +16,11 @@ pub struct SimpleTypeDescription {
     pub base_data_type: opcua::types::node_id::NodeId,
     pub built_in_type: u8,
 }
+impl opcua::types::MessageInfo for SimpleTypeDescription {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::SimpleTypeDescription_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for SimpleTypeDescription {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

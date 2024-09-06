@@ -29,6 +29,11 @@ pub struct WriterGroupDataType {
         Vec<super::data_set_writer_data_type::DataSetWriterDataType>,
     >,
 }
+impl opcua::types::MessageInfo for WriterGroupDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::WriterGroupDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for WriterGroupDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

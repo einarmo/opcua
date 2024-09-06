@@ -12,6 +12,11 @@ pub struct ThreeDFrame {
     pub cartesian_coordinates: super::three_d_cartesian_coordinates::ThreeDCartesianCoordinates,
     pub orientation: super::three_d_orientation::ThreeDOrientation,
 }
+impl opcua::types::MessageInfo for ThreeDFrame {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ThreeDFrame_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for ThreeDFrame {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

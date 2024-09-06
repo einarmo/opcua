@@ -14,6 +14,11 @@ pub struct StructureDescription {
     pub name: opcua::types::qualified_name::QualifiedName,
     pub structure_definition: super::structure_definition::StructureDefinition,
 }
+impl opcua::types::MessageInfo for StructureDescription {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::StructureDescription_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for StructureDescription {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

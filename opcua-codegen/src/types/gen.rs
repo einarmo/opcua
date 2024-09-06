@@ -148,6 +148,10 @@ impl CodeGenerator {
                     path: format!("super::{}", name),
                     // Determined later
                     has_default: None,
+                    base_type: match &item {
+                        LoadedType::Struct(v) => v.base_type.clone(),
+                        LoadedType::Enum(_) => None,
+                    },
                 },
             );
         }
@@ -270,6 +274,22 @@ impl CodeGenerator {
             impl Default for #enum_ident {
                 fn default() -> Self {
                     Self::empty()
+                }
+            }
+        });
+
+        impls.push(parse_quote! {
+            impl From<#enum_ident> for opcua::types::Variant {
+                fn from(v: #enum_ident) -> Self {
+                    Self::from(v.bits())
+                }
+            }
+        });
+
+        impls.push(parse_quote! {
+            impl opcua::types::AsVariantRef for #enum_ident {
+                fn as_variant(&self) -> opcua::types::Variant {
+                    self.bits().into()
                 }
             }
         });
@@ -443,6 +463,29 @@ impl CodeGenerator {
             }
         });
 
+        impls.push(parse_quote! {
+            impl From<#enum_ident> for #ty {
+                fn from(value: #enum_ident) -> Self {
+                    value as #ty
+                }
+            }
+        });
+        impls.push(parse_quote! {
+            impl From<#enum_ident> for opcua::types::Variant {
+                fn from(value: #enum_ident) -> Self {
+                    Self::from(value as #ty)
+                }
+            }
+        });
+
+        impls.push(parse_quote! {
+            impl opcua::types::AsVariantRef for #enum_ident {
+                fn as_variant(&self) -> opcua::types::Variant {
+                    (*self as #ty).into()
+                }
+            }
+        });
+
         // BinaryEncoder impl
         let size: usize = item.size.try_into().map_err(|_| {
             CodeGenError::Other(format!("Value {} does not fit in a usize", item.size))
@@ -487,6 +530,26 @@ impl CodeGenerator {
             },
             name: item.name.clone(),
         })
+    }
+
+    fn is_extension_object(&self, typ: &str) -> bool {
+        if typ == "ua:ExtensionObject" {
+            return true;
+        }
+
+        let name = match typ.split_once(":") {
+            Some((_, n)) => n,
+            None => typ,
+        };
+
+        let Some(parent) = self.import_map.get(name) else {
+            return false;
+        };
+        if let Some(p) = &parent.base_type {
+            self.is_extension_object(p)
+        } else {
+            false
+        }
     }
 
     fn generate_struct(&self, item: StructuredType) -> Result<GeneratedItem, CodeGenError> {
@@ -540,7 +603,7 @@ impl CodeGenerator {
         if item
             .base_type
             .as_ref()
-            .is_some_and(|t| t == "ua:ExtensionObject")
+            .is_some_and(|v| self.is_extension_object(v))
         {
             let encoding_ident = Ident::new(
                 &format!("{}_Encoding_DefaultBinary", item.name),

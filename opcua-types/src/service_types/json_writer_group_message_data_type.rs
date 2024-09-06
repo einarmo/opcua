@@ -11,6 +11,11 @@ mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
 pub struct JsonWriterGroupMessageDataType {
     pub network_message_content_mask: super::enums::JsonNetworkMessageContentMask,
 }
+impl opcua::types::MessageInfo for JsonWriterGroupMessageDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::JsonWriterGroupMessageDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for JsonWriterGroupMessageDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

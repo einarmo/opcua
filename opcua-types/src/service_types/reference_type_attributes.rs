@@ -18,6 +18,11 @@ pub struct ReferenceTypeAttributes {
     pub symmetric: bool,
     pub inverse_name: opcua::types::localized_text::LocalizedText,
 }
+impl opcua::types::MessageInfo for ReferenceTypeAttributes {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReferenceTypeAttributes_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for ReferenceTypeAttributes {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

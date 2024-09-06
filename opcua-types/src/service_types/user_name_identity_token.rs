@@ -14,6 +14,11 @@ pub struct UserNameIdentityToken {
     pub password: opcua::types::byte_string::ByteString,
     pub encryption_algorithm: opcua::types::string::UAString,
 }
+impl opcua::types::MessageInfo for UserNameIdentityToken {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::UserNameIdentityToken_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for UserNameIdentityToken {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

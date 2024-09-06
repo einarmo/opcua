@@ -12,6 +12,11 @@ pub struct NetworkAddressUrlDataType {
     pub network_interface: opcua::types::string::UAString,
     pub url: opcua::types::string::UAString,
 }
+impl opcua::types::MessageInfo for NetworkAddressUrlDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::NetworkAddressUrlDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for NetworkAddressUrlDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

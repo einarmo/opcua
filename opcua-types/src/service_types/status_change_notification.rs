@@ -12,6 +12,11 @@ pub struct StatusChangeNotification {
     pub status: opcua::types::status_code::StatusCode,
     pub diagnostic_info: opcua::types::diagnostic_info::DiagnosticInfo,
 }
+impl opcua::types::MessageInfo for StatusChangeNotification {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::StatusChangeNotification_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for StatusChangeNotification {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

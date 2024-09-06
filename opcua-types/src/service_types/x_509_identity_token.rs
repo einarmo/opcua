@@ -12,6 +12,11 @@ pub struct X509IdentityToken {
     pub policy_id: opcua::types::string::UAString,
     pub certificate_data: opcua::types::byte_string::ByteString,
 }
+impl opcua::types::MessageInfo for X509IdentityToken {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::X509IdentityToken_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for X509IdentityToken {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

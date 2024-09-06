@@ -18,6 +18,11 @@ pub struct GenericAttributes {
         Vec<super::generic_attribute_value::GenericAttributeValue>,
     >,
 }
+impl opcua::types::MessageInfo for GenericAttributes {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::GenericAttributes_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for GenericAttributes {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

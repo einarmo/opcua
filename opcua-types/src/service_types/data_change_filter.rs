@@ -14,6 +14,11 @@ pub struct DataChangeFilter {
     pub deadband_type: u32,
     pub deadband_value: f64,
 }
+impl opcua::types::MessageInfo for DataChangeFilter {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DataChangeFilter_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for DataChangeFilter {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

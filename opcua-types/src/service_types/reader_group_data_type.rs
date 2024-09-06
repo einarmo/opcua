@@ -23,6 +23,11 @@ pub struct ReaderGroupDataType {
         Vec<super::data_set_reader_data_type::DataSetReaderDataType>,
     >,
 }
+impl opcua::types::MessageInfo for ReaderGroupDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReaderGroupDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for ReaderGroupDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

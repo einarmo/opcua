@@ -12,6 +12,11 @@ pub struct MdnsDiscoveryConfiguration {
     pub mdns_server_name: opcua::types::string::UAString,
     pub server_capabilities: Option<Vec<opcua::types::string::UAString>>,
 }
+impl opcua::types::MessageInfo for MdnsDiscoveryConfiguration {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::MdnsDiscoveryConfiguration_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for MdnsDiscoveryConfiguration {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

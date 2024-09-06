@@ -12,6 +12,11 @@ pub struct JsonDataSetReaderMessageDataType {
     pub network_message_content_mask: super::enums::JsonNetworkMessageContentMask,
     pub data_set_message_content_mask: super::enums::JsonDataSetMessageContentMask,
 }
+impl opcua::types::MessageInfo for JsonDataSetReaderMessageDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::JsonDataSetReaderMessageDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for JsonDataSetReaderMessageDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

@@ -13,6 +13,11 @@ pub struct PublishedDataItemsDataType {
         Vec<super::published_variable_data_type::PublishedVariableDataType>,
     >,
 }
+impl opcua::types::MessageInfo for PublishedDataItemsDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::PublishedDataItemsDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for PublishedDataItemsDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
