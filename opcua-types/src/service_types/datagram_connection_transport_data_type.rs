@@ -11,6 +11,11 @@ mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
 pub struct DatagramConnectionTransportDataType {
     pub discovery_address: opcua::types::extension_object::ExtensionObject,
 }
+impl opcua::types::MessageInfo for DatagramConnectionTransportDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DatagramConnectionTransportDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for DatagramConnectionTransportDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

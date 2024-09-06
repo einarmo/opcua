@@ -15,6 +15,11 @@ pub struct PublishedEventsDataType {
     >,
     pub filter: super::content_filter::ContentFilter,
 }
+impl opcua::types::MessageInfo for PublishedEventsDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::PublishedEventsDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for PublishedEventsDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

@@ -14,6 +14,11 @@ pub struct UadpDataSetWriterMessageDataType {
     pub network_message_number: u16,
     pub data_set_offset: u16,
 }
+impl opcua::types::MessageInfo for UadpDataSetWriterMessageDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::UadpDataSetWriterMessageDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for UadpDataSetWriterMessageDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

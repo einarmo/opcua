@@ -11,6 +11,11 @@ mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
 pub struct EventNotificationList {
     pub events: Option<Vec<super::event_field_list::EventFieldList>>,
 }
+impl opcua::types::MessageInfo for EventNotificationList {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::EventNotificationList_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for EventNotificationList {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

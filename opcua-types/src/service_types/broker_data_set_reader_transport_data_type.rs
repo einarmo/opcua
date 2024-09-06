@@ -14,6 +14,11 @@ pub struct BrokerDataSetReaderTransportDataType {
     pub requested_delivery_guarantee: super::enums::BrokerTransportQualityOfService,
     pub meta_data_queue_name: opcua::types::string::UAString,
 }
+impl opcua::types::MessageInfo for BrokerDataSetReaderTransportDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::BrokerDataSetReaderTransportDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for BrokerDataSetReaderTransportDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

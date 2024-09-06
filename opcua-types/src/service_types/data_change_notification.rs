@@ -14,6 +14,11 @@ pub struct DataChangeNotification {
     >,
     pub diagnostic_infos: Option<Vec<opcua::types::diagnostic_info::DiagnosticInfo>>,
 }
+impl opcua::types::MessageInfo for DataChangeNotification {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DataChangeNotification_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for DataChangeNotification {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

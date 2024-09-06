@@ -15,6 +15,11 @@ pub struct AttributeOperand {
     pub attribute_id: u32,
     pub index_range: opcua::types::string::UAString,
 }
+impl opcua::types::MessageInfo for AttributeOperand {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::AttributeOperand_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for AttributeOperand {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

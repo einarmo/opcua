@@ -13,6 +13,11 @@ pub struct BrokerWriterGroupTransportDataType {
     pub authentication_profile_uri: opcua::types::string::UAString,
     pub requested_delivery_guarantee: super::enums::BrokerTransportQualityOfService,
 }
+impl opcua::types::MessageInfo for BrokerWriterGroupTransportDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::BrokerWriterGroupTransportDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for BrokerWriterGroupTransportDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

@@ -12,6 +12,11 @@ pub struct SubscribedDataSetMirrorDataType {
     pub parent_node_name: opcua::types::string::UAString,
     pub role_permissions: Option<Vec<super::role_permission_type::RolePermissionType>>,
 }
+impl opcua::types::MessageInfo for SubscribedDataSetMirrorDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::SubscribedDataSetMirrorDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for SubscribedDataSetMirrorDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

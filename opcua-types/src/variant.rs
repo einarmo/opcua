@@ -30,7 +30,7 @@ use crate::{
     status_code::StatusCode,
     string::{UAString, XmlElement},
     variant_type_id::*,
-    DataValue, DiagnosticInfo,
+    DataValue, DiagnosticInfo, MessageInfo,
 };
 
 use super::DateTimeUtc;
@@ -99,6 +99,76 @@ pub enum Variant {
     /// arrays will be rejected.
     Array(Box<Array>),
 }
+
+/// Trait for types that can be represented by a variant.
+/// Note that the VariantTypeId returned by `variant_type_id`
+/// _must_ be the variant type ID of the variant returned by the corresponding
+/// `From` trait implementation!
+pub trait VariantType {
+    fn variant_type_id() -> VariantTypeId;
+}
+
+// Any type that implements MessageInfo is encoded as an extension object.
+impl<T> VariantType for T
+where
+    T: MessageInfo,
+{
+    fn variant_type_id() -> VariantTypeId {
+        VariantTypeId::ExtensionObject
+    }
+}
+
+/// Trait for types that can be converted to a variant from a reference
+/// directly, typically through encoding.
+pub trait AsVariantRef {
+    fn as_variant(&self) -> Variant;
+}
+
+impl<T> AsVariantRef for T
+where
+    T: BinaryEncoder + MessageInfo,
+{
+    fn as_variant(&self) -> Variant {
+        ExtensionObject::from_message(self).into()
+    }
+}
+
+macro_rules! impl_variant_type_for {
+    ($tp: ty, $vt: expr) => {
+        impl VariantType for $tp {
+            fn variant_type_id() -> VariantTypeId {
+                $vt
+            }
+        }
+    };
+}
+impl_variant_type_for!(bool, VariantTypeId::Boolean);
+impl_variant_type_for!(i8, VariantTypeId::SByte);
+impl_variant_type_for!(u8, VariantTypeId::Byte);
+impl_variant_type_for!(i16, VariantTypeId::Int16);
+impl_variant_type_for!(u16, VariantTypeId::UInt16);
+impl_variant_type_for!(i32, VariantTypeId::Int32);
+impl_variant_type_for!(u32, VariantTypeId::UInt32);
+impl_variant_type_for!(i64, VariantTypeId::Int64);
+impl_variant_type_for!(u64, VariantTypeId::UInt64);
+impl_variant_type_for!(f32, VariantTypeId::Float);
+impl_variant_type_for!(f64, VariantTypeId::Double);
+impl_variant_type_for!(UAString, VariantTypeId::String);
+impl_variant_type_for!(String, VariantTypeId::String);
+impl_variant_type_for!(&str, VariantTypeId::String);
+impl_variant_type_for!(DateTime, VariantTypeId::DateTime);
+impl_variant_type_for!(Guid, VariantTypeId::Guid);
+impl_variant_type_for!(StatusCode, VariantTypeId::StatusCode);
+impl_variant_type_for!(ByteString, VariantTypeId::ByteString);
+impl_variant_type_for!(QualifiedName, VariantTypeId::QualifiedName);
+impl_variant_type_for!(LocalizedText, VariantTypeId::LocalizedText);
+impl_variant_type_for!(NodeId, VariantTypeId::NodeId);
+impl_variant_type_for!(ExpandedNodeId, VariantTypeId::ExpandedNodeId);
+impl_variant_type_for!(ExtensionObject, VariantTypeId::ExtensionObject);
+impl_variant_type_for!(Variant, VariantTypeId::Variant);
+impl_variant_type_for!(DataValue, VariantTypeId::DataValue);
+impl_variant_type_for!(DiagnosticInfo, VariantTypeId::DiagnosticInfo);
+impl_variant_type_for!(Array, VariantTypeId::Array);
 
 macro_rules! impl_from_variant_for {
     ($tp: ty, $vt: expr, $venum: path) => {
@@ -406,50 +476,43 @@ macro_rules! cast_to_integer {
     }
 }
 
-macro_rules! from_array_to_variant_impl {
-    ($encoding_mask: expr, $rtype: ty) => {
-        impl<'a> From<&'a Vec<$rtype>> for Variant {
-            fn from(v: &'a Vec<$rtype>) -> Self {
-                Variant::from(v.as_slice())
-            }
-        }
-
-        impl From<Vec<$rtype>> for Variant {
-            fn from(v: Vec<$rtype>) -> Self {
-                let array: Vec<Variant> = v.into_iter().map(|v| Variant::from(v)).collect();
-                Variant::try_from(($encoding_mask, array)).unwrap()
-            }
-        }
-
-        impl<'a> From<&'a [$rtype]> for Variant {
-            fn from(v: &'a [$rtype]) -> Self {
-                let array: Vec<Variant> = v.iter().map(|v| Variant::from(v.clone())).collect();
-                Variant::try_from(($encoding_mask, array)).unwrap()
-            }
-        }
-    };
+impl<'a, T> From<&'a Vec<T>> for Variant
+where
+    T: Into<Variant> + VariantType + Clone,
+{
+    fn from(value: &'a Vec<T>) -> Self {
+        Self::from(value.as_slice())
+    }
 }
 
-from_array_to_variant_impl!(VariantTypeId::String, String);
-from_array_to_variant_impl!(VariantTypeId::String, &str);
-from_array_to_variant_impl!(VariantTypeId::Boolean, bool);
-from_array_to_variant_impl!(VariantTypeId::SByte, i8);
-from_array_to_variant_impl!(VariantTypeId::Byte, u8);
-from_array_to_variant_impl!(VariantTypeId::Int16, i16);
-from_array_to_variant_impl!(VariantTypeId::UInt16, u16);
-from_array_to_variant_impl!(VariantTypeId::Int32, i32);
-from_array_to_variant_impl!(VariantTypeId::UInt32, u32);
-from_array_to_variant_impl!(VariantTypeId::Int64, i64);
-from_array_to_variant_impl!(VariantTypeId::UInt64, u64);
-from_array_to_variant_impl!(VariantTypeId::Float, f32);
-from_array_to_variant_impl!(VariantTypeId::Double, f64);
-from_array_to_variant_impl!(VariantTypeId::NodeId, NodeId);
-from_array_to_variant_impl!(VariantTypeId::ExpandedNodeId, ExpandedNodeId);
-from_array_to_variant_impl!(VariantTypeId::LocalizedText, LocalizedText);
-from_array_to_variant_impl!(VariantTypeId::QualifiedName, QualifiedName);
-from_array_to_variant_impl!(VariantTypeId::StatusCode, StatusCode);
-from_array_to_variant_impl!(VariantTypeId::ExtensionObject, ExtensionObject);
-from_array_to_variant_impl!(VariantTypeId::DateTime, DateTimeUtc);
+impl<T> From<Vec<T>> for Variant
+where
+    T: Into<Variant> + VariantType,
+{
+    fn from(value: Vec<T>) -> Self {
+        let array: Vec<Variant> = value.into_iter().map(|v| v.into()).collect();
+        Variant::from((T::variant_type_id(), array))
+    }
+}
+
+impl<'a, T> From<&'a [T]> for Variant
+where
+    T: Into<Variant> + VariantType + Clone,
+{
+    fn from(value: &'a [T]) -> Self {
+        let array: Vec<Variant> = value.iter().map(|v| v.clone().into()).collect();
+        Variant::from((T::variant_type_id(), array))
+    }
+}
+
+impl<T> From<&T> for Variant
+where
+    T: BinaryEncoder + MessageInfo,
+{
+    fn from(value: &T) -> Self {
+        ExtensionObject::from_message(value).into()
+    }
+}
 
 /// This macro tries to return a `Vec<foo>` from a `Variant::Array<Variant::Foo>>`, e.g.
 /// If the Variant holds

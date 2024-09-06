@@ -16,6 +16,11 @@ pub struct EnumDescription {
     pub enum_definition: super::enum_definition::EnumDefinition,
     pub built_in_type: u8,
 }
+impl opcua::types::MessageInfo for EnumDescription {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::EnumDescription_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for EnumDescription {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

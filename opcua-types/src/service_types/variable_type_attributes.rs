@@ -20,6 +20,11 @@ pub struct VariableTypeAttributes {
     pub array_dimensions: Option<Vec<u32>>,
     pub is_abstract: bool,
 }
+impl opcua::types::MessageInfo for VariableTypeAttributes {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::VariableTypeAttributes_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for VariableTypeAttributes {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

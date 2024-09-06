@@ -17,6 +17,11 @@ pub struct ViewAttributes {
     pub contains_no_loops: bool,
     pub event_notifier: u8,
 }
+impl opcua::types::MessageInfo for ViewAttributes {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ViewAttributes_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for ViewAttributes {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

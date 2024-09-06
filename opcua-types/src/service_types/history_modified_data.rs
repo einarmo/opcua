@@ -12,6 +12,11 @@ pub struct HistoryModifiedData {
     pub data_values: Option<Vec<opcua::types::data_value::DataValue>>,
     pub modification_infos: Option<Vec<super::modification_info::ModificationInfo>>,
 }
+impl opcua::types::MessageInfo for HistoryModifiedData {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::HistoryModifiedData_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for HistoryModifiedData {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

@@ -12,6 +12,11 @@ pub struct DeleteEventDetails {
     pub node_id: opcua::types::node_id::NodeId,
     pub event_ids: Option<Vec<opcua::types::byte_string::ByteString>>,
 }
+impl opcua::types::MessageInfo for DeleteEventDetails {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DeleteEventDetails_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for DeleteEventDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

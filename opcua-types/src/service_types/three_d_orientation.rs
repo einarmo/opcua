@@ -13,6 +13,11 @@ pub struct ThreeDOrientation {
     pub b: f64,
     pub c: f64,
 }
+impl opcua::types::MessageInfo for ThreeDOrientation {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ThreeDOrientation_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for ThreeDOrientation {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

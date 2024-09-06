@@ -25,6 +25,11 @@ pub struct DataSetMetaDataType {
     pub data_set_class_id: opcua::types::guid::Guid,
     pub configuration_version: super::configuration_version_data_type::ConfigurationVersionDataType,
 }
+impl opcua::types::MessageInfo for DataSetMetaDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DataSetMetaDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for DataSetMetaDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

@@ -11,6 +11,11 @@ mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
 pub struct ElementOperand {
     pub index: u32,
 }
+impl opcua::types::MessageInfo for ElementOperand {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ElementOperand_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for ElementOperand {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

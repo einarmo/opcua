@@ -1,7 +1,7 @@
 use crate::{
-    Array, AttributeId, BinaryEncoder, ByteString, DataValue, DateTime, DiagnosticInfo,
-    ExpandedNodeId, ExtensionObject, Guid, LocalizedText, MessageInfo, NodeId, NumericRange,
-    QualifiedName, StatusCode, UAString, Variant,
+    Array, AsVariantRef, AttributeId, ByteString, DataValue, DateTime, DiagnosticInfo,
+    ExpandedNodeId, ExtensionObject, Guid, LocalizedText, NodeId, NumericRange, QualifiedName,
+    StatusCode, UAString, Variant,
 };
 
 /// Trait implemented by any type that can be a field in an event.
@@ -23,7 +23,7 @@ pub trait EventField {
 
 impl<T> EventField for T
 where
-    T: BinaryEncoder + MessageInfo,
+    T: AsVariantRef,
 {
     fn get_value(
         &self,
@@ -37,7 +37,7 @@ where
         {
             return Variant::Empty;
         }
-        ExtensionObject::from_message(self).into()
+        self.as_variant()
     }
 }
 

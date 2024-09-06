@@ -15,6 +15,11 @@ pub struct ReadProcessedDetails {
     pub aggregate_type: Option<Vec<opcua::types::node_id::NodeId>>,
     pub aggregate_configuration: super::aggregate_configuration::AggregateConfiguration,
 }
+impl opcua::types::MessageInfo for ReadProcessedDetails {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReadProcessedDetails_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for ReadProcessedDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

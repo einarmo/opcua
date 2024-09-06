@@ -46,6 +46,8 @@ pub struct ExternalType {
     pub path: String,
     /// Whether this type has a default implementation.
     pub has_default: Option<bool>,
+    /// Base type, if any
+    pub base_type: Option<String>,
 }
 
 impl ExternalType {
@@ -53,6 +55,7 @@ impl ExternalType {
         Self {
             path: path.to_owned(),
             has_default: Some(has_default),
+            base_type: None,
         }
     }
 }

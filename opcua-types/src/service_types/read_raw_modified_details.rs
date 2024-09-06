@@ -15,6 +15,11 @@ pub struct ReadRawModifiedDetails {
     pub num_values_per_node: u32,
     pub return_bounds: bool,
 }
+impl opcua::types::MessageInfo for ReadRawModifiedDetails {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReadRawModifiedDetails_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for ReadRawModifiedDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

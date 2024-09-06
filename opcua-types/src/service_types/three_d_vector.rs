@@ -13,6 +13,11 @@ pub struct ThreeDVector {
     pub y: f64,
     pub z: f64,
 }
+impl opcua::types::MessageInfo for ThreeDVector {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ThreeDVector_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for ThreeDVector {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

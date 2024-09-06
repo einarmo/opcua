@@ -14,6 +14,11 @@ pub struct UadpWriterGroupMessageDataType {
     pub sampling_offset: f64,
     pub publishing_offset: Option<Vec<f64>>,
 }
+impl opcua::types::MessageInfo for UadpWriterGroupMessageDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::UadpWriterGroupMessageDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for UadpWriterGroupMessageDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

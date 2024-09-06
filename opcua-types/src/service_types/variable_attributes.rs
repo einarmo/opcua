@@ -23,6 +23,11 @@ pub struct VariableAttributes {
     pub minimum_sampling_interval: f64,
     pub historizing: bool,
 }
+impl opcua::types::MessageInfo for VariableAttributes {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::VariableAttributes_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for VariableAttributes {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

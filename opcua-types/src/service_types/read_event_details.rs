@@ -14,6 +14,11 @@ pub struct ReadEventDetails {
     pub end_time: opcua::types::date_time::DateTime,
     pub filter: super::event_filter::EventFilter,
 }
+impl opcua::types::MessageInfo for ReadEventDetails {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReadEventDetails_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for ReadEventDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

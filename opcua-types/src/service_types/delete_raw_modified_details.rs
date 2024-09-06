@@ -14,6 +14,11 @@ pub struct DeleteRawModifiedDetails {
     pub start_time: opcua::types::date_time::DateTime,
     pub end_time: opcua::types::date_time::DateTime,
 }
+impl opcua::types::MessageInfo for DeleteRawModifiedDetails {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DeleteRawModifiedDetails_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for DeleteRawModifiedDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

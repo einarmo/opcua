@@ -12,6 +12,11 @@ pub struct BrokerConnectionTransportDataType {
     pub resource_uri: opcua::types::string::UAString,
     pub authentication_profile_uri: opcua::types::string::UAString,
 }
+impl opcua::types::MessageInfo for BrokerConnectionTransportDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::BrokerConnectionTransportDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for BrokerConnectionTransportDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

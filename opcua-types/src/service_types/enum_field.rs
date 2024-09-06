@@ -16,6 +16,11 @@ pub struct EnumField {
     pub description: opcua::types::localized_text::LocalizedText,
     pub name: opcua::types::string::UAString,
 }
+impl opcua::types::MessageInfo for EnumField {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::EnumField_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for EnumField {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

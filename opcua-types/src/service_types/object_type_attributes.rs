@@ -16,6 +16,11 @@ pub struct ObjectTypeAttributes {
     pub user_write_mask: u32,
     pub is_abstract: bool,
 }
+impl opcua::types::MessageInfo for ObjectTypeAttributes {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ObjectTypeAttributes_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for ObjectTypeAttributes {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;

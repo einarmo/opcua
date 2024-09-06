@@ -15,6 +15,11 @@ pub struct BrokerDataSetWriterTransportDataType {
     pub meta_data_queue_name: opcua::types::string::UAString,
     pub meta_data_update_time: f64,
 }
+impl opcua::types::MessageInfo for BrokerDataSetWriterTransportDataType {
+    fn object_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::BrokerDataSetWriterTransportDataType_Encoding_DefaultBinary
+    }
+}
 impl opcua::types::BinaryEncoder for BrokerDataSetWriterTransportDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
