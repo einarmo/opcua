@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use convert_case::{Case, Casing};
 use proc_macro2::{Span, TokenStream};
-use quote::quote;
+use quote::{quote, ToTokens};
 use syn::{parse_quote, Ident, ItemStruct};
 
 use crate::{nodeset::render::split_node_id, CodeGenError};
@@ -148,18 +148,10 @@ impl<'a> EventGenerator<'a> {
         fields: &mut TokenStream,
     ) -> Result<(), CodeGenError> {
         for (key, field) in &ty.fields {
-            // TODO: Figure out what to do with placeholders?
-            if field.placeholder {
-                continue;
-            }
-            let name = Ident::new(&key.to_case(Case::Snake), Span::call_site());
-            match field.type_id {
+            let typ = match field.type_id {
                 FieldKind::Object(v) => {
                     let typ = self.types.get(v).unwrap();
-                    let typ_ident = Ident::new(&typ.name, Span::call_site());
-                    fields.extend(quote! {
-                        pub #name: #typ_ident,
-                    })
+                    Ident::new(&typ.name, Span::call_site()).into_token_stream()
                 }
                 FieldKind::Variable(v) => {
                     let typ = self.types.get(v).unwrap();
@@ -168,23 +160,41 @@ impl<'a> EventGenerator<'a> {
                             CodeGenError::Other(format!("Missing valid data type for variable {v}"))
                         })?;
 
-                        let data_type_ident = self.get_data_type(data_type_id)?;
-                        fields.extend(quote! {
-                            pub #name: #data_type_ident,
-                        });
+                        self.get_data_type(data_type_id)?
                     } else {
-                        let typ_ident = Ident::new(&typ.name, Span::call_site());
-                        fields.extend(quote! {
-                            pub #name: #typ_ident,
-                        });
+                        Ident::new(&typ.name, Span::call_site()).into_token_stream()
                     }
                 }
                 FieldKind::Method => {
-                    fields.extend(quote! {
-                        pub #name: opcua::nodes::MethodEventField,
-                    });
+                    quote! {
+                        opcua::nodes::MethodEventField
+                    }
                 }
             };
+
+            let name = if field.placeholder {
+                // Sanitize placeholder name.
+                let key = format!(
+                    "{}s",
+                    key.trim_start_matches('<')
+                        .trim_end_matches(">")
+                        .to_case(Case::Snake)
+                );
+                Ident::new(&key, Span::call_site())
+            } else {
+                Ident::new(&key.to_case(Case::Snake), Span::call_site())
+            };
+
+            if field.placeholder {
+                fields.extend(quote! {
+                    #[opcua(placeholder)]
+                    pub #name: opcua::types::PlaceholderEventField<#typ>,
+                });
+            } else {
+                fields.extend(quote! {
+                    pub #name: #typ,
+                });
+            }
         }
 
         Ok(())

@@ -10,6 +10,7 @@ use crate::utils::{ItemAttr, StructItem};
 pub(super) struct EventFieldAttribute {
     pub ignore: bool,
     pub rename: Option<String>,
+    pub placeholder: bool,
 }
 
 impl Parse for EventFieldAttribute {
@@ -24,6 +25,7 @@ impl Parse for EventFieldAttribute {
                     let val: LitStr = input.parse()?;
                     slf.rename = Some(val.value());
                 }
+                "placeholder" => slf.placeholder = true,
                 _ => return Err(syn::Error::new_spanned(ident, "Unknown attribute value")),
             }
             if !input.peek(Token![,]) {
@@ -38,6 +40,7 @@ impl Parse for EventFieldAttribute {
 impl ItemAttr for EventFieldAttribute {
     fn combine(&mut self, other: Self) {
         self.ignore |= other.ignore;
+        self.placeholder |= other.placeholder;
         if other.rename.is_some() {
             self.rename = other.rename.clone();
         }

@@ -15,66 +15,70 @@ mod opcua {
 #[opcua(identifier = "i=2881")]
 pub struct AcknowledgeableConditionType {
     pub base: ConditionType,
-    pub confirm: opcua::nodes::MethodEventField,
-    pub confirmed_state: TwoStateVariableType,
-    pub acked_state: TwoStateVariableType,
     pub enabled_state: TwoStateVariableType,
+    pub confirm: opcua::nodes::MethodEventField,
+    pub acked_state: TwoStateVariableType,
     pub acknowledge: opcua::nodes::MethodEventField,
+    pub confirmed_state: TwoStateVariableType,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=2915")]
 pub struct AlarmConditionType {
     pub base: AcknowledgeableConditionType,
-    pub suppress: opcua::nodes::MethodEventField,
-    pub re_alarm_repeat_count: i16,
-    pub silence_state: TwoStateVariableType,
-    pub input_node: opcua::types::NodeId,
-    pub suppressed_state: TwoStateVariableType,
-    pub unsuppress: opcua::nodes::MethodEventField,
-    pub out_of_service_state: TwoStateVariableType,
-    pub remove_from_service: opcua::nodes::MethodEventField,
-    pub shelving_state: ShelvedStateMachineType,
-    pub first_in_group: AlarmGroupType,
-    pub audible_enabled: bool,
-    pub place_in_service: opcua::nodes::MethodEventField,
-    pub suppressed_or_shelved: bool,
-    pub off_delay: opcua::types::Duration,
-    pub place_in_service_2: opcua::nodes::MethodEventField,
-    pub reset_2: opcua::nodes::MethodEventField,
-    pub first_in_group_flag: bool,
-    pub audible_sound: AudioVariableType,
-    pub remove_from_service_2: opcua::nodes::MethodEventField,
-    pub get_group_memberships: opcua::nodes::MethodEventField,
     pub enabled_state: TwoStateVariableType,
+    pub place_in_service_2: opcua::nodes::MethodEventField,
+    pub suppress: opcua::nodes::MethodEventField,
     pub on_delay: opcua::types::Duration,
-    pub re_alarm_time: opcua::types::Duration,
-    pub unsuppress_2: opcua::nodes::MethodEventField,
-    pub active_state: TwoStateVariableType,
-    pub max_time_shelved: opcua::types::Duration,
-    pub reset: opcua::nodes::MethodEventField,
-    pub silence: opcua::nodes::MethodEventField,
+    pub remove_from_service: opcua::nodes::MethodEventField,
     pub suppress_2: opcua::nodes::MethodEventField,
+    pub re_alarm_repeat_count: i16,
+    pub active_state: TwoStateVariableType,
+    pub unsuppress: opcua::nodes::MethodEventField,
+    pub audible_sound: AudioVariableType,
+    pub input_node: opcua::types::NodeId,
+    pub off_delay: opcua::types::Duration,
+    pub silence_state: TwoStateVariableType,
+    pub unsuppress_2: opcua::nodes::MethodEventField,
+    pub suppressed_or_shelved: bool,
+    pub silence: opcua::nodes::MethodEventField,
+    pub get_group_memberships: opcua::nodes::MethodEventField,
+    pub max_time_shelved: opcua::types::Duration,
     pub latched_state: TwoStateVariableType,
+    pub shelving_state: ShelvedStateMachineType,
+    pub first_in_group_flag: bool,
+    pub reset: opcua::nodes::MethodEventField,
+    pub audible_enabled: bool,
+    pub remove_from_service_2: opcua::nodes::MethodEventField,
+    pub first_in_group: AlarmGroupType,
+    pub place_in_service: opcua::nodes::MethodEventField,
+    pub reset_2: opcua::nodes::MethodEventField,
+    pub re_alarm_time: opcua::types::Duration,
+    #[opcua(placeholder)]
+    pub alarm_groups: opcua::types::PlaceholderEventField<AlarmGroupType>,
+    pub out_of_service_state: TwoStateVariableType,
+    pub suppressed_state: TwoStateVariableType,
 }
 #[derive(Debug, opcua::EventField, Default)]
 pub struct AlarmGroupType {
     pub node_id: opcua::types::NodeId,
+    #[opcua(placeholder)]
+    pub alarm_condition_instances: opcua::types::PlaceholderEventField<AlarmConditionType>,
 }
 #[derive(Debug, opcua::EventField, Default)]
 pub struct AudioVariableType {
     pub node_id: opcua::types::NodeId,
     pub value: opcua::types::AudioDataType,
-    pub agency_id: opcua::types::UAString,
     pub list_id: opcua::types::UAString,
     pub version_id: opcua::types::UAString,
+    pub agency_id: opcua::types::UAString,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=2075")]
 pub struct AuditActivateSessionEventType {
     pub base: AuditSessionEventType,
+    pub client_software_certificates: opcua::types::SignedSoftwareCertificate,
     pub secure_channel_id: opcua::types::UAString,
     pub user_identity_token: opcua::types::UserIdentityToken,
-    pub client_software_certificates: opcua::types::SignedSoftwareCertificate,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=2091")]
@@ -148,11 +152,11 @@ pub struct AuditClientEventType {
 #[opcua(identifier = "i=23926")]
 pub struct AuditClientUpdateMethodResultEventType {
     pub base: AuditClientEventType,
+    pub method_id: opcua::types::NodeId,
     pub status_code_id: opcua::types::StatusCode,
-    pub input_arguments: opcua::types::Variant,
     pub output_arguments: opcua::types::Variant,
     pub object_id: opcua::types::NodeId,
-    pub method_id: opcua::types::NodeId,
+    pub input_arguments: opcua::types::Variant,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=8944")]
@@ -172,8 +176,8 @@ pub struct AuditConditionCommentEventType {
 #[opcua(identifier = "i=8961")]
 pub struct AuditConditionConfirmEventType {
     pub base: AuditConditionEventType,
-    pub comment: opcua::types::LocalizedText,
     pub condition_event_id: opcua::types::ByteString,
+    pub comment: opcua::types::LocalizedText,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=2803")]
@@ -242,33 +246,33 @@ pub struct AuditDeleteReferencesEventType {
 #[opcua(identifier = "i=2052")]
 pub struct AuditEventType {
     pub base: opcua::nodes::BaseEventType,
+    pub client_audit_entry_id: opcua::types::UAString,
+    pub server_id: opcua::types::UAString,
     pub client_user_id: opcua::types::UAString,
     pub status: bool,
-    pub client_audit_entry_id: opcua::types::UAString,
     pub action_time_stamp: opcua::types::UtcTime,
-    pub server_id: opcua::types::UAString,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=19095")]
 pub struct AuditHistoryAnnotationUpdateEventType {
     pub base: AuditHistoryUpdateEventType,
-    pub old_values: opcua::types::Annotation,
     pub new_values: opcua::types::Annotation,
     pub perform_insert_replace: opcua::types::PerformUpdateType,
+    pub old_values: opcua::types::Annotation,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=3019")]
 pub struct AuditHistoryAtTimeDeleteEventType {
     pub base: AuditHistoryDeleteEventType,
-    pub old_values: opcua::types::DataValue,
     pub req_times: opcua::types::UtcTime,
+    pub old_values: opcua::types::DataValue,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=32803")]
 pub struct AuditHistoryBulkInsertEventType {
     pub base: AuditEventType,
-    pub start_time: opcua::types::UtcTime,
     pub updated_node: opcua::types::NodeId,
+    pub start_time: opcua::types::UtcTime,
     pub end_time: opcua::types::UtcTime,
 }
 #[derive(Debug, opcua::Event)]
@@ -286,27 +290,27 @@ pub struct AuditHistoryDeleteEventType {
 #[opcua(identifier = "i=3022")]
 pub struct AuditHistoryEventDeleteEventType {
     pub base: AuditHistoryDeleteEventType,
-    pub event_ids: opcua::types::ByteString,
     pub old_values: opcua::types::HistoryEventFieldList,
+    pub event_ids: opcua::types::ByteString,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=2999")]
 pub struct AuditHistoryEventUpdateEventType {
     pub base: AuditHistoryUpdateEventType,
     pub filter: opcua::types::EventFilter,
-    pub old_values: opcua::types::HistoryEventFieldList,
-    pub updated_node: opcua::types::NodeId,
     pub new_values: opcua::types::HistoryEventFieldList,
+    pub updated_node: opcua::types::NodeId,
     pub perform_insert_replace: opcua::types::PerformUpdateType,
+    pub old_values: opcua::types::HistoryEventFieldList,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=3014")]
 pub struct AuditHistoryRawModifyDeleteEventType {
     pub base: AuditHistoryDeleteEventType,
-    pub is_delete_modified: bool,
-    pub old_values: opcua::types::DataValue,
     pub start_time: opcua::types::UtcTime,
     pub end_time: opcua::types::UtcTime,
+    pub old_values: opcua::types::DataValue,
+    pub is_delete_modified: bool,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=2104")]
@@ -318,9 +322,9 @@ pub struct AuditHistoryUpdateEventType {
 #[opcua(identifier = "i=3006")]
 pub struct AuditHistoryValueUpdateEventType {
     pub base: AuditHistoryUpdateEventType,
-    pub perform_insert_replace: opcua::types::PerformUpdateType,
     pub updated_node: opcua::types::NodeId,
     pub old_values: opcua::types::DataValue,
+    pub perform_insert_replace: opcua::types::PerformUpdateType,
     pub new_values: opcua::types::DataValue,
 }
 #[derive(Debug, opcua::Event)]
@@ -332,13 +336,13 @@ pub struct AuditNodeManagementEventType {
 #[opcua(identifier = "i=2060")]
 pub struct AuditOpenSecureChannelEventType {
     pub base: AuditChannelEventType,
-    pub client_certificate_thumbprint: opcua::types::UAString,
-    pub requested_lifetime: opcua::types::Duration,
     pub security_policy_uri: opcua::types::UAString,
+    pub requested_lifetime: opcua::types::Duration,
     pub certificate_error_event_id: opcua::types::ByteString,
     pub security_mode: opcua::types::MessageSecurityMode,
-    pub request_type: opcua::types::SecurityTokenRequestType,
     pub client_certificate: opcua::types::ByteString,
+    pub client_certificate_thumbprint: opcua::types::UAString,
+    pub request_type: opcua::types::SecurityTokenRequestType,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=11856")]
@@ -367,15 +371,15 @@ pub struct AuditUpdateEventType {
 #[opcua(identifier = "i=2127")]
 pub struct AuditUpdateMethodEventType {
     pub base: AuditEventType,
-    pub input_arguments: opcua::types::Variant,
     pub method_id: opcua::types::NodeId,
+    pub input_arguments: opcua::types::Variant,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=2315")]
 pub struct AuditUpdateStateEventType {
     pub base: AuditUpdateMethodEventType,
-    pub new_state_id: opcua::types::Variant,
     pub old_state_id: opcua::types::Variant,
+    pub new_state_id: opcua::types::Variant,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=2748")]
@@ -387,10 +391,10 @@ pub struct AuditUrlMismatchEventType {
 #[opcua(identifier = "i=2100")]
 pub struct AuditWriteUpdateEventType {
     pub base: AuditUpdateEventType,
-    pub attribute_id: u32,
-    pub old_value: opcua::types::Variant,
     pub index_range: opcua::types::NumericRange,
+    pub attribute_id: u32,
     pub new_value: opcua::types::Variant,
+    pub old_value: opcua::types::Variant,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=2132")]
@@ -401,17 +405,17 @@ pub struct BaseModelChangeEventType {
 #[opcua(identifier = "i=13225")]
 pub struct CertificateExpirationAlarmType {
     pub base: SystemOffNormalAlarmType,
-    pub certificate_type: opcua::types::NodeId,
     pub expiration_limit: opcua::types::Duration,
-    pub certificate: opcua::types::ByteString,
+    pub certificate_type: opcua::types::NodeId,
     pub expiration_date: opcua::types::DateTime,
+    pub certificate: opcua::types::ByteString,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=12620")]
 pub struct CertificateUpdatedAuditEventType {
     pub base: AuditEventType,
-    pub certificate_type: opcua::types::NodeId,
     pub certificate_group: opcua::types::NodeId,
+    pub certificate_type: opcua::types::NodeId,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=32306")]
@@ -422,24 +426,24 @@ pub struct CertificateUpdateRequestedAuditEventType {
 #[opcua(identifier = "i=2782")]
 pub struct ConditionType {
     pub base: opcua::nodes::BaseEventType,
-    pub enabled_state: TwoStateVariableType,
-    pub supports_filtered_retain: bool,
-    pub quality: ConditionVariableType,
-    pub last_severity: ConditionVariableType,
     pub branch_id: opcua::types::NodeId,
-    pub condition_sub_class_name: opcua::types::LocalizedText,
-    pub disable: opcua::nodes::MethodEventField,
-    pub condition_refresh: opcua::nodes::MethodEventField,
-    pub condition_sub_class_id: opcua::types::NodeId,
-    pub condition_class_name: opcua::types::LocalizedText,
-    pub condition_refresh_2: opcua::nodes::MethodEventField,
+    pub last_severity: ConditionVariableType,
+    pub enabled_state: TwoStateVariableType,
     pub retain: bool,
+    pub condition_refresh: opcua::nodes::MethodEventField,
+    pub condition_refresh_2: opcua::nodes::MethodEventField,
+    pub disable: opcua::nodes::MethodEventField,
+    pub condition_class_name: opcua::types::LocalizedText,
     pub enable: opcua::nodes::MethodEventField,
-    pub add_comment: opcua::nodes::MethodEventField,
-    pub condition_name: opcua::types::UAString,
+    pub supports_filtered_retain: bool,
     pub comment: ConditionVariableType,
-    pub condition_class_id: opcua::types::NodeId,
+    pub add_comment: opcua::nodes::MethodEventField,
+    pub condition_sub_class_id: opcua::types::NodeId,
+    pub quality: ConditionVariableType,
     pub client_user_id: opcua::types::UAString,
+    pub condition_class_id: opcua::types::NodeId,
+    pub condition_sub_class_name: opcua::types::LocalizedText,
+    pub condition_name: opcua::types::UAString,
 }
 #[derive(Debug, opcua::EventField, Default)]
 pub struct ConditionVariableType {
@@ -456,16 +460,16 @@ pub struct DeviceFailureEventType {
 #[opcua(identifier = "i=2830")]
 pub struct DialogConditionType {
     pub base: ConditionType,
-    pub cancel_response: i32,
-    pub ok_response: i32,
-    pub dialog_state: TwoStateVariableType,
-    pub respond: opcua::nodes::MethodEventField,
-    pub default_response: i32,
-    pub response_option_set: opcua::types::LocalizedText,
     pub respond_2: opcua::nodes::MethodEventField,
-    pub prompt: opcua::types::LocalizedText,
-    pub last_response: i32,
+    pub response_option_set: opcua::types::LocalizedText,
+    pub dialog_state: TwoStateVariableType,
+    pub ok_response: i32,
     pub enabled_state: TwoStateVariableType,
+    pub respond: opcua::nodes::MethodEventField,
+    pub cancel_response: i32,
+    pub prompt: opcua::types::LocalizedText,
+    pub default_response: i32,
+    pub last_response: i32,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=17080")]
@@ -501,20 +505,20 @@ pub struct ExclusiveLevelAlarmType {
 #[opcua(identifier = "i=9341")]
 pub struct ExclusiveLimitAlarmType {
     pub base: LimitAlarmType,
-    pub active_state: TwoStateVariableType,
     pub limit_state: ExclusiveLimitStateMachineType,
+    pub active_state: TwoStateVariableType,
 }
 #[derive(Debug, opcua::EventField, Default)]
 pub struct ExclusiveLimitStateMachineType {
     pub base: FiniteStateMachineType,
     pub node_id: opcua::types::NodeId,
-    pub high: StateType,
+    pub high_to_high_high: TransitionType,
     pub low_low_to_low: TransitionType,
     pub low_to_low_low: TransitionType,
-    pub low: StateType,
-    pub low_low: StateType,
     pub high_high_to_high: TransitionType,
-    pub high_to_high_high: TransitionType,
+    pub low: StateType,
+    pub high: StateType,
+    pub low_low: StateType,
     pub high_high: StateType,
 }
 #[derive(Debug, opcua::Event)]
@@ -528,9 +532,9 @@ pub struct FiniteStateMachineType {
     pub base: StateMachineType,
     pub node_id: opcua::types::NodeId,
     pub last_transition: FiniteTransitionVariableType,
-    pub current_state: FiniteStateVariableType,
     pub available_transitions: opcua::types::NodeId,
     pub available_states: opcua::types::NodeId,
+    pub current_state: FiniteStateVariableType,
 }
 #[derive(Debug, opcua::EventField, Default)]
 pub struct FiniteStateVariableType {
@@ -576,22 +580,22 @@ pub struct KeyCredentialUpdatedAuditEventType {
 #[opcua(identifier = "i=2955")]
 pub struct LimitAlarmType {
     pub base: AlarmConditionType,
-    pub severity_high_high: u16,
-    pub high_high_limit: f64,
-    pub severity_low: u16,
-    pub low_limit: f64,
-    pub high_limit: f64,
     pub base_low_low_limit: f64,
-    pub base_high_limit: f64,
     pub low_low_deadband: f64,
-    pub high_high_deadband: f64,
-    pub low_low_limit: f64,
-    pub low_deadband: f64,
-    pub severity_high: u16,
+    pub severity_high_high: u16,
+    pub high_limit: f64,
+    pub base_high_limit: f64,
     pub high_deadband: f64,
-    pub base_low_limit: f64,
+    pub severity_high: u16,
+    pub low_low_limit: f64,
+    pub high_high_limit: f64,
     pub base_high_high_limit: f64,
     pub severity_low_low: u16,
+    pub severity_low: u16,
+    pub base_low_limit: f64,
+    pub low_deadband: f64,
+    pub low_limit: f64,
+    pub high_high_deadband: f64,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=10368")]
@@ -609,10 +613,10 @@ pub struct NonExclusiveLevelAlarmType {
 #[opcua(identifier = "i=9906")]
 pub struct NonExclusiveLimitAlarmType {
     pub base: LimitAlarmType,
-    pub active_state: TwoStateVariableType,
     pub high_state: TwoStateVariableType,
     pub high_high_state: TwoStateVariableType,
     pub low_low_state: TwoStateVariableType,
+    pub active_state: TwoStateVariableType,
     pub low_state: TwoStateVariableType,
 }
 #[derive(Debug, opcua::Event)]
@@ -656,16 +660,16 @@ pub struct PubSubCommunicationFailureEventType {
 #[opcua(identifier = "i=15535")]
 pub struct PubSubStatusEventType {
     pub base: SystemEventType,
+    pub connection_id: opcua::types::NodeId,
     pub state: opcua::types::PubSubState,
     pub group_id: opcua::types::NodeId,
-    pub connection_id: opcua::types::NodeId,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=15548")]
 pub struct PubSubTransportLimitsExceedEventType {
     pub base: PubSubStatusEventType,
-    pub maximum: u32,
     pub actual: u32,
+    pub maximum: u32,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=2788")]
@@ -697,22 +701,22 @@ pub struct SemanticChangeEventType {
 pub struct ShelvedStateMachineType {
     pub base: FiniteStateMachineType,
     pub node_id: opcua::types::NodeId,
-    pub one_shot_shelved: StateType,
-    pub one_shot_shelve_2: opcua::nodes::MethodEventField,
-    pub timed_shelve_2: opcua::nodes::MethodEventField,
-    pub unshelved: StateType,
-    pub unshelve_time: opcua::types::Duration,
-    pub timed_shelved: StateType,
-    pub unshelved_to_one_shot_shelved: TransitionType,
     pub one_shot_shelved_to_timed_shelved: TransitionType,
-    pub timed_shelve: opcua::nodes::MethodEventField,
-    pub timed_shelved_to_one_shot_shelved: TransitionType,
     pub unshelve: opcua::nodes::MethodEventField,
-    pub unshelve_2: opcua::nodes::MethodEventField,
-    pub one_shot_shelve: opcua::nodes::MethodEventField,
-    pub timed_shelved_to_unshelved: TransitionType,
-    pub one_shot_shelved_to_unshelved: TransitionType,
+    pub unshelved_to_one_shot_shelved: TransitionType,
+    pub timed_shelved_to_one_shot_shelved: TransitionType,
     pub unshelved_to_timed_shelved: TransitionType,
+    pub timed_shelved: StateType,
+    pub one_shot_shelved_to_unshelved: TransitionType,
+    pub unshelve_time: opcua::types::Duration,
+    pub one_shot_shelve_2: opcua::nodes::MethodEventField,
+    pub timed_shelved_to_unshelved: TransitionType,
+    pub timed_shelve: opcua::nodes::MethodEventField,
+    pub unshelve_2: opcua::nodes::MethodEventField,
+    pub one_shot_shelved: StateType,
+    pub timed_shelve_2: opcua::nodes::MethodEventField,
+    pub one_shot_shelve: opcua::nodes::MethodEventField,
+    pub unshelved: StateType,
 }
 #[derive(Debug, opcua::EventField, Default)]
 pub struct StateMachineType {
@@ -729,10 +733,10 @@ pub struct StateType {
 pub struct StateVariableType {
     pub node_id: opcua::types::NodeId,
     pub value: opcua::types::LocalizedText,
-    pub effective_display_name: opcua::types::LocalizedText,
+    pub name: opcua::types::QualifiedName,
     pub number: u32,
     pub id: opcua::types::Variant,
-    pub name: opcua::types::QualifiedName,
+    pub effective_display_name: opcua::types::LocalizedText,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=18496")]
@@ -772,11 +776,11 @@ pub struct TransitionType {
 pub struct TransitionVariableType {
     pub node_id: opcua::types::NodeId,
     pub value: opcua::types::LocalizedText,
-    pub transition_time: opcua::types::UtcTime,
     pub id: opcua::types::Variant,
+    pub effective_transition_time: opcua::types::UtcTime,
     pub number: u32,
     pub name: opcua::types::QualifiedName,
-    pub effective_transition_time: opcua::types::UtcTime,
+    pub transition_time: opcua::types::UtcTime,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=10751")]
@@ -787,9 +791,9 @@ pub struct TripAlarmType {
 #[opcua(identifier = "i=19297")]
 pub struct TrustListOutOfDateAlarmType {
     pub base: SystemOffNormalAlarmType,
-    pub update_frequency: opcua::types::Duration,
     pub trust_list_id: opcua::types::NodeId,
     pub last_update_time: opcua::types::UtcTime,
+    pub update_frequency: opcua::types::Duration,
 }
 #[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=12561")]
@@ -806,9 +810,9 @@ pub struct TrustListUpdateRequestedAuditEventType {
 pub struct TwoStateVariableType {
     pub base: StateVariableType,
     pub node_id: opcua::types::NodeId,
-    pub id: bool,
     pub false_state: opcua::types::LocalizedText,
     pub true_state: opcua::types::LocalizedText,
+    pub id: bool,
     pub effective_transition_time: opcua::types::UtcTime,
     pub transition_time: opcua::types::UtcTime,
 }
