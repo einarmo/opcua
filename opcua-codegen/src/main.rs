@@ -1,14 +1,7 @@
-use opcua_codegen::{nodeset::test, run_codegen, CodeGenConfig, CodeGenError};
-use opcua_xml::load_nodeset2_file;
+use opcua_codegen::{run_codegen, CodeGenConfig, CodeGenError};
 
 fn main() -> Result<(), CodeGenError> {
-    // run_cli()
-    let node_set =
-        std::fs::read_to_string("tools/schema/schemas/1.05/Opc.Ua.NodeSet2.xml").unwrap();
-    let node_set = load_nodeset2_file(&node_set)?;
-    test(&node_set.node_set.unwrap());
-
-    Ok(())
+    run_cli()
 }
 
 fn run_cli() -> Result<(), CodeGenError> {

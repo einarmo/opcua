@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 
-use log::warn;
 use opcua_xml::schema::ua_node_set::{AliasTable, UANode};
 
 use crate::{nodeset::render::split_qualified_name, CodeGenError};
@@ -44,7 +43,7 @@ pub struct TypeCollector<'a> {
     aliases: HashMap<&'a str, &'a str>,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct Reference<'a> {
     pub source: &'a str,
     pub target: &'a str,
@@ -124,8 +123,8 @@ impl<'a> TypeCollector<'a> {
 
         self.collect_type(&mut result, "i=58", None, TypeKind::ObjectType)?;
         self.collect_type(&mut result, "i=62", None, TypeKind::VariableType)?;
-        self.collect_type(&mut result, "i=31", None, TypeKind::ReferenceType)?;
         self.collect_type(&mut result, "i=24", None, TypeKind::DataType)?;
+        self.collect_type(&mut result, "i=31", None, TypeKind::ReferenceType)?;
 
         Ok(result)
     }
@@ -136,6 +135,21 @@ impl<'a> TypeCollector<'a> {
         } else {
             key
         }
+    }
+
+    fn is_hierarchical_ref_type(&self, ty: &str) -> bool {
+        if ty == "i=33" {
+            return true;
+        }
+        let Some(parent_ref) = self
+            .references
+            .by_target
+            .get(ty)
+            .and_then(|m| m.iter().find(|f| self.lookup_node_id(f.type_id) == "i=45"))
+        else {
+            return false;
+        };
+        self.is_hierarchical_ref_type(parent_ref.source)
     }
 
     fn collect_type(
@@ -178,11 +192,8 @@ impl<'a> TypeCollector<'a> {
                         kind,
                     )?;
                 }
-                // HasComponent and HasProperty, we only handle these for now
-                // In theory we could do a dynamic check of whether a reference type is
-                // hierarchical or not, but let's not do that until we're certain
-                // it's needed.
-                "i=47" | "i=46" => {
+
+                r if self.is_hierarchical_ref_type(r) => {
                     let mut is_placeholder = false;
                     let mut type_def: Option<&'a str> = None;
                     let mut data_type_id: Option<&'a str> = None;
@@ -249,9 +260,7 @@ impl<'a> TypeCollector<'a> {
                     );
                 }
 
-                r => {
-                    warn!("Unknown reference type ID {r} in event hierarchy. Currently only HasComponent and HasProperty are supported")
-                }
+                _ => (),
             }
         }
 
