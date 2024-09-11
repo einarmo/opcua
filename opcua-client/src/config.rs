@@ -19,8 +19,6 @@ use opcua_core::config::Config;
 use opcua_crypto::SecurityPolicy;
 use opcua_types::{ApplicationType, MessageSecurityMode, UAString};
 
-use super::retry::SessionRetryPolicy;
-
 pub const ANONYMOUS_USER_TOKEN_ID: &str = "ANONYMOUS";
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
@@ -141,30 +139,64 @@ impl ClientEndpoint {
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 pub struct DecodingOptions {
     /// Maximum size of a message chunk in bytes. 0 means no limit
+    #[serde(default = "defaults::max_message_size")]
     pub(crate) max_message_size: usize,
     /// Maximum number of chunks in a message. 0 means no limit
+    #[serde(default = "defaults::max_chunk_count")]
     pub(crate) max_chunk_count: usize,
     /// Maximum size of each individual sent message chunk.
+    #[serde(default = "defaults::max_chunk_size")]
     pub(crate) max_chunk_size: usize,
     /// Maximum size of each received chunk.
+    #[serde(default = "defaults::max_incoming_chunk_size")]
     pub(crate) max_incoming_chunk_size: usize,
     /// Maximum length in bytes (not chars!) of a string. 0 actually means 0, i.e. no string permitted
+    #[serde(default = "defaults::max_string_length")]
     pub(crate) max_string_length: usize,
     /// Maximum length in bytes of a byte string. 0 actually means 0, i.e. no byte string permitted
+    #[serde(default = "defaults::max_byte_string_length")]
     pub(crate) max_byte_string_length: usize,
     /// Maximum number of array elements. 0 actually means 0, i.e. no array permitted
+    #[serde(default = "defaults::max_array_length")]
     pub(crate) max_array_length: usize,
+}
+
+impl Default for DecodingOptions {
+    fn default() -> Self {
+        Self {
+            max_message_size: defaults::max_message_size(),
+            max_chunk_count: defaults::max_chunk_count(),
+            max_chunk_size: defaults::max_chunk_size(),
+            max_incoming_chunk_size: defaults::max_incoming_chunk_size(),
+            max_string_length: defaults::max_string_length(),
+            max_byte_string_length: defaults::max_byte_string_length(),
+            max_array_length: defaults::max_array_length(),
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
 pub struct Performance {
     /// Ignore clock skew allows the client to make a successful connection to the server, even
     /// when the client and server clocks are out of sync.
+    #[serde(default)]
     pub(crate) ignore_clock_skew: bool,
     /// Maximum number of monitored items per request when recreating subscriptions on session recreation.
+    #[serde(default = "defaults::recreate_monitored_items_chunk")]
     pub(crate) recreate_monitored_items_chunk: usize,
     /// Maximum number of inflight messages.
+    #[serde(default = "defaults::max_inflight_messages")]
     pub(crate) max_inflight_messages: usize,
+}
+
+impl Default for Performance {
+    fn default() -> Self {
+        Self {
+            ignore_clock_skew: false,
+            recreate_monitored_items_chunk: defaults::recreate_monitored_items_chunk(),
+            max_inflight_messages: defaults::max_inflight_messages(),
+        }
+    }
 }
 
 /// Client OPC UA configuration
@@ -200,30 +232,40 @@ pub struct ClientConfig {
     /// List of end points
     pub(crate) endpoints: BTreeMap<String, ClientEndpoint>,
     /// Decoding options used for serialization / deserialization
+    #[serde(default)]
     pub(crate) decoding_options: DecodingOptions,
     /// Maximum number of times to attempt to reconnect to the server before giving up.
     /// -1 retries forever
+    #[serde(default = "defaults::session_retry_limit")]
     pub(crate) session_retry_limit: i32,
 
     /// Initial delay for exponential backoff when reconnecting to the server.
+    #[serde(default = "defaults::session_retry_initial")]
     pub(crate) session_retry_initial: Duration,
     /// Max delay between retry attempts.
+    #[serde(default = "defaults::session_retry_max")]
     pub(crate) session_retry_max: Duration,
     /// Interval between each keep-alive request sent to the server.
+    #[serde(default = "defaults::keep_alive_interval")]
     pub(crate) keep_alive_interval: Duration,
 
     /// Timeout for each request sent to the server.
+    #[serde(default = "defaults::request_timeout")]
     pub(crate) request_timeout: Duration,
     /// Timeout for publish requests, separate from normal timeout since
     /// subscriptions are often more time sensitive.
+    #[serde(default = "defaults::publish_timeout")]
     pub(crate) publish_timeout: Duration,
     /// Minimum publish interval. Setting this higher will make sure that subscriptions
     /// publish together, which may reduce the number of publish requests if you have a lot of subscriptions.
+    #[serde(default = "defaults::min_publish_interval")]
     pub(crate) min_publish_interval: Duration,
     /// Maximum number of inflight publish requests before further requests are skipped.
+    #[serde(default = "defaults::max_inflight_publish")]
     pub(crate) max_inflight_publish: usize,
 
     /// Requested session timeout in milliseconds
+    #[serde(default = "defaults::session_timeout")]
     pub(crate) session_timeout: u32,
 
     /// Client performance settings
@@ -330,6 +372,88 @@ impl Default for ClientConfig {
     }
 }
 
+mod defaults {
+    use std::time::Duration;
+
+    use crate::retry::SessionRetryPolicy;
+
+    pub fn verify_server_certs() -> bool {
+        true
+    }
+
+    pub fn session_retry_limit() -> i32 {
+        SessionRetryPolicy::DEFAULT_RETRY_LIMIT as i32
+    }
+
+    pub fn session_retry_initial() -> Duration {
+        Duration::from_secs(1)
+    }
+
+    pub fn session_retry_max() -> Duration {
+        Duration::from_secs(30)
+    }
+
+    pub fn keep_alive_interval() -> Duration {
+        Duration::from_secs(10)
+    }
+
+    pub fn request_timeout() -> Duration {
+        Duration::from_secs(60)
+    }
+
+    pub fn min_publish_interval() -> Duration {
+        Duration::from_millis(100)
+    }
+
+    pub fn publish_timeout() -> Duration {
+        Duration::from_secs(60)
+    }
+
+    pub fn max_inflight_publish() -> usize {
+        2
+    }
+
+    pub fn session_timeout() -> u32 {
+        60_000
+    }
+
+    pub fn max_chunk_size() -> usize {
+        65535
+    }
+
+    pub fn max_incoming_chunk_size() -> usize {
+        65535
+    }
+
+    pub fn max_message_size() -> usize {
+        opcua_types::constants::MAX_MESSAGE_SIZE
+    }
+
+    pub fn max_chunk_count() -> usize {
+        opcua_types::constants::MAX_CHUNK_COUNT
+    }
+
+    pub fn max_string_length() -> usize {
+        opcua_types::constants::MAX_STRING_LENGTH
+    }
+
+    pub fn max_byte_string_length() -> usize {
+        opcua_types::constants::MAX_BYTE_STRING_LENGTH
+    }
+
+    pub fn max_array_length() -> usize {
+        opcua_types::constants::MAX_ARRAY_LENGTH
+    }
+
+    pub fn recreate_monitored_items_chunk() -> usize {
+        1000
+    }
+
+    pub fn max_inflight_messages() -> usize {
+        20
+    }
+}
+
 impl ClientConfig {
     /// The default PKI directory
     pub const PKI_DIR: &'static str = "pki";
@@ -338,7 +462,6 @@ impl ClientConfig {
         let mut pki_dir = std::env::current_dir().unwrap();
         pki_dir.push(Self::PKI_DIR);
 
-        let decoding_options = opcua_types::DecodingOptions::default();
         ClientConfig {
             application_name: application_name.into(),
             application_uri: application_uri.into(),
@@ -346,36 +469,24 @@ impl ClientConfig {
             certificate_path: None,
             private_key_path: None,
             trust_server_certs: false,
-            verify_server_certs: true,
+            verify_server_certs: defaults::verify_server_certs(),
             product_uri: String::new(),
             pki_dir,
             preferred_locales: Vec::new(),
             default_endpoint: String::new(),
             user_tokens: BTreeMap::new(),
             endpoints: BTreeMap::new(),
-            session_retry_limit: SessionRetryPolicy::DEFAULT_RETRY_LIMIT as i32,
-            session_retry_initial: Duration::from_secs(1),
-            session_retry_max: Duration::from_secs(30),
-            keep_alive_interval: Duration::from_secs(10),
-            request_timeout: Duration::from_secs(60),
-            min_publish_interval: Duration::from_millis(100),
-            publish_timeout: Duration::from_secs(60),
-            max_inflight_publish: 2,
-            session_timeout: 0,
-            decoding_options: DecodingOptions {
-                max_array_length: decoding_options.max_array_length,
-                max_string_length: decoding_options.max_string_length,
-                max_byte_string_length: decoding_options.max_byte_string_length,
-                max_chunk_count: decoding_options.max_chunk_count,
-                max_message_size: decoding_options.max_message_size,
-                max_chunk_size: 65535,
-                max_incoming_chunk_size: 65535,
-            },
-            performance: Performance {
-                ignore_clock_skew: false,
-                recreate_monitored_items_chunk: 1000,
-                max_inflight_messages: 20,
-            },
+            session_retry_limit: defaults::session_retry_limit(),
+            session_retry_initial: defaults::session_retry_initial(),
+            session_retry_max: defaults::session_retry_max(),
+            keep_alive_interval: defaults::keep_alive_interval(),
+            request_timeout: defaults::request_timeout(),
+            min_publish_interval: defaults::min_publish_interval(),
+            publish_timeout: defaults::publish_timeout(),
+            max_inflight_publish: defaults::max_inflight_publish(),
+            session_timeout: defaults::session_timeout(),
+            decoding_options: DecodingOptions::default(),
+            performance: Performance::default(),
             session_name: "Rust OPC UA Client".into(),
         }
     }
