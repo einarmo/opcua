@@ -7,11 +7,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Failing test
-        run: cargo test connect_aes256sha256rsapss_sign
-        env:
-          RUST_OPCUA_LOG: debug
-
       - name: Test with profiling data
         run: cargo test
         env:
