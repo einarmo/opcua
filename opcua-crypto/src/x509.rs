@@ -13,7 +13,7 @@ use std::{
 };
 
 use chrono::{DateTime, Utc};
-use log::{error, info, trace};
+use log::{error, info, trace, warn};
 type ChronoUtc = DateTime<Utc>;
 
 use rsa;
@@ -226,7 +226,7 @@ impl From<(ApplicationDescription, Option<Vec<String>>)> for X509Data {
             &mut alt_host_names,
             application_uri,
             addresses,
-            false,
+            true,
             true,
             true,
         );
@@ -354,14 +354,7 @@ impl X509Data {
     /// Creates a sample certificate for testing, sample purposes only
     pub fn sample_cert() -> X509Data {
         let mut alt_host_names = AlternateNames::new();
-        Self::compute_alt_host_names(
-            &mut alt_host_names,
-            "urn:OPCUADemo",
-            None,
-            false,
-            true,
-            true,
-        );
+        Self::compute_alt_host_names(&mut alt_host_names, "urn:OPCUADemo", None, true, true, true);
         X509Data {
             key_size: 2048,
             common_name: "OPC UA Demo Key".to_string(),
@@ -456,8 +449,8 @@ impl X509 {
     pub fn cert_and_pkey(x509_data: &X509Data) -> Result<(Self, PrivateKey), String> {
         // Create a key pair
 
-        //TODO the new may panic it should not
-        let pkey = PrivateKey::new(x509_data.key_size);
+        let pkey = PrivateKey::new(x509_data.key_size)
+            .map_err(|e| format!("Failed to generate RSA private key: {e}"))?;
 
         // Create an X509 cert to hold the public key
         let cert = Self::from_pkey(&pkey, x509_data)?;
@@ -717,6 +710,7 @@ impl X509 {
                 info!("Certificate host name {} is good", hostname);
                 StatusCode::Good
             } else {
+                warn!("Did not find hostname {hostname} in alt names {subject_alt_names:?}");
                 StatusCode::BadCertificateHostNameInvalid
             }
         } else {
@@ -830,8 +824,6 @@ mod tests {
     /// This test checks that a cert will validate dns or ip entries in the subject alt host names
     #[test]
     fn alt_hostnames() {
-        crate::console_logging::init();
-
         let mut alt_host_names = AlternateNames::new();
         alt_host_names.add_dns_str("uri:foo"); //the application uri
         alt_host_names.add_address_str("host2");

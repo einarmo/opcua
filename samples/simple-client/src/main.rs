@@ -73,8 +73,8 @@ async fn main() -> Result<(), ()> {
         .new_session_from_endpoint(
             (
                 args.url.as_ref(),
-                SecurityPolicy::None.to_str(),
-                MessageSecurityMode::None,
+                SecurityPolicy::Aes256Sha256RsaPss.to_str(),
+                MessageSecurityMode::SignAndEncrypt,
                 UserTokenPolicy::anonymous(),
             ),
             IdentityToken::Anonymous,

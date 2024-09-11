@@ -127,11 +127,11 @@ impl KeySize for PrivateKey {
 }
 
 impl PrivateKey {
-    pub fn new(bit_length: u32) -> PrivateKey {
+    pub fn new(bit_length: u32) -> Result<PrivateKey, rsa::Error> {
         let mut rng = rand::thread_rng();
 
-        let key = RsaPrivateKey::new(&mut rng, bit_length as usize).unwrap();
-        PKey { value: key }
+        let key = RsaPrivateKey::new(&mut rng, bit_length as usize)?;
+        Ok(PKey { value: key })
     }
 
     pub fn read_pem_file(path: &std::path::Path) -> Result<PrivateKey, PKeyError> {

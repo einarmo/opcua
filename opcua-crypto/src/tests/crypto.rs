@@ -4,7 +4,6 @@ use std::io::Write;
 use opcua_types::StatusCode;
 
 use crate::{
-<<<<<<< HEAD:opcua-crypto/src/tests/crypto.rs
     aeskey::AesKey,
     certificate_store::*,
     from_hex, hash,
@@ -13,21 +12,6 @@ use crate::{
     tests::{
         make_certificate_store, make_test_cert_1024, make_test_cert_2048, APPLICATION_HOSTNAME,
         APPLICATION_URI,
-=======
-    crypto::{
-        aeskey::AesKey,
-        certificate_store::*,
-        hash,
-        pkey::{KeySize, PrivateKey, RsaPadding},
-        random,
-        tests::{
-            make_certificate_store, make_test_cert_1024, make_test_cert_2048, APPLICATION_HOSTNAME,
-            APPLICATION_URI,
-        },
-        user_identity::{legacy_password_decrypt, legacy_password_encrypt},
-        x509::{AlternateNames, X509Data, X509},
-        SecurityPolicy, SHA1_SIZE, SHA256_SIZE,
->>>>>>> a24c880f2 (Replace Openssl by a pure rust libraries (from RustCrypto project)):lib/src/crypto/tests/crypto.rs
     },
     user_identity::{legacy_password_decrypt, legacy_password_encrypt},
     x509::{X509Data, X509},

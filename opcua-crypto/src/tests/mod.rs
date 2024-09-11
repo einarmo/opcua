@@ -4,7 +4,7 @@ use crate::CertificateStore;
 
 use crate::{
     pkey::PrivateKey,
-    x509::{AlternateNames, X509Data, X509},
+    x509::{X509Data, X509},
 };
 
 const APPLICATION_URI: &str = "urn:testapplication";
