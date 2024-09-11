@@ -22,8 +22,6 @@ appveyor = { repository = "locka99/opcua" }
 [features]
 default = ["server", "client"]
 all = ["server", "client", "console-logging"]
-# This is for CI/CD testing on platforms with unresolved OpenSSL deps, don't use otherwise.
-#test-vendored-openssl = ["all", "vendored-openssl"]
 # Server default settings
 server = ["opcua-server", "opcua-nodes", "generated-address-space", "discovery-server-registration"]
 # Client default settings
