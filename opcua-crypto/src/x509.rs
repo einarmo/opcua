@@ -19,7 +19,7 @@ type ChronoUtc = DateTime<Utc>;
 use rsa;
 use rsa::pkcs1v15;
 use rsa::RsaPublicKey;
-use x509_cert as x509;
+use x509_cert::{self as x509, ext::pkix::name::GeneralName};
 
 use const_oid;
 use x509::builder::Error as BuilderError;
@@ -37,9 +37,8 @@ const DEFAULT_KEYSIZE: u32 = 2048;
 const DEFAULT_COUNTRY: &str = "IE";
 const DEFAULT_STATE: &str = "Dublin";
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 /// Used to create an X509 cert (and private key)
-
 pub struct AlternateNames {
     pub names: x509::ext::pkix::SubjectAltName,
 }
@@ -67,56 +66,40 @@ impl AlternateNames {
     }
 
     pub fn add_ipv4(&mut self, ad: &std::net::Ipv4Addr) {
-        let r = x509::der::asn1::OctetString::new(ad.octets());
-        match r {
-            Ok(v) => self.names.0.push(xname::GeneralName::IpAddress(v)),
-            _ => (),
+        if let Ok(v) = x509::der::asn1::OctetString::new(ad.octets()) {
+            self.names.0.push(xname::GeneralName::IpAddress(v));
         }
     }
 
     pub fn add_ipv6(&mut self, ad: &std::net::Ipv6Addr) {
-        let r = x509::der::asn1::OctetString::new(ad.octets());
-        match r {
-            Ok(v) => self.names.0.push(xname::GeneralName::IpAddress(v)),
-            _ => (),
+        if let Ok(v) = x509::der::asn1::OctetString::new(ad.octets()) {
+            self.names.0.push(xname::GeneralName::IpAddress(v))
         }
     }
 
     pub fn add_dns_str(&mut self, v: &str) {
-        let r = x509::der::asn1::Ia5String::new(v);
-        match r {
-            Ok(v) => self.names.0.push(xname::GeneralName::DnsName(v)),
-            _ => (),
+        if let Ok(v) = x509::der::asn1::Ia5String::new(v) {
+            self.names.0.push(xname::GeneralName::DnsName(v));
         }
     }
 
     pub fn add_dns(&mut self, v: &String) {
-        let r = x509::der::asn1::Ia5String::new(v);
-        match r {
-            Ok(v) => self.names.0.push(xname::GeneralName::DnsName(v)),
-            _ => (),
+        if let Ok(v) = x509::der::asn1::Ia5String::new(v) {
+            self.names.0.push(xname::GeneralName::DnsName(v));
         }
     }
 
     pub fn add_address(&mut self, v: &String) {
         {
-            let r = v.parse::<std::net::Ipv4Addr>();
-            match r {
-                Ok(ip) => {
-                    self.add_ipv4(&ip);
-                    return;
-                }
-                _ => (),
+            if let Ok(ip) = v.parse::<std::net::Ipv4Addr>() {
+                self.add_ipv4(&ip);
+                return;
             }
         }
         {
-            let r = v.parse::<std::net::Ipv6Addr>();
-            match r {
-                Ok(ip) => {
-                    self.add_ipv6(&ip);
-                    return;
-                }
-                _ => (),
+            if let Ok(r) = v.parse::<std::net::Ipv6Addr>() {
+                self.add_ipv6(&r);
+                return;
             }
         }
         self.add_dns(v);
@@ -126,19 +109,19 @@ impl AlternateNames {
         self.add_address(&v.to_string());
     }
 
-    pub fn add_addresses(&mut self, ads: &Vec<String>) {
+    pub fn add_addresses(&mut self, ads: &[String]) {
         ads.iter().for_each(|h| {
             self.add_address(h);
         })
     }
 
     fn convert_name(name: &x509::ext::pkix::name::GeneralName) -> Option<String> {
-        use x509_cert::ext::pkix::name::GeneralName::DnsName;
-        use x509_cert::ext::pkix::name::GeneralName::IpAddress;
-
         match name {
-            DnsName(val) => Some(val.to_string()),
-            IpAddress(val) => {
+            GeneralName::DnsName(val) => Some(val.to_string()),
+            GeneralName::DirectoryName(val) => Some(val.to_string()),
+            GeneralName::Rfc822Name(val) => Some(val.to_string()),
+            GeneralName::UniformResourceIdentifier(val) => Some(val.to_string()),
+            GeneralName::IpAddress(val) => {
                 let bytes = val.as_bytes();
                 match bytes.len() {
                     4 => Some(Ipv4Addr::new(bytes[0], bytes[1], bytes[2], bytes[3]).to_string()),
@@ -237,7 +220,7 @@ impl From<(ApplicationDescription, Option<Vec<String>>)> for X509Data {
             organizational_unit: application_description.application_name.to_string(),
             country: DEFAULT_COUNTRY.to_string(),
             state: DEFAULT_STATE.to_string(),
-            alt_host_names: alt_host_names,
+            alt_host_names,
             certificate_duration_days: 365,
         }
     }
@@ -362,7 +345,7 @@ impl X509Data {
             organizational_unit: "OPC UA for Rust".to_string(),
             country: DEFAULT_COUNTRY.to_string(),
             state: DEFAULT_STATE.to_string(),
-            alt_host_names: alt_host_names,
+            alt_host_names,
             certificate_duration_days: 365,
         }
     }
@@ -458,9 +441,9 @@ impl X509 {
         Ok((cert, pkey))
     }
 
-    fn append_to_name(name: &mut String, param: &str, data: &String) {
-        if data.len() > 0 {
-            if name.len() > 0 {
+    fn append_to_name(name: &mut String, param: &str, data: &str) {
+        if !data.is_empty() {
+            if !name.is_empty() {
                 name.push(',');
             }
             name.push_str(param);
@@ -725,17 +708,24 @@ impl X509 {
         // Expecting the first subject alternative name to be a uri that matches with the supplied
         // application uri
         if let Some(alt_names) = self.get_alternate_names() {
-            if alt_names.len() > 0 {
+            if !alt_names.is_empty() {
                 match AlternateNames::convert_name(&alt_names[0]) {
                     Some(val) => {
                         if val == application_uri {
                             StatusCode::Good
                         } else {
+                            error!(
+                                "Application uri {} does not match first alt name {}",
+                                application_uri, val
+                            );
                             StatusCode::BadCertificateUriInvalid
                         }
                     }
 
-                    _ => StatusCode::BadCertificateUriInvalid,
+                    _ => {
+                        error!("Alternate name {:?} cannot be converted", alt_names[0]);
+                        StatusCode::BadCertificateUriInvalid
+                    }
                 }
             } else {
                 error!("Cert has zero subject alt names");

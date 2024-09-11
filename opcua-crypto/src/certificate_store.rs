@@ -127,7 +127,7 @@ impl CertificateStore {
 
     /// Reads a private key from a path on disk.
     pub fn read_pkey(path: &Path) -> Result<PrivateKey, String> {
-        if let Ok(pkey) = PrivateKey::read_pem_file(path.as_ref()) {
+        if let Ok(pkey) = PrivateKey::read_pem_file(path) {
             return Ok(pkey);
         }
 

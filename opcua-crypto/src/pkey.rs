@@ -270,12 +270,11 @@ impl PrivateKey {
                 let src = &src[src_idx..src_end_index];
                 let dst = &mut dst[dst_idx..(dst_idx + cipher_text_block_size)];
 
-                let decrypted;
-                match padding {
-                    RsaPadding::OaepSha256 => decrypted = self.oaepsha2_decrypt(src)?,
-                    RsaPadding::Pkcs1 => decrypted = self.pkcs1_decrypt(src)?,
-                    RsaPadding::OaepSha1 => decrypted = self.oaepsha1_decrypt(src)?,
-                }
+                let decrypted = match padding {
+                    RsaPadding::OaepSha256 => self.oaepsha2_decrypt(src)?,
+                    RsaPadding::Pkcs1 => self.pkcs1_decrypt(src)?,
+                    RsaPadding::OaepSha1 => self.oaepsha1_decrypt(src)?,
+                };
 
                 let size = decrypted.len();
                 if size == dst.len() {
@@ -357,12 +356,11 @@ impl PublicKey {
     }
 
     fn encrypt_data_chunk(&self, src: &[u8], padding: RsaPadding) -> Result<Vec<u8>, PKeyError> {
-        let r: rsa::errors::Result<Vec<u8>>;
-        match padding {
-            RsaPadding::OaepSha256 => r = self.oaepsha2_encrypt(src),
-            RsaPadding::Pkcs1 => r = self.pkcs1_encrypt(src),
-            RsaPadding::OaepSha1 => r = self.oaepsha1_encrypt(src),
-        }
+        let r = match padding {
+            RsaPadding::OaepSha256 => self.oaepsha2_encrypt(src),
+            RsaPadding::Pkcs1 => self.pkcs1_encrypt(src),
+            RsaPadding::OaepSha1 => self.oaepsha1_encrypt(src),
+        };
 
         match r {
             Err(_) => Err(PKeyError),
