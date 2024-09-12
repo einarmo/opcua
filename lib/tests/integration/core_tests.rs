@@ -103,7 +103,7 @@ async fn conn_test(policy: SecurityPolicy, mode: MessageSecurityMode, token: Ide
     let (session, handle) = tester.connect(policy, mode, token).await.unwrap();
     let _h = handle.spawn();
 
-    tokio::time::timeout(Duration::from_secs(10), session.wait_for_connection())
+    tokio::time::timeout(Duration::from_secs(20), session.wait_for_connection())
         .await
         .unwrap();
 

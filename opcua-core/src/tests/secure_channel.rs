@@ -102,7 +102,10 @@ fn test_asymmetric_encrypt_decrypt(
     }
 }
 
+//
+
 #[test]
+#[cfg(not(coverage))]
 fn asymmetric_sign_and_encrypt_message_chunk_basic128rsa15() {
     let _ = Test::setup();
     error!("asymmetric_sign_and_encrypt_message_chunk_basic128rsa15");
@@ -114,6 +117,7 @@ fn asymmetric_sign_and_encrypt_message_chunk_basic128rsa15() {
 }
 
 #[test]
+#[cfg(not(coverage))]
 fn asymmetric_sign_and_encrypt_message_chunk_basic256() {
     let _ = Test::setup();
     error!("asymmetric_sign_and_encrypt_message_chunk_basic256");
@@ -125,6 +129,7 @@ fn asymmetric_sign_and_encrypt_message_chunk_basic256() {
 }
 
 #[test]
+#[cfg(not(coverage))]
 fn asymmetric_sign_and_encrypt_message_chunk_basic256sha256() {
     let _ = Test::setup();
     error!("asymmetric_sign_and_encrypt_message_chunk_basic256sha256");

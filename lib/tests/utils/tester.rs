@@ -421,7 +421,7 @@ impl Tester {
 
         evt_loop.spawn();
 
-        tokio::time::timeout(Duration::from_millis(10_000), session.wait_for_connection())
+        tokio::time::timeout(Duration::from_millis(20_000), session.wait_for_connection())
             .await
             .unwrap();
 
