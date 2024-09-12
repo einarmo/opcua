@@ -87,25 +87,21 @@ impl SessionManager {
             return Err(StatusCode::BadTcpEndpointUrlInvalid);
         };
 
-        let client_certificate = opcua_crypto::X509::from_byte_string(&request.client_certificate);
         let security_policy = channel.security_policy();
 
-        if security_policy != SecurityPolicy::None {
+        let client_certificate = if security_policy != SecurityPolicy::None {
+            let cert = opcua_crypto::X509::from_byte_string(&request.client_certificate)?;
             let store = trace_read_lock!(certificate_store);
-            let result = match &client_certificate {
-                Ok(cert) => store.validate_or_reject_application_instance_cert(
-                    cert,
-                    security_policy,
-                    None,
-                    None,
-                ),
-                Err(e) => *e,
-            };
-
-            if result.is_bad() {
-                return Err(result);
-            }
-        }
+            store.validate_or_reject_application_instance_cert(
+                &cert,
+                security_policy,
+                None,
+                None,
+            )?;
+            Some(cert)
+        } else {
+            None
+        };
 
         let session_timeout = self
             .info
@@ -147,7 +143,7 @@ impl SessionManager {
             request.endpoint_url.clone(),
             security_policy.to_uri().to_string(),
             IdentityToken::None,
-            client_certificate.ok(),
+            client_certificate,
             server_nonce.clone(),
             request.session_name.clone(),
             request.client_description.clone(),

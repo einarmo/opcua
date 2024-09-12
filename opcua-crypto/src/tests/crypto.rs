@@ -132,7 +132,7 @@ fn test_and_reject_application_instance_cert() {
         None,
         None,
     );
-    assert!(result.is_bad());
+    assert!(result.is_err());
 
     drop(tmp_dir);
 }
@@ -161,7 +161,7 @@ fn test_and_trust_application_instance_cert() {
         None,
         None,
     );
-    assert!(result.is_good());
+    assert!(result.is_ok());
 
     drop(tmp_dir);
 }
@@ -191,7 +191,7 @@ fn test_and_reject_thumbprint_mismatch() {
         None,
         None,
     );
-    assert!(result.is_bad());
+    assert!(result.is_err());
 
     drop(tmp_dir);
 }
@@ -566,18 +566,17 @@ fn certificate_with_hostname_mismatch() {
 
     // Create a certificate and ensure that when the hostname does not match, the verification fails
     // with the correct error
-    let result = cert.is_hostname_valid(&wrong_host_name);
+    let result = cert.is_hostname_valid(&wrong_host_name).unwrap_err();
     assert_eq!(result, StatusCode::BadCertificateHostNameInvalid);
 
     // Create a certificate and ensure that when the hostname does  match, the verification succeeds
-    let result = cert.is_hostname_valid(APPLICATION_HOSTNAME);
-    assert_eq!(result, StatusCode::Good);
+    cert.is_hostname_valid(APPLICATION_HOSTNAME).unwrap();
 
     // Try a few times with different case
-    let result = cert.is_hostname_valid(&APPLICATION_HOSTNAME.to_string().to_uppercase());
-    assert_eq!(result, StatusCode::Good);
-    let result = cert.is_hostname_valid(&APPLICATION_HOSTNAME.to_string().to_lowercase());
-    assert_eq!(result, StatusCode::Good);
+    cert.is_hostname_valid(&APPLICATION_HOSTNAME.to_string().to_uppercase())
+        .unwrap();
+    cert.is_hostname_valid(&APPLICATION_HOSTNAME.to_string().to_lowercase())
+        .unwrap();
 }
 
 #[test]
@@ -585,12 +584,11 @@ fn certificate_with_application_uri_mismatch() {
     let (cert, _) = make_test_cert_2048();
 
     // Compare the certificate to the wrong application uri in the description, expect error
-    let result = cert.is_application_uri_valid("urn:WrongURI");
+    let result = cert.is_application_uri_valid("urn:WrongURI").unwrap_err();
     assert_eq!(result, StatusCode::BadCertificateUriInvalid);
 
     // Compare the certificate to the correct application uri in the description, expect success
-    let result = cert.is_application_uri_valid(APPLICATION_URI);
-    assert_eq!(result, StatusCode::Good);
+    cert.is_application_uri_valid(APPLICATION_URI).unwrap();
 }
 
 #[test]

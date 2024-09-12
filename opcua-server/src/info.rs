@@ -459,7 +459,11 @@ impl ServerInfo {
         token: &AnonymousIdentityToken,
     ) -> Result<UserToken, StatusCode> {
         if token.policy_id.as_ref() != POLICY_ID_ANONYMOUS {
-            error!("Token doesn't possess the correct policy id");
+            error!(
+                "Token doesn't possess the correct policy id. Got {}, expected {}",
+                token.policy_id.as_ref(),
+                POLICY_ID_ANONYMOUS
+            );
             return Err(StatusCode::BadIdentityTokenInvalid);
         }
         self.authenticator

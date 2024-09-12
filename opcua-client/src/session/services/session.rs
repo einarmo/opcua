@@ -82,15 +82,12 @@ impl Session {
                         self.session_info.endpoint.server.application_uri.as_ref();
 
                     let certificate_store = trace_write_lock!(self.certificate_store);
-                    let result = certificate_store.validate_or_reject_application_instance_cert(
+                    certificate_store.validate_or_reject_application_instance_cert(
                         &server_certificate,
                         security_policy,
                         Some(&hostname),
                         Some(application_uri),
-                    );
-                    if result.is_bad() {
-                        return Err(result);
-                    }
+                    )?;
                 } else {
                     return Err(StatusCode::BadCertificateInvalid);
                 }

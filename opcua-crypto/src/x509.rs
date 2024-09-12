@@ -19,7 +19,11 @@ type ChronoUtc = DateTime<Utc>;
 use rsa;
 use rsa::pkcs1v15;
 use rsa::RsaPublicKey;
-use x509_cert::{self as x509, ext::pkix::name::GeneralName};
+use x509_cert::{
+    self as x509,
+    der::asn1::{Ia5String, OctetString},
+    ext::pkix::name::GeneralName,
+};
 
 use const_oid;
 use x509::builder::Error as BuilderError;
@@ -103,6 +107,14 @@ impl AlternateNames {
             }
         }
         self.add_dns(v);
+    }
+
+    pub fn add_uri(&mut self, v: &str) {
+        if let Ok(uri) = Ia5String::new(v) {
+            self.names
+                .0
+                .push(xname::GeneralName::UniformResourceIdentifier(uri));
+        }
     }
 
     pub fn add_address_str(&mut self, v: &str) {
@@ -285,7 +297,7 @@ impl X509Data {
     ) {
         // The first name is the application uri
 
-        result.add_address(&application_uri.to_string());
+        result.add_uri(application_uri);
 
         // Addresses supplied by caller
         if let Some(addresses) = addresses {
@@ -511,14 +523,39 @@ impl X509 {
             issuer: Some(subject.clone()),
         };
 
+        // Generate a SKI, and set it as the AKI for the certificate according to Part 6, 6.2.2
+        // Generation is as suggested in RFC3280, 4.2.1.2. A 160-bit SHA-1 hash of the public key bitstring.
+        use sha1::Digest;
+        let mut hasher = sha1::Sha1::new();
+        hasher.update(
+            pub_key
+                .subject_public_key
+                .as_bytes()
+                .expect("Invalid public key"),
+        );
+        let ski = hasher.finalize();
+
         let mut builder = CertificateBuilder::new(
             profile,
-            serial_number,
+            serial_number.clone(),
             validity,
-            subject,
+            subject.clone(),
             pub_key,
             &signing_key,
         )?;
+
+        builder.add_extension(&x509::ext::pkix::SubjectKeyIdentifier(
+            OctetString::new(ski.as_slice()).unwrap(),
+        ))?;
+        builder.add_extension(&x509::ext::pkix::AuthorityKeyIdentifier {
+            authority_cert_issuer: Some(vec![GeneralName::DirectoryName(subject)]),
+            key_identifier: Some(OctetString::new(ski.as_slice()).unwrap()),
+            authority_cert_serial_number: Some(serial_number),
+        })?;
+        builder.add_extension(&x509::ext::pkix::BasicConstraints {
+            ca: false,
+            path_len_constraint: None,
+        })?;
 
         {
             use x509::ext::pkix::KeyUsage;
@@ -624,18 +661,18 @@ impl X509 {
 
     /// Tests if the certificate is valid for the supplied time using the not before and not
     /// after values on the cert.
-    pub fn is_time_valid(&self, now: &DateTime<Utc>) -> StatusCode {
+    pub fn is_time_valid(&self, now: &DateTime<Utc>) -> Result<(), StatusCode> {
         // Issuer time
         let not_before = self.not_before();
         if let Ok(not_before) = not_before {
             if now.lt(&not_before) {
                 error!("Certificate < before date)");
-                return StatusCode::BadCertificateTimeInvalid;
+                return Err(StatusCode::BadCertificateTimeInvalid);
             }
         } else {
             // No before time
             error!("Certificate has no before date");
-            return StatusCode::BadCertificateInvalid;
+            return Err(StatusCode::BadCertificateInvalid);
         }
 
         // Expiration time
@@ -643,16 +680,16 @@ impl X509 {
         if let Ok(not_after) = not_after {
             if now.gt(&not_after) {
                 error!("Certificate has expired (> after date)");
-                return StatusCode::BadCertificateTimeInvalid;
+                return Err(StatusCode::BadCertificateTimeInvalid);
             }
         } else {
             // No after time
             error!("Certificate has no after date");
-            return StatusCode::BadCertificateInvalid;
+            return Err(StatusCode::BadCertificateInvalid);
         }
 
         info!("Certificate is valid for this time");
-        StatusCode::Good
+        Ok(())
     }
 
     fn get_alternate_names(&self) -> Option<x509::ext::pkix::name::GeneralNames> {
@@ -672,12 +709,12 @@ impl X509 {
 
     /// Tests if the supplied hostname matches any of the dns alt subject name entries on the cert
 
-    pub fn is_hostname_valid(&self, hostname: &str) -> StatusCode {
+    pub fn is_hostname_valid(&self, hostname: &str) -> Result<(), StatusCode> {
         trace!("is_hostname_valid against {} on cert", hostname);
         // Look through alt subject names for a matching entry
         if hostname.is_empty() {
             error!("Hostname is empty");
-            StatusCode::BadCertificateHostNameInvalid
+            Err(StatusCode::BadCertificateHostNameInvalid)
         } else if let Some(subject_alt_names) = self.get_alternate_names() {
             let found = subject_alt_names
                 .iter()
@@ -691,20 +728,20 @@ impl X509 {
                 });
             if found {
                 info!("Certificate host name {} is good", hostname);
-                StatusCode::Good
+                Ok(())
             } else {
                 warn!("Did not find hostname {hostname} in alt names {subject_alt_names:?}");
-                StatusCode::BadCertificateHostNameInvalid
+                Err(StatusCode::BadCertificateHostNameInvalid)
             }
         } else {
             // No alt names
             error!("Cert has no subject alt names at all");
-            StatusCode::BadCertificateHostNameInvalid
+            Err(StatusCode::BadCertificateHostNameInvalid)
         }
     }
 
     /// Tests if the supplied application uri matches the uri alt subject name entry on the cert
-    pub fn is_application_uri_valid(&self, application_uri: &str) -> StatusCode {
+    pub fn is_application_uri_valid(&self, application_uri: &str) -> Result<(), StatusCode> {
         // Expecting the first subject alternative name to be a uri that matches with the supplied
         // application uri
         if let Some(alt_names) = self.get_alternate_names() {
@@ -712,29 +749,29 @@ impl X509 {
                 match AlternateNames::convert_name(&alt_names[0]) {
                     Some(val) => {
                         if val == application_uri {
-                            StatusCode::Good
+                            Ok(())
                         } else {
                             error!(
                                 "Application uri {} does not match first alt name {}",
                                 application_uri, val
                             );
-                            StatusCode::BadCertificateUriInvalid
+                            Err(StatusCode::BadCertificateUriInvalid)
                         }
                     }
 
                     _ => {
                         error!("Alternate name {:?} cannot be converted", alt_names[0]);
-                        StatusCode::BadCertificateUriInvalid
+                        Err(StatusCode::BadCertificateUriInvalid)
                     }
                 }
             } else {
                 error!("Cert has zero subject alt names");
-                StatusCode::BadCertificateUriInvalid
+                Err(StatusCode::BadCertificateUriInvalid)
             }
         } else {
             error!("Cert has no subject alt names at all");
             // No alt names
-            StatusCode::BadCertificateUriInvalid
+            Err(StatusCode::BadCertificateUriInvalid)
         }
     }
 
@@ -835,14 +872,14 @@ mod tests {
 
         let (x509, _pkey) = X509::cert_and_pkey(&args).unwrap();
 
-        assert!(!x509.is_hostname_valid("").is_good());
-        assert!(!x509.is_hostname_valid("uri:foo").is_good()); // The application uri should not be valid
-        assert!(!x509.is_hostname_valid("192.168.1.0").is_good());
-        assert!(!x509.is_hostname_valid("www.cnn.com").is_good());
-        assert!(!x509.is_hostname_valid("host1").is_good());
+        assert!(!x509.is_hostname_valid("").is_ok());
+        assert!(!x509.is_hostname_valid("uri:foo").is_ok()); // The application uri should not be valid
+        assert!(!x509.is_hostname_valid("192.168.1.0").is_ok());
+        assert!(!x509.is_hostname_valid("www.cnn.com").is_ok());
+        assert!(!x509.is_hostname_valid("host1").is_ok());
 
         args.alt_host_names.iter().skip(1).for_each(|n| {
-            assert!(x509.is_hostname_valid(n.as_str()).is_good());
+            assert!(x509.is_hostname_valid(n.as_str()).is_ok());
         })
     }
 }
