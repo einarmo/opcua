@@ -215,26 +215,8 @@ impl CertificateStore {
         security_policy: SecurityPolicy,
         hostname: Option<&str>,
         application_uri: Option<&str>,
-    ) -> StatusCode {
-        let result = self.validate_application_instance_cert(
-            cert,
-            security_policy,
-            hostname,
-            application_uri,
-        );
-        if result.is_bad() {
-            match result {
-                StatusCode::BadUnexpectedError | StatusCode::BadSecurityChecksFailed => {
-                    /* DO NOTHING */
-                }
-                _ => {
-                    // Store result in rejected folder
-                    // TODO this appears to be redundant if cert is already in rejected dir
-                    let _ = self.store_rejected_cert(cert);
-                }
-            }
-        }
-        result
+    ) -> Result<(), StatusCode> {
+        self.validate_application_instance_cert(cert, security_policy, hostname, application_uri)
     }
 
     /// Ensures that the cert provided is the same as the one specified by a path. This is a
@@ -295,7 +277,7 @@ impl CertificateStore {
         security_policy: SecurityPolicy,
         hostname: Option<&str>,
         application_uri: Option<&str>,
-    ) -> StatusCode {
+    ) -> Result<(), StatusCode> {
         let cert_file_name = CertificateStore::cert_file_name(cert);
         debug!("Validating cert with name on disk {}", cert_file_name);
 
@@ -308,7 +290,7 @@ impl CertificateStore {
                     "Path for rejected certificates {} does not exist",
                     cert_path.display()
                 );
-                return StatusCode::BadUnexpectedError;
+                return Err(StatusCode::BadUnexpectedError);
             }
             cert_path.push(&cert_file_name);
             if cert_path.exists() {
@@ -316,7 +298,7 @@ impl CertificateStore {
                     "Certificate {} is untrusted because it resides in the rejected directory",
                     cert_file_name
                 );
-                return StatusCode::BadSecurityChecksFailed;
+                return Err(StatusCode::BadSecurityChecksFailed);
             }
         }
 
@@ -330,7 +312,7 @@ impl CertificateStore {
                     "Path for rejected certificates {} does not exist",
                     cert_path.display()
                 );
-                return StatusCode::BadUnexpectedError;
+                return Err(StatusCode::BadUnexpectedError);
             }
             cert_path.push(&cert_file_name);
 
@@ -345,21 +327,21 @@ impl CertificateStore {
                 } else {
                     warn!("Certificate {} is unknown and untrusted so it will be stored in rejected directory", cert_file_name);
                     let _ = self.store_rejected_cert(cert);
-                    return StatusCode::BadCertificateUntrusted;
+                    return Err(StatusCode::BadCertificateUntrusted);
                 }
             }
 
             // Read the cert from the trusted folder to make sure it matches the one supplied
             if !CertificateStore::ensure_cert_and_file_are_the_same(cert, &cert_path) {
                 error!("Certificate in memory does not match the one on disk {} so cert will automatically be treated as untrusted", cert_path.display());
-                return StatusCode::BadUnexpectedError;
+                return Err(StatusCode::BadUnexpectedError);
             }
 
             // Check that the certificate is the right length for the security policy
             match cert.key_length() {
                 Err(_) => {
                     error!("Cannot read key length from certificate {}", cert_file_name);
-                    return StatusCode::BadSecurityChecksFailed;
+                    return Err(StatusCode::BadSecurityChecksFailed);
                 }
                 Ok(key_length) => {
                     if !security_policy.is_valid_keylength(key_length) {
@@ -367,7 +349,7 @@ impl CertificateStore {
                             "Certificate {} has an invalid key length {} for the policy {}",
                             cert_file_name, key_length, security_policy
                         );
-                        return StatusCode::BadSecurityChecksFailed;
+                        return Err(StatusCode::BadSecurityChecksFailed);
                     }
                 }
             }
@@ -377,45 +359,24 @@ impl CertificateStore {
                     "Skipping additional verifications for certificate {}",
                     cert_file_name
                 );
-                return StatusCode::Good;
+                return Ok(());
             }
 
             // Now inspect the cert not before / after values to ensure its validity
             if self.check_time {
                 use chrono::Utc;
                 let now = Utc::now();
-                let status_code = cert.is_time_valid(&now);
-                if status_code.is_bad() {
-                    warn!(
-                        "Certificate {} is not valid for now, check start/end timestamps",
-                        cert_file_name
-                    );
-                    return status_code;
-                }
+                cert.is_time_valid(&now)?;
             }
 
             // Compare the hostname of the cert against the cert supplied
             if let Some(hostname) = hostname {
-                let status_code = cert.is_hostname_valid(hostname);
-                if status_code.is_bad() {
-                    warn!(
-                        "Certificate {} does not have a valid hostname",
-                        cert_file_name
-                    );
-                    return status_code;
-                }
+                cert.is_hostname_valid(hostname)?;
             }
 
             // Compare the application / product uri to the supplied application description
             if let Some(application_uri) = application_uri {
-                let status_code = cert.is_application_uri_valid(application_uri);
-                if status_code.is_bad() {
-                    warn!(
-                        "Certificate {} does not have a valid application uri",
-                        cert_file_name
-                    );
-                    return status_code;
-                }
+                cert.is_application_uri_valid(application_uri)?;
             }
 
             // Other tests that we might do with trust lists
@@ -423,7 +384,7 @@ impl CertificateStore {
             // ... trust (self-signed, ca etc.)
             // ... revocation
         }
-        StatusCode::Good
+        Ok(())
     }
 
     /// Returns a certificate file name from the cert's issuer and thumbprint fields.
