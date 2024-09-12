@@ -21,9 +21,8 @@ fn opc_url_from_str(s: &str) -> Result<Url, url::ParseError> {
             }
             url
         })
-        .map_err(|err| {
+        .inspect_err(|err| {
             error!("Cannot parse url \"{}\", error = {:?}", s, err);
-            err
         })
 }
 

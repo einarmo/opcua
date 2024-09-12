@@ -29,3 +29,7 @@ url = { workspace = true }
 
 opcua-types = { path = "../opcua-types" }
 opcua-crypto = { path = "../opcua-crypto" }
+
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(coverage)'] }

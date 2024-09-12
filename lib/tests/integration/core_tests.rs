@@ -6,6 +6,7 @@ use log::debug;
 use opcua::{
     client::IdentityToken,
     core::comms::tcp_codec::{Message, TcpCodec},
+    core::config::Config,
     crypto::SecurityPolicy,
     types::{
         ApplicationType, DecodingOptions, MessageSecurityMode, NodeId, ReadValueId, StatusCode,
@@ -19,8 +20,8 @@ use tokio::{
 use tokio_util::codec::Decoder;
 
 use crate::utils::{
-    client_user_token, client_x509_token, default_server, test_server, Tester, CLIENT_USERPASS_ID,
-    TEST_COUNTER,
+    client_user_token, client_x509_token, copy_shared_certs, default_server, test_server, Tester,
+    CLIENT_USERPASS_ID, TEST_COUNTER,
 };
 
 #[tokio::test]
@@ -35,6 +36,8 @@ async fn hello_timeout() {
         .discovery_urls(vec![format!("opc.tcp://{}:{}", hostname(), port)])
         .pki_dir(format!("./pki-server/{test_id}"))
         .hello_timeout(1);
+    copy_shared_certs(test_id, &server.config().application_description());
+
     let (server, handle) = server.build().unwrap();
     let addr = listener.local_addr().unwrap();
 
@@ -100,7 +103,7 @@ async fn conn_test(policy: SecurityPolicy, mode: MessageSecurityMode, token: Ide
     let (session, handle) = tester.connect(policy, mode, token).await.unwrap();
     let _h = handle.spawn();
 
-    tokio::time::timeout(Duration::from_secs(2), session.wait_for_connection())
+    tokio::time::timeout(Duration::from_secs(20), session.wait_for_connection())
         .await
         .unwrap();
 

@@ -10,3 +10,4 @@ log/
 **/pki-server
 3rd-party/open62541/build/
 lib/pki*
+lib/certs

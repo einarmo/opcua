@@ -605,11 +605,7 @@ impl<'a> BrowsePathItem<'a> {
             input_index,
             depth: 0,
             node_manager_index: usize::MAX,
-            path: if let Some(elements) = path.relative_path.elements.as_ref() {
-                elements
-            } else {
-                &[]
-            },
+            path: path.relative_path.elements.as_deref().unwrap_or(&[]),
             results: Vec::new(),
             status,
             iteration_number: 0,

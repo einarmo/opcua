@@ -43,6 +43,7 @@ async fn main() {
             },
             "simple",
         ))
+        .trust_client_certs(true)
         .build()
         .unwrap();
     let node_manager = handle

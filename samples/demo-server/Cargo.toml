@@ -4,9 +4,6 @@ version = "0.13.0" # OPCUARustVersion
 authors = ["Adam Lock <locka99@gmail.com>"]
 edition = "2021"
 
-[features]
-vendored-openssl = ["opcua/vendored-openssl"]
-
 [dependencies]
 chrono = "0.4"
 log = "0.4"

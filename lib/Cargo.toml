@@ -22,8 +22,6 @@ appveyor = { repository = "locka99/opcua" }
 [features]
 default = ["server", "client"]
 all = ["server", "client", "console-logging"]
-# This is for CI/CD testing on platforms with unresolved OpenSSL deps, don't use otherwise.
-test-vendored-openssl = ["all", "vendored-openssl"]
 # Server default settings
 server = ["opcua-server", "opcua-nodes", "generated-address-space", "discovery-server-registration"]
 # Client default settings
@@ -36,8 +34,6 @@ generated-address-space = ["opcua-server/generated-address-space"]
 # Allows a server to register itself with a local discovery server. It does so by becoming a client to the LDS,
 # which brings in a dependency to opcua-client. Omitting the feature saves some memory.
 discovery-server-registration = ["opcua-server/discovery-server-registration"]
-# OpenSSL can be compiled and statically linked to with this feature
-vendored-openssl = ["opcua-crypto/vendored-openssl"]
 
 [dependencies]
 chrono = { workspace = true }

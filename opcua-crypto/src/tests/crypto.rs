@@ -89,7 +89,7 @@ fn create_own_cert_in_pki() {
         organizational_unit: "x.org ops".to_string(),
         country: "EN".to_string(),
         state: "London".to_string(),
-        alt_host_names: vec!["host1".to_string(), "host2".to_string()],
+        alt_host_names: vec!["host1".to_string(), "host2".to_string()].into(),
         certificate_duration_days: 60,
     };
 

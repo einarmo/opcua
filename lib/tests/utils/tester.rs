@@ -1,9 +1,10 @@
 use std::{
+    fs,
     net::SocketAddr,
-    path::PathBuf,
+    path::{Path, PathBuf},
     sync::{
         atomic::{AtomicU16, Ordering},
-        Arc,
+        Arc, Mutex,
     },
     time::Duration,
 };
@@ -14,6 +15,9 @@ use opcua::{
     server::{ServerBuilder, ServerHandle, ServerUserToken, ANONYMOUS_USER_TOKEN_ID},
     types::{MessageSecurityMode, StatusCode},
 };
+use opcua_core::config::Config;
+use opcua_crypto::CertificateStore;
+use opcua_types::ApplicationDescription;
 use tokio::net::TcpListener;
 use tokio_util::sync::{CancellationToken, DropGuard};
 
@@ -230,6 +234,56 @@ pub fn test_server() -> ServerBuilder {
     default_server().with_node_manager(test_node_manager())
 }
 
+static SHARED_CERT_LOCK: Mutex<()> = Mutex::new(());
+
+pub fn copy_shared_certs(test_id: u16, desc: &ApplicationDescription) {
+    let _lck = SHARED_CERT_LOCK.lock();
+    if !Path::new("certs").exists() {
+        std::fs::create_dir_all("certs/server").unwrap();
+        std::fs::create_dir_all("certs/client").unwrap();
+        CertificateStore::create_certificate_and_key(
+            &desc.clone().into(),
+            true,
+            &Path::new("certs/server/cert.der"),
+            &Path::new("certs/server/private.pem"),
+        )
+        .unwrap();
+        CertificateStore::create_certificate_and_key(
+            &desc.clone().into(),
+            true,
+            &Path::new("certs/client/cert.der"),
+            &Path::new("certs/client/private.pem"),
+        )
+        .unwrap();
+    }
+
+    std::fs::create_dir_all(&format!("pki-server/{test_id}/own")).unwrap();
+    std::fs::create_dir_all(&format!("pki-server/{test_id}/private")).unwrap();
+    std::fs::create_dir_all(&format!("pki-client/{test_id}/own")).unwrap();
+    std::fs::create_dir_all(&format!("pki-client/{test_id}/private")).unwrap();
+
+    fs::copy(
+        "certs/server/cert.der",
+        &format!("pki-server/{test_id}/own/cert.der"),
+    )
+    .unwrap();
+    fs::copy(
+        "certs/server/private.pem",
+        &format!("pki-server/{test_id}/private/private.pem"),
+    )
+    .unwrap();
+    fs::copy(
+        "certs/client/cert.der",
+        &format!("pki-client/{test_id}/own/cert.der"),
+    )
+    .unwrap();
+    fs::copy(
+        "certs/client/private.pem",
+        &format!("pki-client/{test_id}/private/private.pem"),
+    )
+    .unwrap();
+}
+
 impl Tester {
     async fn listener() -> TcpListener {
         TcpListener::bind(format!("{}:0", hostname()))
@@ -248,6 +302,8 @@ impl Tester {
         let server = default_server()
             .discovery_urls(vec![format!("opc.tcp://{}:{}", hostname(), addr.port())])
             .pki_dir(format!("./pki-server/{test_id}"));
+
+        copy_shared_certs(test_id, &server.config().application_description());
 
         let (server, handle) = server.build().unwrap();
         let token = CancellationToken::new();
@@ -277,6 +333,8 @@ impl Tester {
             .pki_dir(format!("./pki-server/{test_id}"))
             .discovery_urls(vec![format!("opc.tcp://{}:{}", hostname(), addr.port())]);
 
+        copy_shared_certs(test_id, &server.config().application_description());
+
         let (server, handle) = server.build().unwrap();
 
         tokio::task::spawn(server.run_with(listener));
@@ -304,6 +362,9 @@ impl Tester {
         let server = server
             .pki_dir(format!("./pki-server/{test_id}"))
             .discovery_urls(vec![format!("opc.tcp://{}:{}", hostname(), addr.port())]);
+
+        copy_shared_certs(test_id, &server.config().application_description());
+
         let client = client.pki_dir(format!("./pki-client/{test_id}"));
 
         let (server, handle) = server.build().unwrap();
@@ -360,7 +421,7 @@ impl Tester {
 
         evt_loop.spawn();
 
-        tokio::time::timeout(Duration::from_millis(10_000), session.wait_for_connection())
+        tokio::time::timeout(Duration::from_millis(20_000), session.wait_for_connection())
             .await
             .unwrap();
 

@@ -35,10 +35,45 @@ chrono = { version = "0.4", features = ["serde"] }
 byteorder = "1.4"
 base64 = "0.21"
 gethostname = "0.4"
-openssl = "0.10"
-openssl-sys = "0.9"
 foreign-types = "0.3"
 tokio = { version = "1", features = ["full"] }
 tokio-util = { version = "0.7", features = ["codec"] }
 parking_lot = { version = "0.12", features = ["send_guard"] }
 url = "1.6"
+
+
+hmac = "0.12.1"
+sha2 = {version = "0.10.8", features = ["oid"]}
+sha1 = {version = "0.10.6", features = ["oid"]}
+cbc  = "0.1.2"
+aes  = "0.8.4"
+rsa = {version = "0.9.6", features = ["sha2","sha1","pem"]}
+rand = "0.8.5"
+x509-cert = {version="0.2.5",features=["builder","hazmat"]}
+const-oid = {version="0.9.3",features=["db"]}
+
+
+# Compile the crypto dependencies in release even in debug, to make test performance tolerable
+# This makes initial compile times slightly worse, but tests run way faster.
+[profile.dev.package.sha1]
+opt-level = 3
+[profile.dev.package.sha2]
+opt-level = 3
+[profile.dev.package.cbc]
+opt-level = 3
+[profile.dev.package.aes]
+opt-level = 3
+[profile.dev.package.rsa]
+opt-level = 3
+[profile.dev.package.rand]
+opt-level = 3
+[profile.dev.package.x509-cert]
+opt-level = 3
+[profile.dev.package.hmac]
+opt-level = 3
+# This is probably the most important for the tests at the moment,
+# as it is on the hot path of RSA private key generation (gen_prime)
+[profile.dev.package.num-bigint-dig]
+opt-level = 3
+[profile.dev.package.rand_core]
+opt-level = 3

@@ -309,9 +309,8 @@ impl Chunker {
                     error!("The node {:?} was not an object id", node_id);
                     StatusCode::BadUnexpectedError
                 })
-                .map(|object_id| {
+                .inspect(|object_id| {
                     trace!("Decoded node id / object id of {:?}", object_id);
-                    object_id
                 })
         }
     }

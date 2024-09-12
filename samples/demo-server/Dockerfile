@@ -9,7 +9,7 @@ RUN cargo install --path .
 
 # Repackage the binary in a standalone container
 FROM debian:bookworm-slim AS dist
-RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+RUN rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=builder /usr/local/cargo/bin/opcua-demo-server ./
 COPY --from=builder /build/samples/server.conf ./

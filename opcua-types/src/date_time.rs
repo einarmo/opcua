@@ -208,10 +208,11 @@ impl FromStr for DateTime {
     type Err = chrono::ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        DateTimeUtc::from_str(s).map(DateTime::from).map_err(|e| {
-            error!("Cannot parse date {}, error = {}", s, e);
-            e
-        })
+        DateTimeUtc::from_str(s)
+            .map(DateTime::from)
+            .inspect_err(|e| {
+                error!("Cannot parse date {}, error = {}", s, e);
+            })
     }
 }
 
