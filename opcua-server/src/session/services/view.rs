@@ -362,10 +362,9 @@ pub async fn translate_browse_paths(
                 // Item has not yet been marked bad, meaning it failed to resolve somewhere it should.
                 it.status().is_good()
                     // Either it's from a previous node manager,
-                    && (it.node_manager_index() < idx
+                    && (it.node_manager_index() < idx && it.iteration_number() == iteration
                         // Or it's not from a later node manager in the previous iteration.
-                        || it.node_manager_index() > idx
-                            && it.iteration_number() == iteration - 1)
+                        || it.node_manager_index() > idx && it.iteration_number() == iteration - 1)
                     // Or it may be an external reference with an unmatched browse name.
                     && (!it.path().is_empty() || it.unmatched_browse_name().is_some() && mgr.owns_node(it.node_id()))
             })
@@ -417,8 +416,6 @@ pub async fn translate_browse_paths(
             }
             any_new_items_in_iteration = false;
         }
-
-        idx = (idx + 1) % node_managers.len();
     }
     // Collect all final paths.
     let mut results: Vec<_> = items

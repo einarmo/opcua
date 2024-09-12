@@ -8,6 +8,7 @@ use opcua::{
         RelativePathElement, StatusCode, VariableTypeId,
     },
 };
+use opcua_types::{AttributeId, ReadValueId, TimestampsToReturn, Variant};
 
 fn hierarchical_desc(node_id: NodeId) -> BrowseDescription {
     BrowseDescription {
@@ -517,4 +518,64 @@ async fn translate_browse_paths_limits() {
         .await
         .unwrap_err();
     assert_eq!(r, StatusCode::BadTooManyOperations);
+}
+
+#[tokio::test]
+async fn translate_browse_paths_auto_impl() {
+    let (_tester, _nm, session) = setup().await;
+
+    // Do a translate browse paths call into the diagnostics node manager.
+    let r = session
+        .translate_browse_paths_to_node_ids(&[BrowsePath {
+            starting_node: ObjectId::Server.into(),
+            relative_path: RelativePath {
+                elements: Some(
+                    [
+                        (0, "Namespaces"),
+                        (2, "urn:rustopcuatestserver"),
+                        (0, "DefaultAccessRestrictions"),
+                    ]
+                    .iter()
+                    .map(|v| RelativePathElement {
+                        reference_type_id: ReferenceTypeId::HierarchicalReferences.into(),
+                        is_inverse: false,
+                        include_subtypes: true,
+                        target_name: opcua_types::QualifiedName {
+                            namespace_index: v.0,
+                            name: v.1.into(),
+                        },
+                    })
+                    .collect(),
+                ),
+            },
+        }])
+        .await
+        .unwrap();
+    assert_eq!(1, r.len());
+    let it = &r[0];
+    assert_eq!(StatusCode::Good, it.status_code);
+    let targets = it.targets.clone().unwrap_or_default();
+    assert_eq!(1, targets.len());
+    let t = &targets[0];
+    assert_eq!(t.remaining_path_index, u32::MAX);
+    let node_id = t.target_id.node_id.clone();
+
+    let r = session
+        .read(
+            &[ReadValueId {
+                node_id,
+                attribute_id: AttributeId::DisplayName as u32,
+                ..Default::default()
+            }],
+            TimestampsToReturn::Both,
+            0.0,
+        )
+        .await
+        .unwrap();
+    assert_eq!(
+        r[0].value,
+        Some(Variant::LocalizedText(Box::new(
+            "DefaultAccessRestrictions".into()
+        )))
+    );
 }

@@ -14,9 +14,9 @@ use crate::{
         as_opaque_node_id,
         build::NodeManagerBuilder,
         from_opaque_node_id,
-        view::{AddReferenceResult, NodeMetadata},
-        BrowseNode, DefaultTypeTree, DynNodeManager, NodeManager, NodeManagersRef, ReadNode,
-        RequestContext, ServerContext, SyncSampler,
+        view::{impl_translate_browse_paths_using_browse, AddReferenceResult, NodeMetadata},
+        BrowseNode, BrowsePathItem, DefaultTypeTree, DynNodeManager, NodeManager, NodeManagersRef,
+        ReadNode, RequestContext, ServerContext, SyncSampler,
     },
 };
 use opcua_types::{
@@ -645,5 +645,13 @@ impl NodeManager for DiagnosticsNodeManager {
             }
         }
         Ok(())
+    }
+
+    async fn translate_browse_paths_to_node_ids(
+        &self,
+        context: &RequestContext,
+        nodes: &mut [&mut BrowsePathItem],
+    ) -> Result<(), StatusCode> {
+        impl_translate_browse_paths_using_browse(self, context, nodes).await
     }
 }

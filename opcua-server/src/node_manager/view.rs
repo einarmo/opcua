@@ -12,9 +12,11 @@ use opcua_crypto::random;
 use opcua_nodes::TypeTree;
 use opcua_types::{
     BrowseDescription, BrowseDescriptionResultMask, BrowseDirection, BrowsePath, BrowseResult,
-    ByteString, ExpandedNodeId, LocalizedText, NodeClass, NodeClassMask, NodeId, QualifiedName,
-    ReferenceDescription, RelativePathElement, StatusCode,
+    BrowseResultMask, ByteString, ExpandedNodeId, LocalizedText, NodeClass, NodeClassMask, NodeId,
+    QualifiedName, ReferenceDescription, RelativePathElement, StatusCode,
 };
+
+use super::{NodeManager, RequestContext};
 
 #[derive(Debug, Clone)]
 /// Object describing a node with sufficient context to construct
@@ -708,4 +710,140 @@ impl RegisterNodeItem {
             None
         }
     }
+}
+
+/// Implementation of translate_browse_path implemented by repeatedly calling browse.
+/// Note that this is always less efficient than a dedicated implementation, but
+/// for simple node managers it may be a simple solution to get translate browse paths support
+/// without a complex implementation.
+///
+/// Arguments are simply the inputs to translate_browse_paths on `NodeManager`.
+pub async fn impl_translate_browse_paths_using_browse<'a>(
+    mgr: &(impl NodeManager + Send + Sync + 'static),
+    context: &RequestContext,
+    nodes: &mut [&mut BrowsePathItem<'a>],
+) -> Result<(), StatusCode> {
+    // For unmatched browse names we first need to check if the node exists.
+    let mut to_get_metadata: Vec<_> = nodes
+        .iter_mut()
+        .filter(|n| n.unmatched_browse_name().is_some())
+        .map(|r| {
+            let id = r.node_id().clone();
+            (
+                r,
+                ExternalReferenceRequest::new(
+                    &id,
+                    BrowseDescriptionResultMask::RESULT_MASK_BROWSE_NAME,
+                ),
+            )
+        })
+        .collect();
+    let mut items_ref: Vec<_> = to_get_metadata.iter_mut().map(|r| &mut r.1).collect();
+    mgr.resolve_external_references(context, &mut items_ref)
+        .await;
+    for (node, ext) in to_get_metadata {
+        let Some(i) = ext.item else {
+            continue;
+        };
+        if &i.browse_name == node.unmatched_browse_name().unwrap() {
+            node.set_browse_name_matched(context.current_node_manager_index);
+        }
+    }
+
+    // Start with a map from the node ID to browse, to the index in the original nodes array.
+    let mut current_targets = HashMap::new();
+    for (idx, item) in nodes.iter_mut().enumerate() {
+        // If the node is still unmatched, don't use it.
+        if item.unmatched_browse_name.is_some() {
+            continue;
+        }
+        current_targets.insert(item.node_id().clone(), idx);
+    }
+    let mut next_targets = HashMap::new();
+    let mut depth = 0;
+    loop {
+        // If we are out of targets, we've reached the end.
+        if current_targets.is_empty() {
+            break;
+        }
+
+        // For each target, make a browse node.
+        let mut targets = Vec::with_capacity(current_targets.len());
+        let mut target_idx_map = HashMap::new();
+        for (id, target) in current_targets.iter() {
+            let node = &mut nodes[*target];
+            let elem = &node.path()[depth];
+            target_idx_map.insert(targets.len(), *target);
+            targets.push(BrowseNode::new(
+                BrowseDescription {
+                    node_id: id.clone(),
+                    browse_direction: if elem.is_inverse {
+                        BrowseDirection::Inverse
+                    } else {
+                        BrowseDirection::Forward
+                    },
+                    reference_type_id: elem.reference_type_id.clone(),
+                    include_subtypes: elem.include_subtypes,
+                    node_class_mask: NodeClassMask::all().bits(),
+                    result_mask: BrowseResultMask::BrowseName as u32,
+                },
+                context
+                    .info
+                    .config
+                    .limits
+                    .operational
+                    .max_references_per_browse_node,
+                *target,
+            ));
+        }
+        mgr.browse(context, &mut targets).await?;
+
+        // Call browse until the results are exhausted.
+        let mut next = targets;
+        loop {
+            let mut next_t = Vec::with_capacity(next.len());
+            for (idx, mut target) in next.into_iter().enumerate() {
+                // For each node we just browsed, drain the references and external references
+                // and produce path target elements from them.
+                let orig_idx = target_idx_map[&idx];
+                let path_target = &mut nodes[orig_idx];
+                let path_elem = &path_target.path[depth];
+                for it in target.references.drain(..) {
+                    // If we found a reference, add it as a target.
+                    if it.browse_name == path_elem.target_name {
+                        // If the path is empty, we shouldn't browse any further.
+                        if path_target.path.len() > depth + 1 {
+                            next_targets.insert(it.node_id.node_id.clone(), orig_idx);
+                        }
+                        path_target.add_element(it.node_id.node_id, depth + 1, None);
+                    }
+                }
+                // External references are added as unmatched nodes.
+                for ext in target.external_references.drain(..) {
+                    path_target.add_element(
+                        ext.target_id.node_id,
+                        depth + 1,
+                        Some(path_elem.target_name.clone()),
+                    );
+                }
+
+                if target.next_continuation_point.is_some() {
+                    target.input_continuation_point = target.next_continuation_point;
+                    target.next_continuation_point = None;
+                    next_t.push(target);
+                }
+            }
+            if next_t.is_empty() {
+                break;
+            }
+            mgr.browse(context, &mut next_t).await?;
+            next = next_t;
+        }
+        std::mem::swap(&mut current_targets, &mut next_targets);
+        next_targets.clear();
+
+        depth += 1;
+    }
+
+    Ok(())
 }
