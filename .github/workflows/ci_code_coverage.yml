@@ -9,11 +9,15 @@ jobs:
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
 
+      # Crypto tests are excluded because the way rust does coverage makes them take 100x longer.
       - name: Test with profiling data
         run: cargo llvm-cov --workspace --exclude opcua-crypto --codecov --output-path codecov.json
 
       - name: Run crypto tests
         run: cargo test -p opcua-crypto
+      
+      - name: Run core tests
+        run: cargo test -p opcua-core
 
       - name: Upload lcov to codecov.io
         uses: codecov/codecov-action@v4

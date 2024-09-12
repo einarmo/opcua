@@ -164,9 +164,8 @@ impl Client {
         let server_endpoints = self
             .get_server_endpoints_from_url(server_url)
             .await
-            .map_err(|status_code| {
+            .inspect_err(|status_code| {
                 error!("Cannot get endpoints for server, error - {}", status_code);
-                status_code
             })?;
 
         // Find the server endpoint that matches the one desired
@@ -179,12 +178,11 @@ impl Client {
             endpoint.security_mode,
         )
         .ok_or(StatusCode::BadTcpEndpointUrlInvalid)
-        .map_err(|status_code| {
+        .inspect_err(|_| {
             error!(
                 "Cannot find matching endpoint for {}",
                 endpoint.endpoint_url.as_ref()
             );
-            status_code
         })?;
 
         Ok(self
