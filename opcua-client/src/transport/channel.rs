@@ -5,9 +5,8 @@ use arc_swap::{ArcSwap, ArcSwapOption};
 use log::{error, info};
 use opcua_core::{
     comms::secure_channel::{Role, SecureChannel},
-    supported_message::SupportedMessage,
     sync::RwLock,
-    trace_read_lock, trace_write_lock,
+    trace_read_lock, trace_write_lock, RequestMessage, ResponseMessage,
 };
 use opcua_crypto::{CertificateStore, SecurityPolicy};
 use opcua_types::{
@@ -78,9 +77,9 @@ impl AsyncSecureChannel {
 
     pub async fn send(
         &self,
-        request: impl Into<SupportedMessage>,
+        request: impl Into<RequestMessage>,
         timeout: Duration,
-    ) -> Result<SupportedMessage, StatusCode> {
+    ) -> Result<ResponseMessage, StatusCode> {
         let sender = self.request_send.load().as_deref().cloned();
         let Some(send) = sender else {
             return Err(StatusCode::BadNotConnected);

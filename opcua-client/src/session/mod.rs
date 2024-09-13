@@ -83,7 +83,7 @@ macro_rules! session_trace {
 #[allow(unused)]
 pub(crate) use session_trace;
 
-use opcua_core::SupportedMessage;
+use opcua_core::ResponseMessage;
 use opcua_types::{EndpointDescription, ResponseHeader, StatusCode};
 
 use super::IdentityToken;
@@ -102,9 +102,9 @@ pub(crate) fn process_service_result(response_header: &ResponseHeader) -> Result
     }
 }
 
-pub(crate) fn process_unexpected_response(response: SupportedMessage) -> StatusCode {
+pub(crate) fn process_unexpected_response(response: ResponseMessage) -> StatusCode {
     match response {
-        SupportedMessage::ServiceFault(service_fault) => {
+        ResponseMessage::ServiceFault(service_fault) => {
             error!(
                 "Received a service fault of {} for the request",
                 service_fault.response_header.service_result

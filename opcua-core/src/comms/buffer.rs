@@ -8,7 +8,7 @@ use tokio::io::AsyncWriteExt;
 
 use crate::{
     comms::{chunker::Chunker, message_chunk::MessageChunk, secure_channel::SecureChannel},
-    supported_message::SupportedMessage,
+    Message,
 };
 
 use opcua_types::{BinaryEncoder, EncodingError, StatusCode};
@@ -100,7 +100,7 @@ impl SendBuffer {
     pub fn write(
         &mut self,
         request_id: u32,
-        message: SupportedMessage,
+        message: impl Message,
         secure_channel: &SecureChannel,
     ) -> Result<u32, EncodingError> {
         trace!("Writing request to buffer");
@@ -212,6 +212,7 @@ mod tests {
     use super::SendBuffer;
 
     use crate::comms::secure_channel::{Role, SecureChannel};
+    use crate::RequestMessage;
     use opcua_crypto::CertificateStore;
     use opcua_types::StatusCode;
     use opcua_types::{
@@ -248,7 +249,8 @@ mod tests {
 
         let (mut buffer, channel) = get_buffer_and_channel();
 
-        let request_id = buffer.write(1, message.into(), &channel).unwrap();
+        let m: RequestMessage = message.into();
+        let request_id = buffer.write(1, m, &channel).unwrap();
         assert_eq!(request_id, 1);
 
         assert!(buffer.should_encode_chunks());
@@ -281,7 +283,8 @@ mod tests {
 
         let (mut buffer, channel) = get_buffer_and_channel();
 
-        let request_id = buffer.write(1, message.into(), &channel).unwrap();
+        let m: RequestMessage = message.into();
+        let request_id = buffer.write(1, m, &channel).unwrap();
         assert_eq!(request_id, 1);
 
         assert_eq!(buffer.chunks.len(), 3);
@@ -320,7 +323,8 @@ mod tests {
 
         let (mut buffer, channel) = get_buffer_and_channel();
 
-        let err = buffer.write(1, message.into(), &channel).unwrap_err();
+        let m: RequestMessage = message.into();
+        let err = buffer.write(1, m, &channel).unwrap_err();
         assert_eq!(err.status(), StatusCode::BadRequestTooLarge);
     }
 
@@ -344,7 +348,8 @@ mod tests {
 
         let (mut buffer, channel) = get_buffer_and_channel();
 
-        let err = buffer.write(1, message.into(), &channel).unwrap_err();
+        let m: RequestMessage = message.into();
+        let err = buffer.write(1, m, &channel).unwrap_err();
         assert_eq!(err.status(), StatusCode::BadCommunicationError);
     }
 
@@ -368,7 +373,8 @@ mod tests {
 
         let (mut buffer, channel) = get_buffer_and_channel();
 
-        let request_id = buffer.write(1, message.into(), &channel).unwrap();
+        let m: RequestMessage = message.into();
+        let request_id = buffer.write(1, m, &channel).unwrap();
         assert_eq!(request_id, 1);
 
         assert_eq!(buffer.chunks.len(), 3);

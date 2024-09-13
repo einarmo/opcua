@@ -8,16 +8,13 @@ use chrono::Utc;
 use hashbrown::{Equivalent, HashMap};
 use log::error;
 pub use monitored_item::{CreateMonitoredItem, MonitoredItem};
-use opcua_core::{trace_read_lock, trace_write_lock};
+use opcua_core::{trace_read_lock, trace_write_lock, ResponseMessage};
 use opcua_nodes::{Event, TypeTree};
 pub use session_subscriptions::SessionSubscriptions;
 use subscription::TickReason;
 pub use subscription::{MonitoredItemHandle, Subscription, SubscriptionState};
 
-use opcua_core::{
-    sync::{Mutex, RwLock},
-    SupportedMessage,
-};
+use opcua_core::sync::{Mutex, RwLock};
 
 use opcua_types::{
     AttributeId, CreateSubscriptionRequest, CreateSubscriptionResponse, DataValue, DateTimeUtc,
@@ -742,7 +739,7 @@ impl SubscriptionCache {
 }
 
 pub(crate) struct PendingPublish {
-    pub response: tokio::sync::oneshot::Sender<SupportedMessage>,
+    pub response: tokio::sync::oneshot::Sender<ResponseMessage>,
     pub request: Box<PublishRequest>,
     pub ack_results: Option<Vec<StatusCode>>,
     pub deadline: Instant,

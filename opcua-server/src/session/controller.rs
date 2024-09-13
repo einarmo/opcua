@@ -6,7 +6,7 @@ use std::{
 
 use futures::{future::Either, stream::FuturesUnordered, Future, StreamExt};
 use log::{debug, error, trace, warn};
-use opcua_core::{trace_read_lock, trace_write_lock};
+use opcua_core::{trace_read_lock, trace_write_lock, Message, RequestMessage, ResponseMessage};
 use tokio::net::TcpStream;
 
 use opcua_core::{
@@ -15,7 +15,6 @@ use opcua_core::{
     },
     config::Config,
     handle::AtomicHandle,
-    supported_message::SupportedMessage,
     sync::RwLock,
 };
 use opcua_crypto::{CertificateStore, SecurityPolicy};
@@ -40,13 +39,13 @@ use super::{
 };
 
 pub(crate) struct Response {
-    pub message: SupportedMessage,
+    pub message: ResponseMessage,
     pub request_id: u32,
 }
 
 impl Response {
     pub fn from_result(
-        result: Result<impl Into<SupportedMessage>, StatusCode>,
+        result: Result<impl Into<ResponseMessage>, StatusCode>,
         request_handle: u32,
         request_id: u32,
     ) -> Self {
@@ -207,7 +206,7 @@ impl SessionController {
     async fn process_request(&mut self, req: Request) -> RequestProcessResult {
         let id = req.request_id;
         match req.message {
-            SupportedMessage::OpenSecureChannelRequest(r) => {
+            RequestMessage::OpenSecureChannel(r) => {
                 let res = self.open_secure_channel(
                     &req.chunk_info.security_header,
                     self.transport.client_protocol_version,
@@ -238,22 +237,22 @@ impl SessionController {
                 }
             }
 
-            SupportedMessage::CloseSecureChannelRequest(_r) => RequestProcessResult::Close,
+            RequestMessage::CloseSecureChannel(_r) => RequestProcessResult::Close,
 
-            SupportedMessage::CreateSessionRequest(request) => {
+            RequestMessage::CreateSession(request) => {
                 let mut mgr = trace_write_lock!(self.session_manager);
                 let res = mgr.create_session(&mut self.channel, &self.certificate_store, &request);
                 drop(mgr);
                 self.process_service_result(res, request.request_header.request_handle, id)
             }
 
-            SupportedMessage::ActivateSessionRequest(request) => {
+            RequestMessage::ActivateSession(request) => {
                 let res =
                     activate_session(&self.session_manager, &mut self.channel, &request).await;
                 self.process_service_result(res, request.request_header.request_handle, id)
             }
 
-            SupportedMessage::CloseSessionRequest(request) => {
+            RequestMessage::CloseSession(request) => {
                 let res = close_session(
                     &self.session_manager,
                     &mut self.channel,
@@ -263,7 +262,7 @@ impl SessionController {
                 .await;
                 self.process_service_result(res, request.request_header.request_handle, id)
             }
-            SupportedMessage::GetEndpointsRequest(request) => {
+            RequestMessage::GetEndpoints(request) => {
                 // TODO some of the arguments in the request are ignored
                 //  localeIds - list of locales to use for human readable strings (in the endpoint descriptions)
 
@@ -281,7 +280,7 @@ impl SessionController {
                     id,
                 )
             }
-            SupportedMessage::FindServersRequest(request) => {
+            RequestMessage::FindServers(request) => {
                 let desc = self.info.config.application_description();
                 let mut servers = vec![desc];
 
@@ -395,7 +394,7 @@ impl SessionController {
 
     fn process_service_result(
         &mut self,
-        res: Result<impl Into<SupportedMessage>, StatusCode>,
+        res: Result<impl Into<ResponseMessage>, StatusCode>,
         request_handle: u32,
         request_id: u32,
     ) -> RequestProcessResult {
@@ -415,10 +414,10 @@ impl SessionController {
     }
 
     fn validate_request(
-        message: &SupportedMessage,
+        message: &RequestMessage,
         session: Option<Arc<RwLock<Session>>>,
         channel: &SecureChannel,
-    ) -> Result<(u32, Arc<RwLock<Session>>, UserToken), SupportedMessage> {
+    ) -> Result<(u32, Arc<RwLock<Session>>, UserToken), ResponseMessage> {
         let header = message.request_header();
 
         let Some(session) = session else {
@@ -443,7 +442,7 @@ impl SessionController {
         security_header: &SecurityHeader,
         client_protocol_version: u32,
         request: &OpenSecureChannelRequest,
-    ) -> Result<SupportedMessage, StatusCode> {
+    ) -> Result<ResponseMessage, StatusCode> {
         let security_header = match security_header {
             SecurityHeader::Asymmetric(security_header) => security_header,
             _ => {

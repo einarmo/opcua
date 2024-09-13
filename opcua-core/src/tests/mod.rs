@@ -14,7 +14,7 @@ use opcua_types::{
     UAString,
 };
 
-use crate::{comms::secure_channel::SecureChannel, supported_message::SupportedMessage};
+use crate::{comms::secure_channel::SecureChannel, RequestMessage};
 
 pub fn serialize_test_and_return<T>(value: T) -> T
 where
@@ -117,7 +117,7 @@ fn make_open_secure_channel_response() -> OpenSecureChannelResponse {
     }
 }
 
-fn make_sample_message() -> SupportedMessage {
+fn make_sample_message() -> RequestMessage {
     GetEndpointsRequest {
         request_header: RequestHeader {
             authentication_token: NodeId::new(0, 99),

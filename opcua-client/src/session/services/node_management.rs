@@ -3,7 +3,7 @@ use crate::{
     Session,
 };
 
-use opcua_core::SupportedMessage;
+use opcua_core::ResponseMessage;
 use opcua_types::{
     AddNodesItem, AddNodesRequest, AddNodesResult, AddReferencesItem, AddReferencesRequest,
     DeleteNodesItem, DeleteNodesRequest, DeleteReferencesItem, DeleteReferencesRequest, StatusCode,
@@ -36,7 +36,7 @@ impl Session {
                 nodes_to_add: Some(nodes_to_add.to_vec()),
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::AddNodesResponse(response) = response {
+            if let ResponseMessage::AddNodes(response) = response {
                 Ok(response.results.unwrap())
             } else {
                 Err(process_unexpected_response(response))
@@ -70,7 +70,7 @@ impl Session {
                 references_to_add: Some(references_to_add.to_vec()),
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::AddReferencesResponse(response) = response {
+            if let ResponseMessage::AddReferences(response) = response {
                 process_service_result(&response.response_header)?;
                 Ok(response.results.unwrap())
             } else {
@@ -105,7 +105,7 @@ impl Session {
                 nodes_to_delete: Some(nodes_to_delete.to_vec()),
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::DeleteNodesResponse(response) = response {
+            if let ResponseMessage::DeleteNodes(response) = response {
                 Ok(response.results.unwrap())
             } else {
                 Err(process_unexpected_response(response))
@@ -142,7 +142,7 @@ impl Session {
                 references_to_delete: Some(references_to_delete.to_vec()),
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::DeleteReferencesResponse(response) = response {
+            if let ResponseMessage::DeleteReferences(response) = response {
                 Ok(response.results.unwrap())
             } else {
                 Err(process_unexpected_response(response))

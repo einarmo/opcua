@@ -14,7 +14,7 @@ use opcua_core::{
         tcp_codec::{Message, TcpCodec},
         tcp_types::{AcknowledgeMessage, ErrorMessage, HelloMessage},
     },
-    SupportedMessage,
+    RequestMessage, ResponseMessage,
 };
 
 use crate::info::ServerInfo;
@@ -57,7 +57,7 @@ pub(crate) struct TransportConfig {
 
 #[derive(Debug)]
 pub(crate) struct Request {
-    pub message: SupportedMessage,
+    pub message: RequestMessage,
     pub chunk_info: ChunkInfo,
     pub request_id: u32,
 }
@@ -127,7 +127,7 @@ impl TcpTransport {
     pub fn enqueue_message_for_send(
         &mut self,
         channel: &mut SecureChannel,
-        message: SupportedMessage,
+        message: ResponseMessage,
         request_id: u32,
     ) -> Result<(), StatusCode> {
         self.send_buffer.write(request_id, message, channel)?;

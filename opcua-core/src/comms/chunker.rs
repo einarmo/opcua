@@ -8,10 +8,10 @@ use std::io::Cursor;
 
 use crate::{
     comms::{
-        message_chunk::{MessageChunk, MessageChunkType, MessageIsFinalType},
+        message_chunk::{MessageChunk, MessageIsFinalType},
         secure_channel::SecureChannel,
     },
-    supported_message::SupportedMessage,
+    Message,
 };
 
 use log::{debug, error, trace};
@@ -25,19 +25,6 @@ use opcua_types::{
 pub struct Chunker;
 
 impl Chunker {
-    /// Tests what kind of chunk type is used for the supported message.
-    fn message_type(message: &SupportedMessage) -> MessageChunkType {
-        match message {
-            SupportedMessage::OpenSecureChannelRequest(_)
-            | SupportedMessage::OpenSecureChannelResponse(_) => MessageChunkType::OpenSecureChannel,
-            SupportedMessage::CloseSecureChannelRequest(_)
-            | SupportedMessage::CloseSecureChannelResponse(_) => {
-                MessageChunkType::CloseSecureChannel
-            }
-            _ => MessageChunkType::Message,
-        }
-    }
-
     /// Ensure all of the supplied chunks have a valid secure channel id, and sequence numbers
     /// greater than the input sequence number and the preceding chunk
     ///
@@ -115,7 +102,7 @@ impl Chunker {
         max_message_size: usize,
         max_chunk_size: usize,
         secure_channel: &SecureChannel,
-        supported_message: &SupportedMessage,
+        supported_message: &impl Message,
     ) -> std::result::Result<Vec<MessageChunk>, EncodingError> {
         let security_policy = secure_channel.security_policy();
         if security_policy == SecurityPolicy::Unknown {
@@ -144,7 +131,7 @@ impl Chunker {
             let node_id = supported_message.node_id();
             message_size += node_id.byte_len();
 
-            let message_type = Chunker::message_type(supported_message);
+            let message_type = supported_message.message_type();
             let mut stream = Cursor::new(vec![0u8; message_size]);
 
             trace!("Encoding node id {:?}", node_id);
@@ -209,11 +196,11 @@ impl Chunker {
 
     /// Decodes a series of chunks to create a message. The message must be of a `SupportedMessage`
     /// type otherwise an error will occur.
-    pub fn decode(
+    pub fn decode<T: Message>(
         chunks: &[MessageChunk],
         secure_channel: &SecureChannel,
         expected_node_id: Option<NodeId>,
-    ) -> std::result::Result<SupportedMessage, EncodingError> {
+    ) -> std::result::Result<T, EncodingError> {
         // Calculate the size of data held in all chunks
         let mut data_size: usize = 0;
         for (i, chunk) in chunks.iter().enumerate() {
@@ -259,15 +246,10 @@ impl Chunker {
         let object_id = Self::object_id_from_node_id(node_id, expected_node_id)?;
 
         // Now decode the payload using the node id.
-        match SupportedMessage::decode_by_object_id(&mut data, object_id, &decoding_options) {
+        match T::decode_by_object_id(&mut data, object_id, &decoding_options) {
             Ok(decoded_message) => {
-                if let SupportedMessage::Invalid(_) = decoded_message {
-                    debug!("Message {:?} is unsupported", object_id);
-                    Err(StatusCode::BadServiceUnsupported.into())
-                } else {
-                    // debug!("Returning decoded msg {:?}", decoded_message);
-                    Ok(decoded_message)
-                }
+                // debug!("Returning decoded msg {:?}", decoded_message);
+                Ok(decoded_message)
             }
             Err(err) => {
                 debug!("Cannot decode message {:?}, err = {:?}", object_id, err);

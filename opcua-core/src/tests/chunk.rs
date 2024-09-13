@@ -9,8 +9,8 @@ use opcua_types::{
 
 use crate::{
     comms::{chunker::*, message_chunk::*, secure_channel::*, tcp_types::MIN_CHUNK_SIZE},
-    supported_message::SupportedMessage,
     tests::*,
+    RequestMessage, ResponseMessage,
 };
 
 fn sample_secure_channel_request_data_security_none() -> MessageChunk {
@@ -81,7 +81,7 @@ fn set_chunk_request_id(
     old_request_id
 }
 
-fn make_large_read_response() -> SupportedMessage {
+fn make_large_read_response() -> ResponseMessage {
     let results = (0..10000).map(|i| DataValue::new_now(i as u32)).collect();
     ReadResponse {
         response_header: ResponseHeader::null(),
@@ -333,7 +333,7 @@ fn chunk_open_secure_channel() {
     trace!("Decoding original chunks");
     let request = Chunker::decode(&chunks, &secure_channel, None).unwrap();
     let request = match request {
-        SupportedMessage::OpenSecureChannelRequest(request) => request,
+        RequestMessage::OpenSecureChannel(request) => request,
         _ => {
             panic!("Not a OpenSecureChannelRequest");
         }
@@ -356,7 +356,7 @@ fn chunk_open_secure_channel() {
         0,
         0,
         &secure_channel,
-        &SupportedMessage::OpenSecureChannelRequest(request.clone()),
+        &RequestMessage::OpenSecureChannel(request.clone()),
     )
     .unwrap();
     assert_eq!(chunks.len(), 1);
@@ -364,7 +364,7 @@ fn chunk_open_secure_channel() {
     trace!("Decoding to compare the new version");
     let new_request = Chunker::decode(&chunks, &secure_channel, None).unwrap();
     let new_request = match new_request {
-        SupportedMessage::OpenSecureChannelRequest(new_request) => new_request,
+        RequestMessage::OpenSecureChannel(new_request) => new_request,
         _ => {
             panic!("Not a OpenSecureChannelRequest");
         }
@@ -396,14 +396,14 @@ fn open_secure_channel_response() {
     let chunk = MessageChunk::decode(&mut stream, &decoding_options).unwrap();
     let chunks = vec![chunk];
 
-    let decoded = Chunker::decode(&chunks, &secure_channel, None);
+    let decoded: Result<ResponseMessage, _> = Chunker::decode(&chunks, &secure_channel, None);
     if decoded.is_err() {
         panic!("Got error {:?}", decoded.unwrap_err());
     }
     let message = Chunker::decode(&chunks, &secure_channel, None).unwrap();
     //debug!("message = {:#?}", message);
     let response = match message {
-        SupportedMessage::OpenSecureChannelResponse(response) => response,
+        ResponseMessage::OpenSecureChannel(response) => response,
         _ => {
             panic!("Not a OpenSecureChannelResponse");
         }
@@ -444,7 +444,7 @@ fn open_secure_channel() {
         serialize_test_and_return(open_secure_channel_response.clone());
     assert_eq!(
         open_secure_channel_response,
-        new_open_secure_channel_response
+        new_open_secure_channel_response.into()
     );
 }
 

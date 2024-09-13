@@ -4,7 +4,7 @@ use std::time::Instant;
 
 use futures::future::Either;
 use log::{debug, error, info, trace};
-use opcua_core::{trace_read_lock, trace_write_lock};
+use opcua_core::{trace_read_lock, trace_write_lock, RequestMessage, ResponseMessage};
 use parking_lot::RwLock;
 
 use opcua_core::comms::buffer::SendBuffer;
@@ -13,7 +13,6 @@ use opcua_core::comms::{
     chunker::Chunker, message_chunk::MessageChunk, message_chunk_info::ChunkInfo,
     secure_channel::SecureChannel, tcp_codec::Message,
 };
-use opcua_core::supported_message::SupportedMessage;
 use opcua_types::{EncodingError, StatusCode};
 
 #[derive(Debug)]
@@ -23,7 +22,7 @@ struct MessageChunkWithChunkInfo {
 }
 
 pub(crate) struct MessageState {
-    callback: tokio::sync::oneshot::Sender<Result<SupportedMessage, StatusCode>>,
+    callback: tokio::sync::oneshot::Sender<Result<ResponseMessage, StatusCode>>,
     chunks: Vec<MessageChunkWithChunkInfo>,
     deadline: Instant,
 }
@@ -53,8 +52,8 @@ pub enum TransportPollResult {
 }
 
 pub(crate) struct OutgoingMessage {
-    pub request: SupportedMessage,
-    pub callback: Option<tokio::sync::oneshot::Sender<Result<SupportedMessage, StatusCode>>>,
+    pub request: RequestMessage,
+    pub callback: Option<tokio::sync::oneshot::Sender<Result<ResponseMessage, StatusCode>>>,
     pub deadline: Instant,
 }
 
@@ -79,7 +78,7 @@ impl TransportState {
     pub async fn wait_for_outgoing_message(
         &mut self,
         send_buffer: &mut SendBuffer,
-    ) -> Option<(SupportedMessage, u32)> {
+    ) -> Option<(RequestMessage, u32)> {
         loop {
             // Check for any messages that have timed out, and get the time until the next message
             // times out
@@ -234,7 +233,7 @@ impl TransportState {
     fn turn_received_chunks_into_message(
         &mut self,
         chunks: &[MessageChunk],
-    ) -> Result<SupportedMessage, EncodingError> {
+    ) -> Result<ResponseMessage, EncodingError> {
         // Validate that all chunks have incrementing sequence numbers and valid chunk types
         let secure_channel = trace_read_lock!(self.secure_channel);
         self.last_received_sequence_number = Chunker::validate_chunks(

@@ -9,8 +9,8 @@ use tokio::sync::mpsc::error::SendTimeoutError;
 use crate::{session::process_unexpected_response, transport::OutgoingMessage};
 use arc_swap::ArcSwap;
 use opcua_core::{
-    comms::secure_channel::SecureChannel, handle::AtomicHandle,
-    supported_message::SupportedMessage, sync::RwLock, trace_write_lock,
+    comms::secure_channel::SecureChannel, handle::AtomicHandle, sync::RwLock, trace_write_lock,
+    RequestMessage, ResponseMessage,
 };
 use opcua_crypto::SecurityPolicy;
 use opcua_types::{
@@ -38,17 +38,13 @@ pub struct SecureChannelState {
 }
 
 pub(super) struct Request {
-    payload: SupportedMessage,
+    payload: RequestMessage,
     sender: RequestSend,
     timeout: std::time::Duration,
 }
 
 impl Request {
-    pub fn new(
-        payload: impl Into<SupportedMessage>,
-        sender: RequestSend,
-        timeout: Duration,
-    ) -> Self {
+    pub fn new(payload: impl Into<RequestMessage>, sender: RequestSend, timeout: Duration) -> Self {
         Self {
             payload: payload.into(),
             sender,
@@ -70,7 +66,7 @@ impl Request {
         }
     }
 
-    pub async fn send(self) -> Result<SupportedMessage, StatusCode> {
+    pub async fn send(self) -> Result<ResponseMessage, StatusCode> {
         let (cb_send, cb_recv) = tokio::sync::oneshot::channel();
 
         let message = OutgoingMessage {
@@ -158,9 +154,9 @@ impl SecureChannelState {
 
     pub(super) fn end_issue_or_renew_secure_channel(
         &self,
-        response: SupportedMessage,
+        response: ResponseMessage,
     ) -> Result<(), StatusCode> {
-        if let SupportedMessage::OpenSecureChannelResponse(response) = response {
+        if let ResponseMessage::OpenSecureChannel(response) = response {
             // Extract the security token from the response.
             let mut security_token = response.security_token.clone();
 

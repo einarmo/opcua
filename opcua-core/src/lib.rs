@@ -73,10 +73,9 @@ pub mod constants {
 pub mod comms;
 pub mod config;
 pub mod handle;
-#[rustfmt::skip]
-pub mod supported_message;
 
-pub use supported_message::SupportedMessage;
+pub mod messages;
+pub use messages::{Message, MessageType, RequestMessage, ResponseMessage};
 
 /// Tracing macro for obtaining a lock on a `Mutex`. Sometimes deadlocks can happen in code,
 /// and if they do, this macro is useful for finding out where they happened.

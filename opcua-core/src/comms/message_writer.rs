@@ -9,7 +9,7 @@ use opcua_types::{status_code::StatusCode, BinaryEncoder, EncodingResult};
 
 use super::{chunker::Chunker, secure_channel::SecureChannel, tcp_types::AcknowledgeMessage};
 
-use crate::supported_message::SupportedMessage;
+use crate::Message;
 
 const DEFAULT_REQUEST_ID: u32 = 1000;
 const DEFAULT_SENT_SEQUENCE_NUMBER: u32 = 0;
@@ -53,7 +53,7 @@ impl MessageWriter {
     pub fn write(
         &mut self,
         request_id: u32,
-        message: SupportedMessage,
+        message: impl Message,
         secure_channel: &SecureChannel,
     ) -> Result<u32, StatusCode> {
         trace!("Writing request to buffer");
