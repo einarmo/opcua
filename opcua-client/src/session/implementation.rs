@@ -14,8 +14,8 @@ use crate::{
 };
 use opcua_core::{
     handle::AtomicHandle,
-    supported_message::SupportedMessage,
     sync::{Mutex, RwLock},
+    RequestMessage, ResponseMessage,
 };
 use opcua_crypto::CertificateStore;
 use opcua_types::{
@@ -131,8 +131,8 @@ impl Session {
     /// In order to set a different timeout, call `send` on the inner channel instead.
     pub(super) async fn send(
         &self,
-        request: impl Into<SupportedMessage>,
-    ) -> Result<SupportedMessage, StatusCode> {
+        request: impl Into<RequestMessage>,
+    ) -> Result<ResponseMessage, StatusCode> {
         self.channel.send(request, self.request_timeout).await
     }
 

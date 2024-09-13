@@ -12,7 +12,7 @@ use crate::{
     Session,
 };
 use log::{debug, log_enabled};
-use opcua_core::{trace_lock, trace_read_lock, SupportedMessage};
+use opcua_core::{trace_lock, trace_read_lock, ResponseMessage};
 use opcua_types::{
     CreateMonitoredItemsRequest, CreateSubscriptionRequest, DeleteMonitoredItemsRequest,
     DeleteSubscriptionsRequest, ModifyMonitoredItemsRequest, ModifySubscriptionRequest,
@@ -47,7 +47,7 @@ impl Session {
             priority,
         };
         let response = self.send(request).await?;
-        if let SupportedMessage::CreateSubscriptionResponse(response) = response {
+        if let ResponseMessage::CreateSubscription(response) = response {
             process_service_result(&response.response_header)?;
             let subscription = Subscription::new(
                 response.subscription_id,
@@ -214,7 +214,7 @@ impl Session {
                 priority,
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::ModifySubscriptionResponse(response) = response {
+            if let ResponseMessage::ModifySubscription(response) = response {
                 process_service_result(&response.response_header)?;
                 let mut subscription_state = trace_lock!(self.subscription_state);
                 subscription_state.modify_subscription(
@@ -276,7 +276,7 @@ impl Session {
                 subscription_ids: Some(subscription_ids.to_vec()),
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::SetPublishingModeResponse(response) = response {
+            if let ResponseMessage::SetPublishingMode(response) = response {
                 process_service_result(&response.response_header)?;
                 {
                     // Clear out all subscriptions, assuming the delete worked
@@ -334,7 +334,7 @@ impl Session {
             let response = self.send(request).await?;
             // TODO: Create a method where a user can register a subscription without creating it on the server
             // somehow. That's necessary if this method is going to be useable manually.
-            if let SupportedMessage::TransferSubscriptionsResponse(response) = response {
+            if let ResponseMessage::TransferSubscriptions(response) = response {
                 process_service_result(&response.response_header)?;
                 session_debug!(self, "transfer_subscriptions success");
                 Ok(response.results.unwrap_or_default())
@@ -408,7 +408,7 @@ impl Session {
                 subscription_ids: Some(subscription_ids.to_vec()),
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::DeleteSubscriptionsResponse(response) = response {
+            if let ResponseMessage::DeleteSubscriptions(response) = response {
                 process_service_result(&response.response_header)?;
                 {
                     // Clear out deleted subscriptions, assuming the delete worked
@@ -491,7 +491,7 @@ impl Session {
             };
             let response = self.send(request).await?;
 
-            if let SupportedMessage::CreateMonitoredItemsResponse(response) = response {
+            if let ResponseMessage::CreateMonitoredItems(response) = response {
                 process_service_result(&response.response_header)?;
                 if let Some(ref results) = response.results {
                     session_debug!(
@@ -588,7 +588,7 @@ impl Session {
                 items_to_modify: Some(items_to_modify.to_vec()),
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::ModifyMonitoredItemsResponse(response) = response {
+            if let ResponseMessage::ModifyMonitoredItems(response) = response {
                 process_service_result(&response.response_header)?;
                 if let Some(ref results) = response.results {
                     // Set the items in our internal state
@@ -661,7 +661,7 @@ impl Session {
                     monitoring_mode,
                 );
             }
-            if let SupportedMessage::SetMonitoringModeResponse(response) = response {
+            if let ResponseMessage::SetMonitoringMode(response) = response {
                 Ok(response.results.unwrap_or_default())
             } else {
                 session_error!(self, "set_monitoring_mode failed {:?}", response);
@@ -719,7 +719,7 @@ impl Session {
                 }
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::SetTriggeringResponse(response) = response {
+            if let ResponseMessage::SetTriggering(response) = response {
                 // Update client side state
                 let mut subscription_state = trace_lock!(self.subscription_state);
                 subscription_state.set_triggering(
@@ -785,7 +785,7 @@ impl Session {
                 monitored_item_ids: Some(items_to_delete.to_vec()),
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::DeleteMonitoredItemsResponse(response) = response {
+            if let ResponseMessage::DeleteMonitoredItems(response) = response {
                 process_service_result(&response.response_header)?;
                 if response.results.is_some() {
                     let mut subscription_state = trace_lock!(self.subscription_state);
@@ -841,7 +841,7 @@ impl Session {
         let response = self.channel.send(request, self.publish_timeout).await;
 
         let err_status = match response {
-            Ok(SupportedMessage::PublishResponse(r)) => {
+            Ok(ResponseMessage::Publish(r)) => {
                 session_debug!(self, "PublishResponse");
 
                 let decoding_options = {
@@ -902,7 +902,7 @@ impl Session {
 
         let response = self.channel.send(request, self.request_timeout).await?;
 
-        if let SupportedMessage::RepublishResponse(response) = response {
+        if let ResponseMessage::Republish(response) = response {
             process_service_result(&response.response_header)?;
             session_debug!(self, "republish, success");
             {

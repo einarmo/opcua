@@ -2,7 +2,7 @@ use crate::{
     session::{process_service_result, process_unexpected_response, session_debug, session_error},
     Session,
 };
-use opcua_core::SupportedMessage;
+use opcua_core::ResponseMessage;
 use opcua_types::{
     DataValue, DeleteAtTimeDetails, DeleteEventDetails, DeleteRawModifiedDetails, ExtensionObject,
     HistoryReadRequest, HistoryReadResult, HistoryReadValueId, HistoryUpdateRequest,
@@ -112,7 +112,7 @@ impl Session {
                 nodes_to_read: Some(nodes_to_read.to_vec()),
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::ReadResponse(response) = response {
+            if let ResponseMessage::Read(response) = response {
                 session_debug!(self, "read(), success");
                 process_service_result(&response.response_header)?;
                 Ok(response.results.unwrap_or_default())
@@ -171,7 +171,7 @@ impl Session {
             nodes_to_read
         );
         let response = self.send(request).await?;
-        if let SupportedMessage::HistoryReadResponse(response) = response {
+        if let ResponseMessage::HistoryRead(response) = response {
             session_debug!(self, "history_read(), success");
             process_service_result(&response.response_header)?;
             Ok(response.results.unwrap_or_default())
@@ -209,7 +209,7 @@ impl Session {
                 nodes_to_write: Some(nodes_to_write.to_vec()),
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::WriteResponse(response) = response {
+            if let ResponseMessage::Write(response) = response {
                 session_debug!(self, "write(), success");
                 process_service_result(&response.response_header)?;
                 Ok(response.results.unwrap_or_default())
@@ -264,7 +264,7 @@ impl Session {
                 history_update_details: Some(history_update_details.to_vec()),
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::HistoryUpdateResponse(response) = response {
+            if let ResponseMessage::HistoryUpdate(response) = response {
                 session_debug!(self, "history_update(), success");
                 process_service_result(&response.response_header)?;
                 Ok(response.results.unwrap_or_default())

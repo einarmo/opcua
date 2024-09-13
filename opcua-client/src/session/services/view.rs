@@ -2,7 +2,7 @@ use crate::{
     session::{process_service_result, process_unexpected_response, session_debug, session_error},
     Session,
 };
-use opcua_core::SupportedMessage;
+use opcua_core::ResponseMessage;
 use opcua_types::{
     BrowseDescription, BrowseNextRequest, BrowsePath, BrowsePathResult, BrowseRequest,
     BrowseResult, ByteString, DateTime, NodeId, RegisterNodesRequest, StatusCode,
@@ -45,7 +45,7 @@ impl Session {
                 nodes_to_browse: Some(nodes_to_browse.to_vec()),
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::BrowseResponse(response) = response {
+            if let ResponseMessage::Browse(response) = response {
                 session_debug!(self, "browse, success");
                 process_service_result(&response.response_header)?;
                 Ok(response.results.unwrap_or_default())
@@ -86,7 +86,7 @@ impl Session {
                 release_continuation_points,
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::BrowseNextResponse(response) = response {
+            if let ResponseMessage::BrowseNext(response) = response {
                 session_debug!(self, "browse_next, success");
                 process_service_result(&response.response_header)?;
                 Ok(response.results.unwrap_or_default())
@@ -131,7 +131,7 @@ impl Session {
                 browse_paths: Some(browse_paths.to_vec()),
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::TranslateBrowsePathsToNodeIdsResponse(response) = response {
+            if let ResponseMessage::TranslateBrowsePathsToNodeIds(response) = response {
                 session_debug!(self, "translate_browse_paths_to_node_ids, success");
                 process_service_result(&response.response_header)?;
                 Ok(response.results.unwrap_or_default())
@@ -178,7 +178,7 @@ impl Session {
                 nodes_to_register: Some(nodes_to_register.to_vec()),
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::RegisterNodesResponse(response) = response {
+            if let ResponseMessage::RegisterNodes(response) = response {
                 session_debug!(self, "register_nodes, success");
                 process_service_result(&response.response_header)?;
                 Ok(response.registered_node_ids.unwrap())
@@ -217,7 +217,7 @@ impl Session {
                 nodes_to_unregister: Some(nodes_to_unregister.to_vec()),
             };
             let response = self.send(request).await?;
-            if let SupportedMessage::UnregisterNodesResponse(response) = response {
+            if let ResponseMessage::UnregisterNodes(response) = response {
                 session_debug!(self, "unregister_nodes, success");
                 process_service_result(&response.response_header)?;
                 Ok(())

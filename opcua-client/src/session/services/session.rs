@@ -3,8 +3,7 @@ use std::sync::Arc;
 use log::error;
 use opcua_core::{
     comms::{secure_channel::SecureChannel, url::hostname_from_url},
-    supported_message::SupportedMessage,
-    trace_read_lock, trace_write_lock,
+    trace_read_lock, trace_write_lock, ResponseMessage,
 };
 use opcua_crypto::{
     self, certificate_store::CertificateStore, user_identity::make_user_name_identity_token,
@@ -65,7 +64,7 @@ impl Session {
 
         let response = self.send(request).await?;
 
-        if let SupportedMessage::CreateSessionResponse(response) = response {
+        if let ResponseMessage::CreateSession(response) = response {
             process_service_result(&response.response_header)?;
 
             let security_policy = self.channel.security_policy();
@@ -190,7 +189,7 @@ impl Session {
 
         let response = self.send(request).await?;
 
-        if let SupportedMessage::ActivateSessionResponse(response) = response {
+        if let ResponseMessage::ActivateSession(response) = response {
             // trace!("ActivateSessionResponse = {:#?}", response);
             process_service_result(&response.response_header)?;
             Ok(())
@@ -335,7 +334,7 @@ impl Session {
             request_header: self.make_request_header(),
         };
         let response = self.send(request).await?;
-        if let SupportedMessage::CloseSessionResponse(_) = response {
+        if let ResponseMessage::CloseSession(_) = response {
             Ok(())
         } else {
             error!("close_session failed {:?}", response);
@@ -362,7 +361,7 @@ impl Session {
             request_handle,
         };
         let response = self.send(request).await?;
-        if let SupportedMessage::CancelResponse(response) = response {
+        if let ResponseMessage::Cancel(response) = response {
             process_service_result(&response.response_header)?;
             Ok(response.cancel_count)
         } else {

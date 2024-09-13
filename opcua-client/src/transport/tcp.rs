@@ -3,7 +3,8 @@ use std::sync::Arc;
 use super::core::{OutgoingMessage, TransportPollResult, TransportState};
 use futures::StreamExt;
 use log::{debug, error};
-use opcua_core::supported_message::{AcknowledgeMessage, SupportedMessage};
+use opcua_core::comms::tcp_types::AcknowledgeMessage;
+use opcua_core::RequestMessage;
 use opcua_core::{
     comms::{
         buffer::SendBuffer,
@@ -241,7 +242,7 @@ impl TcpTransport {
                         return TransportPollResult::Closed(StatusCode::Good);
                     };
                     let close_connection =
-                        matches!(outgoing, SupportedMessage::CloseSecureChannelRequest(_));
+                        matches!(outgoing, RequestMessage::CloseSecureChannel(_));
                     if close_connection {
                         self.should_close = true;
                         debug!("Writer is about to send a CloseSecureChannelRequest which means it should close in a moment");

@@ -7,10 +7,11 @@ use opcua_crypto::SecurityPolicy;
 use crate::{
     comms::{chunker::*, secure_channel::*},
     tests::*,
+    Message,
 };
 
 fn test_symmetric_encrypt_decrypt(
-    message: SupportedMessage,
+    message: impl Message + PartialEq + Debug,
     security_mode: MessageSecurityMode,
     security_policy: SecurityPolicy,
 ) {
@@ -45,7 +46,7 @@ fn test_symmetric_encrypt_decrypt(
 }
 
 fn test_asymmetric_encrypt_decrypt(
-    message: SupportedMessage,
+    message: impl Message + PartialEq + Debug,
     security_mode: MessageSecurityMode,
     security_policy: SecurityPolicy,
 ) {
@@ -107,10 +108,13 @@ fn test_asymmetric_encrypt_decrypt(
 #[test]
 #[cfg(not(coverage))]
 fn asymmetric_sign_and_encrypt_message_chunk_basic128rsa15() {
+    use crate::ResponseMessage;
+
     let _ = Test::setup();
     error!("asymmetric_sign_and_encrypt_message_chunk_basic128rsa15");
+    let m: ResponseMessage = make_open_secure_channel_response().into();
     test_asymmetric_encrypt_decrypt(
-        make_open_secure_channel_response().into(),
+        m,
         MessageSecurityMode::SignAndEncrypt,
         SecurityPolicy::Basic128Rsa15,
     );
@@ -119,10 +123,13 @@ fn asymmetric_sign_and_encrypt_message_chunk_basic128rsa15() {
 #[test]
 #[cfg(not(coverage))]
 fn asymmetric_sign_and_encrypt_message_chunk_basic256() {
+    use crate::ResponseMessage;
+
     let _ = Test::setup();
     error!("asymmetric_sign_and_encrypt_message_chunk_basic256");
+    let m: ResponseMessage = make_open_secure_channel_response().into();
     test_asymmetric_encrypt_decrypt(
-        make_open_secure_channel_response().into(),
+        m,
         MessageSecurityMode::SignAndEncrypt,
         SecurityPolicy::Basic256,
     );
@@ -131,10 +138,13 @@ fn asymmetric_sign_and_encrypt_message_chunk_basic256() {
 #[test]
 #[cfg(not(coverage))]
 fn asymmetric_sign_and_encrypt_message_chunk_basic256sha256() {
+    use crate::ResponseMessage;
+
     let _ = Test::setup();
     error!("asymmetric_sign_and_encrypt_message_chunk_basic256sha256");
+    let m: ResponseMessage = make_open_secure_channel_response().into();
     test_asymmetric_encrypt_decrypt(
-        make_open_secure_channel_response().into(),
+        m,
         MessageSecurityMode::SignAndEncrypt,
         SecurityPolicy::Basic256Sha256,
     );

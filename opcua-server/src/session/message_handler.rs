@@ -2,7 +2,7 @@ use std::{sync::Arc, time::Instant};
 
 use chrono::Utc;
 use log::{debug, warn};
-use opcua_core::SupportedMessage;
+use opcua_core::{Message, RequestMessage, ResponseMessage};
 use parking_lot::RwLock;
 use tokio::task::JoinHandle;
 
@@ -45,7 +45,7 @@ pub(crate) enum HandleMessageResult {
 pub(crate) struct PendingPublishRequest {
     request_id: u32,
     request_handle: u32,
-    recv: tokio::sync::oneshot::Receiver<SupportedMessage>,
+    recv: tokio::sync::oneshot::Receiver<ResponseMessage>,
 }
 
 impl PendingPublishRequest {
@@ -181,7 +181,7 @@ impl MessageHandler {
     /// Once this returns the request will either be resolved or will have been started.
     pub fn handle_message(
         &mut self,
-        message: SupportedMessage,
+        message: RequestMessage,
         session_id: u32,
         session: Arc<RwLock<Session>>,
         token: UserToken,
@@ -196,51 +196,51 @@ impl MessageHandler {
         };
         // Session management requests are not handled here.
         match message {
-            SupportedMessage::ReadRequest(request) => {
+            RequestMessage::Read(request) => {
                 async_service_call!(services::read, self, request, data)
             }
 
-            SupportedMessage::BrowseRequest(request) => {
+            RequestMessage::Browse(request) => {
                 async_service_call!(services::browse, self, request, data)
             }
 
-            SupportedMessage::BrowseNextRequest(request) => {
+            RequestMessage::BrowseNext(request) => {
                 async_service_call!(services::browse_next, self, request, data)
             }
 
-            SupportedMessage::TranslateBrowsePathsToNodeIdsRequest(request) => {
+            RequestMessage::TranslateBrowsePathsToNodeIds(request) => {
                 async_service_call!(services::translate_browse_paths, self, request, data)
             }
 
-            SupportedMessage::RegisterNodesRequest(request) => {
+            RequestMessage::RegisterNodes(request) => {
                 async_service_call!(services::register_nodes, self, request, data)
             }
 
-            SupportedMessage::UnregisterNodesRequest(request) => {
+            RequestMessage::UnregisterNodes(request) => {
                 async_service_call!(services::unregister_nodes, self, request, data)
             }
 
-            SupportedMessage::CreateMonitoredItemsRequest(request) => {
+            RequestMessage::CreateMonitoredItems(request) => {
                 async_service_call!(services::create_monitored_items, self, request, data)
             }
 
-            SupportedMessage::ModifyMonitoredItemsRequest(request) => {
+            RequestMessage::ModifyMonitoredItems(request) => {
                 async_service_call!(services::modify_monitored_items, self, request, data)
             }
 
-            SupportedMessage::SetMonitoringModeRequest(request) => {
+            RequestMessage::SetMonitoringMode(request) => {
                 async_service_call!(services::set_monitoring_mode, self, request, data)
             }
 
-            SupportedMessage::DeleteMonitoredItemsRequest(request) => {
+            RequestMessage::DeleteMonitoredItems(request) => {
                 async_service_call!(services::delete_monitored_items, self, request, data)
             }
 
-            SupportedMessage::SetTriggeringRequest(request) => self.set_triggering(request, data),
+            RequestMessage::SetTriggering(request) => self.set_triggering(request, data),
 
-            SupportedMessage::PublishRequest(request) => self.publish(request, data),
+            RequestMessage::Publish(request) => self.publish(request, data),
 
-            SupportedMessage::RepublishRequest(request) => {
+            RequestMessage::Republish(request) => {
                 HandleMessageResult::SyncMessage(Response::from_result(
                     self.subscriptions.republish(data.session_id, &request),
                     data.request_handle,
@@ -248,7 +248,7 @@ impl MessageHandler {
                 ))
             }
 
-            SupportedMessage::CreateSubscriptionRequest(request) => {
+            RequestMessage::CreateSubscription(request) => {
                 HandleMessageResult::SyncMessage(Response::from_result(
                     self.subscriptions.create_subscription(
                         data.session_id,
@@ -261,7 +261,7 @@ impl MessageHandler {
                 ))
             }
 
-            SupportedMessage::ModifySubscriptionRequest(request) => {
+            RequestMessage::ModifySubscription(request) => {
                 HandleMessageResult::SyncMessage(Response::from_result(
                     self.subscriptions
                         .modify_subscription(data.session_id, &request, &self.info),
@@ -270,7 +270,7 @@ impl MessageHandler {
                 ))
             }
 
-            SupportedMessage::SetPublishingModeRequest(request) => {
+            RequestMessage::SetPublishingMode(request) => {
                 HandleMessageResult::SyncMessage(Response::from_result(
                     self.subscriptions
                         .set_publishing_mode(data.session_id, &request),
@@ -279,7 +279,7 @@ impl MessageHandler {
                 ))
             }
 
-            SupportedMessage::TransferSubscriptionsRequest(request) => {
+            RequestMessage::TransferSubscriptions(request) => {
                 HandleMessageResult::SyncMessage(Response {
                     message: self
                         .subscriptions
@@ -289,47 +289,47 @@ impl MessageHandler {
                 })
             }
 
-            SupportedMessage::DeleteSubscriptionsRequest(request) => {
+            RequestMessage::DeleteSubscriptions(request) => {
                 async_service_call!(services::delete_subscriptions, self, request, data)
             }
 
-            SupportedMessage::HistoryReadRequest(request) => {
+            RequestMessage::HistoryRead(request) => {
                 async_service_call!(services::history_read, self, request, data)
             }
 
-            SupportedMessage::HistoryUpdateRequest(request) => {
+            RequestMessage::HistoryUpdate(request) => {
                 async_service_call!(services::history_update, self, request, data)
             }
 
-            SupportedMessage::WriteRequest(request) => {
+            RequestMessage::Write(request) => {
                 async_service_call!(services::write, self, request, data)
             }
 
-            SupportedMessage::QueryFirstRequest(request) => {
+            RequestMessage::QueryFirst(request) => {
                 async_service_call!(services::query_first, self, request, data)
             }
 
-            SupportedMessage::QueryNextRequest(request) => {
+            RequestMessage::QueryNext(request) => {
                 async_service_call!(services::query_next, self, request, data)
             }
 
-            SupportedMessage::CallRequest(request) => {
+            RequestMessage::Call(request) => {
                 async_service_call!(services::call, self, request, data)
             }
 
-            SupportedMessage::AddNodesRequest(request) => {
+            RequestMessage::AddNodes(request) => {
                 async_service_call!(services::add_nodes, self, request, data)
             }
 
-            SupportedMessage::AddReferencesRequest(request) => {
+            RequestMessage::AddReferences(request) => {
                 async_service_call!(services::add_references, self, request, data)
             }
 
-            SupportedMessage::DeleteNodesRequest(request) => {
+            RequestMessage::DeleteNodes(request) => {
                 async_service_call!(services::delete_nodes, self, request, data)
             }
 
-            SupportedMessage::DeleteReferencesRequest(request) => {
+            RequestMessage::DeleteReferences(request) => {
                 async_service_call!(services::delete_references, self, request, data)
             }
 

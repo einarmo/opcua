@@ -15,8 +15,8 @@ use opcua_core::{
         url_matches_except_host, url_with_replaced_hostname,
     },
     config::Config,
-    supported_message::SupportedMessage,
     sync::RwLock,
+    ResponseMessage,
 };
 use opcua_crypto::{CertificateStore, SecurityPolicy};
 use opcua_types::{
@@ -466,7 +466,7 @@ impl Client {
         };
         // Send the message and wait for a response.
         let response = channel.send(request, self.config.request_timeout).await?;
-        if let SupportedMessage::GetEndpointsResponse(response) = response {
+        if let ResponseMessage::GetEndpoints(response) = response {
             process_service_result(&response.response_header)?;
             match response.endpoints {
                 None => Ok(Vec::new()),
@@ -579,7 +579,7 @@ impl Client {
         };
 
         let response = channel.send(request, self.config.request_timeout).await?;
-        if let SupportedMessage::FindServersResponse(response) = response {
+        if let ResponseMessage::FindServers(response) = response {
             process_service_result(&response.response_header)?;
             Ok(response.servers.unwrap_or_default())
         } else {
@@ -710,7 +710,7 @@ impl Client {
             server,
         };
         let response = channel.send(request, self.config.request_timeout).await?;
-        if let SupportedMessage::RegisterServerResponse(response) = response {
+        if let ResponseMessage::RegisterServer(response) = response {
             process_service_result(&response.response_header)?;
             Ok(())
         } else {

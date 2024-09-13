@@ -3,7 +3,7 @@ use crate::{
     Session,
 };
 use log::error;
-use opcua_core::SupportedMessage;
+use opcua_core::ResponseMessage;
 use opcua_types::{
     CallMethodRequest, CallMethodResult, CallRequest, MethodId, NodeId, ObjectId, StatusCode,
     Variant,
@@ -39,7 +39,7 @@ impl Session {
             methods_to_call: Some(methods),
         };
         let response = self.send(request).await?;
-        if let SupportedMessage::CallResponse(response) = response {
+        if let ResponseMessage::Call(response) = response {
             if let Some(results) = response.results {
                 if results.len() != cnt {
                     session_error!(
