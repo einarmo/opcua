@@ -76,8 +76,11 @@ pub struct Server {
 
 impl Server {
     pub(crate) fn new_from_builder(builder: ServerBuilder) -> Result<(Self, ServerHandle), String> {
-        if !builder.config.is_valid() {
-            return Err("Configuration is invalid".to_owned());
+        if let Err(e) = builder.config.validate() {
+            return Err(format!(
+                "Builder configuration is invalid: {}",
+                e.join(", ")
+            ));
         }
 
         let mut config = builder.config;

@@ -1,5 +1,6 @@
 use std::{path::PathBuf, time::Duration};
 
+use log::error;
 use opcua_core::config::{Config, ConfigError};
 
 use super::{Client, ClientConfig, ClientEndpoint, ClientUserToken, ANONYMOUS_USER_TOKEN_ID};
@@ -27,10 +28,13 @@ impl ClientBuilder {
     ///
     /// [`Client`]: client/struct.Client.html
     pub fn client(self) -> Option<Client> {
-        if self.is_valid() {
-            Some(Client::new(self.config))
-        } else {
+        if let Err(e) = self.config.validate() {
+            for err in e {
+                error!("{err}");
+            }
             None
+        } else {
+            Some(Client::new(self.config))
         }
     }
 
@@ -43,7 +47,7 @@ impl ClientBuilder {
 
     /// Tests if the builder is in a valid state to be able to yield a `Client`.
     pub fn is_valid(&self) -> bool {
-        self.config.is_valid()
+        self.config.validate().is_ok()
     }
 
     /// Sets the application name.

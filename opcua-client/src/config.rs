@@ -12,7 +12,7 @@ use std::{
     time::Duration,
 };
 
-use log::{error, warn};
+use log::warn;
 use serde::{Deserialize, Serialize};
 
 use opcua_core::config::Config;
@@ -66,35 +66,35 @@ impl ClientUserToken {
 
     /// Test if the token, i.e. that it has a name, and either a password OR a cert path and key path.
     /// The paths are not validated.
-    pub fn is_valid(&self) -> bool {
-        let mut valid = true;
+    pub fn validate(&self) -> Result<(), Vec<String>> {
+        let mut errors = Vec::new();
         if self.user.is_empty() {
-            error!("User token has an empty name.");
-            valid = false;
+            errors.push("User token has an empty name.".to_owned());
         }
         // A token must properly represent one kind of token or it is not valid
         if self.password.is_some() {
             if self.cert_path.is_some() || self.private_key_path.is_some() {
-                error!(
+                errors.push(format!(
                     "User token {} holds a password and certificate info - it cannot be both.",
                     self.user
-                );
-                valid = false;
+                ));
             }
         } else if self.cert_path.is_none() && self.private_key_path.is_none() {
-            error!(
+            errors.push(format!(
                 "User token {} fails to provide a password or certificate info.",
                 self.user
-            );
-            valid = false;
+            ));
         } else if self.cert_path.is_none() || self.private_key_path.is_none() {
-            error!(
+            errors.push(format!(
                 "User token {} fails to provide both a certificate path and a private key path.",
                 self.user
-            );
-            valid = false;
+            ));
         }
-        valid
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
     }
 }
 
@@ -276,31 +276,27 @@ pub struct ClientConfig {
 
 impl Config for ClientConfig {
     /// Test if the config is valid, which requires at the least that
-    fn is_valid(&self) -> bool {
-        let mut valid = true;
+    fn validate(&self) -> Result<(), Vec<String>> {
+        let mut errors = Vec::new();
 
         if self.application_name.is_empty() {
-            error!("Application name is empty");
-            valid = false;
+            errors.push("Application name is empty".to_owned());
         }
         if self.application_uri.is_empty() {
-            error!("Application uri is empty");
-            valid = false;
+            errors.push("Application uri is empty".to_owned());
         }
         if self.user_tokens.contains_key(ANONYMOUS_USER_TOKEN_ID) {
-            error!(
+            errors.push(format!(
                 "User tokens contains the reserved \"{}\" id",
                 ANONYMOUS_USER_TOKEN_ID
-            );
-            valid = false;
+            ));
         }
         if self.user_tokens.contains_key("") {
-            error!("User tokens contains an endpoint with an empty id");
-            valid = false;
+            errors.push("User tokens contains an endpoint with an empty id".to_owned());
         }
-        self.user_tokens.iter().for_each(|(_, token)| {
-            if !token.is_valid() {
-                valid = false;
+        self.user_tokens.iter().for_each(|(k, token)| {
+            if let Err(e) = token.validate() {
+                errors.push(format!("Token {k} failed to validate: {}", e.join(", ")))
             }
         });
         if self.endpoints.is_empty() {
@@ -308,17 +304,15 @@ impl Config for ClientConfig {
         } else {
             // Check for invalid ids in endpoints
             if self.endpoints.contains_key("") {
-                error!("Endpoints contains an endpoint with an empty id");
-                valid = false;
+                errors.push("Endpoints contains an endpoint with an empty id".to_owned());
             }
             if !self.default_endpoint.is_empty()
                 && !self.endpoints.contains_key(&self.default_endpoint)
             {
-                error!(
+                errors.push(format!(
                     "Default endpoint id {} does not exist in list of endpoints",
                     self.default_endpoint
-                );
-                valid = false;
+                ));
             }
             // Check for invalid security policy and modes in endpoints
             self.endpoints.iter().for_each(|(id, e)| {
@@ -327,26 +321,27 @@ impl Config for ClientConfig {
                     if MessageSecurityMode::Invalid
                         == MessageSecurityMode::from(e.security_mode.as_ref())
                     {
-                        error!(
+                        errors.push(format!(
                             "Endpoint {} security mode {} is invalid",
                             id, e.security_mode
-                        );
-                        valid = false;
+                        ));
                     }
                 } else {
-                    error!(
+                    errors.push(format!(
                         "Endpoint {} security policy {} is invalid",
                         id, e.security_policy
-                    );
-                    valid = false;
+                    ));
                 }
             });
         }
         if self.session_retry_limit < 0 && self.session_retry_limit != -1 {
-            error!("Session retry limit of {} is invalid - must be -1 (infinite), 0 (never) or a positive value", self.session_retry_limit);
-            valid = false;
+            errors.push(format!("Session retry limit of {} is invalid - must be -1 (infinite), 0 (never) or a positive value", self.session_retry_limit));
         }
-        valid
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
     }
 
     fn application_name(&self) -> UAString {
@@ -585,7 +580,7 @@ mod tests {
         let saved = config.save(&path);
         println!("Saved = {:?}", saved);
         assert!(saved.is_ok());
-        assert!(config.is_valid());
+        config.validate().unwrap();
     }
 
     #[test]
@@ -617,7 +612,10 @@ mod tests {
                 user_token_id: ANONYMOUS_USER_TOKEN_ID.to_string(),
             },
         );
-        assert!(!config.is_valid());
+        assert_eq!(
+            config.validate().unwrap_err().join(", "),
+            "Endpoint sample_none security policy http://blah is invalid"
+        );
     }
 
     #[test]
@@ -634,7 +632,10 @@ mod tests {
                 user_token_id: ANONYMOUS_USER_TOKEN_ID.to_string(),
             },
         );
-        assert!(!config.is_valid());
+        assert_eq!(
+            config.validate().unwrap_err().join(", "),
+            "Endpoint sample_none security mode SingAndEncrypt is invalid"
+        );
     }
 
     #[test]
@@ -651,6 +652,9 @@ mod tests {
                 private_key_path: None,
             },
         );
-        assert!(!config.is_valid());
+        assert_eq!(
+            config.validate().unwrap_err().join(", "),
+            "User tokens contains the reserved \"ANONYMOUS\" id, Token ANONYMOUS failed to validate: User token has an empty name."
+        );
     }
 }
