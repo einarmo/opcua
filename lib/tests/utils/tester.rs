@@ -206,6 +206,7 @@ pub fn default_server() -> ServerBuilder {
     let limits = builder.limits_mut();
     limits.max_message_size = 1024 * 1024 * 64;
     limits.max_array_length = 100_000;
+    limits.max_chunk_count = 64;
     limits.subscriptions.max_queued_notifications = 200;
 
     builder
@@ -220,7 +221,8 @@ pub fn default_client(test_id: u16, quick_timeout: bool) -> ClientBuilder {
         .trust_server_certs(true)
         .session_retry_initial(Duration::from_millis(200))
         .max_array_length(100_000)
-        .max_message_size(1024 * 1024 * 64);
+        .max_message_size(1024 * 1024 * 64)
+        .max_chunk_count(64);
     let client = if quick_timeout {
         client.session_retry_limit(1)
     } else {

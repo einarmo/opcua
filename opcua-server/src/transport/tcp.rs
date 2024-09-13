@@ -39,6 +39,7 @@ pub(crate) struct TcpTransport {
     /// Last decoded sequence number
     last_received_sequence_number: u32,
     info: Arc<ServerInfo>,
+    receive_buffer_size: usize,
 }
 
 enum TransportState {
@@ -50,6 +51,7 @@ enum TransportState {
 #[derive(Debug, Clone)]
 pub(crate) struct TransportConfig {
     pub send_buffer_size: usize,
+    pub receive_buffer_size: usize,
     pub max_message_size: usize,
     pub max_chunk_count: usize,
     pub hello_timeout: Duration,
@@ -107,6 +109,7 @@ impl TcpTransport {
             last_received_sequence_number: 0,
             client_protocol_version: 0,
             info,
+            receive_buffer_size: config.receive_buffer_size,
         }
     }
 
@@ -163,7 +166,7 @@ impl TcpTransport {
         // Send acknowledge
         let acknowledge = AcknowledgeMessage::new(
             server_protocol_version,
-            hello.send_buffer_size,
+            (self.receive_buffer_size as u32).min(hello.send_buffer_size),
             (self.send_buffer.send_buffer_size as u32).min(hello.receive_buffer_size),
             min_zero_infinite(
                 decoding_options.max_message_size as u32,
@@ -175,10 +178,11 @@ impl TcpTransport {
             ),
         );
         self.send_buffer.revise(
-            acknowledge.receive_buffer_size as usize,
+            acknowledge.send_buffer_size as usize,
             acknowledge.max_message_size as usize,
             acknowledge.max_chunk_count as usize,
         );
+
         self.send_buffer.write_ack(acknowledge);
 
         self.state = TransportState::Running;

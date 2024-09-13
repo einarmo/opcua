@@ -40,6 +40,9 @@ pub(super) struct TransportState {
     max_pending_incoming: usize,
     /// Last decoded sequence number
     last_received_sequence_number: u32,
+    /// Max size of incoming chunks
+    #[allow(unused)]
+    receive_buffer_size: usize,
 }
 
 #[derive(Debug)]
@@ -63,6 +66,7 @@ impl TransportState {
         outgoing_recv: tokio::sync::mpsc::Receiver<OutgoingMessage>,
         max_pending_incoming: usize,
         max_inflight: usize,
+        receive_buffer_size: usize,
     ) -> Self {
         Self {
             secure_channel,
@@ -71,6 +75,7 @@ impl TransportState {
             max_inflight,
             max_pending_incoming,
             last_received_sequence_number: 0,
+            receive_buffer_size,
         }
     }
 

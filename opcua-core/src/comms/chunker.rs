@@ -4,7 +4,7 @@
 
 //! Contains code for turning messages into chunks and chunks into messages.
 
-use std::io::Cursor;
+use std::io::{Cursor, Read, Write};
 
 use crate::{
     comms::{
@@ -20,6 +20,83 @@ use opcua_types::{
     encoding::BinaryEncoder, node_id::NodeId, node_ids::ObjectId, status_code::StatusCode,
     EncodingError,
 };
+
+/// Read implementation for a sequence of message chunks.
+/// This lets us avoid allocating a buffer for the message.
+///
+/// All this type does is `Read` to the end of each chunk, then step into the next
+/// chunk once the previous chunk is exhausted.
+struct ReceiveStream<'a, T> {
+    buffer: &'a [u8],
+    channel: &'a SecureChannel,
+    items: T,
+    num_items: usize,
+    pos: usize,
+    index: usize,
+}
+impl<'a, T: Iterator<Item = &'a MessageChunk>> ReceiveStream<'a, T> {
+    pub fn new(
+        channel: &'a SecureChannel,
+        mut items: T,
+        num_items: usize,
+    ) -> Result<Self, StatusCode> {
+        let Some(chunk) = items.next() else {
+            error!("Stream contained no chunks");
+            return Err(StatusCode::BadUnexpectedError);
+        };
+
+        let chunk_info = chunk.chunk_info(channel)?;
+        let expected_is_final = if num_items == 1 {
+            MessageIsFinalType::Final
+        } else {
+            MessageIsFinalType::Intermediate
+        };
+        if chunk_info.message_header.is_final != expected_is_final {
+            return Err(StatusCode::BadDecodingError);
+        }
+
+        let body_start = chunk_info.body_offset;
+        let body_end = body_start + chunk_info.body_length;
+        let body_data = &chunk.data[body_start..body_end];
+        Ok(Self {
+            buffer: body_data,
+            channel,
+            items,
+            pos: 0,
+            num_items,
+            index: 0,
+        })
+    }
+}
+
+impl<'a, T: Iterator<Item = &'a MessageChunk>> Read for ReceiveStream<'a, T> {
+    fn read(&mut self, mut buf: &mut [u8]) -> std::io::Result<usize> {
+        if self.buffer.len() == self.pos {
+            let Some(chunk) = self.items.next() else {
+                return Ok(0);
+            };
+            self.index += 1;
+            let chunk_info = chunk.chunk_info(self.channel)?;
+            let expected_is_final = if self.index == self.num_items - 1 {
+                MessageIsFinalType::Final
+            } else {
+                MessageIsFinalType::Intermediate
+            };
+            if chunk_info.message_header.is_final != expected_is_final {
+                return Err(StatusCode::BadDecodingError.into());
+            }
+
+            let body_start = chunk_info.body_offset;
+            let body_end = body_start + chunk_info.body_length;
+            let body_data = &chunk.data[body_start..body_end];
+            self.buffer = body_data;
+            self.pos = 0;
+        }
+        let written = buf.write(&self.buffer[self.pos..])?;
+        self.pos += written;
+        Ok(written)
+    }
+}
 
 /// The Chunker is responsible for turning messages to chunks and chunks into messages.
 pub struct Chunker;
@@ -159,6 +236,11 @@ impl Chunker {
                 // Rust has a nice function to do just that.
                 let data_chunks = data.chunks(max_body_per_chunk);
                 let data_chunks_len = data_chunks.len();
+                log::info!(
+                    "Split message into {} chunks of {} length max",
+                    data_chunks_len,
+                    max_body_per_chunk
+                );
                 let mut chunks = Vec::with_capacity(data_chunks_len);
                 for (i, data_chunk) in data_chunks.enumerate() {
                     let is_final = if i == data_chunks_len - 1 {
@@ -202,7 +284,6 @@ impl Chunker {
         expected_node_id: Option<NodeId>,
     ) -> std::result::Result<T, EncodingError> {
         // Calculate the size of data held in all chunks
-        let mut data_size: usize = 0;
         for (i, chunk) in chunks.iter().enumerate() {
             let chunk_info = chunk.chunk_info(secure_channel)?;
             // The last most chunk is expected to be final, the rest intermediate
@@ -214,26 +295,9 @@ impl Chunker {
             if chunk_info.message_header.is_final != expected_is_final {
                 return Err(StatusCode::BadDecodingError.into());
             }
-            // Calculate how much space data is in the chunk
-            let body_start = chunk_info.body_offset;
-            let body_end = body_start + chunk_info.body_length;
-            data_size += chunk.data[body_start..body_end].len();
         }
 
-        // Read the data into a contiguous buffer. The assumption is the data is decrypted / verified by now
-        // TODO this buffer should be externalized so it is not allocated each time
-        let mut data = Vec::with_capacity(data_size);
-        for chunk in chunks.iter() {
-            let chunk_info = chunk.chunk_info(secure_channel)?;
-
-            let body_start = chunk_info.body_offset;
-            let body_end = body_start + chunk_info.body_length;
-            let body_data = &chunk.data[body_start..body_end];
-            data.extend_from_slice(body_data);
-        }
-
-        // Make a stream around the data
-        let mut data = Cursor::new(data);
+        let mut stream = ReceiveStream::new(secure_channel, chunks.iter(), chunks.len())?;
 
         // The extension object prefix is just the node id. A point the spec rather unhelpfully doesn't
         // elaborate on. Probably because people enjoy debugging why the stream pos is out by 1 byte
@@ -242,11 +306,11 @@ impl Chunker {
         let decoding_options = secure_channel.decoding_options();
 
         // Read node id from stream
-        let node_id = NodeId::decode(&mut data, &decoding_options)?;
+        let node_id = NodeId::decode(&mut stream, &decoding_options)?;
         let object_id = Self::object_id_from_node_id(node_id, expected_node_id)?;
 
         // Now decode the payload using the node id.
-        match T::decode_by_object_id(&mut data, object_id, &decoding_options) {
+        match T::decode_by_object_id(&mut stream, object_id, &decoding_options) {
             Ok(decoded_message) => {
                 // debug!("Returning decoded msg {:?}", decoded_message);
                 Ok(decoded_message)
@@ -262,38 +326,20 @@ impl Chunker {
         node_id: NodeId,
         expected_node_id: Option<NodeId>,
     ) -> Result<ObjectId, StatusCode> {
-        let valid_node_id = if node_id.namespace != 0 || !node_id.is_numeric() {
-            // Must be ns 0 and numeric
-            error!("Expecting chunk to contain a OPC UA request or response");
-            false
-        } else if let Some(expected_node_id) = expected_node_id {
-            let matches_expected = expected_node_id == node_id;
-            if !matches_expected {
-                error!(
-                    "Chunk node id {:?} does not match expected {:?}",
-                    node_id, expected_node_id
-                );
+        if let Some(id) = expected_node_id {
+            if node_id != id {
+                error!("The node ID {node_id} is not the expected value {id}");
+                return Err(StatusCode::BadUnexpectedError);
             }
-            matches_expected
-        } else {
-            true
-        };
-        if !valid_node_id {
-            error!(
-                "The node id read from the stream was not accepted in this context {:?}",
-                node_id
-            );
-            Err(StatusCode::BadUnexpectedError)
-        } else {
-            node_id
-                .as_object_id()
-                .map_err(|_| {
-                    error!("The node {:?} was not an object id", node_id);
-                    StatusCode::BadUnexpectedError
-                })
-                .inspect(|object_id| {
-                    trace!("Decoded node id / object id of {:?}", object_id);
-                })
         }
+        node_id
+            .as_object_id()
+            .map_err(|_| {
+                error!("The node {:?} was not an object id", node_id);
+                StatusCode::BadUnexpectedError
+            })
+            .inspect(|object_id| {
+                trace!("Decoded node id / object id of {:?}", object_id);
+            })
     }
 }
