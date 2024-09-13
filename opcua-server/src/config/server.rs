@@ -9,7 +9,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use log::{error, trace, warn};
+use log::{trace, warn};
 use serde::{Deserialize, Serialize};
 
 use crate::constants;
@@ -91,33 +91,33 @@ impl ServerUserToken {
 
     /// Test if the token is valid. This does not care for x509 tokens if the cert is present on
     /// the disk or not.
-    pub fn is_valid(&self, id: &str) -> bool {
-        let mut valid = true;
+    pub fn validate(&self, id: &str) -> Result<(), Vec<String>> {
+        let mut errors = Vec::new();
         if id == ANONYMOUS_USER_TOKEN_ID {
-            error!(
+            errors.push(format!(
                 "User token {} is invalid because id is a reserved value, use another value.",
                 id
-            );
-            valid = false;
+            ));
         }
         if self.user.is_empty() {
-            error!("User token {} has an empty user name.", id);
-            valid = false;
+            errors.push(format!("User token {} has an empty user name.", id));
         }
         if self.pass.is_some() && self.x509.is_some() {
-            error!(
+            errors.push(format!(
                 "User token {} holds a password and certificate info - it cannot be both.",
                 id
-            );
-            valid = false;
+            ));
         } else if self.pass.is_none() && self.x509.is_none() {
-            error!(
+            errors.push(format!(
                 "User token {} fails to provide a password or certificate info.",
                 id
-            );
-            valid = false;
+            ));
         }
-        valid
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
     }
 
     pub fn is_user_pass(&self) -> bool {
@@ -244,8 +244,8 @@ mod defaults {
 }
 
 impl Config for ServerConfig {
-    fn is_valid(&self) -> bool {
-        let mut valid = true;
+    fn validate(&self) -> Result<(), Vec<String>> {
+        let mut errors = Vec::new();
         if self.application_name.is_empty() {
             warn!("No application was set");
         }
@@ -256,41 +256,51 @@ impl Config for ServerConfig {
             warn!("No product uri was set");
         }
         if self.endpoints.is_empty() {
-            error!("Server configuration is invalid. It defines no endpoints");
-            valid = false;
+            errors.push("Server configuration is invalid. It defines no endpoints".to_owned());
         }
         for (id, endpoint) in &self.endpoints {
-            if !endpoint.is_valid(id, &self.user_tokens) {
-                valid = false;
+            if let Err(e) = endpoint.validate(id, &self.user_tokens) {
+                errors.push(format!(
+                    "Endpoint {id} failed to validate: {}",
+                    e.join(", ")
+                ));
             }
         }
         if let Some(ref default_endpoint) = self.default_endpoint {
             if !self.endpoints.contains_key(default_endpoint) {
-                valid = false;
+                errors.push(format!(
+                    "Endpoints does not contain default endpoint {default_endpoint}"
+                ));
             }
         }
         for (id, user_token) in &self.user_tokens {
-            if !user_token.is_valid(id) {
-                valid = false;
+            if let Err(e) = user_token.validate(id) {
+                errors.push(format!(
+                    "User token {id} failed to validate: {}",
+                    e.join(", ")
+                ))
             }
         }
         if self.limits.max_array_length == 0 {
-            error!("Server configuration is invalid. Max array length is invalid");
-            valid = false;
+            errors.push("Server configuration is invalid. Max array length is invalid".to_owned());
         }
         if self.limits.max_string_length == 0 {
-            error!("Server configuration is invalid. Max string length is invalid");
-            valid = false;
+            errors.push("Server configuration is invalid. Max string length is invalid".to_owned());
         }
         if self.limits.max_byte_string_length == 0 {
-            error!("Server configuration is invalid. Max byte string length is invalid");
-            valid = false;
+            errors.push(
+                "Server configuration is invalid. Max byte string length is invalid".to_owned(),
+            );
         }
         if self.discovery_urls.is_empty() {
-            error!("Server configuration is invalid. Discovery urls not set");
-            valid = false;
+            errors.push("Server configuration is invalid. Discovery urls not set".to_owned());
         }
-        valid
+
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
     }
 
     fn application_name(&self) -> UAString {

@@ -18,9 +18,8 @@ use opcua_types::{
 /// Error returned from saving or loading config objects.
 #[derive(Debug)]
 pub enum ConfigError {
-    // TODO: Make the config validation actually return something useful.
-    /// Configuration is invalid.
-    ConfigInvalid,
+    /// Configuration is invalid, with a list of validation errors.
+    ConfigInvalid(Vec<String>),
     /// Reading or writing file failed.
     IO(std::io::Error),
     /// Failed to serialize or deserialize config object.
@@ -43,8 +42,8 @@ impl From<serde_yaml::Error> for ConfigError {
 /// client and/or server.
 pub trait Config: serde::Serialize {
     fn save(&self, path: &Path) -> Result<(), ConfigError> {
-        if !self.is_valid() {
-            return Err(ConfigError::ConfigInvalid);
+        if let Err(e) = self.validate() {
+            return Err(ConfigError::ConfigInvalid(e));
         }
         let s = serde_yaml::to_string(&self)?;
         let mut f = File::create(path)?;
@@ -62,7 +61,7 @@ pub trait Config: serde::Serialize {
         Ok(serde_yaml::from_str(&s)?)
     }
 
-    fn is_valid(&self) -> bool;
+    fn validate(&self) -> Result<(), Vec<String>>;
 
     fn application_name(&self) -> UAString;
 
