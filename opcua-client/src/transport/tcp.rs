@@ -79,6 +79,7 @@ impl TcpTransport {
                 outgoing_recv,
                 config.max_pending_incoming,
                 config.max_inflight,
+                ack.send_buffer_size.min(config.recv_buffer_size as u32) as usize,
             ),
             read: framed_read,
             write: writer,

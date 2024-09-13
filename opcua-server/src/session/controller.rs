@@ -106,6 +106,7 @@ impl SessionController {
                 send_buffer_size: info.config.limits.send_buffer_size,
                 max_message_size: info.config.limits.max_message_size,
                 max_chunk_count: info.config.limits.max_chunk_count,
+                receive_buffer_size: info.config.limits.receive_buffer_size,
                 hello_timeout: Duration::from_secs(info.config.tcp_config.hello_timeout as u64),
             },
             info.decoding_options(),
