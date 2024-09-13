@@ -318,7 +318,7 @@ impl InMemoryNodeManagerImpl for TestNodeManagerImpl {
                     continue;
                 };
                 if let Err(e) = var.set_value(
-                    write.value().index_range.clone(),
+                    &write.value().index_range,
                     write.value().value.value.clone().unwrap_or(Variant::Empty),
                 ) {
                     write.set_status(e);
@@ -332,7 +332,7 @@ impl InMemoryNodeManagerImpl for TestNodeManagerImpl {
                         .or_default();
                     values.values.push(var.value(
                         TimestampsToReturn::Both,
-                        opcua::types::NumericRange::None,
+                        &opcua::types::NumericRange::None,
                         &QualifiedName::null(),
                         0.0,
                     ));

@@ -112,7 +112,6 @@ impl ExternalReference {
 
 #[derive(Debug)]
 /// Result of adding a reference to a browse node.
-// TODO: Consider whether or not to box the reference desc here...
 #[allow(clippy::large_enum_variant)]
 pub enum AddReferenceResult {
     /// The reference was added

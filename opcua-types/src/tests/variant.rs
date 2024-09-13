@@ -205,10 +205,10 @@ fn index_of_array() {
     let v = Variant::from((VariantTypeId::Int32, vars));
     assert!(v.is_array());
 
-    let r = v.range_of(NumericRange::None).unwrap();
+    let r = v.range_of(&NumericRange::None).unwrap();
     assert_eq!(r, v);
 
-    let r = v.range_of(NumericRange::Index(1)).unwrap();
+    let r = v.range_of(&NumericRange::Index(1)).unwrap();
     match r {
         Variant::Array(array) => {
             assert_eq!(array.values.len(), 1);
@@ -217,7 +217,7 @@ fn index_of_array() {
         _ => panic!(),
     }
 
-    let r = v.range_of(NumericRange::Range(1, 2)).unwrap();
+    let r = v.range_of(&NumericRange::Range(1, 2)).unwrap();
     match r {
         Variant::Array(array) => {
             assert_eq!(array.values.len(), 2);
@@ -227,7 +227,7 @@ fn index_of_array() {
         _ => panic!(),
     }
 
-    let r = v.range_of(NumericRange::Range(1, 200)).unwrap();
+    let r = v.range_of(&NumericRange::Range(1, 200)).unwrap();
     match r {
         Variant::Array(array) => {
             assert_eq!(array.values.len(), 2);
@@ -235,7 +235,7 @@ fn index_of_array() {
         _ => panic!(),
     }
 
-    let r = v.range_of(NumericRange::Range(3, 200)).unwrap_err();
+    let r = v.range_of(&NumericRange::Range(3, 200)).unwrap_err();
     assert_eq!(r, StatusCode::BadIndexRangeNoData);
 }
 
@@ -243,17 +243,17 @@ fn index_of_array() {
 fn index_of_string() {
     let v: Variant = "Hello World".into();
 
-    let r = v.range_of(NumericRange::None).unwrap();
+    let r = v.range_of(&NumericRange::None).unwrap();
     assert_eq!(r, v);
 
     // Letter W
-    let r = v.range_of(NumericRange::Index(6)).unwrap();
+    let r = v.range_of(&NumericRange::Index(6)).unwrap();
     assert_eq!(r, Variant::from("W"));
 
-    let r = v.range_of(NumericRange::Range(6, 100)).unwrap();
+    let r = v.range_of(&NumericRange::Range(6, 100)).unwrap();
     assert_eq!(r, Variant::from("World"));
 
-    let r = v.range_of(NumericRange::Range(11, 200)).unwrap_err();
+    let r = v.range_of(&NumericRange::Range(11, 200)).unwrap_err();
     assert_eq!(r, StatusCode::BadIndexRangeNoData);
 }
 

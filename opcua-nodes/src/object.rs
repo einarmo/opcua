@@ -79,7 +79,7 @@ impl Node for Object {
         &self,
         timestamps_to_return: TimestampsToReturn,
         attribute_id: AttributeId,
-        index_range: NumericRange,
+        index_range: &NumericRange,
         data_encoding: &QualifiedName,
         max_age: f64,
     ) -> Option<DataValue> {

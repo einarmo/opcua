@@ -71,7 +71,7 @@ pub trait AttributeQueryable: Copy {
         type_definition_id: &NodeId,
         browse_path: &[QualifiedName],
         attribute_id: AttributeId,
-        index_range: NumericRange,
+        index_range: &NumericRange,
     ) -> Variant;
 }
 
@@ -81,7 +81,7 @@ impl AttributeQueryable for &dyn Event {
         type_definition_id: &NodeId,
         browse_path: &[QualifiedName],
         attribute_id: AttributeId,
-        index_range: NumericRange,
+        index_range: &NumericRange,
     ) -> Variant {
         self.get_field(type_definition_id, attribute_id, index_range, browse_path)
     }
@@ -173,7 +173,7 @@ impl ParsedContentFilter {
                 &o.type_definition_id,
                 &o.browse_path,
                 o.attribute_id,
-                o.index_range.clone(),
+                &o.index_range,
             ),
         }
     }
@@ -292,7 +292,7 @@ fn get_field(event: &dyn Event, attr: &ParsedSimpleAttributeOperand) -> Variant 
     event.get_field(
         &attr.type_definition_id,
         attr.attribute_id,
-        attr.index_range.clone(),
+        &attr.index_range,
         &attr.browse_path,
     )
 }

@@ -1385,7 +1385,7 @@ mod tests {
         assert_eq!(
             v.value(
                 TimestampsToReturn::Neither,
-                NumericRange::None,
+                &NumericRange::None,
                 &QualifiedName::null(),
                 0.0
             )
@@ -1468,7 +1468,7 @@ mod tests {
             let v = v
                 .value(
                     TimestampsToReturn::Neither,
-                    NumericRange::None,
+                    &NumericRange::None,
                     &QualifiedName::null(),
                     0.0,
                 )

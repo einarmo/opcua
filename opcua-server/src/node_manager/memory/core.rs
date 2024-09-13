@@ -459,7 +459,7 @@ impl CoreNodeManagerImpl {
         };
 
         let v = if !matches!(node.index_range, NumericRange::None) {
-            match v.range_of(node.index_range.clone()) {
+            match v.range_of(&node.index_range) {
                 Ok(v) => v,
                 Err(e) => {
                     return Some(DataValue {

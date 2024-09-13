@@ -1634,7 +1634,11 @@ impl Variant {
         }
     }
 
-    pub fn set_range_of(&mut self, range: NumericRange, other: &Variant) -> Result<(), StatusCode> {
+    pub fn set_range_of(
+        &mut self,
+        range: &NumericRange,
+        other: &Variant,
+    ) -> Result<(), StatusCode> {
         // Types need to be the same
         if !self.eq_array_type(other) {
             return Err(StatusCode::BadIndexRangeDataMismatch);
@@ -1654,7 +1658,7 @@ impl Variant {
                 match range {
                     NumericRange::None => Err(StatusCode::BadIndexRangeNoData),
                     NumericRange::Index(idx) => {
-                        let idx = idx as usize;
+                        let idx = (*idx) as usize;
                         if idx >= values.len() || other_values.is_empty() {
                             Err(StatusCode::BadIndexRangeNoData)
                         } else {
@@ -1663,7 +1667,7 @@ impl Variant {
                         }
                     }
                     NumericRange::Range(min, max) => {
-                        let (min, max) = (min as usize, max as usize);
+                        let (min, max) = ((*min) as usize, (*max) as usize);
                         if min >= values.len() {
                             Err(StatusCode::BadIndexRangeNoData)
                         } else {
@@ -1694,7 +1698,7 @@ impl Variant {
 
     /// This function gets a range of values from the variant if it is an array,
     /// or returns the variant itself.
-    pub fn range_of_owned(self, range: NumericRange) -> Result<Variant, StatusCode> {
+    pub fn range_of_owned(self, range: &NumericRange) -> Result<Variant, StatusCode> {
         match range {
             NumericRange::None => Ok(self),
             r => self.range_of(r),
@@ -1703,11 +1707,11 @@ impl Variant {
 
     /// This function gets a range of values from the variant if it is an array, or returns a clone
     /// of the variant itself.
-    pub fn range_of(&self, range: NumericRange) -> Result<Variant, StatusCode> {
+    pub fn range_of(&self, range: &NumericRange) -> Result<Variant, StatusCode> {
         match range {
             NumericRange::None => Ok(self.clone()),
             NumericRange::Index(idx) => {
-                let idx = idx as usize;
+                let idx = (*idx) as usize;
                 match self {
                     Variant::String(_) | Variant::ByteString(_) => self.substring(idx, idx),
                     Variant::Array(array) => {
@@ -1724,7 +1728,7 @@ impl Variant {
                 }
             }
             NumericRange::Range(min, max) => {
-                let (min, max) = (min as usize, max as usize);
+                let (min, max) = ((*min) as usize, (*max) as usize);
                 match self {
                     Variant::String(_) | Variant::ByteString(_) => self.substring(min, max),
                     Variant::Array(array) => {
