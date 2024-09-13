@@ -263,7 +263,7 @@ async fn browse_continuation_point() {
         nm.inner().add_node(
             nm.address_space(),
             tester.handle.type_tree(),
-            VariableBuilder::new(&id, &format!("Var{i}"), &format!("Var{i}"))
+            VariableBuilder::new(&id, format!("Var{i}"), format!("Var{i}"))
                 .data_type(DataTypeId::Int32)
                 .build()
                 .into(),
@@ -321,7 +321,7 @@ async fn browse_release_continuation_point() {
         nm.inner().add_node(
             nm.address_space(),
             tester.handle.type_tree(),
-            VariableBuilder::new(&id, &format!("Var{i}"), &format!("Var{i}"))
+            VariableBuilder::new(&id, format!("Var{i}"), format!("Var{i}"))
                 .data_type(DataTypeId::Int32)
                 .build()
                 .into(),
@@ -393,7 +393,7 @@ async fn translate_browse_path() {
         nm.inner().add_node(
             nm.address_space(),
             tester.handle.type_tree(),
-            ObjectBuilder::new(&id, &format!("Obj{i}"), &format!("Obj{i}"))
+            ObjectBuilder::new(&id, format!("Obj{i}"), format!("Obj{i}"))
                 .build()
                 .into(),
             &parent,
@@ -446,7 +446,7 @@ async fn translate_browse_path_cross_node_manager() {
         nm.inner().add_node(
             nm.address_space(),
             tester.handle.type_tree(),
-            ObjectBuilder::new(&id, &format!("Obj{i}"), &format!("Obj{i}"))
+            ObjectBuilder::new(&id, format!("Obj{i}"), format!("Obj{i}"))
                 .build()
                 .into(),
             &parent,

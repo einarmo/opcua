@@ -84,7 +84,7 @@ async fn call_args() {
     }
 
     nm.inner().add_method_cb(id.clone(), |args| {
-        let Some(Variant::Int64(lhs)) = args.get(0).map(|a| a.cast(VariantTypeId::Int64)) else {
+        let Some(Variant::Int64(lhs)) = args.first().map(|a| a.cast(VariantTypeId::Int64)) else {
             return Err(StatusCode::BadInvalidArgument);
         };
         let Some(Variant::Int64(rhs)) = args.get(1).map(|a| a.cast(VariantTypeId::Int64)) else {
@@ -153,7 +153,7 @@ async fn call_fail() {
     }
 
     nm.inner().add_method_cb(id.clone(), |args| {
-        let Some(Variant::Int64(lhs)) = args.get(0).map(|a| a.cast(VariantTypeId::Int64)) else {
+        let Some(Variant::Int64(lhs)) = args.first().map(|a| a.cast(VariantTypeId::Int64)) else {
             return Err(StatusCode::BadInvalidArgument);
         };
         let Some(Variant::Int64(rhs)) = args.get(1).map(|a| a.cast(VariantTypeId::Int64)) else {

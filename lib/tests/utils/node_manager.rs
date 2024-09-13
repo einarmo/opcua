@@ -43,17 +43,14 @@ struct HistoryContinuationPoint {
     index: usize,
 }
 
+type MethodCb = dyn FnMut(&[Variant]) -> Result<Vec<Variant>, StatusCode> + Send + Sync + 'static;
+
 pub struct TestNodeManagerImpl {
     // In practice you would never store history data in memory, and you would not want
     // a single global lock on all history.
     history_data: RwLock<HashMap<NodeId, HistoryData>>,
     call_info: Mutex<CallInfo>,
-    method_cbs: Mutex<
-        HashMap<
-            NodeId,
-            Box<dyn FnMut(&[Variant]) -> Result<Vec<Variant>, StatusCode> + Send + Sync + 'static>,
-        >,
-    >,
+    method_cbs: Mutex<HashMap<NodeId, Box<MethodCb>>>,
     node_id_generator: AtomicU32,
     namespace_index: u16,
     node_managers: NodeManagersRef,
@@ -180,7 +177,7 @@ impl InMemoryNodeManagerImpl for TestNodeManagerImpl {
             )
             .await;
 
-        for (value, node) in values.into_iter().zip(items.into_iter()) {
+        for (value, node) in values.into_iter().zip(items.iter_mut()) {
             if value.status() != StatusCode::BadAttributeIdInvalid {
                 node.set_initial_value(value);
             }
@@ -276,7 +273,7 @@ impl InMemoryNodeManagerImpl for TestNodeManagerImpl {
             }
         }
 
-        for node in nodes.into_iter() {
+        for node in nodes.iter_mut() {
             self.history_update_node(node)?;
         }
 
@@ -337,14 +334,12 @@ impl InMemoryNodeManagerImpl for TestNodeManagerImpl {
                         0.0,
                     ));
                 }
-            } else {
-                if let Err(e) = node.as_mut_node().set_attribute(
-                    write.value().attribute_id,
-                    write.value().value.value.clone().unwrap_or(Variant::Empty),
-                ) {
-                    write.set_status(e);
-                    continue;
-                }
+            } else if let Err(e) = node.as_mut_node().set_attribute(
+                write.value().attribute_id,
+                write.value().value.value.clone().unwrap_or(Variant::Empty),
+            ) {
+                write.set_status(e);
+                continue;
             }
 
             write.set_status(StatusCode::Good);
@@ -416,7 +411,7 @@ impl InMemoryNodeManagerImpl for TestNodeManagerImpl {
 
         let mut address_space = trace_write_lock!(address_space);
         let mut type_tree = trace_write_lock!(context.type_tree);
-        for (idx, node) in nodes_to_add.into_iter().enumerate() {
+        for (idx, node) in nodes_to_add.iter_mut().enumerate() {
             let node_id = if node.requested_new_node_id().is_null() {
                 self.next_node_id()
             } else {
@@ -894,13 +889,11 @@ impl TestNodeManagerImpl {
                     results[value.orig_idx] = StatusCode::GoodEntryReplaced;
                     values.values.insert(index, data_value);
                 }
+            } else if mode == PerformUpdateType::Replace {
+                results[value.orig_idx] = StatusCode::BadNoEntryExists;
             } else {
-                if mode == PerformUpdateType::Replace {
-                    results[value.orig_idx] = StatusCode::BadNoEntryExists;
-                } else {
-                    results[value.orig_idx] = StatusCode::GoodEntryInserted;
-                    values.values.insert(index, data_value);
-                }
+                results[value.orig_idx] = StatusCode::GoodEntryInserted;
+                values.values.insert(index, data_value);
             }
         }
 
@@ -925,7 +918,7 @@ impl TestNodeManagerImpl {
         data.values.extend(values);
     }
 
-    #[allow(unused)]
+    #[allow(unused, clippy::too_many_arguments)]
     pub fn add_node<'a>(
         &self,
         address_space: &RwLock<AddressSpace>,
@@ -963,9 +956,9 @@ impl TestNodeManagerImpl {
         let mut address_space = trace_write_lock!(address_space);
         for (target, ty, dir) in refs {
             if matches!(dir, ReferenceDirection::Forward) {
-                address_space.insert_reference(&source, target, ty);
+                address_space.insert_reference(source, target, ty);
             } else {
-                address_space.insert_reference(target, &source, ty);
+                address_space.insert_reference(target, source, ty);
             }
         }
     }
@@ -1001,15 +994,15 @@ impl TestNodeManagerImpl {
 
         // If the node is a new node in the type hierarchy, add it there.
         if is_type {
-            type_tree.add_type_node(&node_id, &parent_id, node_class);
-        } else if let Some(type_node) = type_tree.get_node(&parent_id) {
+            type_tree.add_type_node(&node_id, parent_id, node_class);
+        } else if let Some(type_node) = type_tree.get_node(parent_id) {
             let (browse_path, ty) = match type_node {
                 TypeTreeNode::Type(_) => (vec![browse_name.clone()], parent_id.clone()),
                 TypeTreeNode::Property(p) => (
                     p.path
                         .iter()
                         .cloned()
-                        .chain([browse_name.clone()].into_iter())
+                        .chain([browse_name.clone()])
                         .collect(),
                     p.type_id.clone(),
                 ),

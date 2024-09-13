@@ -33,10 +33,10 @@ fn epoch_plus_1tick() {
 #[test]
 fn endtimes() {
     let endtimes = DateTime::ymd_hms_nano(9999, 12, 31, 23, 59, 59, 999_999);
-    assert_eq!(endtimes.checked_ticks(), i64::max_value());
+    assert_eq!(endtimes.checked_ticks(), i64::MAX);
 
     let endtimes = DateTime::ymd_hms_nano(10000, 1, 1, 0, 0, 0, 0);
-    assert_eq!(endtimes.checked_ticks(), i64::max_value());
+    assert_eq!(endtimes.checked_ticks(), i64::MAX);
 }
 
 #[test]

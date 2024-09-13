@@ -45,6 +45,7 @@ pub struct ChannelNotifications {
 }
 
 impl ChannelNotifications {
+    #[allow(clippy::type_complexity)]
     pub fn new() -> (
         Self,
         UnboundedReceiver<(ReadValueId, DataValue)>,

@@ -223,12 +223,12 @@ pub fn default_client(test_id: u16, quick_timeout: bool) -> ClientBuilder {
         .max_array_length(100_000)
         .max_message_size(1024 * 1024 * 64)
         .max_chunk_count(64);
-    let client = if quick_timeout {
+    
+    if quick_timeout {
         client.session_retry_limit(1)
     } else {
         client
-    };
-    client
+    }
 }
 
 #[allow(unused)]
@@ -246,42 +246,42 @@ pub fn copy_shared_certs(test_id: u16, desc: &ApplicationDescription) {
         CertificateStore::create_certificate_and_key(
             &desc.clone().into(),
             true,
-            &Path::new("certs/server/cert.der"),
-            &Path::new("certs/server/private.pem"),
+            Path::new("certs/server/cert.der"),
+            Path::new("certs/server/private.pem"),
         )
         .unwrap();
         CertificateStore::create_certificate_and_key(
             &desc.clone().into(),
             true,
-            &Path::new("certs/client/cert.der"),
-            &Path::new("certs/client/private.pem"),
+            Path::new("certs/client/cert.der"),
+            Path::new("certs/client/private.pem"),
         )
         .unwrap();
     }
 
-    std::fs::create_dir_all(&format!("pki-server/{test_id}/own")).unwrap();
-    std::fs::create_dir_all(&format!("pki-server/{test_id}/private")).unwrap();
-    std::fs::create_dir_all(&format!("pki-client/{test_id}/own")).unwrap();
-    std::fs::create_dir_all(&format!("pki-client/{test_id}/private")).unwrap();
+    std::fs::create_dir_all(format!("pki-server/{test_id}/own")).unwrap();
+    std::fs::create_dir_all(format!("pki-server/{test_id}/private")).unwrap();
+    std::fs::create_dir_all(format!("pki-client/{test_id}/own")).unwrap();
+    std::fs::create_dir_all(format!("pki-client/{test_id}/private")).unwrap();
 
     fs::copy(
         "certs/server/cert.der",
-        &format!("pki-server/{test_id}/own/cert.der"),
+        format!("pki-server/{test_id}/own/cert.der"),
     )
     .unwrap();
     fs::copy(
         "certs/server/private.pem",
-        &format!("pki-server/{test_id}/private/private.pem"),
+        format!("pki-server/{test_id}/private/private.pem"),
     )
     .unwrap();
     fs::copy(
         "certs/client/cert.der",
-        &format!("pki-client/{test_id}/own/cert.der"),
+        format!("pki-client/{test_id}/own/cert.der"),
     )
     .unwrap();
     fs::copy(
         "certs/client/private.pem",
-        &format!("pki-client/{test_id}/private/private.pem"),
+        format!("pki-client/{test_id}/private/private.pem"),
     )
     .unwrap();
 }

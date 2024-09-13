@@ -866,17 +866,17 @@ mod tests {
             organizational_unit: "x.org ops".to_string(),
             country: "EN".to_string(),
             state: "London".to_string(),
-            alt_host_names: alt_host_names,
+            alt_host_names,
             certificate_duration_days: 60,
         };
 
         let (x509, _pkey) = X509::cert_and_pkey(&args).unwrap();
 
-        assert!(!x509.is_hostname_valid("").is_ok());
-        assert!(!x509.is_hostname_valid("uri:foo").is_ok()); // The application uri should not be valid
-        assert!(!x509.is_hostname_valid("192.168.1.0").is_ok());
-        assert!(!x509.is_hostname_valid("www.cnn.com").is_ok());
-        assert!(!x509.is_hostname_valid("host1").is_ok());
+        assert!(x509.is_hostname_valid("").is_err());
+        assert!(x509.is_hostname_valid("uri:foo").is_err()); // The application uri should not be valid
+        assert!(x509.is_hostname_valid("192.168.1.0").is_err());
+        assert!(x509.is_hostname_valid("www.cnn.com").is_err());
+        assert!(x509.is_hostname_valid("host1").is_err());
 
         args.alt_host_names.iter().skip(1).for_each(|n| {
             assert!(x509.is_hostname_valid(n.as_str()).is_ok());

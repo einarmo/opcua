@@ -1081,8 +1081,7 @@ mod tests {
         let mut type_tree = DefaultTypeTree::new();
         address_space.load_into_type_tree(&mut type_tree);
 
-        let reference_types = vec![
-            (
+        let reference_types = [(
                 ReferenceTypeId::References,
                 ReferenceTypeId::HierarchicalReferences,
             ),
@@ -1214,8 +1213,7 @@ mod tests {
             (
                 ReferenceTypeId::GeneratesEvent,
                 ReferenceTypeId::AlwaysGeneratesEvent,
-            ),
-        ];
+            )];
 
         // Make sure that subtypes match when subtypes are to be compared and doesn't when they should
         // not be compared.
@@ -1232,7 +1230,7 @@ mod tests {
     fn array_as_variable() {
         // 1 dimensional array with 100 element
         let values = (0..100)
-            .map(|i| Variant::Int32(i))
+            .map(Variant::Int32)
             .collect::<Vec<Variant>>();
 
         // Get the variable node back from the address space, ensure that the ValueRank and ArrayDimensions are correct
@@ -1252,7 +1250,7 @@ mod tests {
         // 2 dimensional array with 10x10 elements
 
         let values = (0..100)
-            .map(|i| Variant::Int32(i))
+            .map(Variant::Int32)
             .collect::<Vec<Variant>>();
         let mda = Array::new_multi(VariantTypeId::Int32, values, vec![10u32, 10u32]).unwrap();
         assert!(mda.is_valid());
@@ -1381,7 +1379,7 @@ mod tests {
         assert_eq!(v.description().unwrap(), &"Desc".into());
         assert_eq!(v.value_rank(), 10);
         assert_eq!(v.array_dimensions().unwrap(), vec![1, 2, 3]);
-        assert_eq!(v.historizing(), true);
+        assert!(v.historizing());
         assert_eq!(
             v.value(
                 TimestampsToReturn::Neither,
@@ -1458,7 +1456,7 @@ mod tests {
         assert_eq!(refs.len(), 1);
 
         let child = address_space
-            .find_node(&refs.get(0).unwrap().target_node)
+            .find_node(refs.first().unwrap().target_node)
             .unwrap();
         if let NodeType::Variable(v) = child {
             // verify OutputArguments
@@ -1477,7 +1475,7 @@ mod tests {
             if let Variant::Array(array) = v {
                 let v = array.values;
                 assert_eq!(v.len(), 1);
-                let v = v.get(0).unwrap().clone();
+                let v = v.first().unwrap().clone();
                 if let Variant::ExtensionObject(v) = v {
                     // deserialize the Argument here
                     let decoding_options = DecodingOptions::test();
