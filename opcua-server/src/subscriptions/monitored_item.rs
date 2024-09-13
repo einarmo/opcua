@@ -398,7 +398,7 @@ impl MonitoredItem {
 
         if !matches!(self.item_to_monitor.index_range, NumericRange::None) {
             if let Some(v) = value.value {
-                match v.range_of(self.item_to_monitor.index_range.clone()) {
+                match v.range_of(&self.item_to_monitor.index_range) {
                     Ok(r) => value.value = Some(r),
                     Err(e) => {
                         value.status = Some(e);

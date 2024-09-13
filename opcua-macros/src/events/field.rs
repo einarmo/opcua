@@ -37,7 +37,7 @@ pub fn generate_event_field_impls(event: EventFieldStruct) -> syn::Result<TokenS
 
         if field.attr.placeholder {
             placeholder_fields.extend(quote! {
-                if let Some(value) = self.#ident.try_get_value(field, attribute_id, index_range.clone(), browse_path.get(1..).unwrap_or(&[])) {
+                if let Some(value) = self.#ident.try_get_value(field, attribute_id, index_range, browse_path.get(1..).unwrap_or(&[])) {
                     return value;
                 }
             })
@@ -81,7 +81,7 @@ pub fn generate_event_field_impls(event: EventFieldStruct) -> syn::Result<TokenS
             fn get_value(
                 &self,
                 attribute_id: opcua::types::AttributeId,
-                index_range: opcua::types::NumericRange,
+                index_range: &opcua::types::NumericRange,
                 browse_path: &[opcua::types::QualifiedName],
             ) -> opcua::types::Variant {
                 #pre_check_block

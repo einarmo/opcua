@@ -606,7 +606,7 @@ async fn write_bytestring_to_byte_array() {
         };
         let val = v.value(
             TimestampsToReturn::Both,
-            opcua::types::NumericRange::None,
+            &opcua::types::NumericRange::None,
             &Default::default(),
             0.0,
         );
@@ -680,7 +680,7 @@ async fn write_index_range() {
     };
     let val = v.value(
         TimestampsToReturn::Both,
-        opcua::types::NumericRange::None,
+        &opcua::types::NumericRange::None,
         &Default::default(),
         0.0,
     );
@@ -694,7 +694,7 @@ async fn write_index_range() {
     };
     let val = v.value(
         TimestampsToReturn::Both,
-        opcua::types::NumericRange::None,
+        &opcua::types::NumericRange::None,
         &Default::default(),
         0.0,
     );

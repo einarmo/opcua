@@ -193,7 +193,7 @@ pub fn read_node_value(
     let Some(attribute) = node.as_node().get_attribute_max_age(
         timestamps_to_return,
         node_to_read.attribute_id,
-        node_to_read.index_range.clone(),
+        &node_to_read.index_range,
         &node_to_read.data_encoding,
         max_age,
     ) else {

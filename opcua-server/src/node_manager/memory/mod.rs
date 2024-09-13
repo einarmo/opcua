@@ -127,7 +127,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
                 node_ref.get_attribute(
                     TimestampsToReturn::Both,
                     attribute_id,
-                    index_range.clone(),
+                    index_range,
                     data_encoding,
                 )
             },
@@ -149,7 +149,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
     pub fn set_values<'a>(
         &self,
         subscriptions: &SubscriptionCache,
-        values: impl Iterator<Item = (&'a NodeId, Option<NumericRange>, DataValue)>,
+        values: impl Iterator<Item = (&'a NodeId, Option<&'a NumericRange>, DataValue)>,
     ) -> Result<(), StatusCode> {
         let mut address_space = trace_write_lock!(self.address_space);
         let now = DateTime::now();
@@ -193,7 +193,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
                 node_ref.get_attribute(
                     TimestampsToReturn::Both,
                     attribute_id,
-                    index_range.clone(),
+                    index_range,
                     data_encoding,
                 )
             },
@@ -206,7 +206,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
         &self,
         subscriptions: &SubscriptionCache,
         id: &NodeId,
-        index_range: Option<NumericRange>,
+        index_range: Option<&NumericRange>,
         value: DataValue,
     ) -> Result<(), StatusCode> {
         self.set_values(subscriptions, [(id, index_range, value)].into_iter())
@@ -422,8 +422,6 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
             };
 
             if is_for_events {
-                // TODO: History read for events should forward to a global callback
-                // for the server node.
                 let NodeType::Object(object) = node else {
                     history_node.set_status(StatusCode::BadHistoryOperationUnsupported);
                     continue;
@@ -476,8 +474,6 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
             );
 
             if is_for_events {
-                // TODO: History read for events should forward to a global callback
-                // for the server node.
                 let NodeType::Object(object) = node else {
                     history_node.set_status(StatusCode::BadHistoryOperationUnsupported);
                     continue;
@@ -580,7 +576,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
             let Some(Variant::Array(input_arguments_value)) = arg_var
                 .value(
                     TimestampsToReturn::Neither,
-                    NumericRange::None,
+                    &NumericRange::None,
                     &QualifiedName::null(),
                     0.0,
                 )

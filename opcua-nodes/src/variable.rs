@@ -27,7 +27,7 @@ node_builder_impl_property_of!(VariableBuilder);
 impl VariableBuilder {
     /// Sets the value of the variable.
     pub fn value(mut self, value: impl Into<Variant>) -> Self {
-        let _ = self.node.set_value(NumericRange::None, value);
+        let _ = self.node.set_value(&NumericRange::None, value);
         self
     }
 
@@ -187,7 +187,7 @@ impl Node for Variable {
         &self,
         timestamps_to_return: TimestampsToReturn,
         attribute_id: AttributeId,
-        index_range: NumericRange,
+        index_range: &NumericRange,
         data_encoding: &QualifiedName,
         max_age: f64,
     ) -> Option<DataValue> {
@@ -253,7 +253,7 @@ impl Node for Variable {
             }
             AttributeId::Value => {
                 // Call set_value directly
-                self.set_value(NumericRange::None, value)
+                self.set_value(&NumericRange::None, value)
             }
             AttributeId::AccessLevel => {
                 if let Variant::Byte(v) = value {
@@ -474,7 +474,7 @@ impl Variable {
     pub fn value(
         &self,
         _timestamps_to_return: TimestampsToReturn,
-        index_range: NumericRange,
+        index_range: &NumericRange,
         _data_encoding: &QualifiedName,
         max_age: f64,
     ) -> DataValue {
@@ -527,7 +527,7 @@ impl Variable {
     }
 
     /// Sets the variable's `Variant` value. The timestamps for the change are updated to now.
-    pub fn set_value<V>(&mut self, index_range: NumericRange, value: V) -> Result<(), StatusCode>
+    pub fn set_value<V>(&mut self, index_range: &NumericRange, value: V) -> Result<(), StatusCode>
     where
         V: Into<Variant>,
     {
@@ -570,7 +570,7 @@ impl Variable {
     pub fn set_value_range(
         &mut self,
         value: Variant,
-        index_range: NumericRange,
+        index_range: &NumericRange,
         status_code: StatusCode,
         server_timestamp: &DateTime,
         source_timestamp: &DateTime,

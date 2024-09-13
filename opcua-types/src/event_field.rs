@@ -18,7 +18,7 @@ pub trait EventField {
     fn get_value(
         &self,
         attribute_id: AttributeId,
-        index_range: NumericRange,
+        index_range: &NumericRange,
         remaining_path: &[QualifiedName],
     ) -> Variant;
 }
@@ -30,12 +30,12 @@ where
     fn get_value(
         &self,
         attribute_id: AttributeId,
-        index_range: NumericRange,
+        index_range: &NumericRange,
         remaining_path: &[QualifiedName],
     ) -> Variant {
         if !remaining_path.is_empty()
             || attribute_id != AttributeId::Value
-            || index_range != NumericRange::None
+            || !matches!(index_range, NumericRange::None)
         {
             return Variant::Empty;
         }
@@ -50,7 +50,7 @@ where
     fn get_value(
         &self,
         attribute_id: AttributeId,
-        index_range: NumericRange,
+        index_range: &NumericRange,
         remaining_path: &[QualifiedName],
     ) -> Variant {
         let Some(val) = self.as_ref() else {
@@ -67,7 +67,7 @@ where
     fn get_value(
         &self,
         attribute_id: AttributeId,
-        index_range: NumericRange,
+        index_range: &NumericRange,
         remaining_path: &[QualifiedName],
     ) -> Variant {
         if !remaining_path.is_empty() {
@@ -77,12 +77,12 @@ where
         let values: Vec<_> = match index_range {
             NumericRange::None => self
                 .iter()
-                .map(|v| v.get_value(attribute_id, NumericRange::None, &[]))
+                .map(|v| v.get_value(attribute_id, &NumericRange::None, &[]))
                 .collect(),
             NumericRange::Index(i) => {
-                return self.get(i as usize).cloned().get_value(
+                return self.get((*i) as usize).cloned().get_value(
                     attribute_id,
-                    NumericRange::None,
+                    &NumericRange::None,
                     &[],
                 );
             }
@@ -90,11 +90,11 @@ where
                 if e <= s {
                     return Variant::Empty;
                 }
-                let Some(r) = self.get((s as usize)..(e as usize)) else {
+                let Some(r) = self.get(((*s) as usize)..((*e) as usize)) else {
                     return Variant::Empty;
                 };
                 r.iter()
-                    .map(|v| v.get_value(attribute_id, NumericRange::None, &[]))
+                    .map(|v| v.get_value(attribute_id, &NumericRange::None, &[]))
                     .collect()
             }
             NumericRange::MultipleRanges(r) => {
@@ -102,9 +102,9 @@ where
                 for range in r {
                     match range {
                         NumericRange::Index(i) => {
-                            values.push(self.get(i as usize).cloned().get_value(
+                            values.push(self.get((*i) as usize).cloned().get_value(
                                 attribute_id,
-                                NumericRange::None,
+                                &NumericRange::None,
                                 &[],
                             ));
                         }
@@ -112,12 +112,12 @@ where
                             if e <= s {
                                 return Variant::Empty;
                             }
-                            let Some(r) = self.get((s as usize)..(e as usize)) else {
+                            let Some(r) = self.get(((*s) as usize)..((*e) as usize)) else {
                                 continue;
                             };
                             values.extend(
                                 r.iter()
-                                    .map(|v| v.get_value(attribute_id, NumericRange::None, &[])),
+                                    .map(|v| v.get_value(attribute_id, &NumericRange::None, &[])),
                             )
                         }
                         _ => return Variant::Empty,
@@ -144,7 +144,7 @@ macro_rules! basic_field_impl {
             fn get_value(
                 &self,
                 attribute_id: AttributeId,
-                index_range: NumericRange,
+                index_range: &NumericRange,
                 remaining_path: &[QualifiedName],
             ) -> Variant {
                 if remaining_path.len() != 0 || attribute_id != AttributeId::Value {
@@ -187,7 +187,7 @@ impl EventField for Variant {
     fn get_value(
         &self,
         attribute_id: AttributeId,
-        index_range: NumericRange,
+        index_range: &NumericRange,
         remaining_path: &[QualifiedName],
     ) -> Variant {
         if !remaining_path.is_empty() || attribute_id != AttributeId::Value {
@@ -203,7 +203,7 @@ impl EventField for NumericRange {
     fn get_value(
         &self,
         attribute_id: AttributeId,
-        index_range: NumericRange,
+        index_range: &NumericRange,
         remaining_path: &[QualifiedName],
     ) -> Variant {
         if !remaining_path.is_empty() || attribute_id != AttributeId::Value {
@@ -264,7 +264,7 @@ impl<T: EventField> PlaceholderEventField<T> {
         &self,
         key: &QualifiedName,
         attribute_id: AttributeId,
-        index_range: NumericRange,
+        index_range: &NumericRange,
         remaining_path: &[QualifiedName],
     ) -> Option<Variant> {
         println!("Get nested {key:?}");

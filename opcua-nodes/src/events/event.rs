@@ -9,7 +9,7 @@ pub trait Event: EventField {
         &self,
         type_definition_id: &NodeId,
         attribute_id: AttributeId,
-        index_range: NumericRange,
+        index_range: &NumericRange,
         browse_path: &[QualifiedName],
     ) -> Variant;
 
@@ -71,7 +71,7 @@ impl Event for BaseEventType {
         &self,
         type_definition_id: &NodeId,
         attribute_id: AttributeId,
-        index_range: NumericRange,
+        index_range: &NumericRange,
         browse_path: &[QualifiedName],
     ) -> Variant {
         if type_definition_id == &ObjectTypeId::BaseEventType {
@@ -86,7 +86,7 @@ impl EventField for BaseEventType {
     fn get_value(
         &self,
         attribute_id: AttributeId,
-        index_range: NumericRange,
+        index_range: &NumericRange,
         remaining_path: &[QualifiedName],
     ) -> Variant {
         if remaining_path.len() != 1 || attribute_id != AttributeId::Value {
@@ -244,12 +244,17 @@ mod tests {
     }
 
     fn get(id: &NodeId, evt: &dyn Event, field: &str) -> Variant {
-        evt.get_field(&id, AttributeId::Value, NumericRange::None, &[field.into()])
+        evt.get_field(
+            &id,
+            AttributeId::Value,
+            &NumericRange::None,
+            &[field.into()],
+        )
     }
 
     fn get_nested(id: &NodeId, evt: &dyn Event, fields: &[&str]) -> Variant {
         let fields: Vec<QualifiedName> = fields.iter().map(|f| (*f).into()).collect();
-        evt.get_field(&id, AttributeId::Value, NumericRange::None, &fields)
+        evt.get_field(&id, AttributeId::Value, &NumericRange::None, &fields)
     }
 
     #[test]
@@ -286,7 +291,7 @@ mod tests {
             evt.get_field(
                 &ObjectTypeId::ProgressEventType.into(),
                 AttributeId::Value,
-                NumericRange::None,
+                &NumericRange::None,
                 &["Message".into()]
             ),
             Variant::Empty
@@ -296,7 +301,7 @@ mod tests {
             evt.get_field(
                 &id,
                 AttributeId::Value,
-                NumericRange::None,
+                &NumericRange::None,
                 &["FooBar".into()]
             ),
             Variant::Empty
@@ -306,7 +311,7 @@ mod tests {
             evt.get_field(
                 &id,
                 AttributeId::Value,
-                NumericRange::None,
+                &NumericRange::None,
                 &["Float".into(), "Child".into()]
             ),
             Variant::Empty
@@ -316,7 +321,7 @@ mod tests {
             evt.get_field(
                 &id,
                 AttributeId::NodeId,
-                NumericRange::None,
+                &NumericRange::None,
                 &["Float".into()]
             ),
             Variant::Empty
@@ -449,7 +454,7 @@ mod tests {
             evt.get_field(
                 &id,
                 AttributeId::NodeId,
-                NumericRange::None,
+                &NumericRange::None,
                 &["SubComplex".into()]
             ),
             Variant::from(NodeId::new(0, 15))
@@ -458,13 +463,18 @@ mod tests {
             evt.get_field(
                 &id,
                 AttributeId::NodeId,
-                NumericRange::None,
+                &NumericRange::None,
                 &["Var".into()]
             ),
             Variant::from(NodeId::new(0, 16))
         );
         assert_eq!(
-            evt.get_field(&id, AttributeId::Value, NumericRange::None, &["Var".into()]),
+            evt.get_field(
+                &id,
+                AttributeId::Value,
+                &NumericRange::None,
+                &["Var".into()]
+            ),
             Variant::from(20i32)
         );
 
@@ -482,7 +492,7 @@ mod tests {
             evt.get_field(
                 &id,
                 AttributeId::Value,
-                NumericRange::None,
+                &NumericRange::None,
                 &[QualifiedName::new(1, "Extra1"), "Float".into()]
             ),
             Variant::from(20f32)
@@ -491,7 +501,7 @@ mod tests {
             evt.get_field(
                 &id,
                 AttributeId::Value,
-                NumericRange::None,
+                &NumericRange::None,
                 &[QualifiedName::new(1, "Extra2"), "Float".into()]
             ),
             Variant::from(21f32)
@@ -500,7 +510,7 @@ mod tests {
             evt.get_field(
                 &id,
                 AttributeId::Value,
-                NumericRange::None,
+                &NumericRange::None,
                 &[QualifiedName::new(1, "Extra3"), "Float".into()]
             ),
             Variant::Empty
@@ -511,7 +521,7 @@ mod tests {
             evt.get_field(
                 &id,
                 AttributeId::Value,
-                NumericRange::None,
+                &NumericRange::None,
                 &["Var".into(), "Magic".into()]
             ),
             Variant::from(15)
