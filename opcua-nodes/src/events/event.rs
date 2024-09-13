@@ -245,7 +245,7 @@ mod tests {
 
     fn get(id: &NodeId, evt: &dyn Event, field: &str) -> Variant {
         evt.get_field(
-            &id,
+            id,
             AttributeId::Value,
             &NumericRange::None,
             &[field.into()],
@@ -254,7 +254,7 @@ mod tests {
 
     fn get_nested(id: &NodeId, evt: &dyn Event, fields: &[&str]) -> Variant {
         let fields: Vec<QualifiedName> = fields.iter().map(|f| (*f).into()).collect();
-        evt.get_field(&id, AttributeId::Value, &NumericRange::None, &fields)
+        evt.get_field(id, AttributeId::Value, &NumericRange::None, &fields)
     }
 
     #[test]

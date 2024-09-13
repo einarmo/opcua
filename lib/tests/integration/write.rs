@@ -699,6 +699,7 @@ async fn write_index_range() {
         0.0,
     );
     let mut bytes: Vec<_> = vec![0u8; 16];
+    #[allow(clippy::needless_range_loop)]
     for i in 4..13 {
         bytes[i] = (i - 3) as u8;
     }

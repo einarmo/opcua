@@ -693,36 +693,36 @@ pub(super) mod tests {
             server_picoseconds: None,
         };
 
-        assert_eq!(filter.compare(&v1, &v2, None), true);
+        assert!(filter.compare(&v1, &v2, None));
 
         // Change v1 status
         v1.status = Some(StatusCode::Good);
-        assert_eq!(filter.compare(&v1, &v2, None), false);
+        assert!(!filter.compare(&v1, &v2, None));
 
         // Change v2 status
         v2.status = Some(StatusCode::Good);
-        assert_eq!(filter.compare(&v1, &v2, None), true);
+        assert!(filter.compare(&v1, &v2, None));
 
         // Change value - but since trigger is status, this should not matter
         v1.value = Some(Variant::Boolean(true));
-        assert_eq!(filter.compare(&v1, &v2, None), true);
+        assert!(filter.compare(&v1, &v2, None));
 
         // Change trigger to status-value and change should matter
         filter.trigger = DataChangeTrigger::StatusValue;
-        assert_eq!(filter.compare(&v1, &v2, None), false);
+        assert!(!filter.compare(&v1, &v2, None));
 
         // Now values are the same
         v2.value = Some(Variant::Boolean(true));
-        assert_eq!(filter.compare(&v1, &v2, None), true);
+        assert!(filter.compare(&v1, &v2, None));
 
         // And for status-value-timestamp
         filter.trigger = DataChangeTrigger::StatusValueTimestamp;
-        assert_eq!(filter.compare(&v1, &v2, None), true);
+        assert!(filter.compare(&v1, &v2, None));
 
         // Change timestamps to differ
         let now = DateTime::now();
-        v1.server_timestamp = Some(now.clone());
-        assert_eq!(filter.compare(&v1, &v2, None), false);
+        v1.server_timestamp = Some(now);
+        assert!(!filter.compare(&v1, &v2, None));
     }
 
     #[test]
@@ -753,60 +753,53 @@ pub(super) mod tests {
         };
 
         // Values are the same so deadband should not matter
-        assert_eq!(filter.compare(&v1, &v2, None), true);
+        assert!(filter.compare(&v1, &v2, None));
 
         // Adjust by less than deadband
         v2.value = Some(Variant::Double(10.9f64));
-        assert_eq!(filter.compare(&v1, &v2, None), true);
+        assert!(filter.compare(&v1, &v2, None));
 
         // Adjust by equal deadband
         v2.value = Some(Variant::Double(11f64));
-        assert_eq!(filter.compare(&v1, &v2, None), true);
+        assert!(filter.compare(&v1, &v2, None));
 
         // Adjust by equal deadband plus a little bit
         v2.value = Some(Variant::Double(11.00001f64));
-        assert_eq!(filter.compare(&v1, &v2, None), false);
+        assert!(!filter.compare(&v1, &v2, None));
     }
 
     // Straight tests of abs function
     #[test]
     fn deadband_abs() {
-        assert_eq!(DataChangeFilter::abs_compare(100f64, 100f64, 0f64), true);
-        assert_eq!(DataChangeFilter::abs_compare(100f64, 100f64, 1f64), true);
-        assert_eq!(DataChangeFilter::abs_compare(100f64, 101f64, 1f64), true);
-        assert_eq!(DataChangeFilter::abs_compare(101f64, 100f64, 1f64), true);
-        assert_eq!(
-            DataChangeFilter::abs_compare(101.001f64, 100f64, 1f64),
-            false
+        assert!(DataChangeFilter::abs_compare(100f64, 100f64, 0f64));
+        assert!(DataChangeFilter::abs_compare(100f64, 100f64, 1f64));
+        assert!(DataChangeFilter::abs_compare(100f64, 101f64, 1f64));
+        assert!(DataChangeFilter::abs_compare(101f64, 100f64, 1f64));
+        assert!(
+            !DataChangeFilter::abs_compare(101.001f64, 100f64, 1f64)
         );
-        assert_eq!(
-            DataChangeFilter::abs_compare(100f64, 101.001f64, 1f64),
-            false
+        assert!(
+            !DataChangeFilter::abs_compare(100f64, 101.001f64, 1f64)
         );
     }
 
     // Straight tests of pct function
     #[test]
     fn deadband_pct() {
-        assert_eq!(
-            DataChangeFilter::pct_compare(100f64, 101f64, 0f64, 100f64, 0f64),
-            false
+        assert!(
+            !DataChangeFilter::pct_compare(100f64, 101f64, 0f64, 100f64, 0f64)
         );
-        assert_eq!(
-            DataChangeFilter::pct_compare(100f64, 101f64, 0f64, 100f64, 1f64),
-            true
+        assert!(
+            DataChangeFilter::pct_compare(100f64, 101f64, 0f64, 100f64, 1f64)
         );
-        assert_eq!(
-            DataChangeFilter::pct_compare(100f64, 101.0001f64, 0f64, 100f64, 1f64),
-            false
+        assert!(
+            !DataChangeFilter::pct_compare(100f64, 101.0001f64, 0f64, 100f64, 1f64)
         );
-        assert_eq!(
-            DataChangeFilter::pct_compare(101.0001f64, 100f64, 0f64, 100f64, 1f64),
-            false
+        assert!(
+            !DataChangeFilter::pct_compare(101.0001f64, 100f64, 0f64, 100f64, 1f64)
         );
-        assert_eq!(
-            DataChangeFilter::pct_compare(101.0001f64, 100f64, 0f64, 100f64, 1.0002f64),
-            true
+        assert!(
+            DataChangeFilter::pct_compare(101.0001f64, 100f64, 0f64, 100f64, 1.0002f64)
         );
     }
 

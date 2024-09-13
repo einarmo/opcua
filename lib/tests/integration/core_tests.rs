@@ -370,9 +370,9 @@ async fn recoverable_error_test_server() {
 
     let ids = (0..100)
         .map(|_| {
-            ReadValueId::from(ReadValueId::from(<VariableId as Into<NodeId>>::into(
+            ReadValueId::from(<VariableId as Into<NodeId>>::into(
                 VariableId::Server_ServiceLevel,
-            )))
+            ))
         })
         .collect::<Vec<_>>();
 

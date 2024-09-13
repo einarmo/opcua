@@ -127,7 +127,7 @@ async fn many_subscriptions() {
         nm.inner().add_node(
             nm.address_space(),
             tester.handle.type_tree(),
-            VariableBuilder::new(&id, &format!("Var{i}"), &format!("Var{i}"))
+            VariableBuilder::new(&id, format!("Var{i}"), format!("Var{i}"))
                 .data_type(DataTypeId::Int32)
                 .value(-1)
                 .access_level(AccessLevel::CURRENT_READ)

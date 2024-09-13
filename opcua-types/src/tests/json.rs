@@ -172,11 +172,11 @@ fn serialize_status_code() {
     assert_eq!(s, StatusCode::Good);
 
     let v = StatusCode::Good;
-    let json = serde_json::to_value(&v).unwrap();
+    let json = serde_json::to_value(v).unwrap();
     assert_eq!(json, json!(0));
 
     let v = StatusCode::BadDecodingError;
-    let json = serde_json::to_value(&v).unwrap();
+    let json = serde_json::to_value(v).unwrap();
     assert_eq!(json, json!(0x8007_0000i64))
 }
 
@@ -302,7 +302,7 @@ fn serialize_variant_float() {
     if let Variant::Float(v) = value {
         assert!(v.is_nan())
     } else {
-        assert!(false);
+        panic!("Expected NaN");
     }
 
     // Tests for Infinity
@@ -335,7 +335,7 @@ fn serialize_variant_double() {
     if let Variant::Double(v) = value {
         assert!(v.is_nan())
     } else {
-        assert!(false);
+        panic!("Expected NaN");
     }
 
     // Tests for Infinity
@@ -485,8 +485,8 @@ fn serialize_variant_data_value() {
 
     let now = DateTime::rfc3339_now();
 
-    v.server_timestamp = Some(now.clone());
-    v.source_timestamp = Some(now.clone());
+    v.server_timestamp = Some(now);
+    v.source_timestamp = Some(now);
 
     let now_str = now.to_rfc3339();
 
