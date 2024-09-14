@@ -113,7 +113,7 @@ impl SimpleBinaryDecodable for ByteString {
         } else if len as usize > decoding_options.max_byte_string_length {
             Err(Error::decoding(format!(
                 "ByteString length {} exceeds decoding limit {}",
-                len, decoding_options.max_string_length
+                len, decoding_options.max_byte_string_length
             )))
         } else {
             // Create a buffer filled with zeroes and read the byte string over the top
