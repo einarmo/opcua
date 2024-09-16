@@ -24,9 +24,9 @@ use super::{
 
 pub type SimpleNodeManager = InMemoryNodeManager<SimpleNodeManagerImpl>;
 
-type WriteCB = Arc<dyn Fn(DataValue, NumericRange) -> StatusCode + Send + Sync + 'static>;
+type WriteCB = Arc<dyn Fn(DataValue, &NumericRange) -> StatusCode + Send + Sync + 'static>;
 type ReadCB = Arc<
-    dyn Fn(NumericRange, TimestampsToReturn, f64) -> Result<DataValue, StatusCode>
+    dyn Fn(&NumericRange, TimestampsToReturn, f64) -> Result<DataValue, StatusCode>
         + Send
         + Sync
         + 'static,
@@ -171,16 +171,13 @@ impl InMemoryNodeManagerImpl for SimpleNodeManagerImpl {
                     node.item_to_monitor().node_id.clone(),
                     AttributeId::Value,
                     move || {
-                        Some(
-                            // TODO: Make everything take index range by reference.
-                            match cb(index_range.clone(), tss, 0.0) {
-                                Err(e) => DataValue {
-                                    status: Some(e),
-                                    ..Default::default()
-                                },
-                                Ok(v) => v,
+                        Some(match cb(&index_range, tss, 0.0) {
+                            Err(e) => DataValue {
+                                status: Some(e),
+                                ..Default::default()
                             },
-                        )
+                            Ok(v) => v,
+                        })
                     },
                     node.monitoring_mode(),
                     node.handle(),
@@ -298,11 +295,7 @@ impl SimpleNodeManagerImpl {
 
         // If there is a callback registered, call that, otherwise read it from the node hierarchy.
         if let Some(cb) = cbs.get(&node_to_read.node_id) {
-            match cb(
-                node_to_read.index_range.clone(),
-                timestamps_to_return,
-                max_age,
-            ) {
+            match cb(&node_to_read.index_range, timestamps_to_return, max_age) {
                 Err(e) => DataValue {
                     status: Some(e),
                     ..Default::default()
@@ -342,16 +335,13 @@ impl SimpleNodeManagerImpl {
             return;
         };
 
-        write.set_status(cb(
-            write.value().value.clone(),
-            write.value().index_range.clone(),
-        ));
+        write.set_status(cb(write.value().value.clone(), &write.value().index_range));
     }
 
     pub fn add_write_callback(
         &self,
         id: NodeId,
-        cb: impl Fn(DataValue, NumericRange) -> StatusCode + Send + Sync + 'static,
+        cb: impl Fn(DataValue, &NumericRange) -> StatusCode + Send + Sync + 'static,
     ) {
         let mut cbs = trace_write_lock!(self.write_cbs);
         cbs.insert(id, Arc::new(cb));
@@ -360,7 +350,7 @@ impl SimpleNodeManagerImpl {
     pub fn add_read_callback(
         &self,
         id: NodeId,
-        cb: impl Fn(NumericRange, TimestampsToReturn, f64) -> Result<DataValue, StatusCode>
+        cb: impl Fn(&NumericRange, TimestampsToReturn, f64) -> Result<DataValue, StatusCode>
             + Send
             + Sync
             + 'static,

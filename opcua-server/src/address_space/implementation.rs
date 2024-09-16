@@ -855,7 +855,7 @@ mod tests {
     use opcua_types::{
         argument::Argument, Array, BrowseDirection, DataTypeId, DecodingOptions, LocalizedText,
         NodeClass, NodeId, NumericRange, ObjectId, ObjectTypeId, QualifiedName, ReferenceTypeId,
-        TimestampsToReturn, UAString, Variant, VariantTypeId,
+        TimestampsToReturn, UAString, Variant, VariantScalarTypeId,
     };
 
     use super::AddressSpace;
@@ -1081,7 +1081,8 @@ mod tests {
         let mut type_tree = DefaultTypeTree::new();
         address_space.load_into_type_tree(&mut type_tree);
 
-        let reference_types = [(
+        let reference_types = [
+            (
                 ReferenceTypeId::References,
                 ReferenceTypeId::HierarchicalReferences,
             ),
@@ -1213,7 +1214,8 @@ mod tests {
             (
                 ReferenceTypeId::GeneratesEvent,
                 ReferenceTypeId::AlwaysGeneratesEvent,
-            )];
+            ),
+        ];
 
         // Make sure that subtypes match when subtypes are to be compared and doesn't when they should
         // not be compared.
@@ -1229,13 +1231,11 @@ mod tests {
     #[test]
     fn array_as_variable() {
         // 1 dimensional array with 100 element
-        let values = (0..100)
-            .map(Variant::Int32)
-            .collect::<Vec<Variant>>();
+        let values = (0..100).map(Variant::Int32).collect::<Vec<Variant>>();
 
         // Get the variable node back from the address space, ensure that the ValueRank and ArrayDimensions are correct
         let node_id = NodeId::new(2, 1);
-        let v = Variable::new(&node_id, "x", "x", (VariantTypeId::Int32, values));
+        let v = Variable::new(&node_id, "x", "x", (VariantScalarTypeId::Int32, values));
 
         let value_rank = v.value_rank();
         assert_eq!(value_rank, 1);
@@ -1249,10 +1249,8 @@ mod tests {
     fn multi_dimension_array_as_variable() {
         // 2 dimensional array with 10x10 elements
 
-        let values = (0..100)
-            .map(Variant::Int32)
-            .collect::<Vec<Variant>>();
-        let mda = Array::new_multi(VariantTypeId::Int32, values, vec![10u32, 10u32]).unwrap();
+        let values = (0..100).map(Variant::Int32).collect::<Vec<Variant>>();
+        let mda = Array::new_multi(VariantScalarTypeId::Int32, values, vec![10u32, 10u32]).unwrap();
         assert!(mda.is_valid());
 
         // Get the variable node back from the address space, ensure that the ValueRank and ArrayDimensions are correct
