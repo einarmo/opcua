@@ -220,10 +220,13 @@ fn add_static_array_variables(manager: &SimpleNodeManager, ns: u16, static_folde
             .collect::<Vec<Variant>>();
 
         let value_type = values.first().unwrap().type_id();
+        let VariantTypeId::Scalar(s) = value_type else {
+            panic!("Scalar values had array type");
+        };
         VariableBuilder::new(&node_id, name, name)
             .data_type(*sn)
             .value_rank(1)
-            .value((value_type, values))
+            .value((s, values))
             .organized_by(&array_folder_id)
             .writable()
             .insert(&mut *address_space);
@@ -266,10 +269,13 @@ fn add_dynamic_array_variables(manager: &SimpleNodeManager, ns: u16, dynamic_fol
             .map(|_| scalar_default_value(*sn))
             .collect::<Vec<Variant>>();
         let value_type = values.first().unwrap().type_id();
+        let VariantTypeId::Scalar(s) = value_type else {
+            panic!("Scalar values had array type");
+        };
         VariableBuilder::new(&node_id, name, name)
             .data_type(*sn)
             .value_rank(1)
-            .value((value_type, values))
+            .value((s, values))
             .organized_by(&array_folder_id)
             .insert(&mut *address_space);
     });
@@ -295,7 +301,10 @@ fn set_dynamic_timers(
                 let arr_node_id = scalar_node_id(ns, sn, true, true);
                 let arr = (0..10).map(|_| scalar_random_value(sn)).collect::<Vec<_>>();
                 let type_id = arr[0].type_id();
-                let array_val = DataValue::new_at(Array::new(type_id, arr).unwrap(), now);
+                let VariantTypeId::Scalar(s) = type_id else {
+                    panic!("Scalar values had array type");
+                };
+                let array_val = DataValue::new_at(Array::new(s, arr).unwrap(), now);
 
                 manager
                     .set_values(

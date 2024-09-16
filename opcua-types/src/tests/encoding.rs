@@ -431,7 +431,7 @@ fn variant_single_dimension_array() {
         Variant::Int32(200),
         Variant::Int32(300),
     ];
-    let v = Variant::from((VariantTypeId::Int32, values));
+    let v = Variant::from((VariantScalarTypeId::Int32, values));
     serialize_test(v);
 }
 
@@ -446,7 +446,7 @@ fn variant_multi_dimension_array() {
         Variant::Int32(600),
     ];
     let dimensions = vec![3u32, 2u32];
-    let v = Variant::from((VariantTypeId::Int32, values, dimensions));
+    let v = Variant::from((VariantScalarTypeId::Int32, values, dimensions));
     serialize_test(v);
 }
 
@@ -510,26 +510,25 @@ fn argument() {
 
 // test decoding of an null array  null != empty!
 #[test]
-fn null_array() -> EncodingResult<()> {
+fn null_array() {
     // @FIXME currently creating an null array via Array or Variant is not possible so do it by hand
     let vec = Vec::new();
     let mut stream = Cursor::new(vec);
     let mask = EncodingMask::BOOLEAN | EncodingMask::ARRAY_MASK;
-    mask.encode(&mut stream)?;
-    let length = -1_i32;
-    length.encode(&mut stream)?;
+    mask.encode(&mut stream).unwrap();
+    let length = 0i32;
+    length.encode(&mut stream).unwrap();
     let actual = stream.into_inner();
     let mut stream = Cursor::new(actual);
-    let arr = Variant::decode(&mut stream, &DecodingOptions::test())?;
+    let arr = Variant::decode(&mut stream, &DecodingOptions::test()).unwrap();
     assert_eq!(
         arr,
         Variant::Array(Box::new(Array {
-            value_type: VariantTypeId::Boolean,
+            value_type: VariantScalarTypeId::Boolean,
             values: Vec::new(),
             dimensions: Some(Vec::new())
         }))
     );
-    Ok(())
 }
 
 #[test]

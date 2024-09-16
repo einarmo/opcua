@@ -4,14 +4,30 @@
 
 use log::error;
 
-use crate::{DataTypeId, Identifier, NodeId, StatusCode};
+use crate::{DataTypeId, NodeId, NodeIdError, StatusCode};
 
 /// The variant type id is the type of the variant but without its payload.
-#[derive(Debug, Clone, Copy, PartialEq, serde::Serialize, serde::Deserialize)]
-pub enum VariantTypeId {
-    // Null / Empty
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum VariantTypeId<'a> {
     Empty,
-    // Scalar types
+    Scalar(VariantScalarTypeId),
+    Array(VariantScalarTypeId, Option<&'a [u32]>),
+}
+
+impl<'a> From<VariantScalarTypeId> for VariantTypeId<'a> {
+    fn from(value: VariantScalarTypeId) -> Self {
+        Self::Scalar(value)
+    }
+}
+
+impl<'a> From<(VariantScalarTypeId, &'a [u32])> for VariantTypeId<'a> {
+    fn from(value: (VariantScalarTypeId, &'a [u32])) -> Self {
+        Self::Array(value.0, Some(value.1))
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, serde::Serialize, serde::Deserialize)]
+pub enum VariantScalarTypeId {
     Boolean,
     SByte,
     Byte,
@@ -37,156 +53,128 @@ pub enum VariantTypeId {
     Variant,
     DataValue,
     DiagnosticInfo,
-    Array,
 }
 
-impl TryFrom<&NodeId> for VariantTypeId {
-    type Error = ();
-    fn try_from(value: &NodeId) -> Result<Self, Self::Error> {
-        if value.namespace == 0 {
-            if let Identifier::Numeric(type_id) = value.identifier {
-                match type_id {
-                    type_id if type_id == DataTypeId::Boolean as u32 => Ok(VariantTypeId::Boolean),
-                    type_id if type_id == DataTypeId::Byte as u32 => Ok(VariantTypeId::Byte),
-                    type_id if type_id == DataTypeId::Int16 as u32 => Ok(VariantTypeId::Int16),
-                    type_id if type_id == DataTypeId::UInt16 as u32 => Ok(VariantTypeId::UInt16),
-                    type_id if type_id == DataTypeId::Int32 as u32 => Ok(VariantTypeId::Int32),
-                    type_id if type_id == DataTypeId::UInt32 as u32 => Ok(VariantTypeId::UInt32),
-                    type_id if type_id == DataTypeId::Int64 as u32 => Ok(VariantTypeId::Int64),
-                    type_id if type_id == DataTypeId::UInt64 as u32 => Ok(VariantTypeId::UInt64),
-                    type_id if type_id == DataTypeId::Float as u32 => Ok(VariantTypeId::Float),
-                    type_id if type_id == DataTypeId::Double as u32 => Ok(VariantTypeId::Double),
-                    type_id if type_id == DataTypeId::String as u32 => Ok(VariantTypeId::String),
-                    type_id if type_id == DataTypeId::DateTime as u32 => {
-                        Ok(VariantTypeId::DateTime)
-                    }
-                    type_id if type_id == DataTypeId::Guid as u32 => Ok(VariantTypeId::Guid),
-                    type_id if type_id == DataTypeId::ByteString as u32 => {
-                        Ok(VariantTypeId::ByteString)
-                    }
-                    type_id if type_id == DataTypeId::XmlElement as u32 => {
-                        Ok(VariantTypeId::XmlElement)
-                    }
-                    type_id if type_id == DataTypeId::NodeId as u32 => Ok(VariantTypeId::NodeId),
-                    type_id if type_id == DataTypeId::ExpandedNodeId as u32 => {
-                        Ok(VariantTypeId::ExpandedNodeId)
-                    }
-                    type_id if type_id == DataTypeId::XmlElement as u32 => {
-                        Ok(VariantTypeId::XmlElement)
-                    }
-                    type_id if type_id == DataTypeId::StatusCode as u32 => {
-                        Ok(VariantTypeId::StatusCode)
-                    }
-                    type_id if type_id == DataTypeId::QualifiedName as u32 => {
-                        Ok(VariantTypeId::QualifiedName)
-                    }
-                    type_id if type_id == DataTypeId::LocalizedText as u32 => {
-                        Ok(VariantTypeId::LocalizedText)
-                    }
-                    type_id if type_id == DataTypeId::DataValue as u32 => {
-                        Ok(VariantTypeId::DataValue)
-                    }
-                    type_id if type_id == DataTypeId::BaseDataType as u32 => {
-                        Ok(VariantTypeId::Variant)
-                    }
-                    type_id if type_id == DataTypeId::DiagnosticInfo as u32 => {
-                        Ok(VariantTypeId::DiagnosticInfo)
-                    }
-                    _ => Err(()),
-                }
-            } else {
-                Err(())
-            }
-        } else {
-            Err(())
-        }
+impl TryFrom<&NodeId> for VariantScalarTypeId {
+    type Error = NodeIdError;
+    fn try_from(value: &NodeId) -> Result<Self, NodeIdError> {
+        let type_id = value.as_data_type_id()?;
+
+        Ok(match type_id {
+            DataTypeId::Boolean => Self::Boolean,
+            DataTypeId::Byte => Self::Byte,
+            DataTypeId::Int16 => Self::Int16,
+            DataTypeId::UInt16 => Self::UInt16,
+            DataTypeId::Int32 => Self::Int32,
+            DataTypeId::UInt32 => Self::UInt32,
+            DataTypeId::Int64 => Self::Int64,
+            DataTypeId::UInt64 => Self::UInt64,
+            DataTypeId::Float => Self::Float,
+            DataTypeId::Double => Self::Double,
+            DataTypeId::String => Self::String,
+            DataTypeId::DateTime => Self::DateTime,
+            DataTypeId::Guid => Self::Guid,
+            DataTypeId::ByteString => Self::ByteString,
+            DataTypeId::XmlElement => Self::XmlElement,
+            DataTypeId::NodeId => Self::NodeId,
+            DataTypeId::ExpandedNodeId => Self::ExpandedNodeId,
+            DataTypeId::StatusCode => Self::StatusCode,
+            DataTypeId::QualifiedName => Self::QualifiedName,
+            DataTypeId::LocalizedText => Self::LocalizedText,
+            DataTypeId::DataValue => Self::DataValue,
+            DataTypeId::BaseDataType => Self::Variant,
+            DataTypeId::DiagnosticInfo => Self::DiagnosticInfo,
+            _ => return Err(NodeIdError),
+        })
     }
 }
 
-impl VariantTypeId {
+impl<'a> TryFrom<&NodeId> for VariantTypeId<'a> {
+    type Error = NodeIdError;
+    fn try_from(value: &NodeId) -> Result<Self, NodeIdError> {
+        Ok(Self::Scalar(VariantScalarTypeId::try_from(value)?))
+    }
+}
+
+impl VariantScalarTypeId {
     pub fn encoding_mask(&self) -> u8 {
         match self {
-            // Null / Empty
-            VariantTypeId::Empty => 0u8,
-            // Scalar types
-            VariantTypeId::Boolean => EncodingMask::BOOLEAN,
-            VariantTypeId::SByte => EncodingMask::SBYTE,
-            VariantTypeId::Byte => EncodingMask::BYTE,
-            VariantTypeId::Int16 => EncodingMask::INT16,
-            VariantTypeId::UInt16 => EncodingMask::UINT16,
-            VariantTypeId::Int32 => EncodingMask::INT32,
-            VariantTypeId::UInt32 => EncodingMask::UINT32,
-            VariantTypeId::Int64 => EncodingMask::INT64,
-            VariantTypeId::UInt64 => EncodingMask::UINT64,
-            VariantTypeId::Float => EncodingMask::FLOAT,
-            VariantTypeId::Double => EncodingMask::DOUBLE,
-            VariantTypeId::String => EncodingMask::STRING,
-            VariantTypeId::DateTime => EncodingMask::DATE_TIME,
-            VariantTypeId::Guid => EncodingMask::GUID,
-            VariantTypeId::StatusCode => EncodingMask::STATUS_CODE,
-            VariantTypeId::ByteString => EncodingMask::BYTE_STRING,
-            VariantTypeId::XmlElement => EncodingMask::XML_ELEMENT,
-            VariantTypeId::QualifiedName => EncodingMask::QUALIFIED_NAME,
-            VariantTypeId::LocalizedText => EncodingMask::LOCALIZED_TEXT,
-            VariantTypeId::NodeId => EncodingMask::NODE_ID,
-            VariantTypeId::ExpandedNodeId => EncodingMask::EXPANDED_NODE_ID,
-            VariantTypeId::ExtensionObject => EncodingMask::EXTENSION_OBJECT,
-            VariantTypeId::Variant => EncodingMask::VARIANT,
-            VariantTypeId::DataValue => EncodingMask::DATA_VALUE,
-            VariantTypeId::DiagnosticInfo => EncodingMask::DIAGNOSTIC_INFO,
-            VariantTypeId::Array => panic!("Type of array is unknown"),
+            Self::Boolean => EncodingMask::BOOLEAN,
+            Self::SByte => EncodingMask::SBYTE,
+            Self::Byte => EncodingMask::BYTE,
+            Self::Int16 => EncodingMask::INT16,
+            Self::UInt16 => EncodingMask::UINT16,
+            Self::Int32 => EncodingMask::INT32,
+            Self::UInt32 => EncodingMask::UINT32,
+            Self::Int64 => EncodingMask::INT64,
+            Self::UInt64 => EncodingMask::UINT64,
+            Self::Float => EncodingMask::FLOAT,
+            Self::Double => EncodingMask::DOUBLE,
+            Self::String => EncodingMask::STRING,
+            Self::DateTime => EncodingMask::DATE_TIME,
+            Self::Guid => EncodingMask::GUID,
+            Self::StatusCode => EncodingMask::STATUS_CODE,
+            Self::ByteString => EncodingMask::BYTE_STRING,
+            Self::XmlElement => EncodingMask::XML_ELEMENT,
+            Self::QualifiedName => EncodingMask::QUALIFIED_NAME,
+            Self::LocalizedText => EncodingMask::LOCALIZED_TEXT,
+            Self::NodeId => EncodingMask::NODE_ID,
+            Self::ExpandedNodeId => EncodingMask::EXPANDED_NODE_ID,
+            Self::ExtensionObject => EncodingMask::EXTENSION_OBJECT,
+            Self::Variant => EncodingMask::VARIANT,
+            Self::DataValue => EncodingMask::DATA_VALUE,
+            Self::DiagnosticInfo => EncodingMask::DIAGNOSTIC_INFO,
         }
     }
 
     pub fn from_encoding_mask(encoding_mask: u8) -> Result<Self, StatusCode> {
-        match encoding_mask & !EncodingMask::ARRAY_MASK {
-            0u8 => Ok(VariantTypeId::Empty),
-            EncodingMask::BOOLEAN => Ok(VariantTypeId::Boolean),
-            EncodingMask::SBYTE => Ok(VariantTypeId::SByte),
-            EncodingMask::BYTE => Ok(VariantTypeId::Byte),
-            EncodingMask::INT16 => Ok(VariantTypeId::Int16),
-            EncodingMask::UINT16 => Ok(VariantTypeId::UInt16),
-            EncodingMask::INT32 => Ok(VariantTypeId::Int32),
-            EncodingMask::UINT32 => Ok(VariantTypeId::UInt32),
-            EncodingMask::INT64 => Ok(VariantTypeId::Int64),
-            EncodingMask::UINT64 => Ok(VariantTypeId::UInt64),
-            EncodingMask::FLOAT => Ok(VariantTypeId::Float),
-            EncodingMask::DOUBLE => Ok(VariantTypeId::Double),
-            EncodingMask::STRING => Ok(VariantTypeId::String),
-            EncodingMask::DATE_TIME => Ok(VariantTypeId::DateTime),
-            EncodingMask::GUID => Ok(VariantTypeId::Guid),
-            EncodingMask::STATUS_CODE => Ok(VariantTypeId::StatusCode),
-            EncodingMask::BYTE_STRING => Ok(VariantTypeId::ByteString),
-            EncodingMask::XML_ELEMENT => Ok(VariantTypeId::XmlElement),
-            EncodingMask::QUALIFIED_NAME => Ok(VariantTypeId::QualifiedName),
-            EncodingMask::LOCALIZED_TEXT => Ok(VariantTypeId::LocalizedText),
-            EncodingMask::NODE_ID => Ok(VariantTypeId::NodeId),
-            EncodingMask::EXPANDED_NODE_ID => Ok(VariantTypeId::ExpandedNodeId),
-            EncodingMask::EXTENSION_OBJECT => Ok(VariantTypeId::ExtensionObject),
-            EncodingMask::VARIANT => Ok(VariantTypeId::Variant),
-            EncodingMask::DATA_VALUE => Ok(VariantTypeId::DataValue),
-            EncodingMask::DIAGNOSTIC_INFO => Ok(VariantTypeId::DiagnosticInfo),
+        Ok(match encoding_mask & !EncodingMask::ARRAY_MASK {
+            EncodingMask::BOOLEAN => Self::Boolean,
+            EncodingMask::SBYTE => Self::SByte,
+            EncodingMask::BYTE => Self::Byte,
+            EncodingMask::INT16 => Self::Int16,
+            EncodingMask::UINT16 => Self::UInt16,
+            EncodingMask::INT32 => Self::Int32,
+            EncodingMask::UINT32 => Self::UInt32,
+            EncodingMask::INT64 => Self::Int64,
+            EncodingMask::UINT64 => Self::UInt64,
+            EncodingMask::FLOAT => Self::Float,
+            EncodingMask::DOUBLE => Self::Double,
+            EncodingMask::STRING => Self::String,
+            EncodingMask::DATE_TIME => Self::DateTime,
+            EncodingMask::GUID => Self::Guid,
+            EncodingMask::STATUS_CODE => Self::StatusCode,
+            EncodingMask::BYTE_STRING => Self::ByteString,
+            EncodingMask::XML_ELEMENT => Self::XmlElement,
+            EncodingMask::QUALIFIED_NAME => Self::QualifiedName,
+            EncodingMask::LOCALIZED_TEXT => Self::LocalizedText,
+            EncodingMask::NODE_ID => Self::NodeId,
+            EncodingMask::EXPANDED_NODE_ID => Self::ExpandedNodeId,
+            EncodingMask::EXTENSION_OBJECT => Self::ExtensionObject,
+            EncodingMask::VARIANT => Self::Variant,
+            EncodingMask::DATA_VALUE => Self::DataValue,
+            EncodingMask::DIAGNOSTIC_INFO => Self::DiagnosticInfo,
             _ => {
                 error!("Unrecognized encoding mask");
-                Err(StatusCode::BadDecodingError)
+                return Err(StatusCode::BadDecodingError);
             }
-        }
+        })
     }
 
     /// Tests and returns true if the variant holds a numeric type
     pub fn is_numeric(&self) -> bool {
         matches!(
             self,
-            VariantTypeId::SByte
-                | VariantTypeId::Byte
-                | VariantTypeId::Int16
-                | VariantTypeId::UInt16
-                | VariantTypeId::Int32
-                | VariantTypeId::UInt32
-                | VariantTypeId::Int64
-                | VariantTypeId::UInt64
-                | VariantTypeId::Float
-                | VariantTypeId::Double
+            Self::SByte
+                | Self::Byte
+                | Self::Int16
+                | Self::UInt16
+                | Self::Int32
+                | Self::UInt32
+                | Self::Int64
+                | Self::UInt64
+                | Self::Float
+                | Self::Double
         )
     }
 
@@ -195,25 +183,52 @@ impl VariantTypeId {
     /// the highest precedence dictates how values are converted in order to be compared.
     pub fn precedence(&self) -> u8 {
         match self {
-            VariantTypeId::Double => 1,
-            VariantTypeId::Float => 2,
-            VariantTypeId::Int64 => 3,
-            VariantTypeId::UInt64 => 4,
-            VariantTypeId::Int32 => 5,
-            VariantTypeId::UInt32 => 6,
-            VariantTypeId::StatusCode => 7,
-            VariantTypeId::Int16 => 8,
-            VariantTypeId::UInt16 => 9,
-            VariantTypeId::SByte => 10,
-            VariantTypeId::Byte => 11,
-            VariantTypeId::Boolean => 12,
-            VariantTypeId::Guid => 13,
-            VariantTypeId::String => 14,
-            VariantTypeId::ExpandedNodeId => 15,
-            VariantTypeId::NodeId => 16,
-            VariantTypeId::LocalizedText => 17,
-            VariantTypeId::QualifiedName => 18,
+            Self::Double => 1,
+            Self::Float => 2,
+            Self::Int64 => 3,
+            Self::UInt64 => 4,
+            Self::Int32 => 5,
+            Self::UInt32 => 6,
+            Self::StatusCode => 7,
+            Self::Int16 => 8,
+            Self::UInt16 => 9,
+            Self::SByte => 10,
+            Self::Byte => 11,
+            Self::Boolean => 12,
+            Self::Guid => 13,
+            Self::String => 14,
+            Self::ExpandedNodeId => 15,
+            Self::NodeId => 16,
+            Self::LocalizedText => 17,
+            Self::QualifiedName => 18,
             _ => 100,
+        }
+    }
+}
+
+impl<'a> VariantTypeId<'a> {
+    pub fn encoding_mask(&self) -> u8 {
+        match self {
+            // Null / Empty
+            VariantTypeId::Empty => 0u8,
+            // Scalar types
+            VariantTypeId::Scalar(s) => s.encoding_mask(),
+            VariantTypeId::Array(s, dims) => {
+                let mask = s.encoding_mask() | EncodingMask::ARRAY_VALUES_BIT;
+                if dims.is_some() {
+                    mask | EncodingMask::ARRAY_DIMENSIONS_BIT
+                } else {
+                    mask
+                }
+            }
+        }
+    }
+
+    pub fn precedence(&self) -> u8 {
+        match self {
+            Self::Scalar(s) => s.precedence(),
+            Self::Array(s, _) => s.precedence(),
+            Self::Empty => 100,
         }
     }
 }

@@ -124,7 +124,7 @@ macro_rules! load_method_args {
             let mut arguments = $call.arguments().iter();
             (move || {
                 Ok(($(
-                    match arguments.next().map(|v| v.convert(VariantTypeId::$type)) {
+                    match arguments.next().map(|v| v.convert(VariantTypeId::Scalar(VariantScalarTypeId::$type))) {
                         Some(Variant::$type(val)) => val,
                         _ => return Err(StatusCode::BadInvalidArgument),
                     }

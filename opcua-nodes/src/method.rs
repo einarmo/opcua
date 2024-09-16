@@ -8,7 +8,7 @@ use log::error;
 use opcua_types::{
     service_types::{Argument, MethodAttributes},
     AttributeId, AttributesMask, DataTypeId, DataValue, ExtensionObject, NumericRange, ObjectId,
-    StatusCode, TimestampsToReturn, VariableTypeId, Variant, VariantTypeId,
+    StatusCode, TimestampsToReturn, VariableTypeId, Variant, VariantScalarTypeId,
 };
 
 use crate::{FromAttributesError, NodeInsertTarget};
@@ -73,7 +73,7 @@ impl MethodBuilder {
                 ))
             })
             .collect::<Vec<Variant>>();
-        Variant::from((VariantTypeId::ExtensionObject, arguments))
+        Variant::from((VariantScalarTypeId::ExtensionObject, arguments))
     }
 
     fn insert_args(

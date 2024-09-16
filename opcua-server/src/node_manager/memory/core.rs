@@ -19,7 +19,7 @@ use opcua_core::{sync::RwLock, trace_lock};
 use opcua_types::{
     DataValue, DateTime, ExtensionObject, IdType, Identifier, MethodId, MonitoringMode,
     NumericRange, ObjectId, ReferenceTypeId, StatusCode, TimeZoneDataType, TimestampsToReturn,
-    VariableId, Variant, VariantTypeId,
+    VariableId, Variant, VariantScalarTypeId, VariantTypeId,
 };
 
 use super::{

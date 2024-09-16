@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::{
     Array, AsVariantRef, AttributeId, ByteString, DataValue, DateTime, DiagnosticInfo,
     ExpandedNodeId, ExtensionObject, Guid, LocalizedText, NodeId, NumericRange, QualifiedName,
-    StatusCode, UAString, Variant,
+    StatusCode, UAString, Variant, VariantType,
 };
 
 /// Trait implemented by any type that can be a field in an event.
@@ -62,7 +62,7 @@ where
 
 impl<T> EventField for Vec<T>
 where
-    T: EventField + Clone,
+    T: EventField + Clone + VariantType,
 {
     fn get_value(
         &self,
@@ -127,14 +127,10 @@ where
             }
         };
 
-        if let Some(first) = values.first() {
-            let Ok(arr) = Array::new(first.type_id(), values) else {
-                return Variant::Empty;
-            };
-            arr.into()
-        } else {
-            Variant::Empty
-        }
+        let Ok(arr) = Array::new(T::variant_type_id(), values) else {
+            return Variant::Empty;
+        };
+        Variant::Array(Box::new(arr))
     }
 }
 

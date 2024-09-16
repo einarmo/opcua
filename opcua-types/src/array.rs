@@ -8,7 +8,7 @@ use crate::{variant::*, variant_type_id::*, StatusCode};
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct Array {
     // Type of elements in the array
-    pub value_type: VariantTypeId,
+    pub value_type: VariantScalarTypeId,
 
     /// Values are stored sequentially
     pub values: Vec<Variant>,
@@ -22,7 +22,7 @@ pub struct Array {
 
 impl Array {
     /// Constructs a single dimension array from the supplied values
-    pub fn new<V>(value_type: VariantTypeId, values: V) -> Result<Array, StatusCode>
+    pub fn new<V>(value_type: VariantScalarTypeId, values: V) -> Result<Array, StatusCode>
     where
         V: Into<Vec<Variant>>,
     {
@@ -42,7 +42,7 @@ impl Array {
     /// and held as a single dimension array but a separate dimensions parameter indicates how the
     /// values are accessed.
     pub fn new_multi<V, D>(
-        value_type: VariantTypeId,
+        value_type: VariantScalarTypeId,
         values: V,
         dimensions: D,
     ) -> Result<Array, StatusCode>
@@ -51,9 +51,12 @@ impl Array {
         D: Into<Vec<u32>>,
     {
         let values = values.into();
-        let dimensions = dimensions.into();
+        let dimensions: Vec<_> = dimensions.into();
 
-        // TODO should also Self::validate_dimensions(values.len(), &dimensions)
+        if !Self::validate_dimensions(values.len(), &dimensions) {
+            return Err(StatusCode::BadDecodingError);
+        }
+
         if Self::validate_array_type_to_values(value_type, &values) {
             Ok(Array {
                 value_type,
@@ -66,21 +69,13 @@ impl Array {
     }
 
     /// This is a runtime check to ensure the type of the array also matches the types of the variants in the array.
-    fn validate_array_type_to_values(value_type: VariantTypeId, values: &[Variant]) -> bool {
-        match value_type {
-            VariantTypeId::Array | VariantTypeId::Empty => {
-                error!("Invalid array type supplied");
-                false
-            }
-            _ => {
-                if !values_are_of_type(values, value_type) {
-                    // If the values exist, then validate them to the type
-                    error!("Value type of array does not match contents");
-                    false
-                } else {
-                    true
-                }
-            }
+    fn validate_array_type_to_values(value_type: VariantScalarTypeId, values: &[Variant]) -> bool {
+        if !values_are_of_type(values, value_type) {
+            // If the values exist, then validate them to the type
+            error!("Value type of array does not match contents");
+            false
+        } else {
+            true
         }
     }
 
@@ -103,31 +98,34 @@ impl Array {
             true
         } else {
             let expected_type_id = values[0].type_id();
-            if expected_type_id == VariantTypeId::Array {
-                // Nested arrays are explicitly NOT allowed
-                error!("Variant array contains nested array {:?}", expected_type_id);
-                false
-            } else if values.len() > 1 {
-                values_are_of_type(&values[1..], expected_type_id)
-            } else {
-                // Only contains 1 element
-                true
+            match expected_type_id {
+                VariantTypeId::Array(_, _) => {
+                    // Nested arrays are explicitly NOT allowed
+                    error!("Variant array contains nested array {:?}", expected_type_id);
+                    false
+                }
+                VariantTypeId::Empty => {
+                    error!("Variant array contains null values");
+                    false
+                }
+                VariantTypeId::Scalar(s) => {
+                    if values.len() > 1 {
+                        values_are_of_type(&values[1..], s)
+                    } else {
+                        true
+                    }
+                }
             }
         }
     }
 
     fn validate_dimensions(values_len: usize, dimensions: &[u32]) -> bool {
-        // Check that the array dimensions match the length of the array
-        let mut length: usize = 1;
-        for d in dimensions {
-            // Check for invalid dimensions
-            if *d == 0 {
-                // This dimension has no fixed size, so skip it
-                continue;
-            }
-            length *= *d as usize;
-        }
-        length <= values_len
+        let len = dimensions
+            .iter()
+            .map(|d| *d as usize)
+            .reduce(|a, b| a * b)
+            .unwrap_or(0);
+        len == values_len
     }
 
     fn is_valid_dimensions(&self) -> bool {
@@ -140,9 +138,13 @@ impl Array {
 }
 
 /// Check that all elements in the slice of arrays are the same type.
-pub fn values_are_of_type(values: &[Variant], expected_type: VariantTypeId) -> bool {
+pub fn values_are_of_type(values: &[Variant], expected_type: VariantScalarTypeId) -> bool {
     // Ensure all remaining elements are the same type as the first element
-    let found_unexpected = values.iter().any(|v| v.type_id() != expected_type);
+    let found_unexpected = values.iter().any(|v| match v.type_id() {
+        VariantTypeId::Array(_, _) => true,
+        VariantTypeId::Scalar(s) => s != expected_type,
+        VariantTypeId::Empty => true,
+    });
     if found_unexpected {
         error!(
             "Variant array's type is expected to be {:?} but found other types in it",

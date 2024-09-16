@@ -5,7 +5,7 @@ use regex::Regex;
 
 use opcua_types::{
     AttributeId, EventFieldList, FilterOperator, NodeId, NumericRange, QualifiedName, Variant,
-    VariantTypeId,
+    VariantScalarTypeId, VariantTypeId,
 };
 
 use super::{
@@ -48,7 +48,7 @@ macro_rules! cmp_op {
 
 macro_rules! as_type {
     ($v:expr, $t:ident, $def:expr) => {{
-        let v = $v.convert(VariantTypeId::$t);
+        let v = $v.convert(VariantTypeId::Scalar(VariantScalarTypeId::$t));
         let Variant::$t(v) = v else {
             return $def;
         };
@@ -247,7 +247,10 @@ impl ParsedContentFilter {
     fn convert(lhs: Variant, rhs: Variant) -> (Variant, Variant) {
         let lhs_type = lhs.type_id();
         match lhs_type.precedence().cmp(&rhs.type_id().precedence()) {
-            std::cmp::Ordering::Less => (lhs, rhs.convert(lhs_type)),
+            std::cmp::Ordering::Less => {
+                let c = rhs.convert(lhs_type);
+                (lhs, c)
+            }
             std::cmp::Ordering::Equal => (lhs, rhs),
             std::cmp::Ordering::Greater => (lhs.convert(rhs.type_id()), rhs),
         }
