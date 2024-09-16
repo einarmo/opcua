@@ -36,9 +36,7 @@ fn test_symmetric_encrypt_decrypt(
             .verify_and_remove_security(&encrypted_data[..encrypted_size])
             .unwrap();
 
-        // Why offset 12? So we don't compare message_size part which may differ when padding is added. Less than ideal
-        // TODO padding should be stripped from removed security and the message size should be same
-        assert_eq!(&chunk.data[12..], &chunk2.data[12..chunk.data.len()]);
+        assert_eq!(&chunk.data, &chunk2.data);
     }
 
     let message2 = Chunker::decode(&chunks, &secure_channel2, None).unwrap();
@@ -99,7 +97,7 @@ fn test_asymmetric_encrypt_decrypt(
             .verify_and_remove_security(&encrypted_data[..encrypted_size])
             .unwrap();
         assert_eq!(chunk.data.len(), chunk2.data.len());
-        assert_eq!(&chunk.data[12..], &chunk2.data[12..chunk2.data.len()]);
+        assert_eq!(&chunk.data, &chunk2.data);
     }
 }
 

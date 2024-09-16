@@ -626,11 +626,6 @@ impl SecurityPolicy {
         data: &[u8],
         signature: &mut [u8],
     ) -> Result<(), StatusCode> {
-        trace!(
-            "Producing signature for {} bytes of data into signature of {} bytes",
-            data.len(),
-            signature.len()
-        );
         match self {
             SecurityPolicy::Basic128Rsa15 | SecurityPolicy::Basic256 => {
                 hash::hmac_sha1(key, data, signature)

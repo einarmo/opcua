@@ -287,7 +287,7 @@ impl ServerInfo {
         } else {
             (
                 ApplicationDescription {
-                    application_uri: UAString::null(),
+                    application_uri: self.application_uri.clone(),
                     product_uri: UAString::null(),
                     application_name: LocalizedText::null(),
                     application_type: self.application_type(),
