@@ -688,7 +688,7 @@ impl X509 {
             return Err(StatusCode::BadCertificateInvalid);
         }
 
-        info!("Certificate is valid for this time");
+        trace!("Certificate is valid for this time");
         Ok(())
     }
 

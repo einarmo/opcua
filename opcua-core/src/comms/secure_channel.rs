@@ -418,9 +418,11 @@ impl SecureChannel {
         security_header: &SecurityHeader,
         body_size: usize,
         signature_size: usize,
+        message_type: MessageChunkType,
     ) -> (usize, usize) {
         if self.security_policy != SecurityPolicy::None
-            && self.security_mode != MessageSecurityMode::None
+            && (self.security_mode == MessageSecurityMode::SignAndEncrypt
+                || message_type.is_open_secure_channel())
         {
             // Signature size in bytes
             let (plain_text_block_size, key_length) = match security_header {
@@ -480,8 +482,12 @@ impl SecureChannel {
         // Write padding
         let body_size = chunk_info.body_length;
 
-        let (padding_size, minimum_padding) =
-            self.padding_size(&security_header, body_size, signature_size);
+        let (padding_size, minimum_padding) = self.padding_size(
+            &security_header,
+            body_size,
+            signature_size,
+            chunk_info.message_header.message_type,
+        );
         if padding_size > 0 {
             // A number of bytes are written out equal to the padding size.
             // Each byte is the padding size. So if padding size is 15 then
@@ -691,8 +697,8 @@ impl SecureChannel {
 
             // This code doesn't *care* if the cert is trusted, merely that it was used to sign the message
             if security_header.sender_certificate.is_null() {
-                error!("Sender certificate is NULL!!!");
-                // TODO return
+                error!("Sender certificate is null!");
+                return Err(StatusCode::BadCertificateInvalid);
             }
 
             let sender_certificate_len = security_header
@@ -1051,8 +1057,10 @@ impl SecureChannel {
         self.local_keys.as_ref().unwrap()
     }
 
-    fn remote_keys(&self) -> &(Vec<u8>, AesKey, Vec<u8>) {
-        self.remote_keys.as_ref().unwrap()
+    fn remote_keys(&self) -> Result<&(Vec<u8>, AesKey, Vec<u8>), StatusCode> {
+        self.remote_keys
+            .as_ref()
+            .ok_or(StatusCode::BadSecureChannelClosed)
     }
 
     fn encryption_keys(&self) -> (&AesKey, &[u8]) {
@@ -1064,13 +1072,13 @@ impl SecureChannel {
         &(self.local_keys()).0
     }
 
-    fn decryption_keys(&self) -> (&AesKey, &[u8]) {
-        let keys = self.remote_keys();
-        (&keys.1, &keys.2)
+    fn decryption_keys(&self) -> Result<(&AesKey, &[u8]), StatusCode> {
+        let keys = self.remote_keys()?;
+        Ok((&keys.1, &keys.2))
     }
 
-    fn verification_key(&self) -> &[u8] {
-        &(self.remote_keys()).0
+    fn verification_key(&self) -> Result<&[u8], StatusCode> {
+        Ok(&(self.remote_keys()?).0)
     }
 
     /// Encode data using security. Destination buffer is expected to be same size as src and expected
@@ -1201,7 +1209,7 @@ impl SecureChannel {
                     signed_range,
                     signed_range.end
                 );
-                let verification_key = self.verification_key();
+                let verification_key = self.verification_key()?;
                 self.security_policy.symmetric_verify_signature(
                     verification_key,
                     &dst[signed_range.clone()],
@@ -1225,7 +1233,7 @@ impl SecureChannel {
 
                 // Decrypt encrypted portion
                 let mut decrypted_tmp = vec![0u8; ciphertext_size + 16]; // tmp includes +16 for blocksize
-                let (key, iv) = self.decryption_keys();
+                let (key, iv) = self.decryption_keys()?;
 
                 trace!(
                     "Secure decrypt called with encrypted range {:?}",
@@ -1253,7 +1261,7 @@ impl SecureChannel {
                     signed_range,
                     signature_range
                 );
-                let verification_key = self.verification_key();
+                let verification_key = self.verification_key()?;
                 let signature_start = signature_range.start;
                 self.security_policy.symmetric_verify_signature(
                     verification_key,

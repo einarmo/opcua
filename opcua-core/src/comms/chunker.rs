@@ -236,7 +236,7 @@ impl Chunker {
                 // Rust has a nice function to do just that.
                 let data_chunks = data.chunks(max_body_per_chunk);
                 let data_chunks_len = data_chunks.len();
-                log::info!(
+                trace!(
                     "Split message into {} chunks of {} length max",
                     data_chunks_len,
                     max_body_per_chunk
