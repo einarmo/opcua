@@ -775,32 +775,40 @@ pub(super) mod tests {
         assert!(DataChangeFilter::abs_compare(100f64, 100f64, 1f64));
         assert!(DataChangeFilter::abs_compare(100f64, 101f64, 1f64));
         assert!(DataChangeFilter::abs_compare(101f64, 100f64, 1f64));
-        assert!(
-            !DataChangeFilter::abs_compare(101.001f64, 100f64, 1f64)
-        );
-        assert!(
-            !DataChangeFilter::abs_compare(100f64, 101.001f64, 1f64)
-        );
+        assert!(!DataChangeFilter::abs_compare(101.001f64, 100f64, 1f64));
+        assert!(!DataChangeFilter::abs_compare(100f64, 101.001f64, 1f64));
     }
 
     // Straight tests of pct function
     #[test]
     fn deadband_pct() {
-        assert!(
-            !DataChangeFilter::pct_compare(100f64, 101f64, 0f64, 100f64, 0f64)
-        );
-        assert!(
-            DataChangeFilter::pct_compare(100f64, 101f64, 0f64, 100f64, 1f64)
-        );
-        assert!(
-            !DataChangeFilter::pct_compare(100f64, 101.0001f64, 0f64, 100f64, 1f64)
-        );
-        assert!(
-            !DataChangeFilter::pct_compare(101.0001f64, 100f64, 0f64, 100f64, 1f64)
-        );
-        assert!(
-            DataChangeFilter::pct_compare(101.0001f64, 100f64, 0f64, 100f64, 1.0002f64)
-        );
+        assert!(!DataChangeFilter::pct_compare(
+            100f64, 101f64, 0f64, 100f64, 0f64
+        ));
+        assert!(DataChangeFilter::pct_compare(
+            100f64, 101f64, 0f64, 100f64, 1f64
+        ));
+        assert!(!DataChangeFilter::pct_compare(
+            100f64,
+            101.0001f64,
+            0f64,
+            100f64,
+            1f64
+        ));
+        assert!(!DataChangeFilter::pct_compare(
+            101.0001f64,
+            100f64,
+            0f64,
+            100f64,
+            1f64
+        ));
+        assert!(DataChangeFilter::pct_compare(
+            101.0001f64,
+            100f64,
+            0f64,
+            100f64,
+            1.0002f64
+        ));
     }
 
     #[test]

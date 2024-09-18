@@ -223,7 +223,7 @@ pub fn default_client(test_id: u16, quick_timeout: bool) -> ClientBuilder {
         .max_array_length(100_000)
         .max_message_size(1024 * 1024 * 64)
         .max_chunk_count(64);
-    
+
     if quick_timeout {
         client.session_retry_limit(1)
     } else {

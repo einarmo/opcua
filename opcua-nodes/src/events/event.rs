@@ -244,12 +244,7 @@ mod tests {
     }
 
     fn get(id: &NodeId, evt: &dyn Event, field: &str) -> Variant {
-        evt.get_field(
-            id,
-            AttributeId::Value,
-            &NumericRange::None,
-            &[field.into()],
-        )
+        evt.get_field(id, AttributeId::Value, &NumericRange::None, &[field.into()])
     }
 
     fn get_nested(id: &NodeId, evt: &dyn Event, fields: &[&str]) -> Variant {
