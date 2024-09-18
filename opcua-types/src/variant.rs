@@ -1872,10 +1872,31 @@ impl Variant {
                     _ => Err(StatusCode::BadIndexRangeDataMismatch),
                 }
             }
-            NumericRange::MultipleRanges(_ranges) => {
-                // Not yet supported
-                error!("Multiple ranges not supported");
-                Err(StatusCode::BadIndexRangeNoData)
+            NumericRange::MultipleRanges(ranges) => {
+                let mut res = Vec::new();
+                for range in ranges {
+                    let v = self.range_of(range)?;
+                    match v {
+                        Variant::Array(a) => {
+                            res.extend(a.values.into_iter());
+                        }
+                        r => res.push(r),
+                    }
+                }
+                let type_id = if !res.is_empty() {
+                    let VariantTypeId::Scalar(s) = res[0].type_id() else {
+                        return Err(StatusCode::BadIndexRangeNoData);
+                    };
+                    s
+                } else {
+                    match self.type_id() {
+                        VariantTypeId::Array(s, _) => s,
+                        VariantTypeId::Scalar(s) => s,
+                        VariantTypeId::Empty => return Ok(Variant::Empty),
+                    }
+                };
+
+                Ok(Self::Array(Box::new(Array::new(type_id, res)?)))
             }
         }
     }
