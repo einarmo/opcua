@@ -8,7 +8,7 @@ use opcua_types::{
     DataTypeId, NodeClass, NodeId, ObjectTypeId, QualifiedName, ReferenceTypeId, VariableTypeId,
 };
 
-#[derive(PartialEq, Eq, Hash)]
+#[derive(PartialEq, Eq, Hash, Clone)]
 struct TypePropertyKey {
     path: Vec<QualifiedName>,
 }
@@ -44,7 +44,7 @@ pub struct TypePropertyInverseRef {
 ///
 /// Each node manager is responsible for populating the type tree with
 /// its types.
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct DefaultTypeTree {
     nodes: HashMap<NodeId, NodeClass>,
     subtypes_by_source: HashMap<NodeId, HashSet<NodeId>>,
@@ -240,5 +240,24 @@ impl DefaultTypeTree {
 
     pub fn namespaces_mut(&mut self) -> &mut NamespaceMap {
         &mut self.namespaces
+    }
+
+    pub fn get_all_children<'a>(&'a self, root: &'a NodeId) -> Vec<&'a NodeId> {
+        let mut res = Vec::new();
+        let mut roots = vec![root];
+        loop {
+            let Some(root) = roots.pop() else {
+                break;
+            };
+            res.push(root);
+            let Some(children) = self.subtypes_by_source.get(root) else {
+                continue;
+            };
+            for child in children.iter() {
+                roots.push(child);
+            }
+        }
+
+        res
     }
 }

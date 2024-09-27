@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 /// Utility for handling assignment of namespaces on server startup.
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct NamespaceMap {
     known_namespaces: HashMap<String, u16>,
 }
