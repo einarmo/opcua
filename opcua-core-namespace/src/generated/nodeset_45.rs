@@ -6,11 +6,7 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua {
-    pub use opcua_nodes as nodes;
-    pub use opcua_types as types;
-}
-pub(super) fn imported_nodes<'a>(
+mod opcua { pub use opcua_types as types; pub use opcua_nodes as nodes; }pub(super) fn imported_nodes<'a>(
     ns_map: &'a opcua::nodes::NodeSetNamespaceMapper<'_>,
 ) -> Box<dyn Iterator<Item = opcua::nodes::ImportedItem> + 'a> {
     Box::new(
@@ -116,8 +112,8 @@ pub(super) fn imported_nodes<'a>(
             &make_variable_525,
             &make_variable_526,
         ]
-        .into_iter()
-        .map(|f| f(ns_map)),
+            .into_iter()
+            .map(|f| f(ns_map)),
     )
 }
 #[allow(unused)]
@@ -126,38 +122,35 @@ fn make_variable_4727(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 32674u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ReferenceListEntryDataType"),
-                opcua::types::LocalizedText::new("", "ReferenceListEntryDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 32674u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ReferenceListEntryDataType"),
+                    opcua::types::LocalizedText::new("", "ReferenceListEntryDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='ReferenceListEntryDataType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='ReferenceListEntryDataType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -167,38 +160,35 @@ fn make_variable_4728(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16127u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "RolePermissionType"),
-                opcua::types::LocalizedText::new("", "RolePermissionType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16127u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "RolePermissionType"),
+                    opcua::types::LocalizedText::new("", "RolePermissionType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='RolePermissionType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='RolePermissionType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -208,38 +198,35 @@ fn make_variable_4729(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 18166u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "DataTypeDefinition"),
-                opcua::types::LocalizedText::new("", "DataTypeDefinition"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 18166u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "DataTypeDefinition"),
+                    opcua::types::LocalizedText::new("", "DataTypeDefinition"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='DataTypeDefinition']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='DataTypeDefinition']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -249,41 +236,34 @@ fn make_variable_473(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2054u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "Status"),
-                opcua::types::LocalizedText::new("", "Status"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2054u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "Status"),
+                    opcua::types::LocalizedText::new("", "Status"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 1u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 1u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2052u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2052u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -293,38 +273,33 @@ fn make_variable_4730(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 18169u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "StructureField"),
-                opcua::types::LocalizedText::new("", "StructureField"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 18169u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "StructureField"),
+                    opcua::types::LocalizedText::new("", "StructureField"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='StructureField']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='StructureField']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -334,38 +309,35 @@ fn make_variable_4731(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 18172u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "StructureDefinition"),
-                opcua::types::LocalizedText::new("", "StructureDefinition"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 18172u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "StructureDefinition"),
+                    opcua::types::LocalizedText::new("", "StructureDefinition"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='StructureDefinition']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='StructureDefinition']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -375,38 +347,33 @@ fn make_variable_4732(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 18175u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "EnumDefinition"),
-                opcua::types::LocalizedText::new("", "EnumDefinition"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 18175u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "EnumDefinition"),
+                    opcua::types::LocalizedText::new("", "EnumDefinition"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='EnumDefinition']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='EnumDefinition']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -416,38 +383,33 @@ fn make_variable_4733(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8285u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "Argument"),
-                opcua::types::LocalizedText::new("", "Argument"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8285u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "Argument"),
+                    opcua::types::LocalizedText::new("", "Argument"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='Argument']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='Argument']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -457,38 +419,33 @@ fn make_variable_4734(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8291u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "EnumValueType"),
-                opcua::types::LocalizedText::new("", "EnumValueType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8291u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "EnumValueType"),
+                    opcua::types::LocalizedText::new("", "EnumValueType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='EnumValueType']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='EnumValueType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -498,38 +455,33 @@ fn make_variable_4735(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 14826u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "EnumField"),
-                opcua::types::LocalizedText::new("", "EnumField"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 14826u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "EnumField"),
+                    opcua::types::LocalizedText::new("", "EnumField"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='EnumField']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='EnumField']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -539,38 +491,33 @@ fn make_variable_4736(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 12759u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "OptionSet"),
-                opcua::types::LocalizedText::new("", "OptionSet"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 12759u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "OptionSet"),
+                    opcua::types::LocalizedText::new("", "OptionSet"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='OptionSet']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='OptionSet']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -580,38 +527,33 @@ fn make_variable_4737(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8918u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "TimeZoneDataType"),
-                opcua::types::LocalizedText::new("", "TimeZoneDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8918u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "TimeZoneDataType"),
+                    opcua::types::LocalizedText::new("", "TimeZoneDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='TimeZoneDataType']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='TimeZoneDataType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -621,38 +563,35 @@ fn make_variable_4738(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8300u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ApplicationDescription"),
-                opcua::types::LocalizedText::new("", "ApplicationDescription"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8300u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ApplicationDescription"),
+                    opcua::types::LocalizedText::new("", "ApplicationDescription"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='ApplicationDescription']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='ApplicationDescription']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -662,38 +601,33 @@ fn make_variable_4739(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 12201u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ServerOnNetwork"),
-                opcua::types::LocalizedText::new("", "ServerOnNetwork"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 12201u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ServerOnNetwork"),
+                    opcua::types::LocalizedText::new("", "ServerOnNetwork"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='ServerOnNetwork']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='ServerOnNetwork']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -703,41 +637,34 @@ fn make_variable_474(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2055u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ServerId"),
-                opcua::types::LocalizedText::new("", "ServerId"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2055u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ServerId"),
+                    opcua::types::LocalizedText::new("", "ServerId"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2052u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2052u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -747,38 +674,33 @@ fn make_variable_4740(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8297u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "UserTokenPolicy"),
-                opcua::types::LocalizedText::new("", "UserTokenPolicy"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8297u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "UserTokenPolicy"),
+                    opcua::types::LocalizedText::new("", "UserTokenPolicy"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='UserTokenPolicy']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='UserTokenPolicy']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -788,38 +710,35 @@ fn make_variable_4741(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8303u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "EndpointDescription"),
-                opcua::types::LocalizedText::new("", "EndpointDescription"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8303u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "EndpointDescription"),
+                    opcua::types::LocalizedText::new("", "EndpointDescription"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='EndpointDescription']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='EndpointDescription']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -829,38 +748,33 @@ fn make_variable_4742(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8417u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "RegisteredServer"),
-                opcua::types::LocalizedText::new("", "RegisteredServer"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8417u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "RegisteredServer"),
+                    opcua::types::LocalizedText::new("", "RegisteredServer"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='RegisteredServer']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='RegisteredServer']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -870,38 +784,35 @@ fn make_variable_4743(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 12894u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "DiscoveryConfiguration"),
-                opcua::types::LocalizedText::new("", "DiscoveryConfiguration"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 12894u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "DiscoveryConfiguration"),
+                    opcua::types::LocalizedText::new("", "DiscoveryConfiguration"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='DiscoveryConfiguration']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='DiscoveryConfiguration']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -911,38 +822,35 @@ fn make_variable_4744(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 12897u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "MdnsDiscoveryConfiguration"),
-                opcua::types::LocalizedText::new("", "MdnsDiscoveryConfiguration"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 12897u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "MdnsDiscoveryConfiguration"),
+                    opcua::types::LocalizedText::new("", "MdnsDiscoveryConfiguration"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='MdnsDiscoveryConfiguration']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='MdnsDiscoveryConfiguration']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -952,38 +860,35 @@ fn make_variable_4745(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8333u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "SignedSoftwareCertificate"),
-                opcua::types::LocalizedText::new("", "SignedSoftwareCertificate"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8333u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "SignedSoftwareCertificate"),
+                    opcua::types::LocalizedText::new("", "SignedSoftwareCertificate"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='SignedSoftwareCertificate']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='SignedSoftwareCertificate']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -993,38 +898,35 @@ fn make_variable_4746(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8306u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "UserIdentityToken"),
-                opcua::types::LocalizedText::new("", "UserIdentityToken"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8306u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "UserIdentityToken"),
+                    opcua::types::LocalizedText::new("", "UserIdentityToken"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='UserIdentityToken']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='UserIdentityToken']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1034,38 +936,35 @@ fn make_variable_4747(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8309u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "AnonymousIdentityToken"),
-                opcua::types::LocalizedText::new("", "AnonymousIdentityToken"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8309u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "AnonymousIdentityToken"),
+                    opcua::types::LocalizedText::new("", "AnonymousIdentityToken"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='AnonymousIdentityToken']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='AnonymousIdentityToken']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1075,38 +974,35 @@ fn make_variable_4748(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8312u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "UserNameIdentityToken"),
-                opcua::types::LocalizedText::new("", "UserNameIdentityToken"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8312u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "UserNameIdentityToken"),
+                    opcua::types::LocalizedText::new("", "UserNameIdentityToken"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='UserNameIdentityToken']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='UserNameIdentityToken']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1116,38 +1012,35 @@ fn make_variable_4749(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8315u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "X509IdentityToken"),
-                opcua::types::LocalizedText::new("", "X509IdentityToken"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8315u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "X509IdentityToken"),
+                    opcua::types::LocalizedText::new("", "X509IdentityToken"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='X509IdentityToken']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='X509IdentityToken']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1157,41 +1050,34 @@ fn make_variable_475(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2056u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ClientAuditEntryId"),
-                opcua::types::LocalizedText::new("", "ClientAuditEntryId"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2056u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ClientAuditEntryId"),
+                    opcua::types::LocalizedText::new("", "ClientAuditEntryId"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2052u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2052u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -1201,38 +1087,35 @@ fn make_variable_4750(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8318u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "IssuedIdentityToken"),
-                opcua::types::LocalizedText::new("", "IssuedIdentityToken"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8318u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "IssuedIdentityToken"),
+                    opcua::types::LocalizedText::new("", "IssuedIdentityToken"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='IssuedIdentityToken']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='IssuedIdentityToken']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1242,38 +1125,33 @@ fn make_variable_4751(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8363u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "AddNodesItem"),
-                opcua::types::LocalizedText::new("", "AddNodesItem"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8363u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "AddNodesItem"),
+                    opcua::types::LocalizedText::new("", "AddNodesItem"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='AddNodesItem']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='AddNodesItem']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1283,38 +1161,35 @@ fn make_variable_4752(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8366u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "AddReferencesItem"),
-                opcua::types::LocalizedText::new("", "AddReferencesItem"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8366u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "AddReferencesItem"),
+                    opcua::types::LocalizedText::new("", "AddReferencesItem"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='AddReferencesItem']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='AddReferencesItem']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1324,38 +1199,33 @@ fn make_variable_4753(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8369u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "DeleteNodesItem"),
-                opcua::types::LocalizedText::new("", "DeleteNodesItem"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8369u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "DeleteNodesItem"),
+                    opcua::types::LocalizedText::new("", "DeleteNodesItem"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='DeleteNodesItem']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='DeleteNodesItem']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1365,38 +1235,35 @@ fn make_variable_4754(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8372u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "DeleteReferencesItem"),
-                opcua::types::LocalizedText::new("", "DeleteReferencesItem"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8372u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "DeleteReferencesItem"),
+                    opcua::types::LocalizedText::new("", "DeleteReferencesItem"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='DeleteReferencesItem']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='DeleteReferencesItem']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1406,38 +1273,35 @@ fn make_variable_4755(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 12712u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "RelativePathElement"),
-                opcua::types::LocalizedText::new("", "RelativePathElement"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 12712u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "RelativePathElement"),
+                    opcua::types::LocalizedText::new("", "RelativePathElement"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='RelativePathElement']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='RelativePathElement']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1447,38 +1311,33 @@ fn make_variable_4756(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 12715u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "RelativePath"),
-                opcua::types::LocalizedText::new("", "RelativePath"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 12715u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "RelativePath"),
+                    opcua::types::LocalizedText::new("", "RelativePath"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='RelativePath']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='RelativePath']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1488,38 +1347,35 @@ fn make_variable_4757(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8321u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "EndpointConfiguration"),
-                opcua::types::LocalizedText::new("", "EndpointConfiguration"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8321u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "EndpointConfiguration"),
+                    opcua::types::LocalizedText::new("", "EndpointConfiguration"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='EndpointConfiguration']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='EndpointConfiguration']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1529,38 +1385,35 @@ fn make_variable_4758(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8564u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ContentFilterElement"),
-                opcua::types::LocalizedText::new("", "ContentFilterElement"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8564u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ContentFilterElement"),
+                    opcua::types::LocalizedText::new("", "ContentFilterElement"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='ContentFilterElement']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='ContentFilterElement']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1570,38 +1423,33 @@ fn make_variable_4759(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8567u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ContentFilter"),
-                opcua::types::LocalizedText::new("", "ContentFilter"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8567u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ContentFilter"),
+                    opcua::types::LocalizedText::new("", "ContentFilter"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='ContentFilter']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='ContentFilter']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1611,41 +1459,34 @@ fn make_variable_476(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2057u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ClientUserId"),
-                opcua::types::LocalizedText::new("", "ClientUserId"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2057u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ClientUserId"),
+                    opcua::types::LocalizedText::new("", "ClientUserId"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2052u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2052u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -1655,38 +1496,33 @@ fn make_variable_4760(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8570u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "FilterOperand"),
-                opcua::types::LocalizedText::new("", "FilterOperand"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8570u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "FilterOperand"),
+                    opcua::types::LocalizedText::new("", "FilterOperand"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='FilterOperand']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='FilterOperand']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1696,38 +1532,33 @@ fn make_variable_4761(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8573u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ElementOperand"),
-                opcua::types::LocalizedText::new("", "ElementOperand"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8573u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ElementOperand"),
+                    opcua::types::LocalizedText::new("", "ElementOperand"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='ElementOperand']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='ElementOperand']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1737,38 +1568,33 @@ fn make_variable_4762(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8576u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "LiteralOperand"),
-                opcua::types::LocalizedText::new("", "LiteralOperand"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8576u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "LiteralOperand"),
+                    opcua::types::LocalizedText::new("", "LiteralOperand"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='LiteralOperand']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='LiteralOperand']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1778,38 +1604,33 @@ fn make_variable_4763(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8579u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "AttributeOperand"),
-                opcua::types::LocalizedText::new("", "AttributeOperand"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8579u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "AttributeOperand"),
+                    opcua::types::LocalizedText::new("", "AttributeOperand"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='AttributeOperand']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='AttributeOperand']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1819,38 +1640,35 @@ fn make_variable_4764(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8582u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "SimpleAttributeOperand"),
-                opcua::types::LocalizedText::new("", "SimpleAttributeOperand"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8582u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "SimpleAttributeOperand"),
+                    opcua::types::LocalizedText::new("", "SimpleAttributeOperand"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='SimpleAttributeOperand']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='SimpleAttributeOperand']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1860,38 +1678,33 @@ fn make_variable_4765(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15021u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ModificationInfo"),
-                opcua::types::LocalizedText::new("", "ModificationInfo"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15021u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ModificationInfo"),
+                    opcua::types::LocalizedText::new("", "ModificationInfo"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='ModificationInfo']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='ModificationInfo']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1901,38 +1714,33 @@ fn make_variable_4766(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8639u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "HistoryEvent"),
-                opcua::types::LocalizedText::new("", "HistoryEvent"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8639u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "HistoryEvent"),
+                    opcua::types::LocalizedText::new("", "HistoryEvent"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='HistoryEvent']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='HistoryEvent']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1942,38 +1750,35 @@ fn make_variable_4767(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 32830u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "HistoryModifiedEvent"),
-                opcua::types::LocalizedText::new("", "HistoryModifiedEvent"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 32830u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "HistoryModifiedEvent"),
+                    opcua::types::LocalizedText::new("", "HistoryModifiedEvent"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='HistoryModifiedEvent']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='HistoryModifiedEvent']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -1983,38 +1788,33 @@ fn make_variable_4768(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8702u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "MonitoringFilter"),
-                opcua::types::LocalizedText::new("", "MonitoringFilter"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8702u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "MonitoringFilter"),
+                    opcua::types::LocalizedText::new("", "MonitoringFilter"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='MonitoringFilter']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='MonitoringFilter']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2024,38 +1824,33 @@ fn make_variable_4769(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8708u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "EventFilter"),
-                opcua::types::LocalizedText::new("", "EventFilter"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8708u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "EventFilter"),
+                    opcua::types::LocalizedText::new("", "EventFilter"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='EventFilter']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='EventFilter']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2065,38 +1860,35 @@ fn make_variable_4770(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8711u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "AggregateConfiguration"),
-                opcua::types::LocalizedText::new("", "AggregateConfiguration"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8711u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "AggregateConfiguration"),
+                    opcua::types::LocalizedText::new("", "AggregateConfiguration"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='AggregateConfiguration']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='AggregateConfiguration']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2106,38 +1898,35 @@ fn make_variable_4771(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8807u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "HistoryEventFieldList"),
-                opcua::types::LocalizedText::new("", "HistoryEventFieldList"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8807u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "HistoryEventFieldList"),
+                    opcua::types::LocalizedText::new("", "HistoryEventFieldList"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='HistoryEventFieldList']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='HistoryEventFieldList']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2147,38 +1936,33 @@ fn make_variable_4772(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8327u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "BuildInfo"),
-                opcua::types::LocalizedText::new("", "BuildInfo"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8327u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "BuildInfo"),
+                    opcua::types::LocalizedText::new("", "BuildInfo"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='BuildInfo']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='BuildInfo']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2188,38 +1972,35 @@ fn make_variable_4773(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8843u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "RedundantServerDataType"),
-                opcua::types::LocalizedText::new("", "RedundantServerDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8843u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "RedundantServerDataType"),
+                    opcua::types::LocalizedText::new("", "RedundantServerDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='RedundantServerDataType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='RedundantServerDataType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2229,38 +2010,35 @@ fn make_variable_4774(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 11951u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "EndpointUrlListDataType"),
-                opcua::types::LocalizedText::new("", "EndpointUrlListDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 11951u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "EndpointUrlListDataType"),
+                    opcua::types::LocalizedText::new("", "EndpointUrlListDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='EndpointUrlListDataType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='EndpointUrlListDataType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2270,38 +2048,35 @@ fn make_variable_4775(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 11954u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "NetworkGroupDataType"),
-                opcua::types::LocalizedText::new("", "NetworkGroupDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 11954u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "NetworkGroupDataType"),
+                    opcua::types::LocalizedText::new("", "NetworkGroupDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='NetworkGroupDataType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='NetworkGroupDataType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2311,38 +2086,41 @@ fn make_variable_4776(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8846u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "SamplingIntervalDiagnosticsDataType"),
-                opcua::types::LocalizedText::new("", "SamplingIntervalDiagnosticsDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8846u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "SamplingIntervalDiagnosticsDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "SamplingIntervalDiagnosticsDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='SamplingIntervalDiagnosticsDataType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='SamplingIntervalDiagnosticsDataType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2352,38 +2130,41 @@ fn make_variable_4777(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8849u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ServerDiagnosticsSummaryDataType"),
-                opcua::types::LocalizedText::new("", "ServerDiagnosticsSummaryDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8849u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "ServerDiagnosticsSummaryDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "ServerDiagnosticsSummaryDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='ServerDiagnosticsSummaryDataType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='ServerDiagnosticsSummaryDataType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2393,38 +2174,35 @@ fn make_variable_4778(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8852u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ServerStatusDataType"),
-                opcua::types::LocalizedText::new("", "ServerStatusDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8852u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ServerStatusDataType"),
+                    opcua::types::LocalizedText::new("", "ServerStatusDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='ServerStatusDataType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='ServerStatusDataType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2434,38 +2212,35 @@ fn make_variable_4779(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8855u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "SessionDiagnosticsDataType"),
-                opcua::types::LocalizedText::new("", "SessionDiagnosticsDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8855u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "SessionDiagnosticsDataType"),
+                    opcua::types::LocalizedText::new("", "SessionDiagnosticsDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='SessionDiagnosticsDataType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='SessionDiagnosticsDataType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2475,41 +2250,34 @@ fn make_variable_478(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 17615u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "StatusCodeId"),
-                opcua::types::LocalizedText::new("", "StatusCodeId"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 17615u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "StatusCodeId"),
+                    opcua::types::LocalizedText::new("", "StatusCodeId"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 19u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 19u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 80u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2058u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 80u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2058u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -2519,38 +2287,41 @@ fn make_variable_4780(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8858u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "SessionSecurityDiagnosticsDataType"),
-                opcua::types::LocalizedText::new("", "SessionSecurityDiagnosticsDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8858u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "SessionSecurityDiagnosticsDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "SessionSecurityDiagnosticsDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='SessionSecurityDiagnosticsDataType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='SessionSecurityDiagnosticsDataType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2560,38 +2331,35 @@ fn make_variable_4781(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8861u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ServiceCounterDataType"),
-                opcua::types::LocalizedText::new("", "ServiceCounterDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8861u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ServiceCounterDataType"),
+                    opcua::types::LocalizedText::new("", "ServiceCounterDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='ServiceCounterDataType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='ServiceCounterDataType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2601,38 +2369,33 @@ fn make_variable_4782(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8294u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "StatusResult"),
-                opcua::types::LocalizedText::new("", "StatusResult"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8294u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "StatusResult"),
+                    opcua::types::LocalizedText::new("", "StatusResult"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='StatusResult']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='StatusResult']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2642,38 +2405,41 @@ fn make_variable_4783(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8864u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "SubscriptionDiagnosticsDataType"),
-                opcua::types::LocalizedText::new("", "SubscriptionDiagnosticsDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8864u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "SubscriptionDiagnosticsDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "SubscriptionDiagnosticsDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='SubscriptionDiagnosticsDataType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='SubscriptionDiagnosticsDataType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2683,38 +2449,38 @@ fn make_variable_4784(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8867u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ModelChangeStructureDataType"),
-                opcua::types::LocalizedText::new("", "ModelChangeStructureDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8867u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "ModelChangeStructureDataType",
+                    ),
+                    opcua::types::LocalizedText::new("", "ModelChangeStructureDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='ModelChangeStructureDataType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='ModelChangeStructureDataType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2724,38 +2490,41 @@ fn make_variable_4785(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8870u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "SemanticChangeStructureDataType"),
-                opcua::types::LocalizedText::new("", "SemanticChangeStructureDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8870u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "SemanticChangeStructureDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "SemanticChangeStructureDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='SemanticChangeStructureDataType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='SemanticChangeStructureDataType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2765,38 +2534,33 @@ fn make_variable_4786(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8873u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "Range"),
-                opcua::types::LocalizedText::new("", "Range"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8873u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "Range"),
+                    opcua::types::LocalizedText::new("", "Range"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='Range']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='Range']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2806,38 +2570,33 @@ fn make_variable_4787(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8876u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "EUInformation"),
-                opcua::types::LocalizedText::new("", "EUInformation"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8876u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "EUInformation"),
+                    opcua::types::LocalizedText::new("", "EUInformation"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='EUInformation']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='EUInformation']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2847,38 +2606,35 @@ fn make_variable_4788(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 12175u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ComplexNumberType"),
-                opcua::types::LocalizedText::new("", "ComplexNumberType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 12175u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ComplexNumberType"),
+                    opcua::types::LocalizedText::new("", "ComplexNumberType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='ComplexNumberType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='ComplexNumberType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2888,38 +2644,35 @@ fn make_variable_4789(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 12178u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "DoubleComplexNumberType"),
-                opcua::types::LocalizedText::new("", "DoubleComplexNumberType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 12178u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "DoubleComplexNumberType"),
+                    opcua::types::LocalizedText::new("", "DoubleComplexNumberType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='DoubleComplexNumberType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='DoubleComplexNumberType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2929,38 +2682,33 @@ fn make_variable_4790(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 12083u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "AxisInformation"),
-                opcua::types::LocalizedText::new("", "AxisInformation"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 12083u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "AxisInformation"),
+                    opcua::types::LocalizedText::new("", "AxisInformation"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='AxisInformation']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='AxisInformation']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -2970,38 +2718,33 @@ fn make_variable_4791(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 12086u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "XVType"),
-                opcua::types::LocalizedText::new("", "XVType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 12086u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "XVType"),
+                    opcua::types::LocalizedText::new("", "XVType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='XVType']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='XVType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -3011,38 +2754,35 @@ fn make_variable_4792(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8882u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ProgramDiagnosticDataType"),
-                opcua::types::LocalizedText::new("", "ProgramDiagnosticDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8882u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ProgramDiagnosticDataType"),
+                    opcua::types::LocalizedText::new("", "ProgramDiagnosticDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='ProgramDiagnosticDataType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='ProgramDiagnosticDataType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -3052,38 +2792,35 @@ fn make_variable_4793(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 24039u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ProgramDiagnostic2DataType"),
-                opcua::types::LocalizedText::new("", "ProgramDiagnostic2DataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 24039u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ProgramDiagnostic2DataType"),
+                    opcua::types::LocalizedText::new("", "ProgramDiagnostic2DataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from(
+                        "//xs:element[@name='ProgramDiagnostic2DataType']",
+                    ),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='ProgramDiagnostic2DataType']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -3093,38 +2830,33 @@ fn make_variable_4794(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8879u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "Annotation"),
-                opcua::types::LocalizedText::new("", "Annotation"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8879u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "Annotation"),
+                    opcua::types::LocalizedText::new("", "Annotation"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::new_now(
+                    opcua::types::Variant::from("//xs:element[@name='Annotation']"),
+                ),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::new_now(opcua::types::Variant::from(
-                "//xs:element[@name='Annotation']",
-            )),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 69u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8252u32),
-                type_id: opcua::types::NodeId::new(0u16, 47u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            69u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8252u32), type_id :
+            opcua::types::NodeId::new(0u16, 47u32), is_forward : false, }
         ],
     }
 }
@@ -3134,41 +2866,34 @@ fn make_variable_480(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2745u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "SecureChannelId"),
-                opcua::types::LocalizedText::new("", "SecureChannelId"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2745u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "SecureChannelId"),
+                    opcua::types::LocalizedText::new("", "SecureChannelId"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2059u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2059u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3178,41 +2903,34 @@ fn make_variable_482(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2061u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ClientCertificate"),
-                opcua::types::LocalizedText::new("", "ClientCertificate"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2061u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ClientCertificate"),
+                    opcua::types::LocalizedText::new("", "ClientCertificate"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 15u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 15u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2060u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2060u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3222,41 +2940,37 @@ fn make_variable_483(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2746u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ClientCertificateThumbprint"),
-                opcua::types::LocalizedText::new("", "ClientCertificateThumbprint"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2746u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "ClientCertificateThumbprint",
+                    ),
+                    opcua::types::LocalizedText::new("", "ClientCertificateThumbprint"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2060u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2060u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3266,41 +2980,34 @@ fn make_variable_484(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2062u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "RequestType"),
-                opcua::types::LocalizedText::new("", "RequestType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2062u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "RequestType"),
+                    opcua::types::LocalizedText::new("", "RequestType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 315u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 315u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2060u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2060u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3310,41 +3017,34 @@ fn make_variable_485(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2063u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "SecurityPolicyUri"),
-                opcua::types::LocalizedText::new("", "SecurityPolicyUri"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2063u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "SecurityPolicyUri"),
+                    opcua::types::LocalizedText::new("", "SecurityPolicyUri"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2060u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2060u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3354,41 +3054,34 @@ fn make_variable_486(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2065u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "SecurityMode"),
-                opcua::types::LocalizedText::new("", "SecurityMode"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2065u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "SecurityMode"),
+                    opcua::types::LocalizedText::new("", "SecurityMode"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 302u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 302u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2060u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2060u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3398,41 +3091,34 @@ fn make_variable_487(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2066u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "RequestedLifetime"),
-                opcua::types::LocalizedText::new("", "RequestedLifetime"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2066u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "RequestedLifetime"),
+                    opcua::types::LocalizedText::new("", "RequestedLifetime"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 290u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 290u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2060u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2060u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3442,41 +3128,34 @@ fn make_variable_488(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 24135u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "CertificateErrorEventId"),
-                opcua::types::LocalizedText::new("", "CertificateErrorEventId"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 24135u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "CertificateErrorEventId"),
+                    opcua::types::LocalizedText::new("", "CertificateErrorEventId"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 15u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 15u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 80u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2060u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 80u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2060u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3486,41 +3165,34 @@ fn make_variable_490(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2070u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "SessionId"),
-                opcua::types::LocalizedText::new("", "SessionId"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2070u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "SessionId"),
+                    opcua::types::LocalizedText::new("", "SessionId"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 17u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 17u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2069u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2069u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3530,41 +3202,34 @@ fn make_variable_492(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2072u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "SecureChannelId"),
-                opcua::types::LocalizedText::new("", "SecureChannelId"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2072u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "SecureChannelId"),
+                    opcua::types::LocalizedText::new("", "SecureChannelId"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2071u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2071u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3574,41 +3239,34 @@ fn make_variable_493(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2073u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ClientCertificate"),
-                opcua::types::LocalizedText::new("", "ClientCertificate"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2073u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ClientCertificate"),
+                    opcua::types::LocalizedText::new("", "ClientCertificate"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 15u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 15u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2071u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2071u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3618,41 +3276,37 @@ fn make_variable_494(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2747u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ClientCertificateThumbprint"),
-                opcua::types::LocalizedText::new("", "ClientCertificateThumbprint"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2747u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "ClientCertificateThumbprint",
+                    ),
+                    opcua::types::LocalizedText::new("", "ClientCertificateThumbprint"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2071u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2071u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3662,41 +3316,34 @@ fn make_variable_495(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2074u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "RevisedSessionTimeout"),
-                opcua::types::LocalizedText::new("", "RevisedSessionTimeout"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2074u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "RevisedSessionTimeout"),
+                    opcua::types::LocalizedText::new("", "RevisedSessionTimeout"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 290u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 290u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2071u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2071u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3706,41 +3353,34 @@ fn make_variable_497(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2749u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "EndpointUrl"),
-                opcua::types::LocalizedText::new("", "EndpointUrl"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2749u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "EndpointUrl"),
+                    opcua::types::LocalizedText::new("", "EndpointUrl"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2748u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2748u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3750,41 +3390,34 @@ fn make_variable_499(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2076u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ClientSoftwareCertificates"),
-                opcua::types::LocalizedText::new("", "ClientSoftwareCertificates"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 344u32),
-            false,
-            1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            Some(vec![0u32]),
-            Some(0f64),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2076u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ClientSoftwareCertificates"),
+                    opcua::types::LocalizedText::new("", "ClientSoftwareCertificates"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 344u32),
+                false,
+                1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
+                Some(vec![0u32]),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2075u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2075u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3794,41 +3427,34 @@ fn make_variable_500(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2077u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "UserIdentityToken"),
-                opcua::types::LocalizedText::new("", "UserIdentityToken"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2077u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "UserIdentityToken"),
+                    opcua::types::LocalizedText::new("", "UserIdentityToken"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 316u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 316u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2075u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2075u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3838,41 +3464,34 @@ fn make_variable_501(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 11485u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "SecureChannelId"),
-                opcua::types::LocalizedText::new("", "SecureChannelId"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 11485u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "SecureChannelId"),
+                    opcua::types::LocalizedText::new("", "SecureChannelId"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2075u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2075u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3882,41 +3501,34 @@ fn make_variable_503(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2079u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "RequestHandle"),
-                opcua::types::LocalizedText::new("", "RequestHandle"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2079u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "RequestHandle"),
+                    opcua::types::LocalizedText::new("", "RequestHandle"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 7u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 7u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2078u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2078u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3926,41 +3538,34 @@ fn make_variable_505(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2081u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "Certificate"),
-                opcua::types::LocalizedText::new("", "Certificate"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2081u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "Certificate"),
+                    opcua::types::LocalizedText::new("", "Certificate"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 15u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 15u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2080u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2080u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -3970,41 +3575,34 @@ fn make_variable_507(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2083u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "InvalidHostname"),
-                opcua::types::LocalizedText::new("", "InvalidHostname"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2083u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "InvalidHostname"),
+                    opcua::types::LocalizedText::new("", "InvalidHostname"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2082u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2082u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -4014,41 +3612,34 @@ fn make_variable_508(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2084u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "InvalidUri"),
-                opcua::types::LocalizedText::new("", "InvalidUri"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2084u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "InvalidUri"),
+                    opcua::types::LocalizedText::new("", "InvalidUri"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 12u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 12u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2082u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2082u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -4058,41 +3649,34 @@ fn make_variable_516(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2092u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "NodesToAdd"),
-                opcua::types::LocalizedText::new("", "NodesToAdd"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 376u32),
-            false,
-            1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            Some(vec![0u32]),
-            Some(0f64),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2092u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "NodesToAdd"),
+                    opcua::types::LocalizedText::new("", "NodesToAdd"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 376u32),
+                false,
+                1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
+                Some(vec![0u32]),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2091u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2091u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -4102,41 +3686,34 @@ fn make_variable_518(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2094u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "NodesToDelete"),
-                opcua::types::LocalizedText::new("", "NodesToDelete"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 382u32),
-            false,
-            1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            Some(vec![0u32]),
-            Some(0f64),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2094u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "NodesToDelete"),
+                    opcua::types::LocalizedText::new("", "NodesToDelete"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 382u32),
+                false,
+                1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
+                Some(vec![0u32]),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2093u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2093u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -4146,41 +3723,34 @@ fn make_variable_520(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2096u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ReferencesToAdd"),
-                opcua::types::LocalizedText::new("", "ReferencesToAdd"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 379u32),
-            false,
-            1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            Some(vec![0u32]),
-            Some(0f64),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2096u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ReferencesToAdd"),
+                    opcua::types::LocalizedText::new("", "ReferencesToAdd"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 379u32),
+                false,
+                1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
+                Some(vec![0u32]),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2095u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2095u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -4190,41 +3760,34 @@ fn make_variable_522(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2098u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "ReferencesToDelete"),
-                opcua::types::LocalizedText::new("", "ReferencesToDelete"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 385u32),
-            false,
-            1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            Some(vec![0u32]),
-            Some(0f64),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2098u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "ReferencesToDelete"),
+                    opcua::types::LocalizedText::new("", "ReferencesToDelete"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 385u32),
+                false,
+                1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
+                Some(vec![0u32]),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2097u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2097u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -4234,41 +3797,34 @@ fn make_variable_525(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2750u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "AttributeId"),
-                opcua::types::LocalizedText::new("", "AttributeId"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2750u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "AttributeId"),
+                    opcua::types::LocalizedText::new("", "AttributeId"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 7u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 7u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2100u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2100u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }
@@ -4278,41 +3834,34 @@ fn make_variable_526(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2101u32),
-                opcua::types::NodeClass::Variable,
-                opcua::types::QualifiedName::new(0u16, "IndexRange"),
-                opcua::types::LocalizedText::new("", "IndexRange"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2101u32),
+                    opcua::types::NodeClass::Variable,
+                    opcua::types::QualifiedName::new(0u16, "IndexRange"),
+                    opcua::types::LocalizedText::new("", "IndexRange"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::types::NodeId::new(0u16, 291u32),
+                false,
+                -1i32,
+                opcua::types::DataValue::null(),
+                1u8,
+                1u8,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::types::NodeId::new(0u16, 291u32),
-            false,
-            -1i32,
-            opcua::types::DataValue::null(),
-            1u8,
-            1u8,
-            None,
-            Some(0f64),
-        )
-        .into(),
+                Some(0f64),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 68u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 78u32),
-                type_id: opcua::types::NodeId::new(0u16, 37u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 2100u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            68u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 78u32), type_id :
+            opcua::types::NodeId::new(0u16, 37u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            2100u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            false, }
         ],
     }
 }

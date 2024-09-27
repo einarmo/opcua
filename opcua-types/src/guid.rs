@@ -11,7 +11,6 @@ use std::{
 };
 
 use log::error;
-use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 use uuid::Uuid;
 
 use crate::encoding::*;
@@ -22,23 +21,31 @@ pub struct Guid {
     uuid: Uuid,
 }
 
-impl Serialize for Guid {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        self.uuid.to_string().serialize(serializer)
-    }
-}
+#[cfg(feature = "json")]
+mod json {
+    use std::str::FromStr;
 
-impl<'de> Deserialize<'de> for Guid {
-    fn deserialize<D>(deserializer: D) -> Result<Guid, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let s = String::deserialize(deserializer)?;
-        let guid = Guid::from_str(&s).map_err(|_| D::Error::custom("Cannot parse uuid"))?;
-        Ok(guid)
+    use super::Guid;
+    use serde::{de::Error, Deserialize, Serialize};
+
+    impl Serialize for Guid {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: serde::Serializer,
+        {
+            self.uuid.to_string().serialize(serializer)
+        }
+    }
+
+    impl<'de> Deserialize<'de> for Guid {
+        fn deserialize<D>(deserializer: D) -> Result<Guid, D::Error>
+        where
+            D: serde::Deserializer<'de>,
+        {
+            let s = String::deserialize(deserializer)?;
+            let guid = Guid::from_str(&s).map_err(|_| D::Error::custom("Cannot parse uuid"))?;
+            Ok(guid)
+        }
     }
 }
 

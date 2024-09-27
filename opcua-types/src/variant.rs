@@ -1560,6 +1560,14 @@ impl Variant {
         }
     }
 
+    pub fn scalar_type_id(&self) -> Option<VariantScalarTypeId> {
+        match self.type_id() {
+            VariantTypeId::Empty => None,
+            VariantTypeId::Scalar(s) => Some(s),
+            VariantTypeId::Array(s, _) => Some(s),
+        }
+    }
+
     /// Tests and returns true if the variant holds a numeric type
     pub fn is_numeric(&self) -> bool {
         matches!(

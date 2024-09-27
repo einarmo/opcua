@@ -95,40 +95,6 @@ pub fn basic_types_import_map() -> HashMap<String, ExternalType> {
     .collect()
 }
 
-pub fn base_json_serialized_types() -> HashSet<String> {
-    [
-        "ReadValueId",
-        "DataChangeFilter",
-        "EventFilter",
-        "SimpleAttributeOperand",
-        "ContentFilter",
-        "ContentFilterElement",
-        "MonitoredItemNotification",
-        "ServerDiagnosticsSummaryDataType",
-        "EventFieldList",
-        "DataChangeTrigger",
-        "FilterOperator",
-        "TimestampsToReturn",
-        "MonitoringMode",
-        "ConfigurationVersionDataType",
-        "DataSetMetaDataType",
-        "StructureDescription",
-        "EnumDescription",
-        "SimpleTypeDescription",
-        "StructureDefinition",
-        "EnumDefinition",
-        "FieldMetaData",
-        "KeyValuePair",
-        "DataSetFieldFlags",
-        "StructureType",
-        "StructureField",
-        "EnumField",
-    ]
-    .into_iter()
-    .map(|v| v.to_owned())
-    .collect()
-}
-
 pub fn base_native_type_mappings() -> HashMap<String, String> {
     [
         ("String", "UAString"),

@@ -6,11 +6,7 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua {
-    pub use opcua_nodes as nodes;
-    pub use opcua_types as types;
-}
-pub(super) fn imported_nodes<'a>(
+mod opcua { pub use opcua_types as types; pub use opcua_nodes as nodes; }pub(super) fn imported_nodes<'a>(
     ns_map: &'a opcua::nodes::NodeSetNamespaceMapper<'_>,
 ) -> Box<dyn Iterator<Item = opcua::nodes::ImportedItem> + 'a> {
     Box::new(
@@ -116,8 +112,8 @@ pub(super) fn imported_nodes<'a>(
             &make_data_type_2668,
             &make_data_type_2669,
         ]
-        .into_iter()
-        .map(|f| f(ns_map)),
+            .into_iter()
+            .map(|f| f(ns_map)),
     )
 }
 #[allow(unused)]
@@ -126,24 +122,24 @@ fn make_data_type_10(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 4u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "Int16"),
-                opcua::types::LocalizedText::new("", "Int16"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 4u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "Int16"),
+                    opcua::types::LocalizedText::new("", "Int16"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 27u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            27u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -152,32 +148,32 @@ fn make_data_type_1000(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 18813u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "Frame"),
-                opcua::types::LocalizedText::new("", "Frame"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 18813u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "Frame"),
+                    opcua::types::LocalizedText::new("", "Frame"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(vec![]),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -186,51 +182,45 @@ fn make_data_type_1001(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 18814u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "3DFrame"),
-                opcua::types::LocalizedText::new("", "3DFrame"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "CartesianCoordinates".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 18810u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Orientation".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 18812u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 18813u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 18814u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "3DFrame"),
+                    opcua::types::LocalizedText::new("", "3DFrame"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "CartesianCoordinates"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 18810u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Orientation".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 18812u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            18813u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -239,60 +229,46 @@ fn make_data_type_1012(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 11939u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "OpenFileMode"),
-                opcua::types::LocalizedText::new("", "OpenFileMode"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::EnumDefinition {
-                    fields: Some(vec![
-                        opcua::types::EnumField {
-                            value: 1i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Read".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 2i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Write".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 4i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "EraseExisting".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 8i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Append".into(),
-                        },
-                    ]),
-                }
-                .into(),
-            ),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 11939u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "OpenFileMode"),
+                    opcua::types::LocalizedText::new("", "OpenFileMode"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::EnumDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::EnumField { value : 1i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name : "Read"
+                                .into(), }, opcua::types::EnumField { value : 2i64,
+                                display_name : opcua::types::LocalizedText::new("", ""),
+                                description : opcua::types::LocalizedText::new("", ""), name
+                                : "Write".into(), }, opcua::types::EnumField { value : 4i64,
+                                display_name : opcua::types::LocalizedText::new("", ""),
+                                description : opcua::types::LocalizedText::new("", ""), name
+                                : "EraseExisting".into(), }, opcua::types::EnumField { value
+                                : 8i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "Append".into(), },
+                            ],
+                        ),
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 11940u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 29u32),
-                type_id: opcua::types::NodeId::new(0u16, 45u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            11940u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            true, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 29u32), type_id :
+            opcua::types::NodeId::new(0u16, 45u32), is_forward : false, }
         ],
     }
 }
@@ -302,24 +278,24 @@ fn make_data_type_11(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 5u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "UInt16"),
-                opcua::types::LocalizedText::new("", "UInt16"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 5u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "UInt16"),
+                    opcua::types::LocalizedText::new("", "UInt16"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 28u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            28u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -400,51 +376,45 @@ fn make_data_type_1144(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15634u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "IdentityMappingRuleType"),
-                opcua::types::LocalizedText::new("", "IdentityMappingRuleType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "CriteriaType".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15632u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Criteria".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15634u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "IdentityMappingRuleType"),
+                    opcua::types::LocalizedText::new("", "IdentityMappingRuleType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "CriteriaType".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 15632u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Criteria".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -453,24 +423,24 @@ fn make_data_type_12(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 6u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "Int32"),
-                opcua::types::LocalizedText::new("", "Int32"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 6u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "Int32"),
+                    opcua::types::LocalizedText::new("", "Int32"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 27u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            27u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -479,24 +449,24 @@ fn make_data_type_124(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2000u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "ImageBMP"),
-                opcua::types::LocalizedText::new("", "ImageBMP"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2000u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "ImageBMP"),
+                    opcua::types::LocalizedText::new("", "ImageBMP"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 30u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            30u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -505,24 +475,24 @@ fn make_data_type_125(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2001u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "ImageGIF"),
-                opcua::types::LocalizedText::new("", "ImageGIF"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2001u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "ImageGIF"),
+                    opcua::types::LocalizedText::new("", "ImageGIF"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 30u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            30u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -531,24 +501,24 @@ fn make_data_type_126(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2002u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "ImageJPG"),
-                opcua::types::LocalizedText::new("", "ImageJPG"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2002u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "ImageJPG"),
+                    opcua::types::LocalizedText::new("", "ImageJPG"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 30u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            30u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -557,24 +527,24 @@ fn make_data_type_127(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 2003u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "ImagePNG"),
-                opcua::types::LocalizedText::new("", "ImagePNG"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 2003u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "ImagePNG"),
+                    opcua::types::LocalizedText::new("", "ImagePNG"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 30u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            30u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -583,24 +553,24 @@ fn make_data_type_128(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16307u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "AudioDataType"),
-                opcua::types::LocalizedText::new("", "AudioDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16307u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "AudioDataType"),
+                    opcua::types::LocalizedText::new("", "AudioDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -609,32 +579,32 @@ fn make_data_type_129(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 12756u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "Union"),
-                opcua::types::LocalizedText::new("", "Union"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 12756u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "Union"),
+                    opcua::types::LocalizedText::new("", "Union"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(vec![]),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -643,24 +613,24 @@ fn make_data_type_13(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 7u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "UInt32"),
-                opcua::types::LocalizedText::new("", "UInt32"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 7u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "UInt32"),
+                    opcua::types::LocalizedText::new("", "UInt32"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 28u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            28u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -669,24 +639,24 @@ fn make_data_type_130(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23751u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "UriString"),
-                opcua::types::LocalizedText::new("", "UriString"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23751u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "UriString"),
+                    opcua::types::LocalizedText::new("", "UriString"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 12u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            12u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -695,69 +665,55 @@ fn make_data_type_1367(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23498u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "CurrencyUnitType"),
-                opcua::types::LocalizedText::new("", "CurrencyUnitType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "NumericCode".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 4u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Exponent".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 2u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "AlphabeticCode".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Currency".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 21u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23498u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "CurrencyUnitType"),
+                    opcua::types::LocalizedText::new("", "CurrencyUnitType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "NumericCode".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 4u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Exponent".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 2u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "AlphabeticCode"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Currency".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 21u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -766,24 +722,24 @@ fn make_data_type_14(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 8u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "Int64"),
-                opcua::types::LocalizedText::new("", "Int64"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 8u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "Int64"),
+                    opcua::types::LocalizedText::new("", "Int64"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 27u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            27u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -792,60 +748,50 @@ fn make_data_type_1416(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 32434u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "AnnotationDataType"),
-                opcua::types::LocalizedText::new("", "AnnotationDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "Annotation".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Discipline".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Uri".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 32434u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "AnnotationDataType"),
+                    opcua::types::LocalizedText::new("", "AnnotationDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "Annotation".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Discipline".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Uri".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -854,69 +800,55 @@ fn make_data_type_1417(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 32435u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "LinearConversionDataType"),
-                opcua::types::LocalizedText::new("", "LinearConversionDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "InitialAddend".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 10u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Multiplicand".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 10u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Divisor".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 10u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "FinalAddend".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 10u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 32435u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "LinearConversionDataType"),
+                    opcua::types::LocalizedText::new("", "LinearConversionDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "InitialAddend"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 10u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Multiplicand".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 10u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Divisor".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 10u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "FinalAddend".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 10u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -925,54 +857,43 @@ fn make_data_type_1418(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 32436u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "ConversionLimitEnum"),
-                opcua::types::LocalizedText::new("", "ConversionLimitEnum"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::EnumDefinition {
-                    fields: Some(vec![
-                        opcua::types::EnumField {
-                            value: 0i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "NoConversion".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 1i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Limited".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 2i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Unlimited".into(),
-                        },
-                    ]),
-                }
-                .into(),
-            ),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 32436u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "ConversionLimitEnum"),
+                    opcua::types::LocalizedText::new("", "ConversionLimitEnum"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::EnumDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::EnumField { value : 0i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "NoConversion".into(), }, opcua::types::EnumField { value :
+                                1i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "Limited".into(), }, opcua::types::EnumField { value
+                                : 2i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "Unlimited".into(), },
+                            ],
+                        ),
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 32437u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 29u32),
-                type_id: opcua::types::NodeId::new(0u16, 45u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            32437u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            true, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 29u32), type_id :
+            opcua::types::NodeId::new(0u16, 45u32), is_forward : false, }
         ],
     }
 }
@@ -982,105 +903,76 @@ fn make_data_type_1420(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 32438u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "QuantityDimension"),
-                opcua::types::LocalizedText::new("", "QuantityDimension"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "MassExponent".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 2u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "LengthExponent".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 2u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "TimeExponent".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 2u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "ElectricCurrentExponent".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 2u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "AmountOfSubstanceExponent".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 2u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "LuminousIntensityExponent".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 2u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "AbsoluteTemperatureExponent".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 2u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DimensionlessExponent".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 2u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 32438u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "QuantityDimension"),
+                    opcua::types::LocalizedText::new("", "QuantityDimension"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "MassExponent".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 2u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "LengthExponent"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 2u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "TimeExponent".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 2u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name :
+                                "ElectricCurrentExponent".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 2u32), value_rank : - 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "AmountOfSubstanceExponent".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 2u32), value_rank : - 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "LuminousIntensityExponent".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 2u32), value_rank : - 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "AbsoluteTemperatureExponent".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 2u32), value_rank : - 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "DimensionlessExponent".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 2u32), value_rank : - 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1089,24 +981,24 @@ fn make_data_type_15(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 9u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "UInt64"),
-                opcua::types::LocalizedText::new("", "UInt64"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 9u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "UInt64"),
+                    opcua::types::LocalizedText::new("", "UInt64"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 28u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            28u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1115,24 +1007,24 @@ fn make_data_type_16(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 10u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "Float"),
-                opcua::types::LocalizedText::new("", "Float"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 10u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "Float"),
+                    opcua::types::LocalizedText::new("", "Float"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 26u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            26u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1141,24 +1033,24 @@ fn make_data_type_17(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 11u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "Double"),
-                opcua::types::LocalizedText::new("", "Double"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 11u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "Double"),
+                    opcua::types::LocalizedText::new("", "Double"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 26u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            26u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1167,24 +1059,24 @@ fn make_data_type_18(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 12u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "String"),
-                opcua::types::LocalizedText::new("", "String"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 12u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "String"),
+                    opcua::types::LocalizedText::new("", "String"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 24u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            24u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1193,54 +1085,44 @@ fn make_data_type_1833(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 32251u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "AlarmMask"),
-                opcua::types::LocalizedText::new("", "AlarmMask"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::EnumDefinition {
-                    fields: Some(vec![
-                        opcua::types::EnumField {
-                            value: 0i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Active".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 1i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Unacknowledged".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 2i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Unconfirmed".into(),
-                        },
-                    ]),
-                }
-                .into(),
-            ),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 32251u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "AlarmMask"),
+                    opcua::types::LocalizedText::new("", "AlarmMask"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::EnumDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::EnumField { value : 0i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name : "Active"
+                                .into(), }, opcua::types::EnumField { value : 1i64,
+                                display_name : opcua::types::LocalizedText::new("", ""),
+                                description : opcua::types::LocalizedText::new("", ""), name
+                                : "Unacknowledged".into(), }, opcua::types::EnumField {
+                                value : 2i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "Unconfirmed".into(), },
+                            ],
+                        ),
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 32252u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 5u32),
-                type_id: opcua::types::NodeId::new(0u16, 45u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            32252u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            true, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 5u32), type_id :
+            opcua::types::NodeId::new(0u16, 45u32), is_forward : false, }
         ],
     }
 }
@@ -1250,24 +1132,24 @@ fn make_data_type_19(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 13u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "DateTime"),
-                opcua::types::LocalizedText::new("", "DateTime"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 13u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "DateTime"),
+                    opcua::types::LocalizedText::new("", "DateTime"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 24u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            24u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1276,19 +1158,19 @@ fn make_data_type_2(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 24u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "BaseDataType"),
-                opcua::types::LocalizedText::new("", "BaseDataType"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 24u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "BaseDataType"),
+                    opcua::types::LocalizedText::new("", "BaseDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            None,
-        )
-        .into(),
+            )
+            .into(),
         references: vec![],
     }
 }
@@ -1298,24 +1180,24 @@ fn make_data_type_20(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 14u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "Guid"),
-                opcua::types::LocalizedText::new("", "Guid"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 14u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "Guid"),
+                    opcua::types::LocalizedText::new("", "Guid"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 24u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            24u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1395,90 +1277,59 @@ fn make_data_type_2056(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 12552u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "TrustListMasks"),
-                opcua::types::LocalizedText::new("", "TrustListMasks"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::EnumDefinition {
-                    fields: Some(vec![
-                        opcua::types::EnumField {
-                            value: 0i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new(
-                                "",
-                                "No fields are provided.",
-                            ),
-                            name: "None".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 1i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new(
-                                "",
-                                "The TrustedCertificates are provided.",
-                            ),
-                            name: "TrustedCertificates".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 2i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new(
-                                "",
-                                "The TrustedCrls are provided.",
-                            ),
-                            name: "TrustedCrls".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 4i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new(
-                                "",
-                                "The IssuerCertificates are provided.",
-                            ),
-                            name: "IssuerCertificates".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 8i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new(
-                                "",
-                                "The IssuerCrls are provided.",
-                            ),
-                            name: "IssuerCrls".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 15i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new(
-                                "",
-                                "All fields are provided.",
-                            ),
-                            name: "All".into(),
-                        },
-                    ]),
-                }
-                .into(),
-            ),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 12552u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "TrustListMasks"),
+                    opcua::types::LocalizedText::new("", "TrustListMasks"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::EnumDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::EnumField { value : 0i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("",
+                                "No fields are provided."), name : "None".into(), },
+                                opcua::types::EnumField { value : 1i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("",
+                                "The TrustedCertificates are provided."), name :
+                                "TrustedCertificates".into(), }, opcua::types::EnumField {
+                                value : 2i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("",
+                                "The TrustedCrls are provided."), name : "TrustedCrls"
+                                .into(), }, opcua::types::EnumField { value : 4i64,
+                                display_name : opcua::types::LocalizedText::new("", ""),
+                                description : opcua::types::LocalizedText::new("",
+                                "The IssuerCertificates are provided."), name :
+                                "IssuerCertificates".into(), }, opcua::types::EnumField {
+                                value : 8i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("",
+                                "The IssuerCrls are provided."), name : "IssuerCrls".into(),
+                                }, opcua::types::EnumField { value : 15i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("",
+                                "All fields are provided."), name : "All".into(), },
+                            ],
+                        ),
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 12553u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 29u32),
-                type_id: opcua::types::NodeId::new(0u16, 45u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            12553u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            true, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 29u32), type_id :
+            opcua::types::NodeId::new(0u16, 45u32), is_forward : false, }
         ],
     }
 }
@@ -1488,78 +1339,60 @@ fn make_data_type_2058(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 12554u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "TrustListDataType"),
-                opcua::types::LocalizedText::new("", "TrustListDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "SpecifiedLists".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 7u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "TrustedCertificates".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "TrustedCrls".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "IssuerCertificates".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "IssuerCrls".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 12554u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "TrustListDataType"),
+                    opcua::types::LocalizedText::new("", "TrustListDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "SpecifiedLists"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 7u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "TrustedCertificates"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 15u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "TrustedCrls".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 15u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "IssuerCertificates"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 15u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "IssuerCrls".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 15u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1568,24 +1401,24 @@ fn make_data_type_21(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "ByteString"),
-                opcua::types::LocalizedText::new("", "ByteString"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "ByteString"),
+                    opcua::types::LocalizedText::new("", "ByteString"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 24u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            24u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1594,24 +1427,24 @@ fn make_data_type_22(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "XmlElement"),
-                opcua::types::LocalizedText::new("", "XmlElement"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "XmlElement"),
+                    opcua::types::LocalizedText::new("", "XmlElement"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 24u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            24u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1620,24 +1453,24 @@ fn make_data_type_23(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 17u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "NodeId"),
-                opcua::types::LocalizedText::new("", "NodeId"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 17u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "NodeId"),
+                    opcua::types::LocalizedText::new("", "NodeId"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 24u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            24u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1646,60 +1479,50 @@ fn make_data_type_2329(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 32285u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "TransactionErrorType"),
-                opcua::types::LocalizedText::new("", "TransactionErrorType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "TargetId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 17u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Error".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 19u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Message".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 21u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 32285u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "TransactionErrorType"),
+                    opcua::types::LocalizedText::new("", "TransactionErrorType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "TargetId".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 17u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Error".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 19u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Message".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 21u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1708,24 +1531,24 @@ fn make_data_type_24(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 18u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "ExpandedNodeId"),
-                opcua::types::LocalizedText::new("", "ExpandedNodeId"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 18u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "ExpandedNodeId"),
+                    opcua::types::LocalizedText::new("", "ExpandedNodeId"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 24u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            24u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1734,24 +1557,24 @@ fn make_data_type_25(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 19u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "StatusCode"),
-                opcua::types::LocalizedText::new("", "StatusCode"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 19u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "StatusCode"),
+                    opcua::types::LocalizedText::new("", "StatusCode"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 24u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            24u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1760,24 +1583,24 @@ fn make_data_type_26(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 20u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "QualifiedName"),
-                opcua::types::LocalizedText::new("", "QualifiedName"),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 20u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "QualifiedName"),
+                    opcua::types::LocalizedText::new("", "QualifiedName"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
                 None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            None,
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 24u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            24u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1786,69 +1609,55 @@ fn make_data_type_2601(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15534u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "DataTypeSchemaHeader"),
-                opcua::types::LocalizedText::new("", "DataTypeSchemaHeader"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "Namespaces".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "StructureDataTypes".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15487u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "EnumDataTypes".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15488u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SimpleDataTypes".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15005u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15534u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "DataTypeSchemaHeader"),
+                    opcua::types::LocalizedText::new("", "DataTypeSchemaHeader"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "Namespaces".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "StructureDataTypes"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 15487u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "EnumDataTypes"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 15488u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "SimpleDataTypes"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 15005u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1857,51 +1666,45 @@ fn make_data_type_2602(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 14525u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "DataTypeDescription"),
-                opcua::types::LocalizedText::new("", "DataTypeDescription"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "DataTypeId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 17u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Name".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 20u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 14525u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "DataTypeDescription"),
+                    opcua::types::LocalizedText::new("", "DataTypeDescription"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "DataTypeId".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 17u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Name".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 20u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -1910,40 +1713,40 @@ fn make_data_type_2603(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15487u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "StructureDescription"),
-                opcua::types::LocalizedText::new("", "StructureDescription"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![opcua::types::StructureField {
-                        name: "StructureDefinition".into(),
-                        description: opcua::types::LocalizedText::new("", ""),
-                        data_type: opcua::types::NodeId::new(0u16, 99u32),
-                        value_rank: -1i32,
-                        array_dimensions: None,
-                        max_string_length: 0u32,
-                        is_optional: false,
-                    }]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 14525u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15487u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "StructureDescription"),
+                    opcua::types::LocalizedText::new("", "StructureDescription"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "StructureDefinition"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 99u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            14525u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -1952,51 +1755,45 @@ fn make_data_type_2604(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15488u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "EnumDescription"),
-                opcua::types::LocalizedText::new("", "EnumDescription"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "EnumDefinition".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 100u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "BuiltInType".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 3u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 14525u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15488u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "EnumDescription"),
+                    opcua::types::LocalizedText::new("", "EnumDescription"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "EnumDefinition"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 100u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "BuiltInType".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 3u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            14525u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -2005,51 +1802,45 @@ fn make_data_type_2605(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15005u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "SimpleTypeDescription"),
-                opcua::types::LocalizedText::new("", "SimpleTypeDescription"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "BaseDataType".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 17u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "BuiltInType".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 3u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 14525u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15005u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "SimpleTypeDescription"),
+                    opcua::types::LocalizedText::new("", "SimpleTypeDescription"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "BaseDataType".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 17u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "BuiltInType".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 3u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            14525u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -2058,60 +1849,50 @@ fn make_data_type_2606(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15006u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "UABinaryFileDataType"),
-                opcua::types::LocalizedText::new("", "UABinaryFileDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "SchemaLocation".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "FileHeader".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14533u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Body".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 24u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15534u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15006u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "UABinaryFileDataType"),
+                    opcua::types::LocalizedText::new("", "UABinaryFileDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "SchemaLocation"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "FileHeader".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 14533u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Body".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 24u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15534u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -2120,51 +1901,45 @@ fn make_data_type_2607(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 24105u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "PortableQualifiedName"),
-                opcua::types::LocalizedText::new("", "PortableQualifiedName"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "NamespaceUri".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Name".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 24105u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "PortableQualifiedName"),
+                    opcua::types::LocalizedText::new("", "PortableQualifiedName"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "NamespaceUri".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Name".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -2173,51 +1948,45 @@ fn make_data_type_2608(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 24106u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "PortableNodeId"),
-                opcua::types::LocalizedText::new("", "PortableNodeId"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "NamespaceUri".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Identifier".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 17u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 24106u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "PortableNodeId"),
+                    opcua::types::LocalizedText::new("", "PortableNodeId"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "NamespaceUri".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Identifier".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 17u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -2226,51 +1995,45 @@ fn make_data_type_2609(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 24107u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "UnsignedRationalNumber"),
-                opcua::types::LocalizedText::new("", "UnsignedRationalNumber"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "Numerator".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 7u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Denominator".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 7u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 24107u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "UnsignedRationalNumber"),
+                    opcua::types::LocalizedText::new("", "UnsignedRationalNumber"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "Numerator".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 7u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Denominator".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 7u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -2279,66 +2042,50 @@ fn make_data_type_2610(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 14647u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "PubSubState"),
-                opcua::types::LocalizedText::new("", "PubSubState"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::EnumDefinition {
-                    fields: Some(vec![
-                        opcua::types::EnumField {
-                            value: 0i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Disabled".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 1i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Paused".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 2i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Operational".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 3i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Error".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 4i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "PreOperational".into(),
-                        },
-                    ]),
-                }
-                .into(),
-            ),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 14647u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "PubSubState"),
+                    opcua::types::LocalizedText::new("", "PubSubState"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::EnumDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::EnumField { value : 0i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name : "Disabled"
+                                .into(), }, opcua::types::EnumField { value : 1i64,
+                                display_name : opcua::types::LocalizedText::new("", ""),
+                                description : opcua::types::LocalizedText::new("", ""), name
+                                : "Paused".into(), }, opcua::types::EnumField { value :
+                                2i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "Operational".into(), }, opcua::types::EnumField {
+                                value : 3i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name : "Error"
+                                .into(), }, opcua::types::EnumField { value : 4i64,
+                                display_name : opcua::types::LocalizedText::new("", ""),
+                                description : opcua::types::LocalizedText::new("", ""), name
+                                : "PreOperational".into(), },
+                            ],
+                        ),
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 14648u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 29u32),
-                type_id: opcua::types::NodeId::new(0u16, 45u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            14648u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            true, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 29u32), type_id :
+            opcua::types::NodeId::new(0u16, 45u32), is_forward : false, }
         ],
     }
 }
@@ -2348,78 +2095,60 @@ fn make_data_type_2612(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 14523u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "DataSetMetaDataType"),
-                opcua::types::LocalizedText::new("", "DataSetMetaDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "Name".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Description".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 21u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Fields".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14524u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetClassId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "ConfigurationVersion".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14593u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15534u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 14523u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "DataSetMetaDataType"),
+                    opcua::types::LocalizedText::new("", "DataSetMetaDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "Name".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Description".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 21u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Fields".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 14524u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataSetClassId"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 14u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "ConfigurationVersion"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 14593u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15534u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -2428,123 +2157,85 @@ fn make_data_type_2613(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 14524u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "FieldMetaData"),
-                opcua::types::LocalizedText::new("", "FieldMetaData"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "Name".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Description".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 21u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "FieldFlags".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15904u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "BuiltInType".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 3u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataType".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 17u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "ValueRank".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 6u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "ArrayDimensions".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 7u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "MaxStringLength".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 7u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetFieldId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Properties".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14533u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 14524u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "FieldMetaData"),
+                    opcua::types::LocalizedText::new("", "FieldMetaData"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "Name".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Description".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 21u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "FieldFlags".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 15904u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "BuiltInType".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 3u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataType".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 17u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "ValueRank".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 6u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "ArrayDimensions"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 7u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "MaxStringLength"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 7u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataSetFieldId"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 14u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Properties".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 14533u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -2553,40 +2244,37 @@ fn make_data_type_2614(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15904u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "DataSetFieldFlags"),
-                opcua::types::LocalizedText::new("", "DataSetFieldFlags"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::EnumDefinition {
-                    fields: Some(vec![opcua::types::EnumField {
-                        value: 0i64,
-                        display_name: opcua::types::LocalizedText::new("", ""),
-                        description: opcua::types::LocalizedText::new("", ""),
-                        name: "PromotedField".into(),
-                    }]),
-                }
-                .into(),
-            ),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15904u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "DataSetFieldFlags"),
+                    opcua::types::LocalizedText::new("", "DataSetFieldFlags"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::EnumDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::EnumField { value : 0i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "PromotedField".into(), },
+                            ],
+                        ),
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15577u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 5u32),
-                type_id: opcua::types::NodeId::new(0u16, 45u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15577u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            true, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 5u32), type_id :
+            opcua::types::NodeId::new(0u16, 45u32), is_forward : false, }
         ],
     }
 }
@@ -2596,51 +2284,48 @@ fn make_data_type_2616(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 14593u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "ConfigurationVersionDataType"),
-                opcua::types::LocalizedText::new("", "ConfigurationVersionDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "MajorVersion".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 20998u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "MinorVersion".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 20998u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 14593u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "ConfigurationVersionDataType",
+                    ),
+                    opcua::types::LocalizedText::new("", "ConfigurationVersionDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "MajorVersion".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 20998u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "MinorVersion".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 20998u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -2649,78 +2334,60 @@ fn make_data_type_2617(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15578u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "PublishedDataSetDataType"),
-                opcua::types::LocalizedText::new("", "PublishedDataSetDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "Name".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetFolder".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetMetaData".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14523u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "ExtensionFields".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14533u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetSource".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15580u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15578u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "PublishedDataSetDataType"),
+                    opcua::types::LocalizedText::new("", "PublishedDataSetDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "Name".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataSetFolder"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataSetMetaData"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 14523u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "ExtensionFields"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 14533u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataSetSource"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 15580u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -2729,32 +2396,38 @@ fn make_data_type_2618(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15580u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "PublishedDataSetSourceDataType"),
-                opcua::types::LocalizedText::new("", "PublishedDataSetSourceDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15580u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "PublishedDataSetSourceDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "PublishedDataSetSourceDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(vec![]),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -2763,105 +2436,75 @@ fn make_data_type_2619(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 14273u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "PublishedVariableDataType"),
-                opcua::types::LocalizedText::new("", "PublishedVariableDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "PublishedVariable".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 17u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "AttributeId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 288u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SamplingIntervalHint".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 290u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DeadbandType".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 7u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DeadbandValue".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 11u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "IndexRange".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 291u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SubstituteValue".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 24u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "MetaDataProperties".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 20u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 14273u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "PublishedVariableDataType"),
+                    opcua::types::LocalizedText::new("", "PublishedVariableDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "PublishedVariable"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 17u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "AttributeId".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 288u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "SamplingIntervalHint"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 290u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DeadbandType".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 7u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DeadbandValue"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 11u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "IndexRange".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 291u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "SubstituteValue"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 24u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "MetaDataProperties"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 20u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -2870,40 +2513,40 @@ fn make_data_type_2620(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15581u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "PublishedDataItemsDataType"),
-                opcua::types::LocalizedText::new("", "PublishedDataItemsDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![opcua::types::StructureField {
-                        name: "PublishedData".into(),
-                        description: opcua::types::LocalizedText::new("", ""),
-                        data_type: opcua::types::NodeId::new(0u16, 14273u32),
-                        value_rank: 1i32,
-                        array_dimensions: None,
-                        max_string_length: 0u32,
-                        is_optional: false,
-                    }]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15580u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15581u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "PublishedDataItemsDataType"),
+                    opcua::types::LocalizedText::new("", "PublishedDataItemsDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "PublishedData"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 14273u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15580u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -2912,60 +2555,50 @@ fn make_data_type_2621(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15582u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "PublishedEventsDataType"),
-                opcua::types::LocalizedText::new("", "PublishedEventsDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "EventNotifier".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 17u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SelectedFields".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 601u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Filter".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 586u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15580u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15582u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "PublishedEventsDataType"),
+                    opcua::types::LocalizedText::new("", "PublishedEventsDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "EventNotifier"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 17u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "SelectedFields"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 601u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Filter".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 586u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15580u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -2974,40 +2607,46 @@ fn make_data_type_2622(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 25269u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "PublishedDataSetCustomSourceDataType"),
-                opcua::types::LocalizedText::new("", "PublishedDataSetCustomSourceDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![opcua::types::StructureField {
-                        name: "CyclicDataSet".into(),
-                        description: opcua::types::LocalizedText::new("", ""),
-                        data_type: opcua::types::NodeId::new(0u16, 1u32),
-                        value_rank: -1i32,
-                        array_dimensions: None,
-                        max_string_length: 0u32,
-                        is_optional: false,
-                    }]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15580u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 25269u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "PublishedDataSetCustomSourceDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "PublishedDataSetCustomSourceDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "CyclicDataSet"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 1u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15580u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -3016,72 +2655,55 @@ fn make_data_type_2623(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15583u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "DataSetFieldContentMask"),
-                opcua::types::LocalizedText::new("", "DataSetFieldContentMask"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::EnumDefinition {
-                    fields: Some(vec![
-                        opcua::types::EnumField {
-                            value: 0i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "StatusCode".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 1i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "SourceTimestamp".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 2i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "ServerTimestamp".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 3i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "SourcePicoSeconds".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 4i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "ServerPicoSeconds".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 5i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "RawData".into(),
-                        },
-                    ]),
-                }
-                .into(),
-            ),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15583u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "DataSetFieldContentMask"),
+                    opcua::types::LocalizedText::new("", "DataSetFieldContentMask"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::EnumDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::EnumField { value : 0i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "StatusCode".into(), }, opcua::types::EnumField { value :
+                                1i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "SourceTimestamp".into(), }, opcua::types::EnumField
+                                { value : 2i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "ServerTimestamp".into(), }, opcua::types::EnumField { value
+                                : 3i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "SourcePicoSeconds".into(), },
+                                opcua::types::EnumField { value : 4i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "ServerPicoSeconds".into(), }, opcua::types::EnumField {
+                                value : 5i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name : "RawData"
+                                .into(), },
+                            ],
+                        ),
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15584u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 7u32),
-                type_id: opcua::types::NodeId::new(0u16, 45u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15584u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            true, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 7u32), type_id :
+            opcua::types::NodeId::new(0u16, 45u32), is_forward : false, }
         ],
     }
 }
@@ -3091,114 +2713,81 @@ fn make_data_type_2625(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15597u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "DataSetWriterDataType"),
-                opcua::types::LocalizedText::new("", "DataSetWriterDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "Name".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Enabled".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 1u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetWriterId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 5u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetFieldContentMask".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15583u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "KeyFrameCount".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 7u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetName".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetWriterProperties".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14533u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "TransportSettings".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15598u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "MessageSettings".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15605u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15597u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "DataSetWriterDataType"),
+                    opcua::types::LocalizedText::new("", "DataSetWriterDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "Name".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Enabled".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 1u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataSetWriterId"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 5u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name :
+                                "DataSetFieldContentMask".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 15583u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "KeyFrameCount".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 7u32), value_rank : - 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "DataSetName".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 12u32), value_rank : - 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "DataSetWriterProperties".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 14533u32), value_rank :
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "TransportSettings".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 15598u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "MessageSettings".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 15605u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -3207,32 +2796,38 @@ fn make_data_type_2626(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15598u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "DataSetWriterTransportDataType"),
-                opcua::types::LocalizedText::new("", "DataSetWriterTransportDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15598u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "DataSetWriterTransportDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "DataSetWriterTransportDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(vec![]),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -3241,32 +2836,35 @@ fn make_data_type_2627(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15605u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "DataSetWriterMessageDataType"),
-                opcua::types::LocalizedText::new("", "DataSetWriterMessageDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15605u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "DataSetWriterMessageDataType",
+                    ),
+                    opcua::types::LocalizedText::new("", "DataSetWriterMessageDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(vec![]),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -3275,96 +2873,71 @@ fn make_data_type_2628(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15609u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "PubSubGroupDataType"),
-                opcua::types::LocalizedText::new("", "PubSubGroupDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "Name".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Enabled".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 1u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SecurityMode".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 302u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SecurityGroupId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SecurityKeyServices".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 312u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "MaxNetworkMessageSize".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 7u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "GroupProperties".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14533u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15609u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "PubSubGroupDataType"),
+                    opcua::types::LocalizedText::new("", "PubSubGroupDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "Name".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Enabled".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 1u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "SecurityMode".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 302u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "SecurityGroupId"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "SecurityKeyServices"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 312u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name :
+                                "MaxNetworkMessageSize".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 7u32), value_rank : - 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "GroupProperties".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 14533u32), value_rank :
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -3373,114 +2946,80 @@ fn make_data_type_2629(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15480u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "WriterGroupDataType"),
-                opcua::types::LocalizedText::new("", "WriterGroupDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "WriterGroupId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 5u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "PublishingInterval".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 290u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "KeepAliveTime".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 290u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Priority".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 3u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "LocaleIds".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 295u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "HeaderLayoutUri".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "TransportSettings".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15611u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "MessageSettings".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15616u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetWriters".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15597u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15609u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15480u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "WriterGroupDataType"),
+                    opcua::types::LocalizedText::new("", "WriterGroupDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "WriterGroupId"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 5u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "PublishingInterval"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 290u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "KeepAliveTime"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 290u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Priority".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 3u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "LocaleIds".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 295u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "HeaderLayoutUri"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "TransportSettings"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 15611u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "MessageSettings"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 15616u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataSetWriters"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 15597u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15609u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -3489,32 +3028,35 @@ fn make_data_type_2630(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15611u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "WriterGroupTransportDataType"),
-                opcua::types::LocalizedText::new("", "WriterGroupTransportDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15611u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "WriterGroupTransportDataType",
+                    ),
+                    opcua::types::LocalizedText::new("", "WriterGroupTransportDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(vec![]),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -3523,32 +3065,32 @@ fn make_data_type_2631(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15616u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "WriterGroupMessageDataType"),
-                opcua::types::LocalizedText::new("", "WriterGroupMessageDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15616u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "WriterGroupMessageDataType"),
+                    opcua::types::LocalizedText::new("", "WriterGroupMessageDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(vec![]),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -3557,114 +3099,80 @@ fn make_data_type_2632(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15617u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "PubSubConnectionDataType"),
-                opcua::types::LocalizedText::new("", "PubSubConnectionDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "Name".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Enabled".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 1u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "PublisherId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 24u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "TransportProfileUri".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Address".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15502u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "ConnectionProperties".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14533u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "TransportSettings".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15618u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "WriterGroups".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15480u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "ReaderGroups".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15520u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15617u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "PubSubConnectionDataType"),
+                    opcua::types::LocalizedText::new("", "PubSubConnectionDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "Name".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Enabled".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 1u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "PublisherId".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 24u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "TransportProfileUri"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Address".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 15502u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "ConnectionProperties"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 14533u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "TransportSettings"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 15618u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "WriterGroups".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 15480u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "ReaderGroups".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 15520u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -3673,32 +3181,35 @@ fn make_data_type_2633(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15618u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "ConnectionTransportDataType"),
-                opcua::types::LocalizedText::new("", "ConnectionTransportDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15618u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "ConnectionTransportDataType",
+                    ),
+                    opcua::types::LocalizedText::new("", "ConnectionTransportDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(vec![]),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -3707,40 +3218,40 @@ fn make_data_type_2634(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15502u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "NetworkAddressDataType"),
-                opcua::types::LocalizedText::new("", "NetworkAddressDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![opcua::types::StructureField {
-                        name: "NetworkInterface".into(),
-                        description: opcua::types::LocalizedText::new("", ""),
-                        data_type: opcua::types::NodeId::new(0u16, 12u32),
-                        value_rank: -1i32,
-                        array_dimensions: None,
-                        max_string_length: 0u32,
-                        is_optional: false,
-                    }]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15502u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "NetworkAddressDataType"),
+                    opcua::types::LocalizedText::new("", "NetworkAddressDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "NetworkInterface"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -3749,40 +3260,40 @@ fn make_data_type_2635(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15510u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "NetworkAddressUrlDataType"),
-                opcua::types::LocalizedText::new("", "NetworkAddressUrlDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![opcua::types::StructureField {
-                        name: "Url".into(),
-                        description: opcua::types::LocalizedText::new("", ""),
-                        data_type: opcua::types::NodeId::new(0u16, 12u32),
-                        value_rank: -1i32,
-                        array_dimensions: None,
-                        max_string_length: 0u32,
-                        is_optional: false,
-                    }]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15502u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15510u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "NetworkAddressUrlDataType"),
+                    opcua::types::LocalizedText::new("", "NetworkAddressUrlDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "Url".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15502u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -3791,60 +3302,50 @@ fn make_data_type_2636(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15520u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "ReaderGroupDataType"),
-                opcua::types::LocalizedText::new("", "ReaderGroupDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "TransportSettings".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15621u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "MessageSettings".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15622u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetReaders".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15623u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15609u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15520u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "ReaderGroupDataType"),
+                    opcua::types::LocalizedText::new("", "ReaderGroupDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "TransportSettings"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 15621u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "MessageSettings"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 15622u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataSetReaders"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 15623u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15609u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -3853,32 +3354,35 @@ fn make_data_type_2637(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15621u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "ReaderGroupTransportDataType"),
-                opcua::types::LocalizedText::new("", "ReaderGroupTransportDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15621u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "ReaderGroupTransportDataType",
+                    ),
+                    opcua::types::LocalizedText::new("", "ReaderGroupTransportDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(vec![]),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -3887,32 +3391,32 @@ fn make_data_type_2638(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15622u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "ReaderGroupMessageDataType"),
-                opcua::types::LocalizedText::new("", "ReaderGroupMessageDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15622u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "ReaderGroupMessageDataType"),
+                    opcua::types::LocalizedText::new("", "ReaderGroupMessageDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(vec![]),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -3921,186 +3425,121 @@ fn make_data_type_2639(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15623u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "DataSetReaderDataType"),
-                opcua::types::LocalizedText::new("", "DataSetReaderDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "Name".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Enabled".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 1u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "PublisherId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 24u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "WriterGroupId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 5u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetWriterId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 5u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetMetaData".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14523u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetFieldContentMask".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15583u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "MessageReceiveTimeout".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 290u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "KeyFrameCount".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 7u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "HeaderLayoutUri".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SecurityMode".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 302u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SecurityGroupId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SecurityKeyServices".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 312u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetReaderProperties".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14533u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "TransportSettings".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15628u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "MessageSettings".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15629u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SubscribedDataSet".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15630u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15623u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "DataSetReaderDataType"),
+                    opcua::types::LocalizedText::new("", "DataSetReaderDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "Name".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Enabled".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 1u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "PublisherId".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 24u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "WriterGroupId"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 5u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataSetWriterId"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 5u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataSetMetaData"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 14523u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name :
+                                "DataSetFieldContentMask".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 15583u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "MessageReceiveTimeout".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 290u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "KeyFrameCount".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 7u32), value_rank : - 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "HeaderLayoutUri".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 12u32), value_rank : - 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "SecurityMode".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 302u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "SecurityGroupId".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 12u32), value_rank : - 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "SecurityKeyServices".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 312u32), value_rank : 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "DataSetReaderProperties".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 14533u32), value_rank :
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "TransportSettings".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 15628u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "MessageSettings".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 15629u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "SubscribedDataSet".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 15630u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -4109,32 +3548,38 @@ fn make_data_type_2640(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15628u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "DataSetReaderTransportDataType"),
-                opcua::types::LocalizedText::new("", "DataSetReaderTransportDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15628u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "DataSetReaderTransportDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "DataSetReaderTransportDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(vec![]),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -4143,32 +3588,35 @@ fn make_data_type_2641(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15629u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "DataSetReaderMessageDataType"),
-                opcua::types::LocalizedText::new("", "DataSetReaderMessageDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15629u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "DataSetReaderMessageDataType",
+                    ),
+                    opcua::types::LocalizedText::new("", "DataSetReaderMessageDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(vec![]),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -4177,32 +3625,32 @@ fn make_data_type_2642(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15630u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "SubscribedDataSetDataType"),
-                opcua::types::LocalizedText::new("", "SubscribedDataSetDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            true,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15630u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "SubscribedDataSetDataType"),
+                    opcua::types::LocalizedText::new("", "SubscribedDataSetDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                true,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(vec![]),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -4211,40 +3659,40 @@ fn make_data_type_2643(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15631u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "TargetVariablesDataType"),
-                opcua::types::LocalizedText::new("", "TargetVariablesDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![opcua::types::StructureField {
-                        name: "TargetVariables".into(),
-                        description: opcua::types::LocalizedText::new("", ""),
-                        data_type: opcua::types::NodeId::new(0u16, 14744u32),
-                        value_rank: 1i32,
-                        array_dimensions: None,
-                        max_string_length: 0u32,
-                        is_optional: false,
-                    }]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15630u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15631u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "TargetVariablesDataType"),
+                    opcua::types::LocalizedText::new("", "TargetVariablesDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "TargetVariables"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 14744u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15630u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -4253,96 +3701,71 @@ fn make_data_type_2644(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 14744u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "FieldTargetDataType"),
-                opcua::types::LocalizedText::new("", "FieldTargetDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "DataSetFieldId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "ReceiverIndexRange".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 291u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "TargetNodeId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 17u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "AttributeId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 288u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "WriteIndexRange".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 291u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "OverrideValueHandling".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15874u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "OverrideValue".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 24u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 14744u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "FieldTargetDataType"),
+                    opcua::types::LocalizedText::new("", "FieldTargetDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "DataSetFieldId"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 14u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "ReceiverIndexRange"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 291u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "TargetNodeId".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 17u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "AttributeId".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 288u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "WriteIndexRange"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 291u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name :
+                                "OverrideValueHandling".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 15874u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "OverrideValue".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 24u32), value_rank : - 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -4351,54 +3774,44 @@ fn make_data_type_2645(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15874u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "OverrideValueHandling"),
-                opcua::types::LocalizedText::new("", "OverrideValueHandling"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::EnumDefinition {
-                    fields: Some(vec![
-                        opcua::types::EnumField {
-                            value: 0i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Disabled".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 1i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "LastUsableValue".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 2i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "OverrideValue".into(),
-                        },
-                    ]),
-                }
-                .into(),
-            ),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15874u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "OverrideValueHandling"),
+                    opcua::types::LocalizedText::new("", "OverrideValueHandling"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::EnumDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::EnumField { value : 0i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name : "Disabled"
+                                .into(), }, opcua::types::EnumField { value : 1i64,
+                                display_name : opcua::types::LocalizedText::new("", ""),
+                                description : opcua::types::LocalizedText::new("", ""), name
+                                : "LastUsableValue".into(), }, opcua::types::EnumField {
+                                value : 2i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "OverrideValue".into(), },
+                            ],
+                        ),
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15875u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 29u32),
-                type_id: opcua::types::NodeId::new(0u16, 45u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15875u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            true, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 29u32), type_id :
+            opcua::types::NodeId::new(0u16, 45u32), is_forward : false, }
         ],
     }
 }
@@ -4408,51 +3821,51 @@ fn make_data_type_2647(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15635u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "SubscribedDataSetMirrorDataType"),
-                opcua::types::LocalizedText::new("", "SubscribedDataSetMirrorDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "ParentNodeName".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "RolePermissions".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 96u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15630u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15635u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "SubscribedDataSetMirrorDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "SubscribedDataSetMirrorDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "ParentNodeName"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "RolePermissions"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 96u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15630u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -4461,60 +3874,53 @@ fn make_data_type_2648(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15530u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "PubSubConfigurationDataType"),
-                opcua::types::LocalizedText::new("", "PubSubConfigurationDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "PublishedDataSets".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15578u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Connections".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15617u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "Enabled".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 1u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15530u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "PubSubConfigurationDataType",
+                    ),
+                    opcua::types::LocalizedText::new("", "PubSubConfigurationDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "PublishedDataSets"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 15578u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Connections".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 15617u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "Enabled".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 1u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -4523,40 +3929,46 @@ fn make_data_type_2649(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23599u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "StandaloneSubscribedDataSetRefDataType"),
-                opcua::types::LocalizedText::new("", "StandaloneSubscribedDataSetRefDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![opcua::types::StructureField {
-                        name: "DataSetName".into(),
-                        description: opcua::types::LocalizedText::new("", ""),
-                        data_type: opcua::types::NodeId::new(0u16, 12u32),
-                        value_rank: -1i32,
-                        array_dimensions: None,
-                        max_string_length: 0u32,
-                        is_optional: false,
-                    }]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15630u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23599u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "StandaloneSubscribedDataSetRefDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "StandaloneSubscribedDataSetRefDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "DataSetName".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15630u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -4565,69 +3977,61 @@ fn make_data_type_2650(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23600u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "StandaloneSubscribedDataSetDataType"),
-                opcua::types::LocalizedText::new("", "StandaloneSubscribedDataSetDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "Name".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetFolder".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetMetaData".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14523u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SubscribedDataSet".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15630u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15630u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23600u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "StandaloneSubscribedDataSetDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "StandaloneSubscribedDataSetDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "Name".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataSetFolder"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataSetMetaData"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 14523u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "SubscribedDataSet"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 15630u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15630u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -4636,114 +4040,80 @@ fn make_data_type_2651(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23601u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "SecurityGroupDataType"),
-                opcua::types::LocalizedText::new("", "SecurityGroupDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "Name".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SecurityGroupFolder".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "KeyLifetime".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 290u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SecurityPolicyUri".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "MaxFutureKeyCount".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 7u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "MaxPastKeyCount".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 7u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SecurityGroupId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "RolePermissions".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 96u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "GroupProperties".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14533u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23601u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "SecurityGroupDataType"),
+                    opcua::types::LocalizedText::new("", "SecurityGroupDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "Name".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "SecurityGroupFolder"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "KeyLifetime".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 290u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "SecurityPolicyUri"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "MaxFutureKeyCount"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 7u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "MaxPastKeyCount"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 7u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "SecurityGroupId"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "RolePermissions"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 96u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "GroupProperties"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 14533u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -4752,114 +4122,83 @@ fn make_data_type_2652(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 25270u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "PubSubKeyPushTargetDataType"),
-                opcua::types::LocalizedText::new("", "PubSubKeyPushTargetDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "ApplicationUri".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "PushTargetFolder".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "EndpointUrl".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SecurityPolicyUri".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "UserTokenType".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 304u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "RequestedKeyCount".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 5u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "RetryInterval".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 290u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "PushTargetProperties".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14533u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SecurityGroups".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 12u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 22u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 25270u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "PubSubKeyPushTargetDataType",
+                    ),
+                    opcua::types::LocalizedText::new("", "PubSubKeyPushTargetDataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "ApplicationUri"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "PushTargetFolder"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "EndpointUrl".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "SecurityPolicyUri"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "UserTokenType"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 304u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "RequestedKeyCount"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 5u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "RetryInterval"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 290u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "PushTargetProperties"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 14533u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "SecurityGroups"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 12u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            22u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward : false,
+            }
+        ],
     }
 }
 #[allow(unused)]
@@ -4868,96 +4207,74 @@ fn make_data_type_2653(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23602u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "PubSubConfiguration2DataType"),
-                opcua::types::LocalizedText::new("", "PubSubConfiguration2DataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "SubscribedDataSets".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 23600u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetClasses".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14523u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DefaultSecurityKeyServices".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 312u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SecurityGroups".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 23601u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "PubSubKeyPushTargets".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 25270u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "ConfigurationVersion".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 20998u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "ConfigurationProperties".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14533u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15530u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23602u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "PubSubConfiguration2DataType",
+                    ),
+                    opcua::types::LocalizedText::new("", "PubSubConfiguration2DataType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "SubscribedDataSets"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 23600u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataSetClasses"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 14523u32),
+                                value_rank : 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name :
+                                "DefaultSecurityKeyServices".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 312u32), value_rank : 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "SecurityGroups".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 23601u32), value_rank :
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "PubSubKeyPushTargets".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 25270u32), value_rank :
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "ConfigurationVersion".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 20998u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "ConfigurationProperties".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 14533u32), value_rank :
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15530u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -4966,54 +4283,44 @@ fn make_data_type_2654(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 20408u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "DataSetOrderingType"),
-                opcua::types::LocalizedText::new("", "DataSetOrderingType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::EnumDefinition {
-                    fields: Some(vec![
-                        opcua::types::EnumField {
-                            value: 0i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Undefined".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 1i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "AscendingWriterId".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 2i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "AscendingWriterIdSingle".into(),
-                        },
-                    ]),
-                }
-                .into(),
-            ),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 20408u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(0u16, "DataSetOrderingType"),
+                    opcua::types::LocalizedText::new("", "DataSetOrderingType"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::EnumDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::EnumField { value : 0i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name : "Undefined"
+                                .into(), }, opcua::types::EnumField { value : 1i64,
+                                display_name : opcua::types::LocalizedText::new("", ""),
+                                description : opcua::types::LocalizedText::new("", ""), name
+                                : "AscendingWriterId".into(), }, opcua::types::EnumField {
+                                value : 2i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "AscendingWriterIdSingle".into(), },
+                            ],
+                        ),
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15641u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 29u32),
-                type_id: opcua::types::NodeId::new(0u16, 45u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15641u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            true, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 29u32), type_id :
+            opcua::types::NodeId::new(0u16, 45u32), is_forward : false, }
         ],
     }
 }
@@ -5023,102 +4330,78 @@ fn make_data_type_2656(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15642u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "UadpNetworkMessageContentMask"),
-                opcua::types::LocalizedText::new("", "UadpNetworkMessageContentMask"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::EnumDefinition {
-                    fields: Some(vec![
-                        opcua::types::EnumField {
-                            value: 0i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "PublisherId".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 1i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "GroupHeader".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 2i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "WriterGroupId".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 3i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "GroupVersion".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 4i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "NetworkMessageNumber".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 5i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "SequenceNumber".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 6i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "PayloadHeader".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 7i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Timestamp".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 8i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "PicoSeconds".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 9i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "DataSetClassId".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 10i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "PromotedFields".into(),
-                        },
-                    ]),
-                }
-                .into(),
-            ),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15642u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "UadpNetworkMessageContentMask",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "UadpNetworkMessageContentMask",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::EnumDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::EnumField { value : 0i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "PublisherId".into(), }, opcua::types::EnumField { value :
+                                1i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "GroupHeader".into(), }, opcua::types::EnumField {
+                                value : 2i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "WriterGroupId".into(), }, opcua::types::EnumField { value :
+                                3i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "GroupVersion".into(), }, opcua::types::EnumField {
+                                value : 4i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "NetworkMessageNumber".into(), }, opcua::types::EnumField {
+                                value : 5i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "SequenceNumber".into(), }, opcua::types::EnumField { value
+                                : 6i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "PayloadHeader".into(), }, opcua::types::EnumField {
+                                value : 7i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name : "Timestamp"
+                                .into(), }, opcua::types::EnumField { value : 8i64,
+                                display_name : opcua::types::LocalizedText::new("", ""),
+                                description : opcua::types::LocalizedText::new("", ""), name
+                                : "PicoSeconds".into(), }, opcua::types::EnumField { value :
+                                9i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "DataSetClassId".into(), }, opcua::types::EnumField {
+                                value : 10i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "PromotedFields".into(), },
+                            ],
+                        ),
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15643u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 7u32),
-                type_id: opcua::types::NodeId::new(0u16, 45u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15643u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            true, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 7u32), type_id :
+            opcua::types::NodeId::new(0u16, 45u32), is_forward : false, }
         ],
     }
 }
@@ -5128,78 +4411,67 @@ fn make_data_type_2658(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15645u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "UadpWriterGroupMessageDataType"),
-                opcua::types::LocalizedText::new("", "UadpWriterGroupMessageDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "GroupVersion".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 20998u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetOrdering".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 20408u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "NetworkMessageContentMask".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15642u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "SamplingOffset".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 290u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "PublishingOffset".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 290u32),
-                            value_rank: 1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15616u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15645u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "UadpWriterGroupMessageDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "UadpWriterGroupMessageDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "GroupVersion".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 20998u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataSetOrdering"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 20408u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name :
+                                "NetworkMessageContentMask".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 15642u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "SamplingOffset".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 290u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "PublishingOffset".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 290u32), value_rank : 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15616u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -5208,72 +4480,59 @@ fn make_data_type_2659(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15646u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "UadpDataSetMessageContentMask"),
-                opcua::types::LocalizedText::new("", "UadpDataSetMessageContentMask"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::EnumDefinition {
-                    fields: Some(vec![
-                        opcua::types::EnumField {
-                            value: 0i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Timestamp".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 1i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "PicoSeconds".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 2i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Status".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 3i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "MajorVersion".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 4i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "MinorVersion".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 5i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "SequenceNumber".into(),
-                        },
-                    ]),
-                }
-                .into(),
-            ),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15646u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "UadpDataSetMessageContentMask",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "UadpDataSetMessageContentMask",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::EnumDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::EnumField { value : 0i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name : "Timestamp"
+                                .into(), }, opcua::types::EnumField { value : 1i64,
+                                display_name : opcua::types::LocalizedText::new("", ""),
+                                description : opcua::types::LocalizedText::new("", ""), name
+                                : "PicoSeconds".into(), }, opcua::types::EnumField { value :
+                                2i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "Status".into(), }, opcua::types::EnumField { value :
+                                3i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "MajorVersion".into(), }, opcua::types::EnumField {
+                                value : 4i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "MinorVersion".into(), }, opcua::types::EnumField { value :
+                                5i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "SequenceNumber".into(), },
+                            ],
+                        ),
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15647u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 7u32),
-                type_id: opcua::types::NodeId::new(0u16, 45u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15647u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            true, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 7u32), type_id :
+            opcua::types::NodeId::new(0u16, 45u32), is_forward : false, }
         ],
     }
 }
@@ -5283,69 +4542,62 @@ fn make_data_type_2661(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15652u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "UadpDataSetWriterMessageDataType"),
-                opcua::types::LocalizedText::new("", "UadpDataSetWriterMessageDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "DataSetMessageContentMask".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15646u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "ConfiguredSize".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 5u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "NetworkMessageNumber".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 5u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetOffset".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 5u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15605u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15652u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "UadpDataSetWriterMessageDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "UadpDataSetWriterMessageDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name :
+                                "DataSetMessageContentMask".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 15646u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "ConfiguredSize".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 5u32), value_rank : - 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "NetworkMessageNumber".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 5u32), value_rank : - 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "DataSetOffset".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 5u32), value_rank : - 1i32,
+                                array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15605u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -5354,114 +4606,87 @@ fn make_data_type_2662(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15653u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "UadpDataSetReaderMessageDataType"),
-                opcua::types::LocalizedText::new("", "UadpDataSetReaderMessageDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "GroupVersion".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 20998u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "NetworkMessageNumber".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 5u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetOffset".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 5u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetClassId".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 14u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "NetworkMessageContentMask".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15642u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetMessageContentMask".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15646u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "PublishingInterval".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 290u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "ReceiveOffset".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 290u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "ProcessingOffset".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 290u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15629u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15653u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "UadpDataSetReaderMessageDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "UadpDataSetReaderMessageDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name : "GroupVersion".into(),
+                                description : opcua::types::LocalizedText::new("", ""),
+                                data_type : opcua::types::NodeId::new(0u16, 20998u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "NetworkMessageNumber"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 5u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataSetOffset"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 5u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name : "DataSetClassId"
+                                .into(), description : opcua::types::LocalizedText::new("",
+                                ""), data_type : opcua::types::NodeId::new(0u16, 14u32),
+                                value_rank : - 1i32, array_dimensions : None,
+                                max_string_length : 0u32, is_optional : false, },
+                                opcua::types::StructureField { name :
+                                "NetworkMessageContentMask".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 15642u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "DataSetMessageContentMask".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 15646u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "PublishingInterval".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 290u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "ReceiveOffset".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 290u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "ProcessingOffset".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 290u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15629u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -5470,78 +4695,65 @@ fn make_data_type_2663(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15654u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "JsonNetworkMessageContentMask"),
-                opcua::types::LocalizedText::new("", "JsonNetworkMessageContentMask"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::EnumDefinition {
-                    fields: Some(vec![
-                        opcua::types::EnumField {
-                            value: 0i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "NetworkMessageHeader".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 1i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "DataSetMessageHeader".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 2i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "SingleDataSetMessage".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 3i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "PublisherId".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 4i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "DataSetClassId".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 5i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "ReplyTo".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 6i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "WriterGroupName".into(),
-                        },
-                    ]),
-                }
-                .into(),
-            ),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15654u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "JsonNetworkMessageContentMask",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "JsonNetworkMessageContentMask",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::EnumDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::EnumField { value : 0i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "NetworkMessageHeader".into(), }, opcua::types::EnumField {
+                                value : 1i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "DataSetMessageHeader".into(), }, opcua::types::EnumField {
+                                value : 2i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "SingleDataSetMessage".into(), }, opcua::types::EnumField {
+                                value : 3i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "PublisherId".into(), }, opcua::types::EnumField { value :
+                                4i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "DataSetClassId".into(), }, opcua::types::EnumField {
+                                value : 5i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name : "ReplyTo"
+                                .into(), }, opcua::types::EnumField { value : 6i64,
+                                display_name : opcua::types::LocalizedText::new("", ""),
+                                description : opcua::types::LocalizedText::new("", ""), name
+                                : "WriterGroupName".into(), },
+                            ],
+                        ),
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15655u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 7u32),
-                type_id: opcua::types::NodeId::new(0u16, 45u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15655u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            true, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 7u32), type_id :
+            opcua::types::NodeId::new(0u16, 45u32), is_forward : false, }
         ],
     }
 }
@@ -5551,40 +4763,47 @@ fn make_data_type_2665(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15657u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "JsonWriterGroupMessageDataType"),
-                opcua::types::LocalizedText::new("", "JsonWriterGroupMessageDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![opcua::types::StructureField {
-                        name: "NetworkMessageContentMask".into(),
-                        description: opcua::types::LocalizedText::new("", ""),
-                        data_type: opcua::types::NodeId::new(0u16, 15654u32),
-                        value_rank: -1i32,
-                        array_dimensions: None,
-                        max_string_length: 0u32,
-                        is_optional: false,
-                    }]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15616u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15657u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "JsonWriterGroupMessageDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "JsonWriterGroupMessageDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name :
+                                "NetworkMessageContentMask".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 15654u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15616u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -5593,102 +4812,78 @@ fn make_data_type_2666(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15658u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "JsonDataSetMessageContentMask"),
-                opcua::types::LocalizedText::new("", "JsonDataSetMessageContentMask"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::EnumDefinition {
-                    fields: Some(vec![
-                        opcua::types::EnumField {
-                            value: 0i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "DataSetWriterId".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 1i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "MetaDataVersion".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 2i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "SequenceNumber".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 3i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Timestamp".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 4i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "Status".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 5i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "MessageType".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 6i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "DataSetWriterName".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 7i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "ReversibleFieldEncoding".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 8i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "PublisherId".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 9i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "WriterGroupName".into(),
-                        },
-                        opcua::types::EnumField {
-                            value: 10i64,
-                            display_name: opcua::types::LocalizedText::new("", ""),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            name: "MinorVersion".into(),
-                        },
-                    ]),
-                }
-                .into(),
-            ),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15658u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "JsonDataSetMessageContentMask",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "JsonDataSetMessageContentMask",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::EnumDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::EnumField { value : 0i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "DataSetWriterId".into(), }, opcua::types::EnumField { value
+                                : 1i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "MetaDataVersion".into(), }, opcua::types::EnumField
+                                { value : 2i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "SequenceNumber".into(), }, opcua::types::EnumField { value
+                                : 3i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "Timestamp".into(), }, opcua::types::EnumField {
+                                value : 4i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name : "Status"
+                                .into(), }, opcua::types::EnumField { value : 5i64,
+                                display_name : opcua::types::LocalizedText::new("", ""),
+                                description : opcua::types::LocalizedText::new("", ""), name
+                                : "MessageType".into(), }, opcua::types::EnumField { value :
+                                6i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "DataSetWriterName".into(), },
+                                opcua::types::EnumField { value : 7i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "ReversibleFieldEncoding".into(), }, opcua::types::EnumField
+                                { value : 8i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "PublisherId".into(), }, opcua::types::EnumField { value :
+                                9i64, display_name : opcua::types::LocalizedText::new("",
+                                ""), description : opcua::types::LocalizedText::new("", ""),
+                                name : "WriterGroupName".into(), }, opcua::types::EnumField
+                                { value : 10i64, display_name :
+                                opcua::types::LocalizedText::new("", ""), description :
+                                opcua::types::LocalizedText::new("", ""), name :
+                                "MinorVersion".into(), },
+                            ],
+                        ),
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15659u32),
-                type_id: opcua::types::NodeId::new(0u16, 46u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 7u32),
-                type_id: opcua::types::NodeId::new(0u16, 45u32),
-                is_forward: false,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15659u32), type_id : opcua::types::NodeId::new(0u16, 46u32), is_forward :
+            true, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 7u32), type_id :
+            opcua::types::NodeId::new(0u16, 45u32), is_forward : false, }
         ],
     }
 }
@@ -5698,40 +4893,47 @@ fn make_data_type_2668(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15664u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "JsonDataSetWriterMessageDataType"),
-                opcua::types::LocalizedText::new("", "JsonDataSetWriterMessageDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![opcua::types::StructureField {
-                        name: "DataSetMessageContentMask".into(),
-                        description: opcua::types::LocalizedText::new("", ""),
-                        data_type: opcua::types::NodeId::new(0u16, 15658u32),
-                        value_rank: -1i32,
-                        array_dimensions: None,
-                        max_string_length: 0u32,
-                        is_optional: false,
-                    }]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15605u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15664u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "JsonDataSetWriterMessageDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "JsonDataSetWriterMessageDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name :
+                                "DataSetMessageContentMask".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 15658u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15605u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }
 #[allow(unused)]
@@ -5740,50 +4942,51 @@ fn make_data_type_2669(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::DataType::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15665u32),
-                opcua::types::NodeClass::DataType,
-                opcua::types::QualifiedName::new(0u16, "JsonDataSetReaderMessageDataType"),
-                opcua::types::LocalizedText::new("", "JsonDataSetReaderMessageDataType"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            false,
-            Some(
-                opcua::types::StructureDefinition {
-                    fields: Some(vec![
-                        opcua::types::StructureField {
-                            name: "NetworkMessageContentMask".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15654u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                        opcua::types::StructureField {
-                            name: "DataSetMessageContentMask".into(),
-                            description: opcua::types::LocalizedText::new("", ""),
-                            data_type: opcua::types::NodeId::new(0u16, 15658u32),
-                            value_rank: -1i32,
-                            array_dimensions: None,
-                            max_string_length: 0u32,
-                            is_optional: false,
-                        },
-                    ]),
-                    default_encoding_id: opcua::types::NodeId::null(),
-                    base_data_type: opcua::types::NodeId::null(),
-                    structure_type: opcua::types::StructureType::Structure,
-                }
-                .into(),
-            ),
-        )
-        .into(),
-        references: vec![opcua::nodes::ImportedReference {
-            target_id: opcua::types::NodeId::new(0u16, 15629u32),
-            type_id: opcua::types::NodeId::new(0u16, 45u32),
-            is_forward: false,
-        }],
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15665u32),
+                    opcua::types::NodeClass::DataType,
+                    opcua::types::QualifiedName::new(
+                        0u16,
+                        "JsonDataSetReaderMessageDataType",
+                    ),
+                    opcua::types::LocalizedText::new(
+                        "",
+                        "JsonDataSetReaderMessageDataType",
+                    ),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                false,
+                Some(
+                    opcua::types::StructureDefinition {
+                        fields: Some(
+                            vec![
+                                opcua::types::StructureField { name :
+                                "NetworkMessageContentMask".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 15654u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, }, opcua::types::StructureField { name
+                                : "DataSetMessageContentMask".into(), description :
+                                opcua::types::LocalizedText::new("", ""), data_type :
+                                opcua::types::NodeId::new(0u16, 15658u32), value_rank : -
+                                1i32, array_dimensions : None, max_string_length : 0u32,
+                                is_optional : false, },
+                            ],
+                        ),
+                        default_encoding_id: opcua::types::NodeId::null(),
+                        base_data_type: opcua::types::NodeId::null(),
+                        structure_type: opcua::types::StructureType::Structure,
+                    }
+                        .into(),
+                ),
+            )
+            .into(),
+        references: vec![
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15629u32), type_id : opcua::types::NodeId::new(0u16, 45u32), is_forward :
+            false, }
+        ],
     }
 }

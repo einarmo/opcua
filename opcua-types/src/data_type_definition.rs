@@ -3,8 +3,9 @@ use super::{
     Variant,
 };
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-#[serde(untagged)]
+#[derive(Debug, Clone)]
+#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "json", serde(rename_all = "PascalCase", untagged))]
 pub enum DataTypeDefinition {
     Structure(StructureDefinition),
     Enum(EnumDefinition),

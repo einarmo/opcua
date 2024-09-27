@@ -11,8 +11,6 @@ use std::{
 };
 
 use log::error;
-use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
-use serde_json::json;
 
 use crate::{
     byte_string::ByteString,
@@ -31,162 +29,178 @@ pub struct ExpandedNodeId {
     pub server_index: u32,
 }
 
-// JSON serialization schema as per spec:
-//
-// "Type"
-//      The IdentifierType encoded as a JSON number.
-//      Allowed values are:
-//            0 - UInt32 Identifier encoded as a JSON number.
-//            1 - A String Identifier encoded as a JSON string.
-//            2 - A Guid Identifier encoded as described in 5.4.2.7.
-//            3 - A ByteString Identifier encoded as described in 5.4.2.8.
-//      This field is omitted for UInt32 identifiers.
-// "Id"
-//      The Identifier.
-//      The value of the id field specifies the encoding of this field.
-// "Namespace"
-//      The NamespaceIndex for the NodeId.
-//      The field is encoded as a JSON number for the reversible encoding.
-//      The field is omitted if the NamespaceIndex equals 0.
-//      For the non-reversible encoding, the field is the NamespaceUri associated with the NamespaceIndex, encoded as a JSON string.
-//      A NamespaceIndex of 1 is always encoded as a JSON number.
-// "ServerUri"
-//      The ServerIndex for the ExpandedNodeId.
-//      This field is encoded as a JSON number for the reversible encoding.
-//      This field is omitted if the ServerIndex equals 0.
-//      For the non-reversible encoding, this field is the ServerUri associated with the ServerIndex portion of the ExpandedNodeId, encoded as a JSON string.
+#[cfg(feature = "json")]
+mod json {
+    use serde::{
+        de::{self, IgnoredAny, Visitor},
+        ser::SerializeStruct,
+        Deserialize, Deserializer, Serialize, Serializer,
+    };
+    use serde_json::Value;
 
-#[derive(Serialize, Deserialize)]
-struct JsonExpandedNodeId {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "Type")]
-    id_type: Option<u32>,
-    #[serde(rename = "Id")]
-    id: serde_json::Value,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "Namespace")]
-    namespace: Option<serde_json::Value>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(rename = "ServerUri")]
-    server_uri: Option<serde_json::Value>,
-}
+    use crate::{Identifier, NodeId};
 
-impl Serialize for ExpandedNodeId {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let (id_type, id) = match &self.node_id.identifier {
-            Identifier::Numeric(id) => (None, json!(id)),
-            Identifier::String(id) => (Some(1), json!(id.as_ref())),
-            Identifier::Guid(id) => (Some(2), json!(id.to_string())),
-            Identifier::ByteString(id) => (Some(3), json!(id.as_base64())),
-        };
-        // Omit namespace if it is 0
-        let namespace = if self.node_id.namespace == 0 {
-            None
-        } else {
-            Some(json!(self.node_id.namespace))
-        };
+    use super::ExpandedNodeId;
+    // JSON serialization schema as per spec:
+    //
+    // "Type"
+    //      The IdentifierType encoded as a JSON number.
+    //      Allowed values are:
+    //            0 - UInt32 Identifier encoded as a JSON number.
+    //            1 - A String Identifier encoded as a JSON string.
+    //            2 - A Guid Identifier encoded as described in 5.4.2.7.
+    //            3 - A ByteString Identifier encoded as described in 5.4.2.8.
+    //      This field is omitted for UInt32 identifiers.
+    // "Id"
+    //      The Identifier.
+    //      The value of the id field specifies the encoding of this field.
+    // "Namespace"
+    //      The NamespaceIndex for the NodeId.
+    //      The field is encoded as a JSON number for the reversible encoding.
+    //      The field is omitted if the NamespaceIndex equals 0.
+    //      For the non-reversible encoding, the field is the NamespaceUri associated with the NamespaceIndex, encoded as a JSON string.
+    //      A NamespaceIndex of 1 is always encoded as a JSON number.
+    // "ServerUri"
+    //      The ServerIndex for the ExpandedNodeId.
+    //      This field is encoded as a JSON number for the reversible encoding.
+    //      This field is omitted if the ServerIndex equals 0.
+    //      For the non-reversible encoding, this field is the ServerUri associated with the ServerIndex portion of the ExpandedNodeId, encoded as a JSON string.
 
-        let server_uri = if self.server_index == 0 {
-            None
-        } else {
-            Some(json!(self.server_index))
-        };
-
-        let json = JsonExpandedNodeId {
-            id_type,
-            id,
-            namespace,
-            server_uri,
-        };
-        json.serialize(serializer)
-    }
-}
-
-impl<'de> Deserialize<'de> for ExpandedNodeId {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let v = JsonExpandedNodeId::deserialize(deserializer)?;
-        // Only namespace index is supported. Spec says namespace uri can go there too, but not for this code it wonn't.
-        let namespace = if let Some(namespace) = v.namespace {
-            let namespace = namespace
-                .as_u64()
-                .ok_or_else(|| de::Error::custom("Expected numeric namespace index"))?;
-            if namespace > u16::MAX as u64 {
-                return Err(de::Error::custom("Numeric namespace index is out of range"));
+    impl Serialize for ExpandedNodeId {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer,
+        {
+            let mut len = 1;
+            if self.node_id.namespace != 0 || !self.namespace_uri.is_null() {
+                len += 1;
             }
-            namespace as u16
-        } else {
-            0
-        };
-
-        // Server index from server_uri which must be an numeric
-        let server_index = if let Some(server_uri) = v.server_uri {
-            let server_index = server_uri
-                .as_u64()
-                .ok_or_else(|| de::Error::custom("Expected numeric server index"))?;
-            if server_index > u32::MAX as u64 {
-                return Err(de::Error::custom("Numeric server index is out of range"));
+            if !matches!(self.node_id.identifier, Identifier::Numeric(_)) {
+                len += 1;
             }
-            server_index as u32
-        } else {
-            0
-        };
-
-        // Validate and extract
-        let node_id = match v.id_type.unwrap_or(0) {
-            0 => {
-                // Numeric
-                let v =
-                    v.id.as_u64()
-                        .ok_or_else(|| de::Error::custom("Expected Numeric identifier"))?;
-                NodeId::new(namespace, v as u32)
+            if self.server_index != 0 {
+                len += 1;
             }
-            1 => {
-                // String
-                let v =
-                    v.id.as_str()
-                        .ok_or_else(|| de::Error::custom("Expected String identifier"))?;
-                if v.is_empty() {
-                    return Err(de::Error::custom("String identifier is empty"));
+
+            let mut struct_ser = serializer.serialize_struct("NodeId", len)?;
+            match &self.node_id.identifier {
+                Identifier::Numeric(n) => {
+                    struct_ser.serialize_field("Id", n)?;
                 }
-                NodeId::new(namespace, String::from(v))
-            }
-            2 => {
-                // Guid
-                let v =
-                    v.id.as_str()
-                        .ok_or_else(|| de::Error::custom("Expected Guid identifier"))?;
-                if v.is_empty() {
-                    return Err(de::Error::custom("Guid identifier is empty"));
+                Identifier::String(uastring) => {
+                    struct_ser.serialize_field("IdType", &1)?;
+                    struct_ser.serialize_field("Id", uastring)?;
                 }
-                let v = Guid::from_str(v)
-                    .map_err(|_| de::Error::custom("Error parsing Guid identifier"))?;
-                NodeId::new(namespace, v)
-            }
-            3 => {
-                // Bytestring
-                let v =
-                    v.id.as_str()
-                        .ok_or_else(|| de::Error::custom("Expected ByteString identifier"))?;
-                if v.is_empty() {
-                    return Err(de::Error::custom("ByteString identifier is empty"));
+                Identifier::Guid(guid) => {
+                    struct_ser.serialize_field("IdType", &2)?;
+                    struct_ser.serialize_field("Id", guid)?;
                 }
-                let v = ByteString::from_base64(v)
-                    .ok_or_else(|| de::Error::custom("Error parsing ByteString identifier"))?;
-                NodeId::new(namespace, v)
+                Identifier::ByteString(byte_string) => {
+                    struct_ser.serialize_field("IdType", &3)?;
+                    struct_ser.serialize_field("Id", byte_string)?;
+                }
             }
-            _ => return Err(de::Error::custom("Invalid IdType")),
-        };
 
-        Ok(ExpandedNodeId::from((node_id, server_index)))
+            if !self.namespace_uri.is_null() {
+                struct_ser.serialize_field("Namespace", self.namespace_uri.as_ref())?;
+            } else if self.node_id.namespace != 0 {
+                struct_ser.serialize_field("Namespace", &self.node_id.namespace)?;
+            }
+            if self.server_index != 0 {
+                struct_ser.serialize_field("ServerUri", &self.server_index)?;
+            }
+
+            struct_ser.end()
+        }
     }
 
-    // TODO set server index
+    impl<'de> Deserialize<'de> for ExpandedNodeId {
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            struct ExpandedNodeIdVisitor;
+
+            impl<'de> Visitor<'de> for ExpandedNodeIdVisitor {
+                type Value = ExpandedNodeId;
+
+                fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                    write!(formatter, "an object containing a NodeId")
+                }
+
+                fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
+                where
+                    A: serde::de::MapAccess<'de>,
+                {
+                    let mut id_type: Option<u16> = None;
+                    let mut namespace: Option<serde_json::Value> = None;
+                    let mut value: Option<serde_json::Value> = None;
+                    let mut server_uri: Option<u32> = None;
+                    while let Some(key) = map.next_key::<String>()? {
+                        match key.as_str() {
+                            "Id" => {
+                                value = Some(map.next_value()?);
+                            }
+                            "Namespace" => {
+                                namespace = Some(map.next_value()?);
+                            }
+                            "IdType" => id_type = Some(map.next_value()?),
+                            "ServerUri" => server_uri = Some(map.next_value()?),
+                            _ => {
+                                map.next_value::<IgnoredAny>()?;
+                            }
+                        }
+                    }
+
+                    // The standad implies that this field is required.
+                    let Some(value) = value else {
+                        return Err(de::Error::custom(
+                            "Failed to deserialize NodeId, missing Id field",
+                        ));
+                    };
+
+                    let identifier = match id_type {
+                        Some(1) => Identifier::String(
+                            serde_json::from_value(value).map_err(de::Error::custom)?,
+                        ),
+                        Some(2) => Identifier::Guid(
+                            serde_json::from_value(value).map_err(de::Error::custom)?,
+                        ),
+                        Some(3) => Identifier::ByteString(
+                            serde_json::from_value(value).map_err(de::Error::custom)?,
+                        ),
+                        None | Some(0) => Identifier::Numeric(
+                            serde_json::from_value(value).map_err(de::Error::custom)?,
+                        ),
+                        Some(r) => {
+                            return Err(de::Error::custom(&format!(
+                                "Failed to deserialize NodeId, got unexpected IdType {r}"
+                            )))
+                        }
+                    };
+
+                    let (namespace_uri, namespace) = match namespace {
+                        Some(Value::String(s)) => (Some(s), 0),
+                        Some(Value::Number(s)) => (None, s.as_u64().and_then(|v| v.try_into().ok())
+                        .ok_or_else(|| de::Error::custom("Failed to deserialize ExpandedNodeId, expected 16-bit integer or string for Namespace"))?),
+                        None => (None, 0),
+                        _ => return Err(de::Error::custom("Failed to deserialize ExpandedNodeId, expected number or string for Namespace")),
+                    };
+
+                    Ok(ExpandedNodeId {
+                        node_id: NodeId {
+                            namespace,
+                            identifier,
+                        },
+                        namespace_uri: namespace_uri.into(),
+                        server_index: server_uri.unwrap_or_default(),
+                    })
+                }
+            }
+
+            deserializer.deserialize_map(ExpandedNodeIdVisitor)
+        }
+    }
 }
 
 impl BinaryEncoder for ExpandedNodeId {

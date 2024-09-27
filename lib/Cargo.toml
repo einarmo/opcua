@@ -28,6 +28,8 @@ server = ["opcua-server", "opcua-nodes", "generated-address-space", "discovery-s
 client = ["opcua-client"]
 # Console logging just installs a logger that writes out to the screen, useful for general logging
 console-logging = ["env_logger"]
+# The json feature adds serialize/deserialize to all OPC-UA types.
+json = ["opcua-types/json"]
 # Includes all the code to populate the address space with the default node set. This is something that embedded
 # systems may or may not require.
 generated-address-space = ["opcua-server/generated-address-space"]
@@ -58,5 +60,5 @@ tempdir = "0.3"
 tokio = { workspace = true }
 tokio-util = { workspace = true }
 
-# Include console-logging when building tests
-opcua = { path = ".", features = ["console-logging"] }
+# Include console-logging and json when building tests
+opcua = { path = ".", features = ["console-logging", "json"] }

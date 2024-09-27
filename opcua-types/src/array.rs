@@ -5,7 +5,7 @@ use crate::{variant::*, variant_type_id::*, StatusCode};
 /// An array is a vector of values with an optional number of dimensions.
 /// It is expected that the multi-dimensional array is valid, or it might not be encoded or decoded
 /// properly. The dimensions should match the number of values, or the array is invalid.
-#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Array {
     // Type of elements in the array
     pub value_type: VariantScalarTypeId,

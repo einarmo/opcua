@@ -6,11 +6,7 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua {
-    pub use opcua_nodes as nodes;
-    pub use opcua_types as types;
-}
-pub(super) fn imported_nodes<'a>(
+mod opcua { pub use opcua_types as types; pub use opcua_nodes as nodes; }pub(super) fn imported_nodes<'a>(
     ns_map: &'a opcua::nodes::NodeSetNamespaceMapper<'_>,
 ) -> Box<dyn Iterator<Item = opcua::nodes::ImportedItem> + 'a> {
     Box::new(
@@ -116,8 +112,8 @@ pub(super) fn imported_nodes<'a>(
             &make_object_4889,
             &make_object_4890,
         ]
-        .into_iter()
-        .map(|f| f(ns_map)),
+            .into_iter()
+            .map(|f| f(ns_map)),
     )
 }
 #[allow(unused)]
@@ -126,34 +122,27 @@ fn make_object_4627(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 12082u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default XML"),
-                opcua::types::LocalizedText::new("", "Default XML"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 12082u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default XML"),
+                    opcua::types::LocalizedText::new("", "Default XML"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 12080u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 12086u32),
-                type_id: opcua::types::NodeId::new(0u16, 39u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            12080u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 12086u32), type_id :
+            opcua::types::NodeId::new(0u16, 39u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            76u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }
         ],
     }
 }
@@ -163,34 +152,27 @@ fn make_object_4628(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 895u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default XML"),
-                opcua::types::LocalizedText::new("", "Default XML"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 895u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default XML"),
+                    opcua::types::LocalizedText::new("", "Default XML"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 894u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8882u32),
-                type_id: opcua::types::NodeId::new(0u16, 39u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            894u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8882u32), type_id :
+            opcua::types::NodeId::new(0u16, 39u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            76u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }
         ],
     }
 }
@@ -200,34 +182,27 @@ fn make_object_4629(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 24038u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default XML"),
-                opcua::types::LocalizedText::new("", "Default XML"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 24038u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default XML"),
+                    opcua::types::LocalizedText::new("", "Default XML"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 24033u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 24039u32),
-                type_id: opcua::types::NodeId::new(0u16, 39u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            24033u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 24039u32), type_id :
+            opcua::types::NodeId::new(0u16, 39u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            76u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }
         ],
     }
 }
@@ -237,34 +212,27 @@ fn make_object_4630(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 892u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default XML"),
-                opcua::types::LocalizedText::new("", "Default XML"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 892u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default XML"),
+                    opcua::types::LocalizedText::new("", "Default XML"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 891u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 8879u32),
-                type_id: opcua::types::NodeId::new(0u16, 39u32),
-                is_forward: true,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            891u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 8879u32), type_id :
+            opcua::types::NodeId::new(0u16, 39u32), is_forward : true, },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            76u32), type_id : opcua::types::NodeId::new(0u16, 40u32), is_forward : true,
+            }
         ],
     }
 }
@@ -274,29 +242,24 @@ fn make_object_4795(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15085u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15085u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 12756u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            12756u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -306,29 +269,24 @@ fn make_object_4796(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15041u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15041u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 14533u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            14533u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -338,29 +296,24 @@ fn make_object_4797(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 17547u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 17547u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 16313u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            16313u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -370,29 +323,24 @@ fn make_object_4798(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 17557u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 17557u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 17548u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            17548u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -402,29 +350,24 @@ fn make_object_4799(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16150u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16150u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15528u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15528u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -434,29 +377,24 @@ fn make_object_4800(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 32430u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 32430u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 32421u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            32421u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -466,29 +404,24 @@ fn make_object_4801(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 19064u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 19064u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 18806u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            18806u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -498,29 +431,24 @@ fn make_object_4802(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 19065u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 19065u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 18807u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            18807u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -530,29 +458,24 @@ fn make_object_4803(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 19066u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 19066u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 18808u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            18808u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -562,29 +485,24 @@ fn make_object_4804(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 19067u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 19067u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 18809u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            18809u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -594,29 +512,24 @@ fn make_object_4805(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 19068u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 19068u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 18810u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            18810u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -626,29 +539,24 @@ fn make_object_4806(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 19069u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 19069u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 18811u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            18811u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -658,29 +566,24 @@ fn make_object_4807(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 19070u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 19070u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 18812u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            18812u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -690,29 +593,24 @@ fn make_object_4808(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 19071u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 19071u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 18813u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            18813u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -722,29 +620,24 @@ fn make_object_4809(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 19072u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 19072u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 18814u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            18814u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -754,29 +647,24 @@ fn make_object_4810(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15042u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15042u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15634u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15634u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -786,29 +674,24 @@ fn make_object_4811(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23528u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23528u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 23498u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            23498u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -818,29 +701,24 @@ fn make_object_4812(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 32584u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 32584u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 32434u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            32434u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -850,29 +728,24 @@ fn make_object_4813(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 32585u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 32585u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 32435u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            32435u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -882,29 +755,24 @@ fn make_object_4814(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 32586u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 32586u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 32438u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            32438u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -914,29 +782,24 @@ fn make_object_4815(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15044u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15044u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 12554u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            12554u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -946,29 +809,24 @@ fn make_object_4816(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 32390u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 32390u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 32285u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            32285u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -978,29 +836,24 @@ fn make_object_4817(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16151u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16151u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15534u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15534u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1010,29 +863,24 @@ fn make_object_4818(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15057u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15057u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 14525u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            14525u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1042,29 +890,24 @@ fn make_object_4819(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15058u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15058u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15487u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15487u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1074,29 +917,24 @@ fn make_object_4820(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15059u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15059u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15488u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15488u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1106,29 +944,24 @@ fn make_object_4821(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15700u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15700u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15005u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15005u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1138,29 +971,24 @@ fn make_object_4822(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15714u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15714u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15006u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15006u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1170,29 +998,24 @@ fn make_object_4823(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 24132u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 24132u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 24105u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            24105u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1202,29 +1025,24 @@ fn make_object_4824(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 24133u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 24133u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 24106u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            24106u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1234,29 +1052,24 @@ fn make_object_4825(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 24134u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 24134u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 24107u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            24107u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1266,29 +1079,24 @@ fn make_object_4826(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15050u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15050u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 14523u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            14523u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1298,29 +1106,24 @@ fn make_object_4827(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15051u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15051u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 14524u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            14524u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1330,29 +1133,24 @@ fn make_object_4828(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15049u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15049u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 14593u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            14593u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1362,29 +1160,24 @@ fn make_object_4829(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16152u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16152u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15578u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15578u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1394,29 +1187,24 @@ fn make_object_4830(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16153u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16153u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15580u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15580u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1426,29 +1214,24 @@ fn make_object_4831(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15060u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15060u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 14273u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            14273u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1458,29 +1241,24 @@ fn make_object_4832(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16154u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16154u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15581u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15581u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1490,29 +1268,24 @@ fn make_object_4833(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16155u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16155u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15582u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15582u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1522,29 +1295,24 @@ fn make_object_4834(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 25561u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 25561u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 25269u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            25269u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1554,29 +1322,24 @@ fn make_object_4835(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16156u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16156u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15597u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15597u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1586,29 +1349,24 @@ fn make_object_4836(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16157u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16157u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15598u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15598u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1618,29 +1376,24 @@ fn make_object_4837(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16158u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16158u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15605u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15605u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1650,29 +1403,24 @@ fn make_object_4838(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16159u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16159u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15609u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15609u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1682,29 +1430,24 @@ fn make_object_4839(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 21198u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 21198u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15480u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15480u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1714,29 +1457,24 @@ fn make_object_4840(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16161u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16161u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15611u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15611u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1746,29 +1484,24 @@ fn make_object_4841(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16280u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16280u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15616u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15616u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1778,29 +1511,24 @@ fn make_object_4842(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16281u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16281u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15617u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15617u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1810,29 +1538,24 @@ fn make_object_4843(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16282u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16282u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15618u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15618u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1842,29 +1565,24 @@ fn make_object_4844(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 21199u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 21199u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15502u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15502u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1874,29 +1592,24 @@ fn make_object_4845(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 21200u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 21200u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15510u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15510u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1906,29 +1619,24 @@ fn make_object_4846(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 21201u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 21201u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15520u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15520u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1938,29 +1646,24 @@ fn make_object_4847(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16284u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16284u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15621u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15621u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -1970,29 +1673,24 @@ fn make_object_4848(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16285u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16285u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15622u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15622u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2002,29 +1700,24 @@ fn make_object_4849(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16286u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16286u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15623u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15623u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2034,29 +1727,24 @@ fn make_object_4850(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16287u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16287u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15628u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15628u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2066,29 +1754,24 @@ fn make_object_4851(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16288u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16288u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15629u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15629u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2098,29 +1781,24 @@ fn make_object_4852(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16308u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16308u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15630u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15630u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2130,29 +1808,24 @@ fn make_object_4853(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16310u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16310u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15631u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15631u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2162,29 +1835,24 @@ fn make_object_4854(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15061u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15061u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 14744u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            14744u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2194,29 +1862,24 @@ fn make_object_4855(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16311u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16311u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15635u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15635u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2226,29 +1889,24 @@ fn make_object_4856(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 21202u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 21202u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15530u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15530u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2258,29 +1916,24 @@ fn make_object_4857(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23987u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23987u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 23599u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            23599u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2290,29 +1943,24 @@ fn make_object_4858(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23988u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23988u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 23600u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            23600u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2322,29 +1970,24 @@ fn make_object_4859(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23989u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23989u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 23601u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            23601u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2354,29 +1997,24 @@ fn make_object_4860(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 25562u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 25562u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 25270u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            25270u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2386,29 +2024,24 @@ fn make_object_4861(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23990u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23990u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 23602u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            23602u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2418,29 +2051,24 @@ fn make_object_4862(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16323u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16323u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15645u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15645u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2450,29 +2078,24 @@ fn make_object_4863(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16391u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16391u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15652u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15652u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2482,29 +2105,24 @@ fn make_object_4864(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16392u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16392u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15653u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15653u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2514,29 +2132,24 @@ fn make_object_4865(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16393u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16393u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15657u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15657u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2546,29 +2159,24 @@ fn make_object_4866(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16394u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16394u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15664u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15664u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2578,29 +2186,24 @@ fn make_object_4867(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16404u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16404u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15665u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15665u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2610,29 +2213,24 @@ fn make_object_4868(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23991u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23991u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 23603u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            23603u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2642,29 +2240,24 @@ fn make_object_4869(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23992u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23992u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 23604u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            23604u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2674,29 +2267,24 @@ fn make_object_4870(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23993u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23993u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 23605u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            23605u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2706,29 +2294,24 @@ fn make_object_4871(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23996u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23996u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 23608u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            23608u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2738,29 +2321,24 @@ fn make_object_4872(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23997u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23997u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 23609u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            23609u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2770,29 +2348,24 @@ fn make_object_4873(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 17476u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 17476u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 17467u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            17467u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2802,29 +2375,24 @@ fn make_object_4874(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 24000u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 24000u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 23612u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            23612u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2834,29 +2402,24 @@ fn make_object_4875(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 21203u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 21203u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15532u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15532u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2866,29 +2429,24 @@ fn make_object_4876(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 24001u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 24001u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 23613u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            23613u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2898,29 +2456,24 @@ fn make_object_4877(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 24002u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 24002u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 23614u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            23614u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2930,29 +2483,24 @@ fn make_object_4878(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15726u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15726u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15007u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15007u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2962,29 +2510,24 @@ fn make_object_4879(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16524u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16524u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15667u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15667u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -2994,29 +2537,24 @@ fn make_object_4880(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16525u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16525u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15669u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15669u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -3026,29 +2564,24 @@ fn make_object_4881(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 16526u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 16526u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 15670u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            15670u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -3058,29 +2591,24 @@ fn make_object_4882(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 25563u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 25563u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 25519u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            25519u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -3090,29 +2618,24 @@ fn make_object_4883(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 25564u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 25564u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 25520u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            25520u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -3122,29 +2645,24 @@ fn make_object_4884(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 23511u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 23511u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 23468u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            23468u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -3154,29 +2672,24 @@ fn make_object_4885(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 24300u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 24300u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 24281u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            24281u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -3186,29 +2699,24 @@ fn make_object_4886(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 25247u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 25247u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 25220u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            25220u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -3218,29 +2726,24 @@ fn make_object_4887(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 32677u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 32677u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 32659u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            32659u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -3250,29 +2753,24 @@ fn make_object_4888(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 32678u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 32678u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 32660u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            32660u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward :
+            false, }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -3282,29 +2780,24 @@ fn make_object_4889(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15062u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15062u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 96u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            96u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward : false,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }
@@ -3314,29 +2807,24 @@ fn make_object_4890(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Object::new_full(
-            opcua::nodes::Base::new_full(
-                opcua::types::NodeId::new(0u16, 15063u32),
-                opcua::types::NodeClass::Object,
-                opcua::types::QualifiedName::new(0u16, "Default JSON"),
-                opcua::types::LocalizedText::new("", "Default JSON"),
-                None,
-                Some(0u32),
-                Some(0u32),
-            ),
-            opcua::nodes::EventNotifier::from_bits_truncate(0u8),
-        )
-        .into(),
+                opcua::nodes::Base::new_full(
+                    opcua::types::NodeId::new(0u16, 15063u32),
+                    opcua::types::NodeClass::Object,
+                    opcua::types::QualifiedName::new(0u16, "Default JSON"),
+                    opcua::types::LocalizedText::new("", "Default JSON"),
+                    None,
+                    Some(0u32),
+                    Some(0u32),
+                ),
+                opcua::nodes::EventNotifier::from_bits_truncate(0u8),
+            )
+            .into(),
         references: vec![
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 97u32),
-                type_id: opcua::types::NodeId::new(0u16, 38u32),
-                is_forward: false,
-            },
-            opcua::nodes::ImportedReference {
-                target_id: opcua::types::NodeId::new(0u16, 76u32),
-                type_id: opcua::types::NodeId::new(0u16, 40u32),
-                is_forward: true,
-            },
+            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
+            97u32), type_id : opcua::types::NodeId::new(0u16, 38u32), is_forward : false,
+            }, opcua::nodes::ImportedReference { target_id :
+            opcua::types::NodeId::new(0u16, 76u32), type_id :
+            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
         ],
     }
 }

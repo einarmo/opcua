@@ -6,13 +6,11 @@
 
 use std::{
     convert::TryFrom,
-    fmt,
     io::{Read, Write},
 };
 
 use base64::{engine::general_purpose::STANDARD, Engine};
 use log::error;
-use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::{
     encoding::{
@@ -39,55 +37,36 @@ impl AsRef<[u8]> for ByteString {
     }
 }
 
-impl Serialize for ByteString {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        if self.value.is_some() {
-            serializer.serialize_str(&self.as_base64())
-        } else {
-            serializer.serialize_none()
+#[cfg(feature = "json")]
+mod json {
+    use super::ByteString;
+    use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
+
+    impl Serialize for ByteString {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer,
+        {
+            if self.value.is_some() {
+                serializer.serialize_str(&self.as_base64())
+            } else {
+                serializer.serialize_none()
+            }
         }
     }
-}
-struct ByteStringVisitor;
 
-impl<'de> serde::de::Visitor<'de> for ByteStringVisitor {
-    type Value = ByteString;
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "a base64 encoded string value or null")
-    }
-
-    fn visit_none<E>(self) -> Result<Self::Value, E>
-    where
-        E: de::Error,
-    {
-        Ok(Self::Value::null())
-    }
-
-    fn visit_some<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        deserializer.deserialize_str(self)
-    }
-
-    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
-    where
-        E: de::Error,
-    {
-        Self::Value::from_base64(v)
-            .ok_or_else(|| de::Error::custom("Cannot decode base64 bytestring"))
-    }
-}
-
-impl<'de> Deserialize<'de> for ByteString {
-    fn deserialize<D>(deserializer: D) -> Result<ByteString, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        deserializer.deserialize_option(ByteStringVisitor)
+    impl<'de> Deserialize<'de> for ByteString {
+        fn deserialize<D>(deserializer: D) -> Result<ByteString, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            let r = Option::<String>::deserialize(deserializer)?;
+            match r {
+                Some(r) => Self::from_base64(&r)
+                    .ok_or_else(|| de::Error::custom("Cannot decode base64 bytestring")),
+                None => Ok(Self::null()),
+            }
+        }
     }
 }
 
