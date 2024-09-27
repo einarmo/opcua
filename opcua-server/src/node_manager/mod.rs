@@ -45,7 +45,7 @@ pub use {
     node_management::{AddNodeItem, AddReferenceItem, DeleteNodeItem, DeleteReferenceItem},
     query::{ParsedNodeTypeDescription, ParsedQueryDataDescription, QueryRequest},
     utils::*,
-    view::{BrowseNode, BrowsePathItem, RegisterNodeItem},
+    view::{AddReferenceResult, BrowseNode, BrowsePathItem, ExternalReference, RegisterNodeItem},
 };
 
 pub(crate) use context::resolve_external_references;

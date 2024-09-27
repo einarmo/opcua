@@ -1,8 +1,15 @@
 use async_trait::async_trait;
 
-use log::error;
-use opcua_crypto::Thumbprint;
-use opcua_types::{MessageSecurityMode, NodeId, StatusCode};
+use log::{debug, error};
+use opcua_crypto::{SecurityPolicy, Thumbprint};
+use opcua_types::{
+    MessageSecurityMode, NodeId, StatusCode, UAString, UserTokenPolicy, UserTokenType,
+};
+
+use crate::identity_token::{
+    POLICY_ID_ANONYMOUS, POLICY_ID_USER_PASS_NONE, POLICY_ID_USER_PASS_RSA_15,
+    POLICY_ID_USER_PASS_RSA_OAEP, POLICY_ID_X509,
+};
 
 use super::{
     address_space::UserAccessLevel, config::ANONYMOUS_USER_TOKEN_ID, ServerEndpoint,
@@ -109,8 +116,35 @@ pub trait AuthManager: Send + Sync + 'static {
         user_access_level
     }
 
+    /// Return whether a method is actually user executable, overriding whatever is returned by the
+    /// node manager.
     fn is_user_executable(&self, token: &UserToken, method_id: &NodeId) -> bool {
         true
+    }
+
+    /// Return the valid user token policies for the given endpoint.
+    /// Only valid tokens will be passed to the authenticator.
+    fn user_token_policies(&self, endpoint: &ServerEndpoint) -> Vec<UserTokenPolicy>;
+
+    /// Return whether the endpoint supports anonymous authentication.
+    fn supports_anonymous(&self, endpoint: &ServerEndpoint) -> bool {
+        self.user_token_policies(endpoint)
+            .iter()
+            .any(|e| e.token_type == UserTokenType::Anonymous)
+    }
+
+    /// Return whether the endpoint supports username/password authentication.
+    fn supports_user_pass(&self, endpoint: &ServerEndpoint) -> bool {
+        self.user_token_policies(endpoint)
+            .iter()
+            .any(|e| e.token_type == UserTokenType::UserName)
+    }
+
+    /// Return whether the endpoint supports x509-certificate authentication.
+    fn supports_x509(&self, endpoint: &ServerEndpoint) -> bool {
+        self.user_token_policies(endpoint)
+            .iter()
+            .any(|e| e.token_type == UserTokenType::Certificate)
     }
 }
 
@@ -133,7 +167,7 @@ impl AuthManager for DefaultAuthenticator {
         &self,
         endpoint: &ServerEndpoint,
     ) -> Result<(), StatusCode> {
-        if !endpoint.supports_anonymous() {
+        if !endpoint.user_token_ids.contains(ANONYMOUS_USER_TOKEN_ID) {
             error!(
                 "Endpoint \"{}\" does not support anonymous authentication",
                 endpoint.path
@@ -154,14 +188,12 @@ impl AuthManager for DefaultAuthenticator {
             if let Some(server_user_token) = self.users.get(user_token_id) {
                 if server_user_token.is_user_pass() && server_user_token.user == username {
                     // test for empty password
-                    let valid = if server_user_token.pass.is_none() {
-                        // Empty password for user
-                        token_password.is_empty()
+                    let valid = if let Some(server_password) = server_user_token.pass.as_ref() {
+                        server_password.as_bytes() == token_password.as_bytes()
                     } else {
-                        // Password compared as UTF-8 bytes
-                        let server_password = server_user_token.pass.as_ref().unwrap().as_bytes();
-                        server_password == token_password.as_bytes()
+                        token_password.is_empty()
                     };
+
                     if !valid {
                         error!(
                             "Cannot authenticate \"{}\", password is invalid",
@@ -199,4 +231,76 @@ impl AuthManager for DefaultAuthenticator {
         }
         Err(StatusCode::BadIdentityTokenInvalid)
     }
+
+    fn user_token_policies(&self, endpoint: &ServerEndpoint) -> Vec<UserTokenPolicy> {
+        let mut user_identity_tokens = Vec::with_capacity(3);
+
+        // Anonymous policy
+        if endpoint.user_token_ids.contains(ANONYMOUS_USER_TOKEN_ID) {
+            user_identity_tokens.push(UserTokenPolicy {
+                policy_id: UAString::from(POLICY_ID_ANONYMOUS),
+                token_type: UserTokenType::Anonymous,
+                issued_token_type: UAString::null(),
+                issuer_endpoint_url: UAString::null(),
+                security_policy_uri: UAString::null(),
+            });
+        }
+        // User pass policy
+        if endpoint.user_token_ids.iter().any(|id| {
+            id != ANONYMOUS_USER_TOKEN_ID
+                && self.users.get(id).is_some_and(|token| token.is_user_pass())
+        }) {
+            // The endpoint may set a password security policy
+            user_identity_tokens.push(UserTokenPolicy {
+                policy_id: user_pass_security_policy_id(endpoint),
+                token_type: UserTokenType::UserName,
+                issued_token_type: UAString::null(),
+                issuer_endpoint_url: UAString::null(),
+                security_policy_uri: user_pass_security_policy_uri(endpoint),
+            });
+        }
+        // X509 policy
+        if endpoint.user_token_ids.iter().any(|id| {
+            id != ANONYMOUS_USER_TOKEN_ID && self.users.get(id).is_some_and(|token| token.is_x509())
+        }) {
+            user_identity_tokens.push(UserTokenPolicy {
+                policy_id: UAString::from(POLICY_ID_X509),
+                token_type: UserTokenType::Certificate,
+                issued_token_type: UAString::null(),
+                issuer_endpoint_url: UAString::null(),
+                security_policy_uri: UAString::from(SecurityPolicy::Basic128Rsa15.to_uri()),
+            });
+        }
+
+        if user_identity_tokens.is_empty() {
+            debug!(
+                "user_identity_tokens() returned zero endpoints for endpoint {} / {} {}",
+                endpoint.path, endpoint.security_policy, endpoint.security_mode
+            );
+        }
+
+        user_identity_tokens
+    }
+}
+
+pub fn user_pass_security_policy_id(endpoint: &ServerEndpoint) -> UAString {
+    match endpoint.password_security_policy() {
+        SecurityPolicy::None => POLICY_ID_USER_PASS_NONE,
+        SecurityPolicy::Basic128Rsa15 => POLICY_ID_USER_PASS_RSA_15,
+        SecurityPolicy::Basic256 | SecurityPolicy::Basic256Sha256 => POLICY_ID_USER_PASS_RSA_OAEP,
+        // TODO this is a placeholder
+        SecurityPolicy::Aes128Sha256RsaOaep | SecurityPolicy::Aes256Sha256RsaPss => {
+            POLICY_ID_USER_PASS_RSA_OAEP
+        }
+        _ => {
+            panic!()
+        }
+    }
+    .into()
+}
+
+pub fn user_pass_security_policy_uri(_endpoint: &ServerEndpoint) -> UAString {
+    // TODO we could force the security policy uri for passwords to be something other than the default
+    //  here to ensure they're secure even when the endpoint's security policy is None.
+    UAString::null()
 }

@@ -312,43 +312,4 @@ impl ServerEndpoint {
         }
         password_security_policy
     }
-
-    /// Test if the endpoint supports anonymous users
-    pub fn supports_anonymous(&self) -> bool {
-        self.supports_user_token_id(ANONYMOUS_USER_TOKEN_ID)
-    }
-
-    /// Tests if this endpoint supports user pass tokens. It does this by looking to see
-    /// if any of the users allowed to access this endpoint are user pass users.
-    pub fn supports_user_pass(&self, server_tokens: &BTreeMap<String, ServerUserToken>) -> bool {
-        for user_token_id in &self.user_token_ids {
-            if user_token_id != ANONYMOUS_USER_TOKEN_ID {
-                if let Some(user_token) = server_tokens.get(user_token_id) {
-                    if user_token.is_user_pass() {
-                        return true;
-                    }
-                }
-            }
-        }
-        false
-    }
-
-    /// Tests if this endpoint supports x509 tokens.  It does this by looking to see
-    /// if any of the users allowed to access this endpoint are x509 users.
-    pub fn supports_x509(&self, server_tokens: &BTreeMap<String, ServerUserToken>) -> bool {
-        for user_token_id in &self.user_token_ids {
-            if user_token_id != ANONYMOUS_USER_TOKEN_ID {
-                if let Some(user_token) = server_tokens.get(user_token_id) {
-                    if user_token.is_x509() {
-                        return true;
-                    }
-                }
-            }
-        }
-        false
-    }
-
-    pub fn supports_user_token_id(&self, id: &str) -> bool {
-        self.user_token_ids.contains(id)
-    }
 }

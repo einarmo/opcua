@@ -11,7 +11,7 @@ use arc_swap::ArcSwap;
 use log::{debug, error, warn};
 use opcua_nodes::DefaultTypeTree;
 
-use crate::authenticator::Password;
+use crate::authenticator::{user_pass_security_policy_id, Password};
 use crate::node_manager::TypeTreeForUser;
 use opcua_core::comms::url::{hostname_from_url, url_matches_except_host};
 use opcua_core::handle::AtomicHandle;
@@ -22,7 +22,7 @@ use opcua_types::{
     service_types::{
         ActivateSessionRequest, AnonymousIdentityToken, ApplicationDescription, ApplicationType,
         EndpointDescription, RegisteredServer, ServerState as ServerStateType, SignatureData,
-        UserNameIdentityToken, UserTokenPolicy, UserTokenType, X509IdentityToken,
+        UserNameIdentityToken, UserTokenType, X509IdentityToken,
     },
     status_code::StatusCode,
 };
@@ -34,10 +34,7 @@ use opcua_types::{
 use crate::config::{ServerConfig, ServerEndpoint};
 
 use super::authenticator::{AuthManager, UserToken};
-use super::identity_token::{
-    IdentityToken, POLICY_ID_ANONYMOUS, POLICY_ID_USER_PASS_NONE, POLICY_ID_USER_PASS_RSA_15,
-    POLICY_ID_USER_PASS_RSA_OAEP, POLICY_ID_X509,
-};
+use super::identity_token::{IdentityToken, POLICY_ID_ANONYMOUS, POLICY_ID_X509};
 use super::{OperationalLimits, ServerCapabilities, ANONYMOUS_USER_TOKEN_ID};
 
 /// Server state is any configuration associated with the server as a whole that individual sessions might
@@ -188,76 +185,6 @@ impl ServerInfo {
         }
     }
 
-    /// Determine what user/pass encryption to use depending on the security policy.
-    fn user_pass_security_policy_id(endpoint: &ServerEndpoint) -> UAString {
-        match endpoint.password_security_policy() {
-            SecurityPolicy::None => POLICY_ID_USER_PASS_NONE,
-            SecurityPolicy::Basic128Rsa15 => POLICY_ID_USER_PASS_RSA_15,
-            SecurityPolicy::Basic256 | SecurityPolicy::Basic256Sha256 => {
-                POLICY_ID_USER_PASS_RSA_OAEP
-            }
-            // TODO this is a placeholder
-            SecurityPolicy::Aes128Sha256RsaOaep | SecurityPolicy::Aes256Sha256RsaPss => {
-                POLICY_ID_USER_PASS_RSA_OAEP
-            }
-            _ => {
-                panic!()
-            }
-        }
-        .into()
-    }
-
-    fn user_pass_security_policy_uri(_endpoint: &ServerEndpoint) -> UAString {
-        // TODO we could force the security policy uri for passwords to be something other than the default
-        //  here to ensure they're secure even when the endpoint's security policy is None.
-        UAString::null()
-    }
-
-    fn user_identity_tokens(&self, endpoint: &ServerEndpoint) -> Vec<UserTokenPolicy> {
-        let mut user_identity_tokens = Vec::with_capacity(3);
-
-        // Anonymous policy
-        if endpoint.supports_anonymous() {
-            user_identity_tokens.push(UserTokenPolicy {
-                policy_id: UAString::from(POLICY_ID_ANONYMOUS),
-                token_type: UserTokenType::Anonymous,
-                issued_token_type: UAString::null(),
-                issuer_endpoint_url: UAString::null(),
-                security_policy_uri: UAString::null(),
-            });
-        }
-        // User pass policy
-        if endpoint.supports_user_pass(&self.config.user_tokens) {
-            // The endpoint may set a password security policy
-            user_identity_tokens.push(UserTokenPolicy {
-                policy_id: Self::user_pass_security_policy_id(endpoint),
-                token_type: UserTokenType::UserName,
-                issued_token_type: UAString::null(),
-                issuer_endpoint_url: UAString::null(),
-                security_policy_uri: Self::user_pass_security_policy_uri(endpoint),
-            });
-        }
-        // X509 policy
-        if endpoint.supports_x509(&self.config.user_tokens) {
-            user_identity_tokens.push(UserTokenPolicy {
-                policy_id: UAString::from(POLICY_ID_X509),
-                token_type: UserTokenType::Certificate,
-                issued_token_type: UAString::null(),
-                issuer_endpoint_url: UAString::null(),
-                security_policy_uri: UAString::from(SecurityPolicy::Basic128Rsa15.to_uri()),
-            });
-        }
-
-        if user_identity_tokens.is_empty() {
-            debug!(
-                "user_identity_tokens() returned zero endpoints for endpoint {} / {} {}",
-                endpoint.path, endpoint.security_policy, endpoint.security_mode
-            );
-        }
-
-        user_identity_tokens
-    }
-
     /// Constructs a new endpoint description using the server's info and that in an Endpoint
     fn new_endpoint_description(
         &self,
@@ -266,7 +193,7 @@ impl ServerInfo {
     ) -> EndpointDescription {
         let base_endpoint_url = self.base_endpoint();
 
-        let user_identity_tokens = self.user_identity_tokens(endpoint);
+        let user_identity_tokens = self.authenticator.user_token_policies(endpoint);
 
         // CreateSession doesn't need all the endpoint description
         // and docs say not to bother sending the server and server
@@ -482,10 +409,10 @@ impl ServerInfo {
         server_key: &Option<PrivateKey>,
         server_nonce: &ByteString,
     ) -> Result<UserToken, StatusCode> {
-        if !endpoint.supports_user_pass(&self.config.user_tokens) {
+        if !self.authenticator.supports_user_pass(endpoint) {
             error!("Endpoint doesn't support username password tokens");
             Err(StatusCode::BadIdentityTokenRejected)
-        } else if token.policy_id != Self::user_pass_security_policy_id(endpoint) {
+        } else if token.policy_id != user_pass_security_policy_id(endpoint) {
             error!("Token doesn't possess the correct policy id");
             Err(StatusCode::BadIdentityTokenInvalid)
         } else if token.user_name.is_null() {
@@ -532,7 +459,7 @@ impl ServerInfo {
         server_certificate: &Option<X509>,
         server_nonce: &ByteString,
     ) -> Result<UserToken, StatusCode> {
-        if !endpoint.supports_x509(&self.config.user_tokens) {
+        if !self.authenticator.supports_x509(endpoint) {
             error!("Endpoint doesn't support x509 tokens");
             Err(StatusCode::BadIdentityTokenRejected)
         } else if token.policy_id.as_ref() != POLICY_ID_X509 {
@@ -542,7 +469,7 @@ impl ServerInfo {
             match server_certificate {
                 Some(ref server_certificate) => {
                     // Find the security policy used for verifying tokens
-                    let user_identity_tokens = self.user_identity_tokens(endpoint);
+                    let user_identity_tokens = self.authenticator.user_token_policies(endpoint);
                     let security_policy = user_identity_tokens
                         .iter()
                         .find(|t| t.token_type == UserTokenType::Certificate)
