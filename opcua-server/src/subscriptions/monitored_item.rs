@@ -2,7 +2,6 @@ use std::collections::{BTreeSet, VecDeque};
 
 use log::error;
 use opcua_nodes::{Event, ParsedEventFilter, TypeTree};
-use serde::Serialize;
 
 use super::MonitoredItemHandle;
 use crate::{info::ServerInfo, node_manager::ParsedReadValueId};
@@ -13,7 +12,8 @@ use opcua_types::{
     TimestampsToReturn, Variant,
 };
 
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "json", serde::Serialize)]
 pub enum Notification {
     MonitoredItemNotification(MonitoredItemNotification),
     Event(EventFieldList),

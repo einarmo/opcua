@@ -13,12 +13,6 @@ jobs:
       - name: Test with profiling data
         run: cargo llvm-cov --workspace --exclude opcua-crypto --codecov --output-path codecov.json
 
-      - name: Run crypto tests
-        run: cargo test -p opcua-crypto
-      
-      - name: Run core tests
-        run: cargo test -p opcua-core
-
       - name: Upload lcov to codecov.io
         uses: codecov/codecov-action@v4
         with:

@@ -29,7 +29,7 @@ impl fmt::Display for ExtensionObjectError {
 impl Error for ExtensionObjectError {}
 
 /// Enumeration that holds the kinds of encoding that an ExtensionObject data may be encoded with.
-#[derive(PartialEq, Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(PartialEq, Debug, Clone)]
 pub enum ExtensionObjectEncoding {
     /// For an extension object with nothing encoded with it
     None,
@@ -37,11 +37,163 @@ pub enum ExtensionObjectEncoding {
     ByteString(ByteString),
     /// For an extension object with data encoded in an XML string
     XmlElement(XmlElement),
+    /// For an extension object with data encoded in a json string
+    #[cfg(feature = "json")]
+    Json(serde_json::Value),
+}
+
+#[cfg(feature = "json")]
+mod json {
+    use serde::{
+        de::{self, IgnoredAny, Visitor},
+        ser::SerializeStruct,
+        Deserialize, Serialize,
+    };
+    use serde_json::Value;
+
+    use crate::{ByteString, ExtensionObjectEncoding, NodeId};
+
+    use super::ExtensionObject;
+
+    impl Serialize for ExtensionObject {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: serde::Serializer,
+        {
+            if matches!(self.body, ExtensionObjectEncoding::None) {
+                return serializer.serialize_none();
+            }
+
+            let len = 3;
+
+            let mut struct_ser = serializer.serialize_struct("ExtensionObject", len)?;
+            struct_ser.serialize_field("TypeId", &self.node_id)?;
+            match &self.body {
+                ExtensionObjectEncoding::None => (),
+                ExtensionObjectEncoding::ByteString(byte_string) => {
+                    struct_ser.serialize_field("Encoding", &1)?;
+                    struct_ser.serialize_field("Body", byte_string)?;
+                }
+                ExtensionObjectEncoding::XmlElement(uastring) => {
+                    struct_ser.serialize_field("Encoding", &2)?;
+                    struct_ser.serialize_field("Body", uastring)?;
+                }
+                ExtensionObjectEncoding::Json(json) => {
+                    struct_ser.serialize_field("Body", json)?;
+                }
+            }
+
+            struct_ser.end()
+        }
+    }
+
+    impl<'de> Deserialize<'de> for ExtensionObject {
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: serde::Deserializer<'de>,
+        {
+            struct ExtensionObjectVisitor;
+
+            impl<'de> Visitor<'de> for ExtensionObjectVisitor {
+                type Value = ExtensionObject;
+
+                fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                    write!(formatter, "an object containing an ExtensionObject")
+                }
+
+                fn visit_none<E>(self) -> Result<Self::Value, E>
+                where
+                    E: de::Error,
+                {
+                    Ok(ExtensionObject::null())
+                }
+
+                fn visit_some<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
+                where
+                    D: de::Deserializer<'de>,
+                {
+                    deserializer.deserialize_map(self)
+                }
+
+                fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
+                where
+                    A: serde::de::MapAccess<'de>,
+                {
+                    let mut encoding: Option<u8> = None;
+                    let mut type_id: Option<NodeId> = None;
+                    let mut body: Option<Value> = None;
+
+                    while let Some(key) = map.next_key::<String>()? {
+                        match key.as_str() {
+                            "TypeId" => {
+                                type_id = Some(map.next_value()?);
+                            }
+                            "Encoding" => {
+                                encoding = Some(map.next_value()?);
+                            }
+                            "Body" => {
+                                body = Some(map.next_value()?);
+                            }
+                            _ => {
+                                map.next_value::<IgnoredAny>()?;
+                            }
+                        }
+                    }
+
+                    // The standard is not super clear, for safety, it should be OK to just
+                    // return a null object here, which is the most likely scenario.
+                    let Some(type_id) = type_id else {
+                        return Ok(ExtensionObject::null());
+                    };
+
+                    let encoding = encoding.unwrap_or_default();
+                    let body = body.unwrap_or_default();
+
+                    let body = match encoding {
+                        0 => {
+                            if body.is_null() {
+                                ExtensionObjectEncoding::None
+                            } else {
+                                ExtensionObjectEncoding::Json(body)
+                            }
+                        }
+                        1 => {
+                            let Value::String(s) = body else {
+                                return Err(de::Error::custom(
+                                    "Expected a base64 serialized string as ExtensionObject body",
+                                ));
+                            };
+                            ExtensionObjectEncoding::ByteString(ByteString::from_base64(&s).ok_or_else(|| de::Error::custom("Expected a base64 serialized string as ExtensionObject body"))?)
+                        }
+                        2 => {
+                            let Value::String(s) = body else {
+                                return Err(de::Error::custom(
+                                    "Expected a JSON string as XML ExtensionObject body",
+                                ));
+                            };
+                            ExtensionObjectEncoding::XmlElement(s.into())
+                        }
+                        r => {
+                            return Err(de::Error::custom(&format!(
+                                "Expected 0, 1, or 2 as ExtensionObject encoding, got {r}"
+                            )));
+                        }
+                    };
+
+                    Ok(ExtensionObject {
+                        node_id: type_id,
+                        body,
+                    })
+                }
+            }
+
+            deserializer.deserialize_option(ExtensionObjectVisitor)
+        }
+    }
 }
 
 /// An extension object holds a serialized object identified by its node id.
-#[derive(PartialEq, Debug, Clone, serde::Serialize, serde::Deserialize)]
-#[serde(rename_all = "PascalCase")]
+#[derive(PartialEq, Debug, Clone)]
 pub struct ExtensionObject {
     pub node_id: NodeId,
     pub body: ExtensionObjectEncoding,
@@ -66,6 +218,11 @@ impl BinaryEncoder for ExtensionObject {
                 // Encoding mask + data
                 1 + value.byte_len()
             }
+            #[cfg(feature = "json")]
+            ExtensionObjectEncoding::Json(_) => {
+                // Not really something we expect normally. Serialize it as encoding 0, i.e. nothing.
+                1
+            }
         };
         size
     }
@@ -86,6 +243,11 @@ impl BinaryEncoder for ExtensionObject {
                 // Encoding mask + data
                 size += write_u8(stream, 0x2)?;
                 size += value.encode(stream)?;
+            }
+            #[cfg(feature = "json")]
+            ExtensionObjectEncoding::Json(_) => {
+                // We don't support encoding a JSON extension object as binary. Serialize it as encoding 0, i.e. nothing
+                size += write_u8(stream, 0x0)?;
             }
         }
         assert_eq!(size, self.byte_len());
@@ -162,6 +324,17 @@ impl ExtensionObject {
         T: BinaryEncoder + MessageInfo,
     {
         Self::from_encodable(encodable.object_id(), encodable)
+    }
+
+    #[cfg(feature = "json")]
+    pub fn from_json<T: serde::Serialize + MessageInfo>(
+        object: &T,
+    ) -> Result<ExtensionObject, serde_json::Error> {
+        let value = serde_json::to_value(object)?;
+        Ok(Self {
+            node_id: object.object_id().into(),
+            body: ExtensionObjectEncoding::Json(value),
+        })
     }
 
     /// Decodes the inner content of the extension object and returns it. The node id is ignored

@@ -46,6 +46,7 @@ impl opcua::types::AsVariantRef for AccessLevelExType {
         self.bits().into()
     }
 }
+#[cfg(feature = "json")]
 impl<'de> serde::de::Deserialize<'de> for AccessLevelExType {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -66,6 +67,7 @@ impl<'de> serde::de::Deserialize<'de> for AccessLevelExType {
             .map(AccessLevelExType::from_bits_truncate)
     }
 }
+#[cfg(feature = "json")]
 impl serde::ser::Serialize for AccessLevelExType {
     fn serialize<S>(
         &self,
@@ -115,6 +117,7 @@ impl opcua::types::AsVariantRef for AccessLevelType {
         self.bits().into()
     }
 }
+#[cfg(feature = "json")]
 impl<'de> serde::de::Deserialize<'de> for AccessLevelType {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -135,6 +138,7 @@ impl<'de> serde::de::Deserialize<'de> for AccessLevelType {
             .map(AccessLevelType::from_bits_truncate)
     }
 }
+#[cfg(feature = "json")]
 impl serde::ser::Serialize for AccessLevelType {
     fn serialize<S>(
         &self,
@@ -183,6 +187,7 @@ impl opcua::types::AsVariantRef for AccessRestrictionType {
         self.bits().into()
     }
 }
+#[cfg(feature = "json")]
 impl<'de> serde::de::Deserialize<'de> for AccessRestrictionType {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -203,6 +208,7 @@ impl<'de> serde::de::Deserialize<'de> for AccessRestrictionType {
             .map(AccessRestrictionType::from_bits_truncate)
     }
 }
+#[cfg(feature = "json")]
 impl serde::ser::Serialize for AccessRestrictionType {
     fn serialize<S>(
         &self,
@@ -252,6 +258,42 @@ impl From<ApplicationType> for opcua::types::Variant {
 impl opcua::types::AsVariantRef for ApplicationType {
     fn as_variant(&self) -> opcua::types::Variant {
         (*self as i32).into()
+    }
+}
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for ApplicationType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for ApplicationType {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
     }
 }
 impl opcua::types::BinaryEncoder for ApplicationType {
@@ -317,6 +359,7 @@ impl opcua::types::AsVariantRef for AttributeWriteMask {
         self.bits().into()
     }
 }
+#[cfg(feature = "json")]
 impl<'de> serde::de::Deserialize<'de> for AttributeWriteMask {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -337,6 +380,7 @@ impl<'de> serde::de::Deserialize<'de> for AttributeWriteMask {
             .map(AttributeWriteMask::from_bits_truncate)
     }
 }
+#[cfg(feature = "json")]
 impl serde::ser::Serialize for AttributeWriteMask {
     fn serialize<S>(
         &self,
@@ -386,6 +430,42 @@ impl From<AxisScaleEnumeration> for opcua::types::Variant {
 impl opcua::types::AsVariantRef for AxisScaleEnumeration {
     fn as_variant(&self) -> opcua::types::Variant {
         (*self as i32).into()
+    }
+}
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for AxisScaleEnumeration {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for AxisScaleEnumeration {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
     }
 }
 impl opcua::types::BinaryEncoder for AxisScaleEnumeration {
@@ -451,6 +531,42 @@ impl opcua::types::AsVariantRef for BrokerTransportQualityOfService {
         (*self as i32).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for BrokerTransportQualityOfService {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for BrokerTransportQualityOfService {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
+    }
+}
 impl opcua::types::BinaryEncoder for BrokerTransportQualityOfService {
     fn byte_len(&self) -> usize {
         4usize
@@ -510,6 +626,42 @@ impl From<BrowseDirection> for opcua::types::Variant {
 impl opcua::types::AsVariantRef for BrowseDirection {
     fn as_variant(&self) -> opcua::types::Variant {
         (*self as i32).into()
+    }
+}
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for BrowseDirection {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for BrowseDirection {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
     }
 }
 impl opcua::types::BinaryEncoder for BrowseDirection {
@@ -582,6 +734,42 @@ impl opcua::types::AsVariantRef for BrowseResultMask {
         (*self as i32).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for BrowseResultMask {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for BrowseResultMask {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
+    }
+}
 impl opcua::types::BinaryEncoder for BrowseResultMask {
     fn byte_len(&self) -> usize {
         4usize
@@ -601,8 +789,6 @@ impl opcua::types::BinaryEncoder for BrowseResultMask {
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[derive(serde::Serialize, serde::Deserialize)]
-#[serde(rename_all = "PascalCase")]
 #[repr(i32)]
 pub enum DataChangeTrigger {
     Status = 0i32,
@@ -640,6 +826,42 @@ impl From<DataChangeTrigger> for opcua::types::Variant {
 impl opcua::types::AsVariantRef for DataChangeTrigger {
     fn as_variant(&self) -> opcua::types::Variant {
         (*self as i32).into()
+    }
+}
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for DataChangeTrigger {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for DataChangeTrigger {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
     }
 }
 impl opcua::types::BinaryEncoder for DataChangeTrigger {
@@ -698,6 +920,7 @@ impl opcua::types::AsVariantRef for DataSetFieldContentMask {
         self.bits().into()
     }
 }
+#[cfg(feature = "json")]
 impl<'de> serde::de::Deserialize<'de> for DataSetFieldContentMask {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -718,6 +941,7 @@ impl<'de> serde::de::Deserialize<'de> for DataSetFieldContentMask {
             .map(DataSetFieldContentMask::from_bits_truncate)
     }
 }
+#[cfg(feature = "json")]
 impl serde::ser::Serialize for DataSetFieldContentMask {
     fn serialize<S>(
         &self,
@@ -765,6 +989,7 @@ impl opcua::types::AsVariantRef for DataSetFieldFlags {
         self.bits().into()
     }
 }
+#[cfg(feature = "json")]
 impl<'de> serde::de::Deserialize<'de> for DataSetFieldFlags {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -785,6 +1010,7 @@ impl<'de> serde::de::Deserialize<'de> for DataSetFieldFlags {
             .map(DataSetFieldFlags::from_bits_truncate)
     }
 }
+#[cfg(feature = "json")]
 impl serde::ser::Serialize for DataSetFieldFlags {
     fn serialize<S>(
         &self,
@@ -834,6 +1060,42 @@ impl From<DataSetOrderingType> for opcua::types::Variant {
 impl opcua::types::AsVariantRef for DataSetOrderingType {
     fn as_variant(&self) -> opcua::types::Variant {
         (*self as i32).into()
+    }
+}
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for DataSetOrderingType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for DataSetOrderingType {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
     }
 }
 impl opcua::types::BinaryEncoder for DataSetOrderingType {
@@ -890,6 +1152,42 @@ impl From<DeadbandType> for opcua::types::Variant {
 impl opcua::types::AsVariantRef for DeadbandType {
     fn as_variant(&self) -> opcua::types::Variant {
         (*self as i32).into()
+    }
+}
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for DeadbandType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for DeadbandType {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
     }
 }
 impl opcua::types::BinaryEncoder for DeadbandType {
@@ -952,6 +1250,42 @@ impl opcua::types::AsVariantRef for DiagnosticsLevel {
         (*self as i32).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for DiagnosticsLevel {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for DiagnosticsLevel {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
+    }
+}
 impl opcua::types::BinaryEncoder for DiagnosticsLevel {
     fn byte_len(&self) -> usize {
         4usize
@@ -1007,6 +1341,7 @@ impl opcua::types::AsVariantRef for EventNotifierType {
         self.bits().into()
     }
 }
+#[cfg(feature = "json")]
 impl<'de> serde::de::Deserialize<'de> for EventNotifierType {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -1027,6 +1362,7 @@ impl<'de> serde::de::Deserialize<'de> for EventNotifierType {
             .map(EventNotifierType::from_bits_truncate)
     }
 }
+#[cfg(feature = "json")]
 impl serde::ser::Serialize for EventNotifierType {
     fn serialize<S>(
         &self,
@@ -1082,6 +1418,42 @@ impl opcua::types::AsVariantRef for ExceptionDeviationFormat {
         (*self as i32).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for ExceptionDeviationFormat {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for ExceptionDeviationFormat {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
+    }
+}
 impl opcua::types::BinaryEncoder for ExceptionDeviationFormat {
     fn byte_len(&self) -> usize {
         4usize
@@ -1101,8 +1473,6 @@ impl opcua::types::BinaryEncoder for ExceptionDeviationFormat {
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[derive(serde::Serialize, serde::Deserialize)]
-#[serde(rename_all = "PascalCase")]
 #[repr(i32)]
 pub enum FilterOperator {
     Equals = 0i32,
@@ -1170,6 +1540,42 @@ impl opcua::types::AsVariantRef for FilterOperator {
         (*self as i32).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for FilterOperator {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for FilterOperator {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
+    }
+}
 impl opcua::types::BinaryEncoder for FilterOperator {
     fn byte_len(&self) -> usize {
         4usize
@@ -1228,6 +1634,42 @@ impl From<HistoryUpdateType> for opcua::types::Variant {
 impl opcua::types::AsVariantRef for HistoryUpdateType {
     fn as_variant(&self) -> opcua::types::Variant {
         (*self as i32).into()
+    }
+}
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for HistoryUpdateType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for HistoryUpdateType {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
     }
 }
 impl opcua::types::BinaryEncoder for HistoryUpdateType {
@@ -1294,6 +1736,42 @@ impl opcua::types::AsVariantRef for IdentityCriteriaType {
         (*self as i32).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for IdentityCriteriaType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for IdentityCriteriaType {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
+    }
+}
 impl opcua::types::BinaryEncoder for IdentityCriteriaType {
     fn byte_len(&self) -> usize {
         4usize
@@ -1352,6 +1830,42 @@ impl opcua::types::AsVariantRef for IdType {
         (*self as i32).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for IdType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for IdType {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
+    }
+}
 impl opcua::types::BinaryEncoder for IdType {
     fn byte_len(&self) -> usize {
         4usize
@@ -1407,6 +1921,7 @@ impl opcua::types::AsVariantRef for JsonDataSetMessageContentMask {
         self.bits().into()
     }
 }
+#[cfg(feature = "json")]
 impl<'de> serde::de::Deserialize<'de> for JsonDataSetMessageContentMask {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -1427,6 +1942,7 @@ impl<'de> serde::de::Deserialize<'de> for JsonDataSetMessageContentMask {
             .map(JsonDataSetMessageContentMask::from_bits_truncate)
     }
 }
+#[cfg(feature = "json")]
 impl serde::ser::Serialize for JsonDataSetMessageContentMask {
     fn serialize<S>(
         &self,
@@ -1476,6 +1992,7 @@ impl opcua::types::AsVariantRef for JsonNetworkMessageContentMask {
         self.bits().into()
     }
 }
+#[cfg(feature = "json")]
 impl<'de> serde::de::Deserialize<'de> for JsonNetworkMessageContentMask {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -1496,6 +2013,7 @@ impl<'de> serde::de::Deserialize<'de> for JsonNetworkMessageContentMask {
             .map(JsonNetworkMessageContentMask::from_bits_truncate)
     }
 }
+#[cfg(feature = "json")]
 impl serde::ser::Serialize for JsonNetworkMessageContentMask {
     fn serialize<S>(
         &self,
@@ -1548,6 +2066,42 @@ impl From<MessageSecurityMode> for opcua::types::Variant {
 impl opcua::types::AsVariantRef for MessageSecurityMode {
     fn as_variant(&self) -> opcua::types::Variant {
         (*self as i32).into()
+    }
+}
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for MessageSecurityMode {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for MessageSecurityMode {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
     }
 }
 impl opcua::types::BinaryEncoder for MessageSecurityMode {
@@ -1613,6 +2167,42 @@ impl opcua::types::AsVariantRef for ModelChangeStructureVerbMask {
         (*self as i32).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for ModelChangeStructureVerbMask {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for ModelChangeStructureVerbMask {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
+    }
+}
 impl opcua::types::BinaryEncoder for ModelChangeStructureVerbMask {
     fn byte_len(&self) -> usize {
         4usize
@@ -1632,8 +2222,6 @@ impl opcua::types::BinaryEncoder for ModelChangeStructureVerbMask {
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[derive(serde::Serialize, serde::Deserialize)]
-#[serde(rename_all = "PascalCase")]
 #[repr(i32)]
 pub enum MonitoringMode {
     Disabled = 0i32,
@@ -1669,6 +2257,42 @@ impl From<MonitoringMode> for opcua::types::Variant {
 impl opcua::types::AsVariantRef for MonitoringMode {
     fn as_variant(&self) -> opcua::types::Variant {
         (*self as i32).into()
+    }
+}
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for MonitoringMode {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for MonitoringMode {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
     }
 }
 impl opcua::types::BinaryEncoder for MonitoringMode {
@@ -1725,6 +2349,42 @@ impl From<NamingRuleType> for opcua::types::Variant {
 impl opcua::types::AsVariantRef for NamingRuleType {
     fn as_variant(&self) -> opcua::types::Variant {
         (*self as i32).into()
+    }
+}
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for NamingRuleType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for NamingRuleType {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
     }
 }
 impl opcua::types::BinaryEncoder for NamingRuleType {
@@ -1849,6 +2509,42 @@ impl opcua::types::AsVariantRef for NodeAttributesMask {
         (*self as i32).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for NodeAttributesMask {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for NodeAttributesMask {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
+    }
+}
 impl opcua::types::BinaryEncoder for NodeAttributesMask {
     fn byte_len(&self) -> usize {
         4usize
@@ -1917,6 +2613,42 @@ impl opcua::types::AsVariantRef for NodeClass {
         (*self as i32).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for NodeClass {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for NodeClass {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
+    }
+}
 impl opcua::types::BinaryEncoder for NodeClass {
     fn byte_len(&self) -> usize {
         4usize
@@ -1980,6 +2712,42 @@ impl opcua::types::AsVariantRef for NodeIdType {
         (*self as u8).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for NodeIdType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = u8;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "u8")
+            }
+        }
+        let value = deserializer.deserialize_u8(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "u8", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for NodeIdType {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_u8(*self as u8)
+    }
+}
 impl opcua::types::BinaryEncoder for NodeIdType {
     fn byte_len(&self) -> usize {
         1usize
@@ -2038,6 +2806,42 @@ impl opcua::types::AsVariantRef for OpenFileMode {
         (*self as i32).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for OpenFileMode {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for OpenFileMode {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
+    }
+}
 impl opcua::types::BinaryEncoder for OpenFileMode {
     fn byte_len(&self) -> usize {
         4usize
@@ -2094,6 +2898,42 @@ impl From<OverrideValueHandling> for opcua::types::Variant {
 impl opcua::types::AsVariantRef for OverrideValueHandling {
     fn as_variant(&self) -> opcua::types::Variant {
         (*self as i32).into()
+    }
+}
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for OverrideValueHandling {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for OverrideValueHandling {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
     }
 }
 impl opcua::types::BinaryEncoder for OverrideValueHandling {
@@ -2156,6 +2996,42 @@ impl opcua::types::AsVariantRef for PerformUpdateType {
         (*self as i32).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for PerformUpdateType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for PerformUpdateType {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
+    }
+}
 impl opcua::types::BinaryEncoder for PerformUpdateType {
     fn byte_len(&self) -> usize {
         4usize
@@ -2215,6 +3091,7 @@ impl opcua::types::AsVariantRef for PermissionType {
         self.bits().into()
     }
 }
+#[cfg(feature = "json")]
 impl<'de> serde::de::Deserialize<'de> for PermissionType {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -2235,6 +3112,7 @@ impl<'de> serde::de::Deserialize<'de> for PermissionType {
             .map(PermissionType::from_bits_truncate)
     }
 }
+#[cfg(feature = "json")]
 impl serde::ser::Serialize for PermissionType {
     fn serialize<S>(
         &self,
@@ -2283,6 +3161,42 @@ impl From<PubSubDiagnosticsCounterClassification> for opcua::types::Variant {
 impl opcua::types::AsVariantRef for PubSubDiagnosticsCounterClassification {
     fn as_variant(&self) -> opcua::types::Variant {
         (*self as i32).into()
+    }
+}
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for PubSubDiagnosticsCounterClassification {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for PubSubDiagnosticsCounterClassification {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
     }
 }
 impl opcua::types::BinaryEncoder for PubSubDiagnosticsCounterClassification {
@@ -2341,6 +3255,42 @@ impl From<PubSubState> for opcua::types::Variant {
 impl opcua::types::AsVariantRef for PubSubState {
     fn as_variant(&self) -> opcua::types::Variant {
         (*self as i32).into()
+    }
+}
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for PubSubState {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for PubSubState {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
     }
 }
 impl opcua::types::BinaryEncoder for PubSubState {
@@ -2407,6 +3357,42 @@ impl opcua::types::AsVariantRef for RedundancySupport {
         (*self as i32).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for RedundancySupport {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for RedundancySupport {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
+    }
+}
 impl opcua::types::BinaryEncoder for RedundancySupport {
     fn byte_len(&self) -> usize {
         4usize
@@ -2461,6 +3447,42 @@ impl From<SecurityTokenRequestType> for opcua::types::Variant {
 impl opcua::types::AsVariantRef for SecurityTokenRequestType {
     fn as_variant(&self) -> opcua::types::Variant {
         (*self as i32).into()
+    }
+}
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for SecurityTokenRequestType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for SecurityTokenRequestType {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
     }
 }
 impl opcua::types::BinaryEncoder for SecurityTokenRequestType {
@@ -2529,6 +3551,42 @@ impl opcua::types::AsVariantRef for ServerState {
         (*self as i32).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for ServerState {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for ServerState {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
+    }
+}
 impl opcua::types::BinaryEncoder for ServerState {
     fn byte_len(&self) -> usize {
         4usize
@@ -2548,8 +3606,6 @@ impl opcua::types::BinaryEncoder for ServerState {
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[derive(serde::Serialize, serde::Deserialize)]
-#[serde(rename_all = "PascalCase")]
 #[repr(i32)]
 pub enum StructureType {
     Structure = 0i32,
@@ -2587,6 +3643,42 @@ impl opcua::types::AsVariantRef for StructureType {
         (*self as i32).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for StructureType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for StructureType {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
+    }
+}
 impl opcua::types::BinaryEncoder for StructureType {
     fn byte_len(&self) -> usize {
         4usize
@@ -2606,8 +3698,6 @@ impl opcua::types::BinaryEncoder for StructureType {
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[derive(serde::Serialize, serde::Deserialize)]
-#[serde(rename_all = "PascalCase")]
 #[repr(i32)]
 pub enum TimestampsToReturn {
     Source = 0i32,
@@ -2650,6 +3740,42 @@ impl From<TimestampsToReturn> for opcua::types::Variant {
 impl opcua::types::AsVariantRef for TimestampsToReturn {
     fn as_variant(&self) -> opcua::types::Variant {
         (*self as i32).into()
+    }
+}
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for TimestampsToReturn {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for TimestampsToReturn {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
     }
 }
 impl opcua::types::BinaryEncoder for TimestampsToReturn {
@@ -2714,6 +3840,42 @@ impl opcua::types::AsVariantRef for TrustListMasks {
         (*self as i32).into()
     }
 }
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for TrustListMasks {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for TrustListMasks {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
+    }
+}
 impl opcua::types::BinaryEncoder for TrustListMasks {
     fn byte_len(&self) -> usize {
         4usize
@@ -2770,6 +3932,7 @@ impl opcua::types::AsVariantRef for UadpDataSetMessageContentMask {
         self.bits().into()
     }
 }
+#[cfg(feature = "json")]
 impl<'de> serde::de::Deserialize<'de> for UadpDataSetMessageContentMask {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -2790,6 +3953,7 @@ impl<'de> serde::de::Deserialize<'de> for UadpDataSetMessageContentMask {
             .map(UadpDataSetMessageContentMask::from_bits_truncate)
     }
 }
+#[cfg(feature = "json")]
 impl serde::ser::Serialize for UadpDataSetMessageContentMask {
     fn serialize<S>(
         &self,
@@ -2841,6 +4005,7 @@ impl opcua::types::AsVariantRef for UadpNetworkMessageContentMask {
         self.bits().into()
     }
 }
+#[cfg(feature = "json")]
 impl<'de> serde::de::Deserialize<'de> for UadpNetworkMessageContentMask {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -2861,6 +4026,7 @@ impl<'de> serde::de::Deserialize<'de> for UadpNetworkMessageContentMask {
             .map(UadpNetworkMessageContentMask::from_bits_truncate)
     }
 }
+#[cfg(feature = "json")]
 impl serde::ser::Serialize for UadpNetworkMessageContentMask {
     fn serialize<S>(
         &self,
@@ -2910,6 +4076,42 @@ impl From<UserTokenType> for opcua::types::Variant {
 impl opcua::types::AsVariantRef for UserTokenType {
     fn as_variant(&self) -> opcua::types::Variant {
         (*self as i32).into()
+    }
+}
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for UserTokenType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct EnumVisitor;
+        use serde::de::Error;
+        impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+            type Value = i32;
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
+                write!(formatter, "i32")
+            }
+        }
+        let value = deserializer.deserialize_i32(EnumVisitor)?;
+        Self::try_from(value)
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for UserTokenType {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_i32(*self as i32)
     }
 }
 impl opcua::types::BinaryEncoder for UserTokenType {

@@ -7,6 +7,11 @@ use std::io::{Read, Write};
 
 use crate::{encoding::*, string::*};
 
+#[cfg(feature = "json")]
+fn is_zero(id: &u16) -> bool {
+    *id == 0
+}
+
 /// An identifier for a error or condition that is associated with a value or an operation.
 ///
 /// A name qualified by a namespace.
@@ -22,13 +27,22 @@ use crate::{encoding::*, string::*};
 ///        NamespaceUriassociated with the NamespaceIndexportion of the QualifiedNameis encoded as
 ///        JSON string unless the NamespaceIndexis 1 or if NamespaceUriis unknown. In these cases,
 ///        the NamespaceIndexis encoded as a JSON number.
-#[derive(PartialEq, Debug, Clone, serde::Serialize, serde::Deserialize, Eq, Hash)]
-#[serde(rename_all = "PascalCase")]
+#[derive(PartialEq, Debug, Clone, Eq, Hash)]
+#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
+#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
 pub struct QualifiedName {
     /// The namespace index
-    #[serde(rename = "Uri")]
+    #[cfg_attr(
+        feature = "json",
+        serde(rename = "Uri", default, skip_serializing_if = "is_zero")
+    )]
     pub namespace_index: u16,
     /// The name.
+    #[cfg_attr(
+        feature = "json",
+        serde(skip_serializing_if = "UAString::is_null", default)
+    )]
     pub name: UAString,
 }
 

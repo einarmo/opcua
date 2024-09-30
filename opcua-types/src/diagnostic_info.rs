@@ -48,30 +48,56 @@ bitflags! {
     }
 }
 
+#[cfg(feature = "json")]
+impl<'de> serde::de::Deserialize<'de> for DiagnosticBits {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct BitFieldVisitor;
+        impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
+            type Value = u32;
+            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+                write!(formatter, "an u32")
+            }
+        }
+        deserializer
+            .deserialize_u32(BitFieldVisitor)
+            .map(DiagnosticBits::from_bits_truncate)
+    }
+}
+#[cfg(feature = "json")]
+impl serde::ser::Serialize for DiagnosticBits {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_u32(self.bits())
+    }
+}
+
 /// Diagnostic information.
-#[derive(PartialEq, Debug, Clone, serde::Serialize, serde::Deserialize)]
-#[serde(rename_all = "PascalCase")]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
+#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
 pub struct DiagnosticInfo {
     /// A symbolic name for the status code.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub symbolic_id: Option<i32>,
     /// A namespace that qualifies the symbolic id.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub namespace_uri: Option<i32>,
     /// The locale used for the localized text.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub locale: Option<i32>,
     /// A human readable summary of the status code.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub localized_text: Option<i32>,
     /// Detailed application specific diagnostic information.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub additional_info: Option<UAString>,
     /// A status code provided by an underlying system.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub inner_status_code: Option<StatusCode>,
     /// Diagnostic info associated with the inner status code.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub inner_diagnostic_info: Option<Box<DiagnosticInfo>>,
 }
 

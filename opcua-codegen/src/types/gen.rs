@@ -59,7 +59,6 @@ pub struct CodeGenItemConfig {
 }
 
 pub struct CodeGenerator {
-    json_serializable_types: HashSet<String>,
     import_map: HashMap<String, ExternalType>,
     input: HashMap<String, LoadedType>,
     default_excluded: HashSet<String>,
@@ -68,14 +67,12 @@ pub struct CodeGenerator {
 
 impl CodeGenerator {
     pub fn new(
-        json_serializable_types: HashSet<String>,
         external_import_map: HashMap<String, ExternalType>,
         input: Vec<LoadedType>,
         default_excluded: HashSet<String>,
         config: CodeGenItemConfig,
     ) -> Self {
         Self {
-            json_serializable_types,
             import_map: external_import_map,
             input: input
                 .into_iter()
@@ -299,6 +296,7 @@ impl CodeGenerator {
         let typ_str = format!("an {}", item.typ);
 
         impls.push(parse_quote! {
+            #[cfg(feature = "json")]
             impl<'de> serde::de::Deserialize<'de> for #enum_ident {
                 fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
                 where
@@ -322,6 +320,7 @@ impl CodeGenerator {
         });
 
         impls.push(parse_quote! {
+            #[cfg(feature = "json")]
             impl serde::ser::Serialize for #enum_ident {
                 fn serialize<S>(&self, serializer: S) -> Result<
                     <S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
@@ -363,14 +362,6 @@ impl CodeGenerator {
         attrs.push(parse_quote! {
             #[derive(Debug, Copy, Clone, PartialEq, Eq)]
         });
-        if self.json_serializable_types.contains(&item.name) {
-            attrs.push(parse_quote! {
-                #[derive(serde::Serialize, serde::Deserialize)]
-            });
-            attrs.push(parse_quote! {
-                #[serde(rename_all = "PascalCase")]
-            });
-        }
         let ty: Type = syn::parse_str(&item.typ.to_string())?;
         attrs.push(parse_quote! {
             #[repr(#ty)]
@@ -486,6 +477,50 @@ impl CodeGenerator {
             }
         });
 
+        let ser_method = Ident::new(&format!("serialize_{}", item.typ), Span::call_site());
+        let deser_method = Ident::new(&format!("deserialize_{}", item.typ), Span::call_site());
+        let typ_str = format!("{}", item.typ);
+        let typ_name_str = item.typ.to_string();
+
+        impls.push(parse_quote! {
+            #[cfg(feature = "json")]
+            impl<'de> serde::de::Deserialize<'de> for #enum_ident {
+                fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+                where
+                    D: serde::de::Deserializer<'de>,
+                {
+                    struct EnumVisitor;
+                    use serde::de::Error;
+
+                    impl<'de> serde::de::Visitor<'de> for EnumVisitor {
+                        type Value = #ty;
+
+                        fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+                            write!(formatter, #typ_str)
+                        }
+                    }
+
+                    let value = deserializer.#deser_method(EnumVisitor)?;
+                    Self::try_from(value).map_err(|e| D::Error::custom(
+                        &format!("Failed to deserialize {}: {:?}", #typ_name_str, e)
+                    ))
+                }
+            }
+        });
+
+        impls.push(parse_quote! {
+            #[cfg(feature = "json")]
+            impl serde::ser::Serialize for #enum_ident {
+                fn serialize<S>(&self, serializer: S) -> Result<
+                    <S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
+                where
+                    S: serde::ser::Serializer
+                {
+                    serializer.#ser_method(*self as #ty)
+                }
+            }
+        });
+
         // BinaryEncoder impl
         let size: usize = item.size.try_into().map_err(|_| {
             CodeGenError::Other(format!("Value {} does not fit in a usize", item.size))
@@ -564,14 +599,16 @@ impl CodeGenerator {
         attrs.push(parse_quote! {
             #[derive(Debug, Clone, PartialEq)]
         });
-        if self.json_serializable_types.contains(&item.name) {
-            attrs.push(parse_quote! {
-                #[derive(serde::Serialize, serde::Deserialize)]
-            });
-            attrs.push(parse_quote! {
-                #[serde(rename_all = "PascalCase")]
-            });
-        }
+        attrs.push(parse_quote! {
+            #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
+        });
+        attrs.push(parse_quote! {
+            #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+        });
+        attrs.push(parse_quote! {
+            #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+        });
+
         if self.has_default(&item.name) {
             attrs.push(parse_quote! {
                 #[derive(Default)]

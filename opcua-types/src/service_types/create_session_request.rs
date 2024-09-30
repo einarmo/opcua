@@ -7,6 +7,9 @@
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
 mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
+#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
 pub struct CreateSessionRequest {
     pub request_header: opcua::types::request_header::RequestHeader,
     pub client_description: super::application_description::ApplicationDescription,

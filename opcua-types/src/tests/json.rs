@@ -6,8 +6,11 @@ use crate::{
     byte_string::ByteString, data_value::DataValue, date_time::DateTime,
     diagnostic_info::DiagnosticInfo, expanded_node_id::ExpandedNodeId, guid::Guid,
     localized_text::LocalizedText, node_id::NodeId, qualified_name::QualifiedName,
-    status_code::StatusCode, string::UAString, variant::Variant,
+    status_code::StatusCode, string::UAString, variant::Variant, Argument, Array, DataTypeId,
+    VariantScalarTypeId,
 };
+
+use super::ExtensionObject;
 
 #[test]
 fn serialize_string() {
@@ -92,57 +95,57 @@ fn serialize_node_id() {
 
     let n = NodeId::new(1, "Hello");
     let json = serde_json::to_value(&n).unwrap();
-    assert_eq!(json, json!({"Type": 1, "Id": "Hello", "Namespace": 1}));
+    assert_eq!(json, json!({"IdType": 1, "Id": "Hello", "Namespace": 1}));
     let n2 = serde_json::from_value::<NodeId>(json).unwrap();
     assert_eq!(n, n2);
 
     let guid = "995a9546-cd91-4393-b1c8-a83851f88d6a";
     let n = NodeId::new(1, Guid::from_str(guid).unwrap());
     let json = serde_json::to_value(&n).unwrap();
-    assert_eq!(json, json!({"Type": 2, "Id": guid, "Namespace": 1}));
+    assert_eq!(json, json!({"IdType": 2, "Id": guid, "Namespace": 1}));
     let n2 = serde_json::from_value::<NodeId>(json).unwrap();
     assert_eq!(n, n2);
 
     let bytestring = "aGVsbG8gd29ybGQ=";
     let n = NodeId::new(1, ByteString::from_base64(bytestring).unwrap());
     let json = serde_json::to_value(&n).unwrap();
-    assert_eq!(json, json!({"Type": 3, "Id": bytestring, "Namespace": 1}));
+    assert_eq!(json, json!({"IdType": 3, "Id": bytestring, "Namespace": 1}));
     let n2 = serde_json::from_value::<NodeId>(json).unwrap();
     assert_eq!(n, n2);
 
     // Missing namespace is treated as 0
-    let n2 = serde_json::from_value::<NodeId>(json!({"Type": 1, "Id": "XYZ"})).unwrap();
+    let n2 = serde_json::from_value::<NodeId>(json!({"IdType": 1, "Id": "XYZ"})).unwrap();
     assert_eq!(NodeId::new(0, "XYZ"), n2);
 
     // Invalid Type
     let n =
-        serde_json::from_value::<NodeId>(json!({"Type": 5, "Id": "InvalidType", "Namespace": 1}));
+        serde_json::from_value::<NodeId>(json!({"IdType": 5, "Id": "InvalidType", "Namespace": 1}));
     assert!(n.is_err());
 
     // Missing id
-    let n = serde_json::from_value::<NodeId>(json!({"Type": 1, "Namespace": 1}));
+    let n = serde_json::from_value::<NodeId>(json!({"IdType": 1, "Namespace": 1}));
     assert!(n.is_err());
 
     // Invalid string ids
-    let n = serde_json::from_value::<NodeId>(json!({"Type": 1, "Id": null, "Namespace": 1}));
+    let n = serde_json::from_value::<NodeId>(json!({"IdType": 1, "Id": null, "Namespace": 1}));
     assert!(n.is_err());
-    let n = serde_json::from_value::<NodeId>(json!({"Type": 1, "Id": true, "Namespace": 1}));
+    let n = serde_json::from_value::<NodeId>(json!({"IdType": 1, "Id": true, "Namespace": 1}));
     assert!(n.is_err());
-    let n = serde_json::from_value::<NodeId>(json!({"Type": 1, "Id": "", "Namespace": 1}));
+    let n = serde_json::from_value::<NodeId>(json!({"IdType": 1, "Id": "", "Namespace": 1}));
     assert!(n.is_err());
 
     // Invalid guid
-    let n = serde_json::from_value::<NodeId>(json!({"Type": 2, "Id": null, "Namespace": 1}));
+    let n = serde_json::from_value::<NodeId>(json!({"IdType": 2, "Id": null, "Namespace": 1}));
     assert!(n.is_err());
-    let n = serde_json::from_value::<NodeId>(json!({"Type": 2, "Id": "1234", "Namespace": 1}));
+    let n = serde_json::from_value::<NodeId>(json!({"IdType": 2, "Id": "1234", "Namespace": 1}));
     assert!(n.is_err());
-    let n = serde_json::from_value::<NodeId>(json!({"Type": 2, "Id": "", "Namespace": 1}));
+    let n = serde_json::from_value::<NodeId>(json!({"IdType": 2, "Id": "", "Namespace": 1}));
     assert!(n.is_err());
 
     // Invalid bytestring
-    let n = serde_json::from_value::<NodeId>(json!({"Type": 3, "Id": null, "Namespace": 1}));
+    let n = serde_json::from_value::<NodeId>(json!({"IdType": 3, "Id": null, "Namespace": 1}));
     assert!(n.is_err());
-    let n = serde_json::from_value::<NodeId>(json!({"Type": 3, "Id": "", "Namespace": 1}));
+    let n = serde_json::from_value::<NodeId>(json!({"IdType": 3, "Id": "", "Namespace": 1}));
     assert!(n.is_err());
 }
 
@@ -152,11 +155,14 @@ fn serialize_expanded_node_id() {
     let json = serde_json::to_value(&n).unwrap();
     assert_eq!(json, json!({"Id": 1}));
 
-    // TODO more tests
-
-    // Namespace uri
-
-    // Server index
+    let mut n = ExpandedNodeId::new(NodeId::new(1, 1));
+    n.server_index = 5;
+    n.namespace_uri = "urn:SomeNamespace".into();
+    let json = serde_json::to_value(&n).unwrap();
+    assert_eq!(
+        json,
+        json!({"Id": 1, "Namespace": "urn:SomeNamespace", "ServerUri": 5})
+    );
 }
 
 #[test]
@@ -180,26 +186,65 @@ fn serialize_status_code() {
     assert_eq!(json, json!(0x8007_0000i64))
 }
 
-//#[test]
-//fn serialize_extension_object() {
-//    let v = ExtensionObject::null();
-//    let json = serde_json::to_value(&v).unwrap();
-//}
+#[test]
+fn serialize_extension_object() {
+    let v = ExtensionObject::null();
+    let json = serde_json::to_value(&v).unwrap();
+    assert_eq!(json, json!(null));
 
-//#[test]
-//fn serialize_localized_text() {
-//    todo!()
-//}
+    // As json body.
+    let argument = Argument {
+        name: "Arg".into(),
+        data_type: DataTypeId::Double.into(),
+        value_rank: 1,
+        array_dimensions: Some(vec![3]),
+        description: "An argument".into(),
+    };
 
-//#[test]
-//fn serialize_diagnostic_info() {
-//    todo!()
-//}
+    let v = ExtensionObject::from_json(&argument).unwrap();
+    let json = serde_json::to_value(&v).unwrap();
+    assert_eq!(
+        json,
+        json!({
+            "TypeId": {
+                "Id": 298
+            },
+            "Body": {
+                "Name": "Arg",
+                "DataType": {
+                    "Id": 11
+                },
+                "ValueRank": 1,
+                "ArrayDimensions": [3],
+                "Description": {
+                    "Text": "An argument"
+                }
+            }
+        })
+    );
+}
 
-//#[test]
-//fn serialize_qualified_name() {
-//    todo!()
-//}
+#[test]
+fn serialize_localized_text() {
+    let v = LocalizedText::new("en", "Text");
+    let json = serde_json::to_value(&v).unwrap();
+    assert_eq!(json, json!({"Locale": "en", "Text": "Text"}));
+
+    let v: LocalizedText = "Text".into();
+    let json = serde_json::to_value(&v).unwrap();
+    assert_eq!(json, json!({"Text": "Text"}));
+}
+
+#[test]
+fn serialize_qualified_name() {
+    let v = QualifiedName::new(0, "Test");
+    let json = serde_json::to_value(&v).unwrap();
+    assert_eq!(json, json!({"Name": "Test"}));
+
+    let v = QualifiedName::new(2, "Test");
+    let json = serde_json::to_value(&v).unwrap();
+    assert_eq!(json, json!({"Uri": 2, "Name": "Test"}));
+}
 
 /// Serializes and deserializes a variant. The input json should match
 /// what the serialized output is. In some cases, this function may not be useful
@@ -239,7 +284,7 @@ fn test_json_to_variant(json: serde_json::Value, expected: Variant) {
 #[test]
 fn serialize_variant_empty() {
     // Empty (0)
-    test_ser_de_variant(Variant::Empty, json!({"Type": 0}));
+    test_ser_de_variant(Variant::Empty, json!(null));
     test_json_to_variant(json!(null), Variant::Empty);
     test_json_to_variant(json!({"Type": 0}), Variant::Empty);
     test_json_to_variant(json!({"Type": 0, "Body": null}), Variant::Empty);
@@ -271,9 +316,9 @@ fn serialize_variant_numeric() {
 
     // Int64 & UInt64 are encoded as strings. Missing body should be treated as the default
     // numeric value, i.e. 0
-    test_ser_de_variant(Variant::Int64(-1i64), json!({"Type": 8, "Body": "-1"}));
+    test_ser_de_variant(Variant::Int64(-1i64), json!({"Type": 8, "Body": -1}));
     test_json_to_variant(json!({"Type": 8}), Variant::Int64(0));
-    test_ser_de_variant(Variant::UInt64(1000u64), json!({"Type": 9, "Body": "1000"}));
+    test_ser_de_variant(Variant::UInt64(1000u64), json!({"Type": 9, "Body": 1000}));
     test_json_to_variant(json!({"Type": 9}), Variant::UInt64(0));
 }
 
@@ -367,18 +412,16 @@ fn serialize_variant_string() {
     );
 }
 
-/*
 #[test]
 fn serialize_variant_datetime() {
     // DateTime (13)
-    let dt = DateTime::now();
-    let ticks = dt.checked_ticks();
-    let v = Variant::from(dt);
-    let vs = serde_json::to_string(&v).unwrap();
-    println!("v = {}", vs);
-    assert_eq!(vs, format!("{{\"DateTime\":{}}}", ticks));
+    test_ser_de_variant(
+        Variant::DateTime(Box::new(DateTime::ymd(2000, 1, 1))),
+        json!({
+            "Type": 13, "Body": "2000-01-01T00:00:00.000Z"
+        }),
+    );
 }
-*/
 
 #[test]
 fn serialize_variant_guid() {
@@ -419,7 +462,7 @@ fn serialize_variant_node_id() {
     // NodeId (17)
     test_ser_de_variant(
         Variant::NodeId(Box::new(NodeId::new(5, "Hello World"))),
-        json!({"Type": 17, "Body": { "Type": 1, "Id": "Hello World", "Namespace": 5}}),
+        json!({"Type": 17, "Body": { "IdType": 1, "Id": "Hello World", "Namespace": 5}}),
     );
 }
 
@@ -431,7 +474,7 @@ fn serialize_variant_expanded_node_id() {
             NodeId::new(5, "Hello World"),
             20,
         )))),
-        json!({"Type": 18, "Body": { "Type": 1, "Id": "Hello World", "Namespace": 5, "ServerUri": 20}}),
+        json!({"Type": 18, "Body": { "IdType": 1, "Id": "Hello World", "Namespace": 5, "ServerUri": 20}}),
     );
 }
 
@@ -454,7 +497,7 @@ fn serialize_variant_qualified_name() {
     // QualifiedName (20)
     test_ser_de_variant(
         Variant::QualifiedName(Box::new(QualifiedName::null())),
-        json!({"Type": 20, "Body": {"Uri": 0, "Name": null}}),
+        json!({"Type": 20, "Body": {}}),
     );
 }
 
@@ -463,20 +506,53 @@ fn serialize_variant_localized_text() {
     // LocalizedText (21)
     test_ser_de_variant(
         Variant::LocalizedText(Box::new(LocalizedText::null())),
-        json!({"Type": 21, "Body": {"Locale": null, "Text": null}}),
+        json!({"Type": 21, "Body": {}}),
     );
 }
 
-/* TODO
 #[test]
 fn serialize_variant_extension_object() {
     // ExtensionObject (22)
     test_ser_de_variant(
         Variant::ExtensionObject(Box::new(ExtensionObject::null())),
-        json!({"Type": 22, "Body": {"Body": "None", "NodeId": {"Id": 0}}}),
+        json!({"Type": 22, "Body": null}),
+    );
+    let argument = Argument {
+        name: "Arg".into(),
+        data_type: DataTypeId::Double.into(),
+        value_rank: 1,
+        array_dimensions: Some(vec![3]),
+        description: "An argument".into(),
+    };
+    // Note: There's a fair bit more to do here, but it's all quite complicated.
+    // First, for some insane reason structs with optional fields are supposed to
+    // have an "encoding mask".
+    // Second, all default values are supposed to be skipped.
+    // Neither of these are easy to do, and will probably require a custom
+    // serialize/deserialize macro.
+    test_ser_de_variant(
+        Variant::ExtensionObject(Box::new(ExtensionObject::from_json(&argument).unwrap())),
+        json!({
+            "Type": 22,
+            "Body": {
+                "TypeId": {
+                    "Id": 298
+                },
+                "Body": {
+                    "Name": "Arg",
+                    "DataType": {
+                        "Id": 11
+                    },
+                    "ValueRank": 1,
+                    "ArrayDimensions": [3],
+                    "Description": {
+                        "Text": "An argument"
+                    }
+                }
+            }
+        }),
     );
 }
- */
 
 #[test]
 fn serialize_variant_data_value() {
@@ -501,10 +577,13 @@ fn serialize_variant_variant() {
     // Variant (24)
     test_ser_de_variant(
         Variant::Variant(Box::new(Variant::Empty)),
-        json!({"Type": 24, "Body": {"Type": 0}}),
+        json!({"Type": 24, "Body": null}),
     );
 
-    // TODO more variants
+    test_ser_de_variant(
+        Variant::Variant(Box::new(Variant::Double(1.2))),
+        json!({"Type": 24, "Body": { "Type": 11, "Body": 1.2 }}),
+    );
 }
 
 #[test]
@@ -515,27 +594,62 @@ fn serialize_variant_diagnostic_info() {
         json!({"Type": 25, "Body": {}}),
     );
 
-    // TODO more diagnostics
+    test_ser_de_variant(
+        Variant::DiagnosticInfo(Box::new(DiagnosticInfo {
+            symbolic_id: Some(2),
+            namespace_uri: Some(3),
+            additional_info: Some("info".into()),
+            locale: Some(4),
+            ..Default::default()
+        })),
+        json!({"Type": 25, "Body": {
+            "SymbolicId": 2,
+            "NamespaceUri": 3,
+            "AdditionalInfo": "info",
+            "Locale": 4,
+        }}),
+    )
 }
-
-/*
-
-TODO support arrays
 
 #[test]
 fn serialize_variant_single_dimension_array() {
-    let v = Array::new(VariantTypeId::Empty, []).unwrap();
-    let v = Variant::from(v);
-    let json = serde_json::to_value(&v).unwrap();
-    assert_eq!(json, json!({}));
+    test_ser_de_variant(
+        Variant::from(vec![1, 2, 3]),
+        json!({"Type": 6, "Body": [1, 2, 3]}),
+    );
+
+    test_ser_de_variant(
+        Variant::from(vec![
+            LocalizedText::new("en", "Test"),
+            LocalizedText::new("en", "Test2"),
+        ]),
+        json!({"Type": 21, "Body": [{
+            "Locale": "en",
+            "Text": "Test"
+        }, {
+            "Locale": "en",
+            "Text": "Test2"
+        }]}),
+    )
 }
 
 #[test]
 fn serialize_variant_multi_dimension_array() {
-    let v = Array::new_multi(VariantTypeId::Empty, [], []).unwrap();
-    let v = Variant::from(v);
-    let json = serde_json::to_value(&v).unwrap();
-    assert_eq!(json, json!({}));
+    let v = Array::new_multi(
+        VariantScalarTypeId::Int32,
+        [1, 2, 3, 4, 5, 6]
+            .into_iter()
+            .map(Variant::from)
+            .collect::<Vec<_>>(),
+        vec![2, 3],
+    )
+    .unwrap();
+    test_ser_de_variant(
+        v.into(),
+        json!({
+            "Type": 6,
+            "Body": [1, 2, 3, 4, 5, 6],
+            "Dimensions": [2, 3]
+        }),
+    );
 }
-
- */

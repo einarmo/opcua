@@ -6,9 +6,11 @@ use std::{
 
 use super::encoding::{read_u32, write_u32, BinaryEncoder, DecodingOptions, EncodingResult};
 
-#[derive(Copy, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize, Hash, Default)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Default)]
 /// Wrapper around an OPC-UA status code, with utilities for displaying,
 /// parsing, and reading.
+#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "json", serde(transparent))]
 pub struct StatusCode(u32);
 
 const SUBCODE_MASK: u32 = 0xffff_0000;

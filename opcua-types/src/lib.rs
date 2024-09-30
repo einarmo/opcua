@@ -223,6 +223,7 @@ pub mod response_header;
 pub mod status_code;
 pub mod string;
 pub mod variant;
+#[cfg(feature = "json")]
 pub mod variant_json;
 pub mod variant_type_id;
 

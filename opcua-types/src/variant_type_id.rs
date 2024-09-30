@@ -26,33 +26,71 @@ impl<'a> From<(VariantScalarTypeId, &'a [u32])> for VariantTypeId<'a> {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+#[repr(u32)]
 pub enum VariantScalarTypeId {
-    Boolean,
-    SByte,
-    Byte,
-    Int16,
-    UInt16,
-    Int32,
-    UInt32,
-    Int64,
-    UInt64,
-    Float,
-    Double,
-    String,
-    DateTime,
-    Guid,
-    StatusCode,
-    ByteString,
-    XmlElement,
-    QualifiedName,
-    LocalizedText,
-    NodeId,
-    ExpandedNodeId,
-    ExtensionObject,
-    Variant,
-    DataValue,
-    DiagnosticInfo,
+    Boolean = 1,
+    SByte = 2,
+    Byte = 3,
+    Int16 = 4,
+    UInt16 = 5,
+    Int32 = 6,
+    UInt32 = 7,
+    Int64 = 8,
+    UInt64 = 9,
+    Float = 10,
+    Double = 11,
+    String = 12,
+    DateTime = 13,
+    Guid = 14,
+    ByteString = 15,
+    XmlElement = 16,
+    NodeId = 17,
+    ExpandedNodeId = 18,
+    StatusCode = 19,
+    QualifiedName = 20,
+    LocalizedText = 21,
+    ExtensionObject = 22,
+    DataValue = 23,
+    Variant = 24,
+    DiagnosticInfo = 25,
+}
+
+impl TryFrom<u32> for VariantScalarTypeId {
+    type Error = StatusCode;
+    fn try_from(value: u32) -> Result<Self, Self::Error> {
+        Ok(match value {
+            1 => Self::Boolean,
+            2 => Self::SByte,
+            3 => Self::Byte,
+            4 => Self::Int16,
+            5 => Self::UInt16,
+            6 => Self::Int32,
+            7 => Self::UInt32,
+            8 => Self::Int64,
+            9 => Self::UInt64,
+            10 => Self::Float,
+            11 => Self::Double,
+            12 => Self::String,
+            13 => Self::DateTime,
+            14 => Self::Guid,
+            15 => Self::ByteString,
+            16 => Self::XmlElement,
+            17 => Self::NodeId,
+            18 => Self::ExpandedNodeId,
+            19 => Self::StatusCode,
+            20 => Self::QualifiedName,
+            21 => Self::LocalizedText,
+            22 => Self::ExtensionObject,
+            23 => Self::DataValue,
+            24 => Self::Variant,
+            25 => Self::DiagnosticInfo,
+            r => {
+                log::error!("Got unexpected vlaue for enum VariantScalarTypeId: {r}");
+                return Err(StatusCode::BadDecodingError);
+            }
+        })
+    }
 }
 
 impl TryFrom<&NodeId> for VariantScalarTypeId {

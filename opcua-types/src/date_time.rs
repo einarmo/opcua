@@ -14,7 +14,6 @@ use std::{
 
 use chrono::{Duration, SecondsFormat, TimeDelta, TimeZone, Timelike, Utc};
 use log::error;
-use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::encoding::*;
 
@@ -34,24 +33,30 @@ pub struct DateTime {
     date_time: DateTimeUtc,
 }
 
-impl Serialize for DateTime {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        serializer.serialize_str(&self.to_rfc3339())
-    }
-}
+#[cfg(feature = "json")]
+mod json {
+    use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 
-impl<'de> Deserialize<'de> for DateTime {
-    fn deserialize<D>(deserializer: D) -> Result<DateTime, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let v = String::deserialize(deserializer)?;
-        let dt = DateTime::parse_from_rfc3339(&v)
-            .map_err(|_| D::Error::custom("Cannot parse date time"))?;
-        Ok(dt)
+    use super::DateTime;
+    impl Serialize for DateTime {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer,
+        {
+            serializer.serialize_str(&self.to_rfc3339())
+        }
+    }
+
+    impl<'de> Deserialize<'de> for DateTime {
+        fn deserialize<D>(deserializer: D) -> Result<DateTime, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            let v = String::deserialize(deserializer)?;
+            let dt = DateTime::parse_from_rfc3339(&v)
+                .map_err(|e| D::Error::custom(&format!("Cannot parse date time: {e}")))?;
+            Ok(dt)
+        }
     }
 }
 

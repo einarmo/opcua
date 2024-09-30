@@ -8,8 +8,6 @@ use std::{
     io::{Read, Write},
 };
 
-use serde::{Deserialize, Serialize};
-
 use crate::{encoding::*, string::*};
 
 /// JSON encoding
@@ -18,12 +16,21 @@ use crate::{encoding::*, string::*};
 /// Text       The Textportion of LocalizedTextvalues shall be encoded as a JSON string.
 
 /// A human readable text with an optional locale identifier.
-#[derive(PartialEq, Default, Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "PascalCase")]
+#[derive(PartialEq, Default, Debug, Clone)]
+#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
 pub struct LocalizedText {
     /// The locale. Omitted from stream if null or empty
+    #[cfg_attr(
+        feature = "json",
+        serde(skip_serializing_if = "UAString::is_null", default)
+    )]
     pub locale: UAString,
     /// The text in the specified locale. Omitted frmo stream if null or empty.
+    #[cfg_attr(
+        feature = "json",
+        serde(skip_serializing_if = "UAString::is_null", default)
+    )]
     pub text: UAString,
 }
 

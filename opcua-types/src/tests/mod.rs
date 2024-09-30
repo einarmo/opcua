@@ -1,5 +1,6 @@
 mod date_time;
 mod encoding;
+#[cfg(feature = "json")]
 mod json;
 mod node_id;
 mod variant;

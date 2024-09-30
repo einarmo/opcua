@@ -42,12 +42,6 @@ pub fn generate_types(target: &TypeCodeGenTarget) -> Result<Vec<GeneratedItem>, 
     }
 
     let generator = CodeGenerator::new(
-        target
-            .json_serialized_types
-            .iter()
-            .cloned()
-            .chain(base_json_serialized_types())
-            .collect(),
         types_import_map,
         types,
         target.default_excluded.clone(),

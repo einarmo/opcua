@@ -15,9 +15,9 @@ use opcua_xml::load_nodeset2_file;
 use serde::{Deserialize, Serialize};
 use syn::File;
 pub use types::{
-    base_ignored_types, base_json_serialized_types, base_native_type_mappings,
-    basic_types_import_map, BsdTypeLoader, CodeGenItemConfig, GeneratedItem, ItemDefinition,
-    LoadedType, LoadedTypes, StructureField, StructureFieldType, StructuredType,
+    base_ignored_types, base_native_type_mappings, basic_types_import_map, BsdTypeLoader,
+    CodeGenItemConfig, GeneratedItem, ItemDefinition, LoadedType, LoadedTypes, StructureField,
+    StructureFieldType, StructuredType,
 };
 use types::{generate_types, ExternalType};
 pub use utils::{create_module_file, GeneratedOutput};
@@ -164,8 +164,6 @@ pub struct TypeCodeGenTarget {
     pub output_dir: String,
     #[serde(default)]
     pub ignore: Vec<String>,
-    #[serde(default)]
-    pub json_serialized_types: Vec<String>,
     #[serde(default)]
     pub types_import_map: HashMap<String, ExternalType>,
     #[serde(default)]
