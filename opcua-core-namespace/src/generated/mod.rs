@@ -6,15 +6,11 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use opcua_types as types; pub use opcua_nodes as nodes; }mod nodeset_1;
-mod nodeset_2;
-mod nodeset_3;
-mod nodeset_4;
-mod nodeset_5;
-mod nodeset_6;
-mod nodeset_7;
-mod nodeset_8;
-mod nodeset_9;
+mod opcua {
+    pub use opcua_nodes as nodes;
+    pub use opcua_types as types;
+}
+mod nodeset_1;
 mod nodeset_10;
 mod nodeset_11;
 mod nodeset_12;
@@ -25,6 +21,7 @@ mod nodeset_16;
 mod nodeset_17;
 mod nodeset_18;
 mod nodeset_19;
+mod nodeset_2;
 mod nodeset_20;
 mod nodeset_21;
 mod nodeset_22;
@@ -35,6 +32,7 @@ mod nodeset_26;
 mod nodeset_27;
 mod nodeset_28;
 mod nodeset_29;
+mod nodeset_3;
 mod nodeset_30;
 mod nodeset_31;
 mod nodeset_32;
@@ -45,6 +43,7 @@ mod nodeset_36;
 mod nodeset_37;
 mod nodeset_38;
 mod nodeset_39;
+mod nodeset_4;
 mod nodeset_40;
 mod nodeset_41;
 mod nodeset_42;
@@ -55,7 +54,12 @@ mod nodeset_46;
 mod nodeset_47;
 mod nodeset_48;
 mod nodeset_49;
+mod nodeset_5;
 mod nodeset_50;
+mod nodeset_6;
+mod nodeset_7;
+mod nodeset_8;
+mod nodeset_9;
 pub struct CoreNamespace;
 impl opcua::nodes::NodeSetImport for CoreNamespace {
     fn load<'a>(
@@ -113,13 +117,11 @@ impl opcua::nodes::NodeSetImport for CoreNamespace {
             nodeset_49::imported_nodes(map),
             nodeset_50::imported_nodes(map),
         ]
-            .into_iter()
-            .flatten()
+        .into_iter()
+        .flatten()
     }
-    fn register_namespaces(
-        map: &mut opcua::nodes::NodeSetNamespaceMapper,
-    ) -> Vec<String> {
+    fn register_namespaces(map: &mut opcua::nodes::NodeSetNamespaceMapper) -> Vec<String> {
         map.add_namespace("http://opcfoundation.org/UA/", 0u16);
-        vec!["http://opcfoundation.org/UA/".to_owned(),]
+        vec!["http://opcfoundation.org/UA/".to_owned()]
     }
 }

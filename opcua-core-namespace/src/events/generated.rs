@@ -6,7 +6,12 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use opcua_types as types; pub use opcua_nodes as nodes; pub use opcua_nodes::{Event, EventField}; }#[derive(Debug, opcua::Event)]
+mod opcua {
+    pub use opcua_nodes as nodes;
+    pub use opcua_nodes::{Event, EventField};
+    pub use opcua_types as types;
+}
+#[derive(Debug, opcua::Event)]
 #[opcua(identifier = "i=2881")]
 pub struct AcknowledgeableConditionType {
     pub base: ConditionType,
@@ -57,9 +62,7 @@ pub struct AlarmConditionType {
 pub struct AlarmGroupType {
     pub node_id: opcua::types::NodeId,
     #[opcua(placeholder)]
-    pub alarm_condition_instances: opcua::types::PlaceholderEventField<
-        AlarmConditionType,
-    >,
+    pub alarm_condition_instances: opcua::types::PlaceholderEventField<AlarmConditionType>,
 }
 #[derive(Debug, opcua::EventField, Default)]
 pub struct AudioVariableType {

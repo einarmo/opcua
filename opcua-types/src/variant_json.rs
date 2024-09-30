@@ -2,7 +2,7 @@ use core::f32;
 
 use serde::{
     de::{self, Visitor},
-    ser::SerializeStruct,
+    ser::{SerializeSeq, SerializeStruct},
     Deserialize, Serialize,
 };
 use serde_json::{from_value, Value};
@@ -84,11 +84,72 @@ impl Serialize for Variant {
                         struct_ser.serialize_field("Dimensions", &dims)?;
                     }
                 }
-                struct_ser.serialize_field("Body", &array.values)?;
+
+                struct_ser.serialize_field("Body", &VariantValueArray(&array.values))?;
             }
         };
 
         struct_ser.end()
+    }
+}
+
+struct VariantValueArray<'a>(&'a [Variant]);
+
+macro_rules! ser_float_seq {
+    ($v: expr, $t: ty, $ser: expr) => {
+        if *$v == <$t>::INFINITY {
+            $ser.serialize_element(VALUE_INFINITY)
+        } else if *$v == <$t>::NEG_INFINITY {
+            $ser.serialize_element(VALUE_NEG_INFINITY)
+        } else if $v.is_nan() {
+            $ser.serialize_element(VALUE_NAN)
+        } else {
+            $ser.serialize_element($v)
+        }
+    };
+}
+
+impl<'a> Serialize for VariantValueArray<'a> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut seq_ser = serializer.serialize_seq(Some(self.0.len()))?;
+        for elem in self.0 {
+            match elem {
+                Variant::Empty => seq_ser.serialize_element(&None::<i32>)?,
+                Variant::Boolean(b) => seq_ser.serialize_element(b)?,
+                Variant::SByte(b) => seq_ser.serialize_element(b)?,
+                Variant::Byte(b) => seq_ser.serialize_element(b)?,
+                Variant::Int16(b) => seq_ser.serialize_element(b)?,
+                Variant::UInt16(b) => seq_ser.serialize_element(b)?,
+                Variant::Int32(b) => seq_ser.serialize_element(b)?,
+                Variant::UInt32(b) => seq_ser.serialize_element(b)?,
+                Variant::Int64(b) => seq_ser.serialize_element(b)?,
+                Variant::UInt64(b) => seq_ser.serialize_element(b)?,
+                Variant::Float(b) => ser_float_seq!(b, f32, seq_ser)?,
+                Variant::Double(b) => ser_float_seq!(b, f64, seq_ser)?,
+                Variant::String(b) => seq_ser.serialize_element(b)?,
+                Variant::DateTime(b) => seq_ser.serialize_element(b)?,
+                Variant::Guid(b) => seq_ser.serialize_element(b)?,
+                Variant::StatusCode(b) => seq_ser.serialize_element(b)?,
+                Variant::ByteString(b) => seq_ser.serialize_element(b)?,
+                Variant::XmlElement(b) => seq_ser.serialize_element(b)?,
+                Variant::QualifiedName(b) => seq_ser.serialize_element(b)?,
+                Variant::LocalizedText(b) => seq_ser.serialize_element(b)?,
+                Variant::NodeId(b) => seq_ser.serialize_element(b)?,
+                Variant::ExpandedNodeId(b) => seq_ser.serialize_element(b)?,
+                Variant::ExtensionObject(b) => seq_ser.serialize_element(b)?,
+                Variant::Variant(b) => seq_ser.serialize_element(b)?,
+                Variant::DataValue(b) => seq_ser.serialize_element(b)?,
+                Variant::DiagnosticInfo(b) => seq_ser.serialize_element(b)?,
+                Variant::Array(_) => {
+                    // Should be impossible, just write null
+                    seq_ser.serialize_element(&None::<i32>)?
+                }
+            }
+        }
+        seq_ser.end()
     }
 }
 

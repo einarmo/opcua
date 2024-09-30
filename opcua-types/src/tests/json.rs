@@ -6,7 +6,8 @@ use crate::{
     byte_string::ByteString, data_value::DataValue, date_time::DateTime,
     diagnostic_info::DiagnosticInfo, expanded_node_id::ExpandedNodeId, guid::Guid,
     localized_text::LocalizedText, node_id::NodeId, qualified_name::QualifiedName,
-    status_code::StatusCode, string::UAString, variant::Variant, Argument, DataTypeId,
+    status_code::StatusCode, string::UAString, variant::Variant, Argument, Array, DataTypeId,
+    VariantScalarTypeId,
 };
 
 use super::ExtensionObject;
@@ -411,18 +412,16 @@ fn serialize_variant_string() {
     );
 }
 
-/*
 #[test]
 fn serialize_variant_datetime() {
     // DateTime (13)
-    let dt = DateTime::now();
-    let ticks = dt.checked_ticks();
-    let v = Variant::from(dt);
-    let vs = serde_json::to_string(&v).unwrap();
-    println!("v = {}", vs);
-    assert_eq!(vs, format!("{{\"DateTime\":{}}}", ticks));
+    test_ser_de_variant(
+        Variant::DateTime(Box::new(DateTime::ymd(2000, 1, 1))),
+        json!({
+            "Type": 13, "Body": "2000-01-01T00:00:00.000Z"
+        }),
+    );
 }
-*/
 
 #[test]
 fn serialize_variant_guid() {
@@ -581,7 +580,10 @@ fn serialize_variant_variant() {
         json!({"Type": 24, "Body": null}),
     );
 
-    // TODO more variants
+    test_ser_de_variant(
+        Variant::Variant(Box::new(Variant::Double(1.2))),
+        json!({"Type": 24, "Body": { "Type": 11, "Body": 1.2 }}),
+    );
 }
 
 #[test]
@@ -592,27 +594,62 @@ fn serialize_variant_diagnostic_info() {
         json!({"Type": 25, "Body": {}}),
     );
 
-    // TODO more diagnostics
+    test_ser_de_variant(
+        Variant::DiagnosticInfo(Box::new(DiagnosticInfo {
+            symbolic_id: Some(2),
+            namespace_uri: Some(3),
+            additional_info: Some("info".into()),
+            locale: Some(4),
+            ..Default::default()
+        })),
+        json!({"Type": 25, "Body": {
+            "SymbolicId": 2,
+            "NamespaceUri": 3,
+            "AdditionalInfo": "info",
+            "Locale": 4,
+        }}),
+    )
 }
-
-/*
-
-TODO support arrays
 
 #[test]
 fn serialize_variant_single_dimension_array() {
-    let v = Array::new(VariantTypeId::Empty, []).unwrap();
-    let v = Variant::from(v);
-    let json = serde_json::to_value(&v).unwrap();
-    assert_eq!(json, json!({}));
+    test_ser_de_variant(
+        Variant::from(vec![1, 2, 3]),
+        json!({"Type": 6, "Body": [1, 2, 3]}),
+    );
+
+    test_ser_de_variant(
+        Variant::from(vec![
+            LocalizedText::new("en", "Test"),
+            LocalizedText::new("en", "Test2"),
+        ]),
+        json!({"Type": 21, "Body": [{
+            "Locale": "en",
+            "Text": "Test"
+        }, {
+            "Locale": "en",
+            "Text": "Test2"
+        }]}),
+    )
 }
 
 #[test]
 fn serialize_variant_multi_dimension_array() {
-    let v = Array::new_multi(VariantTypeId::Empty, [], []).unwrap();
-    let v = Variant::from(v);
-    let json = serde_json::to_value(&v).unwrap();
-    assert_eq!(json, json!({}));
+    let v = Array::new_multi(
+        VariantScalarTypeId::Int32,
+        [1, 2, 3, 4, 5, 6]
+            .into_iter()
+            .map(Variant::from)
+            .collect::<Vec<_>>(),
+        vec![2, 3],
+    )
+    .unwrap();
+    test_ser_de_variant(
+        v.into(),
+        json!({
+            "Type": 6,
+            "Body": [1, 2, 3, 4, 5, 6],
+            "Dimensions": [2, 3]
+        }),
+    );
 }
-
- */
