@@ -27,8 +27,19 @@ use crate::{
     AsyncSecureChannel, IdentityToken, Session, UARequest,
 };
 
-#[derive(Debug, Clone)]
-pub struct CreateSession {
+#[derive(Clone)]
+/// Sends a [`CreateSessionRequest`] to the server, returning the session id of the created
+/// session. Internally, the session will store the authentication token which is used for requests
+/// subsequent to this call.
+///
+/// See OPC UA Part 4 - Services 5.6.2 for complete description of the service and error responses.
+///
+/// Note that in order to use the session you will need to store the auth token and
+/// use that in subsequent requests.
+///
+/// Note: Avoid calling this on sessions managed by the [`Session`] type. Session creation
+/// is handled automatically as part of connect/reconnect logic.
+pub struct CreateSession<'a> {
     client_description: ApplicationDescription,
     server_uri: UAString,
     endpoint_url: UAString,
@@ -36,14 +47,16 @@ pub struct CreateSession {
     client_certificate: ByteString,
     session_timeout: f64,
     max_response_message_size: u32,
+    certificate_store: &'a RwLock<CertificateStore>,
+    endpoint: &'a EndpointDescription,
 
     header: RequestHeaderBuilder,
 }
 
-builder_base!(CreateSession);
+builder_base!(CreateSession<'a>);
 
-impl CreateSession {
-    pub fn new(session: &Session) -> Self {
+impl<'a> CreateSession<'a> {
+    pub fn new(session: &'a Session) -> Self {
         Self {
             endpoint_url: session.session_info.endpoint.endpoint_url.clone(),
             server_uri: UAString::null(),
@@ -57,6 +70,8 @@ impl CreateSession {
                     .map(|m| m.as_byte_string())
                     .unwrap_or_default()
             },
+            endpoint: &session.session_info.endpoint,
+            certificate_store: &session.certificate_store,
             session_timeout: session.session_timeout,
             max_response_message_size: 0,
             header: RequestHeaderBuilder::new_from_session(session),
@@ -64,6 +79,8 @@ impl CreateSession {
     }
 
     pub fn new_manual(
+        certificate_store: &'a RwLock<CertificateStore>,
+        endpoint: &'a EndpointDescription,
         session_id: u32,
         timeout: Duration,
         auth_token: NodeId,
@@ -77,6 +94,8 @@ impl CreateSession {
             client_certificate: ByteString::null(),
             session_timeout: 0.0,
             max_response_message_size: 0,
+            certificate_store,
+            endpoint,
             header: RequestHeaderBuilder::new(session_id, timeout, auth_token, request_handle),
         }
     }
@@ -127,7 +146,7 @@ impl CreateSession {
     }
 }
 
-impl UARequest for CreateSession {
+impl<'b> UARequest for CreateSession<'b> {
     type Out = CreateSessionResponse;
 
     async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
@@ -149,6 +168,35 @@ impl UARequest for CreateSession {
 
         if let ResponseMessage::CreateSession(response) = response {
             process_service_result(&response.response_header)?;
+
+            let security_policy = channel.security_policy();
+
+            if security_policy != SecurityPolicy::None {
+                if let Ok(server_certificate) =
+                    opcua_crypto::X509::from_byte_string(&response.server_certificate)
+                {
+                    // Validate server certificate against hostname and application_uri
+                    let hostname = hostname_from_url(self.endpoint.endpoint_url.as_ref())
+                        .map_err(|_| StatusCode::BadUnexpectedError)?;
+                    let application_uri = self.endpoint.server.application_uri.as_ref();
+
+                    let certificate_store = trace_write_lock!(self.certificate_store);
+                    certificate_store.validate_or_reject_application_instance_cert(
+                        &server_certificate,
+                        security_policy,
+                        Some(&hostname),
+                        Some(application_uri),
+                    )?;
+                } else {
+                    return Err(StatusCode::BadCertificateInvalid);
+                }
+            }
+
+            channel.update_from_created_session(
+                &response.server_nonce,
+                &response.server_certificate,
+            )?;
+
             Ok(*response)
         } else {
             Err(process_unexpected_response(response))
@@ -157,6 +205,13 @@ impl UARequest for CreateSession {
 }
 
 #[derive(Debug, Clone)]
+/// Sends an [`ActivateSessionRequest`] to the server to activate the session tied to
+/// the secure channel.
+///
+/// See OPC UA Part 4 - Services 5.6.3 for complete description of the service and error responses.
+///
+/// Note: Avoid calling this on sessions managed by the [`Session`] type. Session activation
+/// is handled automatically as part of connect/reconnect logic.
 pub struct ActivateSession {
     identity_token: IdentityToken,
     private_key: Option<PKey<RsaPrivateKey>>,
@@ -416,6 +471,10 @@ impl UARequest for ActivateSession {
 }
 
 #[derive(Debug, Clone)]
+/// Close the session by sending a [`CloseSessionRequest`] to the server.
+///
+/// Note: Avoid using this on an session managed by the [`Session`] type,
+/// instead call [`Session::disconnect`].
 pub struct CloseSession {
     delete_subscriptions: bool,
     header: RequestHeaderBuilder,
@@ -472,6 +531,9 @@ impl UARequest for CloseSession {
 }
 
 #[derive(Debug, Clone)]
+/// Cancels an outstanding service request by sending a [`CancelRequest`] to the server.
+///
+/// See OPC UA Part 4 - Services 5.6.5 for complete description of the service and error responses.
 pub struct Cancel {
     request_handle: IntegerId,
     header: RequestHeaderBuilder,
@@ -538,38 +600,12 @@ impl Session {
     pub(crate) async fn create_session(&self) -> Result<NodeId, StatusCode> {
         let response = CreateSession::new(self).send(&self.channel).await?;
 
-        let security_policy = self.channel.security_policy();
-
-        if security_policy != SecurityPolicy::None {
-            if let Ok(server_certificate) =
-                opcua_crypto::X509::from_byte_string(&response.server_certificate)
-            {
-                // Validate server certificate against hostname and application_uri
-                let hostname = hostname_from_url(self.session_info.endpoint.endpoint_url.as_ref())
-                    .map_err(|_| StatusCode::BadUnexpectedError)?;
-                let application_uri = self.session_info.endpoint.server.application_uri.as_ref();
-
-                let certificate_store = trace_write_lock!(self.certificate_store);
-                certificate_store.validate_or_reject_application_instance_cert(
-                    &server_certificate,
-                    security_policy,
-                    Some(&hostname),
-                    Some(application_uri),
-                )?;
-            } else {
-                return Err(StatusCode::BadCertificateInvalid);
-            }
-        }
-
         let session_id = {
             self.session_id.store(Arc::new(response.session_id.clone()));
             response.session_id.clone()
         };
         self.auth_token
             .store(Arc::new(response.authentication_token));
-
-        self.channel
-            .update_from_created_session(&response.server_nonce, &response.server_certificate)?;
 
         Ok(session_id)
     }

@@ -218,7 +218,7 @@ pub struct HistoryRead<'a> {
     header: RequestHeaderBuilder,
 }
 
-builder_base!(HistoryRead<'a>, <'a>);
+builder_base!(HistoryRead<'a>);
 
 impl<'a> HistoryRead<'a> {
     pub fn new(details: &'a HistoryReadAction, session: &Session) -> Self {

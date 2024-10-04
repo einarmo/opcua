@@ -83,7 +83,7 @@ impl Request {
 
         match cb_recv.await {
             Ok(r) => r,
-            // Should not really happen, would mean something paniced.
+            // Should not really happen, would mean something panicked.
             Err(_) => Err(StatusCode::BadConnectionClosed),
         }
     }

@@ -47,7 +47,7 @@ pub struct CreateSubscription<'a> {
     header: RequestHeaderBuilder,
 }
 
-builder_base!(CreateSubscription<'a>, <'a>);
+builder_base!(CreateSubscription<'a>);
 
 impl<'a> CreateSubscription<'a> {
     /// Construct a new call to the `CreateSubscription` service.
@@ -210,7 +210,7 @@ pub struct ModifySubscription<'a> {
     header: RequestHeaderBuilder,
 }
 
-builder_base!(ModifySubscription<'a>, <'a>);
+builder_base!(ModifySubscription<'a>);
 
 impl<'a> ModifySubscription<'a> {
     /// Construct a new call to the `ModifySubscription` service.
@@ -361,7 +361,7 @@ pub struct SetPublishingMode<'a> {
     header: RequestHeaderBuilder,
 }
 
-builder_base!(SetPublishingMode<'a>, <'a>);
+builder_base!(SetPublishingMode<'a>);
 
 impl<'a> SetPublishingMode<'a> {
     /// Construct a new call to the `SetPublishingMode` service.
@@ -579,7 +579,7 @@ pub struct DeleteSubscriptions<'a> {
     header: RequestHeaderBuilder,
 }
 
-builder_base!(DeleteSubscriptions<'a>, <'a>);
+builder_base!(DeleteSubscriptions<'a>);
 
 impl<'a> DeleteSubscriptions<'a> {
     /// Construct a new call to the `DeleteSubscriptions` service.
@@ -654,6 +654,9 @@ impl<'b> UARequest for DeleteSubscriptions<'b> {
 }
 
 #[derive(Clone)]
+/// Creates monitored items on a subscription by sending a [`CreateMonitoredItemsRequest`] to the server.
+///
+/// See OPC UA Part 4 - Services 5.12.2 for complete description of the service and error responses.
 pub struct CreateMonitoredItems<'a> {
     subscription_id: u32,
     timestamps_to_return: TimestampsToReturn,
@@ -664,7 +667,7 @@ pub struct CreateMonitoredItems<'a> {
     header: RequestHeaderBuilder,
 }
 
-builder_base!(CreateMonitoredItems<'a>, <'a>);
+builder_base!(CreateMonitoredItems<'a>);
 
 impl<'a> CreateMonitoredItems<'a> {
     /// Construct a new call to the `CreateMonitoredItems` service.
@@ -845,6 +848,10 @@ impl<'b> UARequest for CreateMonitoredItems<'b> {
     }
 }
 
+#[derive(Clone)]
+/// Modifies monitored items on a subscription by sending a [`ModifyMonitoredItemsRequest`] to the server.
+///
+/// See OPC UA Part 4 - Services 5.12.3 for complete description of the service and error responses.
 pub struct ModifyMonitoredItems<'a> {
     subscription_id: u32,
     timestamps_to_return: TimestampsToReturn,
@@ -854,7 +861,7 @@ pub struct ModifyMonitoredItems<'a> {
     header: RequestHeaderBuilder,
 }
 
-builder_base!(ModifyMonitoredItems<'a>, <'a>);
+builder_base!(ModifyMonitoredItems<'a>);
 
 impl<'a> ModifyMonitoredItems<'a> {
     /// Construct a new call to the `ModifyMonitoredItems` service.
@@ -989,6 +996,11 @@ impl<'b> UARequest for ModifyMonitoredItems<'b> {
     }
 }
 
+#[derive(Clone)]
+/// Sets the monitoring mode on one or more monitored items by sending a [`SetMonitoringModeRequest`]
+/// to the server.
+///
+/// See OPC UA Part 4 - Services 5.12.4 for complete description of the service and error responses.
 pub struct SetMonitoringMode<'a> {
     subscription_id: u32,
     monitoring_mode: MonitoringMode,
@@ -998,7 +1010,7 @@ pub struct SetMonitoringMode<'a> {
     header: RequestHeaderBuilder,
 }
 
-builder_base!(SetMonitoringMode<'a>, <'a>);
+builder_base!(SetMonitoringMode<'a>);
 
 impl<'a> SetMonitoringMode<'a> {
     /// Construct a new call to the `SetMonitoringMode` service.
@@ -1126,6 +1138,12 @@ impl<'b> UARequest for SetMonitoringMode<'b> {
     }
 }
 
+#[derive(Clone)]
+/// Sets a monitored item so it becomes the trigger that causes other monitored items to send
+/// change events in the same update. Sends a [`SetTriggeringRequest`] to the server.
+/// Note that `items_to_remove` is applied before `items_to_add`.
+///
+/// See OPC UA Part 4 - Services 5.12.5 for complete description of the service and error responses.
 pub struct SetTriggering<'a> {
     subscription_id: u32,
     triggering_item_id: u32,
@@ -1136,7 +1154,7 @@ pub struct SetTriggering<'a> {
     header: RequestHeaderBuilder,
 }
 
-builder_base!(SetTriggering<'a>, <'a>);
+builder_base!(SetTriggering<'a>);
 
 impl<'a> SetTriggering<'a> {
     /// Construct a new call to the `SetTriggering` service.
@@ -1296,6 +1314,10 @@ impl<'b> UARequest for SetTriggering<'b> {
     }
 }
 
+#[derive(Clone)]
+/// Deletes monitored items from a subscription by sending a [`DeleteMonitoredItemsRequest`] to the server.
+///
+/// See OPC UA Part 4 - Services 5.12.6 for complete description of the service and error responses.
 pub struct DeleteMonitoredItems<'a> {
     subscription_id: u32,
     items_to_delete: Vec<u32>,
@@ -1304,7 +1326,7 @@ pub struct DeleteMonitoredItems<'a> {
     header: RequestHeaderBuilder,
 }
 
-builder_base!(DeleteMonitoredItems<'a>, <'a>);
+builder_base!(DeleteMonitoredItems<'a>);
 
 impl<'a> DeleteMonitoredItems<'a> {
     /// Construct a new call to the `DeleteMonitoredItems` service.

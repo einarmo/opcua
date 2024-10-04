@@ -55,19 +55,19 @@ impl RequestHeaderBuilder {
 }
 
 macro_rules! builder_base {
-    ($st:ty) => {
+    ($st:ident) => {
         impl $st {
-            builder_base!(_inner $st);
+            builder_base!(!_inner);
         }
     };
 
-    ($st:ty, $($gen:tt)*) => {
-        impl$($gen)* $st {
-            builder_base!(_inner $st);
+    ($st:ident$($gen:tt)*) => {
+        impl$($gen)* $st$($gen)* {
+            builder_base!(!_inner);
         }
     };
 
-    (_inner $st:ty) => {
+    (!_inner) => {
         /// Set requested diagnostic bits.
         pub fn diagnostics(mut self, bits: opcua_types::DiagnosticBits) -> Self {
             self.header.header.return_diagnostics = bits;
