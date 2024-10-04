@@ -75,6 +75,8 @@ pub trait TypeTree {
         type_id: &NodeId,
         path: &[QualifiedName],
     ) -> Option<&TypeProperty>;
+
+    fn get_supertype<'a>(&'a self, node: &NodeId) -> Option<&'a NodeId>;
 }
 
 impl TypeTree for DefaultTypeTree {
@@ -131,6 +133,10 @@ impl TypeTree for DefaultTypeTree {
         path: &[QualifiedName],
     ) -> Option<&TypeProperty> {
         self.type_properties.get(type_id).and_then(|p| p.get(path))
+    }
+
+    fn get_supertype<'a>(&'a self, node: &NodeId) -> Option<&'a NodeId> {
+        self.subtypes_by_target.get(node)
     }
 }
 

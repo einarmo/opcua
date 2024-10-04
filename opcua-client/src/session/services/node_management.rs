@@ -1,13 +1,319 @@
+use std::time::Duration;
+
 use crate::{
-    session::{process_service_result, process_unexpected_response, session_error},
-    Session,
+    session::{
+        process_service_result, process_unexpected_response,
+        request_builder::{builder_base, builder_debug, builder_error, RequestHeaderBuilder},
+    },
+    Session, UARequest,
 };
 
 use opcua_core::ResponseMessage;
 use opcua_types::{
-    AddNodesItem, AddNodesRequest, AddNodesResult, AddReferencesItem, AddReferencesRequest,
-    DeleteNodesItem, DeleteNodesRequest, DeleteReferencesItem, DeleteReferencesRequest, StatusCode,
+    AddNodesItem, AddNodesRequest, AddNodesResponse, AddNodesResult, AddReferencesItem,
+    AddReferencesRequest, AddReferencesResponse, DeleteNodesItem, DeleteNodesRequest,
+    DeleteNodesResponse, DeleteReferencesItem, DeleteReferencesRequest, DeleteReferencesResponse,
+    IntegerId, NodeId, StatusCode,
 };
+
+#[derive(Debug, Clone)]
+pub struct AddNodes {
+    nodes_to_add: Vec<AddNodesItem>,
+
+    header: RequestHeaderBuilder,
+}
+
+builder_base!(AddNodes);
+
+/// Add nodes by sending a [`AddNodesRequest`] to the server.
+///
+/// See OPC UA Part 4 - Services 5.7.2 for complete description of the service and error responses.
+impl AddNodes {
+    /// Construct a new call to the `AddNodes` service.
+    pub fn new(session: &Session) -> Self {
+        Self {
+            nodes_to_add: Vec::new(),
+            header: RequestHeaderBuilder::new_from_session(session),
+        }
+    }
+
+    /// Construct a new call to the `AddNodes` service, setting header parameters manually.
+    pub fn new_manual(
+        session_id: u32,
+        timeout: Duration,
+        auth_token: NodeId,
+        request_handle: IntegerId,
+    ) -> Self {
+        Self {
+            nodes_to_add: Vec::new(),
+            header: RequestHeaderBuilder::new(session_id, timeout, auth_token, request_handle),
+        }
+    }
+
+    /// Set nodes to add, overwriting any that were set previously.
+    pub fn nodes_to_add(mut self, nodes_to_add: Vec<AddNodesItem>) -> Self {
+        self.nodes_to_add = nodes_to_add;
+        self
+    }
+
+    /// Add a node to create.
+    pub fn node(mut self, node: impl Into<AddNodesItem>) -> Self {
+        self.nodes_to_add.push(node.into());
+        self
+    }
+}
+
+impl UARequest for AddNodes {
+    type Out = AddNodesResponse;
+
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
+    where
+        Self: 'a,
+    {
+        if self.nodes_to_add.is_empty() {
+            builder_error!(self, "add_nodes, called with no nodes to add");
+            return Err(StatusCode::BadNothingToDo);
+        }
+        let request = AddNodesRequest {
+            request_header: self.header.header,
+            nodes_to_add: Some(self.nodes_to_add),
+        };
+        let response = channel.send(request, self.header.timeout).await?;
+        if let ResponseMessage::AddNodes(response) = response {
+            builder_debug!(self, "add_nodes, success");
+            process_service_result(&response.response_header)?;
+            Ok(*response)
+        } else {
+            builder_error!(self, "add_nodes failed");
+            Err(process_unexpected_response(response))
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+/// Add references by sending a [`AddReferencesRequest`] to the server.
+///
+/// See OPC UA Part 4 - Services 5.7.3 for complete description of the service and error responses.
+pub struct AddReferences {
+    references_to_add: Vec<AddReferencesItem>,
+
+    header: RequestHeaderBuilder,
+}
+
+builder_base!(AddReferences);
+
+impl AddReferences {
+    /// Construct a new call to the `AddReferences` service.
+    pub fn new(session: &Session) -> Self {
+        Self {
+            references_to_add: Vec::new(),
+            header: RequestHeaderBuilder::new_from_session(session),
+        }
+    }
+
+    /// Construct a new call to the `AddReferences` service, setting header parameters manually.
+    pub fn new_manual(
+        session_id: u32,
+        timeout: Duration,
+        auth_token: NodeId,
+        request_handle: IntegerId,
+    ) -> Self {
+        Self {
+            references_to_add: Vec::new(),
+            header: RequestHeaderBuilder::new(session_id, timeout, auth_token, request_handle),
+        }
+    }
+
+    /// Set references to add, overwriting any that were set previously.
+    pub fn references_to_add(mut self, references_to_add: Vec<AddReferencesItem>) -> Self {
+        self.references_to_add = references_to_add;
+        self
+    }
+
+    /// Add a reference to create.
+    pub fn reference(mut self, reference: impl Into<AddReferencesItem>) -> Self {
+        self.references_to_add.push(reference.into());
+        self
+    }
+}
+
+impl UARequest for AddReferences {
+    type Out = AddReferencesResponse;
+
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
+    where
+        Self: 'a,
+    {
+        if self.references_to_add.is_empty() {
+            builder_error!(self, "add_references, called with no references to add");
+            return Err(StatusCode::BadNothingToDo);
+        }
+        let request = AddReferencesRequest {
+            request_header: self.header.header,
+            references_to_add: Some(self.references_to_add),
+        };
+        let response = channel.send(request, self.header.timeout).await?;
+        if let ResponseMessage::AddReferences(response) = response {
+            builder_debug!(self, "add_references, success");
+            process_service_result(&response.response_header)?;
+            Ok(*response)
+        } else {
+            builder_error!(self, "add_references failed");
+            Err(process_unexpected_response(response))
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+/// Delete nodes by sending a [`DeleteNodesRequest`] to the server.
+///
+/// See OPC UA Part 4 - Services 5.7.4 for complete description of the service and error responses.
+pub struct DeleteNodes {
+    nodes_to_delete: Vec<DeleteNodesItem>,
+
+    header: RequestHeaderBuilder,
+}
+
+builder_base!(DeleteNodes);
+
+impl DeleteNodes {
+    /// Construct a new call to the `DeleteNodes` service.
+    pub fn new(session: &Session) -> Self {
+        Self {
+            nodes_to_delete: Vec::new(),
+            header: RequestHeaderBuilder::new_from_session(session),
+        }
+    }
+
+    /// Construct a new call to the `DeleteNodes` service, setting header parameters manually.
+    pub fn new_manual(
+        session_id: u32,
+        timeout: Duration,
+        auth_token: NodeId,
+        request_handle: IntegerId,
+    ) -> Self {
+        Self {
+            nodes_to_delete: Vec::new(),
+            header: RequestHeaderBuilder::new(session_id, timeout, auth_token, request_handle),
+        }
+    }
+
+    /// Set nodes to delete, overwriting any that were set previously.
+    pub fn nodes_to_delete(mut self, nodes_to_delete: Vec<DeleteNodesItem>) -> Self {
+        self.nodes_to_delete = nodes_to_delete;
+        self
+    }
+
+    /// Add a node to delete.
+    pub fn node(mut self, reference: impl Into<DeleteNodesItem>) -> Self {
+        self.nodes_to_delete.push(reference.into());
+        self
+    }
+}
+
+impl UARequest for DeleteNodes {
+    type Out = DeleteNodesResponse;
+
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
+    where
+        Self: 'a,
+    {
+        if self.nodes_to_delete.is_empty() {
+            builder_error!(self, "delete_nodes, called with no nodes to delete");
+            return Err(StatusCode::BadNothingToDo);
+        }
+        let request = DeleteNodesRequest {
+            request_header: self.header.header,
+            nodes_to_delete: Some(self.nodes_to_delete),
+        };
+        let response = channel.send(request, self.header.timeout).await?;
+        if let ResponseMessage::DeleteNodes(response) = response {
+            builder_debug!(self, "delete_nodes, success");
+            process_service_result(&response.response_header)?;
+            Ok(*response)
+        } else {
+            builder_error!(self, "delete_nodes failed");
+            Err(process_unexpected_response(response))
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+/// Delete references by sending a [`DeleteReferencesRequest`] to the server.
+///
+/// See OPC UA Part 4 - Services 5.7.5 for complete description of the service and error responses.
+pub struct DeleteReferences {
+    references_to_delete: Vec<DeleteReferencesItem>,
+
+    header: RequestHeaderBuilder,
+}
+
+builder_base!(DeleteReferences);
+
+impl DeleteReferences {
+    /// Construct a new call to the `DeleteReferences` service.
+    pub fn new(session: &Session) -> Self {
+        Self {
+            references_to_delete: Vec::new(),
+            header: RequestHeaderBuilder::new_from_session(session),
+        }
+    }
+
+    /// Construct a new call to the `DeleteReferences` service, setting header parameters manually.
+    pub fn new_manual(
+        session_id: u32,
+        timeout: Duration,
+        auth_token: NodeId,
+        request_handle: IntegerId,
+    ) -> Self {
+        Self {
+            references_to_delete: Vec::new(),
+            header: RequestHeaderBuilder::new(session_id, timeout, auth_token, request_handle),
+        }
+    }
+
+    /// Set nodes to delete, overwriting any that were set previously.
+    pub fn references_to_delete(mut self, references_to_delete: Vec<DeleteReferencesItem>) -> Self {
+        self.references_to_delete = references_to_delete;
+        self
+    }
+
+    /// Add a reference to delete.
+    pub fn reference(mut self, reference: impl Into<DeleteReferencesItem>) -> Self {
+        self.references_to_delete.push(reference.into());
+        self
+    }
+}
+
+impl UARequest for DeleteReferences {
+    type Out = DeleteReferencesResponse;
+
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
+    where
+        Self: 'a,
+    {
+        if self.references_to_delete.is_empty() {
+            builder_error!(
+                self,
+                "delete_references, called with no references to delete"
+            );
+            return Err(StatusCode::BadNothingToDo);
+        }
+        let request = DeleteReferencesRequest {
+            request_header: self.header.header,
+            references_to_delete: Some(self.references_to_delete),
+        };
+        let response = channel.send(request, self.header.timeout).await?;
+        if let ResponseMessage::DeleteReferences(response) = response {
+            builder_debug!(self, "delete_references, success");
+            process_service_result(&response.response_header)?;
+            Ok(*response)
+        } else {
+            builder_error!(self, "delete_references failed");
+            Err(process_unexpected_response(response))
+        }
+    }
+}
 
 impl Session {
     /// Add nodes by sending a [`AddNodesRequest`] to the server.
@@ -27,21 +333,12 @@ impl Session {
         &self,
         nodes_to_add: &[AddNodesItem],
     ) -> Result<Vec<AddNodesResult>, StatusCode> {
-        if nodes_to_add.is_empty() {
-            session_error!(self, "add_nodes, called with no nodes to add");
-            Err(StatusCode::BadNothingToDo)
-        } else {
-            let request = AddNodesRequest {
-                request_header: self.make_request_header(),
-                nodes_to_add: Some(nodes_to_add.to_vec()),
-            };
-            let response = self.send(request).await?;
-            if let ResponseMessage::AddNodes(response) = response {
-                Ok(response.results.unwrap())
-            } else {
-                Err(process_unexpected_response(response))
-            }
-        }
+        Ok(AddNodes::new(self)
+            .nodes_to_add(nodes_to_add.to_vec())
+            .send(&self.channel)
+            .await?
+            .results
+            .unwrap_or_default())
     }
 
     /// Add references by sending a [`AddReferencesRequest`] to the server.
@@ -61,22 +358,12 @@ impl Session {
         &self,
         references_to_add: &[AddReferencesItem],
     ) -> Result<Vec<StatusCode>, StatusCode> {
-        if references_to_add.is_empty() {
-            session_error!(self, "add_references, called with no references to add");
-            Err(StatusCode::BadNothingToDo)
-        } else {
-            let request = AddReferencesRequest {
-                request_header: self.make_request_header(),
-                references_to_add: Some(references_to_add.to_vec()),
-            };
-            let response = self.send(request).await?;
-            if let ResponseMessage::AddReferences(response) = response {
-                process_service_result(&response.response_header)?;
-                Ok(response.results.unwrap())
-            } else {
-                Err(process_unexpected_response(response))
-            }
-        }
+        Ok(AddReferences::new(self)
+            .references_to_add(references_to_add.to_vec())
+            .send(&self.channel)
+            .await?
+            .results
+            .unwrap_or_default())
     }
 
     /// Delete nodes by sending a [`DeleteNodesRequest`] to the server.
@@ -96,21 +383,12 @@ impl Session {
         &self,
         nodes_to_delete: &[DeleteNodesItem],
     ) -> Result<Vec<StatusCode>, StatusCode> {
-        if nodes_to_delete.is_empty() {
-            session_error!(self, "delete_nodes, called with no nodes to delete");
-            Err(StatusCode::BadNothingToDo)
-        } else {
-            let request = DeleteNodesRequest {
-                request_header: self.make_request_header(),
-                nodes_to_delete: Some(nodes_to_delete.to_vec()),
-            };
-            let response = self.send(request).await?;
-            if let ResponseMessage::DeleteNodes(response) = response {
-                Ok(response.results.unwrap())
-            } else {
-                Err(process_unexpected_response(response))
-            }
-        }
+        Ok(DeleteNodes::new(self)
+            .nodes_to_delete(nodes_to_delete.to_vec())
+            .send(&self.channel)
+            .await?
+            .results
+            .unwrap_or_default())
     }
 
     /// Delete references by sending a [`DeleteReferencesRequest`] to the server.
@@ -130,23 +408,11 @@ impl Session {
         &self,
         references_to_delete: &[DeleteReferencesItem],
     ) -> Result<Vec<StatusCode>, StatusCode> {
-        if references_to_delete.is_empty() {
-            session_error!(
-                self,
-                "delete_references, called with no references to delete"
-            );
-            Err(StatusCode::BadNothingToDo)
-        } else {
-            let request = DeleteReferencesRequest {
-                request_header: self.make_request_header(),
-                references_to_delete: Some(references_to_delete.to_vec()),
-            };
-            let response = self.send(request).await?;
-            if let ResponseMessage::DeleteReferences(response) = response {
-                Ok(response.results.unwrap())
-            } else {
-                Err(process_unexpected_response(response))
-            }
-        }
+        Ok(DeleteReferences::new(self)
+            .references_to_delete(references_to_delete.to_vec())
+            .send(&self.channel)
+            .await?
+            .results
+            .unwrap_or_default())
     }
 }

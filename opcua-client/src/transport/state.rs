@@ -14,8 +14,8 @@ use opcua_core::{
 };
 use opcua_crypto::SecurityPolicy;
 use opcua_types::{
-    DateTime, DiagnosticBits, MessageSecurityMode, NodeId, OpenSecureChannelRequest, RequestHeader,
-    SecurityTokenRequestType, StatusCode,
+    DateTime, DiagnosticBits, IntegerId, MessageSecurityMode, NodeId, OpenSecureChannelRequest,
+    RequestHeader, SecurityTokenRequestType, StatusCode,
 };
 
 pub(crate) type RequestSend = tokio::sync::mpsc::Sender<OutgoingMessage>;
@@ -83,7 +83,7 @@ impl Request {
 
         match cb_recv.await {
             Ok(r) => r,
-            // Should not really happen, would mean something paniced.
+            // Should not really happen, would mean something panicked.
             Err(_) => Err(StatusCode::BadConnectionClosed),
         }
     }
@@ -205,5 +205,9 @@ impl SecureChannelState {
             timeout_hint: timeout.as_millis().min(u32::MAX as u128) as u32,
             ..Default::default()
         }
+    }
+
+    pub fn request_handle(&self) -> IntegerId {
+        self.request_handle.next()
     }
 }

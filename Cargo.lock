@@ -1042,6 +1042,7 @@ dependencies = [
  "opcua-crypto",
  "opcua-types",
  "parking_lot",
+ "rsa",
  "serde",
  "tokio",
  "tokio-util",

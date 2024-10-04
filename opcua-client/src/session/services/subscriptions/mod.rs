@@ -14,6 +14,12 @@ use opcua_types::{
     StatusChangeNotification, Variant,
 };
 
+pub use service::{
+    CreateMonitoredItems, CreateSubscription, DeleteMonitoredItems, DeleteSubscriptions,
+    ModifyMonitoredItems, ModifySubscription, SetMonitoringMode, SetPublishingMode, SetTriggering,
+    TransferSubscriptions,
+};
+
 pub(crate) struct CreateMonitoredItem {
     pub id: u32,
     pub client_handle: u32,
@@ -146,6 +152,8 @@ impl OnSubscriptionNotification for EventCallback {
     }
 }
 
+#[derive(Debug, Clone)]
+/// Client-side representation of a monitored item.
 pub struct MonitoredItem {
     /// This is the monitored item's id within the subscription
     id: u32,
@@ -238,6 +246,7 @@ impl MonitoredItem {
     }
 }
 
+/// Client-side representation of a subscription.
 pub struct Subscription {
     /// Subscription id, supplied by server
     subscription_id: u32,
@@ -321,6 +330,13 @@ impl Subscription {
         self.publishing_enabled
     }
 
+    pub fn insert_existing_monitored_item(&mut self, item: MonitoredItem) {
+        let client_handle = item.client_handle();
+        let monitored_item_id = item.id();
+        self.monitored_items.insert(monitored_item_id, item);
+        self.client_handles.insert(client_handle, monitored_item_id);
+    }
+
     pub(crate) fn set_publishing_interval(&mut self, publishing_interval: Duration) {
         self.publishing_interval = publishing_interval;
     }
@@ -359,11 +375,7 @@ impl Subscription {
                 filter: i.filter,
             };
 
-            let client_handle = monitored_item.client_handle();
-            let monitored_item_id = monitored_item.id();
-            self.monitored_items
-                .insert(monitored_item_id, monitored_item);
-            self.client_handles.insert(client_handle, monitored_item_id);
+            self.insert_existing_monitored_item(monitored_item);
         });
     }
 

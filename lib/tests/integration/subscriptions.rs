@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use crate::utils::ChannelNotifications;
+use crate::utils::{test_server, ChannelNotifications, TestNodeManager, Tester};
 
 use super::utils::setup;
 use opcua::{
@@ -11,6 +11,9 @@ use opcua::{
         ReadValueId, ReferenceTypeId, StatusCode, TimestampsToReturn, VariableTypeId, Variant,
     },
 };
+use opcua_client::{services::TransferSubscriptions, IdentityToken, Subscription, UARequest};
+use opcua_crypto::SecurityPolicy;
+use opcua_types::MessageSecurityMode;
 use tokio::{sync::mpsc::UnboundedReceiver, time::timeout};
 
 #[tokio::test]
@@ -440,5 +443,164 @@ async fn subscription_limits() {
     assert_eq!(e, StatusCode::BadTooManyOperations);
 }
 
-// TODO: Add tests for transfer subscriptions and more detailed high level tests on
-// subscriptions. Would be much easier to do with a low-level client.
+#[tokio::test]
+async fn transfer_subscriptions() {
+    let server = test_server();
+    let mut tester = Tester::new(server, false).await;
+    let nm = tester
+        .handle
+        .node_managers()
+        .get_of_type::<TestNodeManager>()
+        .unwrap();
+    // Need to use an encrypted connection, or transfer won't work.
+    let (session, lp) = tester
+        .connect(
+            SecurityPolicy::Aes256Sha256RsaPss,
+            MessageSecurityMode::SignAndEncrypt,
+            IdentityToken::Anonymous,
+        )
+        .await
+        .unwrap();
+    lp.spawn();
+    tokio::time::timeout(Duration::from_secs(2), session.wait_for_connection())
+        .await
+        .unwrap();
+
+    let id = nm.inner().next_node_id();
+    nm.inner().add_node(
+        nm.address_space(),
+        tester.handle.type_tree(),
+        VariableBuilder::new(&id, "TestVar1", "TestVar1")
+            .value(-1)
+            .data_type(DataTypeId::Int32)
+            .access_level(AccessLevel::CURRENT_READ)
+            .user_access_level(UserAccessLevel::CURRENT_READ)
+            .build()
+            .into(),
+        &ObjectId::ObjectsFolder.into(),
+        &ReferenceTypeId::Organizes.into(),
+        Some(&VariableTypeId::BaseDataVariableType.into()),
+        Vec::new(),
+    );
+
+    let (notifs, mut data, _) = ChannelNotifications::new();
+
+    // Create a subscription
+    let sub_id = session
+        .create_subscription(Duration::from_millis(100), 100, 20, 1000, 0, true, notifs)
+        .await
+        .unwrap();
+
+    // Create a monitored item on that subscription
+    let res = session
+        .create_monitored_items(
+            sub_id,
+            TimestampsToReturn::Both,
+            vec![MonitoredItemCreateRequest {
+                item_to_monitor: ReadValueId {
+                    node_id: id.clone(),
+                    attribute_id: AttributeId::Value as u32,
+                    ..Default::default()
+                },
+                monitoring_mode: opcua::types::MonitoringMode::Reporting,
+                requested_parameters: MonitoringParameters {
+                    sampling_interval: 0.0,
+                    queue_size: 10,
+                    discard_oldest: true,
+                    ..Default::default()
+                },
+            }],
+        )
+        .await
+        .unwrap();
+    assert_eq!(res.len(), 1);
+    let it = &res[0];
+    assert_eq!(it.status_code, StatusCode::Good);
+
+    // We should quickly get a data value, this is due to the initial queued publish request.
+    let (r, v) = timeout(Duration::from_millis(500), data.recv())
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(r.node_id, id);
+    let val = match v.value {
+        Some(Variant::Int32(v)) => v,
+        _ => panic!("Expected integer value"),
+    };
+    assert_eq!(-1, val);
+
+    // Fetch the existing monitored item from the subscription.
+    let old_item = {
+        let state = session.subscription_state().lock();
+        state
+            .get(sub_id)
+            .unwrap()
+            .monitored_items()
+            .values()
+            .next()
+            .unwrap()
+            .clone()
+    };
+
+    // Now, close the session without clearing subscriptions.
+    session
+        .disconnect_without_delete_subscriptions()
+        .await
+        .unwrap();
+
+    // Create a new session
+    let (session, lp) = tester
+        .connect(
+            SecurityPolicy::Aes256Sha256RsaPss,
+            MessageSecurityMode::SignAndEncrypt,
+            IdentityToken::Anonymous,
+        )
+        .await
+        .unwrap();
+    lp.spawn();
+    tokio::time::timeout(Duration::from_secs(2), session.wait_for_connection())
+        .await
+        .unwrap();
+
+    // Manually add the subscription with a monitored item.
+    let (notifs, mut data, _) = ChannelNotifications::new();
+    let mut sub = Subscription::new(
+        sub_id,
+        Duration::from_millis(100),
+        100,
+        20,
+        1000,
+        0,
+        true,
+        Box::new(notifs),
+    );
+    sub.insert_existing_monitored_item(old_item);
+    {
+        let mut state = session.subscription_state().lock();
+        state.add_subscription(sub);
+    }
+
+    // Call transfer subscriptions.
+    let r = TransferSubscriptions::new(&session)
+        .subscription(sub_id)
+        .send_initial_values(true)
+        .send(session.channel())
+        .await
+        .unwrap();
+    assert_eq!(r.results.unwrap()[0].status_code, StatusCode::Good);
+    session.trigger_publish_now();
+
+    // Expect a value
+    let (r, v) = timeout(Duration::from_millis(500), data.recv())
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(r.node_id, id);
+    let val = match v.value {
+        Some(Variant::Int32(v)) => v,
+        _ => panic!("Expected integer value"),
+    };
+    assert_eq!(-1, val);
+}
+
+// TODO: Add more detailed high level tests on subscriptions.

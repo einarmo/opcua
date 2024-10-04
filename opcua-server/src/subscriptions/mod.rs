@@ -688,18 +688,22 @@ impl SubscriptionCache {
             let mut session_subs_lck = session_subs.lock();
 
             for (sub_id, res) in &mut results {
-                let Some(inner_session_id) = lck.subscription_to_session.get(sub_id) else {
+                let Some(current_owner_session_id) = lck.subscription_to_session.get(sub_id) else {
                     continue;
                 };
-                if session_id == *inner_session_id {
+                if session_id == *current_owner_session_id {
                     res.status_code = StatusCode::Good;
                     res.available_sequence_numbers =
                         session_subs_lck.available_sequence_numbers(*sub_id);
                     continue;
                 }
 
-                let Some(session_cache) = lck.session_subscriptions.get(inner_session_id).cloned()
+                let Some(session_cache) = lck
+                    .session_subscriptions
+                    .get(current_owner_session_id)
+                    .cloned()
                 else {
+                    // Should be impossible.
                     continue;
                 };
 
@@ -711,6 +715,11 @@ impl SubscriptionCache {
                 }
 
                 if let (Some(sub), notifs) = session_lck.remove(*sub_id) {
+                    log::debug!(
+                        "Transfer subscription {} to session {}",
+                        sub.id(),
+                        session_id
+                    );
                     res.status_code = StatusCode::Good;
                     res.available_sequence_numbers =
                         Some(notifs.iter().map(|n| n.message.sequence_number).collect());

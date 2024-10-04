@@ -124,9 +124,25 @@ pub use config::{ClientConfig, ClientEndpoint, ClientUserToken, ANONYMOUS_USER_T
 pub use session::{
     Client, DataChangeCallback, EventCallback, HistoryReadAction, HistoryUpdateAction,
     MonitoredItem, OnSubscriptionNotification, Session, SessionActivity, SessionConnectMode,
-    SessionEventLoop, SessionPollResult, Subscription, SubscriptionCallbacks,
+    SessionEventLoop, SessionPollResult, Subscription, SubscriptionCallbacks, UARequest,
 };
 pub use transport::AsyncSecureChannel;
+
+pub mod services {
+    //! This module contains request builders for most OPC-UA services.
+    //! Typically you can just use the methods on [`Session`], but if you need to specify
+    //! diagnostics, set a custom timeout, or do other header manipulation, you must use the
+    //! raw request builders.
+    //! Note that these let you pass a session manually, in this case you are responsible for
+    //! passing a valid session matching the secure channel.
+    pub use super::session::{
+        ActivateSession, AddNodes, AddReferences, Browse, BrowseNext, Call, Cancel, CloseSession,
+        CreateMonitoredItems, CreateSession, CreateSubscription, DeleteMonitoredItems, DeleteNodes,
+        DeleteReferences, DeleteSubscriptions, HistoryRead, HistoryUpdate, ModifyMonitoredItems,
+        ModifySubscription, Read, RegisterNodes, SetMonitoringMode, SetPublishingMode,
+        SetTriggering, TransferSubscriptions, TranslateBrowsePaths, UnregisterNodes, Write,
+    };
+}
 
 #[derive(Debug, Clone)]
 pub enum IdentityToken {

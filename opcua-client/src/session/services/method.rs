@@ -1,16 +1,112 @@
+use std::time::Duration;
+
 use crate::{
-    session::{process_unexpected_response, session_debug, session_error},
-    Session,
+    session::{
+        process_unexpected_response,
+        request_builder::{builder_base, builder_debug, builder_error, RequestHeaderBuilder},
+        session_error,
+    },
+    AsyncSecureChannel, Session, UARequest,
 };
-use log::error;
 use opcua_core::ResponseMessage;
 use opcua_types::{
-    CallMethodRequest, CallMethodResult, CallRequest, MethodId, NodeId, ObjectId, StatusCode,
-    Variant,
+    CallMethodRequest, CallMethodResult, CallRequest, CallResponse, IntegerId, MethodId, NodeId,
+    ObjectId, StatusCode, Variant,
 };
 
+#[derive(Debug, Clone)]
+/// Calls a list of methods on the server by sending a [`CallRequest`] to the server.
+///
+/// See OPC UA Part 4 - Services 5.11.2 for complete description of the service and error responses.
+pub struct Call {
+    methods: Vec<CallMethodRequest>,
+
+    header: RequestHeaderBuilder,
+}
+
+builder_base!(Call);
+
+impl Call {
+    /// Create a new call to the `Call` service.
+    pub fn new(session: &Session) -> Self {
+        Self {
+            methods: Vec::new(),
+            header: RequestHeaderBuilder::new_from_session(session),
+        }
+    }
+
+    /// Construct a new call to the `Call` service, setting header parameters manually.
+    pub fn new_manual(
+        session_id: u32,
+        timeout: Duration,
+        auth_token: NodeId,
+        request_handle: IntegerId,
+    ) -> Self {
+        Self {
+            methods: Vec::new(),
+            header: RequestHeaderBuilder::new(session_id, timeout, auth_token, request_handle),
+        }
+    }
+
+    /// Set the list of methods to call.
+    pub fn methods_to_call(mut self, methods: Vec<CallMethodRequest>) -> Self {
+        self.methods = methods;
+        self
+    }
+
+    /// Add a method to call.
+    pub fn method(mut self, method: impl Into<CallMethodRequest>) -> Self {
+        self.methods.push(method.into());
+        self
+    }
+}
+
+impl UARequest for Call {
+    type Out = CallResponse;
+
+    async fn send<'a>(self, channel: &'a AsyncSecureChannel) -> Result<Self::Out, StatusCode>
+    where
+        Self: 'a,
+    {
+        if self.methods.is_empty() {
+            builder_error!(self, "call(), was not supplied with any methods to call");
+            return Err(StatusCode::BadNothingToDo);
+        }
+
+        builder_debug!(self, "call()");
+        let cnt = self.methods.len();
+        let request = CallRequest {
+            request_header: self.header.header,
+            methods_to_call: Some(self.methods),
+        };
+        let response = channel.send(request, self.header.timeout).await?;
+        if let ResponseMessage::Call(response) = response {
+            if let Some(results) = &response.results {
+                if results.len() != cnt {
+                    builder_error!(
+                        self,
+                        "call(), expecting {cnt} results from the call to the server, got {} results",
+                        results.len()
+                    );
+                    Err(StatusCode::BadUnexpectedError)
+                } else {
+                    Ok(*response)
+                }
+            } else {
+                builder_error!(
+                    self,
+                    "call(), expecting a result from the call to the server, got nothing"
+                );
+                Err(StatusCode::BadUnexpectedError)
+            }
+        } else {
+            Err(process_unexpected_response(response))
+        }
+    }
+}
+
 impl Session {
-    /// Calls a single method on an object on the server by sending a [`CallRequest`] to the server.
+    /// Calls a list of methods on the server by sending a [`CallRequest`] to the server.
     ///
     /// See OPC UA Part 4 - Services 5.11.2 for complete description of the service and error responses.
     ///
@@ -27,40 +123,12 @@ impl Session {
         &self,
         methods: Vec<CallMethodRequest>,
     ) -> Result<Vec<CallMethodResult>, StatusCode> {
-        if methods.is_empty() {
-            session_error!(self, "call(), was not supplied with any methods to call");
-            return Err(StatusCode::BadNothingToDo);
-        }
-
-        session_debug!(self, "call()");
-        let cnt = methods.len();
-        let request = CallRequest {
-            request_header: self.make_request_header(),
-            methods_to_call: Some(methods),
-        };
-        let response = self.send(request).await?;
-        if let ResponseMessage::Call(response) = response {
-            if let Some(results) = response.results {
-                if results.len() != cnt {
-                    session_error!(
-                        self,
-                        "call(), expecting {cnt} results from the call to the server, got {} results",
-                        results.len()
-                    );
-                    Err(StatusCode::BadUnexpectedError)
-                } else {
-                    Ok(results)
-                }
-            } else {
-                session_error!(
-                    self,
-                    "call(), expecting a result from the call to the server, got nothing"
-                );
-                Err(StatusCode::BadUnexpectedError)
-            }
-        } else {
-            Err(process_unexpected_response(response))
-        }
+        Ok(Call::new(self)
+            .methods_to_call(methods)
+            .send(&self.channel)
+            .await?
+            .results
+            .unwrap_or_default())
     }
 
     /// Calls a single method on an object on the server by sending a [`CallRequest`] to the server.
@@ -118,11 +186,15 @@ impl Session {
                     .map_err(|_| StatusCode::BadUnexpectedError)?;
                 Ok((server_handles, client_handles))
             } else {
-                error!("Expected a result with 2 args and didn't get it.");
+                session_error!(
+                    self,
+                    "Expected a result with 2 args but got {}",
+                    result.len()
+                );
                 Err(StatusCode::BadUnexpectedError)
             }
         } else {
-            error!("Expected a result and didn't get it.");
+            session_error!(self, "Expected output arguments but got null");
             Err(StatusCode::BadUnexpectedError)
         }
     }

@@ -10,7 +10,7 @@ use opcua_core::{
 };
 use opcua_crypto::{CertificateStore, SecurityPolicy};
 use opcua_types::{
-    ByteString, CloseSecureChannelRequest, DecodingOptions, NodeId, RequestHeader,
+    ByteString, CloseSecureChannelRequest, DecodingOptions, IntegerId, NodeId, RequestHeader,
     SecurityTokenRequestType, StatusCode,
 };
 
@@ -142,6 +142,10 @@ impl AsyncSecureChannel {
         self.state.make_request_header(timeout)
     }
 
+    pub fn request_handle(&self) -> IntegerId {
+        self.state.request_handle()
+    }
+
     pub(crate) fn client_nonce(&self) -> ByteString {
         let secure_channel = trace_read_lock!(self.secure_channel);
         secure_channel.local_nonce_as_byte_string()
@@ -216,7 +220,10 @@ impl AsyncSecureChannel {
         } else {
             let (cert, key) = {
                 let certificate_store = trace_write_lock!(self.certificate_store);
-                certificate_store.read_own_cert_and_pkey_optional()
+                (
+                    certificate_store.read_own_cert().ok(),
+                    certificate_store.read_own_pkey().ok(),
+                )
             };
 
             {
