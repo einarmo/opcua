@@ -103,7 +103,11 @@ impl SubscriptionState {
             .count()
     }
 
-    pub(crate) fn add_subscription(&mut self, subscription: Subscription) {
+    /// Add a subscription to the state. Note that this
+    /// does not create the subscription, you need to do that yourself.
+    ///
+    /// Most users should simply call [`crate::Session::create_subscription`]
+    pub fn add_subscription(&mut self, subscription: Subscription) {
         self.subscriptions
             .insert(subscription.subscription_id(), subscription);
         self.set_keep_alive_timeout();

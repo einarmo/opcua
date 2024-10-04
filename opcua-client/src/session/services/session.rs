@@ -627,8 +627,11 @@ impl Session {
     /// Close the session by sending a [`CloseSessionRequest`] to the server.
     ///
     /// This is not accessible by users, they must instead call `disconnect` to properly close the session.
-    pub(crate) async fn close_session(&self) -> Result<(), StatusCode> {
-        CloseSession::new(self).send(&self.channel).await?;
+    pub(crate) async fn close_session(&self, delete_subscriptions: bool) -> Result<(), StatusCode> {
+        CloseSession::new(self)
+            .delete_subscriptions(delete_subscriptions)
+            .send(&self.channel)
+            .await?;
         Ok(())
     }
 

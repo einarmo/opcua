@@ -1433,6 +1433,11 @@ impl Session {
         &self.subscription_state
     }
 
+    /// Trigger a publish to fire immediately.
+    pub fn trigger_publish_now(&self) {
+        let _ = self.trigger_publish_tx.send(Instant::now());
+    }
+
     #[allow(clippy::too_many_arguments)]
     async fn create_subscription_inner(
         &self,

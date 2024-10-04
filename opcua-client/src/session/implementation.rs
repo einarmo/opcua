@@ -177,7 +177,17 @@ impl Session {
 
     /// Disconnect from the server and wait until disconnected.
     pub async fn disconnect(&self) -> Result<(), StatusCode> {
-        self.close_session().await?;
+        self.close_session(true).await?;
+        self.channel.close_channel().await;
+
+        self.wait_for_state(false).await;
+
+        Ok(())
+    }
+
+    /// Disconnect the server without deleting subscriptions, then wait until disconnected.
+    pub async fn disconnect_without_delete_subscriptions(&self) -> Result<(), StatusCode> {
+        self.close_session(false).await?;
         self.channel.close_channel().await;
 
         self.wait_for_state(false).await;
