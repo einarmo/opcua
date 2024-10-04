@@ -2,6 +2,7 @@ mod client;
 mod connect;
 mod event_loop;
 mod implementation;
+mod request_builder;
 mod services;
 
 /// Information about the server endpoint, security policy, security mode and user identity that the session will
@@ -41,10 +42,21 @@ pub use connect::SessionConnectMode;
 pub use event_loop::{SessionActivity, SessionEventLoop, SessionPollResult};
 pub use implementation::Session;
 use log::{error, info};
-pub use services::attributes::{HistoryReadAction, HistoryUpdateAction};
+pub use request_builder::UARequest;
+pub use services::attributes::{
+    HistoryRead, HistoryReadAction, HistoryUpdate, HistoryUpdateAction, Read, Write,
+};
+pub use services::method::Call;
+pub use services::node_management::{AddNodes, AddReferences, DeleteNodes, DeleteReferences};
+pub use services::session::{ActivateSession, Cancel, CloseSession, CreateSession};
 pub use services::subscriptions::{
-    DataChangeCallback, EventCallback, MonitoredItem, OnSubscriptionNotification, Subscription,
-    SubscriptionCallbacks,
+    CreateMonitoredItems, CreateSubscription, DataChangeCallback, DeleteMonitoredItems,
+    DeleteSubscriptions, EventCallback, ModifyMonitoredItems, ModifySubscription, MonitoredItem,
+    OnSubscriptionNotification, SetMonitoringMode, SetPublishingMode, SetTriggering, Subscription,
+    SubscriptionCallbacks, TransferSubscriptions,
+};
+pub use services::view::{
+    Browse, BrowseNext, RegisterNodes, TranslateBrowsePaths, UnregisterNodes,
 };
 
 #[allow(unused)]

@@ -15,11 +15,10 @@ use crate::{
 use opcua_core::{
     handle::AtomicHandle,
     sync::{Mutex, RwLock},
-    RequestMessage, ResponseMessage,
 };
 use opcua_crypto::CertificateStore;
 use opcua_types::{
-    ApplicationDescription, DecodingOptions, NodeId, RequestHeader, StatusCode, UAString,
+    ApplicationDescription, DecodingOptions, IntegerId, NodeId, RequestHeader, StatusCode, UAString,
 };
 
 use super::{services::subscriptions::state::SubscriptionState, SessionEventLoop, SessionInfo};
@@ -126,16 +125,6 @@ impl Session {
         )
     }
 
-    /// Send a message and wait for response, using the default configured timeout.
-    ///
-    /// In order to set a different timeout, call `send` on the inner channel instead.
-    pub(super) async fn send(
-        &self,
-        request: impl Into<RequestMessage>,
-    ) -> Result<ResponseMessage, StatusCode> {
-        self.channel.send(request, self.request_timeout).await
-    }
-
     /// Create a request header with the default timeout.
     pub(super) fn make_request_header(&self) -> RequestHeader {
         self.channel.make_request_header(self.request_timeout)
@@ -198,5 +187,13 @@ impl Session {
 
     pub fn decoding_options(&self) -> &DecodingOptions {
         &self.decoding_options
+    }
+
+    pub fn channel(&self) -> &AsyncSecureChannel {
+        &self.channel
+    }
+
+    pub fn request_handle(&self) -> IntegerId {
+        self.channel.request_handle()
     }
 }

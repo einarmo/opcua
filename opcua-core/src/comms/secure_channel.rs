@@ -100,12 +100,21 @@ impl SecureChannel {
     ) -> SecureChannel {
         let (cert, private_key) = {
             let certificate_store = certificate_store.read();
-            if let Ok((cert, pkey)) = certificate_store.read_own_cert_and_pkey() {
-                (Some(cert), Some(pkey))
-            } else {
-                error!("Cannot read our own certificate and private key. Check paths. Crypto won't work");
-                (None, None)
-            }
+            let cert = match certificate_store.read_own_cert() {
+                Err(e) => {
+                    error!("Failed to read own certificate: {e}. Check paths, crypto won't work");
+                    None
+                }
+                Ok(r) => Some(r),
+            };
+            let pkey = match certificate_store.read_own_pkey() {
+                Err(e) => {
+                    error!("Failed to read own private key: {e}. Check paths, crypto won't work");
+                    None
+                }
+                Ok(r) => Some(r),
+            };
+            (cert, pkey)
         };
         SecureChannel {
             role,

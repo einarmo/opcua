@@ -62,6 +62,7 @@ impl From<rsa::Error> for PKeyError {
 
 /// This is a wrapper around an asymmetric key pair. Since the PKey is either
 /// a public or private key so we have to differentiate that as well.
+#[derive(Clone)]
 pub struct PKey<T> {
     pub(crate) value: T,
 }

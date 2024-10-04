@@ -87,27 +87,31 @@ impl CertificateStore {
             error!("Folder for storing certificates cannot be examined so server has no application instance certificate or private key.");
             (None, None)
         } else {
-            let result = certificate_store.read_own_cert_and_pkey();
-            if let Ok((cert, pkey)) = result {
-                (Some(cert), Some(pkey))
-            } else if let Some(x509_data) = x509_data {
-                info!("Creating sample application instance certificate and private key");
-                let x509_data = x509_data.into();
-                let result = certificate_store
-                    .create_and_store_application_instance_cert(&x509_data, overwrite);
-                if let Err(err) = result {
-                    error!("Certificate creation failed, error = {}", err);
-                    (None, None)
-                } else {
-                    let (cert, pkey) = result.unwrap();
-                    (Some(cert), Some(pkey))
+            let cert = certificate_store.read_own_cert();
+            let pkey = certificate_store.read_own_pkey();
+            match (cert, pkey, x509_data) {
+                (Ok(cert), Ok(pkey), _) => (Some(cert), Some(pkey)),
+                (_, _, Some(x509_data)) => {
+                    info!("Creating sample application instance certificate and private key");
+                    let x509_data = x509_data.into();
+                    let result = certificate_store
+                        .create_and_store_application_instance_cert(&x509_data, overwrite);
+                    match result {
+                        Ok((cert, pkey)) => (Some(cert), Some(pkey)),
+                        Err(err) => {
+                            error!("Certificate creation failed, error = {}", err);
+                            (None, None)
+                        }
+                    }
                 }
-            } else {
-                error!(
-                    "Application instance certificate and private key could not be read - {}",
-                    result.unwrap_err()
-                );
-                (None, None)
+                (Err(e1), Err(e2), _) => {
+                    error!("Failed to get cert and private key: {e1}, {e2}");
+                    (None, None)
+                }
+                (Err(e), _, _) | (_, Err(e), _) => {
+                    error!("Failed to get cert or private key: {e}");
+                    (None, None)
+                }
             }
         };
         (certificate_store, cert, pkey)
@@ -134,32 +138,23 @@ impl CertificateStore {
         Err(format!("Cannot read pkey from path {:?}", path))
     }
 
-    /// Reads the store's own certificate and private key
-    pub fn read_own_cert_and_pkey(&self) -> Result<(X509, PrivateKey), String> {
-        if let Ok(cert) = CertificateStore::read_cert(&self.own_certificate_path()) {
-            CertificateStore::read_pkey(&self.own_private_key_path())
-                .map(|pkey| (cert, pkey))
-                .map_err(|_| {
-                    format!(
-                        "Cannot read pkey from path {:?}",
-                        self.own_private_key_path()
-                    )
-                })
-        } else {
-            Err(format!(
-                "Cannot read cert from path {:?}",
+    /// Reads the store's own certificate
+    pub fn read_own_cert(&self) -> Result<X509, String> {
+        CertificateStore::read_cert(&self.own_certificate_path()).map_err(|e| {
+            format!(
+                "Cannot read cert from path {:?}: {e}",
                 self.own_certificate_path()
-            ))
-        }
+            )
+        })
     }
 
-    /// Fetches the public certificate and private key into options
-    pub fn read_own_cert_and_pkey_optional(&self) -> (Option<X509>, Option<PrivateKey>) {
-        if let Ok((cert, key)) = self.read_own_cert_and_pkey() {
-            (Some(cert), Some(key))
-        } else {
-            (None, None)
-        }
+    pub fn read_own_pkey(&self) -> Result<PrivateKey, String> {
+        CertificateStore::read_pkey(&self.own_private_key_path()).map_err(|e| {
+            format!(
+                "Cannot read pkey from path {:?}: {e}",
+                self.own_private_key_path()
+            )
+        })
     }
 
     /// Create a certificate and key pair to the specified locations

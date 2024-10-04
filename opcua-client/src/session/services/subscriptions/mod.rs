@@ -14,6 +14,12 @@ use opcua_types::{
     StatusChangeNotification, Variant,
 };
 
+pub use service::{
+    CreateMonitoredItems, CreateSubscription, DeleteMonitoredItems, DeleteSubscriptions,
+    ModifyMonitoredItems, ModifySubscription, SetMonitoringMode, SetPublishingMode, SetTriggering,
+    TransferSubscriptions,
+};
+
 pub(crate) struct CreateMonitoredItem {
     pub id: u32,
     pub client_handle: u32,
