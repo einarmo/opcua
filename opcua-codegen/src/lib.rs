@@ -1,4 +1,5 @@
 mod error;
+mod ids;
 pub mod nodeset;
 mod types;
 mod utils;
@@ -10,6 +11,7 @@ use std::{
 };
 
 pub use error::CodeGenError;
+use ids::{generate_node_ids, NodeIdCodeGenTarget};
 use nodeset::{generate_events, generate_target, make_root_module, NodeSetCodeGenTarget};
 use opcua_xml::load_nodeset2_file;
 use serde::{Deserialize, Serialize};
@@ -152,6 +154,26 @@ pub fn run_codegen(config: &CodeGenConfig) -> Result<(), CodeGenError> {
                     println!("Created {} event types", cnt);
                 }
             }
+            CodeGenTarget::Ids(n) => {
+                println!("Running node ID code generation for {}", n.file_path);
+                let gen = generate_node_ids(n)?;
+                let mut file = std::fs::File::options()
+                    .create(true)
+                    .truncate(true)
+                    .write(true)
+                    .open(&n.output_file)
+                    .map_err(|e| {
+                        CodeGenError::io(&format!("Failed to open file {}", n.output_file), e)
+                    })?;
+                let header = make_header(&n.file_path, &[&config.extra_header, &n.extra_header]);
+                file.write_all(header.as_bytes()).map_err(|e| {
+                    CodeGenError::io(&format!("Failed to write to file {}", n.output_file), e)
+                })?;
+                file.write_all(prettyplease::unparse(&gen).as_bytes())
+                    .map_err(|e| {
+                        CodeGenError::io(&format!("Failed to write to file {}", n.output_file), e)
+                    })?;
+            }
         }
     }
 
@@ -181,6 +203,7 @@ pub struct TypeCodeGenTarget {
 pub enum CodeGenTarget {
     Types(TypeCodeGenTarget),
     Nodes(NodeSetCodeGenTarget),
+    Ids(NodeIdCodeGenTarget),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
