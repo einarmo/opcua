@@ -4,7 +4,7 @@ extra_header: |
   // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 targets:
   - type: types
-    file_path: tools/schema/schemas/1.0.4/Opc.Ua.Types.bsd
+    file_path: schemas/1.0.4/Opc.Ua.Types.bsd
     output_dir: opcua-types/src/service_types
     enums_single_file: true
     extra_header: |
@@ -13,14 +13,14 @@ targets:
     default_excluded:
       - AnonymousIdentityToken
   - type: nodes
-    file_path: tools/schema/schemas/1.05/Opc.Ua.NodeSet2.xml
+    file_path: schemas/1.05/Opc.Ua.NodeSet2.xml
     output_dir: opcua-core-namespace/src/generated
     max_nodes_per_file: 100
     extra_header: |
       #[allow(unused)]
       mod opcua { pub use opcua_types as types; pub use opcua_nodes as nodes; }
     types:
-      - file_path: tools/schema/schemas/1.05/Opc.Ua.Types.xsd
+      - file_path: schemas/1.05/Opc.Ua.Types.xsd
         root_path: opcua::types
     own_namespaces:
       - "http://opcfoundation.org/UA/"
@@ -31,3 +31,8 @@ targets:
       extra_header: |
         #[allow(unused)]
         mod opcua { pub use opcua_types as types; pub use opcua_nodes as nodes; pub use opcua_nodes::{Event, EventField}; }
+  - type: ids
+    file_path: schemas/1.05/NodeIds.csv
+    extra_header: |
+      mod opcua { pub use crate as types; }
+    output_file: opcua-types/src/node_ids.rs
