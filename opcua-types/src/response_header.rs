@@ -54,10 +54,20 @@ impl BinaryEncoder for ResponseHeader {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let timestamp = UtcTime::decode(stream, decoding_options)?;
         let request_handle = IntegerId::decode(stream, decoding_options)?;
-        let service_result = StatusCode::decode(stream, decoding_options)?;
-        let service_diagnostics = DiagnosticInfo::decode(stream, decoding_options)?;
-        let string_table: Option<Vec<UAString>> = read_array(stream, decoding_options)?;
-        let additional_header = ExtensionObject::decode(stream, decoding_options)?;
+        // Capture request handle if decoding fails after this.
+        let (service_result, service_diagnostics, string_table, additional_header) = (|| {
+            let service_result = StatusCode::decode(stream, decoding_options)?;
+            let service_diagnostics = DiagnosticInfo::decode(stream, decoding_options)?;
+            let string_table: Option<Vec<UAString>> = read_array(stream, decoding_options)?;
+            let additional_header = ExtensionObject::decode(stream, decoding_options)?;
+            Ok((
+                service_result,
+                service_diagnostics,
+                string_table,
+                additional_header,
+            ))
+        })()
+        .map_err(|e: EncodingError| e.with_request_handle(request_handle))?;
         Ok(ResponseHeader {
             timestamp,
             request_handle,

@@ -133,7 +133,7 @@ impl SubscriptionEventLoop {
                                         }
                                         StatusCode::BadSessionClosed
                                         | StatusCode::BadSessionIdInvalid => {
-                                            // TODO: Do something here?
+                                            // If this happens we will probably eventually fail keep-alive, defer to that.
                                             session_error!(slf.session, "Publish response indicates session is dead");
                                         }
                                         StatusCode::BadNoSubscription

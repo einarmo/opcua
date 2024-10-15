@@ -12,7 +12,7 @@ The following is a list of tasks, with progress indicated where relevant.
      - Audit events are taken out due to the above.
      - The web server is removed. Likely forever, a better solution is to use the `metrics` library to hook into the rust metrics ecosystem.
      - A smattering of TODO's, most are somehow blocked by other tasks.
- - Merge most recent PRs on the main repo, especially the one migrating away from OpenSSL.
+ - **100%** (The big stuff is merged) Merge most recent PRs on the main repo, especially the one migrating away from OpenSSL.
  - **100%** Split the library into parts again.
    - Initially into types, client, core, and server.
    - This is needed for other features.
@@ -21,13 +21,13 @@ The following is a list of tasks, with progress indicated where relevant.
  - **70%** Implement sophisticated event support, using a macro to create event types.
  - **100%?** Investigate decoding. There are several things that would be interesting to do here.
    - Capture request-id/request-handle for error reporting during decoding. This will allow us to fatally fail much less often, but will require major changes to codegen.
-   - See if there is a way to avoid needing to pass the ID when decoding ExtensionObjects. This info should be available, either in the object itself or as part of the type being decoded.
+   - **100%** See if there is a way to avoid needing to pass the ID when decoding ExtensionObjects. This info should be available, either in the object itself or as part of the type being decoded.
  - Flesh out the server and client SDK with tooling for ease if use.
-   - I had an idea of a "request builder" framework for the client SDK, which might be really useful.
+   - **80%** (Methods for retries and stuff still missing) I had an idea of a "request builder" framework for the client SDK, which might be really useful.
    - The server should be possible to set up in such a way that it is no harder to use than before. A specialized node manager would be ideal for this.
    - There are probably lots of neat logic we can add as utility methods that make it easier to implement node managers.
- - Go through the standard and implement _more_ of the core stuff. Diagnostics, server management methods, etc.
+ - Go through the standard and implement _more_ of the core stuff. Diagnostics (**done-ish**), server management methods, etc.
  - Implement a better framework for security checks. (?)
  - Write a sophisticated server example with a persistent store. This would be a great way to verify the flexibility of the server.
  - Write some "bad ideas" servers, it would be nice to showcase how flexible this is.
- - Look into using non-send locks, to eliminate a source of deadlocks.
+ - **N/A, clippy warns about this** Look into using non-send locks, to eliminate a source of deadlocks.

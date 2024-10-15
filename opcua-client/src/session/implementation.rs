@@ -1,6 +1,6 @@
 use std::{
     sync::{
-        atomic::{AtomicU32, Ordering},
+        atomic::{AtomicBool, AtomicU32, Ordering},
         Arc,
     },
     time::{Duration, Instant},
@@ -21,7 +21,9 @@ use opcua_types::{
     ApplicationDescription, DecodingOptions, IntegerId, NodeId, RequestHeader, StatusCode, UAString,
 };
 
-use super::{services::subscriptions::state::SubscriptionState, SessionEventLoop, SessionInfo};
+use super::{
+    services::subscriptions::state::SubscriptionState, session_warn, SessionEventLoop, SessionInfo,
+};
 
 #[derive(Clone, Copy)]
 pub enum SessionState {
@@ -60,6 +62,7 @@ pub struct Session {
     pub(super) monitored_item_handle: AtomicHandle,
     pub(super) trigger_publish_tx: tokio::sync::watch::Sender<Instant>,
     decoding_options: DecodingOptions,
+    pub(super) should_reconnect: AtomicBool,
 }
 
 impl Session {
@@ -112,6 +115,7 @@ impl Session {
             monitored_item_handle: AtomicHandle::new(1000),
             trigger_publish_tx,
             decoding_options,
+            should_reconnect: AtomicBool::new(true),
         });
 
         (
@@ -121,6 +125,7 @@ impl Session {
                 session_retry_policy,
                 trigger_publish_rx,
                 config.keep_alive_interval,
+                config.max_failed_keep_alive_count,
             ),
         )
     }
@@ -175,24 +180,56 @@ impl Session {
         self.wait_for_state(true).await
     }
 
-    /// Disconnect from the server and wait until disconnected.
-    pub async fn disconnect(&self) -> Result<(), StatusCode> {
-        self.close_session(true).await?;
+    /// Disable automatic reconnects.
+    /// This will make the event loop quit the next time
+    /// it disconnects for whatever reason.
+    pub fn disable_reconnects(&self) {
+        self.should_reconnect.store(false, Ordering::Relaxed);
+    }
+
+    /// Enable automatic reconnects.
+    /// Automatically reconnecting is enabled by default.
+    pub fn enable_reconnects(&self) {
+        self.should_reconnect.store(true, Ordering::Relaxed);
+    }
+
+    /// Inner method for disconnect. [`Session::disconnect`] and [`Session::disconnect_without_delete_subscriptions`]
+    /// are shortands for this with `delete_subscriptions` set to `false` and `true` respectively, and
+    /// `disable_reconnect` set to `true`.
+    pub async fn disconnect_inner(
+        &self,
+        delete_subscriptions: bool,
+        disable_reconnect: bool,
+    ) -> Result<(), StatusCode> {
+        if disable_reconnect {
+            self.should_reconnect.store(false, Ordering::Relaxed);
+        }
+        let mut res = Ok(());
+        if let Err(e) = self.close_session(delete_subscriptions).await {
+            res = Err(e);
+            session_warn!(
+                self,
+                "Failed to close session, channel will be closed anyway: {e}"
+            );
+        }
         self.channel.close_channel().await;
 
         self.wait_for_state(false).await;
 
-        Ok(())
+        res
+    }
+
+    /// Disconnect from the server and wait until disconnected.
+    /// This will set the `should_reconnect` flag to false on the session, indicating
+    /// that it should not attempt to reconnect to the server. You may clear this flag
+    /// yourself to
+    pub async fn disconnect(&self) -> Result<(), StatusCode> {
+        self.disconnect_inner(true, true).await
     }
 
     /// Disconnect the server without deleting subscriptions, then wait until disconnected.
     pub async fn disconnect_without_delete_subscriptions(&self) -> Result<(), StatusCode> {
-        self.close_session(false).await?;
-        self.channel.close_channel().await;
-
-        self.wait_for_state(false).await;
-
-        Ok(())
+        self.disconnect_inner(false, true).await
     }
 
     pub fn decoding_options(&self) -> &DecodingOptions {

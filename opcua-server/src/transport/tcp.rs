@@ -18,7 +18,7 @@ use opcua_core::{
 };
 
 use crate::info::ServerInfo;
-use opcua_types::{DecodingOptions, EncodingError, StatusCode};
+use opcua_types::{DecodingOptions, EncodingError, ResponseHeader, ServiceFault, StatusCode};
 
 use futures::StreamExt;
 use tokio::{
@@ -133,8 +133,27 @@ impl TcpTransport {
         message: ResponseMessage,
         request_id: u32,
     ) -> Result<(), StatusCode> {
-        self.send_buffer.write(request_id, message, channel)?;
-        Ok(())
+        match self.send_buffer.write(request_id, message, channel) {
+            Ok(_) => Ok(()),
+            Err(e) => {
+                log::warn!("Failed to encode outgoing message: {e:?}");
+                if let Some((request_id, request_handle)) = e.full_context() {
+                    self.send_buffer.write(
+                        request_id,
+                        ResponseMessage::ServiceFault(Box::new(ServiceFault {
+                            response_header: ResponseHeader::new_service_result(
+                                request_handle,
+                                e.into(),
+                            ),
+                        })),
+                        channel,
+                    )?;
+                    Ok(())
+                } else {
+                    Err(e.into())
+                }
+            }
+        }
     }
 
     fn process_hello(

@@ -1,9 +1,9 @@
 use std::{
-    sync::Arc,
+    sync::{atomic::Ordering, Arc},
     time::{Duration, Instant},
 };
 
-use futures::{stream::BoxStream, Stream, StreamExt, TryStreamExt};
+use futures::{future::BoxFuture, stream::BoxStream, FutureExt, Stream, StreamExt, TryStreamExt};
 use log::warn;
 
 use crate::{
@@ -42,14 +42,21 @@ pub enum SessionPollResult {
     Subscription(SubscriptionActivity),
     /// The session begins (re)connecting to the server.
     BeginConnect,
+    /// Disconnect due to a keep alive terminated.
+    FinishedDisconnect,
+}
+
+struct ConnectedState {
+    channel: SecureChannelEventLoop,
+    keep_alive: BoxStream<'static, SessionActivity>,
+    subscriptions: BoxStream<'static, SubscriptionActivity>,
+    current_failed_keep_alive_count: u64,
+    currently_closing: bool,
+    disconnect_fut: BoxFuture<'static, Result<(), StatusCode>>,
 }
 
 enum SessionEventLoopState {
-    Connected(
-        SecureChannelEventLoop,
-        BoxStream<'static, SessionActivity>,
-        BoxStream<'static, SubscriptionActivity>,
-    ),
+    Connected(ConnectedState),
     Connecting(SessionConnector, ExponentialBackoff, Instant),
     Disconnected,
 }
@@ -61,6 +68,7 @@ pub struct SessionEventLoop {
     trigger_publish_recv: tokio::sync::watch::Receiver<Instant>,
     retry: SessionRetryPolicy,
     keep_alive_interval: Duration,
+    max_failed_keep_alive_count: u64,
 }
 
 impl SessionEventLoop {
@@ -69,12 +77,14 @@ impl SessionEventLoop {
         retry: SessionRetryPolicy,
         trigger_publish_recv: tokio::sync::watch::Receiver<Instant>,
         keep_alive_interval: Duration,
+        max_failed_keep_alive_count: u64,
     ) -> Self {
         Self {
             inner,
             retry,
             trigger_publish_recv,
             keep_alive_interval,
+            max_failed_keep_alive_count,
         }
     }
 
@@ -121,14 +131,15 @@ impl SessionEventLoop {
             (self, SessionEventLoopState::Disconnected),
             |(slf, state)| async move {
                 let (res, state) = match state {
-                    SessionEventLoopState::Connected(mut c, mut activity, mut subscriptions) => {
+                    SessionEventLoopState::Connected(mut state) => {
                         tokio::select! {
-                            r = c.poll() => {
+                            r = state.channel.poll() => {
                                 if let TransportPollResult::Closed(code) = r {
                                     session_warn!(slf.inner, "Transport disconnected: {code}");
                                     let _ = slf.inner.state_watch_tx.send(SessionState::Disconnected);
 
-                                    if code.is_good() {
+                                    let should_reconnect = slf.inner.should_reconnect.load(Ordering::Relaxed);
+                                    if !should_reconnect {
                                         return Ok(None);
                                     }
 
@@ -139,23 +150,42 @@ impl SessionEventLoop {
                                 } else {
                                     Ok((
                                         SessionPollResult::Transport(r),
-                                        SessionEventLoopState::Connected(c, activity, subscriptions),
+                                        SessionEventLoopState::Connected(state),
                                     ))
                                 }
                             }
-                            r = activity.next() => {
+                            r = state.keep_alive.next() => {
                                 // Should never be null, fail out
                                 let Some(r) = r else {
                                     session_error!(slf.inner, "Session activity loop ended unexpectedly");
                                     return Err(StatusCode::BadUnexpectedError);
                                 };
 
+                                match r {
+                                    SessionActivity::KeepAliveSucceeded => state.current_failed_keep_alive_count = 0,
+                                    SessionActivity::KeepAliveFailed(status_code) => {
+                                        session_warn!(slf.inner, "Keep alive failed: {status_code}");
+                                        state.current_failed_keep_alive_count += 1;
+                                        if !state.currently_closing
+                                            && state.current_failed_keep_alive_count >= slf.max_failed_keep_alive_count
+                                            && slf.max_failed_keep_alive_count != 0
+                                        {
+                                            session_error!(slf.inner, "Maximum number of failed keep-alives exceed limit, session will be closed.");
+                                            state.currently_closing = true;
+                                            let s = slf.inner.clone();
+                                            state.disconnect_fut = async move {
+                                                s.disconnect_inner(false, false).await
+                                            }.boxed();
+                                        }
+                                    },
+                                }
+
                                 Ok((
                                     SessionPollResult::SessionActivity(r),
-                                    SessionEventLoopState::Connected(c, activity, subscriptions),
+                                    SessionEventLoopState::Connected(state),
                                 ))
                             }
-                            r = subscriptions.next() => {
+                            r = state.subscriptions.next() => {
                                 // Should never be null, fail out
                                 let Some(r) = r else {
                                     session_error!(slf.inner, "Subscription event loop ended unexpectedly");
@@ -164,7 +194,15 @@ impl SessionEventLoop {
 
                                 Ok((
                                     SessionPollResult::Subscription(r),
-                                    SessionEventLoopState::Connected(c, activity, subscriptions),
+                                    SessionEventLoopState::Connected(state),
+                                ))
+                            }
+                            _ = &mut state.disconnect_fut => {
+                                // Do nothing, if this terminates we will very soon be transitioning
+                                // to a disconnected state.
+                                Ok((
+                                    SessionPollResult::FinishedDisconnect,
+                                    SessionEventLoopState::Connected(state)
                                 ))
                             }
                         }
@@ -191,21 +229,24 @@ impl SessionEventLoop {
                                 let _ = slf.inner.state_watch_tx.send(SessionState::Connected);
                                 Ok((
                                     SessionPollResult::Reconnected(result),
-                                    SessionEventLoopState::Connected(
+                                    SessionEventLoopState::Connected(ConnectedState {
                                         channel,
-                                        SessionActivityLoop::new(
+                                        keep_alive: SessionActivityLoop::new(
                                             slf.inner.clone(),
                                             slf.keep_alive_interval,
                                         )
                                         .run()
                                         .boxed(),
-                                        SubscriptionEventLoop::new(
+                                        subscriptions: SubscriptionEventLoop::new(
                                             slf.inner.clone(),
                                             slf.trigger_publish_recv.clone(),
                                         )
                                         .run()
                                         .boxed(),
-                                    ),
+                                        current_failed_keep_alive_count: 0,
+                                        currently_closing: false,
+                                        disconnect_fut: futures::future::pending().boxed(),
+                                    }),
                                 ))
                             }
                             Err(e) => {

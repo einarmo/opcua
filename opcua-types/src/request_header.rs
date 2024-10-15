@@ -132,11 +132,21 @@ impl BinaryEncoder for RequestHeader {
         let authentication_token = NodeId::decode(stream, decoding_options)?;
         let timestamp = UtcTime::decode(stream, decoding_options)?;
         let request_handle = IntegerId::decode(stream, decoding_options)?;
-        let return_diagnostics =
-            DiagnosticBits::from_bits_truncate(u32::decode(stream, decoding_options)?);
-        let audit_entry_id = UAString::decode(stream, decoding_options)?;
-        let timeout_hint = u32::decode(stream, decoding_options)?;
-        let additional_header = ExtensionObject::decode(stream, decoding_options)?;
+        let (return_diagnostics, audit_entry_id, timeout_hint, additional_header) = (|| {
+            let return_diagnostics =
+                DiagnosticBits::from_bits_truncate(u32::decode(stream, decoding_options)?);
+            let audit_entry_id = UAString::decode(stream, decoding_options)?;
+            let timeout_hint = u32::decode(stream, decoding_options)?;
+            let additional_header = ExtensionObject::decode(stream, decoding_options)?;
+            Ok((
+                return_diagnostics,
+                audit_entry_id,
+                timeout_hint,
+                additional_header,
+            ))
+        })()
+        .map_err(|e: EncodingError| e.with_request_handle(request_handle))?;
+
         Ok(RequestHeader {
             authentication_token,
             timestamp,

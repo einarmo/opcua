@@ -114,7 +114,7 @@ impl SendBuffer {
             secure_channel,
             &message,
         )
-        .map_err(|e| e.with_request_id(request_id))?;
+        .map_err(|e| e.with_context(Some(request_id), Some(message.request_handle())))?;
 
         if self.max_chunk_count > 0 && chunks.len() > self.max_chunk_count {
             error!(
