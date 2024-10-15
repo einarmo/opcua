@@ -231,6 +231,16 @@ impl ClientBuilder {
         self
     }
 
+    /// Maximum number of failed keep alives before the client will be forcibly closed.
+    /// Set this to zero to never close the connection due to failed keepalives.
+    ///
+    /// Note that this should not be necessary to set if the server is compliant,
+    /// only if it ends up in a bad state that cannot be recovered from easily.
+    pub fn max_failed_keep_alive_count(mut self, max_failed_keep_alive_count: u64) -> Self {
+        self.config.max_failed_keep_alive_count = max_failed_keep_alive_count;
+        self
+    }
+
     /// Set the timeout on requests sent to the server.
     pub fn request_timeout(mut self, request_timeout: Duration) -> Self {
         self.config.request_timeout = request_timeout;

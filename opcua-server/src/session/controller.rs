@@ -137,19 +137,13 @@ impl SessionController {
 
             tokio::select! {
                 _ = tokio::time::sleep_until(self.deadline.into()) => {
-                    if !self.transport.is_closing() {
-                        warn!("Connection timed out, closing");
-                        self.transport.enqueue_error(ErrorMessage::new(StatusCode::BadTimeout, "Connection timeout"));
-                    }
-                    self.transport.set_closing();
+                    warn!("Connection timed out, closing");
+                    self.fatal_error(StatusCode::BadTimeout, "Connection timeout");
                 }
                 cmd = command.recv() => {
                     match cmd {
                         Some(ControllerCommand::Close) | None => {
-                            if !self.transport.is_closing() {
-                                self.transport.enqueue_error(ErrorMessage::new(StatusCode::BadServerHalted, "Server stopped"));
-                            }
-                            self.transport.set_closing();
+                            self.fatal_error(StatusCode::BadServerHalted, "Server stopped");
                         }
                     }
                 }
@@ -158,7 +152,7 @@ impl SessionController {
                         Some(Ok(x)) => x,
                         Some(Err(e)) => {
                             error!("Unexpected error in message handler: {e}");
-                            self.transport.set_closing();
+                            self.fatal_error(StatusCode::BadInternalError, &e);
                             continue;
                         }
                         // Cannot happen, pending_messages is non-empty or this future never returns.
@@ -170,7 +164,7 @@ impl SessionController {
                         msg.request_id
                     ) {
                         error!("Failed to send response: {e}");
-                        self.transport.set_closing();
+                        self.fatal_error(e, "Encoding error");
                     }
                 }
                 res = self.transport.poll(&mut self.channel) => {
@@ -186,15 +180,12 @@ impl SessionController {
                             let msg = ServiceFault::new(handle, s).into();
                             if let Err(e) = self.transport.enqueue_message_for_send(&mut self.channel, msg, id) {
                                 error!("Failed to send response: {e}");
-                                self.transport.set_closing();
+                                self.fatal_error(e, "Encoding error");
                             }
                         }
                         TransportPollResult::Error(s) => {
                             error!("Fatal transport error: {s}");
-                            if !self.transport.is_closing() {
-                                self.transport.enqueue_error(ErrorMessage::new(s, "Transport error"));
-                            }
-                            self.transport.set_closing();
+                            self.fatal_error(s, "Transport error");
                         }
                         TransportPollResult::Closed => break,
                         _ => (),
@@ -202,6 +193,13 @@ impl SessionController {
                 }
             }
         }
+    }
+
+    fn fatal_error(&mut self, err: StatusCode, msg: &str) {
+        if !self.transport.is_closing() {
+            self.transport.enqueue_error(ErrorMessage::new(err, msg));
+        }
+        self.transport.set_closing();
     }
 
     async fn process_request(&mut self, req: Request) -> RequestProcessResult {

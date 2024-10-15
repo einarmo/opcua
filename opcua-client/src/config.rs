@@ -248,6 +248,12 @@ pub struct ClientConfig {
     /// Interval between each keep-alive request sent to the server.
     #[serde(default = "defaults::keep_alive_interval")]
     pub(crate) keep_alive_interval: Duration,
+    /// Maximum number of failed keep alives before the client will be closed.
+    /// Note that this should not actually needed if the server is compliant,
+    /// only if the connection ends up in a bad state and needs to be
+    /// forcibly reset.
+    #[serde(default = "defaults::max_failed_keep_alive_count")]
+    pub(crate) max_failed_keep_alive_count: u64,
 
     /// Timeout for each request sent to the server.
     #[serde(default = "defaults::request_timeout")]
@@ -392,6 +398,10 @@ mod defaults {
         Duration::from_secs(10)
     }
 
+    pub fn max_failed_keep_alive_count() -> u64 {
+        0
+    }
+
     pub fn request_timeout() -> Duration {
         Duration::from_secs(60)
     }
@@ -483,6 +493,7 @@ impl ClientConfig {
             decoding_options: DecodingOptions::default(),
             performance: Performance::default(),
             session_name: "Rust OPC UA Client".into(),
+            max_failed_keep_alive_count: defaults::max_failed_keep_alive_count(),
         }
     }
 }
