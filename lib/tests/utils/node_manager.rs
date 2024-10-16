@@ -1,4 +1,7 @@
-use std::{collections::HashMap, sync::atomic::AtomicU32};
+use std::{
+    collections::HashMap,
+    sync::atomic::{AtomicU32, Ordering},
+};
 
 use async_trait::async_trait;
 use opcua::{
@@ -54,6 +57,12 @@ pub struct TestNodeManagerImpl {
     node_id_generator: AtomicU32,
     namespace_index: u16,
     node_managers: NodeManagersRef,
+    issues: IssueEmulation,
+}
+
+#[derive(Default)]
+pub struct IssueEmulation {
+    pub fatal_read: AtomicU32,
 }
 
 /// Information about calls made to the node manager impl, for verifying in tests.
@@ -138,6 +147,20 @@ impl InMemoryNodeManagerImpl for TestNodeManagerImpl {
         max_age: f64,
         timestamps_to_return: TimestampsToReturn,
     ) -> Vec<DataValue> {
+        if self
+            .issues
+            .fatal_read
+            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |f| {
+                if f > 0 {
+                    Some(f - 1)
+                } else {
+                    None
+                }
+            })
+            .is_ok()
+        {
+            panic!("Something went wrong! (Error emulation)");
+        }
         {
             let mut call_info = self.call_info.lock();
             for node in nodes.iter() {
@@ -697,7 +720,12 @@ impl TestNodeManagerImpl {
             node_id_generator: AtomicU32::new(1),
             namespace_index,
             node_managers,
+            issues: Default::default(),
         }
+    }
+
+    pub fn issues(&self) -> &IssueEmulation {
+        &self.issues
     }
 
     #[allow(unused)]

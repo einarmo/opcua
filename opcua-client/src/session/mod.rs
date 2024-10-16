@@ -3,6 +3,7 @@ mod connect;
 mod event_loop;
 mod implementation;
 mod request_builder;
+mod retry;
 mod services;
 
 /// Information about the server endpoint, security policy, security mode and user identity that the session will
@@ -43,6 +44,7 @@ pub use event_loop::{SessionActivity, SessionEventLoop, SessionPollResult};
 pub use implementation::Session;
 use log::{error, info};
 pub use request_builder::UARequest;
+pub use retry::{DefaultRetryPolicy, RequestRetryPolicy};
 pub use services::attributes::{
     HistoryRead, HistoryReadAction, HistoryUpdate, HistoryUpdateAction, Read, Write,
 };

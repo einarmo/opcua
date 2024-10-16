@@ -121,10 +121,12 @@ use std::path::PathBuf;
 
 pub use builder::ClientBuilder;
 pub use config::{ClientConfig, ClientEndpoint, ClientUserToken, ANONYMOUS_USER_TOKEN_ID};
+pub use retry::{ExponentialBackoff, SessionRetryPolicy};
 pub use session::{
-    Client, DataChangeCallback, EventCallback, HistoryReadAction, HistoryUpdateAction,
-    MonitoredItem, OnSubscriptionNotification, Session, SessionActivity, SessionConnectMode,
-    SessionEventLoop, SessionPollResult, Subscription, SubscriptionCallbacks, UARequest,
+    Client, DataChangeCallback, DefaultRetryPolicy, EventCallback, HistoryReadAction,
+    HistoryUpdateAction, MonitoredItem, OnSubscriptionNotification, RequestRetryPolicy, Session,
+    SessionActivity, SessionConnectMode, SessionEventLoop, SessionPollResult, Subscription,
+    SubscriptionCallbacks, UARequest,
 };
 pub use transport::AsyncSecureChannel;
 
