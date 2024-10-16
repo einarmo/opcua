@@ -1,3 +1,5 @@
+use std::{sync::atomic::Ordering, time::Duration};
+
 use super::utils::{array_value, read_value_id, read_value_ids, setup};
 use chrono::TimeDelta;
 use opcua::{
@@ -14,6 +16,7 @@ use opcua::{
         Variant, WriteMask,
     },
 };
+use opcua_client::{services::Read, DefaultRetryPolicy, ExponentialBackoff};
 
 #[tokio::test]
 async fn read() {
@@ -1068,4 +1071,68 @@ async fn history_read_fail() {
         .unwrap();
 
     assert_eq!(r[0].status_code, StatusCode::BadNodeIdUnknown);
+}
+
+#[tokio::test]
+async fn read_retry() {
+    let (tester, nm, session) = setup().await;
+
+    let id = nm.inner().next_node_id();
+    nm.inner().add_node(
+        nm.address_space(),
+        tester.handle.type_tree(),
+        VariableBuilder::new(&id, "TestVar1", "TestVar1")
+            .historizing(true)
+            .value(1)
+            .description("Description")
+            .data_type(DataTypeId::Int32)
+            .access_level(AccessLevel::CURRENT_READ)
+            .user_access_level(UserAccessLevel::CURRENT_READ)
+            .build()
+            .into(),
+        &ObjectId::ObjectsFolder.into(),
+        &ReferenceTypeId::Organizes.into(),
+        Some(&VariableTypeId::BaseDataVariableType.into()),
+        Vec::new(),
+    );
+    // Tell the node manager to fail fatally three times.
+    nm.inner().issues().fatal_read.store(3, Ordering::Relaxed);
+
+    // Make one request first, it should fail
+    let e = session
+        .read(
+            &[ReadValueId {
+                node_id: id.clone(),
+                attribute_id: AttributeId::Value as u32,
+                ..Default::default()
+            }],
+            TimestampsToReturn::Both,
+            0.0,
+        )
+        .await
+        .unwrap_err();
+    assert_eq!(e, StatusCode::BadInternalError);
+
+    // Use the retry method to send the remaining requests, two more will fail, then
+    // the request will succeed.
+    let r = session
+        .send_with_retry(
+            Read::new(&session).node(ReadValueId {
+                node_id: id,
+                attribute_id: AttributeId::Value as u32,
+                ..Default::default()
+            }),
+            DefaultRetryPolicy::new(ExponentialBackoff::new(
+                Duration::from_millis(1000),
+                Some(3),
+                Duration::from_millis(50),
+            )),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(
+        r.results.unwrap_or_default().get(0).unwrap().value,
+        Some(Variant::Int32(1))
+    );
 }

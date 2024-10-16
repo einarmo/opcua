@@ -1,7 +1,8 @@
 use std::time::Duration;
 
 #[derive(Debug, Clone)]
-pub(crate) struct ExponentialBackoff {
+/// A type implementing [`Iterator<Item = Option<Duration>`] with simple exponential backoff.
+pub struct ExponentialBackoff {
     max_sleep: Duration,
     max_retries: Option<u32>,
     current_sleep: Duration,
