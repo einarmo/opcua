@@ -1,19 +1,16 @@
-#[cfg_attr(feature = "ser", derive(serde::Serialize))]
-#[derive(Debug)]
+#[derive(serde::Serialize, Debug)]
 pub enum StructureFieldType {
     Field(String),
     Array(String),
 }
 
-#[cfg_attr(feature = "ser", derive(serde::Serialize))]
-#[derive(Debug)]
+#[derive(serde::Serialize, Debug)]
 pub struct StructureField {
     pub name: String,
     pub typ: StructureFieldType,
 }
 
-#[cfg_attr(feature = "ser", derive(serde::Serialize))]
-#[derive(Debug)]
+#[derive(serde::Serialize, Debug)]
 pub struct StructuredType {
     pub name: String,
     pub fields: Vec<StructureField>,

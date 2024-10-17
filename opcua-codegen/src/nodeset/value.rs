@@ -398,7 +398,7 @@ impl<'a> ValueBuilder<'a> {
             .map_err(CodeGenError::Other)?;
 
         if is_array {
-            let items: Vec<_> = node.children.iter().filter(|c| c.tag == name).collect();
+            let items: Vec<_> = node.children_with_name(name).collect();
             if items.is_empty() {
                 Ok(quote! {
                     None
@@ -524,18 +524,17 @@ impl<'a> ValueBuilder<'a> {
         // Some simple types contain fields, and need special handling.
         match ty {
             "Guid" => {
-                if let Some(data) = node
-                    .children
-                    .iter()
-                    .find(|f| f.tag == "String")
-                    .and_then(|f| f.text.as_ref())
-                {
+                if let Some(data) = node.child_content("String") {
                     let uuid = uuid::Uuid::parse_str(data).map_err(|e| {
                         CodeGenError::Other(format!("Failed to parse uuid {data}: {e}"))
                     })?;
                     let bytes = uuid.as_bytes();
                     return Ok(quote! {
                         opcua::types::Uuid::from_slice(&[#(#bytes),*]).unwrap()
+                    });
+                } else {
+                    return Ok(quote! {
+                        opcua::types::Uuid::nil()
                     });
                 }
             }

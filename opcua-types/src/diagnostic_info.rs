@@ -48,6 +48,17 @@ bitflags! {
     }
 }
 
+#[cfg(feature = "xml")]
+impl crate::xml::FromXml for DiagnosticBits {
+    fn from_xml<'a>(
+        element: &opcua_xml::XmlElement,
+        ctx: &crate::xml::XmlContext<'a>,
+    ) -> Result<Self, crate::xml::FromXmlError> {
+        let v = u32::from_xml(element, ctx)?;
+        Ok(Self::from_bits_truncate(v))
+    }
+}
+
 #[cfg(feature = "json")]
 impl<'de> serde::de::Deserialize<'de> for DiagnosticBits {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
@@ -79,11 +90,17 @@ impl serde::ser::Serialize for DiagnosticBits {
     }
 }
 
+#[cfg(feature = "xml")]
+mod opcua {
+    pub use crate as types;
+}
+
 /// Diagnostic information.
 #[derive(PartialEq, Debug, Clone)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(feature = "xml", derive(crate::FromXml))]
 pub struct DiagnosticInfo {
     /// A symbolic name for the status code.
     pub symbolic_id: Option<i32>,

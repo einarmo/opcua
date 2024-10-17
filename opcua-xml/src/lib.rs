@@ -9,6 +9,8 @@ pub use error::XmlError;
 pub use schema::opc_binary_schema::load_bsd_file;
 pub use schema::ua_node_set::load_nodeset2_file;
 
+pub use schema::opc_ua_types::XmlElement;
+
 pub trait XmlLoad<'input>: Sized {
     fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError>;
 }

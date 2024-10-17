@@ -1181,7 +1181,9 @@ dependencies = [
  "hashbrown 0.14.5",
  "log",
  "opcua-macros",
+ "opcua-nodes",
  "opcua-types",
+ "opcua-xml",
  "regex",
 ]
 
@@ -1241,10 +1243,14 @@ dependencies = [
  "chrono",
  "lazy_static",
  "log",
+ "opcua-macros",
+ "opcua-types",
+ "opcua-xml",
  "regex",
  "serde",
  "serde_json",
  "serde_with",
+ "thiserror",
  "uuid",
 ]
 

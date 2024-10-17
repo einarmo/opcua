@@ -12,11 +12,17 @@ use crate::{
     extension_object::ExtensionObject, node_id::NodeId, string::UAString,
 };
 
+#[cfg(feature = "xml")]
+mod opcua {
+    pub use crate as types;
+}
+
 /// The `RequestHeader` contains information common to every request from a client to the server.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(feature = "xml", derive(crate::FromXml))]
 pub struct RequestHeader {
     /// The secret Session identifier used to verify that the request is associated with
     /// the Session. The SessionAuthenticationToken type is defined in 7.31.

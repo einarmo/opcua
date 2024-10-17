@@ -1,12 +1,10 @@
-#[cfg_attr(feature = "ser", derive(serde::Serialize))]
-#[derive(Debug)]
+#[derive(serde::Serialize, Debug)]
 pub struct EnumValue {
     pub name: String,
     pub value: i64,
 }
 
-#[cfg_attr(feature = "ser", derive(serde::Serialize))]
-#[derive(Debug)]
+#[derive(serde::Serialize, Debug)]
 #[allow(non_camel_case_types)]
 pub enum EnumReprType {
     u8,
@@ -26,8 +24,7 @@ impl std::fmt::Display for EnumReprType {
     }
 }
 
-#[cfg_attr(feature = "ser", derive(serde::Serialize))]
-#[derive(Debug)]
+#[derive(serde::Serialize, Debug)]
 pub struct EnumType {
     pub name: String,
     pub values: Vec<EnumValue>,

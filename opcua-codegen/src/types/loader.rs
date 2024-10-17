@@ -23,15 +23,14 @@ fn strip_first_segment<'a>(val: &'a str, sep: &'static str) -> Result<&'a str, C
         .map(|v| v.1)
 }
 
-#[cfg_attr(feature = "ser", derive(serde::Serialize))]
-#[derive(Debug)]
+#[derive(serde::Serialize, Debug)]
 pub struct LoadedTypes {
     pub structures: Vec<StructuredType>,
     pub enums: Vec<EnumType>,
 }
 
-#[cfg_attr(feature = "ser", derive(serde::Serialize))]
-#[cfg_attr(feature = "ser", serde(untagged))]
+#[derive(serde::Serialize)]
+#[serde(untagged)]
 #[derive(Debug)]
 pub enum LoadedType {
     Struct(StructuredType),

@@ -212,6 +212,7 @@ pub mod extension_object;
 pub mod guid;
 mod impls;
 pub mod localized_text;
+pub mod namespaces;
 pub mod node_id;
 pub mod notification_message;
 pub mod numeric_range;
@@ -226,14 +227,19 @@ pub mod variant;
 #[cfg(feature = "json")]
 pub mod variant_json;
 pub mod variant_type_id;
+#[cfg(feature = "xml")]
+pub mod xml;
+
+#[cfg(feature = "xml")]
+pub use opcua_macros::FromXml;
 
 pub use self::{
     add_node_attributes::AddNodeAttributes, array::*, attribute::*, byte_string::*,
     data_type_definition::*, data_types::*, data_value::*, date_time::*, diagnostic_info::*,
     encoding::*, event_field::*, expanded_node_id::*, extension_object::*, guid::*, impls::*,
-    localized_text::*, node_id::*, node_ids::*, numeric_range::*, operand::*, qualified_name::*,
-    request_header::*, response_header::*, service_types::*, status_code::*, string::*, variant::*,
-    variant_type_id::*,
+    localized_text::*, namespaces::*, node_id::*, node_ids::*, numeric_range::*, operand::*,
+    qualified_name::*, request_header::*, response_header::*, service_types::*, status_code::*,
+    string::*, variant::*, variant_type_id::*,
 };
 
 // Various aliases

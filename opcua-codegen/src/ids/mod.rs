@@ -1,13 +1,11 @@
 use std::fs::File;
 
-use gen::{parse, render};
-use serde::{Deserialize, Serialize};
-
 use crate::CodeGenError;
+use gen::{parse, render};
 
 mod gen;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(serde::Serialize, serde::Deserialize, Debug)]
 pub struct NodeIdCodeGenTarget {
     pub file_path: String,
     pub output_file: String,
