@@ -26,8 +26,13 @@ use crate::{
     ObjectType, ReferenceType, Variable, VariableType, View,
 };
 
+/// [`NodeSetImport`] implementation for dynamically loading NodeSet2 files at
+/// runtime. Note that structures must be loaded with a type loader. By default
+/// the type loader for the base types is registered, but if your NodeSet2 file uses custom types
+/// you will have to add an [`XmlLoader`] using [`NodeSet2Import::add_type_loader`].
 pub struct NodeSet2Import {
     type_loaders: Vec<Arc<dyn XmlLoader>>,
+    dependent_namespaces: Vec<String>,
     preferred_locale: String,
     file: UANodeSet,
 }
@@ -39,17 +44,43 @@ fn qualified_name_regex() -> &'static Regex {
 }
 
 #[derive(Error, Debug)]
+/// Error when loading NodeSet2 XML.
 pub enum LoadXmlError {
+    /// The XML file failed to parse.
     #[error("{0}")]
     Xml(#[from] XmlError),
+    /// The file failed to load.
     #[error("{0}")]
     Io(#[from] std::io::Error),
+    /// The nodeset section is missing from the file. It is most likely invalid.
     #[error("Missing <NodeSet> section from file")]
     MissingNodeSet,
 }
 
 impl NodeSet2Import {
-    pub fn new(preferred_locale: &str, path: impl AsRef<Path>) -> Result<Self, LoadXmlError> {
+    /// Create a new NodeSet2 importer.
+    /// The `dependent_namespaces` array contains namespaces that this nodeset requires, in order,
+    /// but that are _not_ included in the nodeset file itself.
+    /// It does not need to include the base namespace, but it may.
+    ///
+    /// # Example
+    ///
+    /// ```ignore
+    /// NodeSet2Import::new(
+    ///     "en",
+    ///     "My.ISA95.Extension.NodeSet2.xml",
+    ///     // Since we depend on ISA95, we need to include the ISA95 namespace.
+    ///     // Typically, the NodeSet will reference ns=1 as ISA95, and ns=2 as its own
+    ///     // namespace, this will allow us to interpret ns=1 correctly. Without this,
+    ///     // we would panic when failing to look up ns=2.
+    ///     vec!["http://www.OPCFoundation.org/UA/2013/01/ISA95"]
+    /// )
+    /// ```
+    pub fn new(
+        preferred_locale: &str,
+        path: impl AsRef<Path>,
+        dependent_namespaces: Vec<String>,
+    ) -> Result<Self, LoadXmlError> {
         let content = std::fs::read_to_string(path)?;
         let nodeset = load_nodeset2_file(&content)?;
         let nodeset = nodeset
@@ -59,8 +90,30 @@ impl NodeSet2Import {
         Ok(Self {
             preferred_locale: preferred_locale.to_owned(),
             type_loaders: vec![Arc::new(opcua_types::service_types::TypesXmlLoader)],
+            dependent_namespaces,
             file: nodeset,
         })
+    }
+
+    /// Create a new importer with a pre-loaded nodeset.
+    /// The `dependent_namespaces` array contains namespaces that this nodeset requires, in order,
+    /// but that are _not_ included in the nodeset file itself.
+    /// It does not need to include the base namespace, but it may.
+    pub fn new_nodeset(
+        preferred_locale: &str,
+        nodeset: UANodeSet,
+        dependent_namespaces: Vec<String>,
+    ) -> Self {
+        Self {
+            preferred_locale: preferred_locale.to_owned(),
+            type_loaders: vec![Arc::new(opcua_types::service_types::TypesXmlLoader)],
+            file: nodeset,
+            dependent_namespaces,
+        }
+    }
+
+    pub fn add_type_loader(&mut self, loader: Arc<dyn XmlLoader>) {
+        self.type_loaders.push(loader);
     }
 
     fn select_localized_text(&self, texts: &[ua_node_set::LocalizedText]) -> Option<LocalizedText> {
@@ -363,12 +416,19 @@ impl NodeSetImport for NodeSet2Import {
         let nss = self.get_own_namespaces();
         // If the root namespace is in the namespace array, use absolute indexes,
         // else, start at 1
-        for (idx, ns) in nss.iter().enumerate() {
+        let mut offset = 1;
+        for (idx, ns) in self
+            .dependent_namespaces
+            .iter()
+            .chain(nss.iter())
+            .enumerate()
+        {
             if ns == "http://opcfoundation.org/UA/" {
+                offset = 0;
                 continue;
             }
             println!("Adding new namespace: {} {}", idx, ns);
-            namespaces.add_namespace(ns, idx as u16 + 1);
+            namespaces.add_namespace(ns, idx as u16 + offset);
         }
     }
 

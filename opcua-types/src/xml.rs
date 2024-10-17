@@ -77,11 +77,18 @@ impl<'a> XmlContext<'a> {
     }
 }
 
+/// `FromXml` is implemented by types that can be loaded from a NodeSet2 XML node.
 pub trait FromXml: Sized {
+    /// Attempt to load the type from the given XML node.
     fn from_xml<'a>(element: &XmlElement, ctx: &XmlContext<'a>) -> Result<Self, FromXmlError>;
 }
 
+/// Trait for a type that can create an extension object given a node ID.
+/// If the loader does not recognize the given node ID, it should return [`None`]
 pub trait XmlLoader {
+    /// Try to create an extension object from `body`. If `node_id` is not known,
+    /// this should return [`None`], else it should return the result of calling [`FromXml::from_xml`]
+    /// for the specified type.
     fn load_extension_object<'a>(
         &self,
         body: &XmlElement,
@@ -330,6 +337,9 @@ where
     }
 }
 
+/// `XmlField` is a convenience trait that wraps [`FromXml`] when the
+/// XML node to extract is one or more fields of a parent node.
+/// It is implemented for `T`, `Vec<T>`, `Option<T>`, and `Option<Vec<T>>`, notably.
 pub trait XmlField: Sized {
     fn get_xml_field<'a>(
         parent: &XmlElement,
@@ -445,6 +455,9 @@ fn mk_extension_object(
 use opcua_xml::schema::opc_ua_types::{self, Variant as XmlVariant};
 
 impl Variant {
+    /// Create a Variant value from a NodeSet2 variant object.
+    /// Note that this is different from the `FromXml` implementation of `Variant`,
+    /// which accepts an untyped XML node.
     pub fn from_nodeset<'a>(val: &XmlVariant, ctx: &XmlContext<'a>) -> Variant {
         match val {
             XmlVariant::Boolean(v) => (*v).into(),
