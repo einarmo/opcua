@@ -99,8 +99,8 @@ impl FromXml for UAString {
 impl FromXml for LocalizedText {
     fn from_xml<'a>(element: &XmlElement, _ctx: &XmlContext<'a>) -> Result<Self, FromXmlError> {
         Ok(LocalizedText::new(
-            element.child_content("Locale").unwrap_or(""),
-            element.child_content("Text").unwrap_or(""),
+            element.child_content("Locale").unwrap_or("").trim(),
+            element.child_content("Text").unwrap_or("").trim(),
         ))
     }
 }
@@ -475,7 +475,7 @@ impl Variant {
             XmlVariant::ListOfDateTime(v) => v.into(),
             XmlVariant::Guid(v) => (*v).into(),
             XmlVariant::ListOfGuid(v) => v.into(),
-            XmlVariant::ByteString(b) => ByteString::from_base64(&b)
+            XmlVariant::ByteString(b) => ByteString::from_base64(b.trim())
                 .unwrap_or_else(|| {
                     warn!("Invalid byte string: {b}");
                     ByteString::null()
@@ -484,23 +484,29 @@ impl Variant {
             XmlVariant::ListOfByteString(v) => v
                 .iter()
                 .map(|b| {
-                    ByteString::from_base64(&b).unwrap_or_else(|| {
+                    ByteString::from_base64(b.trim()).unwrap_or_else(|| {
                         warn!("Invalid byte string: {b}");
                         ByteString::null()
                     })
                 })
                 .collect::<Vec<_>>()
                 .into(),
-            XmlVariant::XmlElement(vec) => {
-                Variant::XmlElement(vec.iter().map(|v| v.to_string()).collect::<String>().into())
-            }
+            XmlVariant::XmlElement(vec) => Variant::XmlElement(
+                vec.iter()
+                    .map(|v| v.to_string().trim().to_owned())
+                    .collect::<String>()
+                    .into(),
+            ),
             XmlVariant::ListOfXmlElement(vec) => Variant::Array(Box::new(Array {
                 value_type: VariantScalarTypeId::XmlElement,
                 values: vec
                     .iter()
                     .map(|v| {
                         Variant::XmlElement(
-                            v.iter().map(|vv| vv.to_string()).collect::<String>().into(),
+                            v.iter()
+                                .map(|vv| vv.to_string().trim().to_string())
+                                .collect::<String>()
+                                .into(),
                         )
                     })
                     .collect(),
@@ -508,7 +514,7 @@ impl Variant {
             })),
             XmlVariant::QualifiedName(q) => QualifiedName::new(
                 ctx.namespaces.get_index(q.namespace_index.unwrap_or(0)),
-                q.name.as_deref().unwrap_or(""),
+                q.name.as_deref().unwrap_or("").trim(),
             )
             .into(),
             XmlVariant::ListOfQualifiedName(v) => v
@@ -516,22 +522,22 @@ impl Variant {
                 .map(|q| {
                     QualifiedName::new(
                         ctx.namespaces.get_index(q.namespace_index.unwrap_or(0)),
-                        q.name.as_deref().unwrap_or(""),
+                        q.name.as_deref().unwrap_or("").trim(),
                     )
                 })
                 .collect::<Vec<_>>()
                 .into(),
             XmlVariant::LocalizedText(l) => LocalizedText::new(
-                l.locale.as_deref().unwrap_or(""),
-                l.text.as_deref().unwrap_or(""),
+                l.locale.as_deref().unwrap_or("").trim(),
+                l.text.as_deref().unwrap_or("").trim(),
             )
             .into(),
             XmlVariant::ListOfLocalizedText(v) => v
                 .iter()
                 .map(|l| {
                     LocalizedText::new(
-                        l.locale.as_deref().unwrap_or(""),
-                        l.text.as_deref().unwrap_or(""),
+                        l.locale.as_deref().unwrap_or("").trim(),
+                        l.text.as_deref().unwrap_or("").trim(),
                     )
                 })
                 .collect::<Vec<_>>()

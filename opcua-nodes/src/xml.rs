@@ -1,4 +1,5 @@
 use std::{
+    path::Path,
     str::FromStr,
     sync::{Arc, OnceLock},
 };
@@ -9,11 +10,16 @@ use opcua_types::{
     DataTypeDefinition, DataValue, EnumDefinition, EnumField, LocalizedText, NodeClass, NodeId,
     QualifiedName, StructureDefinition, StructureField, StructureType, Variant,
 };
-use opcua_xml::schema::ua_node_set::{
-    self, ArrayDimensions, ListOfReferences, UADataType, UAMethod, UANodeSet, UAObject,
-    UAObjectType, UAReferenceType, UAVariable, UAVariableType, UAView,
+use opcua_xml::{
+    load_nodeset2_file,
+    schema::ua_node_set::{
+        self, ArrayDimensions, ListOfReferences, UADataType, UAMethod, UANodeSet, UAObject,
+        UAObjectType, UAReferenceType, UAVariable, UAVariableType, UAView,
+    },
+    XmlError,
 };
 use regex::Regex;
+use thiserror::Error;
 
 use crate::{
     Base, DataType, EventNotifier, ImportedItem, ImportedReference, Method, NodeSetImport, Object,
@@ -32,7 +38,31 @@ fn qualified_name_regex() -> &'static Regex {
     QUALIFIED_NAME_REGEX.get_or_init(|| Regex::new(r"^((?P<ns>[0-9]+):)?(?P<name>.*)$").unwrap())
 }
 
+#[derive(Error, Debug)]
+pub enum LoadXmlError {
+    #[error("{0}")]
+    Xml(#[from] XmlError),
+    #[error("{0}")]
+    Io(#[from] std::io::Error),
+    #[error("Missing <NodeSet> section from file")]
+    MissingNodeSet,
+}
+
 impl NodeSet2Import {
+    pub fn new(preferred_locale: &str, path: impl AsRef<Path>) -> Result<Self, LoadXmlError> {
+        let content = std::fs::read_to_string(path)?;
+        let nodeset = load_nodeset2_file(&content)?;
+        let nodeset = nodeset
+            .node_set
+            .ok_or_else(|| LoadXmlError::MissingNodeSet)?;
+
+        Ok(Self {
+            preferred_locale: preferred_locale.to_owned(),
+            type_loaders: vec![Arc::new(opcua_types::service_types::TypesXmlLoader)],
+            file: nodeset,
+        })
+    }
+
     fn select_localized_text(&self, texts: &[ua_node_set::LocalizedText]) -> Option<LocalizedText> {
         let mut selected_str = None;
         for text in texts {
@@ -53,7 +83,10 @@ impl NodeSet2Import {
             node_id_str = aliased;
         };
 
-        let mut parsed = NodeId::from_str(node_id_str).ok()?;
+        let Some(mut parsed) = NodeId::from_str(node_id_str).ok() else {
+            warn!("Failed to parse node ID: {node_id_str}");
+            return None;
+        };
         parsed.namespace = ctx.namespaces.get_index(parsed.namespace);
         Some(parsed)
     }
@@ -207,7 +240,7 @@ impl NodeSet2Import {
     }
 
     fn make_object(&self, ctx: &XmlContext<'_>, node: &UAObject) -> Option<ImportedItem> {
-        let base = self.make_base(ctx, &node.base.base, NodeClass::Variable)?;
+        let base = self.make_base(ctx, &node.base.base, NodeClass::Object)?;
         Some(ImportedItem {
             references: self.make_references(&ctx, &base, &node.base.base.references),
             node: Object::new_full(
@@ -326,31 +359,31 @@ impl NodeSet2Import {
 }
 
 impl NodeSetImport for NodeSet2Import {
-    fn register_namespaces(
-        &self,
-        namespaces: &mut opcua_types::NodeSetNamespaceMapper,
-    ) -> Vec<String> {
-        let nss = self
-            .file
-            .namespace_uris
-            .as_ref()
-            .map(|n| n.uris.clone())
-            .unwrap_or_default();
+    fn register_namespaces(&self, namespaces: &mut opcua_types::NodeSetNamespaceMapper) {
+        let nss = self.get_own_namespaces();
         // If the root namespace is in the namespace array, use absolute indexes,
         // else, start at 1
         for (idx, ns) in nss.iter().enumerate() {
             if ns == "http://opcfoundation.org/UA/" {
                 continue;
             }
-            namespaces.add_namespace(ns, idx as u16);
+            println!("Adding new namespace: {} {}", idx, ns);
+            namespaces.add_namespace(ns, idx as u16 + 1);
         }
-        nss
+    }
+
+    fn get_own_namespaces(&self) -> Vec<String> {
+        self.file
+            .namespace_uris
+            .as_ref()
+            .map(|n| n.uris.clone())
+            .unwrap_or_default()
     }
 
     fn load<'a>(
         &'a self,
         namespaces: &'a opcua_types::NodeSetNamespaceMapper,
-    ) -> impl Iterator<Item = crate::ImportedItem> + 'a {
+    ) -> Box<dyn Iterator<Item = crate::ImportedItem> + 'a> {
         let aliases = self
             .file
             .aliases
@@ -363,32 +396,36 @@ impl NodeSetImport for NodeSet2Import {
             aliases,
             loaders: self.type_loaders.clone(),
         };
-        self.file
-            .nodes
-            .iter()
-            .filter_map(move |raw_node| match raw_node {
-                opcua_xml::schema::ua_node_set::UANode::Object(node) => {
-                    self.make_object(&ctx, node)
-                }
-                opcua_xml::schema::ua_node_set::UANode::Variable(node) => {
-                    self.make_variable(&ctx, node)
-                }
-                opcua_xml::schema::ua_node_set::UANode::Method(node) => {
-                    self.make_method(&ctx, node)
-                }
-                opcua_xml::schema::ua_node_set::UANode::View(node) => self.make_view(&ctx, node),
-                opcua_xml::schema::ua_node_set::UANode::ObjectType(node) => {
-                    self.make_object_type(&ctx, node)
-                }
-                opcua_xml::schema::ua_node_set::UANode::VariableType(node) => {
-                    self.make_variable_type(&ctx, node)
-                }
-                opcua_xml::schema::ua_node_set::UANode::DataType(node) => {
-                    self.make_data_type(&ctx, node)
-                }
-                opcua_xml::schema::ua_node_set::UANode::ReferenceType(node) => {
-                    self.make_reference_type(&ctx, node)
-                }
-            })
+        Box::new(
+            self.file
+                .nodes
+                .iter()
+                .filter_map(move |raw_node| match raw_node {
+                    opcua_xml::schema::ua_node_set::UANode::Object(node) => {
+                        self.make_object(&ctx, node)
+                    }
+                    opcua_xml::schema::ua_node_set::UANode::Variable(node) => {
+                        self.make_variable(&ctx, node)
+                    }
+                    opcua_xml::schema::ua_node_set::UANode::Method(node) => {
+                        self.make_method(&ctx, node)
+                    }
+                    opcua_xml::schema::ua_node_set::UANode::View(node) => {
+                        self.make_view(&ctx, node)
+                    }
+                    opcua_xml::schema::ua_node_set::UANode::ObjectType(node) => {
+                        self.make_object_type(&ctx, node)
+                    }
+                    opcua_xml::schema::ua_node_set::UANode::VariableType(node) => {
+                        self.make_variable_type(&ctx, node)
+                    }
+                    opcua_xml::schema::ua_node_set::UANode::DataType(node) => {
+                        self.make_data_type(&ctx, node)
+                    }
+                    opcua_xml::schema::ua_node_set::UANode::ReferenceType(node) => {
+                        self.make_reference_type(&ctx, node)
+                    }
+                }),
+        )
     }
 }

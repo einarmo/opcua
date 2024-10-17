@@ -72,7 +72,7 @@ impl UANode {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct UANodeSet {
     pub namespace_uris: Option<UriTable>,
     pub server_uris: Option<UriTable>,

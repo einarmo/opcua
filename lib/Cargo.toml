@@ -37,7 +37,7 @@ generated-address-space = ["opcua-server/generated-address-space"]
 # which brings in a dependency to opcua-client. Omitting the feature saves some memory.
 discovery-server-registration = ["opcua-server/discovery-server-registration"]
 # Methods for XML parsing and loading of nodesets from XML.
-xml = ["opcua-types/xml"]
+xml = ["opcua-types/xml", "opcua-nodes/xml"]
 
 
 [dependencies]

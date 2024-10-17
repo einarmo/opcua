@@ -23,6 +23,7 @@ bitflags = { workspace = true }
 hashbrown = { workspace = true }
 log = { workspace = true }
 regex = { workspace = true }
+thiserror = { workspace = true }
 
 opcua-types = { path = "../opcua-types" }
 opcua-macros = { path = "../opcua-macros" }

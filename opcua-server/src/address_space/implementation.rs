@@ -395,9 +395,14 @@ impl AddressSpace {
         }
     }
 
-    pub fn import_node_set<T: NodeSetImport>(&mut self, import: T, namespaces: &mut NamespaceMap) {
+    pub fn import_node_set<T: NodeSetImport + ?Sized>(
+        &mut self,
+        import: &T,
+        namespaces: &mut NamespaceMap,
+    ) {
         let mut map = NodeSetNamespaceMapper::new(namespaces);
-        let owned_namespaces = import.register_namespaces(&mut map);
+        import.register_namespaces(&mut map);
+        let owned_namespaces = import.get_own_namespaces();
         for ns in owned_namespaces {
             let idx = map
                 .namespaces()
@@ -864,7 +869,7 @@ mod tests {
         let mut address_space = AddressSpace::new();
         address_space.add_namespace("http://opcfoundation.org/UA/", 0);
         let mut namespaces = NamespaceMap::default();
-        address_space.import_node_set(CoreNamespace, &mut namespaces);
+        address_space.import_node_set(&CoreNamespace, &mut namespaces);
         add_sample_vars_to_address_space(&mut address_space);
         address_space
     }

@@ -18,10 +18,12 @@ pub struct ImportedItem {
 }
 
 pub trait NodeSetImport {
-    fn register_namespaces(&self, namespaces: &mut NodeSetNamespaceMapper) -> Vec<String>;
+    fn register_namespaces(&self, namespaces: &mut NodeSetNamespaceMapper);
+
+    fn get_own_namespaces(&self) -> Vec<String>;
 
     fn load<'a>(
         &'a self,
         namespaces: &'a NodeSetNamespaceMapper,
-    ) -> impl Iterator<Item = ImportedItem> + 'a;
+    ) -> Box<dyn Iterator<Item = ImportedItem> + 'a>;
 }

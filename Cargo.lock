@@ -1185,6 +1185,7 @@ dependencies = [
  "opcua-types",
  "opcua-xml",
  "regex",
+ "thiserror",
 ]
 
 [[package]]

@@ -6,6 +6,8 @@ mod import;
 mod type_tree;
 #[cfg(feature = "xml")]
 mod xml;
+#[cfg(feature = "xml")]
+pub use xml::NodeSet2Import;
 
 pub use base::Base;
 pub use data_type::{DataType, DataTypeBuilder};
