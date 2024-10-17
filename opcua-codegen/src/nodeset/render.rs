@@ -82,7 +82,7 @@ impl RenderExpr for NodeId {
             quote! { 0u16 }
         } else {
             quote! {
-                ns_map.get_index(#namespace)
+                ns_map.get_index(#namespace).unwrap()
             }
         };
 
@@ -123,7 +123,7 @@ impl RenderExpr for QualifiedName {
             quote! { 0u16 }
         } else {
             quote! {
-                ns_map.get_index(#namespace)
+                ns_map.get_index(#namespace).unwrap()
             }
         };
 

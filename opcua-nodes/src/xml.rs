@@ -6,7 +6,7 @@ use std::{
 
 use log::warn;
 use opcua_types::{
-    xml::{XmlContext, XmlLoader},
+    xml::{FromXmlError, XmlContext, XmlLoader},
     DataTypeDefinition, DataValue, EnumDefinition, EnumField, LocalizedText, NodeClass, NodeId,
     QualifiedName, StructureDefinition, StructureField, StructureType, Variant,
 };
@@ -130,57 +130,72 @@ impl NodeSet2Import {
         Some(LocalizedText::new(&selected.locale.0, &selected.text))
     }
 
-    fn make_node_id(&self, node_id: &ua_node_set::NodeId, ctx: &XmlContext<'_>) -> Option<NodeId> {
+    fn make_node_id(
+        &self,
+        node_id: &ua_node_set::NodeId,
+        ctx: &XmlContext<'_>,
+    ) -> Result<NodeId, FromXmlError> {
         let mut node_id_str = &node_id.0;
         if let Some(aliased) = ctx.aliases.get(&node_id.0) {
             node_id_str = aliased;
         };
 
         let Some(mut parsed) = NodeId::from_str(node_id_str).ok() else {
-            warn!("Failed to parse node ID: {node_id_str}");
-            return None;
+            return Err(FromXmlError::Other(format!(
+                "Failed to parse node ID: {node_id_str}"
+            )));
         };
-        parsed.namespace = ctx.namespaces.get_index(parsed.namespace);
-        Some(parsed)
+        parsed.namespace = ctx.namespaces.get_index(parsed.namespace)?;
+        Ok(parsed)
     }
 
     fn make_qualified_name(
         &self,
         qname: &ua_node_set::QualifiedName,
         ctx: &XmlContext<'_>,
-    ) -> Option<QualifiedName> {
-        let captures = qualified_name_regex().captures(&qname.0)?;
+    ) -> Result<QualifiedName, FromXmlError> {
+        let captures = qualified_name_regex()
+            .captures(&qname.0)
+            .ok_or_else(|| FromXmlError::Other(format!("Invalid qualified name: {}", qname.0)))?;
 
         let namespace = if let Some(ns) = captures.name("ns") {
-            ns.as_str().parse::<u16>().ok()?
+            ns.as_str().trim().parse::<u16>().map_err(|e| {
+                format!(
+                    "Failed to parse namespace index from qualified name: {}, {e:?}",
+                    qname.0
+                )
+            })?
         } else {
             0
         };
 
-        let namespace = ctx.namespaces.get_index(namespace);
-        Some(QualifiedName::new(
-            namespace,
-            captures.name("name")?.as_str(),
-        ))
+        let namespace = ctx.namespaces.get_index(namespace)?;
+        let name = captures.name("name").map(|n| n.as_str()).unwrap_or("");
+        Ok(QualifiedName::new(namespace, name))
     }
 
-    fn make_array_dimensions(&self, dims: &ArrayDimensions) -> Option<Vec<u32>> {
+    fn make_array_dimensions(
+        &self,
+        dims: &ArrayDimensions,
+    ) -> Result<Option<Vec<u32>>, FromXmlError> {
         if dims.0.trim().is_empty() {
-            return None;
+            return Ok(None);
         }
 
         let mut values = Vec::new();
         for it in dims.0.split(',') {
             let Ok(r) = it.trim().parse::<u32>() else {
-                warn!("Invalid array dimensions: {}", dims.0);
-                continue;
+                return Err(FromXmlError::Other(format!(
+                    "Invalid array dimensions: {}",
+                    dims.0
+                )));
             };
             values.push(r);
         }
         if values.is_empty() {
-            None
+            Ok(None)
         } else {
-            Some(values)
+            Ok(Some(values))
         }
     }
 
@@ -188,7 +203,7 @@ impl NodeSet2Import {
         &self,
         def: &ua_node_set::DataTypeDefinition,
         ctx: &XmlContext<'_>,
-    ) -> DataTypeDefinition {
+    ) -> Result<DataTypeDefinition, FromXmlError> {
         let is_enum = def.fields.first().is_some_and(|f| f.value != -1);
         if is_enum {
             let fields = def
@@ -205,9 +220,9 @@ impl NodeSet2Import {
                     name: field.name.clone().into(),
                 })
                 .collect();
-            DataTypeDefinition::Enum(EnumDefinition {
+            Ok(DataTypeDefinition::Enum(EnumDefinition {
                 fields: Some(fields),
-            })
+            }))
         } else {
             let mut any_optional = false;
             let mut fields = Vec::with_capacity(def.fields.len());
@@ -220,12 +235,12 @@ impl NodeSet2Import {
                         .unwrap_or_default(),
                     data_type: self.make_node_id(&field.data_type, ctx).unwrap_or_default(),
                     value_rank: field.value_rank.0,
-                    array_dimensions: self.make_array_dimensions(&field.array_dimensions),
+                    array_dimensions: self.make_array_dimensions(&field.array_dimensions)?,
                     max_string_length: field.max_string_length as u32,
                     is_optional: field.is_optional,
                 });
             }
-            DataTypeDefinition::Structure(StructureDefinition {
+            Ok(DataTypeDefinition::Structure(StructureDefinition {
                 default_encoding_id: NodeId::null(),
                 base_data_type: NodeId::null(),
                 structure_type: if def.is_union {
@@ -236,7 +251,7 @@ impl NodeSet2Import {
                     StructureType::Structure
                 },
                 fields: Some(fields),
-            })
+            }))
         }
     }
 
@@ -245,8 +260,8 @@ impl NodeSet2Import {
         ctx: &XmlContext<'_>,
         base: &ua_node_set::UANodeBase,
         node_class: NodeClass,
-    ) -> Option<Base> {
-        Some(Base::new_full(
+    ) -> Result<Base, FromXmlError> {
+        Ok(Base::new_full(
             self.make_node_id(&base.node_id, ctx)?,
             node_class,
             self.make_qualified_name(&base.browse_name, ctx)?,
@@ -263,39 +278,44 @@ impl NodeSet2Import {
         ctx: &XmlContext<'_>,
         base: &Base,
         refs: &Option<ListOfReferences>,
-    ) -> Vec<ImportedReference> {
+    ) -> Result<Vec<ImportedReference>, FromXmlError> {
         let Some(refs) = refs.as_ref() else {
-            return Vec::new();
+            return Ok(Vec::new());
         };
         let mut res = Vec::with_capacity(refs.references.len());
         for rf in &refs.references {
-            let Some(target_id) = self.make_node_id(&rf.node_id, ctx) else {
+            let target_id = self.make_node_id(&rf.node_id, ctx).inspect_err(|e| {
                 warn!(
-                    "Invalid target ID {} on reference from node {}",
+                    "Invalid target ID {} on reference from node {}: {e}",
                     rf.node_id.0, base.node_id
-                );
-                continue;
-            };
-            let Some(type_id) = self.make_node_id(&rf.reference_type, ctx) else {
-                warn!(
-                    "Invalid reference type ID {} on reference from node {}",
-                    rf.node_id.0, base.node_id
-                );
-                continue;
-            };
+                )
+            })?;
+
+            let type_id = self
+                .make_node_id(&rf.reference_type, ctx)
+                .inspect_err(|e| {
+                    warn!(
+                        "Invalid reference type ID {} on reference from node {}: {e}",
+                        rf.node_id.0, base.node_id
+                    )
+                })?;
             res.push(ImportedReference {
                 target_id,
                 type_id,
                 is_forward: rf.is_forward,
             });
         }
-        res
+        Ok(res)
     }
 
-    fn make_object(&self, ctx: &XmlContext<'_>, node: &UAObject) -> Option<ImportedItem> {
+    fn make_object(
+        &self,
+        ctx: &XmlContext<'_>,
+        node: &UAObject,
+    ) -> Result<ImportedItem, FromXmlError> {
         let base = self.make_base(ctx, &node.base.base, NodeClass::Object)?;
-        Some(ImportedItem {
-            references: self.make_references(&ctx, &base, &node.base.base.references),
+        Ok(ImportedItem {
+            references: self.make_references(&ctx, &base, &node.base.base.references)?,
             node: Object::new_full(
                 base,
                 EventNotifier::from_bits_truncate(node.event_notifier.0),
@@ -304,10 +324,14 @@ impl NodeSet2Import {
         })
     }
 
-    fn make_variable(&self, ctx: &XmlContext<'_>, node: &UAVariable) -> Option<ImportedItem> {
+    fn make_variable(
+        &self,
+        ctx: &XmlContext<'_>,
+        node: &UAVariable,
+    ) -> Result<ImportedItem, FromXmlError> {
         let base = self.make_base(ctx, &node.base.base, NodeClass::Variable)?;
-        Some(ImportedItem {
-            references: self.make_references(ctx, &base, &node.base.base.references),
+        Ok(ImportedItem {
+            references: self.make_references(ctx, &base, &node.base.base.references)?,
             node: Variable::new_full(
                 base,
                 self.make_node_id(&node.data_type, ctx)?,
@@ -315,29 +339,38 @@ impl NodeSet2Import {
                 node.value_rank.0,
                 node.value
                     .as_ref()
-                    .map(|v| DataValue::new_now(Variant::from_nodeset(&v.0, ctx)))
+                    .map(|v| {
+                        Ok::<DataValue, FromXmlError>(DataValue::new_now(Variant::from_nodeset(
+                            &v.0, ctx,
+                        )?))
+                    })
+                    .transpose()?
                     .unwrap_or_else(|| DataValue::null()),
                 node.access_level.0,
                 node.user_access_level.0,
-                self.make_array_dimensions(&node.array_dimensions),
+                self.make_array_dimensions(&node.array_dimensions)?,
                 Some(node.minimum_sampling_interval.0),
             )
             .into(),
         })
     }
 
-    fn make_method(&self, ctx: &XmlContext<'_>, node: &UAMethod) -> Option<ImportedItem> {
+    fn make_method(
+        &self,
+        ctx: &XmlContext<'_>,
+        node: &UAMethod,
+    ) -> Result<ImportedItem, FromXmlError> {
         let base = self.make_base(ctx, &node.base.base, NodeClass::Method)?;
-        Some(ImportedItem {
-            references: self.make_references(ctx, &base, &node.base.base.references),
+        Ok(ImportedItem {
+            references: self.make_references(ctx, &base, &node.base.base.references)?,
             node: Method::new_full(base, node.executable, node.user_executable).into(),
         })
     }
 
-    fn make_view(&self, ctx: &XmlContext<'_>, node: &UAView) -> Option<ImportedItem> {
+    fn make_view(&self, ctx: &XmlContext<'_>, node: &UAView) -> Result<ImportedItem, FromXmlError> {
         let base = self.make_base(ctx, &node.base.base, NodeClass::View)?;
-        Some(ImportedItem {
-            references: self.make_references(ctx, &base, &node.base.base.references),
+        Ok(ImportedItem {
+            references: self.make_references(ctx, &base, &node.base.base.references)?,
             node: View::new_full(
                 base,
                 EventNotifier::from_bits_truncate(node.event_notifier.0),
@@ -347,10 +380,14 @@ impl NodeSet2Import {
         })
     }
 
-    fn make_object_type(&self, ctx: &XmlContext<'_>, node: &UAObjectType) -> Option<ImportedItem> {
+    fn make_object_type(
+        &self,
+        ctx: &XmlContext<'_>,
+        node: &UAObjectType,
+    ) -> Result<ImportedItem, FromXmlError> {
         let base = self.make_base(ctx, &node.base.base, NodeClass::ObjectType)?;
-        Some(ImportedItem {
-            references: self.make_references(ctx, &base, &node.base.base.references),
+        Ok(ImportedItem {
+            references: self.make_references(ctx, &base, &node.base.base.references)?,
             node: ObjectType::new_full(base, node.base.is_abstract).into(),
         })
     }
@@ -359,10 +396,10 @@ impl NodeSet2Import {
         &self,
         ctx: &XmlContext<'_>,
         node: &UAVariableType,
-    ) -> Option<ImportedItem> {
+    ) -> Result<ImportedItem, FromXmlError> {
         let base = self.make_base(ctx, &node.base.base, NodeClass::VariableType)?;
-        Some(ImportedItem {
-            references: self.make_references(ctx, &base, &node.base.base.references),
+        Ok(ImportedItem {
+            references: self.make_references(ctx, &base, &node.base.base.references)?,
             node: VariableType::new_full(
                 base,
                 self.make_node_id(&node.data_type, ctx)?,
@@ -370,23 +407,31 @@ impl NodeSet2Import {
                 node.value_rank.0,
                 node.value
                     .as_ref()
-                    .map(|v| DataValue::new_now(Variant::from_nodeset(&v.0, ctx))),
-                self.make_array_dimensions(&node.array_dimensions),
+                    .map(|v| {
+                        Ok::<_, FromXmlError>(DataValue::new_now(Variant::from_nodeset(&v.0, ctx)?))
+                    })
+                    .transpose()?,
+                self.make_array_dimensions(&node.array_dimensions)?,
             )
             .into(),
         })
     }
 
-    fn make_data_type(&self, ctx: &XmlContext<'_>, node: &UADataType) -> Option<ImportedItem> {
+    fn make_data_type(
+        &self,
+        ctx: &XmlContext<'_>,
+        node: &UADataType,
+    ) -> Result<ImportedItem, FromXmlError> {
         let base = self.make_base(ctx, &node.base.base, NodeClass::DataType)?;
-        Some(ImportedItem {
-            references: self.make_references(ctx, &base, &node.base.base.references),
+        Ok(ImportedItem {
+            references: self.make_references(ctx, &base, &node.base.base.references)?,
             node: DataType::new_full(
                 base,
                 node.base.is_abstract,
                 node.definition
                     .as_ref()
-                    .map(|v| self.make_data_type_def(v, ctx)),
+                    .map(|v| Ok::<_, FromXmlError>(self.make_data_type_def(v, ctx)?))
+                    .transpose()?,
             )
             .into(),
         })
@@ -396,10 +441,10 @@ impl NodeSet2Import {
         &self,
         ctx: &XmlContext<'_>,
         node: &UAReferenceType,
-    ) -> Option<ImportedItem> {
+    ) -> Result<ImportedItem, FromXmlError> {
         let base = self.make_base(ctx, &node.base.base, NodeClass::ReferenceType)?;
-        Some(ImportedItem {
-            references: self.make_references(ctx, &base, &node.base.base.references),
+        Ok(ImportedItem {
+            references: self.make_references(ctx, &base, &node.base.base.references)?,
             node: ReferenceType::new_full(
                 base,
                 node.symmetric,
@@ -456,36 +501,38 @@ impl NodeSetImport for NodeSet2Import {
             aliases,
             loaders: self.type_loaders.clone(),
         };
-        Box::new(
-            self.file
-                .nodes
-                .iter()
-                .filter_map(move |raw_node| match raw_node {
-                    opcua_xml::schema::ua_node_set::UANode::Object(node) => {
-                        self.make_object(&ctx, node)
-                    }
-                    opcua_xml::schema::ua_node_set::UANode::Variable(node) => {
-                        self.make_variable(&ctx, node)
-                    }
-                    opcua_xml::schema::ua_node_set::UANode::Method(node) => {
-                        self.make_method(&ctx, node)
-                    }
-                    opcua_xml::schema::ua_node_set::UANode::View(node) => {
-                        self.make_view(&ctx, node)
-                    }
-                    opcua_xml::schema::ua_node_set::UANode::ObjectType(node) => {
-                        self.make_object_type(&ctx, node)
-                    }
-                    opcua_xml::schema::ua_node_set::UANode::VariableType(node) => {
-                        self.make_variable_type(&ctx, node)
-                    }
-                    opcua_xml::schema::ua_node_set::UANode::DataType(node) => {
-                        self.make_data_type(&ctx, node)
-                    }
-                    opcua_xml::schema::ua_node_set::UANode::ReferenceType(node) => {
-                        self.make_reference_type(&ctx, node)
-                    }
-                }),
-        )
+        Box::new(self.file.nodes.iter().filter_map(move |raw_node| {
+            let r = match raw_node {
+                opcua_xml::schema::ua_node_set::UANode::Object(node) => {
+                    self.make_object(&ctx, node)
+                }
+                opcua_xml::schema::ua_node_set::UANode::Variable(node) => {
+                    self.make_variable(&ctx, node)
+                }
+                opcua_xml::schema::ua_node_set::UANode::Method(node) => {
+                    self.make_method(&ctx, node)
+                }
+                opcua_xml::schema::ua_node_set::UANode::View(node) => self.make_view(&ctx, node),
+                opcua_xml::schema::ua_node_set::UANode::ObjectType(node) => {
+                    self.make_object_type(&ctx, node)
+                }
+                opcua_xml::schema::ua_node_set::UANode::VariableType(node) => {
+                    self.make_variable_type(&ctx, node)
+                }
+                opcua_xml::schema::ua_node_set::UANode::DataType(node) => {
+                    self.make_data_type(&ctx, node)
+                }
+                opcua_xml::schema::ua_node_set::UANode::ReferenceType(node) => {
+                    self.make_reference_type(&ctx, node)
+                }
+            };
+            match r {
+                Ok(r) => Some(r),
+                Err(e) => {
+                    warn!("Failed to import node {}: {e}", raw_node.base().node_id.0);
+                    None
+                }
+            }
+        }))
     }
 }

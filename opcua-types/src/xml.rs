@@ -6,8 +6,8 @@ use thiserror::Error;
 
 use crate::{
     Array, ByteString, DataValue, DateTime, ExpandedNodeId, ExtensionObject, Guid, LocalizedText,
-    NodeId, NodeSetNamespaceMapper, QualifiedName, StatusCode, UAString, Variant,
-    VariantScalarTypeId,
+    NodeId, NodeSetNamespaceMapper, QualifiedName, StatusCode, UAString, UninitializedIndex,
+    Variant, VariantScalarTypeId,
 };
 
 #[derive(Error, Debug)]
@@ -18,6 +18,14 @@ pub enum FromXmlError {
     MissingContent(&'static str),
     #[error("{0}")]
     Other(String),
+    #[error("Uninitialized index {0}")]
+    UninitializedIndex(u16),
+}
+
+impl From<UninitializedIndex> for FromXmlError {
+    fn from(value: UninitializedIndex) -> Self {
+        Self::UninitializedIndex(value.0)
+    }
 }
 
 macro_rules! from_xml_number {
@@ -136,7 +144,7 @@ impl FromXml for NodeId {
             .map_err(|e| format!("Failed to parse node ID from string {id}: {e}"))?;
         // Update the namespace index, the index in the XML nodeset will probably not match the one
         // in the server.
-        node_id.namespace = ctx.namespaces.get_index(node_id.namespace);
+        node_id.namespace = ctx.namespaces.get_index(node_id.namespace)?;
         Ok(node_id)
     }
 }
@@ -206,7 +214,7 @@ impl FromXml for QualifiedName {
         } else {
             0
         };
-        let index = ctx.namespaces.get_index(index);
+        let index = ctx.namespaces.get_index(index)?;
         let name = element.child_content("Name").unwrap_or("");
         Ok(QualifiedName::new(index, name))
     }
@@ -417,39 +425,36 @@ where
     }
 }
 
-fn mk_node_id(node_id: &opc_ua_types::NodeId, ctx: &XmlContext<'_>) -> NodeId {
+fn mk_node_id(
+    node_id: &opc_ua_types::NodeId,
+    ctx: &XmlContext<'_>,
+) -> Result<NodeId, FromXmlError> {
     let Some(idf) = &node_id.identifier else {
-        return NodeId::null();
+        return Ok(NodeId::null());
     };
     let Ok(mut parsed) = NodeId::from_str(idf) else {
         warn!("Invalid node ID: {idf}");
-        return NodeId::null();
+        return Err(FromXmlError::Other(format!("Invalid node ID: {idf}")));
     };
-    parsed.namespace = ctx.namespaces.get_index(parsed.namespace);
-    parsed
+    parsed.namespace = ctx.namespaces.get_index(parsed.namespace)?;
+    Ok(parsed)
 }
 
 fn mk_extension_object(
     ext_obj: &opc_ua_types::ExtensionObject,
     ctx: &XmlContext<'_>,
-) -> ExtensionObject {
+) -> Result<ExtensionObject, FromXmlError> {
     let Some(b) = ext_obj.body.as_ref() else {
-        return ExtensionObject::null();
+        return Ok(ExtensionObject::null());
     };
 
     let Some(type_id) = ext_obj.type_id.as_ref() else {
-        return ExtensionObject::null();
+        return Ok(ExtensionObject::null());
     };
 
-    let node_id = mk_node_id(type_id, ctx);
+    let node_id = mk_node_id(type_id, ctx)?;
 
-    match ctx.load_extension_object(&b.data, &node_id) {
-        Ok(r) => r,
-        Err(e) => {
-            warn!("Failed to load extension object: {e}");
-            ExtensionObject::null()
-        }
-    }
+    ctx.load_extension_object(&b.data, &node_id)
 }
 
 use opcua_xml::schema::opc_ua_types::{self, Variant as XmlVariant};
@@ -458,8 +463,11 @@ impl Variant {
     /// Create a Variant value from a NodeSet2 variant object.
     /// Note that this is different from the `FromXml` implementation of `Variant`,
     /// which accepts an untyped XML node.
-    pub fn from_nodeset<'a>(val: &XmlVariant, ctx: &XmlContext<'a>) -> Variant {
-        match val {
+    pub fn from_nodeset<'a>(
+        val: &XmlVariant,
+        ctx: &XmlContext<'a>,
+    ) -> Result<Variant, FromXmlError> {
+        Ok(match val {
             XmlVariant::Boolean(v) => (*v).into(),
             XmlVariant::ListOfBoolean(v) => v.into(),
             XmlVariant::SByte(v) => (*v).into(),
@@ -526,19 +534,19 @@ impl Variant {
                 dimensions: None,
             })),
             XmlVariant::QualifiedName(q) => QualifiedName::new(
-                ctx.namespaces.get_index(q.namespace_index.unwrap_or(0)),
+                ctx.namespaces.get_index(q.namespace_index.unwrap_or(0))?,
                 q.name.as_deref().unwrap_or("").trim(),
             )
             .into(),
             XmlVariant::ListOfQualifiedName(v) => v
                 .iter()
                 .map(|q| {
-                    QualifiedName::new(
-                        ctx.namespaces.get_index(q.namespace_index.unwrap_or(0)),
+                    Ok(QualifiedName::new(
+                        ctx.namespaces.get_index(q.namespace_index.unwrap_or(0))?,
                         q.name.as_deref().unwrap_or("").trim(),
-                    )
+                    ))
                 })
-                .collect::<Vec<_>>()
+                .collect::<Result<Vec<QualifiedName>, FromXmlError>>()?
                 .into(),
             XmlVariant::LocalizedText(l) => LocalizedText::new(
                 l.locale.as_deref().unwrap_or("").trim(),
@@ -555,36 +563,36 @@ impl Variant {
                 })
                 .collect::<Vec<_>>()
                 .into(),
-            XmlVariant::NodeId(node_id) => mk_node_id(node_id, ctx).into(),
+            XmlVariant::NodeId(node_id) => mk_node_id(node_id, ctx)?.into(),
             XmlVariant::ListOfNodeId(v) => v
                 .iter()
                 .map(|node_id| mk_node_id(node_id, ctx))
-                .collect::<Vec<_>>()
+                .collect::<Result<Vec<_>, _>>()?
                 .into(),
             XmlVariant::ExpandedNodeId(node_id) => {
-                ExpandedNodeId::new(mk_node_id(node_id, ctx)).into()
+                ExpandedNodeId::new(mk_node_id(node_id, ctx)?).into()
             }
             XmlVariant::ListOfExpandedNodeId(v) => v
                 .iter()
-                .map(|node_id| ExpandedNodeId::new(mk_node_id(node_id, ctx)))
-                .collect::<Vec<_>>()
+                .map(|node_id| Ok(ExpandedNodeId::new(mk_node_id(node_id, ctx)?)))
+                .collect::<Result<Vec<_>, FromXmlError>>()?
                 .into(),
-            XmlVariant::ExtensionObject(val) => mk_extension_object(val, ctx).into(),
+            XmlVariant::ExtensionObject(val) => mk_extension_object(val, ctx)?.into(),
             XmlVariant::ListOfExtensionObject(v) => v
                 .iter()
                 .map(|val| mk_extension_object(val, ctx))
-                .collect::<Vec<_>>()
+                .collect::<Result<Vec<_>, _>>()?
                 .into(),
             XmlVariant::Variant(variant) => {
-                let inner = Variant::from_nodeset(&*variant, ctx);
+                let inner = Variant::from_nodeset(&*variant, ctx)?;
                 Variant::Variant(Box::new(inner))
             }
             XmlVariant::ListOfVariant(vec) => Variant::Array(Box::new(Array {
                 value_type: VariantScalarTypeId::Variant,
                 values: vec
                     .iter()
-                    .map(|v| Variant::Variant(Box::new(Variant::from_nodeset(&*v, ctx))))
-                    .collect(),
+                    .map(|v| Ok(Variant::Variant(Box::new(Variant::from_nodeset(&*v, ctx)?))))
+                    .collect::<Result<Vec<_>, FromXmlError>>()?,
                 dimensions: None,
             })),
             XmlVariant::StatusCode(status_code) => StatusCode::from(status_code.code).into(),
@@ -593,6 +601,6 @@ impl Variant {
                 .map(|v| StatusCode::from(v.code))
                 .collect::<Vec<_>>()
                 .into(),
-        }
+        })
     }
 }
