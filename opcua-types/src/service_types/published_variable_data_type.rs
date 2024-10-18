@@ -23,8 +23,14 @@ pub struct PublishedVariableDataType {
     pub meta_data_properties: Option<Vec<opcua::types::qualified_name::QualifiedName>>,
 }
 impl opcua::types::MessageInfo for PublishedVariableDataType {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::PublishedVariableDataType_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::PublishedVariableDataType_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::PublishedVariableDataType_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for PublishedVariableDataType {

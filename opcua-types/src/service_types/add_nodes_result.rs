@@ -17,8 +17,14 @@ pub struct AddNodesResult {
     pub added_node_id: opcua::types::node_id::NodeId,
 }
 impl opcua::types::MessageInfo for AddNodesResult {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::AddNodesResult_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::AddNodesResult_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::AddNodesResult_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for AddNodesResult {

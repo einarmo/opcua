@@ -16,8 +16,14 @@ pub struct HistoryEvent {
     pub events: Option<Vec<super::history_event_field_list::HistoryEventFieldList>>,
 }
 impl opcua::types::MessageInfo for HistoryEvent {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::HistoryEvent_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::HistoryEvent_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::HistoryEvent_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for HistoryEvent {

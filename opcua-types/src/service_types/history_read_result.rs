@@ -18,8 +18,14 @@ pub struct HistoryReadResult {
     pub history_data: opcua::types::extension_object::ExtensionObject,
 }
 impl opcua::types::MessageInfo for HistoryReadResult {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::HistoryReadResult_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::HistoryReadResult_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::HistoryReadResult_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for HistoryReadResult {

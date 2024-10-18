@@ -17,8 +17,14 @@ pub struct BrowsePath {
     pub relative_path: super::relative_path::RelativePath,
 }
 impl opcua::types::MessageInfo for BrowsePath {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::BrowsePath_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::BrowsePath_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::BrowsePath_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for BrowsePath {

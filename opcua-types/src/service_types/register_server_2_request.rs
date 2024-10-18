@@ -19,8 +19,14 @@ pub struct RegisterServer2Request {
     >,
 }
 impl opcua::types::MessageInfo for RegisterServer2Request {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::RegisterServer2Request_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::RegisterServer2Request_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::RegisterServer2Request_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for RegisterServer2Request {

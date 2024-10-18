@@ -19,8 +19,14 @@ pub struct DeleteRawModifiedDetails {
     pub end_time: opcua::types::date_time::DateTime,
 }
 impl opcua::types::MessageInfo for DeleteRawModifiedDetails {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::DeleteRawModifiedDetails_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DeleteRawModifiedDetails_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DeleteRawModifiedDetails_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for DeleteRawModifiedDetails {

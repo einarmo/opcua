@@ -16,8 +16,14 @@ pub struct EventNotificationList {
     pub events: Option<Vec<super::event_field_list::EventFieldList>>,
 }
 impl opcua::types::MessageInfo for EventNotificationList {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::EventNotificationList_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::EventNotificationList_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::EventNotificationList_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for EventNotificationList {

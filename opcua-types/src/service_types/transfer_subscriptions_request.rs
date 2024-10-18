@@ -18,8 +18,14 @@ pub struct TransferSubscriptionsRequest {
     pub send_initial_values: bool,
 }
 impl opcua::types::MessageInfo for TransferSubscriptionsRequest {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::TransferSubscriptionsRequest_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::TransferSubscriptionsRequest_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::TransferSubscriptionsRequest_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for TransferSubscriptionsRequest {

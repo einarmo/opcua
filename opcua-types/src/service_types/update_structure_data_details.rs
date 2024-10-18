@@ -17,8 +17,14 @@ pub struct UpdateStructureDataDetails {
     pub update_values: Option<Vec<opcua::types::data_value::DataValue>>,
 }
 impl opcua::types::MessageInfo for UpdateStructureDataDetails {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::UpdateStructureDataDetails_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::UpdateStructureDataDetails_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::UpdateStructureDataDetails_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for UpdateStructureDataDetails {

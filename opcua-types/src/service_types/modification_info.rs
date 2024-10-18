@@ -17,8 +17,14 @@ pub struct ModificationInfo {
     pub user_name: opcua::types::string::UAString,
 }
 impl opcua::types::MessageInfo for ModificationInfo {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ModificationInfo_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ModificationInfo_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ModificationInfo_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for ModificationInfo {

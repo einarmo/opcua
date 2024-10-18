@@ -323,7 +323,7 @@ impl ExtensionObject {
     where
         T: BinaryEncoder + MessageInfo,
     {
-        Self::from_encodable(encodable.object_id(), encodable)
+        Self::from_encodable(encodable.type_id(), encodable)
     }
 
     #[cfg(feature = "json")]
@@ -332,7 +332,7 @@ impl ExtensionObject {
     ) -> Result<ExtensionObject, serde_json::Error> {
         let value = serde_json::to_value(object)?;
         Ok(Self {
-            node_id: object.object_id().into(),
+            node_id: object.type_id().into(),
             body: ExtensionObjectEncoding::Json(value),
         })
     }

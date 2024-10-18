@@ -23,8 +23,14 @@ pub struct ReferenceTypeAttributes {
     pub inverse_name: opcua::types::localized_text::LocalizedText,
 }
 impl opcua::types::MessageInfo for ReferenceTypeAttributes {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ReferenceTypeAttributes_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReferenceTypeAttributes_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReferenceTypeAttributes_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for ReferenceTypeAttributes {

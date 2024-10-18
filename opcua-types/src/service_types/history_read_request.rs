@@ -19,8 +19,14 @@ pub struct HistoryReadRequest {
     pub nodes_to_read: Option<Vec<super::history_read_value_id::HistoryReadValueId>>,
 }
 impl opcua::types::MessageInfo for HistoryReadRequest {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::HistoryReadRequest_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::HistoryReadRequest_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::HistoryReadRequest_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for HistoryReadRequest {

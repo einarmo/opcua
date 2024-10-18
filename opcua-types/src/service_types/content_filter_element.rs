@@ -16,8 +16,14 @@ pub struct ContentFilterElement {
     pub filter_operands: Option<Vec<opcua::types::extension_object::ExtensionObject>>,
 }
 impl opcua::types::MessageInfo for ContentFilterElement {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ContentFilterElement_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ContentFilterElement_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ContentFilterElement_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for ContentFilterElement {

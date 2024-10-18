@@ -20,8 +20,14 @@ pub struct ReadProcessedDetails {
     pub aggregate_configuration: super::aggregate_configuration::AggregateConfiguration,
 }
 impl opcua::types::MessageInfo for ReadProcessedDetails {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ReadProcessedDetails_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReadProcessedDetails_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReadProcessedDetails_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for ReadProcessedDetails {

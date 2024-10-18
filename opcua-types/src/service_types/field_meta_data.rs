@@ -25,8 +25,14 @@ pub struct FieldMetaData {
     pub properties: Option<Vec<super::key_value_pair::KeyValuePair>>,
 }
 impl opcua::types::MessageInfo for FieldMetaData {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::FieldMetaData_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::FieldMetaData_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::FieldMetaData_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for FieldMetaData {

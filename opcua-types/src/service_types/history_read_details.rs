@@ -14,8 +14,14 @@ mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
 #[derive(Default)]
 pub struct HistoryReadDetails {}
 impl opcua::types::MessageInfo for HistoryReadDetails {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::HistoryReadDetails_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::HistoryReadDetails_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::HistoryReadDetails_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for HistoryReadDetails {

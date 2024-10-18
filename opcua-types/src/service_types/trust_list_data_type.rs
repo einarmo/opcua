@@ -20,8 +20,14 @@ pub struct TrustListDataType {
     pub issuer_crls: Option<Vec<opcua::types::byte_string::ByteString>>,
 }
 impl opcua::types::MessageInfo for TrustListDataType {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::TrustListDataType_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::TrustListDataType_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::TrustListDataType_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for TrustListDataType {

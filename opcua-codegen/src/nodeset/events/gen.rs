@@ -143,7 +143,9 @@ impl<'a> EventGenerator<'a> {
         ty: &CollectedType<'a>,
         fields: &mut TokenStream,
     ) -> Result<(), CodeGenError> {
-        for (key, field) in &ty.fields {
+        let mut item_fields: Vec<_> = ty.fields.iter().collect();
+        item_fields.sort_by(|a, b| a.0.cmp(b.0));
+        for (key, field) in item_fields {
             let typ = match field.type_id {
                 FieldKind::Object(v) => {
                     let typ = self.types.get(v).unwrap();

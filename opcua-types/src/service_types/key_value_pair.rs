@@ -17,8 +17,14 @@ pub struct KeyValuePair {
     pub value: opcua::types::variant::Variant,
 }
 impl opcua::types::MessageInfo for KeyValuePair {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::KeyValuePair_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::KeyValuePair_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::KeyValuePair_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for KeyValuePair {

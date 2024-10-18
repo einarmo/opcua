@@ -24,8 +24,14 @@ pub struct PubSubConnectionDataType {
     pub reader_groups: Option<Vec<super::reader_group_data_type::ReaderGroupDataType>>,
 }
 impl opcua::types::MessageInfo for PubSubConnectionDataType {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::PubSubConnectionDataType_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::PubSubConnectionDataType_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::PubSubConnectionDataType_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for PubSubConnectionDataType {

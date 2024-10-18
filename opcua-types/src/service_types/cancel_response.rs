@@ -17,8 +17,14 @@ pub struct CancelResponse {
     pub cancel_count: u32,
 }
 impl opcua::types::MessageInfo for CancelResponse {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::CancelResponse_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::CancelResponse_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::CancelResponse_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for CancelResponse {

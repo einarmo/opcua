@@ -27,8 +27,14 @@ pub struct ProgramDiagnostic2DataType {
     pub last_method_return_status: super::status_result::StatusResult,
 }
 impl opcua::types::MessageInfo for ProgramDiagnostic2DataType {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ProgramDiagnostic2DataType_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ProgramDiagnostic2DataType_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ProgramDiagnostic2DataType_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for ProgramDiagnostic2DataType {

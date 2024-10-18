@@ -16,8 +16,14 @@ pub struct HistoryEventFieldList {
     pub event_fields: Option<Vec<opcua::types::variant::Variant>>,
 }
 impl opcua::types::MessageInfo for HistoryEventFieldList {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::HistoryEventFieldList_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::HistoryEventFieldList_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::HistoryEventFieldList_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for HistoryEventFieldList {

@@ -18,8 +18,14 @@ pub struct QueryNextResponse {
     pub revised_continuation_point: opcua::types::byte_string::ByteString,
 }
 impl opcua::types::MessageInfo for QueryNextResponse {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::QueryNextResponse_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::QueryNextResponse_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::QueryNextResponse_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for QueryNextResponse {

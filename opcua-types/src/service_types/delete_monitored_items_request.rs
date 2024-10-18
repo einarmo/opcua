@@ -18,8 +18,14 @@ pub struct DeleteMonitoredItemsRequest {
     pub monitored_item_ids: Option<Vec<u32>>,
 }
 impl opcua::types::MessageInfo for DeleteMonitoredItemsRequest {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::DeleteMonitoredItemsRequest_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DeleteMonitoredItemsRequest_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DeleteMonitoredItemsRequest_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for DeleteMonitoredItemsRequest {

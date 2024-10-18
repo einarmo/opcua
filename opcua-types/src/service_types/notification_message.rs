@@ -18,8 +18,14 @@ pub struct NotificationMessage {
     pub notification_data: Option<Vec<opcua::types::extension_object::ExtensionObject>>,
 }
 impl opcua::types::MessageInfo for NotificationMessage {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::NotificationMessage_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::NotificationMessage_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::NotificationMessage_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for NotificationMessage {

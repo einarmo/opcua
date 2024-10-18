@@ -17,8 +17,14 @@ pub struct TimeZoneDataType {
     pub daylight_saving_in_offset: bool,
 }
 impl opcua::types::MessageInfo for TimeZoneDataType {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::TimeZoneDataType_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::TimeZoneDataType_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::TimeZoneDataType_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for TimeZoneDataType {

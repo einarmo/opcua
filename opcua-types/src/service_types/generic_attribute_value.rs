@@ -17,8 +17,14 @@ pub struct GenericAttributeValue {
     pub value: opcua::types::variant::Variant,
 }
 impl opcua::types::MessageInfo for GenericAttributeValue {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::GenericAttributeValue_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::GenericAttributeValue_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::GenericAttributeValue_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for GenericAttributeValue {

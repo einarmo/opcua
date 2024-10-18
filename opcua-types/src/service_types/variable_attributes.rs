@@ -28,8 +28,14 @@ pub struct VariableAttributes {
     pub historizing: bool,
 }
 impl opcua::types::MessageInfo for VariableAttributes {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::VariableAttributes_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::VariableAttributes_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::VariableAttributes_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for VariableAttributes {

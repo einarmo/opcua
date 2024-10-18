@@ -25,5 +25,5 @@ pub trait Message: BinaryEncoder + MessageType {
     where
         Self: Sized;
 
-    fn node_id(&self) -> NodeId;
+    fn type_id(&self) -> NodeId;
 }

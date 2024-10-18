@@ -681,14 +681,28 @@ impl CodeGenerator {
                 &format!("{}_Encoding_DefaultBinary", item.name),
                 Span::call_site(),
             );
+            let json_encoding_ident = Ident::new(
+                &format!("{}_Encoding_DefaultJson", item.name),
+                Span::call_site(),
+            );
+            let xml_encoding_ident = Ident::new(
+                &format!("{}_Encoding_DefaultXml", item.name),
+                Span::call_site(),
+            );
             impls.push(parse_quote! {
                 impl opcua::types::MessageInfo for #struct_ident {
-                    fn object_id(&self) -> opcua::types::ObjectId {
+                    fn type_id(&self) -> opcua::types::ObjectId {
                         opcua::types::ObjectId::#encoding_ident
+                    }
+                    fn json_type_id(&self) -> opcua::types::ObjectId {
+                        opcua::types::ObjectId::#json_encoding_ident
+                    }
+                    fn xml_type_id(&self) -> opcua::types::ObjectId {
+                        opcua::types::ObjectId::#xml_encoding_ident
                     }
                 }
             });
-            object_id = Some(encoding_ident);
+            object_id = Some(xml_encoding_ident);
         }
 
         let mut len_impl;

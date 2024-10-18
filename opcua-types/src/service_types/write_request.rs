@@ -17,8 +17,14 @@ pub struct WriteRequest {
     pub nodes_to_write: Option<Vec<super::write_value::WriteValue>>,
 }
 impl opcua::types::MessageInfo for WriteRequest {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::WriteRequest_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::WriteRequest_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::WriteRequest_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for WriteRequest {

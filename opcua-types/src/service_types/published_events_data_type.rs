@@ -20,8 +20,14 @@ pub struct PublishedEventsDataType {
     pub filter: super::content_filter::ContentFilter,
 }
 impl opcua::types::MessageInfo for PublishedEventsDataType {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::PublishedEventsDataType_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::PublishedEventsDataType_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::PublishedEventsDataType_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for PublishedEventsDataType {

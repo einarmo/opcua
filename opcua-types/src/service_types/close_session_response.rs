@@ -16,8 +16,14 @@ pub struct CloseSessionResponse {
     pub response_header: opcua::types::response_header::ResponseHeader,
 }
 impl opcua::types::MessageInfo for CloseSessionResponse {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::CloseSessionResponse_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::CloseSessionResponse_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::CloseSessionResponse_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for CloseSessionResponse {

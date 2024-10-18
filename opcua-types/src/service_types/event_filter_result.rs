@@ -20,8 +20,14 @@ pub struct EventFilterResult {
     pub where_clause_result: super::content_filter_result::ContentFilterResult,
 }
 impl opcua::types::MessageInfo for EventFilterResult {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::EventFilterResult_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::EventFilterResult_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::EventFilterResult_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for EventFilterResult {

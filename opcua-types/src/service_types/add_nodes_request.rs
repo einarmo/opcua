@@ -17,8 +17,14 @@ pub struct AddNodesRequest {
     pub nodes_to_add: Option<Vec<super::add_nodes_item::AddNodesItem>>,
 }
 impl opcua::types::MessageInfo for AddNodesRequest {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::AddNodesRequest_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::AddNodesRequest_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::AddNodesRequest_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for AddNodesRequest {

@@ -17,8 +17,14 @@ pub struct AddReferencesRequest {
     pub references_to_add: Option<Vec<super::add_references_item::AddReferencesItem>>,
 }
 impl opcua::types::MessageInfo for AddReferencesRequest {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::AddReferencesRequest_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::AddReferencesRequest_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::AddReferencesRequest_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for AddReferencesRequest {

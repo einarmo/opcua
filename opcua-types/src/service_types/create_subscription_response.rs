@@ -20,8 +20,14 @@ pub struct CreateSubscriptionResponse {
     pub revised_max_keep_alive_count: u32,
 }
 impl opcua::types::MessageInfo for CreateSubscriptionResponse {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::CreateSubscriptionResponse_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::CreateSubscriptionResponse_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::CreateSubscriptionResponse_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for CreateSubscriptionResponse {

@@ -18,8 +18,14 @@ pub struct BrokerWriterGroupTransportDataType {
     pub requested_delivery_guarantee: super::enums::BrokerTransportQualityOfService,
 }
 impl opcua::types::MessageInfo for BrokerWriterGroupTransportDataType {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::BrokerWriterGroupTransportDataType_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::BrokerWriterGroupTransportDataType_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::BrokerWriterGroupTransportDataType_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for BrokerWriterGroupTransportDataType {

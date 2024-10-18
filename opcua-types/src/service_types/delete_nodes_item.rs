@@ -17,8 +17,14 @@ pub struct DeleteNodesItem {
     pub delete_target_references: bool,
 }
 impl opcua::types::MessageInfo for DeleteNodesItem {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::DeleteNodesItem_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DeleteNodesItem_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DeleteNodesItem_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for DeleteNodesItem {

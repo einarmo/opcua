@@ -220,11 +220,7 @@ impl UAString {
 
     /// Returns true if the string is null or empty, false otherwise
     pub fn is_empty(&self) -> bool {
-        if self.value.is_none() {
-            true
-        } else {
-            self.value.as_ref().unwrap().is_empty()
-        }
+        self.value.is_none() || self.value.as_ref().is_some_and(|v| v.is_empty())
     }
 
     /// Returns the length of the string in bytes or -1 for null.

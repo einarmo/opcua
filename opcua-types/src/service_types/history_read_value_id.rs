@@ -19,8 +19,14 @@ pub struct HistoryReadValueId {
     pub continuation_point: opcua::types::byte_string::ByteString,
 }
 impl opcua::types::MessageInfo for HistoryReadValueId {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::HistoryReadValueId_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::HistoryReadValueId_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::HistoryReadValueId_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for HistoryReadValueId {

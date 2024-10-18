@@ -20,8 +20,14 @@ pub struct Argument {
     pub description: opcua::types::localized_text::LocalizedText,
 }
 impl opcua::types::MessageInfo for Argument {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::Argument_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::Argument_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::Argument_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for Argument {

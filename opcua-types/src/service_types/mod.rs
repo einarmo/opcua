@@ -6,10 +6,7 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua {
-    pub use crate as types;
-}
-pub mod enums;
+mod opcua { pub use crate as types; }pub mod enums;
 pub use enums::*;
 pub mod activate_session_request;
 pub use activate_session_request::*;
@@ -594,1120 +591,1120 @@ impl opcua::types::xml::XmlLoader for TypesXmlLoader {
         };
         Some(
             match object_id {
-                opcua::types::ObjectId::CallMethodRequest_Encoding_DefaultBinary => {
-                    CallMethodRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::EphemeralKeyType_Encoding_DefaultBinary => {
-                    EphemeralKeyType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::BrokerWriterGroupTransportDataType_Encoding_DefaultBinary => {
-                    BrokerWriterGroupTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::UpdateEventDetails_Encoding_DefaultBinary => {
-                    UpdateEventDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ContentFilterElement_Encoding_DefaultBinary => {
-                    ContentFilterElement::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::NetworkAddressUrlDataType_Encoding_DefaultBinary => {
-                    NetworkAddressUrlDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::MethodAttributes_Encoding_DefaultBinary => {
-                    MethodAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::TimeZoneDataType_Encoding_DefaultBinary => {
-                    TimeZoneDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::CloseSecureChannelRequest_Encoding_DefaultBinary => {
-                    CloseSecureChannelRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DataSetWriterTransportDataType_Encoding_DefaultBinary => {
-                    DataSetWriterTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::CancelRequest_Encoding_DefaultBinary => {
-                    CancelRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::RolePermissionType_Encoding_DefaultBinary => {
-                    RolePermissionType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::HistoryModifiedData_Encoding_DefaultBinary => {
-                    HistoryModifiedData::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::AddNodesItem_Encoding_DefaultBinary => {
-                    AddNodesItem::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::OpenSecureChannelResponse_Encoding_DefaultBinary => {
-                    OpenSecureChannelResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::TargetVariablesDataType_Encoding_DefaultBinary => {
-                    TargetVariablesDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::WriteValue_Encoding_DefaultBinary => {
-                    WriteValue::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DoubleComplexNumberType_Encoding_DefaultBinary => {
-                    DoubleComplexNumberType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SemanticChangeStructureDataType_Encoding_DefaultBinary => {
-                    SemanticChangeStructureDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::UadpDataSetWriterMessageDataType_Encoding_DefaultBinary => {
-                    UadpDataSetWriterMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::Vector_Encoding_DefaultBinary => {
-                    Vector::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::CloseSecureChannelResponse_Encoding_DefaultBinary => {
-                    CloseSecureChannelResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ReadProcessedDetails_Encoding_DefaultBinary => {
-                    ReadProcessedDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ReferenceTypeAttributes_Encoding_DefaultBinary => {
-                    ReferenceTypeAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::TranslateBrowsePathsToNodeIdsRequest_Encoding_DefaultBinary => {
-                    TranslateBrowsePathsToNodeIdsRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DataSetWriterDataType_Encoding_DefaultBinary => {
-                    DataSetWriterDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::TransferSubscriptionsResponse_Encoding_DefaultBinary => {
-                    TransferSubscriptionsResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::EnumDescription_Encoding_DefaultBinary => {
-                    EnumDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::FieldTargetDataType_Encoding_DefaultBinary => {
-                    FieldTargetDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::UadpDataSetReaderMessageDataType_Encoding_DefaultBinary => {
-                    UadpDataSetReaderMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::BrowsePath_Encoding_DefaultBinary => {
-                    BrowsePath::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DeleteRawModifiedDetails_Encoding_DefaultBinary => {
-                    DeleteRawModifiedDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::CallRequest_Encoding_DefaultBinary => {
-                    CallRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::BrokerConnectionTransportDataType_Encoding_DefaultBinary => {
-                    BrokerConnectionTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SetTriggeringResponse_Encoding_DefaultBinary => {
-                    SetTriggeringResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DeleteReferencesItem_Encoding_DefaultBinary => {
-                    DeleteReferencesItem::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SignatureData_Encoding_DefaultBinary => {
-                    SignatureData::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::PublishedDataItemsDataType_Encoding_DefaultBinary => {
-                    PublishedDataItemsDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ContentFilterResult_Encoding_DefaultBinary => {
-                    ContentFilterResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ModelChangeStructureDataType_Encoding_DefaultBinary => {
-                    ModelChangeStructureDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::WriterGroupDataType_Encoding_DefaultBinary => {
-                    WriterGroupDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ServerDiagnosticsSummaryDataType_Encoding_DefaultBinary => {
-                    ServerDiagnosticsSummaryDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SetPublishingModeRequest_Encoding_DefaultBinary => {
-                    SetPublishingModeRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::EventFieldList_Encoding_DefaultBinary => {
-                    EventFieldList::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::QueryNextResponse_Encoding_DefaultBinary => {
-                    QueryNextResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DataSetWriterMessageDataType_Encoding_DefaultBinary => {
-                    DataSetWriterMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ObjectAttributes_Encoding_DefaultBinary => {
-                    ObjectAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DeleteMonitoredItemsResponse_Encoding_DefaultBinary => {
-                    DeleteMonitoredItemsResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::Range_Encoding_DefaultBinary => {
-                    Range::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::GetEndpointsResponse_Encoding_DefaultBinary => {
-                    GetEndpointsResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::HistoryUpdateDetails_Encoding_DefaultBinary => {
-                    HistoryUpdateDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::RepublishResponse_Encoding_DefaultBinary => {
-                    RepublishResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::TransferResult_Encoding_DefaultBinary => {
-                    TransferResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::IssuedIdentityToken_Encoding_DefaultBinary => {
-                    IssuedIdentityToken::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SimpleAttributeOperand_Encoding_DefaultBinary => {
-                    SimpleAttributeOperand::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SetPublishingModeResponse_Encoding_DefaultBinary => {
-                    SetPublishingModeResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ReadEventDetails_Encoding_DefaultBinary => {
-                    ReadEventDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ContentFilterElementResult_Encoding_DefaultBinary => {
-                    ContentFilterElementResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::AnonymousIdentityToken_Encoding_DefaultBinary => {
-                    AnonymousIdentityToken::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ChannelSecurityToken_Encoding_DefaultBinary => {
-                    ChannelSecurityToken::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::RegisterServerResponse_Encoding_DefaultBinary => {
-                    RegisterServerResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::QueryDataDescription_Encoding_DefaultBinary => {
-                    QueryDataDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::QueryFirstRequest_Encoding_DefaultBinary => {
-                    QueryFirstRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::OpenSecureChannelRequest_Encoding_DefaultBinary => {
-                    OpenSecureChannelRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SessionlessInvokeRequestType_Encoding_DefaultBinary => {
-                    SessionlessInvokeRequestType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::RegisterNodesResponse_Encoding_DefaultBinary => {
-                    RegisterNodesResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ReadValueId_Encoding_DefaultBinary => {
-                    ReadValueId::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SubscriptionAcknowledgement_Encoding_DefaultBinary => {
-                    SubscriptionAcknowledgement::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::CreateMonitoredItemsResponse_Encoding_DefaultBinary => {
-                    CreateMonitoredItemsResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::CreateSubscriptionResponse_Encoding_DefaultBinary => {
-                    CreateSubscriptionResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SignedSoftwareCertificate_Encoding_DefaultBinary => {
-                    SignedSoftwareCertificate::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ProgramDiagnosticDataType_Encoding_DefaultBinary => {
-                    ProgramDiagnosticDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::XVType_Encoding_DefaultBinary => {
-                    XVType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::FindServersRequest_Encoding_DefaultBinary => {
-                    FindServersRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::CreateMonitoredItemsRequest_Encoding_DefaultBinary => {
-                    CreateMonitoredItemsRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ConfigurationVersionDataType_Encoding_DefaultBinary => {
-                    ConfigurationVersionDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::AdditionalParametersType_Encoding_DefaultBinary => {
-                    AdditionalParametersType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SubscribedDataSetMirrorDataType_Encoding_DefaultBinary => {
-                    SubscribedDataSetMirrorDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::AddReferencesRequest_Encoding_DefaultBinary => {
-                    AddReferencesRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ServerStatusDataType_Encoding_DefaultBinary => {
-                    ServerStatusDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::HistoryEvent_Encoding_DefaultBinary => {
-                    HistoryEvent::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::StructureField_Encoding_DefaultBinary => {
-                    StructureField::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SubscriptionDiagnosticsDataType_Encoding_DefaultBinary => {
-                    SubscriptionDiagnosticsDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DataSetReaderTransportDataType_Encoding_DefaultBinary => {
-                    DataSetReaderTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ModifyMonitoredItemsRequest_Encoding_DefaultBinary => {
-                    ModifyMonitoredItemsRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::FindServersOnNetworkRequest_Encoding_DefaultBinary => {
-                    FindServersOnNetworkRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::AddNodesResponse_Encoding_DefaultBinary => {
-                    AddNodesResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::RedundantServerDataType_Encoding_DefaultBinary => {
-                    RedundantServerDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::Frame_Encoding_DefaultBinary => {
-                    Frame::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::BrokerDataSetWriterTransportDataType_Encoding_DefaultBinary => {
-                    BrokerDataSetWriterTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DeleteSubscriptionsRequest_Encoding_DefaultBinary => {
-                    DeleteSubscriptionsRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::MonitoredItemModifyRequest_Encoding_DefaultBinary => {
-                    MonitoredItemModifyRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::PubSubGroupDataType_Encoding_DefaultBinary => {
-                    PubSubGroupDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DataTypeDescription_Encoding_DefaultBinary => {
-                    DataTypeDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::CurrencyUnitType_Encoding_DefaultBinary => {
-                    CurrencyUnitType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DataTypeSchemaHeader_Encoding_DefaultBinary => {
-                    DataTypeSchemaHeader::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::CreateSubscriptionRequest_Encoding_DefaultBinary => {
-                    CreateSubscriptionRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::UserIdentityToken_Encoding_DefaultBinary => {
-                    UserIdentityToken::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::PublishedDataSetDataType_Encoding_DefaultBinary => {
-                    PublishedDataSetDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::JsonDataSetWriterMessageDataType_Encoding_DefaultBinary => {
-                    JsonDataSetWriterMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DiscoveryConfiguration_Encoding_DefaultBinary => {
-                    DiscoveryConfiguration::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DeleteNodesResponse_Encoding_DefaultBinary => {
-                    DeleteNodesResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ViewDescription_Encoding_DefaultBinary => {
-                    ViewDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DeleteReferencesRequest_Encoding_DefaultBinary => {
-                    DeleteReferencesRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ServerOnNetwork_Encoding_DefaultBinary => {
-                    ServerOnNetwork::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::VariableAttributes_Encoding_DefaultBinary => {
-                    VariableAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::Argument_Encoding_DefaultBinary => {
-                    Argument::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::VariableTypeAttributes_Encoding_DefaultBinary => {
-                    VariableTypeAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::UserTokenPolicy_Encoding_DefaultBinary => {
-                    UserTokenPolicy::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::PublishedVariableDataType_Encoding_DefaultBinary => {
-                    PublishedVariableDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::WriteRequest_Encoding_DefaultBinary => {
-                    WriteRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::IdentityMappingRuleType_Encoding_DefaultBinary => {
-                    IdentityMappingRuleType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::StructureDescription_Encoding_DefaultBinary => {
-                    StructureDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ModifyMonitoredItemsResponse_Encoding_DefaultBinary => {
-                    ModifyMonitoredItemsResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::HistoryUpdateResult_Encoding_DefaultBinary => {
-                    HistoryUpdateResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::AddNodesRequest_Encoding_DefaultBinary => {
-                    AddNodesRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::QueryNextRequest_Encoding_DefaultBinary => {
-                    QueryNextRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::TranslateBrowsePathsToNodeIdsResponse_Encoding_DefaultBinary => {
-                    TranslateBrowsePathsToNodeIdsResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::CallMethodResult_Encoding_DefaultBinary => {
-                    CallMethodResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::EventFilterResult_Encoding_DefaultBinary => {
-                    EventFilterResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::CloseSessionRequest_Encoding_DefaultBinary => {
-                    CloseSessionRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::GenericAttributeValue_Encoding_DefaultBinary => {
-                    GenericAttributeValue::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::BrowseRequest_Encoding_DefaultBinary => {
-                    BrowseRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::AddReferencesResponse_Encoding_DefaultBinary => {
-                    AddReferencesResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::AddNodesResult_Encoding_DefaultBinary => {
-                    AddNodesResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DeleteReferencesResponse_Encoding_DefaultBinary => {
-                    DeleteReferencesResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::AggregateFilter_Encoding_DefaultBinary => {
-                    AggregateFilter::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::PubSubConfigurationDataType_Encoding_DefaultBinary => {
-                    PubSubConfigurationDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::StatusResult_Encoding_DefaultBinary => {
-                    StatusResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DataChangeFilter_Encoding_DefaultBinary => {
-                    DataChangeFilter::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ContentFilter_Encoding_DefaultBinary => {
-                    ContentFilter::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::UpdateDataDetails_Encoding_DefaultBinary => {
-                    UpdateDataDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ViewAttributes_Encoding_DefaultBinary => {
-                    ViewAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ReaderGroupDataType_Encoding_DefaultBinary => {
-                    ReaderGroupDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::UserNameIdentityToken_Encoding_DefaultBinary => {
-                    UserNameIdentityToken::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DataSetMetaDataType_Encoding_DefaultBinary => {
-                    DataSetMetaDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::CancelResponse_Encoding_DefaultBinary => {
-                    CancelResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::RegisterServer2Response_Encoding_DefaultBinary => {
-                    RegisterServer2Response::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::RegisterServerRequest_Encoding_DefaultBinary => {
-                    RegisterServerRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::CreateSessionRequest_Encoding_DefaultBinary => {
-                    CreateSessionRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::JsonDataSetReaderMessageDataType_Encoding_DefaultBinary => {
-                    JsonDataSetReaderMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::UABinaryFileDataType_Encoding_DefaultBinary => {
-                    UABinaryFileDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::FieldMetaData_Encoding_DefaultBinary => {
-                    FieldMetaData::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ApplicationDescription_Encoding_DefaultBinary => {
-                    ApplicationDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ReadAnnotationDataDetails_Encoding_DefaultBinary => {
-                    ReadAnnotationDataDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DataSetReaderMessageDataType_Encoding_DefaultBinary => {
-                    DataSetReaderMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DeleteEventDetails_Encoding_DefaultBinary => {
-                    DeleteEventDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::UnregisterNodesRequest_Encoding_DefaultBinary => {
-                    UnregisterNodesRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::RelativePathElement_Encoding_DefaultBinary => {
-                    RelativePathElement::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SamplingIntervalDiagnosticsDataType_Encoding_DefaultBinary => {
-                    SamplingIntervalDiagnosticsDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DeleteNodesRequest_Encoding_DefaultBinary => {
-                    DeleteNodesRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::LiteralOperand_Encoding_DefaultBinary => {
-                    LiteralOperand::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::AggregateFilterResult_Encoding_DefaultBinary => {
-                    AggregateFilterResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::EnumValueType_Encoding_DefaultBinary => {
-                    EnumValueType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::NotificationMessage_Encoding_DefaultBinary => {
-                    NotificationMessage::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ModifySubscriptionRequest_Encoding_DefaultBinary => {
-                    ModifySubscriptionRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::RelativePath_Encoding_DefaultBinary => {
-                    RelativePath::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::NotificationData_Encoding_DefaultBinary => {
-                    NotificationData::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::AggregateConfiguration_Encoding_DefaultBinary => {
-                    AggregateConfiguration::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ElementOperand_Encoding_DefaultBinary => {
-                    ElementOperand::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::PublishedEventsDataType_Encoding_DefaultBinary => {
-                    PublishedEventsDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::BrowseNextResponse_Encoding_DefaultBinary => {
-                    BrowseNextResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::RegisteredServer_Encoding_DefaultBinary => {
-                    RegisteredServer::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DeleteMonitoredItemsRequest_Encoding_DefaultBinary => {
-                    DeleteMonitoredItemsRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::RationalNumber_Encoding_DefaultBinary => {
-                    RationalNumber::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::HistoryUpdateRequest_Encoding_DefaultBinary => {
-                    HistoryUpdateRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::HistoryReadResult_Encoding_DefaultBinary => {
-                    HistoryReadResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::PubSubConnectionDataType_Encoding_DefaultBinary => {
-                    PubSubConnectionDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SimpleTypeDescription_Encoding_DefaultBinary => {
-                    SimpleTypeDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::TransferSubscriptionsRequest_Encoding_DefaultBinary => {
-                    TransferSubscriptionsRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DataTypeAttributes_Encoding_DefaultBinary => {
-                    DataTypeAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::AxisInformation_Encoding_DefaultBinary => {
-                    AxisInformation::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::Orientation_Encoding_DefaultBinary => {
-                    Orientation::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::NetworkGroupDataType_Encoding_DefaultBinary => {
-                    NetworkGroupDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SetMonitoringModeResponse_Encoding_DefaultBinary => {
-                    SetMonitoringModeResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ParsingResult_Encoding_DefaultBinary => {
-                    ParsingResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::EUInformation_Encoding_DefaultBinary => {
-                    EUInformation::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::HistoryData_Encoding_DefaultBinary => {
-                    HistoryData::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::RepublishRequest_Encoding_DefaultBinary => {
-                    RepublishRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::CloseSessionResponse_Encoding_DefaultBinary => {
-                    CloseSessionResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::OptionSet_Encoding_DefaultBinary => {
-                    OptionSet::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::BrokerDataSetReaderTransportDataType_Encoding_DefaultBinary => {
-                    BrokerDataSetReaderTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DataChangeNotification_Encoding_DefaultBinary => {
-                    DataChangeNotification::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::FindServersOnNetworkResponse_Encoding_DefaultBinary => {
-                    FindServersOnNetworkResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::EndpointUrlListDataType_Encoding_DefaultBinary => {
-                    EndpointUrlListDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DeleteSubscriptionsResponse_Encoding_DefaultBinary => {
-                    DeleteSubscriptionsResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ProgramDiagnostic2DataType_Encoding_DefaultBinary => {
-                    ProgramDiagnostic2DataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::NodeAttributes_Encoding_DefaultBinary => {
-                    NodeAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::TrustListDataType_Encoding_DefaultBinary => {
-                    TrustListDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DatagramWriterGroupTransportDataType_Encoding_DefaultBinary => {
-                    DatagramWriterGroupTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::MonitoredItemCreateRequest_Encoding_DefaultBinary => {
-                    MonitoredItemCreateRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ReaderGroupTransportDataType_Encoding_DefaultBinary => {
-                    ReaderGroupTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SubscribedDataSetDataType_Encoding_DefaultBinary => {
-                    SubscribedDataSetDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::X509IdentityToken_Encoding_DefaultBinary => {
-                    X509IdentityToken::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DeleteAtTimeDetails_Encoding_DefaultBinary => {
-                    DeleteAtTimeDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::JsonWriterGroupMessageDataType_Encoding_DefaultBinary => {
-                    JsonWriterGroupMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SetMonitoringModeRequest_Encoding_DefaultBinary => {
-                    SetMonitoringModeRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::PublishedDataSetSourceDataType_Encoding_DefaultBinary => {
-                    PublishedDataSetSourceDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::HistoryReadDetails_Encoding_DefaultBinary => {
-                    HistoryReadDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::WriterGroupMessageDataType_Encoding_DefaultBinary => {
-                    WriterGroupMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DatagramConnectionTransportDataType_Encoding_DefaultBinary => {
-                    DatagramConnectionTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::BuildInfo_Encoding_DefaultBinary => {
-                    BuildInfo::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ThreeDOrientation_Encoding_DefaultBinary => {
-                    ThreeDOrientation::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::QueryDataSet_Encoding_DefaultBinary => {
-                    QueryDataSet::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::WriterGroupTransportDataType_Encoding_DefaultBinary => {
-                    WriterGroupTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::BrowseNextRequest_Encoding_DefaultBinary => {
-                    BrowseNextRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::BrowsePathTarget_Encoding_DefaultBinary => {
-                    BrowsePathTarget::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DecimalDataType_Encoding_DefaultBinary => {
-                    DecimalDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::EndpointConfiguration_Encoding_DefaultBinary => {
-                    EndpointConfiguration::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::PublishRequest_Encoding_DefaultBinary => {
-                    PublishRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::BrowseResponse_Encoding_DefaultBinary => {
-                    BrowseResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::EventFilter_Encoding_DefaultBinary => {
-                    EventFilter::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::HistoryReadValueId_Encoding_DefaultBinary => {
-                    HistoryReadValueId::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::MdnsDiscoveryConfiguration_Encoding_DefaultBinary => {
-                    MdnsDiscoveryConfiguration::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::UpdateStructureDataDetails_Encoding_DefaultBinary => {
-                    UpdateStructureDataDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::PublishResponse_Encoding_DefaultBinary => {
-                    PublishResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DeleteNodesItem_Encoding_DefaultBinary => {
-                    DeleteNodesItem::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SessionlessInvokeResponseType_Encoding_DefaultBinary => {
-                    SessionlessInvokeResponseType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ModifySubscriptionResponse_Encoding_DefaultBinary => {
-                    ModifySubscriptionResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::NodeTypeDescription_Encoding_DefaultBinary => {
-                    NodeTypeDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::HistoryReadResponse_Encoding_DefaultBinary => {
-                    HistoryReadResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ModificationInfo_Encoding_DefaultBinary => {
-                    ModificationInfo::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SessionDiagnosticsDataType_Encoding_DefaultBinary => {
-                    SessionDiagnosticsDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::SessionSecurityDiagnosticsDataType_Encoding_DefaultBinary => {
-                    SessionSecurityDiagnosticsDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ReaderGroupMessageDataType_Encoding_DefaultBinary => {
-                    ReaderGroupMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::MonitoringFilterResult_Encoding_DefaultBinary => {
-                    MonitoringFilterResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::HistoryUpdateResponse_Encoding_DefaultBinary => {
-                    HistoryUpdateResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::AttributeOperand_Encoding_DefaultBinary => {
-                    AttributeOperand::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::CreateSessionResponse_Encoding_DefaultBinary => {
-                    CreateSessionResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::MonitoredItemModifyResult_Encoding_DefaultBinary => {
-                    MonitoredItemModifyResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::GetEndpointsRequest_Encoding_DefaultBinary => {
-                    GetEndpointsRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::WriteResponse_Encoding_DefaultBinary => {
-                    WriteResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ServiceCounterDataType_Encoding_DefaultBinary => {
-                    ServiceCounterDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::EndpointDescription_Encoding_DefaultBinary => {
-                    EndpointDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ReadRawModifiedDetails_Encoding_DefaultBinary => {
-                    ReadRawModifiedDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::DataSetReaderDataType_Encoding_DefaultBinary => {
-                    DataSetReaderDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ThreeDFrame_Encoding_DefaultBinary => {
-                    ThreeDFrame::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::NodeReference_Encoding_DefaultBinary => {
-                    NodeReference::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ThreeDVector_Encoding_DefaultBinary => {
-                    ThreeDVector::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ActivateSessionResponse_Encoding_DefaultBinary => {
-                    ActivateSessionResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ReadResponse_Encoding_DefaultBinary => {
-                    ReadResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::HistoryReadRequest_Encoding_DefaultBinary => {
-                    HistoryReadRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::MonitoredItemCreateResult_Encoding_DefaultBinary => {
-                    MonitoredItemCreateResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ObjectTypeAttributes_Encoding_DefaultBinary => {
-                    ObjectTypeAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::StatusChangeNotification_Encoding_DefaultBinary => {
-                    StatusChangeNotification::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::NetworkAddressDataType_Encoding_DefaultBinary => {
-                    NetworkAddressDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::EnumField_Encoding_DefaultBinary => {
-                    EnumField::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::UnregisterNodesResponse_Encoding_DefaultBinary => {
-                    UnregisterNodesResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ReferenceDescription_Encoding_DefaultBinary => {
-                    ReferenceDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::MonitoringFilter_Encoding_DefaultBinary => {
-                    MonitoringFilter::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::GenericAttributes_Encoding_DefaultBinary => {
-                    GenericAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::MonitoredItemNotification_Encoding_DefaultBinary => {
-                    MonitoredItemNotification::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::KeyValuePair_Encoding_DefaultBinary => {
-                    KeyValuePair::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ReadAtTimeDetails_Encoding_DefaultBinary => {
-                    ReadAtTimeDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::ComplexNumberType_Encoding_DefaultBinary => {
-                    ComplexNumberType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
-                }
-                opcua::types::ObjectId::BrowseResult_Encoding_DefaultBinary => {
+                opcua::types::ObjectId::BrowseResult_Encoding_DefaultXml => {
                     BrowseResult::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::ReadRequest_Encoding_DefaultBinary => {
-                    ReadRequest::from_xml(body, ctx)
+                opcua::types::ObjectId::ModifyMonitoredItemsRequest_Encoding_DefaultXml => {
+                    ModifyMonitoredItemsRequest::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::BrowseDescription_Encoding_DefaultBinary => {
-                    BrowseDescription::from_xml(body, ctx)
+                opcua::types::ObjectId::SetMonitoringModeRequest_Encoding_DefaultXml => {
+                    SetMonitoringModeRequest::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::FindServersResponse_Encoding_DefaultBinary => {
-                    FindServersResponse::from_xml(body, ctx)
+                opcua::types::ObjectId::BrowseResponse_Encoding_DefaultXml => {
+                    BrowseResponse::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::HistoryEventFieldList_Encoding_DefaultBinary => {
-                    HistoryEventFieldList::from_xml(body, ctx)
+                opcua::types::ObjectId::DeleteNodesResponse_Encoding_DefaultXml => {
+                    DeleteNodesResponse::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::EventNotificationList_Encoding_DefaultBinary => {
-                    EventNotificationList::from_xml(body, ctx)
+                opcua::types::ObjectId::HistoryEvent_Encoding_DefaultXml => {
+                    HistoryEvent::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::UadpWriterGroupMessageDataType_Encoding_DefaultBinary => {
-                    UadpWriterGroupMessageDataType::from_xml(body, ctx)
+                opcua::types::ObjectId::RegisterServer2Response_Encoding_DefaultXml => {
+                    RegisterServer2Response::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::BrowsePathResult_Encoding_DefaultBinary => {
-                    BrowsePathResult::from_xml(body, ctx)
+                opcua::types::ObjectId::EventFilterResult_Encoding_DefaultXml => {
+                    EventFilterResult::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::Annotation_Encoding_DefaultBinary => {
-                    Annotation::from_xml(body, ctx)
+                opcua::types::ObjectId::CreateSessionRequest_Encoding_DefaultXml => {
+                    CreateSessionRequest::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::CallResponse_Encoding_DefaultBinary => {
-                    CallResponse::from_xml(body, ctx)
+                opcua::types::ObjectId::QueryDataSet_Encoding_DefaultXml => {
+                    QueryDataSet::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::EndpointType_Encoding_DefaultBinary => {
-                    EndpointType::from_xml(body, ctx)
+                opcua::types::ObjectId::SubscribedDataSetMirrorDataType_Encoding_DefaultXml => {
+                    SubscribedDataSetMirrorDataType::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::AliasNameDataType_Encoding_DefaultBinary => {
-                    AliasNameDataType::from_xml(body, ctx)
+                opcua::types::ObjectId::CloseSecureChannelResponse_Encoding_DefaultXml => {
+                    CloseSecureChannelResponse::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::AddReferencesItem_Encoding_DefaultBinary => {
-                    AddReferencesItem::from_xml(body, ctx)
+                opcua::types::ObjectId::BrokerDataSetWriterTransportDataType_Encoding_DefaultXml => {
+                    BrokerDataSetWriterTransportDataType::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::FilterOperand_Encoding_DefaultBinary => {
+                opcua::types::ObjectId::HistoryData_Encoding_DefaultXml => {
+                    HistoryData::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::BrowsePath_Encoding_DefaultXml => {
+                    BrowsePath::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::GenericAttributes_Encoding_DefaultXml => {
+                    GenericAttributes::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::FindServersRequest_Encoding_DefaultXml => {
+                    FindServersRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::PublishedDataSetSourceDataType_Encoding_DefaultXml => {
+                    PublishedDataSetSourceDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ReadAtTimeDetails_Encoding_DefaultXml => {
+                    ReadAtTimeDetails::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ObjectAttributes_Encoding_DefaultXml => {
+                    ObjectAttributes::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::RationalNumber_Encoding_DefaultXml => {
+                    RationalNumber::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::BuildInfo_Encoding_DefaultXml => {
+                    BuildInfo::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::HistoryUpdateDetails_Encoding_DefaultXml => {
+                    HistoryUpdateDetails::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::UserNameIdentityToken_Encoding_DefaultXml => {
+                    UserNameIdentityToken::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DeleteReferencesResponse_Encoding_DefaultXml => {
+                    DeleteReferencesResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ActivateSessionResponse_Encoding_DefaultXml => {
+                    ActivateSessionResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::CreateSessionResponse_Encoding_DefaultXml => {
+                    CreateSessionResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::RelativePath_Encoding_DefaultXml => {
+                    RelativePath::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::TranslateBrowsePathsToNodeIdsResponse_Encoding_DefaultXml => {
+                    TranslateBrowsePathsToNodeIdsResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ThreeDVector_Encoding_DefaultXml => {
+                    ThreeDVector::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::JsonDataSetWriterMessageDataType_Encoding_DefaultXml => {
+                    JsonDataSetWriterMessageDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DeleteEventDetails_Encoding_DefaultXml => {
+                    DeleteEventDetails::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DeleteNodesRequest_Encoding_DefaultXml => {
+                    DeleteNodesRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DataTypeSchemaHeader_Encoding_DefaultXml => {
+                    DataTypeSchemaHeader::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ContentFilter_Encoding_DefaultXml => {
+                    ContentFilter::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::FilterOperand_Encoding_DefaultXml => {
                     FilterOperand::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::CartesianCoordinates_Encoding_DefaultBinary => {
-                    CartesianCoordinates::from_xml(body, ctx)
+                opcua::types::ObjectId::OpenSecureChannelResponse_Encoding_DefaultXml => {
+                    OpenSecureChannelResponse::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::ServiceFault_Encoding_DefaultBinary => {
-                    ServiceFault::from_xml(body, ctx)
+                opcua::types::ObjectId::AnonymousIdentityToken_Encoding_DefaultXml => {
+                    AnonymousIdentityToken::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::MonitoringParameters_Encoding_DefaultBinary => {
-                    MonitoringParameters::from_xml(body, ctx)
+                opcua::types::ObjectId::BrowseDescription_Encoding_DefaultXml => {
+                    BrowseDescription::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::ThreeDCartesianCoordinates_Encoding_DefaultBinary => {
-                    ThreeDCartesianCoordinates::from_xml(body, ctx)
+                opcua::types::ObjectId::UnregisterNodesResponse_Encoding_DefaultXml => {
+                    UnregisterNodesResponse::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::ConnectionTransportDataType_Encoding_DefaultBinary => {
+                opcua::types::ObjectId::ReadValueId_Encoding_DefaultXml => {
+                    ReadValueId::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::BrokerDataSetReaderTransportDataType_Encoding_DefaultXml => {
+                    BrokerDataSetReaderTransportDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::AddReferencesRequest_Encoding_DefaultXml => {
+                    AddReferencesRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::TranslateBrowsePathsToNodeIdsRequest_Encoding_DefaultXml => {
+                    TranslateBrowsePathsToNodeIdsRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::TrustListDataType_Encoding_DefaultXml => {
+                    TrustListDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ModelChangeStructureDataType_Encoding_DefaultXml => {
+                    ModelChangeStructureDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::TransferResult_Encoding_DefaultXml => {
+                    TransferResult::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::NetworkAddressUrlDataType_Encoding_DefaultXml => {
+                    NetworkAddressUrlDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::HistoryUpdateResponse_Encoding_DefaultXml => {
+                    HistoryUpdateResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::CallRequest_Encoding_DefaultXml => {
+                    CallRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DataSetReaderTransportDataType_Encoding_DefaultXml => {
+                    DataSetReaderTransportDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::WriterGroupMessageDataType_Encoding_DefaultXml => {
+                    WriterGroupMessageDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::NodeReference_Encoding_DefaultXml => {
+                    NodeReference::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DeleteRawModifiedDetails_Encoding_DefaultXml => {
+                    DeleteRawModifiedDetails::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ContentFilterElementResult_Encoding_DefaultXml => {
+                    ContentFilterElementResult::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SubscribedDataSetDataType_Encoding_DefaultXml => {
+                    SubscribedDataSetDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::KeyValuePair_Encoding_DefaultXml => {
+                    KeyValuePair::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::CloseSessionRequest_Encoding_DefaultXml => {
+                    CloseSessionRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::Annotation_Encoding_DefaultXml => {
+                    Annotation::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SetTriggeringRequest_Encoding_DefaultXml => {
+                    SetTriggeringRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::EndpointDescription_Encoding_DefaultXml => {
+                    EndpointDescription::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ReaderGroupMessageDataType_Encoding_DefaultXml => {
+                    ReaderGroupMessageDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::HistoryUpdateRequest_Encoding_DefaultXml => {
+                    HistoryUpdateRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::GenericAttributeValue_Encoding_DefaultXml => {
+                    GenericAttributeValue::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ServiceCounterDataType_Encoding_DefaultXml => {
+                    ServiceCounterDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::UserTokenPolicy_Encoding_DefaultXml => {
+                    UserTokenPolicy::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SignatureData_Encoding_DefaultXml => {
+                    SignatureData::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::TransferSubscriptionsResponse_Encoding_DefaultXml => {
+                    TransferSubscriptionsResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::QueryDataDescription_Encoding_DefaultXml => {
+                    QueryDataDescription::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::UadpDataSetWriterMessageDataType_Encoding_DefaultXml => {
+                    UadpDataSetWriterMessageDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::EventNotificationList_Encoding_DefaultXml => {
+                    EventNotificationList::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::GetEndpointsResponse_Encoding_DefaultXml => {
+                    GetEndpointsResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::CurrencyUnitType_Encoding_DefaultXml => {
+                    CurrencyUnitType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::PublishedDataSetDataType_Encoding_DefaultXml => {
+                    PublishedDataSetDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SetPublishingModeResponse_Encoding_DefaultXml => {
+                    SetPublishingModeResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DeleteMonitoredItemsRequest_Encoding_DefaultXml => {
+                    DeleteMonitoredItemsRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::EndpointUrlListDataType_Encoding_DefaultXml => {
+                    EndpointUrlListDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DataSetReaderDataType_Encoding_DefaultXml => {
+                    DataSetReaderDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ComplexNumberType_Encoding_DefaultXml => {
+                    ComplexNumberType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SimpleAttributeOperand_Encoding_DefaultXml => {
+                    SimpleAttributeOperand::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ChannelSecurityToken_Encoding_DefaultXml => {
+                    ChannelSecurityToken::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::CallMethodResult_Encoding_DefaultXml => {
+                    CallMethodResult::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DatagramConnectionTransportDataType_Encoding_DefaultXml => {
+                    DatagramConnectionTransportDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::AggregateFilter_Encoding_DefaultXml => {
+                    AggregateFilter::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::UadpWriterGroupMessageDataType_Encoding_DefaultXml => {
+                    UadpWriterGroupMessageDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SetPublishingModeRequest_Encoding_DefaultXml => {
+                    SetPublishingModeRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::JsonWriterGroupMessageDataType_Encoding_DefaultXml => {
+                    JsonWriterGroupMessageDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::NodeAttributes_Encoding_DefaultXml => {
+                    NodeAttributes::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::QueryNextRequest_Encoding_DefaultXml => {
+                    QueryNextRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DeleteSubscriptionsRequest_Encoding_DefaultXml => {
+                    DeleteSubscriptionsRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::RelativePathElement_Encoding_DefaultXml => {
+                    RelativePathElement::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SimpleTypeDescription_Encoding_DefaultXml => {
+                    SimpleTypeDescription::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SessionSecurityDiagnosticsDataType_Encoding_DefaultXml => {
+                    SessionSecurityDiagnosticsDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SemanticChangeStructureDataType_Encoding_DefaultXml => {
+                    SemanticChangeStructureDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DeleteSubscriptionsResponse_Encoding_DefaultXml => {
+                    DeleteSubscriptionsResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::MonitoringFilter_Encoding_DefaultXml => {
+                    MonitoringFilter::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::CancelRequest_Encoding_DefaultXml => {
+                    CancelRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SessionlessInvokeRequestType_Encoding_DefaultXml => {
+                    SessionlessInvokeRequestType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ConnectionTransportDataType_Encoding_DefaultXml => {
                     ConnectionTransportDataType::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::ActivateSessionRequest_Encoding_DefaultBinary => {
+                opcua::types::ObjectId::ReadRawModifiedDetails_Encoding_DefaultXml => {
+                    ReadRawModifiedDetails::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ReadEventDetails_Encoding_DefaultXml => {
+                    ReadEventDetails::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DataSetWriterTransportDataType_Encoding_DefaultXml => {
+                    DataSetWriterTransportDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::HistoryReadResponse_Encoding_DefaultXml => {
+                    HistoryReadResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ActivateSessionRequest_Encoding_DefaultXml => {
                     ActivateSessionRequest::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::RegisterNodesRequest_Encoding_DefaultBinary => {
-                    RegisterNodesRequest::from_xml(body, ctx)
+                opcua::types::ObjectId::AliasNameDataType_Encoding_DefaultXml => {
+                    AliasNameDataType::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::RegisterServer2Request_Encoding_DefaultBinary => {
-                    RegisterServer2Request::from_xml(body, ctx)
+                opcua::types::ObjectId::EventFieldList_Encoding_DefaultXml => {
+                    EventFieldList::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::QueryFirstResponse_Encoding_DefaultBinary => {
+                opcua::types::ObjectId::CreateSubscriptionResponse_Encoding_DefaultXml => {
+                    CreateSubscriptionResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::RegisterNodesResponse_Encoding_DefaultXml => {
+                    RegisterNodesResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SessionlessInvokeResponseType_Encoding_DefaultXml => {
+                    SessionlessInvokeResponseType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ConfigurationVersionDataType_Encoding_DefaultXml => {
+                    ConfigurationVersionDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::EndpointConfiguration_Encoding_DefaultXml => {
+                    EndpointConfiguration::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DoubleComplexNumberType_Encoding_DefaultXml => {
+                    DoubleComplexNumberType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ThreeDCartesianCoordinates_Encoding_DefaultXml => {
+                    ThreeDCartesianCoordinates::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ModifySubscriptionRequest_Encoding_DefaultXml => {
+                    ModifySubscriptionRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ServerStatusDataType_Encoding_DefaultXml => {
+                    ServerStatusDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::WriteResponse_Encoding_DefaultXml => {
+                    WriteResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::QueryNextResponse_Encoding_DefaultXml => {
+                    QueryNextResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::PublishResponse_Encoding_DefaultXml => {
+                    PublishResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::EnumField_Encoding_DefaultXml => {
+                    EnumField::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::PublishedDataItemsDataType_Encoding_DefaultXml => {
+                    PublishedDataItemsDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::IssuedIdentityToken_Encoding_DefaultXml => {
+                    IssuedIdentityToken::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ReadAnnotationDataDetails_Encoding_DefaultXml => {
+                    ReadAnnotationDataDetails::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DeleteMonitoredItemsResponse_Encoding_DefaultXml => {
+                    DeleteMonitoredItemsResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::AddNodesRequest_Encoding_DefaultXml => {
+                    AddNodesRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::BrowseNextRequest_Encoding_DefaultXml => {
+                    BrowseNextRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ModificationInfo_Encoding_DefaultXml => {
+                    ModificationInfo::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::MonitoringFilterResult_Encoding_DefaultXml => {
+                    MonitoringFilterResult::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::HistoryModifiedData_Encoding_DefaultXml => {
+                    HistoryModifiedData::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ApplicationDescription_Encoding_DefaultXml => {
+                    ApplicationDescription::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::UadpDataSetReaderMessageDataType_Encoding_DefaultXml => {
+                    UadpDataSetReaderMessageDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::BrokerWriterGroupTransportDataType_Encoding_DefaultXml => {
+                    BrokerWriterGroupTransportDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::EphemeralKeyType_Encoding_DefaultXml => {
+                    EphemeralKeyType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ThreeDFrame_Encoding_DefaultXml => {
+                    ThreeDFrame::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::RedundantServerDataType_Encoding_DefaultXml => {
+                    RedundantServerDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::RepublishResponse_Encoding_DefaultXml => {
+                    RepublishResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::X509IdentityToken_Encoding_DefaultXml => {
+                    X509IdentityToken::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::Argument_Encoding_DefaultXml => {
+                    Argument::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ContentFilterResult_Encoding_DefaultXml => {
+                    ContentFilterResult::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::AddNodesResult_Encoding_DefaultXml => {
+                    AddNodesResult::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::StructureField_Encoding_DefaultXml => {
+                    StructureField::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DataSetMetaDataType_Encoding_DefaultXml => {
+                    DataSetMetaDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::FindServersOnNetworkResponse_Encoding_DefaultXml => {
+                    FindServersOnNetworkResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ServiceFault_Encoding_DefaultXml => {
+                    ServiceFault::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ProgramDiagnosticDataType_Encoding_DefaultXml => {
+                    ProgramDiagnosticDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DeleteNodesItem_Encoding_DefaultXml => {
+                    DeleteNodesItem::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SubscriptionAcknowledgement_Encoding_DefaultXml => {
+                    SubscriptionAcknowledgement::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::RegisterServerResponse_Encoding_DefaultXml => {
+                    RegisterServerResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::OpenSecureChannelRequest_Encoding_DefaultXml => {
+                    OpenSecureChannelRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::AggregateConfiguration_Encoding_DefaultXml => {
+                    AggregateConfiguration::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ThreeDOrientation_Encoding_DefaultXml => {
+                    ThreeDOrientation::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::AddReferencesResponse_Encoding_DefaultXml => {
+                    AddReferencesResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SessionDiagnosticsDataType_Encoding_DefaultXml => {
+                    SessionDiagnosticsDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::BrokerConnectionTransportDataType_Encoding_DefaultXml => {
+                    BrokerConnectionTransportDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::UnregisterNodesRequest_Encoding_DefaultXml => {
+                    UnregisterNodesRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::Orientation_Encoding_DefaultXml => {
+                    Orientation::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::RepublishRequest_Encoding_DefaultXml => {
+                    RepublishRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DataSetReaderMessageDataType_Encoding_DefaultXml => {
+                    DataSetReaderMessageDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::QueryFirstResponse_Encoding_DefaultXml => {
                     QueryFirstResponse::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
-                opcua::types::ObjectId::SetTriggeringRequest_Encoding_DefaultBinary => {
-                    SetTriggeringRequest::from_xml(body, ctx)
+                opcua::types::ObjectId::HistoryReadResult_Encoding_DefaultXml => {
+                    HistoryReadResult::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ReadProcessedDetails_Encoding_DefaultXml => {
+                    ReadProcessedDetails::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::NetworkGroupDataType_Encoding_DefaultXml => {
+                    NetworkGroupDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::FieldMetaData_Encoding_DefaultXml => {
+                    FieldMetaData::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DataTypeDescription_Encoding_DefaultXml => {
+                    DataTypeDescription::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::MonitoredItemCreateRequest_Encoding_DefaultXml => {
+                    MonitoredItemCreateRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DeleteReferencesRequest_Encoding_DefaultXml => {
+                    DeleteReferencesRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::PubSubGroupDataType_Encoding_DefaultXml => {
+                    PubSubGroupDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::LiteralOperand_Encoding_DefaultXml => {
+                    LiteralOperand::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ProgramDiagnostic2DataType_Encoding_DefaultXml => {
+                    ProgramDiagnostic2DataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ReferenceTypeAttributes_Encoding_DefaultXml => {
+                    ReferenceTypeAttributes::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::CreateMonitoredItemsRequest_Encoding_DefaultXml => {
+                    CreateMonitoredItemsRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::WriteRequest_Encoding_DefaultXml => {
+                    WriteRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::TransferSubscriptionsRequest_Encoding_DefaultXml => {
+                    TransferSubscriptionsRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::RegisteredServer_Encoding_DefaultXml => {
+                    RegisteredServer::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SignedSoftwareCertificate_Encoding_DefaultXml => {
+                    SignedSoftwareCertificate::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::UpdateEventDetails_Encoding_DefaultXml => {
+                    UpdateEventDetails::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::NodeTypeDescription_Encoding_DefaultXml => {
+                    NodeTypeDescription::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::FindServersOnNetworkRequest_Encoding_DefaultXml => {
+                    FindServersOnNetworkRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::MonitoredItemCreateResult_Encoding_DefaultXml => {
+                    MonitoredItemCreateResult::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::BrowseRequest_Encoding_DefaultXml => {
+                    BrowseRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ElementOperand_Encoding_DefaultXml => {
+                    ElementOperand::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ModifySubscriptionResponse_Encoding_DefaultXml => {
+                    ModifySubscriptionResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::HistoryEventFieldList_Encoding_DefaultXml => {
+                    HistoryEventFieldList::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::GetEndpointsRequest_Encoding_DefaultXml => {
+                    GetEndpointsRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::VariableAttributes_Encoding_DefaultXml => {
+                    VariableAttributes::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::PubSubConfigurationDataType_Encoding_DefaultXml => {
+                    PubSubConfigurationDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::PublishedVariableDataType_Encoding_DefaultXml => {
+                    PublishedVariableDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::EnumValueType_Encoding_DefaultXml => {
+                    EnumValueType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::AggregateFilterResult_Encoding_DefaultXml => {
+                    AggregateFilterResult::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::CreateMonitoredItemsResponse_Encoding_DefaultXml => {
+                    CreateMonitoredItemsResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ObjectTypeAttributes_Encoding_DefaultXml => {
+                    ObjectTypeAttributes::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::RegisterServer2Request_Encoding_DefaultXml => {
+                    RegisterServer2Request::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DecimalDataType_Encoding_DefaultXml => {
+                    DecimalDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DeleteReferencesItem_Encoding_DefaultXml => {
+                    DeleteReferencesItem::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::CloseSecureChannelRequest_Encoding_DefaultXml => {
+                    CloseSecureChannelRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::MonitoredItemModifyResult_Encoding_DefaultXml => {
+                    MonitoredItemModifyResult::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::Vector_Encoding_DefaultXml => {
+                    Vector::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::NetworkAddressDataType_Encoding_DefaultXml => {
+                    NetworkAddressDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DataSetWriterDataType_Encoding_DefaultXml => {
+                    DataSetWriterDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::EndpointType_Encoding_DefaultXml => {
+                    EndpointType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::UserIdentityToken_Encoding_DefaultXml => {
+                    UserIdentityToken::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::CartesianCoordinates_Encoding_DefaultXml => {
+                    CartesianCoordinates::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::PubSubConnectionDataType_Encoding_DefaultXml => {
+                    PubSubConnectionDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::MonitoringParameters_Encoding_DefaultXml => {
+                    MonitoringParameters::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SubscriptionDiagnosticsDataType_Encoding_DefaultXml => {
+                    SubscriptionDiagnosticsDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DatagramWriterGroupTransportDataType_Encoding_DefaultXml => {
+                    DatagramWriterGroupTransportDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::BrowsePathResult_Encoding_DefaultXml => {
+                    BrowsePathResult::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::EnumDescription_Encoding_DefaultXml => {
+                    EnumDescription::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::UpdateDataDetails_Encoding_DefaultXml => {
+                    UpdateDataDetails::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::StatusChangeNotification_Encoding_DefaultXml => {
+                    StatusChangeNotification::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ModifyMonitoredItemsResponse_Encoding_DefaultXml => {
+                    ModifyMonitoredItemsResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::NotificationData_Encoding_DefaultXml => {
+                    NotificationData::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::CreateSubscriptionRequest_Encoding_DefaultXml => {
+                    CreateSubscriptionRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::QueryFirstRequest_Encoding_DefaultXml => {
+                    QueryFirstRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::EventFilter_Encoding_DefaultXml => {
+                    EventFilter::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::TargetVariablesDataType_Encoding_DefaultXml => {
+                    TargetVariablesDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::BrowsePathTarget_Encoding_DefaultXml => {
+                    BrowsePathTarget::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::CallMethodRequest_Encoding_DefaultXml => {
+                    CallMethodRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::StatusResult_Encoding_DefaultXml => {
+                    StatusResult::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::WriteValue_Encoding_DefaultXml => {
+                    WriteValue::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::StructureDescription_Encoding_DefaultXml => {
+                    StructureDescription::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::HistoryReadValueId_Encoding_DefaultXml => {
+                    HistoryReadValueId::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::WriterGroupDataType_Encoding_DefaultXml => {
+                    WriterGroupDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::AddNodesItem_Encoding_DefaultXml => {
+                    AddNodesItem::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::CancelResponse_Encoding_DefaultXml => {
+                    CancelResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::RegisterServerRequest_Encoding_DefaultXml => {
+                    RegisterServerRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::HistoryUpdateResult_Encoding_DefaultXml => {
+                    HistoryUpdateResult::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::BrowseNextResponse_Encoding_DefaultXml => {
+                    BrowseNextResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::AdditionalParametersType_Encoding_DefaultXml => {
+                    AdditionalParametersType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SetMonitoringModeResponse_Encoding_DefaultXml => {
+                    SetMonitoringModeResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DataChangeFilter_Encoding_DefaultXml => {
+                    DataChangeFilter::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ReadResponse_Encoding_DefaultXml => {
+                    ReadResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DiscoveryConfiguration_Encoding_DefaultXml => {
+                    DiscoveryConfiguration::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ReaderGroupTransportDataType_Encoding_DefaultXml => {
+                    ReaderGroupTransportDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::FieldTargetDataType_Encoding_DefaultXml => {
+                    FieldTargetDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::HistoryReadRequest_Encoding_DefaultXml => {
+                    HistoryReadRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ParsingResult_Encoding_DefaultXml => {
+                    ParsingResult::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::TimeZoneDataType_Encoding_DefaultXml => {
+                    TimeZoneDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::WriterGroupTransportDataType_Encoding_DefaultXml => {
+                    WriterGroupTransportDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ContentFilterElement_Encoding_DefaultXml => {
+                    ContentFilterElement::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ServerOnNetwork_Encoding_DefaultXml => {
+                    ServerOnNetwork::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::MdnsDiscoveryConfiguration_Encoding_DefaultXml => {
+                    MdnsDiscoveryConfiguration::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ReaderGroupDataType_Encoding_DefaultXml => {
+                    ReaderGroupDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::UpdateStructureDataDetails_Encoding_DefaultXml => {
+                    UpdateStructureDataDetails::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::IdentityMappingRuleType_Encoding_DefaultXml => {
+                    IdentityMappingRuleType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::RolePermissionType_Encoding_DefaultXml => {
+                    RolePermissionType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DataChangeNotification_Encoding_DefaultXml => {
+                    DataChangeNotification::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SetTriggeringResponse_Encoding_DefaultXml => {
+                    SetTriggeringResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::MethodAttributes_Encoding_DefaultXml => {
+                    MethodAttributes::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::NotificationMessage_Encoding_DefaultXml => {
+                    NotificationMessage::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ReadRequest_Encoding_DefaultXml => {
+                    ReadRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::JsonDataSetReaderMessageDataType_Encoding_DefaultXml => {
+                    JsonDataSetReaderMessageDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::AddNodesResponse_Encoding_DefaultXml => {
+                    AddNodesResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::EUInformation_Encoding_DefaultXml => {
+                    EUInformation::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::PublishedEventsDataType_Encoding_DefaultXml => {
+                    PublishedEventsDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::RegisterNodesRequest_Encoding_DefaultXml => {
+                    RegisterNodesRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::FindServersResponse_Encoding_DefaultXml => {
+                    FindServersResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::OptionSet_Encoding_DefaultXml => {
+                    OptionSet::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::AttributeOperand_Encoding_DefaultXml => {
+                    AttributeOperand::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::MonitoredItemNotification_Encoding_DefaultXml => {
+                    MonitoredItemNotification::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DataSetWriterMessageDataType_Encoding_DefaultXml => {
+                    DataSetWriterMessageDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ViewAttributes_Encoding_DefaultXml => {
+                    ViewAttributes::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DataTypeAttributes_Encoding_DefaultXml => {
+                    DataTypeAttributes::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::CallResponse_Encoding_DefaultXml => {
+                    CallResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::XVType_Encoding_DefaultXml => {
+                    XVType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::PublishRequest_Encoding_DefaultXml => {
+                    PublishRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::AxisInformation_Encoding_DefaultXml => {
+                    AxisInformation::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ReferenceDescription_Encoding_DefaultXml => {
+                    ReferenceDescription::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::DeleteAtTimeDetails_Encoding_DefaultXml => {
+                    DeleteAtTimeDetails::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::AddReferencesItem_Encoding_DefaultXml => {
+                    AddReferencesItem::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::VariableTypeAttributes_Encoding_DefaultXml => {
+                    VariableTypeAttributes::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ViewDescription_Encoding_DefaultXml => {
+                    ViewDescription::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::CloseSessionResponse_Encoding_DefaultXml => {
+                    CloseSessionResponse::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::SamplingIntervalDiagnosticsDataType_Encoding_DefaultXml => {
+                    SamplingIntervalDiagnosticsDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::MonitoredItemModifyRequest_Encoding_DefaultXml => {
+                    MonitoredItemModifyRequest::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::ServerDiagnosticsSummaryDataType_Encoding_DefaultXml => {
+                    ServerDiagnosticsSummaryDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::Range_Encoding_DefaultXml => {
+                    Range::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::UABinaryFileDataType_Encoding_DefaultXml => {
+                    UABinaryFileDataType::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::HistoryReadDetails_Encoding_DefaultXml => {
+                    HistoryReadDetails::from_xml(body, ctx)
+                        .map(|v| opcua::types::ExtensionObject::from_message(&v))
+                }
+                opcua::types::ObjectId::Frame_Encoding_DefaultXml => {
+                    Frame::from_xml(body, ctx)
                         .map(|v| opcua::types::ExtensionObject::from_message(&v))
                 }
                 _ => return None,

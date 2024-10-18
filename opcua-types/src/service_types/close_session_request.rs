@@ -17,8 +17,14 @@ pub struct CloseSessionRequest {
     pub delete_subscriptions: bool,
 }
 impl opcua::types::MessageInfo for CloseSessionRequest {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::CloseSessionRequest_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::CloseSessionRequest_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::CloseSessionRequest_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for CloseSessionRequest {

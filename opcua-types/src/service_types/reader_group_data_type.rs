@@ -28,8 +28,14 @@ pub struct ReaderGroupDataType {
     >,
 }
 impl opcua::types::MessageInfo for ReaderGroupDataType {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ReaderGroupDataType_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReaderGroupDataType_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReaderGroupDataType_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for ReaderGroupDataType {

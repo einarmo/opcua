@@ -21,8 +21,14 @@ pub struct ApplicationDescription {
     pub discovery_urls: Option<Vec<opcua::types::string::UAString>>,
 }
 impl opcua::types::MessageInfo for ApplicationDescription {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ApplicationDescription_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ApplicationDescription_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ApplicationDescription_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for ApplicationDescription {

@@ -20,8 +20,14 @@ pub struct DeleteReferencesItem {
     pub delete_bidirectional: bool,
 }
 impl opcua::types::MessageInfo for DeleteReferencesItem {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::DeleteReferencesItem_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DeleteReferencesItem_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DeleteReferencesItem_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for DeleteReferencesItem {

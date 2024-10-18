@@ -19,8 +19,14 @@ pub struct BrokerDataSetReaderTransportDataType {
     pub meta_data_queue_name: opcua::types::string::UAString,
 }
 impl opcua::types::MessageInfo for BrokerDataSetReaderTransportDataType {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::BrokerDataSetReaderTransportDataType_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::BrokerDataSetReaderTransportDataType_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::BrokerDataSetReaderTransportDataType_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for BrokerDataSetReaderTransportDataType {

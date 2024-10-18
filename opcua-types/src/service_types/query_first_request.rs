@@ -21,8 +21,14 @@ pub struct QueryFirstRequest {
     pub max_references_to_return: u32,
 }
 impl opcua::types::MessageInfo for QueryFirstRequest {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::QueryFirstRequest_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::QueryFirstRequest_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::QueryFirstRequest_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for QueryFirstRequest {

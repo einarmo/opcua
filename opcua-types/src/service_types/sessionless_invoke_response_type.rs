@@ -18,8 +18,14 @@ pub struct SessionlessInvokeResponseType {
     pub service_id: u32,
 }
 impl opcua::types::MessageInfo for SessionlessInvokeResponseType {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::SessionlessInvokeResponseType_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::SessionlessInvokeResponseType_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::SessionlessInvokeResponseType_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for SessionlessInvokeResponseType {

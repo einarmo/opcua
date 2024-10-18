@@ -17,8 +17,14 @@ pub struct SemanticChangeStructureDataType {
     pub affected_type: opcua::types::node_id::NodeId,
 }
 impl opcua::types::MessageInfo for SemanticChangeStructureDataType {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::SemanticChangeStructureDataType_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::SemanticChangeStructureDataType_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::SemanticChangeStructureDataType_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for SemanticChangeStructureDataType {

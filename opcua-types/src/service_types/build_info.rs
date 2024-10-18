@@ -21,8 +21,14 @@ pub struct BuildInfo {
     pub build_date: opcua::types::date_time::DateTime,
 }
 impl opcua::types::MessageInfo for BuildInfo {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::BuildInfo_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::BuildInfo_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::BuildInfo_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for BuildInfo {

@@ -17,8 +17,14 @@ pub struct DeleteNodesRequest {
     pub nodes_to_delete: Option<Vec<super::delete_nodes_item::DeleteNodesItem>>,
 }
 impl opcua::types::MessageInfo for DeleteNodesRequest {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::DeleteNodesRequest_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DeleteNodesRequest_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DeleteNodesRequest_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for DeleteNodesRequest {

@@ -17,8 +17,14 @@ pub struct AliasNameDataType {
     pub referenced_nodes: Option<Vec<opcua::types::expanded_node_id::ExpandedNodeId>>,
 }
 impl opcua::types::MessageInfo for AliasNameDataType {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::AliasNameDataType_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::AliasNameDataType_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::AliasNameDataType_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for AliasNameDataType {

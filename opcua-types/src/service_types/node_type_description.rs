@@ -18,8 +18,14 @@ pub struct NodeTypeDescription {
     pub data_to_return: Option<Vec<super::query_data_description::QueryDataDescription>>,
 }
 impl opcua::types::MessageInfo for NodeTypeDescription {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::NodeTypeDescription_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::NodeTypeDescription_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::NodeTypeDescription_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for NodeTypeDescription {

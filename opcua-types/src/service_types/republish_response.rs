@@ -17,8 +17,14 @@ pub struct RepublishResponse {
     pub notification_message: super::notification_message::NotificationMessage,
 }
 impl opcua::types::MessageInfo for RepublishResponse {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::RepublishResponse_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::RepublishResponse_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::RepublishResponse_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for RepublishResponse {

@@ -18,8 +18,14 @@ pub struct Annotation {
     pub annotation_time: opcua::types::date_time::DateTime,
 }
 impl opcua::types::MessageInfo for Annotation {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::Annotation_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::Annotation_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::Annotation_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for Annotation {

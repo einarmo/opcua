@@ -19,8 +19,14 @@ pub struct ReadValueId {
     pub data_encoding: opcua::types::qualified_name::QualifiedName,
 }
 impl opcua::types::MessageInfo for ReadValueId {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ReadValueId_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReadValueId_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReadValueId_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for ReadValueId {

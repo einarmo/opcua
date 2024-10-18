@@ -21,8 +21,14 @@ pub struct ReferenceDescription {
     pub type_definition: opcua::types::expanded_node_id::ExpandedNodeId,
 }
 impl opcua::types::MessageInfo for ReferenceDescription {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ReferenceDescription_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReferenceDescription_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReferenceDescription_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for ReferenceDescription {

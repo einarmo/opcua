@@ -17,8 +17,14 @@ pub struct MdnsDiscoveryConfiguration {
     pub server_capabilities: Option<Vec<opcua::types::string::UAString>>,
 }
 impl opcua::types::MessageInfo for MdnsDiscoveryConfiguration {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::MdnsDiscoveryConfiguration_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::MdnsDiscoveryConfiguration_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::MdnsDiscoveryConfiguration_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for MdnsDiscoveryConfiguration {

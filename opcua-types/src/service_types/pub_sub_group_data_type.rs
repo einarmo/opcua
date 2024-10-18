@@ -23,8 +23,14 @@ pub struct PubSubGroupDataType {
     pub group_properties: Option<Vec<super::key_value_pair::KeyValuePair>>,
 }
 impl opcua::types::MessageInfo for PubSubGroupDataType {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::PubSubGroupDataType_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::PubSubGroupDataType_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::PubSubGroupDataType_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for PubSubGroupDataType {

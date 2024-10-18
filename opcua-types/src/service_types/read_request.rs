@@ -18,8 +18,14 @@ pub struct ReadRequest {
     pub nodes_to_read: Option<Vec<super::read_value_id::ReadValueId>>,
 }
 impl opcua::types::MessageInfo for ReadRequest {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ReadRequest_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReadRequest_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::ReadRequest_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for ReadRequest {

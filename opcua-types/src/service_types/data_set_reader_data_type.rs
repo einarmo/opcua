@@ -33,8 +33,14 @@ pub struct DataSetReaderDataType {
     pub subscribed_data_set: opcua::types::extension_object::ExtensionObject,
 }
 impl opcua::types::MessageInfo for DataSetReaderDataType {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::DataSetReaderDataType_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DataSetReaderDataType_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DataSetReaderDataType_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for DataSetReaderDataType {

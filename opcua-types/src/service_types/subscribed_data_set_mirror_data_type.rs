@@ -17,8 +17,14 @@ pub struct SubscribedDataSetMirrorDataType {
     pub role_permissions: Option<Vec<super::role_permission_type::RolePermissionType>>,
 }
 impl opcua::types::MessageInfo for SubscribedDataSetMirrorDataType {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::SubscribedDataSetMirrorDataType_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::SubscribedDataSetMirrorDataType_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::SubscribedDataSetMirrorDataType_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for SubscribedDataSetMirrorDataType {

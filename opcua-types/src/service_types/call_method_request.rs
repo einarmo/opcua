@@ -18,8 +18,14 @@ pub struct CallMethodRequest {
     pub input_arguments: Option<Vec<opcua::types::variant::Variant>>,
 }
 impl opcua::types::MessageInfo for CallMethodRequest {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::CallMethodRequest_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::CallMethodRequest_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::CallMethodRequest_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for CallMethodRequest {

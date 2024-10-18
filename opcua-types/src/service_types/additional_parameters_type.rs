@@ -16,8 +16,14 @@ pub struct AdditionalParametersType {
     pub parameters: Option<Vec<super::key_value_pair::KeyValuePair>>,
 }
 impl opcua::types::MessageInfo for AdditionalParametersType {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::AdditionalParametersType_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::AdditionalParametersType_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::AdditionalParametersType_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for AdditionalParametersType {

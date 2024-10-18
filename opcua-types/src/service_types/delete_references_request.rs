@@ -19,8 +19,14 @@ pub struct DeleteReferencesRequest {
     >,
 }
 impl opcua::types::MessageInfo for DeleteReferencesRequest {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::DeleteReferencesRequest_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DeleteReferencesRequest_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::DeleteReferencesRequest_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for DeleteReferencesRequest {

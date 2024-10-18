@@ -17,8 +17,14 @@ pub struct X509IdentityToken {
     pub certificate_data: opcua::types::byte_string::ByteString,
 }
 impl opcua::types::MessageInfo for X509IdentityToken {
-    fn object_id(&self) -> opcua::types::ObjectId {
+    fn type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::X509IdentityToken_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::X509IdentityToken_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> opcua::types::ObjectId {
+        opcua::types::ObjectId::X509IdentityToken_Encoding_DefaultXml
     }
 }
 impl opcua::types::BinaryEncoder for X509IdentityToken {
