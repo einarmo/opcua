@@ -12,12 +12,15 @@ use std::{
     time::Duration,
 };
 
+use chrono::TimeDelta;
 use log::warn;
 use serde::{Deserialize, Serialize};
 
 use opcua_core::config::Config;
 use opcua_crypto::SecurityPolicy;
-use opcua_types::{ApplicationType, MessageSecurityMode, UAString};
+use opcua_types::{ApplicationType, EndpointDescription, MessageSecurityMode, UAString};
+
+use crate::{Client, IdentityToken, SessionRetryPolicy};
 
 pub const ANONYMOUS_USER_TOKEN_ID: &str = "ANONYMOUS";
 
@@ -159,6 +162,20 @@ pub struct DecodingOptions {
     /// Maximum number of array elements. 0 actually means 0, i.e. no array permitted
     #[serde(default = "defaults::max_array_length")]
     pub(crate) max_array_length: usize,
+}
+
+impl DecodingOptions {
+    pub fn as_comms_decoding_options(&self) -> opcua_types::DecodingOptions {
+        opcua_types::DecodingOptions {
+            max_chunk_count: self.max_chunk_count,
+            max_message_size: self.max_message_size,
+            max_string_length: self.max_string_length,
+            max_byte_string_length: self.max_byte_string_length,
+            max_array_length: self.max_array_length,
+            client_offset: TimeDelta::zero(),
+            ..Default::default()
+        }
+    }
 }
 
 impl Default for DecodingOptions {
@@ -364,6 +381,81 @@ impl Config for ClientConfig {
 
     fn application_type(&self) -> ApplicationType {
         ApplicationType::Client
+    }
+}
+
+impl ClientConfig {
+    pub fn session_retry_policy(&self) -> SessionRetryPolicy {
+        SessionRetryPolicy::new(
+            self.session_retry_max,
+            if self.session_retry_limit < 0 {
+                None
+            } else {
+                Some(self.session_retry_limit as u32)
+            },
+            self.session_retry_initial,
+        )
+    }
+
+    /// Returns an identity token corresponding to the matching user in the configuration. Or None
+    /// if there is no matching token.
+    pub fn client_identity_token(&self, user_token_id: impl Into<String>) -> Option<IdentityToken> {
+        let user_token_id = user_token_id.into();
+        if user_token_id == ANONYMOUS_USER_TOKEN_ID {
+            Some(IdentityToken::Anonymous)
+        } else {
+            let token = self.user_tokens.get(&user_token_id)?;
+
+            if let Some(ref password) = token.password {
+                Some(IdentityToken::UserName(
+                    token.user.clone(),
+                    password.clone(),
+                ))
+            } else if let Some(ref cert_path) = token.cert_path {
+                token.private_key_path.as_ref().map(|private_key_path| {
+                    IdentityToken::X509(PathBuf::from(cert_path), PathBuf::from(private_key_path))
+                })
+            } else {
+                None
+            }
+        }
+    }
+
+    /// Creates a [`EndpointDescription`](EndpointDescription) information from the supplied client endpoint.
+    pub(super) fn endpoint_description_for_client_endpoint(
+        &self,
+        client_endpoint: &ClientEndpoint,
+        endpoints: &[EndpointDescription],
+    ) -> Result<EndpointDescription, String> {
+        let security_policy =
+            SecurityPolicy::from_str(&client_endpoint.security_policy).map_err(|_| {
+                format!(
+                    "Endpoint {} security policy {} is invalid",
+                    client_endpoint.url, client_endpoint.security_policy
+                )
+            })?;
+        let security_mode = MessageSecurityMode::from(client_endpoint.security_mode.as_ref());
+        if security_mode == MessageSecurityMode::Invalid {
+            return Err(format!(
+                "Endpoint {} security mode {} is invalid",
+                client_endpoint.url, client_endpoint.security_mode
+            ));
+        }
+        let endpoint_url = client_endpoint.url.clone();
+        let endpoint = Client::find_matching_endpoint(
+            endpoints,
+            &endpoint_url,
+            security_policy,
+            security_mode,
+        )
+        .ok_or_else(|| {
+            format!(
+                "Endpoint {}, {:?} / {:?} does not match any supplied by the server",
+                endpoint_url, security_policy, security_mode
+            )
+        })?;
+
+        Ok(endpoint)
     }
 }
 

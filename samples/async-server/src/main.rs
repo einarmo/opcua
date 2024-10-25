@@ -24,7 +24,7 @@ async fn main() {
     let mut client = Client::new(ClientConfig::load(&PathBuf::from("../client.conf")).unwrap());
 
     let (session, event_loop) = client
-        .new_session_from_endpoint(
+        .connect_to_matching_endpoint(
             "opc.tcp://127.0.0.1:4855",
             opcua::client::IdentityToken::Anonymous,
         )
