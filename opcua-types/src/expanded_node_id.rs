@@ -5,7 +5,9 @@
 //! Contains the implementation of `ExpandedNodeId`.
 
 use std::{
-    self, fmt,
+    self,
+    borrow::Cow,
+    fmt,
     io::{Read, Write},
     str::FromStr,
 };
@@ -19,6 +21,7 @@ use crate::{
     node_id::{Identifier, NodeId},
     status_code::StatusCode,
     string::*,
+    NamespaceMap,
 };
 
 /// A NodeId that allows the namespace URI to be specified instead of an index.
@@ -462,5 +465,25 @@ impl ExpandedNodeId {
 
     pub fn is_null(&self) -> bool {
         self.node_id.is_null()
+    }
+
+    /// Try to resolve the expanded node ID into a NodeId.
+    /// This will directly return the inner NodeId if namespace URI is null, otherwise it will
+    /// try to return a NodeId with the namespace index given by the namespace uri.
+    /// If server index is non-zero, this will always return None, otherwise, it will return
+    /// None if the namespace is not in the namespace map.
+    pub fn try_resolve<'a>(&'a self, namespaces: &NamespaceMap) -> Option<Cow<'a, NodeId>> {
+        if self.server_index != 0 {
+            return None;
+        }
+        if let Some(uri) = self.namespace_uri.value() {
+            let idx = namespaces.get_index(uri)?;
+            Some(Cow::Owned(NodeId {
+                namespace: idx,
+                identifier: self.node_id.identifier.clone(),
+            }))
+        } else {
+            Some(Cow::Borrowed(&self.node_id))
+        }
     }
 }

@@ -4,6 +4,8 @@ mod encoding;
 mod json;
 mod node_id;
 mod variant;
+#[cfg(feature = "xml")]
+mod xml;
 
 use std::cmp::PartialEq;
 use std::fmt::Debug;

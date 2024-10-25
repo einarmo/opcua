@@ -2,6 +2,7 @@ use std::{collections::HashMap, sync::Arc, time::Duration};
 
 use async_trait::async_trait;
 use opcua_core::{trace_read_lock, trace_write_lock};
+use opcua_nodes::NodeSetImport;
 
 use crate::{
     address_space::{read_node_value, AddressSpace, NodeBase, NodeType},
@@ -34,14 +35,24 @@ type ReadCB = Arc<
 type MethodCB = Arc<dyn Fn(&[Variant]) -> Result<Vec<Variant>, StatusCode> + Send + Sync + 'static>;
 
 pub struct SimpleNodeManagerBuilder {
-    namespace: NamespaceMetadata,
+    namespaces: Vec<NamespaceMetadata>,
+    imports: Vec<Box<dyn NodeSetImport>>,
     name: String,
 }
 
 impl SimpleNodeManagerBuilder {
     pub fn new(namespace: NamespaceMetadata, name: &str) -> Self {
         Self {
-            namespace,
+            namespaces: vec![namespace],
+            imports: Vec::new(),
+            name: name.to_owned(),
+        }
+    }
+
+    pub fn new_imports(imports: Vec<Box<dyn NodeSetImport>>, name: &str) -> Self {
+        Self {
+            namespaces: Vec::new(),
+            imports,
             name: name.to_owned(),
         }
     }
@@ -53,20 +64,38 @@ impl InMemoryNodeManagerImplBuilder for SimpleNodeManagerBuilder {
     fn build(mut self, context: ServerContext, address_space: &mut AddressSpace) -> Self::Impl {
         {
             let mut type_tree = context.type_tree.write();
-            self.namespace.namespace_index = type_tree
-                .namespaces_mut()
-                .add_namespace(&self.namespace.namespace_uri);
+            for import in self.imports {
+                address_space.import_node_set(&*import, type_tree.namespaces_mut());
+                let nss = import.get_own_namespaces();
+                for ns in nss {
+                    if !self.namespaces.iter().any(|n| n.namespace_uri == ns) {
+                        self.namespaces.push(NamespaceMetadata {
+                            namespace_uri: ns,
+                            ..Default::default()
+                        });
+                    }
+                }
+            }
+            for ns in &mut self.namespaces {
+                ns.namespace_index = type_tree.namespaces_mut().add_namespace(&ns.namespace_uri);
+            }
         }
-        address_space.add_namespace(
-            &self.namespace.namespace_uri,
-            self.namespace.namespace_index,
-        );
-        SimpleNodeManagerImpl::new(self.namespace, &self.name, context.node_managers.clone())
+        for ns in &self.namespaces {
+            address_space.add_namespace(&ns.namespace_uri, ns.namespace_index);
+        }
+        SimpleNodeManagerImpl::new(self.namespaces, &self.name, context.node_managers.clone())
     }
 }
 
 pub fn simple_node_manager(namespace: NamespaceMetadata, name: &str) -> impl NodeManagerBuilder {
     InMemoryNodeManagerBuilder::new(SimpleNodeManagerBuilder::new(namespace, name))
+}
+
+pub fn simple_node_manager_imports(
+    imports: Vec<Box<dyn NodeSetImport>>,
+    name: &str,
+) -> impl NodeManagerBuilder {
+    InMemoryNodeManagerBuilder::new(SimpleNodeManagerBuilder::new_imports(imports, name))
 }
 
 /// Node manager designed to deal with simple, entirely in-memory, synchronous OPC-UA servers.
@@ -80,7 +109,7 @@ pub struct SimpleNodeManagerImpl {
     write_cbs: RwLock<HashMap<NodeId, WriteCB>>,
     read_cbs: RwLock<HashMap<NodeId, ReadCB>>,
     method_cbs: RwLock<HashMap<NodeId, MethodCB>>,
-    namespace: NamespaceMetadata,
+    namespaces: Vec<NamespaceMetadata>,
     #[allow(unused)]
     node_managers: NodeManagersRef,
     name: String,
@@ -104,7 +133,7 @@ impl InMemoryNodeManagerImpl for SimpleNodeManagerImpl {
     }
 
     fn namespaces(&self) -> Vec<NamespaceMetadata> {
-        vec![self.namespace.clone()]
+        self.namespaces.clone()
     }
 
     fn name(&self) -> &str {
@@ -262,12 +291,16 @@ impl InMemoryNodeManagerImpl for SimpleNodeManagerImpl {
 }
 
 impl SimpleNodeManagerImpl {
-    pub fn new(namespace: NamespaceMetadata, name: &str, node_managers: NodeManagersRef) -> Self {
+    pub fn new(
+        namespaces: Vec<NamespaceMetadata>,
+        name: &str,
+        node_managers: NodeManagersRef,
+    ) -> Self {
         Self {
             write_cbs: Default::default(),
             read_cbs: Default::default(),
             method_cbs: Default::default(),
-            namespace,
+            namespaces,
             name: name.to_owned(),
             node_managers,
             samplers: SyncSampler::new(),

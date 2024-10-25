@@ -14,5 +14,5 @@ documentation = "https://docs.rs/opcua/"
 [dependencies]
 chrono = "0.4.38"
 roxmltree = "0.20.0"
-thiserror = "1.0.63"
+thiserror = { workspace = true }
 uuid = "1.10.0"

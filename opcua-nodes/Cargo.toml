@@ -15,12 +15,20 @@ edition = "2021"
 [lib]
 name = "opcua_nodes"
 
+[features]
+xml = ["opcua-types/xml", "opcua-xml"]
+
 [dependencies]
 bitflags = { workspace = true }
 hashbrown = { workspace = true }
 log = { workspace = true }
 regex = { workspace = true }
+thiserror = { workspace = true }
 
 opcua-types = { path = "../opcua-types" }
 opcua-macros = { path = "../opcua-macros" }
+opcua-xml = { path = "../opcua-xml", optional = true }
 
+
+[dev-dependencies]
+opcua-nodes = { path = ".", features = ["xml"] }

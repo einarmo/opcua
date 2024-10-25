@@ -23,6 +23,7 @@ pub struct GeneratedItem {
     pub impls: Vec<ItemImpl>,
     pub module: String,
     pub name: String,
+    pub object_id: Option<Ident>,
 }
 
 impl GeneratedOutput for GeneratedItem {
@@ -291,6 +292,20 @@ impl CodeGenerator {
             }
         });
 
+        // Xml impl
+        impls.push(parse_quote! {
+            #[cfg(feature = "xml")]
+            impl opcua::types::xml::FromXml for #enum_ident {
+                fn from_xml<'a>(
+                    element: &opcua::types::xml::XmlElement,
+                    ctx: &opcua::types::xml::XmlContext<'a>
+                ) -> Result<Self, opcua::types::xml::FromXmlError> {
+                    let val = #ty::from_xml(element, ctx)?;
+                    Ok(Self::from_bits_truncate(val))
+                }
+            }
+        });
+
         let ser_method = Ident::new(&format!("serialize_{}", item.typ), Span::call_site());
         let deser_method = Ident::new(&format!("deserialize_{}", item.typ), Span::call_site());
         let typ_str = format!("an {}", item.typ);
@@ -343,6 +358,7 @@ impl CodeGenerator {
                 item.name.to_case(Case::Snake)
             },
             name: item.name.clone(),
+            object_id: None,
         })
     }
 
@@ -450,6 +466,20 @@ impl CodeGenerator {
                     Ok(match value {
                         #try_from_arms
                     })
+                }
+            }
+        });
+        // Xml impl
+        let fail_xml_msg = format!("Got unexpected value for enum {}: {{}}", item.name);
+        impls.push(parse_quote! {
+            #[cfg(feature = "xml")]
+            impl opcua::types::xml::FromXml for #enum_ident {
+                fn from_xml<'a>(
+                    element: &opcua::types::xml::XmlElement,
+                    ctx: &opcua::types::xml::XmlContext<'a>
+                ) -> Result<Self, opcua::types::xml::FromXmlError> {
+                    let val = #ty::from_xml(element, ctx)?;
+                    Ok(Self::try_from(val).map_err(|e| format!(#fail_xml_msg, e))?)
                 }
             }
         });
@@ -564,6 +594,7 @@ impl CodeGenerator {
                 item.name.to_case(Case::Snake)
             },
             name: item.name.clone(),
+            object_id: None,
         })
     }
 
@@ -608,6 +639,9 @@ impl CodeGenerator {
         attrs.push(parse_quote! {
             #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
         });
+        attrs.push(parse_quote! {
+            #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+        });
 
         if self.has_default(&item.name) {
             attrs.push(parse_quote! {
@@ -632,6 +666,7 @@ impl CodeGenerator {
             });
         }
 
+        let mut object_id = None;
         // Generate impls
         // Has message info
         // TODO: This won't work for custom types. It may be possible
@@ -646,13 +681,28 @@ impl CodeGenerator {
                 &format!("{}_Encoding_DefaultBinary", item.name),
                 Span::call_site(),
             );
+            let json_encoding_ident = Ident::new(
+                &format!("{}_Encoding_DefaultJson", item.name),
+                Span::call_site(),
+            );
+            let xml_encoding_ident = Ident::new(
+                &format!("{}_Encoding_DefaultXml", item.name),
+                Span::call_site(),
+            );
             impls.push(parse_quote! {
                 impl opcua::types::MessageInfo for #struct_ident {
-                    fn object_id(&self) -> opcua::types::ObjectId {
+                    fn type_id(&self) -> opcua::types::ObjectId {
                         opcua::types::ObjectId::#encoding_ident
+                    }
+                    fn json_type_id(&self) -> opcua::types::ObjectId {
+                        opcua::types::ObjectId::#json_encoding_ident
+                    }
+                    fn xml_type_id(&self) -> opcua::types::ObjectId {
+                        opcua::types::ObjectId::#xml_encoding_ident
                     }
                 }
             });
+            object_id = Some(xml_encoding_ident);
         }
 
         let mut len_impl;
@@ -773,6 +823,7 @@ impl CodeGenerator {
                 item.name.to_case(Case::Snake)
             },
             name: item.name.clone(),
+            object_id,
         })
     }
 }

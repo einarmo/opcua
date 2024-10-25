@@ -44,7 +44,7 @@ impl InMemoryNodeManagerImplBuilder for CoreNodeManagerBuilder {
     fn build(self, context: ServerContext, address_space: &mut AddressSpace) -> Self::Impl {
         {
             let mut type_tree = context.type_tree.write();
-            address_space.import_node_set::<CoreNamespace>(type_tree.namespaces_mut());
+            address_space.import_node_set(&CoreNamespace, type_tree.namespaces_mut());
             /* address_space.add_namespace(
                 "http://opcfoundation.org/UA/",
                 type_tree

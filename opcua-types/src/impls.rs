@@ -30,8 +30,12 @@ use super::{PerformUpdateType, SecurityTokenRequestType};
 
 /// Implemented by messages
 pub trait MessageInfo {
-    /// The object id associated with the message
-    fn object_id(&self) -> ObjectId;
+    /// The binary type id associated with the message
+    fn type_id(&self) -> ObjectId;
+    /// The JSON type id associated with the message.
+    fn json_type_id(&self) -> ObjectId;
+    /// The XML type id associated with the message.
+    fn xml_type_id(&self) -> ObjectId;
 }
 
 impl ServiceFault {

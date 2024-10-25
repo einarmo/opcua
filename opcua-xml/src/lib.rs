@@ -9,6 +9,19 @@ pub use error::XmlError;
 pub use schema::opc_binary_schema::load_bsd_file;
 pub use schema::ua_node_set::load_nodeset2_file;
 
+pub use schema::opc_ua_types::XmlElement;
+
+pub fn from_str<'a, T: XmlLoad<'a>>(data: &'a str) -> Result<T, XmlError> {
+    let doc = roxmltree::Document::parse(data).map_err(|e| XmlError {
+        span: 0..data.len(),
+        error: e.into(),
+    })?;
+    T::load(&doc.root().first_child().ok_or_else(|| XmlError {
+        span: doc.root().range(),
+        error: error::XmlErrorInner::MissingField("Root".to_owned()),
+    })?)
+}
+
 pub trait XmlLoad<'input>: Sized {
     fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError>;
 }

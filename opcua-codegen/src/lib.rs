@@ -21,7 +21,7 @@ pub use types::{
     CodeGenItemConfig, GeneratedItem, ItemDefinition, LoadedType, LoadedTypes, StructureField,
     StructureFieldType, StructuredType,
 };
-use types::{generate_types, ExternalType};
+use types::{generate_types, generate_xml_loader_impl, ExternalType};
 pub use utils::{create_module_file, GeneratedOutput};
 
 pub fn write_to_directory<T: GeneratedOutput>(
@@ -111,8 +111,20 @@ pub fn run_codegen(config: &CodeGenConfig) -> Result<(), CodeGenError> {
 
                 let header = make_header(&t.file_path, &[&config.extra_header, &t.extra_header]);
 
+                let object_ids = types
+                    .iter()
+                    .filter_map(|v| {
+                        v.object_id
+                            .as_ref()
+                            .map(|i| (i.to_string(), v.name.clone()))
+                    })
+                    .collect();
                 let modules = write_to_directory(&t.output_dir, &header, types)?;
-                let module_file = create_module_file(modules);
+                let mut module_file = create_module_file(modules);
+                module_file
+                    .items
+                    .extend(generate_xml_loader_impl(object_ids).into_iter());
+
                 write_module_file(&t.output_dir, &header, module_file)?;
             }
             CodeGenTarget::Nodes(n) => {

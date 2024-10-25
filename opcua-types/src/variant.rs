@@ -13,6 +13,7 @@ use std::{
 };
 
 use log::{error, warn};
+use uuid::Uuid;
 
 use crate::{
     array::*,
@@ -168,6 +169,8 @@ impl_variant_type_for!(ExtensionObject, VariantScalarTypeId::ExtensionObject);
 impl_variant_type_for!(Variant, VariantScalarTypeId::Variant);
 impl_variant_type_for!(DataValue, VariantScalarTypeId::DataValue);
 impl_variant_type_for!(DiagnosticInfo, VariantScalarTypeId::DiagnosticInfo);
+impl_variant_type_for!(chrono::DateTime<chrono::Utc>, VariantScalarTypeId::DateTime);
+impl_variant_type_for!(Uuid, VariantScalarTypeId::Guid);
 
 macro_rules! impl_from_variant_for {
     ($tp: ty, $vt: expr, $venum: path) => {
@@ -335,6 +338,12 @@ impl From<DateTime> for Variant {
 impl From<Guid> for Variant {
     fn from(v: Guid) -> Self {
         Variant::Guid(Box::new(v))
+    }
+}
+
+impl From<Uuid> for Variant {
+    fn from(v: Uuid) -> Self {
+        Variant::Guid(Box::new(v.into()))
     }
 }
 

@@ -13,11 +13,17 @@ use crate::{
     string::UAString,
 };
 
+#[cfg(feature = "xml")]
+mod opcua {
+    pub use crate as types;
+}
+
 /// The `ResponseHeader` contains information common to every response from server to client.
 #[derive(Debug, Clone, PartialEq, Default)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(feature = "xml", derive(crate::FromXml))]
 pub struct ResponseHeader {
     pub timestamp: UtcTime,
     pub request_handle: IntegerId,

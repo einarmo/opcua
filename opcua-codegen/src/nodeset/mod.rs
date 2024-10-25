@@ -222,15 +222,17 @@ pub fn make_root_module(
 
     items.push(parse_quote! {
         impl opcua::nodes::NodeSetImport for #name_ident {
-            fn load<'a>(map: &'a opcua::nodes::NodeSetNamespaceMapper) -> impl Iterator<Item = opcua::nodes::ImportedItem> + 'a {
-                [
+            fn load<'a>(&'a self, map: &'a opcua::nodes::NodeSetNamespaceMapper) -> Box<dyn Iterator<Item = opcua::nodes::ImportedItem> + 'a> {
+                Box::new([
                     #(#names::imported_nodes(map)),*
-                ].into_iter().flatten()
+                ].into_iter().flatten())
             }
 
-            fn register_namespaces(map: &mut opcua::nodes::NodeSetNamespaceMapper) -> Vec<String> {
+            fn register_namespaces(&self, map: &mut opcua::nodes::NodeSetNamespaceMapper) {
                 #namespace_adds
+            }
 
+            fn get_own_namespaces(&self) -> Vec<String> {
                 vec![#namespace_out]
             }
         }

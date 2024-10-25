@@ -205,7 +205,7 @@ impl Chunker {
                 EncodingError::new(StatusCode::BadResponseTooLarge, ctx_id, ctx_handle)
             })
         } else {
-            let node_id = supported_message.node_id();
+            let node_id = supported_message.type_id();
             message_size += node_id.byte_len();
 
             let message_type = supported_message.message_type();

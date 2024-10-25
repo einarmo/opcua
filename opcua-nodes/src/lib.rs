@@ -3,8 +3,11 @@ use bitflags::bitflags;
 mod events;
 mod generic;
 mod import;
-mod namespaces;
 mod type_tree;
+#[cfg(feature = "xml")]
+mod xml;
+#[cfg(feature = "xml")]
+pub use xml::NodeSet2Import;
 
 pub use base::Base;
 pub use data_type::{DataType, DataTypeBuilder};
@@ -12,10 +15,10 @@ pub use events::*;
 pub use generic::new_node_from_attributes;
 pub use import::{ImportedItem, ImportedReference, NodeSetImport, NodeSetNamespaceMapper};
 pub use method::{Method, MethodBuilder};
-pub use namespaces::NamespaceMap;
 pub use node::{HasNodeId, Node, NodeBase, NodeType};
 pub use object::{Object, ObjectBuilder};
 pub use object_type::{ObjectType, ObjectTypeBuilder};
+pub use opcua_types::NamespaceMap;
 use opcua_types::NodeId;
 pub use reference_type::{ReferenceType, ReferenceTypeBuilder};
 pub use type_tree::{

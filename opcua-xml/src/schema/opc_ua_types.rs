@@ -170,12 +170,33 @@ impl<'input> XmlLoad<'input> for StatusCode {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct XmlElement {
     pub text: Option<String>,
     pub tag: String,
     pub attributes: HashMap<String, String>,
-    pub children: Vec<XmlElement>,
+    pub children: HashMap<String, Vec<XmlElement>>,
+}
+
+impl std::fmt::Display for XmlElement {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "<{}", self.tag)?;
+        for (k, v) in &self.attributes {
+            write!(f, " {k}=\"{v}\"")?;
+        }
+        write!(f, ">")?;
+        if let Some(text) = &self.text {
+            write!(f, "{text}")?;
+        }
+        for elems in self.children.values() {
+            for child in elems {
+                write!(f, "{child}")?;
+            }
+        }
+        write!(f, "</{}>", self.tag)?;
+
+        Ok(())
+    }
 }
 
 impl<'input> XmlLoad<'input> for Option<XmlElement> {
@@ -184,6 +205,14 @@ impl<'input> XmlLoad<'input> for Option<XmlElement> {
         if tag_name.is_empty() {
             return Ok(None);
         };
+        let mut children: HashMap<String, Vec<XmlElement>> = HashMap::new();
+        for child in children_of_type::<XmlElement>(node)? {
+            if let Some(ch) = children.get_mut(&child.tag) {
+                ch.push(child);
+            } else {
+                children.insert(child.tag.clone(), vec![child]);
+            }
+        }
         Ok(Some(XmlElement {
             text: node.text().and_then(|t| {
                 let trimmed = t.trim();
@@ -198,7 +227,7 @@ impl<'input> XmlLoad<'input> for Option<XmlElement> {
                 .attributes()
                 .map(|a| (a.name().to_owned(), a.value().to_owned()))
                 .collect(),
-            children: children_of_type(node)?,
+            children,
         }))
     }
 }
@@ -208,7 +237,8 @@ impl XmlElement {
         &'a self,
         name: &'a str,
     ) -> impl Iterator<Item = &XmlElement> + 'a {
-        self.children.iter().filter(move |c| c.tag == name)
+        let inner = self.children.get(name);
+        inner.into_iter().flat_map(|m| m.iter())
     }
 
     pub fn first_child_with_name<'a>(&'a self, name: &'a str) -> Option<&'a XmlElement> {

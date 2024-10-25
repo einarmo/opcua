@@ -6,7 +6,11 @@ extern crate serde_json;
 extern crate tempdir;
 
 pub use opcua_core::sync;
-pub use opcua_macros::*;
+
+#[cfg(feature = "xml")]
+pub use opcua_macros::FromXml;
+#[cfg(feature = "server")]
+pub use opcua_macros::{Event, EventField};
 
 #[cfg(feature = "client")]
 pub use opcua_client as client;

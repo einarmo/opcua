@@ -66,9 +66,9 @@ macro_rules! request_enum {
                 }
             }
 
-            fn node_id(&self) -> NodeId {
+            fn type_id(&self) -> NodeId {
                 match self {
-                    $( Self::$name(v) => v.object_id().into(), )*
+                    $( Self::$name(v) => v.type_id().into(), )*
                 }
             }
         }

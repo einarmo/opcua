@@ -36,6 +36,9 @@ generated-address-space = ["opcua-server/generated-address-space"]
 # Allows a server to register itself with a local discovery server. It does so by becoming a client to the LDS,
 # which brings in a dependency to opcua-client. Omitting the feature saves some memory.
 discovery-server-registration = ["opcua-server/discovery-server-registration"]
+# Methods for XML parsing and loading of nodesets from XML.
+xml = ["opcua-types/xml", "opcua-nodes/xml"]
+
 
 [dependencies]
 chrono = { workspace = true }
@@ -61,4 +64,4 @@ tokio = { workspace = true }
 tokio-util = { workspace = true }
 
 # Include console-logging and json when building tests
-opcua = { path = ".", features = ["console-logging", "json"] }
+opcua = { path = ".", features = ["console-logging", "json", "xml"] }
