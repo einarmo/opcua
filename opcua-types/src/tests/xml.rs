@@ -45,7 +45,6 @@ fn from_xml_str_ctx<T: FromXml>(data: &str, ctx: &XmlContext<'_>) -> Result<T, F
     let Some(element) = element else {
         return Err(FromXmlError::MissingContent("root"));
     };
-    println!("{element}");
     T::from_xml(&element, &ctx)
 }
 

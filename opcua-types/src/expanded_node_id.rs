@@ -477,9 +477,7 @@ impl ExpandedNodeId {
             return None;
         }
         if let Some(uri) = self.namespace_uri.value() {
-            let Some(idx) = namespaces.get_index(uri) else {
-                return None;
-            };
+            let idx = namespaces.get_index(uri)?;
             Some(Cow::Owned(NodeId {
                 namespace: idx,
                 identifier: self.node_id.identifier.clone(),

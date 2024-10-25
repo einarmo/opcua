@@ -188,7 +188,7 @@ impl std::fmt::Display for XmlElement {
         if let Some(text) = &self.text {
             write!(f, "{text}")?;
         }
-        for (_, elems) in &self.children {
+        for elems in self.children.values() {
             for child in elems {
                 write!(f, "{child}")?;
             }
