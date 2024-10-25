@@ -89,6 +89,11 @@ impl<'a> XmlContext<'a> {
 pub trait FromXml: Sized {
     /// Attempt to load the type from the given XML node.
     fn from_xml<'a>(element: &XmlElement, ctx: &XmlContext<'a>) -> Result<Self, FromXmlError>;
+    /// Get the default value of the field, or fail with a `MissingRequired` error.
+    /// Workaround for specialization.
+    fn default_or_required(name: &'static str) -> Result<Self, FromXmlError> {
+        Err(FromXmlError::MissingRequired(name))
+    }
 }
 
 /// Trait for a type that can create an extension object given a node ID.
@@ -109,6 +114,10 @@ impl FromXml for UAString {
     fn from_xml<'a>(element: &XmlElement, _ctx: &XmlContext<'a>) -> Result<Self, FromXmlError> {
         Ok(element.text.clone().into())
     }
+
+    fn default_or_required(_name: &'static str) -> Result<Self, FromXmlError> {
+        Ok(Self::null())
+    }
 }
 
 impl FromXml for LocalizedText {
@@ -117,6 +126,10 @@ impl FromXml for LocalizedText {
             element.child_content("Locale").unwrap_or("").trim(),
             element.child_content("Text").unwrap_or("").trim(),
         ))
+    }
+
+    fn default_or_required(_name: &'static str) -> Result<Self, FromXmlError> {
+        Ok(Self::null())
     }
 }
 
@@ -127,6 +140,10 @@ impl FromXml for Guid {
         } else {
             Ok(Guid::null())
         }
+    }
+
+    fn default_or_required(_name: &'static str) -> Result<Self, FromXmlError> {
+        Ok(Self::null())
     }
 }
 
@@ -147,6 +164,10 @@ impl FromXml for NodeId {
         node_id.namespace = ctx.namespaces.get_index(node_id.namespace)?;
         Ok(node_id)
     }
+
+    fn default_or_required(_name: &'static str) -> Result<Self, FromXmlError> {
+        Ok(Self::null())
+    }
 }
 
 impl FromXml for ExpandedNodeId {
@@ -163,6 +184,10 @@ impl FromXml for StatusCode {
             .transpose()?
             .unwrap_or_default();
         Ok(StatusCode::from(code))
+    }
+
+    fn default_or_required(_name: &'static str) -> Result<Self, FromXmlError> {
+        Ok(Self::Good)
     }
 }
 
@@ -182,6 +207,10 @@ impl FromXml for ExtensionObject {
         };
         ctx.load_extension_object(body, &type_id)
     }
+
+    fn default_or_required(_name: &'static str) -> Result<Self, FromXmlError> {
+        Ok(Self::null())
+    }
 }
 
 impl FromXml for DateTime {
@@ -194,6 +223,10 @@ impl FromXml for DateTime {
         )
         .map_err(|e| e.to_string())?)
     }
+
+    fn default_or_required(_name: &'static str) -> Result<Self, FromXmlError> {
+        Ok(Self::null())
+    }
 }
 
 impl FromXml for ByteString {
@@ -203,6 +236,10 @@ impl FromXml for ByteString {
         };
         Ok(ByteString::from_base64(c)
             .ok_or_else(|| "Failed to parse bytestring from string".to_string())?)
+    }
+
+    fn default_or_required(_name: &'static str) -> Result<Self, FromXmlError> {
+        Ok(Self::null())
     }
 }
 
@@ -217,6 +254,10 @@ impl FromXml for QualifiedName {
         let index = ctx.namespaces.get_index(index)?;
         let name = element.child_content("Name").unwrap_or("");
         Ok(QualifiedName::new(index, name))
+    }
+
+    fn default_or_required(_name: &'static str) -> Result<Self, FromXmlError> {
+        Ok(Self::null())
     }
 }
 
@@ -236,6 +277,10 @@ impl FromXml for DataValue {
             server_timestamp,
             server_picoseconds,
         })
+    }
+
+    fn default_or_required(_name: &'static str) -> Result<Self, FromXmlError> {
+        Ok(Self::null())
     }
 }
 
@@ -334,6 +379,10 @@ impl FromXml for Variant {
             r => return Err(FromXmlError::Other(format!("Unexpected variant type: {r}"))),
         })
     }
+
+    fn default_or_required(_name: &'static str) -> Result<Self, FromXmlError> {
+        Ok(Self::Empty)
+    }
 }
 
 impl<T> FromXml for Box<T>
@@ -342,6 +391,10 @@ where
 {
     fn from_xml<'a>(element: &XmlElement, ctx: &XmlContext<'a>) -> Result<Self, FromXmlError> {
         Ok(Box::new(T::from_xml(element, ctx)?))
+    }
+
+    fn default_or_required(name: &'static str) -> Result<Self, FromXmlError> {
+        Ok(Box::new(T::default_or_required(name)?))
     }
 }
 
@@ -366,7 +419,7 @@ where
         ctx: &XmlContext<'a>,
     ) -> Result<Self, FromXmlError> {
         let Some(own) = parent.first_child_with_name(name) else {
-            return Err(FromXmlError::MissingRequired(name));
+            return T::default_or_required(name);
         };
         Ok(FromXml::from_xml(own, ctx)?)
     }

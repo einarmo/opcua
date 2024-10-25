@@ -82,17 +82,24 @@ impl NodeSet2Import {
         dependent_namespaces: Vec<String>,
     ) -> Result<Self, LoadXmlError> {
         let content = std::fs::read_to_string(path)?;
-        let nodeset = load_nodeset2_file(&content)?;
+        Self::new_str(preferred_locale, &content, dependent_namespaces)
+    }
+
+    pub fn new_str(
+        preferred_locale: &str,
+        nodeset: &str,
+        dependent_namespaces: Vec<String>,
+    ) -> Result<Self, LoadXmlError> {
+        let nodeset = load_nodeset2_file(&nodeset)?;
         let nodeset = nodeset
             .node_set
             .ok_or_else(|| LoadXmlError::MissingNodeSet)?;
 
-        Ok(Self {
-            preferred_locale: preferred_locale.to_owned(),
-            type_loaders: vec![Arc::new(opcua_types::service_types::TypesXmlLoader)],
+        Ok(Self::new_nodeset(
+            preferred_locale,
+            nodeset,
             dependent_namespaces,
-            file: nodeset,
-        })
+        ))
     }
 
     /// Create a new importer with a pre-loaded nodeset.
@@ -529,10 +536,110 @@ impl NodeSetImport for NodeSet2Import {
             match r {
                 Ok(r) => Some(r),
                 Err(e) => {
-                    warn!("Failed to import node {}: {e}", raw_node.base().node_id.0);
+                    println!("Failed to import node {}: {e}", raw_node.base().node_id.0);
                     None
                 }
             }
         }))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use opcua_types::{
+        DataTypeId, EUInformation, ExtensionObject, LocalizedText, NamespaceMap,
+        NodeSetNamespaceMapper, QualifiedName, Variant,
+    };
+
+    use crate::{NodeBase, NodeSetImport, NodeType};
+
+    use super::NodeSet2Import;
+
+    const TEST_NODESET: &'static str = r#"
+<UANodeSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" LastModified="2023-12-15T00:00:00Z" xmlns="http://opcfoundation.org/UA/2011/03/UANodeSet.xsd">
+  <NamespaceUris>
+    <Uri>http://test.com</Uri>
+  </NamespaceUris>
+  <Models>
+    <Model ModelUri="http://test.com" Version="1.00" PublicationDate="2013-11-06T00:00:00Z">
+      <RequiredModel ModelUri="http://opcfoundation.org/UA/" />
+    </Model>
+  </Models>
+  <Aliases>
+    <Alias Alias="Int32">i=6</Alias>
+    <Alias Alias="HasComponent">i=47</Alias>
+    <Alias Alias="HasSubtype">i=45</Alias>
+  </Aliases>
+  <UAObject NodeId="ns=1;i=1" BrowseName="1:My Root">
+    <DisplayName>My Root</DisplayName>
+    <Description>My description</Description>
+    <References>
+      <Reference ReferenceType="HasComponent" IsForward="false">i=85</Reference>
+      <Reference ReferenceType="i=40">i=61</Reference>
+    </References>
+  </UAObject>
+  <UAVariable NodeId="ns=1;i=2" BrowseName="1:My Property" DataType="i=887">
+    <DisplayName>My Property</DisplayName>
+    <Description>My description</Description>
+    <References>
+      <Reference ReferenceType="i=40">i=68</Reference>
+      <Reference ReferenceType="i=46" IsForward="false">ns=1;i=1</Reference>
+    </References>
+    <Value>
+      <ExtensionObject>
+        <TypeId><Identifier>i=888</Identifier></TypeId>
+        <Body>
+          <EUInformation>
+            <NamespaceUri>http://unit-namespace.namespace</NamespaceUri>
+            <UnitId>15</UnitId>
+            <DisplayName>
+                <Locale>en</Locale>
+                <Text>Degrees Celsius</Text>
+            </DisplayName>
+          </EUInformation>
+        </Body>
+      </ExtensionObject>
+    </Value>
+  </UAVariable>
+</UANodeSet>"#;
+
+    #[test]
+    fn test_load_xml_nodeset() {
+        let import = NodeSet2Import::new_str("en", TEST_NODESET, vec![]).unwrap();
+        assert_eq!(
+            import.get_own_namespaces(),
+            vec!["http://test.com".to_owned()]
+        );
+        let mut ns = NamespaceMap::new();
+        let mut map = NodeSetNamespaceMapper::new(&mut ns);
+        import.register_namespaces(&mut map);
+        let nodes: Vec<_> = import.load(&map).collect();
+        assert_eq!(nodes.len(), 2);
+        let node = &nodes[0];
+        let NodeType::Object(o) = &node.node else {
+            panic!("Unexpected node type");
+        };
+        assert_eq!(o.display_name(), &LocalizedText::new("", "My Root"));
+        assert_eq!(o.browse_name(), &QualifiedName::new(1, "My Root"));
+        assert_eq!(node.references.len(), 2);
+
+        let node = &nodes[1];
+        let NodeType::Variable(v) = &node.node else {
+            panic!("Unexpected node type");
+        };
+        assert_eq!(v.display_name(), &LocalizedText::new("", "My Property"));
+        assert_eq!(v.browse_name(), &QualifiedName::new(1, "My Property"));
+        assert_eq!(v.data_type(), DataTypeId::EUInformation);
+        assert_eq!(
+            v.value.value,
+            Some(Variant::ExtensionObject(Box::new(
+                ExtensionObject::from_message(&EUInformation {
+                    namespace_uri: "http://unit-namespace.namespace".into(),
+                    unit_id: 15,
+                    display_name: LocalizedText::new("en", "Degrees Celsius"),
+                    description: LocalizedText::null()
+                })
+            )))
+        );
     }
 }
