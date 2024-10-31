@@ -1,6 +1,8 @@
 use std::sync::Arc;
 
+use super::connect::{Connector, Transport};
 use super::core::{OutgoingMessage, TransportPollResult, TransportState};
+use async_trait::async_trait;
 use futures::StreamExt;
 use log::{debug, error};
 use opcua_core::comms::tcp_types::AcknowledgeMessage;
@@ -28,7 +30,7 @@ enum TransportCloseState {
     Closed(StatusCode),
 }
 
-pub(crate) struct TcpTransport {
+pub struct TcpTransport {
     state: TransportState,
     read: FramedRead<ReadHalf<TcpStream>, TcpCodec>,
     write: WriteHalf<TcpStream>,
@@ -47,48 +49,9 @@ pub struct TransportConfiguration {
     pub max_chunk_count: usize,
 }
 
-impl TcpTransport {
-    /// Attempt to establish a connection to the OPC UA endpoint given by `endpoint_url`.
-    /// Note that on success, this returns a `TcpTransport`. The caller is responsible for
-    /// calling `run` on the returned transport in order to actually send and receive messages.
-    pub async fn connect(
-        secure_channel: Arc<RwLock<SecureChannel>>,
-        outgoing_recv: tokio::sync::mpsc::Receiver<OutgoingMessage>,
-        config: TransportConfiguration,
-        endpoint_url: &str,
-    ) -> Result<Self, StatusCode> {
-        let (framed_read, writer, ack) =
-            match Self::connect_inner(&secure_channel, &config, endpoint_url).await {
-                Ok(k) => k,
-                Err(status) => return Err(status),
-            };
-        let mut buffer = SendBuffer::new(
-            config.send_buffer_size,
-            config.max_message_size,
-            config.max_chunk_count,
-        );
-        buffer.revise(
-            ack.receive_buffer_size as usize,
-            ack.max_message_size as usize,
-            ack.max_chunk_count as usize,
-        );
+pub struct TcpConnector;
 
-        Ok(Self {
-            state: TransportState::new(
-                secure_channel,
-                outgoing_recv,
-                config.max_pending_incoming,
-                config.max_inflight,
-                ack.send_buffer_size.min(config.recv_buffer_size as u32) as usize,
-            ),
-            read: framed_read,
-            write: writer,
-            send_buffer: buffer,
-            should_close: false,
-            closed: TransportCloseState::Open,
-        })
-    }
-
+impl TcpConnector {
     async fn connect_inner(
         secure_channel: &RwLock<SecureChannel>,
         config: &TransportConfiguration,
@@ -178,7 +141,51 @@ impl TcpTransport {
 
         Ok((framed_read, writer, ack))
     }
+}
 
+#[async_trait]
+impl Connector for TcpConnector {
+    async fn connect(
+        &self,
+        channel: Arc<RwLock<SecureChannel>>,
+        outgoing_recv: tokio::sync::mpsc::Receiver<OutgoingMessage>,
+        config: TransportConfiguration,
+        endpoint_url: &str,
+    ) -> Result<TcpTransport, StatusCode> {
+        let (framed_read, writer, ack) =
+            match Self::connect_inner(&channel, &config, endpoint_url).await {
+                Ok(k) => k,
+                Err(status) => return Err(status),
+            };
+        let mut buffer = SendBuffer::new(
+            config.send_buffer_size,
+            config.max_message_size,
+            config.max_chunk_count,
+        );
+        buffer.revise(
+            ack.receive_buffer_size as usize,
+            ack.max_message_size as usize,
+            ack.max_chunk_count as usize,
+        );
+
+        Ok(TcpTransport {
+            state: TransportState::new(
+                channel,
+                outgoing_recv,
+                config.max_pending_incoming,
+                config.max_inflight,
+                ack.send_buffer_size.min(config.recv_buffer_size as u32) as usize,
+            ),
+            read: framed_read,
+            write: writer,
+            send_buffer: buffer,
+            should_close: false,
+            closed: TransportCloseState::Open,
+        })
+    }
+}
+
+impl TcpTransport {
     fn handle_incoming_message(
         &mut self,
         incoming: Option<Result<Message, std::io::Error>>,
@@ -268,8 +275,10 @@ impl TcpTransport {
             }
         }
     }
+}
 
-    pub async fn poll(&mut self) -> TransportPollResult {
+impl Transport for TcpTransport {
+    async fn poll(&mut self) -> TransportPollResult {
         // We want poll to be cancel safe, this means that if we stop polling
         // a future returned from poll, we do not lose data or get in an
         // inconsistent state.

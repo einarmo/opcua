@@ -5,7 +5,10 @@ use log::{debug, error};
 use tokio::{pin, select};
 
 use crate::{
-    transport::{tcp::TransportConfiguration, TransportPollResult},
+    transport::{
+        tcp::{TcpConnector, TransportConfiguration},
+        TransportPollResult,
+    },
     AsyncSecureChannel, ClientConfig, ClientEndpoint, IdentityToken,
 };
 use opcua_core::{
@@ -225,6 +228,7 @@ impl Client {
                 max_message_size: self.config.decoding_options.max_message_size,
                 max_chunk_count: self.config.decoding_options.max_chunk_count,
             },
+            Box::new(TcpConnector),
         )
     }
 

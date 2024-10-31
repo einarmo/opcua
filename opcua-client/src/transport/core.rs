@@ -54,7 +54,7 @@ pub enum TransportPollResult {
     Closed(StatusCode),
 }
 
-pub(crate) struct OutgoingMessage {
+pub struct OutgoingMessage {
     pub request: RequestMessage,
     pub callback: Option<tokio::sync::oneshot::Sender<Result<ResponseMessage, StatusCode>>>,
     pub deadline: Instant,

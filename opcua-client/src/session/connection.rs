@@ -5,13 +5,17 @@ use opcua_core::{comms::url::is_opc_ua_binary_url, config::Config, sync::RwLock}
 use opcua_crypto::{CertificateStore, SecurityPolicy};
 use opcua_types::{EndpointDescription, MessageSecurityMode, NodeId, StatusCode, UserTokenType};
 
-use crate::{ClientConfig, IdentityToken};
+use crate::{
+    transport::{tcp::TcpConnector, Connector},
+    ClientConfig, IdentityToken,
+};
 
 use super::{Client, Session, SessionEventLoop, SessionInfo};
 
 struct SessionBuilderInner {
     session_id: Option<NodeId>,
     user_identity_token: IdentityToken,
+    connector: Box<dyn Connector>,
 }
 
 /// Type-state builder for a session and session event loop.
@@ -35,6 +39,7 @@ impl<'a> SessionBuilder<'a, (), ()> {
             inner: SessionBuilderInner {
                 session_id: None,
                 user_identity_token: IdentityToken::Anonymous,
+                connector: Box::new(TcpConnector),
             },
         }
     }
@@ -265,6 +270,7 @@ impl<'a, R> SessionBuilder<'a, EndpointDescription, R> {
             self.config.decoding_options.as_comms_decoding_options(),
             self.config,
             self.inner.session_id,
+            self.inner.connector,
         )
     }
 }

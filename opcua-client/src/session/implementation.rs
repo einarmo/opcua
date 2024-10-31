@@ -9,8 +9,9 @@ use std::{
 use arc_swap::ArcSwap;
 
 use crate::{
-    retry::SessionRetryPolicy, transport::tcp::TransportConfiguration, AsyncSecureChannel,
-    ClientConfig,
+    retry::SessionRetryPolicy,
+    transport::{tcp::TransportConfiguration, Connector},
+    AsyncSecureChannel, ClientConfig,
 };
 use opcua_core::{
     handle::AtomicHandle,
@@ -76,6 +77,7 @@ impl Session {
         decoding_options: DecodingOptions,
         config: &ClientConfig,
         session_id: Option<NodeId>,
+        connector: Box<dyn Connector>,
     ) -> (Arc<Self>, SessionEventLoop) {
         let auth_token: Arc<ArcSwap<NodeId>> = Default::default();
         let (state_watch_tx, state_watch_rx) =
@@ -98,6 +100,7 @@ impl Session {
                     max_message_size: config.decoding_options.max_message_size,
                     max_chunk_count: config.decoding_options.max_chunk_count,
                 },
+                connector,
             ),
             internal_session_id: AtomicU32::new(NEXT_SESSION_ID.fetch_add(1, Ordering::Relaxed)),
             state_watch_rx,
