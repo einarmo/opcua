@@ -3,7 +3,7 @@ use std::{str::FromStr, sync::Arc};
 use log::error;
 use opcua_core::{comms::url::is_opc_ua_binary_url, config::Config, sync::RwLock};
 use opcua_crypto::{CertificateStore, SecurityPolicy};
-use opcua_types::{EndpointDescription, NodeId, StatusCode};
+use opcua_types::{EndpointDescription, MessageSecurityMode, NodeId, StatusCode, UserTokenType};
 
 use crate::{ClientConfig, IdentityToken};
 
@@ -14,6 +14,10 @@ struct SessionBuilderInner {
     user_identity_token: IdentityToken,
 }
 
+/// Type-state builder for a session and session event loop.
+/// To use, you will typically first call [SessionBuilder::with_endpoints] to set
+/// a list of available endpoints, then one of the `connect_to` methods, then finally
+/// [SessionBuilder::build].
 pub struct SessionBuilder<'a, T = (), R = ()> {
     endpoint: T,
     config: &'a ClientConfig,
@@ -22,6 +26,7 @@ pub struct SessionBuilder<'a, T = (), R = ()> {
 }
 
 impl<'a> SessionBuilder<'a, (), ()> {
+    /// Create a new, empty session builder.
     pub fn new(config: &'a ClientConfig) -> Self {
         Self {
             endpoint: (),
@@ -36,6 +41,9 @@ impl<'a> SessionBuilder<'a, (), ()> {
 }
 
 impl<'a, T> SessionBuilder<'a, T, ()> {
+    /// Set a list of available endpoints on the server.
+    ///
+    /// You'll typically get this from [Client::get_server_endpoints].
     pub fn with_endpoints(
         self,
         endpoints: Vec<EndpointDescription>,
@@ -50,18 +58,43 @@ impl<'a, T> SessionBuilder<'a, T, ()> {
 }
 
 impl<'a, T, R> SessionBuilder<'a, T, R> {
+    /// Set the user identity token to use.
     pub fn user_identity_token(mut self, identity_token: IdentityToken) -> Self {
         self.inner.user_identity_token = identity_token;
         self
     }
 
+    /// Set an initial session ID. The session will try to reactivate this session
+    /// before creating a new session. This can be useful to persist session IDs
+    /// between program executions, to avoid having to recreate subscriptions.
     pub fn session_id(mut self, session_id: NodeId) -> Self {
         self.inner.session_id = Some(session_id);
         self
     }
+
+    fn endpoint_supports_token(&self, endpoint: &EndpointDescription) -> bool {
+        match &self.inner.user_identity_token {
+            IdentityToken::Anonymous => {
+                endpoint.user_identity_tokens.is_none()
+                    || endpoint
+                        .user_identity_tokens
+                        .as_ref()
+                        .is_some_and(|e| e.iter().any(|p| p.token_type == UserTokenType::Anonymous))
+            }
+            IdentityToken::UserName(_, _) => endpoint
+                .user_identity_tokens
+                .as_ref()
+                .is_some_and(|e| e.iter().any(|p| p.token_type == UserTokenType::UserName)),
+            IdentityToken::X509(_, _) => endpoint
+                .user_identity_tokens
+                .as_ref()
+                .is_some_and(|e| e.iter().any(|p| p.token_type == UserTokenType::Certificate)),
+        }
+    }
 }
 
 impl<'a> SessionBuilder<'a, (), Vec<EndpointDescription>> {
+    /// Connect to an endpoint matching the given endpoint description.
     pub fn connect_to_matching_endpoint(
         self,
         endpoint: impl Into<EndpointDescription>,
@@ -92,6 +125,8 @@ impl<'a> SessionBuilder<'a, (), Vec<EndpointDescription>> {
         })
     }
 
+    /// Connect to the configured default endpoint, this will use the user identity token configured in the
+    /// default endpoint.
     pub fn connect_to_default_endpoint(
         mut self,
     ) -> Result<SessionBuilder<'a, EndpointDescription, Vec<EndpointDescription>>, String> {
@@ -125,6 +160,8 @@ impl<'a> SessionBuilder<'a, (), Vec<EndpointDescription>> {
         })
     }
 
+    /// Connect to the configured endpoint with the given id, this will use the user identity token configured in the
+    /// configured endpoint.
     pub fn connect_to_endpoint_id(
         mut self,
         endpoint_id: impl Into<String>,
@@ -154,9 +191,40 @@ impl<'a> SessionBuilder<'a, (), Vec<EndpointDescription>> {
             endpoints: self.endpoints,
         })
     }
+
+    /// Attempt to pick the "best" endpoint. If `secure` is `false` this means
+    /// any unencrypted endpoint that supports the configured identity token.
+    /// If `secure` is `true`, the endpoint that supports the configured identity token with the highest
+    /// `securityLevel`.
+    pub fn connect_to_best_endpoint(
+        self,
+        secure: bool,
+    ) -> Result<SessionBuilder<'a, EndpointDescription, Vec<EndpointDescription>>, String> {
+        let endpoint = if secure {
+            self.endpoints
+                .iter()
+                .filter(|e| self.endpoint_supports_token(e))
+                .max_by(|a, b| a.security_level.cmp(&b.security_level))
+        } else {
+            self.endpoints.iter().find(|e| {
+                e.security_mode == MessageSecurityMode::None && self.endpoint_supports_token(e)
+            })
+        };
+        let Some(endpoint) = endpoint else {
+            return Err(format!("No suitable endpoint found"));
+        };
+        Ok(SessionBuilder {
+            inner: self.inner,
+            endpoint: endpoint.clone(),
+            config: self.config,
+            endpoints: self.endpoints,
+        })
+    }
 }
 
 impl<'a, R> SessionBuilder<'a, (), R> {
+    /// Connect directly to an endpoint description, this does not require you to list
+    /// endpoints on the server first.
     pub fn connect_to_endpoint_directly(
         self,
         endpoint: impl Into<EndpointDescription>,
@@ -178,6 +246,8 @@ impl<'a, R> SessionBuilder<'a, (), R> {
 }
 
 impl<'a, R> SessionBuilder<'a, EndpointDescription, R> {
+    /// Build the session and session event loop. Note that you will need to
+    /// start polling the event loop before a connection is actually established.
     pub fn build(
         self,
         certificate_store: Arc<RwLock<CertificateStore>>,
