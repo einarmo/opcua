@@ -3,15 +3,15 @@ use std::sync::Arc;
 use log::info;
 use tokio::{pin, select};
 
-use crate::transport::{SecureChannelEventLoop, TransportPollResult};
+use crate::transport::{SecureChannelEventLoop, Transport, TransportPollResult};
 use opcua_types::{NodeId, StatusCode};
 
 use super::Session;
 
 /// This struct manages the task of connecting to the server.
 /// It will only make a single attempt, so whatever is calling it is responsible for retries.
-pub(super) struct SessionConnector {
-    inner: Arc<Session>,
+pub(super) struct SessionConnector<T> {
+    inner: Arc<Session<T>>,
 }
 
 /// When the session connects to the server, this describes
@@ -24,20 +24,20 @@ pub enum SessionConnectMode {
     ReactivatedSession(NodeId),
 }
 
-impl SessionConnector {
-    pub fn new(session: Arc<Session>) -> Self {
+impl<T: Transport> SessionConnector<T> {
+    pub fn new(session: Arc<Session<T>>) -> Self {
         Self { inner: session }
     }
 
     pub async fn try_connect(
         &self,
-    ) -> Result<(SecureChannelEventLoop, SessionConnectMode), StatusCode> {
+    ) -> Result<(SecureChannelEventLoop<T>, SessionConnectMode), StatusCode> {
         self.connect_and_activate().await
     }
 
     async fn connect_and_activate(
         &self,
-    ) -> Result<(SecureChannelEventLoop, SessionConnectMode), StatusCode> {
+    ) -> Result<(SecureChannelEventLoop<T>, SessionConnectMode), StatusCode> {
         let mut event_loop = self.inner.channel.connect_no_retry().await?;
 
         let activate_fut = self.ensure_and_activate_session();

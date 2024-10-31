@@ -5,6 +5,7 @@ use crate::{
         process_service_result, process_unexpected_response,
         request_builder::{builder_base, builder_debug, builder_error, RequestHeaderBuilder},
     },
+    transport::Transport,
     Session, UARequest,
 };
 use opcua_core::ResponseMessage;
@@ -32,7 +33,7 @@ builder_base!(Browse);
 
 impl Browse {
     /// Construct a new call to the `Browse` service.
-    pub fn new(session: &Session) -> Self {
+    pub fn new<T>(session: &Session<T>) -> Self {
         Self {
             nodes_to_browse: Vec::new(),
             view: ViewDescription::default(),
@@ -86,7 +87,10 @@ impl Browse {
 impl UARequest for Browse {
     type Out = BrowseResponse;
 
-    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
+    async fn send<'a, T: Transport>(
+        self,
+        channel: &'a crate::AsyncSecureChannel<T>,
+    ) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -128,7 +132,7 @@ builder_base!(BrowseNext);
 
 impl BrowseNext {
     /// Construct a new call to the `BrowseNext` service.
-    pub fn new(session: &Session) -> Self {
+    pub fn new<T>(session: &Session<T>) -> Self {
         Self {
             continuation_points: Vec::new(),
             release_continuation_points: false,
@@ -175,7 +179,10 @@ impl BrowseNext {
 impl UARequest for BrowseNext {
     type Out = BrowseNextResponse;
 
-    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
+    async fn send<'a, T: Transport>(
+        self,
+        channel: &'a crate::AsyncSecureChannel<T>,
+    ) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -220,7 +227,7 @@ builder_base!(TranslateBrowsePaths);
 
 impl TranslateBrowsePaths {
     /// Construct a new call to the `TranslateBrowsePaths` service.
-    pub fn new(session: &Session) -> Self {
+    pub fn new<T>(session: &Session<T>) -> Self {
         Self {
             browse_paths: Vec::new(),
 
@@ -258,7 +265,10 @@ impl TranslateBrowsePaths {
 impl UARequest for TranslateBrowsePaths {
     type Out = TranslateBrowsePathsToNodeIdsResponse;
 
-    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
+    async fn send<'a, T: Transport>(
+        self,
+        channel: &'a crate::AsyncSecureChannel<T>,
+    ) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -301,7 +311,7 @@ builder_base!(RegisterNodes);
 
 impl RegisterNodes {
     /// Construct a new call to the `RegisterNodes` service.
-    pub fn new(session: &Session) -> Self {
+    pub fn new<T>(session: &Session<T>) -> Self {
         Self {
             nodes_to_register: Vec::new(),
 
@@ -339,7 +349,10 @@ impl RegisterNodes {
 impl UARequest for RegisterNodes {
     type Out = RegisterNodesResponse;
 
-    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
+    async fn send<'a, T: Transport>(
+        self,
+        channel: &'a crate::AsyncSecureChannel<T>,
+    ) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -379,7 +392,7 @@ builder_base!(UnregisterNodes);
 
 impl UnregisterNodes {
     /// Construct a new call to the `UnregisterNodes` service.
-    pub fn new(session: &Session) -> Self {
+    pub fn new<T>(session: &Session<T>) -> Self {
         Self {
             nodes_to_unregister: Vec::new(),
 
@@ -417,7 +430,10 @@ impl UnregisterNodes {
 impl UARequest for UnregisterNodes {
     type Out = UnregisterNodesResponse;
 
-    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
+    async fn send<'a, T: Transport>(
+        self,
+        channel: &'a crate::AsyncSecureChannel<T>,
+    ) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -441,7 +457,7 @@ impl UARequest for UnregisterNodes {
     }
 }
 
-impl Session {
+impl<T: Transport> Session<T> {
     /// Discover the references to the specified nodes by sending a [`BrowseRequest`] to the server.
     ///
     /// See OPC UA Part 4 - Services 5.8.2 for complete description of the service and error responses.

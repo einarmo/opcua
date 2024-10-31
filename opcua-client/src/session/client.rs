@@ -5,7 +5,9 @@ use log::{debug, error};
 use tokio::{pin, select};
 
 use crate::{
-    transport::{tcp::TransportConfiguration, TransportPollResult},
+    transport::{
+        tcp::TransportConfiguration, Connector, TcpConnector, Transport, TransportPollResult,
+    },
     AsyncSecureChannel, ClientConfig, ClientEndpoint, IdentityToken,
 };
 use opcua_core::{
@@ -209,8 +211,12 @@ impl Client {
     ///
     /// This is used when creating temporary connections to the server, when creating a session,
     /// [`AsyncSession`] manages its own channel.
-    fn channel_from_session_info(&self, session_info: SessionInfo) -> AsyncSecureChannel {
-        AsyncSecureChannel::new(
+    fn channel_from_session_info<T: Transport>(
+        &self,
+        session_info: SessionInfo,
+        connector: Arc<dyn Connector<Transport = T>>,
+    ) -> AsyncSecureChannel<T> {
+        AsyncSecureChannel::<T>::new(
             self.certificate_store.clone(),
             session_info,
             self.config.session_retry_policy(),
@@ -225,6 +231,7 @@ impl Client {
                 max_message_size: self.config.decoding_options.max_message_size,
                 max_chunk_count: self.config.decoding_options.max_chunk_count,
             },
+            connector,
         )
     }
 
@@ -285,10 +292,10 @@ impl Client {
         }
     }
 
-    async fn get_server_endpoints_inner(
+    async fn get_server_endpoints_inner<T: Transport>(
         &self,
         endpoint: &EndpointDescription,
-        channel: &AsyncSecureChannel,
+        channel: &AsyncSecureChannel<T>,
         locale_ids: Option<Vec<UAString>>,
         profile_uris: Option<Vec<UAString>>,
     ) -> Result<Vec<EndpointDescription>, StatusCode> {
@@ -358,7 +365,7 @@ impl Client {
             user_identity_token: IdentityToken::Anonymous,
             preferred_locales,
         };
-        let channel = self.channel_from_session_info(session_info);
+        let channel = self.channel_from_session_info(session_info, Arc::new(TcpConnector));
 
         let mut evt_loop = channel.connect().await?;
 
@@ -400,10 +407,10 @@ impl Client {
         res
     }
 
-    async fn find_servers_inner(
+    async fn find_servers_inner<T: Transport>(
         &self,
         endpoint_url: String,
-        channel: &AsyncSecureChannel,
+        channel: &AsyncSecureChannel<T>,
     ) -> Result<Vec<ApplicationDescription>, StatusCode> {
         let request = FindServersRequest {
             request_header: channel.make_request_header(self.config.request_timeout),
@@ -444,7 +451,7 @@ impl Client {
             user_identity_token: IdentityToken::Anonymous,
             preferred_locales: Vec::new(),
         };
-        let channel = self.channel_from_session_info(session_info);
+        let channel = self.channel_from_session_info(session_info, Arc::new(TcpConnector));
 
         let mut evt_loop = channel.connect().await?;
 
@@ -534,10 +541,10 @@ impl Client {
         }
     }
 
-    async fn register_server_inner(
+    async fn register_server_inner<T: Transport>(
         &self,
         server: RegisteredServer,
-        channel: &AsyncSecureChannel,
+        channel: &AsyncSecureChannel<T>,
     ) -> Result<(), StatusCode> {
         let request = RegisterServerRequest {
             request_header: channel.make_request_header(self.config.request_timeout),
@@ -609,7 +616,7 @@ impl Client {
             user_identity_token: IdentityToken::Anonymous,
             preferred_locales: Vec::new(),
         };
-        let channel = self.channel_from_session_info(session_info);
+        let channel = self.channel_from_session_info(session_info, Arc::new(TcpConnector));
 
         let mut evt_loop = channel.connect().await?;
 

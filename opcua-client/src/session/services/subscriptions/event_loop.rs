@@ -5,6 +5,7 @@ use opcua_types::StatusCode;
 
 use crate::{
     session::{session_debug, session_error},
+    transport::Transport,
     Session,
 };
 
@@ -22,8 +23,8 @@ pub enum SubscriptionActivity {
 ///
 /// This handles publshing on a fixed interval, republishing failed requests,
 /// and subscription keep-alive.
-pub struct SubscriptionEventLoop {
-    session: Arc<Session>,
+pub struct SubscriptionEventLoop<T> {
+    session: Arc<Session<T>>,
     trigger_publish_recv: tokio::sync::watch::Receiver<Instant>,
     max_inflight_publish: usize,
     last_external_trigger: Instant,
@@ -32,7 +33,7 @@ pub struct SubscriptionEventLoop {
     is_waiting_for_response: bool,
 }
 
-impl SubscriptionEventLoop {
+impl<T: Transport> SubscriptionEventLoop<T> {
     /// Create a new subscription event loop for `session`
     ///
     /// # Arguments
@@ -42,7 +43,7 @@ impl SubscriptionEventLoop {
     ///    This is used to trigger publish outside of the normal schedule, for example when
     ///    a new subscription is created.
     pub fn new(
-        session: Arc<Session>,
+        session: Arc<Session<T>>,
         trigger_publish_recv: tokio::sync::watch::Receiver<Instant>,
     ) -> Self {
         let last_external_trigger = *trigger_publish_recv.borrow();

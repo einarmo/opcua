@@ -5,7 +5,7 @@ use opcua_core::{comms::url::is_opc_ua_binary_url, config::Config, sync::RwLock}
 use opcua_crypto::{CertificateStore, SecurityPolicy};
 use opcua_types::{EndpointDescription, MessageSecurityMode, NodeId, StatusCode, UserTokenType};
 
-use crate::{ClientConfig, IdentityToken};
+use crate::{transport::TcpConnector, ClientConfig, IdentityToken};
 
 use super::{Client, Session, SessionEventLoop, SessionInfo};
 
@@ -265,6 +265,7 @@ impl<'a, R> SessionBuilder<'a, EndpointDescription, R> {
             self.config.decoding_options.as_comms_decoding_options(),
             self.config,
             self.inner.session_id,
+            Arc::new(TcpConnector),
         )
     }
 }

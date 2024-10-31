@@ -9,8 +9,12 @@ use std::{
 use arc_swap::ArcSwap;
 
 use crate::{
-    retry::SessionRetryPolicy, transport::tcp::TransportConfiguration, AsyncSecureChannel,
-    ClientConfig,
+    retry::SessionRetryPolicy,
+    transport::{
+        tcp::{TcpTransport, TransportConfiguration},
+        Connector, Transport,
+    },
+    AsyncSecureChannel, ClientConfig,
 };
 use opcua_core::{
     handle::AtomicHandle,
@@ -42,8 +46,8 @@ lazy_static::lazy_static! {
 /// may cause the connection to be dropped. Your client is expected to know the capabilities of
 /// the server it is calling to avoid this.
 ///
-pub struct Session {
-    pub(super) channel: AsyncSecureChannel,
+pub struct Session<T = TcpTransport> {
+    pub(super) channel: AsyncSecureChannel<T>,
     pub(super) state_watch_rx: tokio::sync::watch::Receiver<SessionState>,
     pub(super) state_watch_tx: tokio::sync::watch::Sender<SessionState>,
     pub(super) certificate_store: Arc<RwLock<CertificateStore>>,
@@ -65,73 +69,7 @@ pub struct Session {
     pub(super) should_reconnect: AtomicBool,
 }
 
-impl Session {
-    #[allow(clippy::too_many_arguments)]
-    pub(crate) fn new(
-        certificate_store: Arc<RwLock<CertificateStore>>,
-        session_info: SessionInfo,
-        session_name: UAString,
-        application_description: ApplicationDescription,
-        session_retry_policy: SessionRetryPolicy,
-        decoding_options: DecodingOptions,
-        config: &ClientConfig,
-        session_id: Option<NodeId>,
-    ) -> (Arc<Self>, SessionEventLoop) {
-        let auth_token: Arc<ArcSwap<NodeId>> = Default::default();
-        let (state_watch_tx, state_watch_rx) =
-            tokio::sync::watch::channel(SessionState::Disconnected);
-        let (trigger_publish_tx, trigger_publish_rx) = tokio::sync::watch::channel(Instant::now());
-
-        let session = Arc::new(Session {
-            channel: AsyncSecureChannel::new(
-                certificate_store.clone(),
-                session_info.clone(),
-                session_retry_policy.clone(),
-                decoding_options.clone(),
-                config.performance.ignore_clock_skew,
-                auth_token.clone(),
-                TransportConfiguration {
-                    max_pending_incoming: 5,
-                    max_inflight: config.performance.max_inflight_messages,
-                    send_buffer_size: config.decoding_options.max_chunk_size,
-                    recv_buffer_size: config.decoding_options.max_incoming_chunk_size,
-                    max_message_size: config.decoding_options.max_message_size,
-                    max_chunk_count: config.decoding_options.max_chunk_count,
-                },
-            ),
-            internal_session_id: AtomicU32::new(NEXT_SESSION_ID.fetch_add(1, Ordering::Relaxed)),
-            state_watch_rx,
-            state_watch_tx,
-            session_id: Arc::new(ArcSwap::new(Arc::new(session_id.unwrap_or_default()))),
-            session_info,
-            auth_token,
-            session_name,
-            application_description,
-            certificate_store,
-            request_timeout: config.request_timeout,
-            session_timeout: config.session_timeout as f64,
-            publish_timeout: config.publish_timeout,
-            max_inflight_publish: config.max_inflight_publish,
-            recreate_monitored_items_chunk: config.performance.recreate_monitored_items_chunk,
-            subscription_state: Mutex::new(SubscriptionState::new(config.min_publish_interval)),
-            monitored_item_handle: AtomicHandle::new(1000),
-            trigger_publish_tx,
-            decoding_options,
-            should_reconnect: AtomicBool::new(true),
-        });
-
-        (
-            session.clone(),
-            SessionEventLoop::new(
-                session,
-                session_retry_policy,
-                trigger_publish_rx,
-                config.keep_alive_interval,
-                config.max_failed_keep_alive_count,
-            ),
-        )
-    }
-
+impl<T> Session<T> {
     /// Create a request header with the default timeout.
     pub(super) fn make_request_header(&self) -> RequestHeader {
         self.channel.make_request_header(self.request_timeout)
@@ -194,6 +132,76 @@ impl Session {
     pub fn enable_reconnects(&self) {
         self.should_reconnect.store(true, Ordering::Relaxed);
     }
+}
+
+impl<T: Transport> Session<T> {
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn new(
+        certificate_store: Arc<RwLock<CertificateStore>>,
+        session_info: SessionInfo,
+        session_name: UAString,
+        application_description: ApplicationDescription,
+        session_retry_policy: SessionRetryPolicy,
+        decoding_options: DecodingOptions,
+        config: &ClientConfig,
+        session_id: Option<NodeId>,
+        connector: Arc<dyn Connector<Transport = T>>,
+    ) -> (Arc<Self>, SessionEventLoop<T>) {
+        let auth_token: Arc<ArcSwap<NodeId>> = Default::default();
+        let (state_watch_tx, state_watch_rx) =
+            tokio::sync::watch::channel(SessionState::Disconnected);
+        let (trigger_publish_tx, trigger_publish_rx) = tokio::sync::watch::channel(Instant::now());
+
+        let session = Arc::new(Session {
+            channel: AsyncSecureChannel::new(
+                certificate_store.clone(),
+                session_info.clone(),
+                session_retry_policy.clone(),
+                decoding_options.clone(),
+                config.performance.ignore_clock_skew,
+                auth_token.clone(),
+                TransportConfiguration {
+                    max_pending_incoming: 5,
+                    max_inflight: config.performance.max_inflight_messages,
+                    send_buffer_size: config.decoding_options.max_chunk_size,
+                    recv_buffer_size: config.decoding_options.max_incoming_chunk_size,
+                    max_message_size: config.decoding_options.max_message_size,
+                    max_chunk_count: config.decoding_options.max_chunk_count,
+                },
+                connector,
+            ),
+            internal_session_id: AtomicU32::new(NEXT_SESSION_ID.fetch_add(1, Ordering::Relaxed)),
+            state_watch_rx,
+            state_watch_tx,
+            session_id: Arc::new(ArcSwap::new(Arc::new(session_id.unwrap_or_default()))),
+            session_info,
+            auth_token,
+            session_name,
+            application_description,
+            certificate_store,
+            request_timeout: config.request_timeout,
+            session_timeout: config.session_timeout as f64,
+            publish_timeout: config.publish_timeout,
+            max_inflight_publish: config.max_inflight_publish,
+            recreate_monitored_items_chunk: config.performance.recreate_monitored_items_chunk,
+            subscription_state: Mutex::new(SubscriptionState::new(config.min_publish_interval)),
+            monitored_item_handle: AtomicHandle::new(1000),
+            trigger_publish_tx,
+            decoding_options,
+            should_reconnect: AtomicBool::new(true),
+        });
+
+        (
+            session.clone(),
+            SessionEventLoop::new(
+                session,
+                session_retry_policy,
+                trigger_publish_rx,
+                config.keep_alive_interval,
+                config.max_failed_keep_alive_count,
+            ),
+        )
+    }
 
     /// Inner method for disconnect. [`Session::disconnect`] and [`Session::disconnect_without_delete_subscriptions`]
     /// are shortands for this with `delete_subscriptions` set to `false` and `true` respectively, and
@@ -238,7 +246,7 @@ impl Session {
         &self.decoding_options
     }
 
-    pub fn channel(&self) -> &AsyncSecureChannel {
+    pub fn channel(&self) -> &AsyncSecureChannel<T> {
         &self.channel
     }
 

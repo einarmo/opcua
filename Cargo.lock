@@ -1034,6 +1034,7 @@ name = "opcua-client"
 version = "0.13.0"
 dependencies = [
  "arc-swap",
+ "async-trait",
  "chrono",
  "futures",
  "lazy_static",

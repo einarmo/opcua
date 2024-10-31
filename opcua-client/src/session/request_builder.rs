@@ -2,16 +2,16 @@ use std::{future::Future, time::Duration};
 
 use opcua_types::{DateTime, DiagnosticBits, IntegerId, NodeId, RequestHeader, StatusCode};
 
-use crate::AsyncSecureChannel;
+use crate::{transport::Transport, AsyncSecureChannel};
 
 use super::Session;
 
 pub trait UARequest {
     type Out;
 
-    fn send<'a>(
+    fn send<'a, T: Transport>(
         self,
-        channel: &'a AsyncSecureChannel,
+        channel: &'a AsyncSecureChannel<T>,
     ) -> impl Future<Output = Result<Self::Out, StatusCode>> + Send + Sync + 'a
     where
         Self: 'a;
@@ -25,7 +25,7 @@ pub(crate) struct RequestHeaderBuilder {
 }
 
 impl RequestHeaderBuilder {
-    pub fn new_from_session(session: &Session) -> Self {
+    pub fn new_from_session<T>(session: &Session<T>) -> Self {
         Self {
             header: session.make_request_header(),
             timeout: session.request_timeout,

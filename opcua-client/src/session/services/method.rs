@@ -6,6 +6,7 @@ use crate::{
         request_builder::{builder_base, builder_debug, builder_error, RequestHeaderBuilder},
         session_error,
     },
+    transport::Transport,
     AsyncSecureChannel, Session, UARequest,
 };
 use opcua_core::ResponseMessage;
@@ -28,7 +29,7 @@ builder_base!(Call);
 
 impl Call {
     /// Create a new call to the `Call` service.
-    pub fn new(session: &Session) -> Self {
+    pub fn new<T>(session: &Session<T>) -> Self {
         Self {
             methods: Vec::new(),
             header: RequestHeaderBuilder::new_from_session(session),
@@ -64,7 +65,10 @@ impl Call {
 impl UARequest for Call {
     type Out = CallResponse;
 
-    async fn send<'a>(self, channel: &'a AsyncSecureChannel) -> Result<Self::Out, StatusCode>
+    async fn send<'a, T: Transport>(
+        self,
+        channel: &'a AsyncSecureChannel<T>,
+    ) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -105,7 +109,7 @@ impl UARequest for Call {
     }
 }
 
-impl Session {
+impl<T: Transport> Session<T> {
     /// Calls a list of methods on the server by sending a [`CallRequest`] to the server.
     ///
     /// See OPC UA Part 4 - Services 5.11.2 for complete description of the service and error responses.
