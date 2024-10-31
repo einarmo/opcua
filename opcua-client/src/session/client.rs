@@ -1,13 +1,12 @@
-use std::{path::PathBuf, str::FromStr, sync::Arc};
+use std::{str::FromStr, sync::Arc};
 
 use chrono::Duration;
-use log::{debug, error, info};
+use log::{debug, error};
 use tokio::{pin, select};
 
 use crate::{
-    retry::SessionRetryPolicy,
     transport::{tcp::TransportConfiguration, TransportPollResult},
-    AsyncSecureChannel, ClientConfig, ClientEndpoint, IdentityToken, ANONYMOUS_USER_TOKEN_ID,
+    AsyncSecureChannel, ClientConfig, ClientEndpoint, IdentityToken,
 };
 use opcua_core::{
     comms::url::{
@@ -26,16 +25,15 @@ use opcua_types::{
 };
 
 use super::{
-    process_service_result, process_unexpected_response, Session, SessionEventLoop, SessionInfo,
+    connection::SessionBuilder, process_service_result, process_unexpected_response, Session,
+    SessionEventLoop, SessionInfo,
 };
 
 pub struct Client {
     /// Client configuration
-    config: ClientConfig,
+    pub(super) config: ClientConfig,
     /// Certificate store is where certificates go.
     certificate_store: Arc<RwLock<CertificateStore>>,
-    /// The session retry policy for new sessions
-    session_retry_policy: SessionRetryPolicy,
 }
 
 impl Client {
@@ -74,21 +72,14 @@ impl Client {
         // The session retry policy dictates how many times to retry if connection to the server goes down
         // and on what interval
 
-        let session_retry_policy = SessionRetryPolicy::new(
-            config.session_retry_max,
-            if config.session_retry_limit < 0 {
-                None
-            } else {
-                Some(config.session_retry_limit as u32)
-            },
-            config.session_retry_initial,
-        );
-
         Self {
             config,
-            session_retry_policy,
             certificate_store: Arc::new(RwLock::new(certificate_store)),
         }
+    }
+
+    pub fn session_builder(&self) -> SessionBuilder<'_, (), ()> {
+        SessionBuilder::<'_, (), ()>::new(&self.config)
     }
 
     /// Connects to a named endpoint that you have defined in the `ClientConfig`
@@ -102,34 +93,17 @@ impl Client {
     ///
     pub async fn connect_to_endpoint_id(
         &mut self,
-        endpoint_id: Option<&str>,
+        endpoint_id: impl Into<String>,
     ) -> Result<(Arc<Session>, SessionEventLoop), StatusCode> {
-        // Ask the server associated with the default endpoint for its list of endpoints
-        let endpoints = match self.get_server_endpoints().await {
-            Err(status_code) => {
-                error!("Cannot get endpoints for server, error - {}", status_code);
-                return Err(status_code);
-            }
-            Ok(endpoints) => endpoints,
-        };
-
-        info!("Server has these endpoints:");
-        endpoints.iter().for_each(|e| {
-            info!(
-                "  {} - {:?} / {:?}",
-                e.endpoint_url,
-                SecurityPolicy::from_str(e.security_policy_uri.as_ref()).unwrap(),
-                e.security_mode
-            )
-        });
-
-        // Create a session to an endpoint. If an endpoint id is specified use that
-        if let Some(endpoint_id) = endpoint_id {
-            self.new_session_from_id(endpoint_id, &endpoints)
-        } else {
-            self.new_session(&endpoints)
-        }
-        .map_err(|_| StatusCode::BadConfigurationError)
+        Ok(self
+            .session_builder()
+            .with_endpoints(self.get_server_endpoints().await?)
+            .connect_to_endpoint_id(endpoint_id)
+            .map_err(|e| {
+                error!("{}", e);
+                StatusCode::BadConfigurationError
+            })?
+            .build(self.certificate_store.clone()))
     }
 
     /// Connects to an ad-hoc server endpoint description.
@@ -151,7 +125,7 @@ impl Client {
     /// * `Ok((Arc<AsyncSession>, SessionEventLoop))` - Session and event loop.
     /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
     ///
-    pub async fn new_session_from_endpoint(
+    pub async fn connect_to_matching_endpoint(
         &mut self,
         endpoint: impl Into<EndpointDescription>,
         user_identity_token: IdentityToken,
@@ -161,40 +135,15 @@ impl Client {
         // Get the server endpoints
         let server_url = endpoint.endpoint_url.as_ref();
 
-        let server_endpoints = self
-            .get_server_endpoints_from_url(server_url)
-            .await
-            .inspect_err(|status_code| {
-                error!("Cannot get endpoints for server, error - {}", status_code);
-            })?;
-
-        // Find the server endpoint that matches the one desired
-        let security_policy = SecurityPolicy::from_str(endpoint.security_policy_uri.as_ref())
-            .map_err(|_| StatusCode::BadSecurityPolicyRejected)?;
-        let server_endpoint = Self::find_matching_endpoint(
-            &server_endpoints,
-            endpoint.endpoint_url.as_ref(),
-            security_policy,
-            endpoint.security_mode,
-        )
-        .ok_or(StatusCode::BadTcpEndpointUrlInvalid)
-        .inspect_err(|_| {
-            error!(
-                "Cannot find matching endpoint for {}",
-                endpoint.endpoint_url.as_ref()
-            );
-        })?;
-
         Ok(self
-            .new_session_from_info(SessionInfo {
-                endpoint: server_endpoint,
-                user_identity_token,
-                preferred_locales: Vec::new(),
-            })
-            .unwrap())
+            .session_builder()
+            .with_endpoints(self.get_server_endpoints_from_url(server_url).await?)
+            .connect_to_matching_endpoint(endpoint)?
+            .user_identity_token(user_identity_token)
+            .build(self.certificate_store.clone()))
     }
 
-    /// Connects to an a server directly using provided [`SessionInfo`].
+    /// Connects to a server directly using provided [`EndpointDescription`].
     ///
     /// This function returns both a reference to the session, and a `SessionEventLoop`. You must run and
     /// poll the event loop in order to actually establish a connection.
@@ -204,34 +153,24 @@ impl Client {
     ///
     /// # Arguments
     ///
-    /// * `session_info` - Session info for creating a new session.
+    /// * `endpoint` - Endpoint to connect to.
+    /// * `identity_token` - Identity token for authentication.
     ///
     /// # Returns
     ///
     /// * `Ok((Arc<AsyncSession>, SessionEventLoop))` - Session and event loop.
     /// * `Err(String)` - Endpoint is invalid.
     ///
-    pub fn new_session_from_info(
+    pub fn connect_to_endpoint_directly(
         &mut self,
-        session_info: impl Into<SessionInfo>,
+        endpoint: impl Into<EndpointDescription>,
+        identity_token: IdentityToken,
     ) -> Result<(Arc<Session>, SessionEventLoop), String> {
-        let session_info = session_info.into();
-        if !is_opc_ua_binary_url(session_info.endpoint.endpoint_url.as_ref()) {
-            Err(format!(
-                "Endpoint url {}, is not a valid / supported url",
-                session_info.endpoint.endpoint_url
-            ))
-        } else {
-            Ok(Session::new(
-                self.certificate_store.clone(),
-                session_info,
-                self.config.session_name.clone().into(),
-                self.config.application_description(),
-                self.session_retry_policy.clone(),
-                self.decoding_options(),
-                &self.config,
-            ))
-        }
+        Ok(self
+            .session_builder()
+            .connect_to_endpoint_directly(endpoint)?
+            .user_identity_token(identity_token)
+            .build(self.certificate_store.clone()))
     }
 
     /// Creates a new [`AsyncSession`] using the default endpoint specified in the config. If
@@ -252,99 +191,18 @@ impl Client {
     /// * `Ok((Arc<AsyncSession>, SessionEventLoop))` - Session and event loop.
     /// * `Err(String)` - Endpoint is invalid.
     ///
-    pub fn new_session(
+    pub async fn connect_to_default_endpoint(
         &mut self,
-        endpoints: &[EndpointDescription],
     ) -> Result<(Arc<Session>, SessionEventLoop), String> {
-        let endpoint = self.default_endpoint()?;
-        let session_info = self.session_info_for_endpoint(&endpoint, endpoints)?;
-        self.new_session_from_info(session_info)
-    }
-
-    /// Creates a new [`AsyncSession`] using the named endpoint id. If there is no
-    /// endpoint of that id in the config, this function will return an error
-    ///
-    /// This function returns both a reference to the session, and a `SessionEventLoop`. You must run and
-    /// poll the event loop in order to actually establish a connection.
-    ///
-    /// This method will not attempt to create a session on the server, that will only happen once you start polling
-    /// the session event loop.
-    ///
-    /// # Arguments
-    ///
-    /// * `endpoint_id` - ID matching an endpoint defined in config.
-    /// * `endpoints` - List of endpoints available on the server.
-    ///
-    pub fn new_session_from_id(
-        &mut self,
-        endpoint_id: impl Into<String>,
-        endpoints: &[EndpointDescription],
-    ) -> Result<(Arc<Session>, SessionEventLoop), String> {
-        let endpoint_id = endpoint_id.into();
-        let endpoint = {
-            let endpoint = self.config.endpoints.get(&endpoint_id);
-            if endpoint.is_none() {
-                return Err(format!("Cannot find endpoint with id {}", endpoint_id));
-            }
-            // This clone is an unfortunate workaround to a lifetime issue between the borrowed
-            // endpoint and the need to call the mutable new_session_from_endpoint()
-            endpoint.unwrap().clone()
-        };
-        let session_info = self.session_info_for_endpoint(&endpoint, endpoints)?;
-        self.new_session_from_info(session_info)
-    }
-
-    /// Creates a [`SessionInfo`](SessionInfo) information from the supplied client endpoint.
-    fn session_info_for_endpoint(
-        &self,
-        client_endpoint: &ClientEndpoint,
-        endpoints: &[EndpointDescription],
-    ) -> Result<SessionInfo, String> {
-        // Enumerate endpoints looking for matching one
-        if let Ok(security_policy) = SecurityPolicy::from_str(&client_endpoint.security_policy) {
-            let security_mode = MessageSecurityMode::from(client_endpoint.security_mode.as_ref());
-            if security_mode != MessageSecurityMode::Invalid {
-                let endpoint_url = client_endpoint.url.clone();
-                // Now find a matching endpoint from those on the server
-                let endpoint = Self::find_matching_endpoint(
-                    endpoints,
-                    &endpoint_url,
-                    security_policy,
-                    security_mode,
-                );
-                if endpoint.is_none() {
-                    Err(format!("Endpoint {}, {:?} / {:?} does not match against any supplied by the server", endpoint_url, security_policy, security_mode))
-                } else if let Some(user_identity_token) =
-                    self.client_identity_token(client_endpoint.user_token_id.clone())
-                {
-                    info!(
-                        "Creating a session for endpoint {}, {:?} / {:?}",
-                        endpoint_url, security_policy, security_mode
-                    );
-                    let preferred_locales = self.config.preferred_locales.clone();
-                    Ok(SessionInfo {
-                        endpoint: endpoint.unwrap(),
-                        user_identity_token,
-                        preferred_locales,
-                    })
-                } else {
-                    Err(format!(
-                        "Endpoint {} user id cannot be found",
-                        client_endpoint.user_token_id
-                    ))
-                }
-            } else {
-                Err(format!(
-                    "Endpoint {} security mode {} is invalid",
-                    client_endpoint.url, client_endpoint.security_mode
-                ))
-            }
-        } else {
-            Err(format!(
-                "Endpoint {} security policy {} is invalid",
-                client_endpoint.url, client_endpoint.security_policy
-            ))
-        }
+        Ok(self
+            .session_builder()
+            .with_endpoints(
+                self.get_server_endpoints()
+                    .await
+                    .map_err(|e| format!("Failed to fetch server endpoints: {e}"))?,
+            )
+            .connect_to_default_endpoint()?
+            .build(self.certificate_store.clone()))
     }
 
     /// Create a secure channel using the provided [`SessionInfo`].
@@ -355,7 +213,7 @@ impl Client {
         AsyncSecureChannel::new(
             self.certificate_store.clone(),
             session_info,
-            self.session_retry_policy.clone(),
+            self.config.session_retry_policy(),
             self.decoding_options(),
             self.config.performance.ignore_clock_skew,
             Arc::default(),
@@ -368,30 +226,6 @@ impl Client {
                 max_chunk_count: self.config.decoding_options.max_chunk_count,
             },
         )
-    }
-
-    /// Returns an identity token corresponding to the matching user in the configuration. Or None
-    /// if there is no matching token.
-    fn client_identity_token(&self, user_token_id: impl Into<String>) -> Option<IdentityToken> {
-        let user_token_id = user_token_id.into();
-        if user_token_id == ANONYMOUS_USER_TOKEN_ID {
-            Some(IdentityToken::Anonymous)
-        } else {
-            let token = self.config.user_tokens.get(&user_token_id)?;
-
-            if let Some(ref password) = token.password {
-                Some(IdentityToken::UserName(
-                    token.user.clone(),
-                    password.clone(),
-                ))
-            } else if let Some(ref cert_path) = token.cert_path {
-                token.private_key_path.as_ref().map(|private_key_path| {
-                    IdentityToken::X509(PathBuf::from(cert_path), PathBuf::from(private_key_path))
-                })
-            } else {
-                None
-            }
-        }
     }
 
     /// Gets the [`ClientEndpoint`] information for the default endpoint, as defined

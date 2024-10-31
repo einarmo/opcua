@@ -83,7 +83,7 @@ async fn main() -> Result<(), ()> {
         .unwrap();
 
     let (session, event_loop) = client
-        .new_session_from_endpoint(
+        .connect_to_matching_endpoint(
             (
                 args.url.as_ref(),
                 SecurityPolicy::None.to_str(),

@@ -66,6 +66,7 @@ pub struct Session {
 }
 
 impl Session {
+    #[allow(clippy::too_many_arguments)]
     pub(crate) fn new(
         certificate_store: Arc<RwLock<CertificateStore>>,
         session_info: SessionInfo,
@@ -74,6 +75,7 @@ impl Session {
         session_retry_policy: SessionRetryPolicy,
         decoding_options: DecodingOptions,
         config: &ClientConfig,
+        session_id: Option<NodeId>,
     ) -> (Arc<Self>, SessionEventLoop) {
         let auth_token: Arc<ArcSwap<NodeId>> = Default::default();
         let (state_watch_tx, state_watch_rx) =
@@ -100,7 +102,7 @@ impl Session {
             internal_session_id: AtomicU32::new(NEXT_SESSION_ID.fetch_add(1, Ordering::Relaxed)),
             state_watch_rx,
             state_watch_tx,
-            session_id: Default::default(),
+            session_id: Arc::new(ArcSwap::new(Arc::new(session_id.unwrap_or_default()))),
             session_info,
             auth_token,
             session_name,

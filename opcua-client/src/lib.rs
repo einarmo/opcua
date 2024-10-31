@@ -60,7 +60,7 @@
 //!     let endpoint: EndpointDescription = ("opc.tcp://localhost:4855/", "None", MessageSecurityMode::None, UserTokenPolicy::anonymous()).into();
 //!
 //!     // Create the session and event loop
-//!     let (session, event_loop) = client.new_session_from_endpoint(endpoint, IdentityToken::Anonymous).await.unwrap();
+//!     let (session, event_loop) = client.connect_to_matching_endpoint(endpoint, IdentityToken::Anonymous).await.unwrap();
 //!     let handle = event_loop.spawn();
 //!
 //!     session.wait_for_connection().await;

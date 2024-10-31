@@ -1,5 +1,6 @@
 mod client;
 mod connect;
+mod connection;
 mod event_loop;
 mod implementation;
 mod request_builder;

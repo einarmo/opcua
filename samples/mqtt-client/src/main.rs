@@ -119,13 +119,13 @@ async fn main() -> Result<(), ()> {
     // Use the sample client config to set up a client. The sample config has a number of named
     // endpoints one of which is marked as the default.
     let mut client = Client::new(ClientConfig::load(&PathBuf::from(config_file)).unwrap());
-    let endpoint_id: Option<&str> = if !endpoint_id.is_empty() {
-        Some(&endpoint_id)
-    } else {
-        None
-    };
+
     let ns = 2;
-    let (session, event_loop) = client.connect_to_endpoint_id(endpoint_id).await.unwrap();
+    let (session, event_loop) = if !endpoint_id.is_empty() {
+        client.connect_to_endpoint_id(endpoint_id).await.unwrap()
+    } else {
+        client.connect_to_default_endpoint().await.unwrap()
+    };
     let handle = event_loop.spawn();
 
     session.wait_for_connection().await;

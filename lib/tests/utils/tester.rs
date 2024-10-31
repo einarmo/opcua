@@ -391,7 +391,7 @@ impl Tester {
         user_identity: IdentityToken,
     ) -> Result<(Arc<Session>, SessionEventLoop), StatusCode> {
         self.client
-            .new_session_from_endpoint(
+            .connect_to_matching_endpoint(
                 (
                     &self.endpoint() as &str,
                     security_policy.to_str(),
@@ -411,7 +411,7 @@ impl Tester {
     ) -> Result<Arc<Session>, StatusCode> {
         let (session, evt_loop) = self
             .client
-            .new_session_from_endpoint(
+            .connect_to_matching_endpoint(
                 (
                     &self.endpoint() as &str,
                     security_policy.to_str(),
