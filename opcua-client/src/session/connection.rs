@@ -211,7 +211,7 @@ impl<'a> SessionBuilder<'a, (), Vec<EndpointDescription>> {
             })
         };
         let Some(endpoint) = endpoint else {
-            return Err(format!("No suitable endpoint found"));
+            return Err("No suitable endpoint found".to_owned());
         };
         Ok(SessionBuilder {
             inner: self.inner,
