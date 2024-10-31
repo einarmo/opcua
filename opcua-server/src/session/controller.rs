@@ -22,6 +22,7 @@ use opcua_types::{
     OpenSecureChannelRequest, OpenSecureChannelResponse, ResponseHeader, SecurityTokenRequestType,
     ServiceFault, StatusCode,
 };
+use tokio_util::sync::CancellationToken;
 
 use crate::{
     authenticator::UserToken,
@@ -115,15 +116,20 @@ impl<T: Connector> SessionStarter<T> {
     }
 
     pub async fn run(self, mut command: tokio::sync::mpsc::Receiver<ControllerCommand>) {
+        let token = CancellationToken::new();
+        let fut = self.connector.connect(self.info.clone(), token.clone());
+        tokio::pin!(fut);
         let transport = tokio::select! {
             cmd = command.recv() => {
                 match cmd {
                     Some(ControllerCommand::Close) | None => {
+                        token.cancel();
+                        let _ = fut.await;
                         return;
                     }
                 }
             }
-            r = self.connector.connect(self.info.clone()) => {
+            r = &mut fut => {
                 match r {
                     Ok(t) => t,
                     Err(e) => {

@@ -149,6 +149,7 @@ impl SessionManager {
             request.client_description.clone(),
             channel.security_mode(),
         );
+        info!("Created new session with ID {}", session.session_id());
 
         let session_id = session.session_id().clone();
         self.sessions
@@ -232,7 +233,7 @@ impl SessionManager {
 }
 
 // This is a non-self method to avoid holding the manager
-// across an away point.
+// across an await point.
 pub(crate) async fn close_session(
     mgr_lck: &RwLock<SessionManager>,
     channel: &mut SecureChannel,
@@ -258,6 +259,7 @@ pub(crate) async fn close_session(
             (id, token, session_id)
         };
 
+        info!("Closed session with ID {}", session_id);
         let session = mgr.sessions.remove(&session_id).unwrap();
         {
             let mut session_lck = trace_write_lock!(session);

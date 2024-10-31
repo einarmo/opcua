@@ -1,6 +1,7 @@
 use std::{future::Future, sync::Arc};
 
 use opcua_types::StatusCode;
+use tokio_util::sync::CancellationToken;
 
 use crate::info::ServerInfo;
 
@@ -10,5 +11,6 @@ pub trait Connector {
     fn connect(
         self,
         info: Arc<ServerInfo>,
+        token: CancellationToken,
     ) -> impl Future<Output = Result<TcpTransport, StatusCode>> + Send + Sync;
 }

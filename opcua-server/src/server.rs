@@ -25,7 +25,7 @@ use opcua_crypto::CertificateStore;
 
 use crate::{
     node_manager::{DefaultTypeTreeGetter, ServerContext},
-    session::controller::SessionStarter,
+    session::controller::{ControllerCommand, SessionStarter},
     transport::tcp::{TcpConnector, TransportConfig},
     ServerStatusWrapper,
 };
@@ -39,7 +39,7 @@ use super::{
     info::ServerInfo,
     node_manager::{NodeManagers, NodeManagersRef},
     server_handle::ServerHandle,
-    session::{controller::ControllerCommand, manager::SessionManager},
+    session::manager::SessionManager,
     subscriptions::SubscriptionCache,
     ServerCapabilities,
 };

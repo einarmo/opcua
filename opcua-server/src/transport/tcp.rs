@@ -27,7 +27,7 @@ use tokio::{
     io::{AsyncWriteExt, ReadHalf, WriteHalf},
     net::TcpStream,
 };
-use tokio_util::codec::FramedRead;
+use tokio_util::{codec::FramedRead, sync::CancellationToken};
 
 use super::connect::Connector;
 
@@ -200,10 +200,17 @@ impl TcpConnector {
 }
 
 impl Connector for TcpConnector {
-    async fn connect(mut self, info: Arc<ServerInfo>) -> Result<TcpTransport, StatusCode> {
+    async fn connect(
+        mut self,
+        info: Arc<ServerInfo>,
+        token: CancellationToken,
+    ) -> Result<TcpTransport, StatusCode> {
         let err = tokio::select! {
             _ = tokio::time::sleep_until(self.deadline.into()) => {
                 ErrorMessage::new(StatusCode::BadTimeout, "Timeout waiting for HELLO")
+            }
+            _ = token.cancelled() => {
+                ErrorMessage::new(StatusCode::BadServerHalted, "Server closed")
             }
             r = self.connect_inner(info) => {
                 match r {
