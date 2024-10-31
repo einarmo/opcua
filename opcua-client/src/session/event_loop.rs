@@ -9,7 +9,7 @@ use log::warn;
 use crate::{
     retry::{ExponentialBackoff, SessionRetryPolicy},
     session::{session_error, session_warn},
-    transport::{tcp::TcpTransport, SecureChannelEventLoop, Transport, TransportPollResult},
+    transport::{SecureChannelEventLoop, TransportPollResult},
 };
 use opcua_types::{
     AttributeId, QualifiedName, ReadValueId, StatusCode, TimestampsToReturn, VariableId,
@@ -46,8 +46,8 @@ pub enum SessionPollResult {
     FinishedDisconnect,
 }
 
-struct ConnectedState<T> {
-    channel: SecureChannelEventLoop<T>,
+struct ConnectedState {
+    channel: SecureChannelEventLoop,
     keep_alive: BoxStream<'static, SessionActivity>,
     subscriptions: BoxStream<'static, SubscriptionActivity>,
     current_failed_keep_alive_count: u64,
@@ -55,25 +55,25 @@ struct ConnectedState<T> {
     disconnect_fut: BoxFuture<'static, Result<(), StatusCode>>,
 }
 
-enum SessionEventLoopState<T> {
-    Connected(ConnectedState<T>),
-    Connecting(SessionConnector<T>, ExponentialBackoff, Instant),
+enum SessionEventLoopState {
+    Connected(ConnectedState),
+    Connecting(SessionConnector, ExponentialBackoff, Instant),
     Disconnected,
 }
 
 /// The session event loop drives the client. It must be polled for anything to happen at all.
 #[must_use = "The session event loop must be started for the session to work"]
-pub struct SessionEventLoop<T = TcpTransport> {
-    inner: Arc<Session<T>>,
+pub struct SessionEventLoop {
+    inner: Arc<Session>,
     trigger_publish_recv: tokio::sync::watch::Receiver<Instant>,
     retry: SessionRetryPolicy,
     keep_alive_interval: Duration,
     max_failed_keep_alive_count: u64,
 }
 
-impl<T: Transport> SessionEventLoop<T> {
+impl SessionEventLoop {
     pub(crate) fn new(
-        inner: Arc<Session<T>>,
+        inner: Arc<Session>,
         retry: SessionRetryPolicy,
         trigger_publish_recv: tokio::sync::watch::Receiver<Instant>,
         keep_alive_interval: Duration,
@@ -305,13 +305,13 @@ impl SessionIntervals {
     }
 }
 
-struct SessionActivityLoop<T> {
-    inner: Arc<Session<T>>,
+struct SessionActivityLoop {
+    inner: Arc<Session>,
     tick_gen: SessionIntervals,
 }
 
-impl<T: Transport> SessionActivityLoop<T> {
-    pub fn new(inner: Arc<Session<T>>, keep_alive_interval: Duration) -> Self {
+impl SessionActivityLoop {
+    pub fn new(inner: Arc<Session>, keep_alive_interval: Duration) -> Self {
         Self {
             inner,
             tick_gen: SessionIntervals::new(keep_alive_interval),

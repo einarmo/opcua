@@ -4,7 +4,10 @@ use async_trait::async_trait;
 use opcua_core::{comms::secure_channel::SecureChannel, sync::RwLock};
 use opcua_types::StatusCode;
 
-use super::{tcp::TransportConfiguration, OutgoingMessage, TransportPollResult};
+use super::{
+    tcp::{TcpTransport, TransportConfiguration},
+    OutgoingMessage, TransportPollResult,
+};
 
 #[async_trait]
 /// Trait implemented by simple wrapper types that create a connection to an OPC-UA server.
@@ -15,7 +18,6 @@ use super::{tcp::TransportConfiguration, OutgoingMessage, TransportPollResult};
 ///    or equivalent.
 ///  - This should not do any retries, that's handled on a higher level.
 pub trait Connector: Send + Sync {
-    type Transport: Transport;
     /// Attempt to establish a connection to the OPC UA endpoint given by `endpoint_url`.
     /// Note that on success, this returns a `TcpTransport`. The caller is responsible for
     /// calling `run` on the returned transport in order to actually send and receive messages.
@@ -25,7 +27,7 @@ pub trait Connector: Send + Sync {
         outgoing_recv: tokio::sync::mpsc::Receiver<OutgoingMessage>,
         config: TransportConfiguration,
         endpoint_url: &str,
-    ) -> Result<Self::Transport, StatusCode>;
+    ) -> Result<TcpTransport, StatusCode>;
 }
 
 /// Trait for client transport channels.

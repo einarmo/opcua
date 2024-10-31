@@ -145,7 +145,6 @@ impl TcpConnector {
 
 #[async_trait]
 impl Connector for TcpConnector {
-    type Transport = TcpTransport;
     async fn connect(
         &self,
         channel: Arc<RwLock<SecureChannel>>,

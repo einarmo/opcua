@@ -5,7 +5,6 @@ use crate::{
         process_service_result, process_unexpected_response,
         request_builder::{builder_base, builder_debug, builder_error, RequestHeaderBuilder},
     },
-    transport::Transport,
     Session, UARequest,
 };
 
@@ -31,7 +30,7 @@ builder_base!(AddNodes);
 /// See OPC UA Part 4 - Services 5.7.2 for complete description of the service and error responses.
 impl AddNodes {
     /// Construct a new call to the `AddNodes` service.
-    pub fn new<T>(session: &Session<T>) -> Self {
+    pub fn new(session: &Session) -> Self {
         Self {
             nodes_to_add: Vec::new(),
             header: RequestHeaderBuilder::new_from_session(session),
@@ -67,10 +66,7 @@ impl AddNodes {
 impl UARequest for AddNodes {
     type Out = AddNodesResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a crate::AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -108,7 +104,7 @@ builder_base!(AddReferences);
 
 impl AddReferences {
     /// Construct a new call to the `AddReferences` service.
-    pub fn new<T>(session: &Session<T>) -> Self {
+    pub fn new(session: &Session) -> Self {
         Self {
             references_to_add: Vec::new(),
             header: RequestHeaderBuilder::new_from_session(session),
@@ -144,10 +140,7 @@ impl AddReferences {
 impl UARequest for AddReferences {
     type Out = AddReferencesResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a crate::AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -185,7 +178,7 @@ builder_base!(DeleteNodes);
 
 impl DeleteNodes {
     /// Construct a new call to the `DeleteNodes` service.
-    pub fn new<T>(session: &Session<T>) -> Self {
+    pub fn new(session: &Session) -> Self {
         Self {
             nodes_to_delete: Vec::new(),
             header: RequestHeaderBuilder::new_from_session(session),
@@ -221,10 +214,7 @@ impl DeleteNodes {
 impl UARequest for DeleteNodes {
     type Out = DeleteNodesResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a crate::AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -262,7 +252,7 @@ builder_base!(DeleteReferences);
 
 impl DeleteReferences {
     /// Construct a new call to the `DeleteReferences` service.
-    pub fn new<T>(session: &Session<T>) -> Self {
+    pub fn new(session: &Session) -> Self {
         Self {
             references_to_delete: Vec::new(),
             header: RequestHeaderBuilder::new_from_session(session),
@@ -298,10 +288,7 @@ impl DeleteReferences {
 impl UARequest for DeleteReferences {
     type Out = DeleteReferencesResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a crate::AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -328,7 +315,7 @@ impl UARequest for DeleteReferences {
     }
 }
 
-impl<T: Transport> Session<T> {
+impl Session {
     /// Add nodes by sending a [`AddNodesRequest`] to the server.
     ///
     /// See OPC UA Part 4 - Services 5.7.2 for complete description of the service and error responses.

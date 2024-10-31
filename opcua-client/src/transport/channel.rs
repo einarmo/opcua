@@ -17,6 +17,7 @@ use opcua_types::{
 use super::{
     connect::{Connector, Transport},
     state::{Request, RequestSend, SecureChannelState},
+    tcp::TcpTransport,
 };
 
 use crate::{
@@ -25,7 +26,7 @@ use crate::{
 };
 
 /// Wrapper around an open secure channel
-pub struct AsyncSecureChannel<T> {
+pub struct AsyncSecureChannel {
     session_info: SessionInfo,
     session_retry_policy: SessionRetryPolicy,
     pub(crate) secure_channel: Arc<RwLock<SecureChannel>>,
@@ -33,22 +34,22 @@ pub struct AsyncSecureChannel<T> {
     transport_config: TransportConfiguration,
     state: SecureChannelState,
     issue_channel_lock: tokio::sync::Mutex<()>,
-    connector: Arc<dyn Connector<Transport = T>>,
+    connector: Box<dyn Connector>,
 
     request_send: ArcSwapOption<RequestSend>,
 }
 
-pub struct SecureChannelEventLoop<T> {
-    transport: T,
+pub struct SecureChannelEventLoop {
+    transport: TcpTransport,
 }
 
-impl<T: Transport> SecureChannelEventLoop<T> {
+impl SecureChannelEventLoop {
     pub async fn poll(&mut self) -> TransportPollResult {
         self.transport.poll().await
     }
 }
 
-impl<T> AsyncSecureChannel<T> {
+impl AsyncSecureChannel {
     pub(crate) fn make_request_header(&self, timeout: Duration) -> RequestHeader {
         self.state.make_request_header(timeout)
     }
@@ -79,7 +80,7 @@ impl<T> AsyncSecureChannel<T> {
     }
 }
 
-impl<T: Transport> AsyncSecureChannel<T> {
+impl AsyncSecureChannel {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         certificate_store: Arc<RwLock<CertificateStore>>,
@@ -89,7 +90,7 @@ impl<T: Transport> AsyncSecureChannel<T> {
         ignore_clock_skew: bool,
         auth_token: Arc<ArcSwap<NodeId>>,
         transport_config: TransportConfiguration,
-        connector: Arc<dyn Connector<Transport = T>>,
+        connector: Box<dyn Connector>,
     ) -> Self {
         let secure_channel = Arc::new(RwLock::new(SecureChannel::new(
             certificate_store.clone(),
@@ -154,7 +155,7 @@ impl<T: Transport> AsyncSecureChannel<T> {
         Request::new(request, send, timeout).send().await
     }
 
-    pub async fn connect(&self) -> Result<SecureChannelEventLoop<T>, StatusCode> {
+    pub async fn connect(&self) -> Result<SecureChannelEventLoop, StatusCode> {
         self.request_send.store(None);
         let mut backoff = self.session_retry_policy.new_backoff();
         loop {
@@ -173,7 +174,7 @@ impl<T: Transport> AsyncSecureChannel<T> {
         }
     }
 
-    pub async fn connect_no_retry(&self) -> Result<SecureChannelEventLoop<T>, StatusCode> {
+    pub async fn connect_no_retry(&self) -> Result<SecureChannelEventLoop, StatusCode> {
         {
             let mut secure_channel = trace_write_lock!(self.secure_channel);
             secure_channel.clear_security_token();
@@ -210,7 +211,7 @@ impl<T: Transport> AsyncSecureChannel<T> {
 
     async fn create_transport(
         &self,
-    ) -> Result<(T, tokio::sync::mpsc::Sender<OutgoingMessage>), StatusCode> {
+    ) -> Result<(TcpTransport, tokio::sync::mpsc::Sender<OutgoingMessage>), StatusCode> {
         let endpoint_url = self.session_info.endpoint.endpoint_url.clone();
         info!("Connect");
         let security_policy =

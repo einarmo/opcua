@@ -6,7 +6,6 @@ use crate::{
         request_builder::{builder_base, builder_debug, builder_error, RequestHeaderBuilder},
         UARequest,
     },
-    transport::Transport,
     AsyncSecureChannel, Session,
 };
 use opcua_core::ResponseMessage;
@@ -129,7 +128,7 @@ pub struct Read {
 
 impl Read {
     /// Construct a new call to the `Read` service.
-    pub fn new<T: Transport>(session: &Session<T>) -> Self {
+    pub fn new(session: &Session) -> Self {
         Self {
             nodes_to_read: Vec::new(),
             timestamps_to_return: TimestampsToReturn::Neither,
@@ -183,10 +182,7 @@ builder_base!(Read);
 impl UARequest for Read {
     type Out = ReadResponse;
 
-    async fn send<'b, T: Transport>(
-        self,
-        channel: &'b AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'b>(self, channel: &'b AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'b,
     {
@@ -225,7 +221,7 @@ pub struct HistoryRead<'a> {
 builder_base!(HistoryRead<'a>);
 
 impl<'a> HistoryRead<'a> {
-    pub fn new<T: Transport>(details: &'a HistoryReadAction, session: &Session<T>) -> Self {
+    pub fn new(details: &'a HistoryReadAction, session: &Session) -> Self {
         Self {
             details,
             timestamps_to_return: TimestampsToReturn::Neither,
@@ -283,10 +279,7 @@ impl<'a> HistoryRead<'a> {
 impl<'a> UARequest for HistoryRead<'a> {
     type Out = HistoryReadResponse;
 
-    async fn send<'b, T: Transport>(
-        self,
-        channel: &'b AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'b>(self, channel: &'b AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'b,
     {
@@ -335,7 +328,7 @@ builder_base!(Write);
 
 impl Write {
     /// Construct a new call to the `Write` service.
-    pub fn new<T: Transport>(session: &Session<T>) -> Self {
+    pub fn new(session: &Session) -> Self {
         Self {
             nodes_to_write: Vec::new(),
             header: RequestHeaderBuilder::new_from_session(session),
@@ -371,10 +364,7 @@ impl Write {
 impl UARequest for Write {
     type Out = WriteResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -421,7 +411,7 @@ builder_base!(HistoryUpdate);
 
 impl HistoryUpdate {
     /// Construct a new call to the `HistoryUpdate` service.
-    pub fn new<T: Transport>(session: &Session<T>) -> Self {
+    pub fn new(session: &Session) -> Self {
         Self {
             details: Vec::new(),
 
@@ -458,10 +448,7 @@ impl HistoryUpdate {
 impl UARequest for HistoryUpdate {
     type Out = HistoryUpdateResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -489,7 +476,7 @@ impl UARequest for HistoryUpdate {
     }
 }
 
-impl<T: Transport> Session<T> {
+impl Session {
     /// Reads the value of nodes by sending a [`ReadRequest`] to the server.
     ///
     /// See OPC UA Part 4 - Services 5.10.2 for complete description of the service and error responses.

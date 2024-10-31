@@ -10,7 +10,6 @@ use crate::{
         services::subscriptions::{CreateMonitoredItem, ModifyMonitoredItem, Subscription},
         session_debug, session_error, session_warn,
     },
-    transport::Transport,
     Session, UARequest,
 };
 use log::{debug, log_enabled};
@@ -52,10 +51,7 @@ builder_base!(CreateSubscription<'a>);
 
 impl<'a> CreateSubscription<'a> {
     /// Construct a new call to the `CreateSubscription` service.
-    pub fn new<T: Transport>(
-        session: &'a Session<T>,
-        callback: Box<dyn OnSubscriptionNotification>,
-    ) -> Self {
+    pub fn new(session: &'a Session, callback: Box<dyn OnSubscriptionNotification>) -> Self {
         Self {
             publishing_interval: Duration::from_millis(500),
             lifetime_count: 60,
@@ -153,10 +149,7 @@ impl<'a> CreateSubscription<'a> {
 impl<'b> UARequest for CreateSubscription<'b> {
     type Out = CreateSubscriptionResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a crate::AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -221,7 +214,7 @@ builder_base!(ModifySubscription<'a>);
 
 impl<'a> ModifySubscription<'a> {
     /// Construct a new call to the `ModifySubscription` service.
-    pub fn new<T: Transport>(subscription_id: u32, session: &'a Session<T>) -> Self {
+    pub fn new(subscription_id: u32, session: &'a Session) -> Self {
         Self {
             subscription_id,
             publishing_interval: Duration::from_millis(500),
@@ -308,10 +301,7 @@ impl<'a> ModifySubscription<'a> {
 impl<'b> UARequest for ModifySubscription<'b> {
     type Out = ModifySubscriptionResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a crate::AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -375,7 +365,7 @@ builder_base!(SetPublishingMode<'a>);
 
 impl<'a> SetPublishingMode<'a> {
     /// Construct a new call to the `SetPublishingMode` service.
-    pub fn new<T: Transport>(publishing_enabled: bool, session: &'a Session<T>) -> Self {
+    pub fn new(publishing_enabled: bool, session: &'a Session) -> Self {
         Self {
             subscription_ids: Vec::new(),
             publishing_enabled,
@@ -417,10 +407,7 @@ impl<'a> SetPublishingMode<'a> {
 impl<'b> UARequest for SetPublishingMode<'b> {
     type Out = SetPublishingModeResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a crate::AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -506,7 +493,7 @@ builder_base!(TransferSubscriptions);
 
 impl TransferSubscriptions {
     /// Construct a new call to the `TransferSubscriptions` service.
-    pub fn new<T: Transport>(session: &Session<T>) -> Self {
+    pub fn new(session: &Session) -> Self {
         Self {
             subscription_ids: Vec::new(),
             send_initial_values: false,
@@ -552,10 +539,7 @@ impl TransferSubscriptions {
 impl UARequest for TransferSubscriptions {
     type Out = TransferSubscriptionsResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a crate::AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -599,7 +583,7 @@ builder_base!(DeleteSubscriptions<'a>);
 
 impl<'a> DeleteSubscriptions<'a> {
     /// Construct a new call to the `DeleteSubscriptions` service.
-    pub fn new<T: Transport>(session: &'a Session<T>) -> Self {
+    pub fn new(session: &'a Session) -> Self {
         Self {
             subscription_ids: Vec::new(),
             subscriptions: session.subscription_state(),
@@ -638,10 +622,7 @@ impl<'a> DeleteSubscriptions<'a> {
 impl<'b> UARequest for DeleteSubscriptions<'b> {
     type Out = DeleteSubscriptionsResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a crate::AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -690,7 +671,7 @@ builder_base!(CreateMonitoredItems<'a>);
 
 impl<'a> CreateMonitoredItems<'a> {
     /// Construct a new call to the `CreateMonitoredItems` service.
-    pub fn new<T: Transport>(subscription_id: u32, session: &'a Session<T>) -> Self {
+    pub fn new(subscription_id: u32, session: &'a Session) -> Self {
         Self {
             subscription_id,
             timestamps_to_return: TimestampsToReturn::Neither,
@@ -764,9 +745,9 @@ impl<'a> CreateMonitoredItems<'a> {
 impl<'b> UARequest for CreateMonitoredItems<'b> {
     type Out = CreateMonitoredItemsResponse;
 
-    async fn send<'a, T: Transport>(
+    async fn send<'a>(
         mut self,
-        channel: &'a crate::AsyncSecureChannel<T>,
+        channel: &'a crate::AsyncSecureChannel,
     ) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
@@ -884,7 +865,7 @@ builder_base!(ModifyMonitoredItems<'a>);
 
 impl<'a> ModifyMonitoredItems<'a> {
     /// Construct a new call to the `ModifyMonitoredItems` service.
-    pub fn new<T: Transport>(subscription_id: u32, session: &'a Session<T>) -> Self {
+    pub fn new(subscription_id: u32, session: &'a Session) -> Self {
         Self {
             subscription_id,
             timestamps_to_return: TimestampsToReturn::Neither,
@@ -934,10 +915,7 @@ impl<'a> ModifyMonitoredItems<'a> {
 impl<'b> UARequest for ModifyMonitoredItems<'b> {
     type Out = ModifyMonitoredItemsResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a crate::AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -1036,10 +1014,10 @@ builder_base!(SetMonitoringMode<'a>);
 
 impl<'a> SetMonitoringMode<'a> {
     /// Construct a new call to the `SetMonitoringMode` service.
-    pub fn new<T: Transport>(
+    pub fn new(
         subscription_id: u32,
         monitoring_mode: MonitoringMode,
-        session: &'a Session<T>,
+        session: &'a Session,
     ) -> Self {
         Self {
             subscription_id,
@@ -1085,10 +1063,7 @@ impl<'a> SetMonitoringMode<'a> {
 impl<'b> UARequest for SetMonitoringMode<'b> {
     type Out = SetMonitoringModeResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a crate::AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -1183,11 +1158,7 @@ builder_base!(SetTriggering<'a>);
 
 impl<'a> SetTriggering<'a> {
     /// Construct a new call to the `SetTriggering` service.
-    pub fn new<T: Transport>(
-        subscription_id: u32,
-        triggering_item_id: u32,
-        session: &'a Session<T>,
-    ) -> Self {
+    pub fn new(subscription_id: u32, triggering_item_id: u32, session: &'a Session) -> Self {
         Self {
             subscription_id,
             triggering_item_id,
@@ -1246,10 +1217,7 @@ impl<'a> SetTriggering<'a> {
 impl<'b> UARequest for SetTriggering<'b> {
     type Out = SetTriggeringResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a crate::AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -1362,7 +1330,7 @@ builder_base!(DeleteMonitoredItems<'a>);
 
 impl<'a> DeleteMonitoredItems<'a> {
     /// Construct a new call to the `DeleteMonitoredItems` service.
-    pub fn new<T: Transport>(subscription_id: u32, session: &'a Session<T>) -> Self {
+    pub fn new(subscription_id: u32, session: &'a Session) -> Self {
         Self {
             subscription_id,
             items_to_delete: Vec::new(),
@@ -1404,10 +1372,7 @@ impl<'a> DeleteMonitoredItems<'a> {
 impl<'b> UARequest for DeleteMonitoredItems<'b> {
     type Out = DeleteMonitoredItemsResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a crate::AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -1462,7 +1427,7 @@ impl<'b> UARequest for DeleteMonitoredItems<'b> {
     }
 }
 
-impl<T: Transport> Session<T> {
+impl Session {
     /// Get the internal state of subscriptions registered on the session.
     pub fn subscription_state(&self) -> &Mutex<SubscriptionState> {
         &self.subscription_state

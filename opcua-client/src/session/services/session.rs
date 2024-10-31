@@ -24,7 +24,6 @@ use crate::{
         process_service_result, process_unexpected_response,
         request_builder::{builder_base, builder_error, RequestHeaderBuilder},
     },
-    transport::Transport,
     AsyncSecureChannel, IdentityToken, Session, UARequest,
 };
 
@@ -57,7 +56,7 @@ pub struct CreateSession<'a> {
 builder_base!(CreateSession<'a>);
 
 impl<'a> CreateSession<'a> {
-    pub fn new<T>(session: &'a Session<T>) -> Self {
+    pub fn new(session: &'a Session) -> Self {
         Self {
             endpoint_url: session.session_info.endpoint.endpoint_url.clone(),
             server_uri: UAString::null(),
@@ -150,10 +149,7 @@ impl<'a> CreateSession<'a> {
 impl<'b> UARequest for CreateSession<'b> {
     type Out = CreateSessionResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a crate::AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -229,7 +225,7 @@ pub struct ActivateSession {
 builder_base!(ActivateSession);
 
 impl ActivateSession {
-    pub fn new<T>(session: &Session<T>) -> Self {
+    pub fn new(session: &Session) -> Self {
         Self {
             identity_token: session.session_info.user_identity_token.clone(),
             private_key: {
@@ -396,9 +392,9 @@ impl ActivateSession {
         }
     }
 
-    fn build_request<T>(
+    fn build_request(
         self,
-        channel: &AsyncSecureChannel<T>,
+        channel: &AsyncSecureChannel,
     ) -> Result<ActivateSessionRequest, StatusCode> {
         let secure_channel = trace_read_lock!(channel.secure_channel);
         let (user_identity_token, user_token_signature) =
@@ -455,10 +451,7 @@ impl ActivateSession {
 impl UARequest for ActivateSession {
     type Out = ActivateSessionResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a crate::AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -490,7 +483,7 @@ pub struct CloseSession {
 builder_base!(CloseSession);
 
 impl CloseSession {
-    pub fn new<T>(session: &Session<T>) -> Self {
+    pub fn new(session: &Session) -> Self {
         Self {
             delete_subscriptions: true,
             header: RequestHeaderBuilder::new_from_session(session),
@@ -518,10 +511,7 @@ impl CloseSession {
 impl UARequest for CloseSession {
     type Out = CloseSessionResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -552,7 +542,7 @@ pub struct Cancel {
 builder_base!(Cancel);
 
 impl Cancel {
-    pub fn new<T>(request_to_cancel: IntegerId, session: &Session<T>) -> Self {
+    pub fn new(request_to_cancel: IntegerId, session: &Session) -> Self {
         Self {
             request_handle: request_to_cancel,
             header: RequestHeaderBuilder::new_from_session(session),
@@ -576,10 +566,7 @@ impl Cancel {
 impl UARequest for Cancel {
     type Out = CancelResponse;
 
-    async fn send<'a, T: Transport>(
-        self,
-        channel: &'a AsyncSecureChannel<T>,
-    ) -> Result<Self::Out, StatusCode>
+    async fn send<'a>(self, channel: &'a AsyncSecureChannel) -> Result<Self::Out, StatusCode>
     where
         Self: 'a,
     {
@@ -598,7 +585,7 @@ impl UARequest for Cancel {
     }
 }
 
-impl<T: Transport> Session<T> {
+impl Session {
     /// Sends a [`CreateSessionRequest`] to the server, returning the session id of the created
     /// session. Internally, the session will store the authentication token which is used for requests
     /// subsequent to this call.

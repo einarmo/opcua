@@ -129,7 +129,6 @@ pub use session::{
     SubscriptionCallbacks, UARequest,
 };
 pub use transport::AsyncSecureChannel;
-pub use transport::{Connector, Transport, TransportPollResult};
 
 pub mod services {
     //! This module contains request builders for most OPC-UA services.
