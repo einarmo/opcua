@@ -641,4 +641,8 @@ impl Client {
 
         res
     }
+
+    pub fn certificate_store(&self) -> &Arc<RwLock<CertificateStore>> {
+        &self.certificate_store
+    }
 }

@@ -24,17 +24,17 @@ impl ClientBuilder {
     }
 
     /// Yields a [`Client`] from the values set by the builder. If the builder is not in a valid state
-    /// it will return `None`.
+    /// it will return a list of errors.
     ///
     /// [`Client`]: client/struct.Client.html
-    pub fn client(self) -> Option<Client> {
+    pub fn client(self) -> Result<Client, Vec<String>> {
         if let Err(e) = self.config.validate() {
-            for err in e {
+            for err in &e {
                 error!("{err}");
             }
-            None
+            Err(e)
         } else {
-            Some(Client::new(self.config))
+            Ok(Client::new(self.config))
         }
     }
 
