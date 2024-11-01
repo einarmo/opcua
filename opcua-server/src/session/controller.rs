@@ -7,7 +7,6 @@ use std::{
 use futures::{future::Either, stream::FuturesUnordered, Future, StreamExt};
 use log::{debug, error, trace, warn};
 use opcua_core::{trace_read_lock, trace_write_lock, Message, RequestMessage, ResponseMessage};
-use tokio::net::TcpStream;
 
 use opcua_core::{
     comms::{
@@ -23,13 +22,15 @@ use opcua_types::{
     OpenSecureChannelRequest, OpenSecureChannelResponse, ResponseHeader, SecurityTokenRequestType,
     ServiceFault, StatusCode,
 };
+use tokio_util::sync::CancellationToken;
 
 use crate::{
     authenticator::UserToken,
     info::ServerInfo,
     node_manager::NodeManagers,
     subscriptions::SubscriptionCache,
-    transport::tcp::{Request, TcpTransport, TransportConfig, TransportPollResult},
+    transport::tcp::{Request, TcpTransport, TransportPollResult},
+    transport::Connector,
 };
 
 use super::{
@@ -86,9 +87,74 @@ enum RequestProcessResult {
     Close,
 }
 
+pub struct SessionStarter<T> {
+    connector: T,
+    info: Arc<ServerInfo>,
+    session_manager: Arc<RwLock<SessionManager>>,
+    certificate_store: Arc<RwLock<CertificateStore>>,
+    node_managers: NodeManagers,
+    subscriptions: Arc<SubscriptionCache>,
+}
+
+impl<T: Connector> SessionStarter<T> {
+    pub fn new(
+        connector: T,
+        info: Arc<ServerInfo>,
+        session_manager: Arc<RwLock<SessionManager>>,
+        certificate_store: Arc<RwLock<CertificateStore>>,
+        node_managers: NodeManagers,
+        subscriptions: Arc<SubscriptionCache>,
+    ) -> Self {
+        Self {
+            connector,
+            info,
+            session_manager,
+            certificate_store,
+            node_managers,
+            subscriptions,
+        }
+    }
+
+    pub async fn run(self, mut command: tokio::sync::mpsc::Receiver<ControllerCommand>) {
+        let token = CancellationToken::new();
+        let fut = self.connector.connect(self.info.clone(), token.clone());
+        tokio::pin!(fut);
+        let transport = tokio::select! {
+            cmd = command.recv() => {
+                match cmd {
+                    Some(ControllerCommand::Close) | None => {
+                        token.cancel();
+                        let _ = fut.await;
+                        return;
+                    }
+                }
+            }
+            r = &mut fut => {
+                match r {
+                    Ok(t) => t,
+                    Err(e) => {
+                        log::error!("Connection failed while waiting for channel to be established: {e}");
+                        return;
+                    }
+                }
+            }
+        };
+
+        let controller = SessionController::new(
+            transport,
+            self.session_manager,
+            self.certificate_store,
+            self.info,
+            self.node_managers,
+            self.subscriptions,
+        );
+        controller.run(command).await
+    }
+}
+
 impl SessionController {
     pub fn new(
-        socket: TcpStream,
+        transport: TcpTransport,
         session_manager: Arc<RwLock<SessionManager>>,
         certificate_store: Arc<RwLock<CertificateStore>>,
         info: Arc<ServerInfo>,
@@ -99,18 +165,6 @@ impl SessionController {
             certificate_store.clone(),
             opcua_core::comms::secure_channel::Role::Server,
             info.decoding_options(),
-        );
-        let transport = TcpTransport::new(
-            socket,
-            TransportConfig {
-                send_buffer_size: info.config.limits.send_buffer_size,
-                max_message_size: info.config.limits.max_message_size,
-                max_chunk_count: info.config.limits.max_chunk_count,
-                receive_buffer_size: info.config.limits.receive_buffer_size,
-                hello_timeout: Duration::from_secs(info.config.tcp_config.hello_timeout as u64),
-            },
-            info.decoding_options(),
-            info.clone(),
         );
 
         Self {

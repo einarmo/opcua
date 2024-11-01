@@ -1220,6 +1220,7 @@ dependencies = [
 name = "opcua-simple-client"
 version = "0.13.0"
 dependencies = [
+ "log",
  "opcua",
  "pico-args",
  "tokio",

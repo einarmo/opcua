@@ -25,7 +25,8 @@ use opcua_crypto::CertificateStore;
 
 use crate::{
     node_manager::{DefaultTypeTreeGetter, ServerContext},
-    session::controller::SessionController,
+    session::controller::{ControllerCommand, SessionStarter},
+    transport::tcp::{TcpConnector, TransportConfig},
     ServerStatusWrapper,
 };
 use opcua_types::{DateTime, LocalizedText, ServerState, UAString};
@@ -38,7 +39,7 @@ use super::{
     info::ServerInfo,
     node_manager::{NodeManagers, NodeManagersRef},
     server_handle::ServerHandle,
-    session::{controller::ControllerCommand, manager::SessionManager},
+    session::manager::SessionManager,
     subscriptions::SubscriptionCache,
     ServerCapabilities,
 };
@@ -327,14 +328,21 @@ impl Server {
                     match rs {
                         Ok((socket, addr)) => {
                             info!("Accept new connection from {addr} ({connection_counter})");
-                            let conn = SessionController::new(
-                                socket,
+                            let conn = SessionStarter::new(
+                                TcpConnector::new(socket, TransportConfig {
+                                    send_buffer_size: self.info.config.limits.send_buffer_size,
+                                    max_message_size: self.info.config.limits.max_message_size,
+                                    max_chunk_count: self.info.config.limits.max_chunk_count,
+                                    receive_buffer_size: self.info.config.limits.receive_buffer_size,
+                                    hello_timeout: Duration::from_secs(self.info.config.tcp_config.hello_timeout as u64),
+                                }, self.info.decoding_options()),
+                                self.info.clone(),
                                 self.session_manager.clone(),
                                 self.certificate_store.clone(),
-                                self.info.clone(),
                                 self.node_managers.clone(),
                                 self.subscriptions.clone()
                             );
+
                             let (send, recv) = tokio::sync::mpsc::channel(5);
                             let handle = tokio::spawn(conn.run(recv).map(move |_| connection_counter));
                             self.connections.push(handle);

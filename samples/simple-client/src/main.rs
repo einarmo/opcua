@@ -9,6 +9,7 @@
 //! 3. Subscribe to values and loop forever printing out their values
 use std::{sync::Arc, time::Duration};
 
+use log::warn;
 use opcua::{
     client::{ClientBuilder, DataChangeCallback, IdentityToken, MonitoredItem, Session},
     crypto::SecurityPolicy,
@@ -45,7 +46,7 @@ Usage:
     }
 }
 
-const DEFAULT_URL: &str = "opc.tcp://127.0.0.1:4855";
+const DEFAULT_URL: &str = "opc.tcp://localhost:4855";
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
@@ -91,6 +92,18 @@ async fn main() -> Result<(), ()> {
         );
         let _ = session.disconnect().await;
     }
+
+    // It's a good idea to intercept ctrl-c and gracefully shut down the client
+    // since servers will keep sessions alive for some time after a sudden disconnect.
+    // This way, the session will be properly closed.
+    let session_c = session.clone();
+    tokio::task::spawn(async move {
+        if let Err(e) = tokio::signal::ctrl_c().await {
+            warn!("Failed to register CTRL-C handler: {e}");
+            return;
+        }
+        let _ = session_c.disconnect().await;
+    });
 
     handle.await.unwrap();
 

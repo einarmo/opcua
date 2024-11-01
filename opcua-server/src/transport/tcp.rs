@@ -12,20 +12,24 @@ use opcua_core::{
         message_chunk_info::ChunkInfo,
         secure_channel::SecureChannel,
         tcp_codec::{Message, TcpCodec},
-        tcp_types::{AcknowledgeMessage, ErrorMessage, HelloMessage},
+        tcp_types::{AcknowledgeMessage, ErrorMessage},
     },
     RequestMessage, ResponseMessage,
 };
 
 use crate::info::ServerInfo;
-use opcua_types::{DecodingOptions, EncodingError, ResponseHeader, ServiceFault, StatusCode};
+use opcua_types::{
+    BinaryEncoder, DecodingOptions, EncodingError, ResponseHeader, ServiceFault, StatusCode,
+};
 
 use futures::StreamExt;
 use tokio::{
-    io::{ReadHalf, WriteHalf},
+    io::{AsyncWriteExt, ReadHalf, WriteHalf},
     net::TcpStream,
 };
-use tokio_util::codec::FramedRead;
+use tokio_util::{codec::FramedRead, sync::CancellationToken};
+
+use super::connect::Connector;
 
 /// Transport implementation for opc.tcp.
 pub(crate) struct TcpTransport {
@@ -38,12 +42,9 @@ pub(crate) struct TcpTransport {
     pub(crate) client_protocol_version: u32,
     /// Last decoded sequence number
     last_received_sequence_number: u32,
-    info: Arc<ServerInfo>,
-    receive_buffer_size: usize,
 }
 
 enum TransportState {
-    WaitingForHello(Instant),
     Running,
     Closing,
 }
@@ -70,7 +71,6 @@ pub(crate) enum TransportPollResult {
     OutgoingMessageSent,
     IncomingChunk,
     IncomingMessage(Request),
-    IncomingHello,
     Error(StatusCode),
     RecoverableError(StatusCode, u32, u32),
     Closed,
@@ -86,30 +86,165 @@ fn min_zero_infinite(server: u32, client: u32) -> u32 {
     }
 }
 
-impl TcpTransport {
+pub struct TcpConnector {
+    read: FramedRead<ReadHalf<TcpStream>, TcpCodec>,
+    write: WriteHalf<TcpStream>,
+    deadline: Instant,
+    config: TransportConfig,
+    decoding_options: DecodingOptions,
+}
+
+impl TcpConnector {
     pub fn new(
         stream: TcpStream,
         config: TransportConfig,
         decoding_options: DecodingOptions,
-        info: Arc<ServerInfo>,
     ) -> Self {
         let (read, write) = tokio::io::split(stream);
-        let read = FramedRead::new(read, TcpCodec::new(decoding_options));
+        let read = FramedRead::new(read, TcpCodec::new(decoding_options.clone()));
+        TcpConnector {
+            read,
+            write,
+            deadline: Instant::now() + config.hello_timeout,
+            config,
+            decoding_options,
+        }
+    }
 
+    async fn connect_inner(&mut self, info: Arc<ServerInfo>) -> Result<SendBuffer, ErrorMessage> {
+        let hello = match self.read.next().await {
+            Some(Ok(Message::Hello(hello))) => Ok(hello),
+            Some(Ok(bad_msg)) => Err(ErrorMessage::new(
+                StatusCode::BadCommunicationError,
+                &format!("Expected a hello message, got {:?} instead", bad_msg),
+            )),
+            Some(Err(communication_err)) => Err(ErrorMessage::new(
+                StatusCode::BadCommunicationError,
+                &format!(
+                    "Communication error while waiting for Hello message: {}",
+                    communication_err
+                ),
+            )),
+            None => Err(ErrorMessage::new(
+                StatusCode::BadCommunicationError,
+                "Stream closed",
+            )),
+        }?;
+
+        let mut buffer = SendBuffer::new(
+            self.config.send_buffer_size,
+            self.config.max_message_size,
+            self.config.max_chunk_count,
+        );
+
+        let endpoints = info.endpoints(&hello.endpoint_url, &None);
+
+        if !endpoints.is_some_and(|e| hello.is_endpoint_url_valid(&e)) {
+            return Err(ErrorMessage::new(
+                StatusCode::BadTcpEndpointUrlInvalid,
+                "HELLO endpoint url is invalid",
+            ));
+        }
+        if !hello.is_valid_buffer_sizes() {
+            return Err(ErrorMessage::new(
+                StatusCode::BadCommunicationError,
+                "HELLO buffer sizes are invalid",
+            ));
+        }
+
+        let server_protocol_version = 0;
+        // Validate protocol version
+        if hello.protocol_version > server_protocol_version {
+            return Err(ErrorMessage::new(
+                StatusCode::BadProtocolVersionUnsupported,
+                "Client protocol version is unsupported.",
+            ));
+        }
+
+        let decoding_options = &self.decoding_options;
+
+        // Send acknowledge
+        let acknowledge = AcknowledgeMessage::new(
+            server_protocol_version,
+            (self.config.receive_buffer_size as u32).min(hello.send_buffer_size),
+            (buffer.send_buffer_size as u32).min(hello.receive_buffer_size),
+            min_zero_infinite(
+                decoding_options.max_message_size as u32,
+                hello.max_message_size,
+            ),
+            min_zero_infinite(
+                decoding_options.max_chunk_count as u32,
+                hello.max_chunk_count,
+            ),
+        );
+        buffer.revise(
+            acknowledge.send_buffer_size as usize,
+            acknowledge.max_message_size as usize,
+            acknowledge.max_chunk_count as usize,
+        );
+
+        let mut buf = Vec::with_capacity(acknowledge.byte_len());
+        acknowledge
+            .encode(&mut buf)
+            .map_err(|e| ErrorMessage::new(e.into(), "Failed to encode ack"))?;
+
+        self.write.write_all(&buf).await.map_err(|e| {
+            ErrorMessage::new(
+                StatusCode::BadCommunicationError,
+                &format!("Failed to send ack: {e}"),
+            )
+        })?;
+
+        Ok(buffer)
+    }
+}
+
+impl Connector for TcpConnector {
+    async fn connect(
+        mut self,
+        info: Arc<ServerInfo>,
+        token: CancellationToken,
+    ) -> Result<TcpTransport, StatusCode> {
+        let err = tokio::select! {
+            _ = tokio::time::sleep_until(self.deadline.into()) => {
+                ErrorMessage::new(StatusCode::BadTimeout, "Timeout waiting for HELLO")
+            }
+            _ = token.cancelled() => {
+                ErrorMessage::new(StatusCode::BadServerHalted, "Server closed")
+            }
+            r = self.connect_inner(info) => {
+                match r {
+                    Ok(r) => return Ok(TcpTransport::new(self.read, self.write, r)),
+                    Err(e) => e,
+                }
+            }
+        };
+
+        // We want to send an error if connection failed for whatever reason, but
+        // there's a good chance the channel is closed, so just ignore any errors.
+        let mut buf = Vec::with_capacity(err.byte_len());
+        if err.encode(&mut buf).is_ok() {
+            let _ = self.write.write_all(&buf).await;
+        }
+
+        Err(StatusCode::from(err.error))
+    }
+}
+
+impl TcpTransport {
+    pub fn new(
+        read: FramedRead<ReadHalf<TcpStream>, TcpCodec>,
+        write: WriteHalf<TcpStream>,
+        send_buffer: SendBuffer,
+    ) -> Self {
         Self {
             read,
             write,
-            send_buffer: SendBuffer::new(
-                config.send_buffer_size,
-                config.max_message_size,
-                config.max_chunk_count,
-            ),
-            state: TransportState::WaitingForHello(Instant::now() + config.hello_timeout),
+            state: TransportState::Running,
             pending_chunks: Vec::new(),
             last_received_sequence_number: 0,
             client_protocol_version: 0,
-            info,
-            receive_buffer_size: config.receive_buffer_size,
+            send_buffer,
         }
     }
 
@@ -156,83 +291,7 @@ impl TcpTransport {
         }
     }
 
-    fn process_hello(
-        &mut self,
-        channel: &mut SecureChannel,
-        hello: HelloMessage,
-    ) -> Result<(), StatusCode> {
-        let endpoints = self.info.endpoints(&hello.endpoint_url, &None);
-
-        if !endpoints.is_some_and(|e| hello.is_endpoint_url_valid(&e)) {
-            error!("HELLO endpoint url is invalid");
-            return Err(StatusCode::BadTcpEndpointUrlInvalid);
-        }
-        if !hello.is_valid_buffer_sizes() {
-            error!("HELLO buffer sizes are invalid");
-            return Err(StatusCode::BadCommunicationError);
-        }
-
-        let server_protocol_version = 0;
-        // Validate protocol version
-        if hello.protocol_version > server_protocol_version {
-            return Err(StatusCode::BadProtocolVersionUnsupported);
-        }
-
-        self.client_protocol_version = hello.protocol_version;
-
-        let decoding_options = channel.decoding_options();
-
-        // Send acknowledge
-        let acknowledge = AcknowledgeMessage::new(
-            server_protocol_version,
-            (self.receive_buffer_size as u32).min(hello.send_buffer_size),
-            (self.send_buffer.send_buffer_size as u32).min(hello.receive_buffer_size),
-            min_zero_infinite(
-                decoding_options.max_message_size as u32,
-                hello.max_message_size,
-            ),
-            min_zero_infinite(
-                decoding_options.max_chunk_count as u32,
-                hello.max_chunk_count,
-            ),
-        );
-        self.send_buffer.revise(
-            acknowledge.send_buffer_size as usize,
-            acknowledge.max_message_size as usize,
-            acknowledge.max_chunk_count as usize,
-        );
-
-        self.send_buffer.write_ack(acknowledge);
-
-        self.state = TransportState::Running;
-
-        Ok(())
-    }
-
     pub async fn poll(&mut self, channel: &mut SecureChannel) -> TransportPollResult {
-        // If we're waiting for hello, just do that. We're not sending anything until
-        // we get it.
-        if let TransportState::WaitingForHello(deadline) = &self.state {
-            return tokio::select! {
-                _ = tokio::time::sleep_until((*deadline).into()) => {
-                    TransportPollResult::Error(StatusCode::BadTimeout)
-                }
-                r = self.wait_for_hello() => {
-                    match r {
-                        Ok(h) => {
-                            match self.process_hello(channel, h) {
-                                Ok(()) => TransportPollResult::IncomingHello,
-                                Err(e) => TransportPollResult::Error(e)
-                            }
-                        }
-                        Err(e) => {
-                            TransportPollResult::Error(e)
-                        }
-                    }
-                }
-            };
-        }
-
         // Either we've got something in the send buffer, which we can send,
         // or we're waiting for more outgoing messages.
         // We won't wait for outgoing messages while sending, since that
@@ -268,24 +327,6 @@ impl TcpTransport {
             }
             let incoming = self.read.next().await;
             self.handle_incoming_message(incoming, channel)
-        }
-    }
-
-    async fn wait_for_hello(&mut self) -> Result<HelloMessage, StatusCode> {
-        match self.read.next().await {
-            Some(Ok(Message::Hello(hello))) => Ok(hello),
-            Some(Ok(bad_msg)) => {
-                log::error!("Expected a hello message, got {:?} instead", bad_msg);
-                Err(StatusCode::BadCommunicationError)
-            }
-            Some(Err(communication_err)) => {
-                error!(
-                    "Communication error while waiting for Hello message: {}",
-                    communication_err
-                );
-                Err(StatusCode::BadCommunicationError)
-            }
-            None => Err(StatusCode::BadConnectionClosed),
         }
     }
 

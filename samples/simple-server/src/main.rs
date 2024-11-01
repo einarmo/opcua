@@ -9,6 +9,7 @@ use std::sync::atomic::{AtomicBool, AtomicI32, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
+use log::warn;
 use opcua::server::address_space::Variable;
 use opcua::server::node_manager::memory::{
     simple_node_manager, InMemoryNodeManager, NamespaceMetadata, SimpleNodeManager,
@@ -54,6 +55,17 @@ async fn main() {
 
     // Add some variables of our own
     add_example_variables(ns, node_manager, handle.subscriptions().clone());
+
+    // If you don't register a ctrl-c handler, the server will close without
+    // informing clients.
+    let handle_c = handle.clone();
+    tokio::spawn(async move {
+        if let Err(e) = tokio::signal::ctrl_c().await {
+            warn!("Failed to register CTRL-C handler: {e}");
+            return;
+        }
+        handle_c.cancel();
+    });
 
     // Run the server. This does not ordinarily exit so you must Ctrl+C to terminate
     server.run().await.unwrap();
