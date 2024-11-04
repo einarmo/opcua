@@ -1,6 +1,6 @@
 use opcua_types::{
-    AttributeId, DataValue, DateTime, DiagnosticBits, DiagnosticInfo, NodeId, NumericRange,
-    QualifiedName, ReadValueId, StatusCode, WriteValue,
+    AttributeId, DataEncoding, DataValue, DateTime, DiagnosticBits, DiagnosticInfo, NodeId,
+    NumericRange, ReadValueId, StatusCode, WriteValue,
 };
 
 use super::IntoResult;
@@ -11,7 +11,7 @@ pub struct ParsedReadValueId {
     pub node_id: NodeId,
     pub attribute_id: AttributeId,
     pub index_range: NumericRange,
-    pub data_encoding: QualifiedName,
+    pub data_encoding: DataEncoding,
 }
 
 impl ParsedReadValueId {
@@ -29,8 +29,7 @@ impl ParsedReadValueId {
             node_id: val.node_id,
             attribute_id,
             index_range,
-            // TODO: Do something here? Do we actually care about supporting custom data encodings?
-            data_encoding: val.data_encoding,
+            data_encoding: DataEncoding::from_browse_name(val.data_encoding)?,
         })
     }
 
@@ -40,7 +39,7 @@ impl ParsedReadValueId {
             node_id: NodeId::null(),
             attribute_id: AttributeId::NodeId,
             index_range: NumericRange::None,
-            data_encoding: QualifiedName::null(),
+            data_encoding: DataEncoding::Binary,
         }
     }
 

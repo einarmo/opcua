@@ -17,10 +17,10 @@ pub use subscription::{MonitoredItemHandle, Subscription, SubscriptionState};
 use opcua_core::sync::{Mutex, RwLock};
 
 use opcua_types::{
-    AttributeId, CreateSubscriptionRequest, CreateSubscriptionResponse, DataValue, DateTimeUtc,
-    MessageSecurityMode, ModifySubscriptionRequest, ModifySubscriptionResponse,
+    AttributeId, CreateSubscriptionRequest, CreateSubscriptionResponse, DataEncoding, DataValue,
+    DateTimeUtc, MessageSecurityMode, ModifySubscriptionRequest, ModifySubscriptionResponse,
     MonitoredItemCreateResult, MonitoredItemModifyRequest, MonitoringMode, NodeId,
-    NotificationMessage, NumericRange, ObjectId, PublishRequest, QualifiedName, RepublishRequest,
+    NotificationMessage, NumericRange, ObjectId, PublishRequest, RepublishRequest,
     RepublishResponse, ResponseHeader, SetPublishingModeRequest, SetPublishingModeResponse,
     StatusCode, TimestampsToReturn, TransferResult, TransferSubscriptionsRequest,
     TransferSubscriptionsResponse,
@@ -54,7 +54,7 @@ impl<'a> Equivalent<MonitoredItemKey> for MonitoredItemKeyRef<'a> {
 
 struct MonitoredItemEntry {
     enabled: bool,
-    data_encoding: QualifiedName,
+    data_encoding: DataEncoding,
     index_range: NumericRange,
 }
 
@@ -338,7 +338,7 @@ impl SubscriptionCache {
     pub fn maybe_notify<'a>(
         &self,
         items: impl Iterator<Item = (&'a NodeId, AttributeId)>,
-        sample: impl Fn(&NodeId, AttributeId, &NumericRange, &QualifiedName) -> Option<DataValue>,
+        sample: impl Fn(&NodeId, AttributeId, &NumericRange, &DataEncoding) -> Option<DataValue>,
     ) {
         let lck = trace_read_lock!(self.inner);
         let mut by_subscription: HashMap<u32, Vec<_>> = HashMap::new();

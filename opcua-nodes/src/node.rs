@@ -3,8 +3,8 @@
 // Copyright (C) 2017-2024 Adam Lock
 
 use opcua_types::{
-    service_types::NodeClass, status_code::StatusCode, AttributeId, DataValue, LocalizedText,
-    NodeId, NumericRange, QualifiedName, TimestampsToReturn, Variant, WriteMask,
+    service_types::NodeClass, status_code::StatusCode, AttributeId, DataEncoding, DataValue,
+    LocalizedText, NodeId, NumericRange, QualifiedName, TimestampsToReturn, Variant, WriteMask,
 };
 
 use super::{DataType, Method, Object, ObjectType, ReferenceType, Variable, VariableType, View};
@@ -121,7 +121,7 @@ pub trait Node: NodeBase {
         timestamps_to_return: TimestampsToReturn,
         attribute_id: AttributeId,
         index_range: &NumericRange,
-        data_encoding: &QualifiedName,
+        data_encoding: &DataEncoding,
         max_age: f64,
     ) -> Option<DataValue>;
 
@@ -131,7 +131,7 @@ pub trait Node: NodeBase {
         timestamps_to_return: TimestampsToReturn,
         attribute_id: AttributeId,
         index_range: &NumericRange,
-        data_encoding: &QualifiedName,
+        data_encoding: &DataEncoding,
     ) -> Option<DataValue> {
         self.get_attribute_max_age(
             timestamps_to_return,

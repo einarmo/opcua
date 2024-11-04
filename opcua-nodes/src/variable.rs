@@ -9,8 +9,8 @@ use std::convert::{Into, TryFrom};
 use log::error;
 use opcua_types::service_types::VariableAttributes;
 use opcua_types::{
-    AttributeId, AttributesMask, DataTypeId, DataValue, DateTime, NumericRange, StatusCode,
-    TimestampsToReturn, Variant,
+    AttributeId, AttributesMask, DataEncoding, DataTypeId, DataValue, DateTime, NumericRange,
+    StatusCode, TimestampsToReturn, Variant,
 };
 
 use crate::FromAttributesError;
@@ -188,7 +188,7 @@ impl Node for Variable {
         timestamps_to_return: TimestampsToReturn,
         attribute_id: AttributeId,
         index_range: &NumericRange,
-        data_encoding: &QualifiedName,
+        data_encoding: &DataEncoding,
         max_age: f64,
     ) -> Option<DataValue> {
         /* TODO for Variables derived from the Structure data type, the AttributeId::Value should check
@@ -475,7 +475,7 @@ impl Variable {
         &self,
         _timestamps_to_return: TimestampsToReturn,
         index_range: &NumericRange,
-        _data_encoding: &QualifiedName,
+        _data_encoding: &DataEncoding,
         max_age: f64,
     ) -> DataValue {
         /* if let Some(ref value_getter) = self.value_getter {

@@ -89,34 +89,30 @@ pub fn create_signature_data(
     contained_cert: &ByteString,
     nonce: &ByteString,
 ) -> Result<SignatureData, StatusCode> {
-    // TODO this function should be refactored to return an error if the contained cert or nonce is incorrect, not a blank signature. That
-    //  very much depends on reading the spec to see what should happen if its not possible to create a signature, e.g. because
-    //  policy is None.
+    let (algorithm, signature) = match security_policy {
+        SecurityPolicy::Unknown => return Err(StatusCode::BadSecurityPolicyRejected),
+        SecurityPolicy::None => (UAString::null(), ByteString::null()),
+        security_policy => {
+            if contained_cert.is_null() {
+                error!("Null certificate passed to create_signature_data");
+                return Err(StatusCode::BadCertificateInvalid);
+            }
+            if nonce.is_null() {
+                error!("Null nonce passed to create_signature_data");
+                return Err(StatusCode::BadNonceInvalid);
+            }
 
-    let (algorithm, signature) = if contained_cert.is_null() || nonce.is_null() {
-        (UAString::null(), ByteString::null())
-    } else {
-        let data = concat_data_and_nonce(contained_cert.as_ref(), nonce.as_ref());
-        // Sign the bytes and return the algorithm, signature
-        match security_policy {
-            SecurityPolicy::None => (UAString::null(), ByteString::null()),
-            SecurityPolicy::Unknown => {
-                error!(
-                    "An unknown security policy was passed to create_signature_data and rejected"
-                );
-                (UAString::null(), ByteString::null())
-            }
-            security_policy => {
-                let signing_key_size = signing_key.size();
-                let mut signature = vec![0u8; signing_key_size];
-                let _ = security_policy.asymmetric_sign(signing_key, &data, &mut signature)?;
-                (
-                    UAString::from(security_policy.asymmetric_signature_algorithm()),
-                    ByteString::from(&signature),
-                )
-            }
+            let data = concat_data_and_nonce(contained_cert.as_ref(), nonce.as_ref());
+            let signing_key_size = signing_key.size();
+            let mut signature = vec![0u8; signing_key_size];
+            let _ = security_policy.asymmetric_sign(signing_key, &data, &mut signature)?;
+            (
+                UAString::from(security_policy.asymmetric_signature_algorithm()),
+                ByteString::from(&signature),
+            )
         }
     };
+
     let signature_data = SignatureData {
         algorithm,
         signature,

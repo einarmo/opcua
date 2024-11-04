@@ -7,8 +7,9 @@
 use log::error;
 use opcua_types::{
     service_types::{Argument, MethodAttributes},
-    AttributeId, AttributesMask, DataTypeId, DataValue, ExtensionObject, NumericRange, ObjectId,
-    StatusCode, TimestampsToReturn, VariableTypeId, Variant, VariantScalarTypeId,
+    AttributeId, AttributesMask, DataEncoding, DataTypeId, DataValue, ExtensionObject,
+    NumericRange, ObjectId, StatusCode, TimestampsToReturn, VariableTypeId, Variant,
+    VariantScalarTypeId,
 };
 
 use crate::{FromAttributesError, NodeInsertTarget};
@@ -122,7 +123,7 @@ impl Node for Method {
         timestamps_to_return: TimestampsToReturn,
         attribute_id: AttributeId,
         index_range: &NumericRange,
-        data_encoding: &QualifiedName,
+        data_encoding: &DataEncoding,
         max_age: f64,
     ) -> Option<DataValue> {
         match attribute_id {
@@ -246,8 +247,6 @@ impl Method {
     pub fn user_executable(&self) -> bool {
         // User executable cannot be true unless executable is true
         self.executable && self.user_executable
-        // TODO this should check the current session state to determine if the user
-        //  has permissions to execute this method
     }
 
     pub fn set_user_executable(&mut self, user_executable: bool) {

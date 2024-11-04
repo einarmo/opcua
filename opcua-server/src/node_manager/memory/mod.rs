@@ -28,8 +28,8 @@ use crate::{
 };
 use opcua_core::sync::RwLock;
 use opcua_types::{
-    argument::Argument, AttributeId, BrowseDescriptionResultMask, BrowseDirection, DataValue,
-    DateTime, ExpandedNodeId, MonitoringMode, NodeClass, NodeId, NumericRange, QualifiedName,
+    argument::Argument, AttributeId, BrowseDescriptionResultMask, BrowseDirection, DataEncoding,
+    DataValue, DateTime, ExpandedNodeId, MonitoringMode, NodeClass, NodeId, NumericRange,
     ReadAnnotationDataDetails, ReadAtTimeDetails, ReadEventDetails, ReadProcessedDetails,
     ReadRawModifiedDetails, ReferenceDescription, ReferenceTypeId, StatusCode, TimestampsToReturn,
     Variant,
@@ -577,7 +577,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
                 .value(
                     TimestampsToReturn::Neither,
                     &NumericRange::None,
-                    &QualifiedName::null(),
+                    &DataEncoding::Binary,
                     0.0,
                 )
                 .value

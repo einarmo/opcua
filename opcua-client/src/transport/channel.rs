@@ -35,6 +35,7 @@ pub struct AsyncSecureChannel {
     state: SecureChannelState,
     issue_channel_lock: tokio::sync::Mutex<()>,
     connector: Box<dyn Connector>,
+    channel_lifetime: u32,
 
     request_send: ArcSwapOption<RequestSend>,
 }
@@ -91,6 +92,7 @@ impl AsyncSecureChannel {
         auth_token: Arc<ArcSwap<NodeId>>,
         transport_config: TransportConfiguration,
         connector: Box<dyn Connector>,
+        channel_lifetime: u32,
     ) -> Self {
         let secure_channel = Arc::new(RwLock::new(SecureChannel::new(
             certificate_store.clone(),
@@ -108,6 +110,7 @@ impl AsyncSecureChannel {
             session_retry_policy,
             request_send: Default::default(),
             connector,
+            channel_lifetime,
         }
     }
 
@@ -140,6 +143,7 @@ impl AsyncSecureChannel {
             if should_renew_security_token {
                 let request = self.state.begin_issue_or_renew_secure_channel(
                     SecurityTokenRequestType::Renew,
+                    self.channel_lifetime,
                     Duration::from_secs(30),
                     send.clone(),
                 );
@@ -184,6 +188,7 @@ impl AsyncSecureChannel {
 
         let request = self.state.begin_issue_or_renew_secure_channel(
             SecurityTokenRequestType::Issue,
+            self.channel_lifetime,
             Duration::from_secs(30),
             send.clone(),
         );

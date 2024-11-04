@@ -15,7 +15,28 @@ use byteorder::{ByteOrder, LittleEndian, WriteBytesExt};
 use chrono::Duration;
 use log::{error, trace, warn};
 
-use crate::{constants, status_code::StatusCode};
+use crate::{constants, status_code::StatusCode, QualifiedName};
+
+#[derive(Debug, Clone, Default)]
+pub enum DataEncoding {
+    #[default]
+    Binary,
+    XML,
+    JSON,
+    Other(QualifiedName),
+}
+
+impl DataEncoding {
+    pub fn from_browse_name(name: QualifiedName) -> std::result::Result<Self, StatusCode> {
+        match name.name.as_ref() {
+            "Default Binary" | "" => Ok(Self::Binary),
+            "Default XML" => Ok(Self::XML),
+            "Default JSON" => Ok(Self::JSON),
+            _ if name.namespace_index != 0 => Ok(Self::Other(name)),
+            _ => Err(StatusCode::BadDataEncodingInvalid),
+        }
+    }
+}
 
 pub type EncodingResult<T> = std::result::Result<T, EncodingError>;
 

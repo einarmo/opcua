@@ -158,9 +158,6 @@ impl SessionManager {
 
         self.notify.notify_waiters();
 
-        // TODO: Register session in core namespace
-        // Note: This will instead be handled by the diagnostic node manager on the fly.
-
         Ok(CreateSessionResponse {
             response_header: ResponseHeader::new_good(&request.request_header),
             session_id,

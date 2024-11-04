@@ -101,6 +101,7 @@ impl Session {
                     max_chunk_count: config.decoding_options.max_chunk_count,
                 },
                 connector,
+                config.channel_lifetime,
             ),
             internal_session_id: AtomicU32::new(NEXT_SESSION_ID.fetch_add(1, Ordering::Relaxed)),
             state_watch_rx,

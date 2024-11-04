@@ -25,13 +25,14 @@ use opcua::{
     sync::{Mutex, RwLock},
     types::{
         AttributeId, DataValue, DateTime, ExpandedNodeId, MonitoringMode, NodeClass, NodeId,
-        PerformUpdateType, QualifiedName, ReadRawModifiedDetails, ReferenceTypeId, StatusCode,
-        TimestampsToReturn, Variant,
+        PerformUpdateType, ReadRawModifiedDetails, ReferenceTypeId, StatusCode, TimestampsToReturn,
+        Variant,
     },
 };
 use opcua_core::{trace_read_lock, trace_write_lock};
 use opcua_nodes::{DefaultTypeTree, TypeTree, TypeTreeNode};
 use opcua_server::address_space::add_namespaces;
+use opcua_types::DataEncoding;
 
 #[allow(unused)]
 pub type TestNodeManager = InMemoryNodeManager<TestNodeManagerImpl>;
@@ -353,7 +354,7 @@ impl InMemoryNodeManagerImpl for TestNodeManagerImpl {
                     values.values.push(var.value(
                         TimestampsToReturn::Both,
                         &opcua::types::NumericRange::None,
-                        &QualifiedName::null(),
+                        &DataEncoding::Binary,
                         0.0,
                     ));
                 }
