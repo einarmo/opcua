@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for DecimalDataType {
         opcua::types::ObjectId::DecimalDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for DecimalDataType {
+impl opcua::types::BinaryEncodable for DecimalDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.scale.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for DecimalDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let scale = <i16 as opcua::types::BinaryEncoder>::decode(
+        let scale = <i16 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let value = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let value = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

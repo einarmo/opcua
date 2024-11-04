@@ -19,7 +19,7 @@ use opcua_core::{
 
 use crate::info::ServerInfo;
 use opcua_types::{
-    BinaryEncoder, DecodingOptions, EncodingError, ResponseHeader, ServiceFault, StatusCode,
+    BinaryEncodable, DecodingOptions, EncodingError, ResponseHeader, ServiceFault, StatusCode,
 };
 
 use futures::StreamExt;

@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for SamplingIntervalDiagnosticsDataType {
         opcua::types::ObjectId::SamplingIntervalDiagnosticsDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for SamplingIntervalDiagnosticsDataType {
+impl opcua::types::BinaryEncodable for SamplingIntervalDiagnosticsDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.sampling_interval.byte_len();
@@ -55,19 +55,19 @@ impl opcua::types::BinaryEncoder for SamplingIntervalDiagnosticsDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let sampling_interval = <f64 as opcua::types::BinaryEncoder>::decode(
+        let sampling_interval = <f64 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let monitored_item_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let monitored_item_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let max_monitored_item_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let max_monitored_item_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let disabled_monitored_item_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let disabled_monitored_item_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

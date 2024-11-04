@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for GetEndpointsResponse {
         opcua::types::ObjectId::GetEndpointsResponse_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for GetEndpointsResponse {
+impl opcua::types::BinaryEncodable for GetEndpointsResponse {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.response_header.byte_len();
@@ -49,14 +49,14 @@ impl opcua::types::BinaryEncoder for GetEndpointsResponse {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncoder>::decode(
+        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
         let endpoints = <Option<
             Vec<super::endpoint_description::EndpointDescription>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
             .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self { response_header, endpoints })
     }

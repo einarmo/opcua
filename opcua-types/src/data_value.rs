@@ -59,7 +59,7 @@ pub struct DataValue {
     pub server_picoseconds: Option<u16>,
 }
 
-impl BinaryEncoder for DataValue {
+impl BinaryEncodable for DataValue {
     fn byte_len(&self) -> usize {
         let mut size = 1;
         let encoding_mask = self.encoding_mask();

@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for BrokerDataSetReaderTransportDataType {
         opcua::types::ObjectId::BrokerDataSetReaderTransportDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for BrokerDataSetReaderTransportDataType {
+impl opcua::types::BinaryEncodable for BrokerDataSetReaderTransportDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.queue_name.byte_len();
@@ -57,23 +57,23 @@ impl opcua::types::BinaryEncoder for BrokerDataSetReaderTransportDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let queue_name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let queue_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let resource_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let resource_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let authentication_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let authentication_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let requested_delivery_guarantee = <super::enums::BrokerTransportQualityOfService as opcua::types::BinaryEncoder>::decode(
+        let requested_delivery_guarantee = <super::enums::BrokerTransportQualityOfService as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let meta_data_queue_name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let meta_data_queue_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

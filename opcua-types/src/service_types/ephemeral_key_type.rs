@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for EphemeralKeyType {
         opcua::types::ObjectId::EphemeralKeyType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for EphemeralKeyType {
+impl opcua::types::BinaryEncodable for EphemeralKeyType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.public_key.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for EphemeralKeyType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let public_key = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let public_key = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let signature = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let signature = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for PublishedDataItemsDataType {
         opcua::types::ObjectId::PublishedDataItemsDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for PublishedDataItemsDataType {
+impl opcua::types::BinaryEncodable for PublishedDataItemsDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.published_data.byte_len();
@@ -50,7 +50,7 @@ impl opcua::types::BinaryEncoder for PublishedDataItemsDataType {
     ) -> opcua::types::EncodingResult<Self> {
         let published_data = <Option<
             Vec<super::published_variable_data_type::PublishedVariableDataType>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self { published_data })
     }
 }

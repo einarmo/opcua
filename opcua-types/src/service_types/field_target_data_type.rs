@@ -31,7 +31,7 @@ impl opcua::types::MessageInfo for FieldTargetDataType {
         opcua::types::ObjectId::FieldTargetDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for FieldTargetDataType {
+impl opcua::types::BinaryEncodable for FieldTargetDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.data_set_field_id.byte_len();
@@ -63,31 +63,31 @@ impl opcua::types::BinaryEncoder for FieldTargetDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let data_set_field_id = <opcua::types::guid::Guid as opcua::types::BinaryEncoder>::decode(
+        let data_set_field_id = <opcua::types::guid::Guid as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let receiver_index_range = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let receiver_index_range = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let target_node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let target_node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let attribute_id = <u32 as opcua::types::BinaryEncoder>::decode(
+        let attribute_id = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let write_index_range = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let write_index_range = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let override_value_handling = <super::enums::OverrideValueHandling as opcua::types::BinaryEncoder>::decode(
+        let override_value_handling = <super::enums::OverrideValueHandling as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let override_value = <opcua::types::variant::Variant as opcua::types::BinaryEncoder>::decode(
+        let override_value = <opcua::types::variant::Variant as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

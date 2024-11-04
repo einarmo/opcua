@@ -309,7 +309,7 @@ mod json {
     }
 }
 
-impl BinaryEncoder for NodeId {
+impl BinaryEncodable for NodeId {
     fn byte_len(&self) -> usize {
         // Type determines the byte code
         let size: usize = match self.identifier {

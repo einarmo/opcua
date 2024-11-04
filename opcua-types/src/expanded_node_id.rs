@@ -206,7 +206,7 @@ mod json {
     }
 }
 
-impl BinaryEncoder for ExpandedNodeId {
+impl BinaryEncodable for ExpandedNodeId {
     fn byte_len(&self) -> usize {
         let mut size = self.node_id.byte_len();
         if !self.namespace_uri.is_null() {

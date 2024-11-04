@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for Annotation {
         opcua::types::ObjectId::Annotation_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for Annotation {
+impl opcua::types::BinaryEncodable for Annotation {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.message.byte_len();
@@ -52,15 +52,15 @@ impl opcua::types::BinaryEncoder for Annotation {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let message = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let message = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let user_name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let user_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let annotation_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncoder>::decode(
+        let annotation_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

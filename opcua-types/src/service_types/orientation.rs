@@ -24,7 +24,7 @@ impl opcua::types::MessageInfo for Orientation {
         opcua::types::ObjectId::Orientation_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for Orientation {
+impl opcua::types::BinaryEncodable for Orientation {
     fn byte_len(&self) -> usize {
         0usize
     }

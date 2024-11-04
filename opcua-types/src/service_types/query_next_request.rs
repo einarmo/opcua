@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for QueryNextRequest {
         opcua::types::ObjectId::QueryNextRequest_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for QueryNextRequest {
+impl opcua::types::BinaryEncodable for QueryNextRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -52,17 +52,17 @@ impl opcua::types::BinaryEncoder for QueryNextRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncoder>::decode(
+        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
-        let release_continuation_point = <bool as opcua::types::BinaryEncoder>::decode(
+        let release_continuation_point = <bool as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let continuation_point = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let continuation_point = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )

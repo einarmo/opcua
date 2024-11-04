@@ -26,7 +26,7 @@ impl opcua::types::MessageInfo for RegisterServerResponse {
         opcua::types::ObjectId::RegisterServerResponse_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for RegisterServerResponse {
+impl opcua::types::BinaryEncodable for RegisterServerResponse {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.response_header.byte_len();
@@ -46,7 +46,7 @@ impl opcua::types::BinaryEncoder for RegisterServerResponse {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncoder>::decode(
+        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

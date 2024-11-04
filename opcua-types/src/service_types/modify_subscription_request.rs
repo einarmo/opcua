@@ -32,7 +32,7 @@ impl opcua::types::MessageInfo for ModifySubscriptionRequest {
         opcua::types::ObjectId::ModifySubscriptionRequest_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ModifySubscriptionRequest {
+impl opcua::types::BinaryEncodable for ModifySubscriptionRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -64,37 +64,37 @@ impl opcua::types::BinaryEncoder for ModifySubscriptionRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncoder>::decode(
+        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
-        let subscription_id = <u32 as opcua::types::BinaryEncoder>::decode(
+        let subscription_id = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let requested_publishing_interval = <f64 as opcua::types::BinaryEncoder>::decode(
+        let requested_publishing_interval = <f64 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let requested_lifetime_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let requested_lifetime_count = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let requested_max_keep_alive_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let requested_max_keep_alive_count = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let max_notifications_per_publish = <u32 as opcua::types::BinaryEncoder>::decode(
+        let max_notifications_per_publish = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let priority = <u8 as opcua::types::BinaryEncoder>::decode(
+        let priority = <u8 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )

@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for NetworkAddressUrlDataType {
         opcua::types::ObjectId::NetworkAddressUrlDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for NetworkAddressUrlDataType {
+impl opcua::types::BinaryEncodable for NetworkAddressUrlDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.network_interface.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for NetworkAddressUrlDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let network_interface = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let network_interface = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let url = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let url = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

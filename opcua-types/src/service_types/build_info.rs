@@ -31,7 +31,7 @@ impl opcua::types::MessageInfo for BuildInfo {
         opcua::types::ObjectId::BuildInfo_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for BuildInfo {
+impl opcua::types::BinaryEncodable for BuildInfo {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.product_uri.byte_len();
@@ -61,27 +61,27 @@ impl opcua::types::BinaryEncoder for BuildInfo {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let product_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let product_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let manufacturer_name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let manufacturer_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let product_name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let product_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let software_version = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let software_version = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let build_number = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let build_number = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let build_date = <opcua::types::date_time::DateTime as opcua::types::BinaryEncoder>::decode(
+        let build_date = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

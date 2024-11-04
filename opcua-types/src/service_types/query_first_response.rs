@@ -31,7 +31,7 @@ impl opcua::types::MessageInfo for QueryFirstResponse {
         opcua::types::ObjectId::QueryFirstResponse_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for QueryFirstResponse {
+impl opcua::types::BinaryEncodable for QueryFirstResponse {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.response_header.byte_len();
@@ -61,29 +61,29 @@ impl opcua::types::BinaryEncoder for QueryFirstResponse {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncoder>::decode(
+        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
         let query_data_sets = <Option<
             Vec<super::query_data_set::QueryDataSet>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let continuation_point = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let continuation_point = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
         let parsing_results = <Option<
             Vec<super::parsing_result::ParsingResult>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
             .map_err(|e| e.with_request_handle(__request_handle))?;
         let diagnostic_infos = <Option<
             Vec<opcua::types::diagnostic_info::DiagnosticInfo>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let filter_result = <super::content_filter_result::ContentFilterResult as opcua::types::BinaryEncoder>::decode(
+        let filter_result = <super::content_filter_result::ContentFilterResult as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )

@@ -31,7 +31,7 @@ impl opcua::types::MessageInfo for ReferenceDescription {
         opcua::types::ObjectId::ReferenceDescription_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ReferenceDescription {
+impl opcua::types::BinaryEncodable for ReferenceDescription {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.reference_type_id.byte_len();
@@ -63,31 +63,31 @@ impl opcua::types::BinaryEncoder for ReferenceDescription {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let reference_type_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let reference_type_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let is_forward = <bool as opcua::types::BinaryEncoder>::decode(
+        let is_forward = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let node_id = <opcua::types::expanded_node_id::ExpandedNodeId as opcua::types::BinaryEncoder>::decode(
+        let node_id = <opcua::types::expanded_node_id::ExpandedNodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let browse_name = <opcua::types::qualified_name::QualifiedName as opcua::types::BinaryEncoder>::decode(
+        let browse_name = <opcua::types::qualified_name::QualifiedName as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let display_name = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncoder>::decode(
+        let display_name = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let node_class = <super::enums::NodeClass as opcua::types::BinaryEncoder>::decode(
+        let node_class = <super::enums::NodeClass as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let type_definition = <opcua::types::expanded_node_id::ExpandedNodeId as opcua::types::BinaryEncoder>::decode(
+        let type_definition = <opcua::types::expanded_node_id::ExpandedNodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

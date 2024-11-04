@@ -26,7 +26,7 @@ pub struct Argument {
     pub description: LocalizedText,
 }
 
-impl BinaryEncoder for Argument {
+impl BinaryEncodable for Argument {
     fn byte_len(&self) -> usize {
         let mut size = 0;
         size += self.name.byte_len();

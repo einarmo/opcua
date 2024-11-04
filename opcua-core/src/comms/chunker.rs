@@ -17,7 +17,7 @@ use crate::{
 use log::{debug, error, trace};
 use opcua_crypto::SecurityPolicy;
 use opcua_types::{
-    encoding::BinaryEncoder, node_id::NodeId, node_ids::ObjectId, status_code::StatusCode,
+    encoding::BinaryEncodable, node_id::NodeId, node_ids::ObjectId, status_code::StatusCode,
     EncodingError,
 };
 

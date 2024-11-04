@@ -26,7 +26,7 @@ impl opcua::types::MessageInfo for HistoryEventFieldList {
         opcua::types::ObjectId::HistoryEventFieldList_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for HistoryEventFieldList {
+impl opcua::types::BinaryEncodable for HistoryEventFieldList {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.event_fields.byte_len();
@@ -48,7 +48,7 @@ impl opcua::types::BinaryEncoder for HistoryEventFieldList {
     ) -> opcua::types::EncodingResult<Self> {
         let event_fields = <Option<
             Vec<opcua::types::variant::Variant>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self { event_fields })
     }
 }

@@ -26,7 +26,7 @@ impl opcua::types::MessageInfo for ContentFilterElement {
         opcua::types::ObjectId::ContentFilterElement_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ContentFilterElement {
+impl opcua::types::BinaryEncodable for ContentFilterElement {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.filter_operator.byte_len();
@@ -48,13 +48,13 @@ impl opcua::types::BinaryEncoder for ContentFilterElement {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let filter_operator = <super::enums::FilterOperator as opcua::types::BinaryEncoder>::decode(
+        let filter_operator = <super::enums::FilterOperator as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let filter_operands = <Option<
             Vec<opcua::types::extension_object::ExtensionObject>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             filter_operator,
             filter_operands,

@@ -109,7 +109,7 @@ impl Default for RequestHeader {
     }
 }
 
-impl BinaryEncoder for RequestHeader {
+impl BinaryEncodable for RequestHeader {
     fn byte_len(&self) -> usize {
         let mut size: usize = 0;
         size += self.authentication_token.byte_len();

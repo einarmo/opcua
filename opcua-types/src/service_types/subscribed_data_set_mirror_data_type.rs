@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for SubscribedDataSetMirrorDataType {
         opcua::types::ObjectId::SubscribedDataSetMirrorDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for SubscribedDataSetMirrorDataType {
+impl opcua::types::BinaryEncodable for SubscribedDataSetMirrorDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.parent_node_name.byte_len();
@@ -49,13 +49,13 @@ impl opcua::types::BinaryEncoder for SubscribedDataSetMirrorDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let parent_node_name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let parent_node_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let role_permissions = <Option<
             Vec<super::role_permission_type::RolePermissionType>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             parent_node_name,
             role_permissions,

@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for XVType {
         opcua::types::ObjectId::XVType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for XVType {
+impl opcua::types::BinaryEncodable for XVType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.x.byte_len();
@@ -49,8 +49,8 @@ impl opcua::types::BinaryEncoder for XVType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let x = <f64 as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let value = <f32 as opcua::types::BinaryEncoder>::decode(
+        let x = <f64 as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let value = <f32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

@@ -34,7 +34,7 @@ impl opcua::types::MessageInfo for DataSetWriterDataType {
         opcua::types::ObjectId::DataSetWriterDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for DataSetWriterDataType {
+impl opcua::types::BinaryEncodable for DataSetWriterDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.name.byte_len();
@@ -70,38 +70,38 @@ impl opcua::types::BinaryEncoder for DataSetWriterDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let enabled = <bool as opcua::types::BinaryEncoder>::decode(
+        let enabled = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let data_set_writer_id = <u16 as opcua::types::BinaryEncoder>::decode(
+        let data_set_writer_id = <u16 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let data_set_field_content_mask = <super::enums::DataSetFieldContentMask as opcua::types::BinaryEncoder>::decode(
+        let data_set_field_content_mask = <super::enums::DataSetFieldContentMask as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let key_frame_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let key_frame_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let data_set_name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let data_set_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let data_set_writer_properties = <Option<
             Vec<super::key_value_pair::KeyValuePair>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let transport_settings = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let transport_settings = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let message_settings = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncoder>::decode(
+        let message_settings = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

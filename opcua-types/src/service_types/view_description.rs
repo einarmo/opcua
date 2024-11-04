@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for ViewDescription {
         opcua::types::ObjectId::ViewDescription_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ViewDescription {
+impl opcua::types::BinaryEncodable for ViewDescription {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.view_id.byte_len();
@@ -52,15 +52,15 @@ impl opcua::types::BinaryEncoder for ViewDescription {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let view_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let view_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let timestamp = <opcua::types::date_time::DateTime as opcua::types::BinaryEncoder>::decode(
+        let timestamp = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let view_version = <u32 as opcua::types::BinaryEncoder>::decode(
+        let view_version = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

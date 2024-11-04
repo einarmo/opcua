@@ -10,7 +10,7 @@ use std::io::{Cursor, Read, Write};
 use log::{error, trace};
 use opcua_types::{
     process_decode_io_result, process_encode_io_result, read_u32, read_u8, status_code::StatusCode,
-    write_u32, write_u8, BinaryEncoder, DecodingOptions, EncodingResult,
+    write_u32, write_u8, BinaryEncodable, DecodingOptions, EncodingResult,
 };
 
 use super::{
@@ -63,7 +63,7 @@ pub struct MessageChunkHeader {
     pub secure_channel_id: u32,
 }
 
-impl BinaryEncoder for MessageChunkHeader {
+impl BinaryEncodable for MessageChunkHeader {
     fn byte_len(&self) -> usize {
         MESSAGE_CHUNK_HEADER_SIZE
     }
@@ -138,7 +138,7 @@ pub struct MessageChunk {
     pub data: Vec<u8>,
 }
 
-impl BinaryEncoder for MessageChunk {
+impl BinaryEncodable for MessageChunk {
     fn byte_len(&self) -> usize {
         self.data.len()
     }

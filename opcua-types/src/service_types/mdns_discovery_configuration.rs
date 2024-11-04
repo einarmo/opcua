@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for MdnsDiscoveryConfiguration {
         opcua::types::ObjectId::MdnsDiscoveryConfiguration_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for MdnsDiscoveryConfiguration {
+impl opcua::types::BinaryEncodable for MdnsDiscoveryConfiguration {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.mdns_server_name.byte_len();
@@ -49,13 +49,13 @@ impl opcua::types::BinaryEncoder for MdnsDiscoveryConfiguration {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let mdns_server_name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let mdns_server_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let server_capabilities = <Option<
             Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             mdns_server_name,
             server_capabilities,

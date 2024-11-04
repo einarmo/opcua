@@ -19,7 +19,7 @@ use opcua_crypto::{
 };
 use opcua_types::{
     service_types::ChannelSecurityToken, status_code::StatusCode, write_bytes, write_u8,
-    BinaryEncoder, ByteString, DecodingOptions, MessageSecurityMode,
+    BinaryEncodable, ByteString, DecodingOptions, MessageSecurityMode,
 };
 use parking_lot::RwLock;
 

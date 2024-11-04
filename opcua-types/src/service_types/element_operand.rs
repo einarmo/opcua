@@ -26,7 +26,7 @@ impl opcua::types::MessageInfo for ElementOperand {
         opcua::types::ObjectId::ElementOperand_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ElementOperand {
+impl opcua::types::BinaryEncodable for ElementOperand {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.index.byte_len();
@@ -46,7 +46,7 @@ impl opcua::types::BinaryEncoder for ElementOperand {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let index = <u32 as opcua::types::BinaryEncoder>::decode(
+        let index = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

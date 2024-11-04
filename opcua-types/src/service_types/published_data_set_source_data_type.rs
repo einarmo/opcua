@@ -24,7 +24,7 @@ impl opcua::types::MessageInfo for PublishedDataSetSourceDataType {
         opcua::types::ObjectId::PublishedDataSetSourceDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for PublishedDataSetSourceDataType {
+impl opcua::types::BinaryEncodable for PublishedDataSetSourceDataType {
     fn byte_len(&self) -> usize {
         0usize
     }

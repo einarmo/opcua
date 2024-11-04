@@ -67,7 +67,7 @@ impl fmt::Display for LocalizedText {
     }
 }
 
-impl BinaryEncoder for LocalizedText {
+impl BinaryEncodable for LocalizedText {
     fn byte_len(&self) -> usize {
         let mut size = 1;
         if !self.locale.is_empty() {

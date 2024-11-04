@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for AddNodesResult {
         opcua::types::ObjectId::AddNodesResult_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for AddNodesResult {
+impl opcua::types::BinaryEncodable for AddNodesResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.status_code.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for AddNodesResult {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let status_code = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncoder>::decode(
+        let status_code = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let added_node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let added_node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

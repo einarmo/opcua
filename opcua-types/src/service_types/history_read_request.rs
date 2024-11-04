@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for HistoryReadRequest {
         opcua::types::ObjectId::HistoryReadRequest_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for HistoryReadRequest {
+impl opcua::types::BinaryEncodable for HistoryReadRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -57,29 +57,29 @@ impl opcua::types::BinaryEncoder for HistoryReadRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncoder>::decode(
+        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
-        let history_read_details = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncoder>::decode(
+        let history_read_details = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let timestamps_to_return = <super::enums::TimestampsToReturn as opcua::types::BinaryEncoder>::decode(
+        let timestamps_to_return = <super::enums::TimestampsToReturn as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let release_continuation_points = <bool as opcua::types::BinaryEncoder>::decode(
+        let release_continuation_points = <bool as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
         let nodes_to_read = <Option<
             Vec<super::history_read_value_id::HistoryReadValueId>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
             .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,

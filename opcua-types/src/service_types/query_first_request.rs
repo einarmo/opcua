@@ -31,7 +31,7 @@ impl opcua::types::MessageInfo for QueryFirstRequest {
         opcua::types::ObjectId::QueryFirstRequest_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for QueryFirstRequest {
+impl opcua::types::BinaryEncodable for QueryFirstRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -61,31 +61,31 @@ impl opcua::types::BinaryEncoder for QueryFirstRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncoder>::decode(
+        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
-        let view = <super::view_description::ViewDescription as opcua::types::BinaryEncoder>::decode(
+        let view = <super::view_description::ViewDescription as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
         let node_types = <Option<
             Vec<super::node_type_description::NodeTypeDescription>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let filter = <super::content_filter::ContentFilter as opcua::types::BinaryEncoder>::decode(
+        let filter = <super::content_filter::ContentFilter as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let max_data_sets_to_return = <u32 as opcua::types::BinaryEncoder>::decode(
+        let max_data_sets_to_return = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let max_references_to_return = <u32 as opcua::types::BinaryEncoder>::decode(
+        let max_references_to_return = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )

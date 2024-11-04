@@ -24,7 +24,7 @@ impl opcua::types::MessageInfo for CartesianCoordinates {
         opcua::types::ObjectId::CartesianCoordinates_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for CartesianCoordinates {
+impl opcua::types::BinaryEncodable for CartesianCoordinates {
     fn byte_len(&self) -> usize {
         0usize
     }

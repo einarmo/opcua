@@ -30,7 +30,7 @@ impl opcua::types::MessageInfo for ModifyMonitoredItemsRequest {
         opcua::types::ObjectId::ModifyMonitoredItemsRequest_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ModifyMonitoredItemsRequest {
+impl opcua::types::BinaryEncodable for ModifyMonitoredItemsRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -56,24 +56,24 @@ impl opcua::types::BinaryEncoder for ModifyMonitoredItemsRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncoder>::decode(
+        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
-        let subscription_id = <u32 as opcua::types::BinaryEncoder>::decode(
+        let subscription_id = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let timestamps_to_return = <super::enums::TimestampsToReturn as opcua::types::BinaryEncoder>::decode(
+        let timestamps_to_return = <super::enums::TimestampsToReturn as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
         let items_to_modify = <Option<
             Vec<super::monitored_item_modify_request::MonitoredItemModifyRequest>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
             .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,

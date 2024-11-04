@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for CancelResponse {
         opcua::types::ObjectId::CancelResponse_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for CancelResponse {
+impl opcua::types::BinaryEncodable for CancelResponse {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.response_header.byte_len();
@@ -49,12 +49,12 @@ impl opcua::types::BinaryEncoder for CancelResponse {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncoder>::decode(
+        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
-        let cancel_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let cancel_count = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )

@@ -33,7 +33,7 @@ impl opcua::types::MessageInfo for SessionSecurityDiagnosticsDataType {
         opcua::types::ObjectId::SessionSecurityDiagnosticsDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for SessionSecurityDiagnosticsDataType {
+impl opcua::types::BinaryEncodable for SessionSecurityDiagnosticsDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.session_id.byte_len();
@@ -69,38 +69,38 @@ impl opcua::types::BinaryEncoder for SessionSecurityDiagnosticsDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let session_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let session_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let client_user_id_of_session = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let client_user_id_of_session = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let client_user_id_history = <Option<
             Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let authentication_mechanism = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let authentication_mechanism = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let encoding = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let encoding = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let transport_protocol = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let transport_protocol = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let security_mode = <super::enums::MessageSecurityMode as opcua::types::BinaryEncoder>::decode(
+        let security_mode = <super::enums::MessageSecurityMode as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let security_policy_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let security_policy_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let client_certificate = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let client_certificate = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

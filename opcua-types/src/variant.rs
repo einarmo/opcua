@@ -127,7 +127,7 @@ pub trait AsVariantRef {
 
 impl<T> AsVariantRef for T
 where
-    T: BinaryEncoder + ExpandedMessageInfo,
+    T: BinaryEncodable + ExpandedMessageInfo,
 {
     fn as_variant(&self, ctx: &EncodingContext) -> Variant {
         ExtensionObject::from_message_full(self, ctx)
@@ -523,7 +523,7 @@ where
 
 impl<T> From<&T> for Variant
 where
-    T: BinaryEncoder + MessageInfo,
+    T: BinaryEncodable + MessageInfo,
 {
     fn from(value: &T) -> Self {
         ExtensionObject::from_message(value).into()
@@ -579,7 +579,7 @@ try_from_variant_to_array_impl!(u64, UInt64);
 try_from_variant_to_array_impl!(f32, Float);
 try_from_variant_to_array_impl!(f64, Double);
 
-impl BinaryEncoder for Variant {
+impl BinaryEncodable for Variant {
     fn byte_len(&self) -> usize {
         let mut size: usize = 0;
 

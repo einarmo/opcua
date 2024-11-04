@@ -33,7 +33,7 @@ impl opcua::types::MessageInfo for CreateSessionRequest {
         opcua::types::ObjectId::CreateSessionRequest_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for CreateSessionRequest {
+impl opcua::types::BinaryEncodable for CreateSessionRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -69,47 +69,47 @@ impl opcua::types::BinaryEncoder for CreateSessionRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncoder>::decode(
+        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
-        let client_description = <super::application_description::ApplicationDescription as opcua::types::BinaryEncoder>::decode(
+        let client_description = <super::application_description::ApplicationDescription as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let server_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let server_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let endpoint_url = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let endpoint_url = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let session_name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let session_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let client_nonce = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let client_nonce = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let client_certificate = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let client_certificate = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let requested_session_timeout = <f64 as opcua::types::BinaryEncoder>::decode(
+        let requested_session_timeout = <f64 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let max_response_message_size = <u32 as opcua::types::BinaryEncoder>::decode(
+        let max_response_message_size = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )

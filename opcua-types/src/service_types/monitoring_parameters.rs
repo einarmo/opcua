@@ -30,7 +30,7 @@ impl opcua::types::MessageInfo for MonitoringParameters {
         opcua::types::ObjectId::MonitoringParameters_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for MonitoringParameters {
+impl opcua::types::BinaryEncodable for MonitoringParameters {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.client_handle.byte_len();
@@ -58,23 +58,23 @@ impl opcua::types::BinaryEncoder for MonitoringParameters {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let client_handle = <u32 as opcua::types::BinaryEncoder>::decode(
+        let client_handle = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let sampling_interval = <f64 as opcua::types::BinaryEncoder>::decode(
+        let sampling_interval = <f64 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let filter = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncoder>::decode(
+        let filter = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let queue_size = <u32 as opcua::types::BinaryEncoder>::decode(
+        let queue_size = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let discard_oldest = <bool as opcua::types::BinaryEncoder>::decode(
+        let discard_oldest = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

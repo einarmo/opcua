@@ -26,7 +26,7 @@ impl opcua::types::MessageInfo for ReadAnnotationDataDetails {
         opcua::types::ObjectId::ReadAnnotationDataDetails_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ReadAnnotationDataDetails {
+impl opcua::types::BinaryEncodable for ReadAnnotationDataDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.req_times.byte_len();
@@ -48,7 +48,7 @@ impl opcua::types::BinaryEncoder for ReadAnnotationDataDetails {
     ) -> opcua::types::EncodingResult<Self> {
         let req_times = <Option<
             Vec<opcua::types::date_time::DateTime>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self { req_times })
     }
 }

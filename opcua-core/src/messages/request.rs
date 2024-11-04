@@ -18,7 +18,7 @@ macro_rules! request_enum {
                 }
             }
         )*
-        impl BinaryEncoder for RequestMessage {
+        impl BinaryEncodable for RequestMessage {
             fn byte_len(&self) -> usize {
                 match self {
                     $( Self::$name(value) => value.byte_len(), )*

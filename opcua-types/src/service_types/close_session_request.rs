@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for CloseSessionRequest {
         opcua::types::ObjectId::CloseSessionRequest_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for CloseSessionRequest {
+impl opcua::types::BinaryEncodable for CloseSessionRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -49,12 +49,12 @@ impl opcua::types::BinaryEncoder for CloseSessionRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncoder>::decode(
+        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
-        let delete_subscriptions = <bool as opcua::types::BinaryEncoder>::decode(
+        let delete_subscriptions = <bool as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )

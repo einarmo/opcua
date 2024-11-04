@@ -32,7 +32,7 @@ impl opcua::types::MessageInfo for PubSubConfigurationDataType {
         opcua::types::ObjectId::PubSubConfigurationDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for PubSubConfigurationDataType {
+impl opcua::types::BinaryEncodable for PubSubConfigurationDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.published_data_sets.byte_len();
@@ -58,11 +58,11 @@ impl opcua::types::BinaryEncoder for PubSubConfigurationDataType {
     ) -> opcua::types::EncodingResult<Self> {
         let published_data_sets = <Option<
             Vec<super::published_data_set_data_type::PublishedDataSetDataType>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let connections = <Option<
             Vec<super::pub_sub_connection_data_type::PubSubConnectionDataType>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let enabled = <bool as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let enabled = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

@@ -35,7 +35,7 @@ impl opcua::types::MessageInfo for FieldMetaData {
         opcua::types::ObjectId::FieldMetaData_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for FieldMetaData {
+impl opcua::types::BinaryEncodable for FieldMetaData {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.name.byte_len();
@@ -73,44 +73,44 @@ impl opcua::types::BinaryEncoder for FieldMetaData {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncoder>::decode(
+        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let field_flags = <super::enums::DataSetFieldFlags as opcua::types::BinaryEncoder>::decode(
+        let field_flags = <super::enums::DataSetFieldFlags as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let built_in_type = <u8 as opcua::types::BinaryEncoder>::decode(
+        let built_in_type = <u8 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let data_type = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let data_type = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let value_rank = <i32 as opcua::types::BinaryEncoder>::decode(
+        let value_rank = <i32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let array_dimensions = <Option<
             Vec<u32>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let max_string_length = <u32 as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let max_string_length = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let data_set_field_id = <opcua::types::guid::Guid as opcua::types::BinaryEncoder>::decode(
+        let data_set_field_id = <opcua::types::guid::Guid as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let properties = <Option<
             Vec<super::key_value_pair::KeyValuePair>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             name,
             description,

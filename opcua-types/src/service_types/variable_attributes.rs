@@ -38,7 +38,7 @@ impl opcua::types::MessageInfo for VariableAttributes {
         opcua::types::ObjectId::VariableAttributes_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for VariableAttributes {
+impl opcua::types::BinaryEncodable for VariableAttributes {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.specified_attributes.byte_len();
@@ -82,54 +82,54 @@ impl opcua::types::BinaryEncoder for VariableAttributes {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let specified_attributes = <u32 as opcua::types::BinaryEncoder>::decode(
+        let specified_attributes = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let display_name = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncoder>::decode(
+        let display_name = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncoder>::decode(
+        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let write_mask = <u32 as opcua::types::BinaryEncoder>::decode(
+        let write_mask = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let user_write_mask = <u32 as opcua::types::BinaryEncoder>::decode(
+        let user_write_mask = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let value = <opcua::types::variant::Variant as opcua::types::BinaryEncoder>::decode(
+        let value = <opcua::types::variant::Variant as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let data_type = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let data_type = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let value_rank = <i32 as opcua::types::BinaryEncoder>::decode(
+        let value_rank = <i32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let array_dimensions = <Option<
             Vec<u32>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let access_level = <u8 as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let access_level = <u8 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let user_access_level = <u8 as opcua::types::BinaryEncoder>::decode(
+        let user_access_level = <u8 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let minimum_sampling_interval = <f64 as opcua::types::BinaryEncoder>::decode(
+        let minimum_sampling_interval = <f64 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let historizing = <bool as opcua::types::BinaryEncoder>::decode(
+        let historizing = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

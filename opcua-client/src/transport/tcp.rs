@@ -17,7 +17,7 @@ use opcua_core::{
     },
     trace_read_lock,
 };
-use opcua_types::{encoding::BinaryEncoder, StatusCode};
+use opcua_types::{encoding::BinaryEncodable, StatusCode};
 use parking_lot::RwLock;
 use tokio::io::{AsyncWriteExt, ReadHalf, WriteHalf};
 use tokio::net::TcpStream;

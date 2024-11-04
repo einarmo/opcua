@@ -24,7 +24,7 @@ impl opcua::types::MessageInfo for Frame {
         opcua::types::ObjectId::Frame_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for Frame {
+impl opcua::types::BinaryEncodable for Frame {
     fn byte_len(&self) -> usize {
         0usize
     }

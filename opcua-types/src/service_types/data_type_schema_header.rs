@@ -33,7 +33,7 @@ impl opcua::types::MessageInfo for DataTypeSchemaHeader {
         opcua::types::ObjectId::DataTypeSchemaHeader_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for DataTypeSchemaHeader {
+impl opcua::types::BinaryEncodable for DataTypeSchemaHeader {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.namespaces.byte_len();
@@ -61,16 +61,16 @@ impl opcua::types::BinaryEncoder for DataTypeSchemaHeader {
     ) -> opcua::types::EncodingResult<Self> {
         let namespaces = <Option<
             Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let structure_data_types = <Option<
             Vec<super::structure_description::StructureDescription>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let enum_data_types = <Option<
             Vec<super::enum_description::EnumDescription>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let simple_data_types = <Option<
             Vec<super::simple_type_description::SimpleTypeDescription>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             namespaces,
             structure_data_types,

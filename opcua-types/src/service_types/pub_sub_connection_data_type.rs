@@ -34,7 +34,7 @@ impl opcua::types::MessageInfo for PubSubConnectionDataType {
         opcua::types::ObjectId::PubSubConnectionDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for PubSubConnectionDataType {
+impl opcua::types::BinaryEncodable for PubSubConnectionDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.name.byte_len();
@@ -70,39 +70,39 @@ impl opcua::types::BinaryEncoder for PubSubConnectionDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let enabled = <bool as opcua::types::BinaryEncoder>::decode(
+        let enabled = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let publisher_id = <opcua::types::variant::Variant as opcua::types::BinaryEncoder>::decode(
+        let publisher_id = <opcua::types::variant::Variant as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let transport_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let transport_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let address = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncoder>::decode(
+        let address = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let connection_properties = <Option<
             Vec<super::key_value_pair::KeyValuePair>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let transport_settings = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let transport_settings = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let writer_groups = <Option<
             Vec<super::writer_group_data_type::WriterGroupDataType>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let reader_groups = <Option<
             Vec<super::reader_group_data_type::ReaderGroupDataType>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             name,
             enabled,

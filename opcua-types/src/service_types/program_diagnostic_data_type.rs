@@ -35,7 +35,7 @@ impl opcua::types::MessageInfo for ProgramDiagnosticDataType {
         opcua::types::ObjectId::ProgramDiagnosticDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ProgramDiagnosticDataType {
+impl opcua::types::BinaryEncodable for ProgramDiagnosticDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.create_session_id.byte_len();
@@ -73,41 +73,41 @@ impl opcua::types::BinaryEncoder for ProgramDiagnosticDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let create_session_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let create_session_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let create_client_name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let create_client_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let invocation_creation_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncoder>::decode(
+        let invocation_creation_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let last_transition_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncoder>::decode(
+        let last_transition_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let last_method_call = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let last_method_call = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let last_method_session_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let last_method_session_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let last_method_input_arguments = <Option<
             Vec<super::argument::Argument>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let last_method_output_arguments = <Option<
             Vec<super::argument::Argument>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let last_method_call_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let last_method_call_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let last_method_return_status = <super::status_result::StatusResult as opcua::types::BinaryEncoder>::decode(
+        let last_method_return_status = <super::status_result::StatusResult as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

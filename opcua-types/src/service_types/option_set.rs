@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for OptionSet {
         opcua::types::ObjectId::OptionSet_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for OptionSet {
+impl opcua::types::BinaryEncodable for OptionSet {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.value.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for OptionSet {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let value = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let value = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let valid_bits = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let valid_bits = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

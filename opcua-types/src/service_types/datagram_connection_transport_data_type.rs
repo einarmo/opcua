@@ -26,7 +26,7 @@ impl opcua::types::MessageInfo for DatagramConnectionTransportDataType {
         opcua::types::ObjectId::DatagramConnectionTransportDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for DatagramConnectionTransportDataType {
+impl opcua::types::BinaryEncodable for DatagramConnectionTransportDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.discovery_address.byte_len();
@@ -46,7 +46,7 @@ impl opcua::types::BinaryEncoder for DatagramConnectionTransportDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let discovery_address = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncoder>::decode(
+        let discovery_address = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

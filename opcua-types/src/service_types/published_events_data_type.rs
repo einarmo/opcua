@@ -30,7 +30,7 @@ impl opcua::types::MessageInfo for PublishedEventsDataType {
         opcua::types::ObjectId::PublishedEventsDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for PublishedEventsDataType {
+impl opcua::types::BinaryEncodable for PublishedEventsDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.event_notifier.byte_len();
@@ -54,14 +54,14 @@ impl opcua::types::BinaryEncoder for PublishedEventsDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let event_notifier = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let event_notifier = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let selected_fields = <Option<
             Vec<super::simple_attribute_operand::SimpleAttributeOperand>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let filter = <super::content_filter::ContentFilter as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let filter = <super::content_filter::ContentFilter as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

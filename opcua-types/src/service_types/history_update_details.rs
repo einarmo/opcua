@@ -26,7 +26,7 @@ impl opcua::types::MessageInfo for HistoryUpdateDetails {
         opcua::types::ObjectId::HistoryUpdateDetails_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for HistoryUpdateDetails {
+impl opcua::types::BinaryEncodable for HistoryUpdateDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.node_id.byte_len();
@@ -46,7 +46,7 @@ impl opcua::types::BinaryEncoder for HistoryUpdateDetails {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
-//! Contains the `BinaryEncoder` trait and helpers for reading and writing of scalar values and
+//! Contains the `BinaryEncodable` trait and helpers for reading and writing of scalar values and
 //! other primitives.
 
 use std::{
@@ -236,7 +236,7 @@ impl DecodingOptions {
 /// OPC UA Binary Encoding interface. Anything that encodes to binary must implement this. It provides
 /// functions to calculate the size in bytes of the struct (for allocating memory), encoding to a stream
 /// and decoding from a stream.
-pub trait BinaryEncoder: Sized {
+pub trait BinaryEncodable: Sized {
     /// Returns the exact byte length of the structure as it would be if `encode` were called.
     /// This may be called prior to writing to ensure the correct amount of space is available.
     fn byte_len(&self) -> usize;
@@ -275,9 +275,9 @@ where
     })
 }
 
-impl<T> BinaryEncoder for Option<Vec<T>>
+impl<T> BinaryEncodable for Option<Vec<T>>
 where
-    T: BinaryEncoder,
+    T: BinaryEncodable,
 {
     fn byte_len(&self) -> usize {
         let mut size = 4;
@@ -327,7 +327,7 @@ where
 }
 
 /// Calculates the length in bytes of an array of encoded type
-pub fn byte_len_array<T: BinaryEncoder>(values: &Option<Vec<T>>) -> usize {
+pub fn byte_len_array<T: BinaryEncodable>(values: &Option<Vec<T>>) -> usize {
     let mut size = 4;
     if let Some(ref values) = values {
         size += values.iter().map(|v| v.byte_len()).sum::<usize>();
@@ -336,7 +336,7 @@ pub fn byte_len_array<T: BinaryEncoder>(values: &Option<Vec<T>>) -> usize {
 }
 
 /// Write an array of the encoded type to stream, preserving distinction between null array and empty array
-pub fn write_array<S: Write, T: BinaryEncoder>(
+pub fn write_array<S: Write, T: BinaryEncodable>(
     stream: &mut S,
     values: &Option<Vec<T>>,
 ) -> EncodingResult<usize> {
@@ -353,7 +353,7 @@ pub fn write_array<S: Write, T: BinaryEncoder>(
 }
 
 /// Reads an array of the encoded type from a stream, preserving distinction between null array and empty array
-pub fn read_array<S: Read, T: BinaryEncoder>(
+pub fn read_array<S: Read, T: BinaryEncodable>(
     stream: &mut S,
     decoding_options: &DecodingOptions,
 ) -> EncodingResult<Option<Vec<T>>> {

@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for EnumDescription {
         opcua::types::ObjectId::EnumDescription_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for EnumDescription {
+impl opcua::types::BinaryEncodable for EnumDescription {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.data_type_id.byte_len();
@@ -55,19 +55,19 @@ impl opcua::types::BinaryEncoder for EnumDescription {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let data_type_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let data_type_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let name = <opcua::types::qualified_name::QualifiedName as opcua::types::BinaryEncoder>::decode(
+        let name = <opcua::types::qualified_name::QualifiedName as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let enum_definition = <super::enum_definition::EnumDefinition as opcua::types::BinaryEncoder>::decode(
+        let enum_definition = <super::enum_definition::EnumDefinition as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let built_in_type = <u8 as opcua::types::BinaryEncoder>::decode(
+        let built_in_type = <u8 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

@@ -24,7 +24,7 @@ impl opcua::types::MessageInfo for DataSetWriterTransportDataType {
         opcua::types::ObjectId::DataSetWriterTransportDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for DataSetWriterTransportDataType {
+impl opcua::types::BinaryEncodable for DataSetWriterTransportDataType {
     fn byte_len(&self) -> usize {
         0usize
     }

@@ -1,7 +1,7 @@
 #![no_main]
 use libfuzzer_sys::fuzz_target;
 
-use opcua::types::{BinaryEncoder, DecodingOptions, StatusCode, Variant};
+use opcua::types::{BinaryEncodable, DecodingOptions, StatusCode, Variant};
 use std::io::Cursor;
 
 pub fn deserialize(data: &[u8], decoding_options: &DecodingOptions) -> Result<Variant, StatusCode> {

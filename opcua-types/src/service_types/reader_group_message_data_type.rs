@@ -24,7 +24,7 @@ impl opcua::types::MessageInfo for ReaderGroupMessageDataType {
         opcua::types::ObjectId::ReaderGroupMessageDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ReaderGroupMessageDataType {
+impl opcua::types::BinaryEncodable for ReaderGroupMessageDataType {
     fn byte_len(&self) -> usize {
         0usize
     }

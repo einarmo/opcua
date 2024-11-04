@@ -32,7 +32,7 @@ impl opcua::types::MessageInfo for RegisteredServer {
         opcua::types::ObjectId::RegisteredServer_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for RegisteredServer {
+impl opcua::types::BinaryEncodable for RegisteredServer {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.server_uri.byte_len();
@@ -66,33 +66,33 @@ impl opcua::types::BinaryEncoder for RegisteredServer {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let server_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let server_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let product_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let product_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let server_names = <Option<
             Vec<opcua::types::localized_text::LocalizedText>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let server_type = <super::enums::ApplicationType as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let server_type = <super::enums::ApplicationType as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let gateway_server_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let gateway_server_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let discovery_urls = <Option<
             Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let semaphore_file_path = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let semaphore_file_path = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let is_online = <bool as opcua::types::BinaryEncoder>::decode(
+        let is_online = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

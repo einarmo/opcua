@@ -30,7 +30,7 @@ impl opcua::types::MessageInfo for CreateSubscriptionResponse {
         opcua::types::ObjectId::CreateSubscriptionResponse_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for CreateSubscriptionResponse {
+impl opcua::types::BinaryEncodable for CreateSubscriptionResponse {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.response_header.byte_len();
@@ -58,27 +58,27 @@ impl opcua::types::BinaryEncoder for CreateSubscriptionResponse {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncoder>::decode(
+        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
-        let subscription_id = <u32 as opcua::types::BinaryEncoder>::decode(
+        let subscription_id = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let revised_publishing_interval = <f64 as opcua::types::BinaryEncoder>::decode(
+        let revised_publishing_interval = <f64 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let revised_lifetime_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let revised_lifetime_count = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let revised_max_keep_alive_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let revised_max_keep_alive_count = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )

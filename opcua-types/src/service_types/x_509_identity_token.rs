@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for X509IdentityToken {
         opcua::types::ObjectId::X509IdentityToken_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for X509IdentityToken {
+impl opcua::types::BinaryEncodable for X509IdentityToken {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.policy_id.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for X509IdentityToken {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let policy_id = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let policy_id = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let certificate_data = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let certificate_data = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

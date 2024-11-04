@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for NetworkGroupDataType {
         opcua::types::ObjectId::NetworkGroupDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for NetworkGroupDataType {
+impl opcua::types::BinaryEncodable for NetworkGroupDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.server_uri.byte_len();
@@ -51,13 +51,13 @@ impl opcua::types::BinaryEncoder for NetworkGroupDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let server_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let server_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let network_paths = <Option<
             Vec<super::endpoint_url_list_data_type::EndpointUrlListDataType>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self { server_uri, network_paths })
     }
 }

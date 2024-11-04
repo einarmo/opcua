@@ -24,7 +24,7 @@ impl opcua::types::MessageInfo for DiscoveryConfiguration {
         opcua::types::ObjectId::DiscoveryConfiguration_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for DiscoveryConfiguration {
+impl opcua::types::BinaryEncodable for DiscoveryConfiguration {
     fn byte_len(&self) -> usize {
         0usize
     }

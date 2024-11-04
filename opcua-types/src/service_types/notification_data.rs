@@ -24,7 +24,7 @@ impl opcua::types::MessageInfo for NotificationData {
         opcua::types::ObjectId::NotificationData_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for NotificationData {
+impl opcua::types::BinaryEncodable for NotificationData {
     fn byte_len(&self) -> usize {
         0usize
     }

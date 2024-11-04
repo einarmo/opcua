@@ -17,7 +17,7 @@ bitflags::bitflags! {
     NonatomicWrite = 512i32; const WriteFullArrayOnly = 1024i32; const NoSubDataTypes =
     2048i32; }
 }
-impl opcua::types::BinaryEncoder for AccessLevelExType {
+impl opcua::types::BinaryEncodable for AccessLevelExType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -95,7 +95,7 @@ bitflags::bitflags! {
     const HistoryWrite = 8u8; const SemanticChange = 16u8; const StatusWrite = 32u8;
     const TimestampWrite = 64u8; }
 }
-impl opcua::types::BinaryEncoder for AccessLevelType {
+impl opcua::types::BinaryEncodable for AccessLevelType {
     fn byte_len(&self) -> usize {
         1usize
     }
@@ -172,7 +172,7 @@ bitflags::bitflags! {
     const None = 0i16; const SigningRequired = 1i16; const EncryptionRequired = 2i16;
     const SessionRequired = 4i16; const ApplyRestrictionsToBrowse = 8i16; }
 }
-impl opcua::types::BinaryEncoder for AccessRestrictionType {
+impl opcua::types::BinaryEncodable for AccessRestrictionType {
     fn byte_len(&self) -> usize {
         2usize
     }
@@ -324,7 +324,7 @@ impl serde::ser::Serialize for ApplicationType {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for ApplicationType {
+impl opcua::types::BinaryEncodable for ApplicationType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -352,7 +352,7 @@ bitflags::bitflags! {
     const DataTypeDefinition = 4194304i32; const RolePermissions = 8388608i32; const
     AccessRestrictions = 16777216i32; const AccessLevelEx = 33554432i32; }
 }
-impl opcua::types::BinaryEncoder for AttributeWriteMask {
+impl opcua::types::BinaryEncodable for AttributeWriteMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -502,7 +502,7 @@ impl serde::ser::Serialize for AxisScaleEnumeration {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for AxisScaleEnumeration {
+impl opcua::types::BinaryEncodable for AxisScaleEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -606,7 +606,7 @@ impl serde::ser::Serialize for BrokerTransportQualityOfService {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for BrokerTransportQualityOfService {
+impl opcua::types::BinaryEncodable for BrokerTransportQualityOfService {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -704,7 +704,7 @@ impl serde::ser::Serialize for BrowseDirection {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for BrowseDirection {
+impl opcua::types::BinaryEncodable for BrowseDirection {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -811,7 +811,7 @@ impl serde::ser::Serialize for BrowseResultMask {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for BrowseResultMask {
+impl opcua::types::BinaryEncodable for BrowseResultMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -904,7 +904,7 @@ impl serde::ser::Serialize for DataChangeTrigger {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for DataChangeTrigger {
+impl opcua::types::BinaryEncodable for DataChangeTrigger {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -925,7 +925,7 @@ bitflags::bitflags! {
     ServerTimestamp = 4i32; const SourcePicoSeconds = 8i32; const ServerPicoSeconds =
     16i32; const RawData = 32i32; }
 }
-impl opcua::types::BinaryEncoder for DataSetFieldContentMask {
+impl opcua::types::BinaryEncodable for DataSetFieldContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1001,7 +1001,7 @@ bitflags::bitflags! {
     #[derive(Debug, Copy, Clone, PartialEq)] pub struct DataSetFieldFlags : i16 { const
     None = 0i16; const PromotedField = 1i16; }
 }
-impl opcua::types::BinaryEncoder for DataSetFieldFlags {
+impl opcua::types::BinaryEncodable for DataSetFieldFlags {
     fn byte_len(&self) -> usize {
         2usize
     }
@@ -1151,7 +1151,7 @@ impl serde::ser::Serialize for DataSetOrderingType {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for DataSetOrderingType {
+impl opcua::types::BinaryEncodable for DataSetOrderingType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1244,7 +1244,7 @@ impl serde::ser::Serialize for DeadbandType {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for DeadbandType {
+impl opcua::types::BinaryEncodable for DeadbandType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1341,7 +1341,7 @@ impl serde::ser::Serialize for DiagnosticsLevel {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for DiagnosticsLevel {
+impl opcua::types::BinaryEncodable for DiagnosticsLevel {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1361,7 +1361,7 @@ bitflags::bitflags! {
     None = 0u8; const SubscribeToEvents = 1u8; const HistoryRead = 4u8; const
     HistoryWrite = 8u8; }
 }
-impl opcua::types::BinaryEncoder for EventNotifierType {
+impl opcua::types::BinaryEncodable for EventNotifierType {
     fn byte_len(&self) -> usize {
         1usize
     }
@@ -1522,7 +1522,7 @@ impl serde::ser::Serialize for ExceptionDeviationFormat {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for ExceptionDeviationFormat {
+impl opcua::types::BinaryEncodable for ExceptionDeviationFormat {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1645,7 +1645,7 @@ impl serde::ser::Serialize for FilterOperator {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for FilterOperator {
+impl opcua::types::BinaryEncodable for FilterOperator {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1740,7 +1740,7 @@ impl serde::ser::Serialize for HistoryUpdateType {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for HistoryUpdateType {
+impl opcua::types::BinaryEncodable for HistoryUpdateType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1839,7 +1839,7 @@ impl serde::ser::Serialize for IdentityCriteriaType {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for IdentityCriteriaType {
+impl opcua::types::BinaryEncodable for IdentityCriteriaType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1934,7 +1934,7 @@ impl serde::ser::Serialize for IdType {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for IdType {
+impl opcua::types::BinaryEncodable for IdType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -1954,7 +1954,7 @@ bitflags::bitflags! {
     i32 { const None = 0i32; const DataSetWriterId = 1i32; const MetaDataVersion = 2i32;
     const SequenceNumber = 4i32; const Timestamp = 8i32; const Status = 16i32; }
 }
-impl opcua::types::BinaryEncoder for JsonDataSetMessageContentMask {
+impl opcua::types::BinaryEncodable for JsonDataSetMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -2032,7 +2032,7 @@ bitflags::bitflags! {
     DataSetMessageHeader = 2i32; const SingleDataSetMessage = 4i32; const PublisherId =
     8i32; const DataSetClassId = 16i32; const ReplyTo = 32i32; }
 }
-impl opcua::types::BinaryEncoder for JsonNetworkMessageContentMask {
+impl opcua::types::BinaryEncodable for JsonNetworkMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -2187,7 +2187,7 @@ impl serde::ser::Serialize for MessageSecurityMode {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for MessageSecurityMode {
+impl opcua::types::BinaryEncodable for MessageSecurityMode {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -2291,7 +2291,7 @@ impl serde::ser::Serialize for ModelChangeStructureVerbMask {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for ModelChangeStructureVerbMask {
+impl opcua::types::BinaryEncodable for ModelChangeStructureVerbMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -2384,7 +2384,7 @@ impl serde::ser::Serialize for MonitoringMode {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for MonitoringMode {
+impl opcua::types::BinaryEncodable for MonitoringMode {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -2477,7 +2477,7 @@ impl serde::ser::Serialize for NamingRuleType {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for NamingRuleType {
+impl opcua::types::BinaryEncodable for NamingRuleType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -2634,7 +2634,7 @@ impl serde::ser::Serialize for NodeAttributesMask {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for NodeAttributesMask {
+impl opcua::types::BinaryEncodable for NodeAttributesMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -2739,7 +2739,7 @@ impl serde::ser::Serialize for NodeClass {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for NodeClass {
+impl opcua::types::BinaryEncodable for NodeClass {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -2839,7 +2839,7 @@ impl serde::ser::Serialize for NodeIdType {
         serializer.serialize_u8(*self as u8)
     }
 }
-impl opcua::types::BinaryEncoder for NodeIdType {
+impl opcua::types::BinaryEncodable for NodeIdType {
     fn byte_len(&self) -> usize {
         1usize
     }
@@ -2934,7 +2934,7 @@ impl serde::ser::Serialize for OpenFileMode {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for OpenFileMode {
+impl opcua::types::BinaryEncodable for OpenFileMode {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -3027,7 +3027,7 @@ impl serde::ser::Serialize for OverrideValueHandling {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for OverrideValueHandling {
+impl opcua::types::BinaryEncodable for OverrideValueHandling {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -3122,7 +3122,7 @@ impl serde::ser::Serialize for PerformUpdateType {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for PerformUpdateType {
+impl opcua::types::BinaryEncodable for PerformUpdateType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -3146,7 +3146,7 @@ bitflags::bitflags! {
     2048i32; const Call = 4096i32; const AddReference = 8192i32; const RemoveReference =
     16384i32; const DeleteNode = 32768i32; const AddNode = 65536i32; }
 }
-impl opcua::types::BinaryEncoder for PermissionType {
+impl opcua::types::BinaryEncodable for PermissionType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -3301,7 +3301,7 @@ impl serde::ser::Serialize for PubSubDiagnosticsCounterClassification {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for PubSubDiagnosticsCounterClassification {
+impl opcua::types::BinaryEncodable for PubSubDiagnosticsCounterClassification {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -3396,7 +3396,7 @@ impl serde::ser::Serialize for PubSubState {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for PubSubState {
+impl opcua::types::BinaryEncodable for PubSubState {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -3495,7 +3495,7 @@ impl serde::ser::Serialize for RedundancySupport {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for RedundancySupport {
+impl opcua::types::BinaryEncodable for RedundancySupport {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -3593,7 +3593,7 @@ impl serde::ser::Serialize for SecurityTokenRequestType {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for SecurityTokenRequestType {
+impl opcua::types::BinaryEncodable for SecurityTokenRequestType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -3696,7 +3696,7 @@ impl serde::ser::Serialize for ServerState {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for ServerState {
+impl opcua::types::BinaryEncodable for ServerState {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -3789,7 +3789,7 @@ impl serde::ser::Serialize for StructureType {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for StructureType {
+impl opcua::types::BinaryEncodable for StructureType {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -3889,7 +3889,7 @@ impl serde::ser::Serialize for TimestampsToReturn {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for TimestampsToReturn {
+impl opcua::types::BinaryEncodable for TimestampsToReturn {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -3988,7 +3988,7 @@ impl serde::ser::Serialize for TrustListMasks {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for TrustListMasks {
+impl opcua::types::BinaryEncodable for TrustListMasks {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -4009,7 +4009,7 @@ bitflags::bitflags! {
     Status = 4i32; const MajorVersion = 8i32; const MinorVersion = 16i32; const
     SequenceNumber = 32i32; }
 }
-impl opcua::types::BinaryEncoder for UadpDataSetMessageContentMask {
+impl opcua::types::BinaryEncodable for UadpDataSetMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -4089,7 +4089,7 @@ bitflags::bitflags! {
     const PicoSeconds = 256i32; const DataSetClassId = 512i32; const PromotedFields =
     1024i32; }
 }
-impl opcua::types::BinaryEncoder for UadpNetworkMessageContentMask {
+impl opcua::types::BinaryEncodable for UadpNetworkMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
@@ -4241,7 +4241,7 @@ impl serde::ser::Serialize for UserTokenType {
         serializer.serialize_i32(*self as i32)
     }
 }
-impl opcua::types::BinaryEncoder for UserTokenType {
+impl opcua::types::BinaryEncodable for UserTokenType {
     fn byte_len(&self) -> usize {
         4usize
     }

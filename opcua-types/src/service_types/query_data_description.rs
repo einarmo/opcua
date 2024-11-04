@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for QueryDataDescription {
         opcua::types::ObjectId::QueryDataDescription_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for QueryDataDescription {
+impl opcua::types::BinaryEncodable for QueryDataDescription {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.relative_path.byte_len();
@@ -52,15 +52,15 @@ impl opcua::types::BinaryEncoder for QueryDataDescription {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let relative_path = <super::relative_path::RelativePath as opcua::types::BinaryEncoder>::decode(
+        let relative_path = <super::relative_path::RelativePath as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let attribute_id = <u32 as opcua::types::BinaryEncoder>::decode(
+        let attribute_id = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let index_range = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let index_range = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

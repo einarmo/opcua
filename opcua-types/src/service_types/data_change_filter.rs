@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for DataChangeFilter {
         opcua::types::ObjectId::DataChangeFilter_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for DataChangeFilter {
+impl opcua::types::BinaryEncodable for DataChangeFilter {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.trigger.byte_len();
@@ -51,15 +51,15 @@ impl opcua::types::BinaryEncoder for DataChangeFilter {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let trigger = <super::enums::DataChangeTrigger as opcua::types::BinaryEncoder>::decode(
+        let trigger = <super::enums::DataChangeTrigger as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let deadband_type = <u32 as opcua::types::BinaryEncoder>::decode(
+        let deadband_type = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let deadband_value = <f64 as opcua::types::BinaryEncoder>::decode(
+        let deadband_value = <f64 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

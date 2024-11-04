@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for DeleteRawModifiedDetails {
         opcua::types::ObjectId::DeleteRawModifiedDetails_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for DeleteRawModifiedDetails {
+impl opcua::types::BinaryEncodable for DeleteRawModifiedDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.node_id.byte_len();
@@ -55,19 +55,19 @@ impl opcua::types::BinaryEncoder for DeleteRawModifiedDetails {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let is_delete_modified = <bool as opcua::types::BinaryEncoder>::decode(
+        let is_delete_modified = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let start_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncoder>::decode(
+        let start_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let end_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncoder>::decode(
+        let end_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

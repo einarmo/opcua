@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for EnumValueType {
         opcua::types::ObjectId::EnumValueType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for EnumValueType {
+impl opcua::types::BinaryEncodable for EnumValueType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.value.byte_len();
@@ -52,15 +52,15 @@ impl opcua::types::BinaryEncoder for EnumValueType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let value = <i64 as opcua::types::BinaryEncoder>::decode(
+        let value = <i64 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let display_name = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncoder>::decode(
+        let display_name = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncoder>::decode(
+        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

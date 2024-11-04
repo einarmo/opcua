@@ -1,6 +1,6 @@
 use std::io::Read;
 
-use opcua_types::{BinaryEncoder, DecodingOptions, EncodingResult, NodeId, ObjectId};
+use opcua_types::{BinaryEncodable, DecodingOptions, EncodingResult, NodeId, ObjectId};
 
 mod request;
 mod response;
@@ -14,7 +14,7 @@ pub trait MessageType {
     fn message_type(&self) -> MessageChunkType;
 }
 
-pub trait Message: BinaryEncoder + MessageType {
+pub trait Message: BinaryEncodable + MessageType {
     fn request_handle(&self) -> u32;
 
     fn decode_by_object_id<S: Read>(

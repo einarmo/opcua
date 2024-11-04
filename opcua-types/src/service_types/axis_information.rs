@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for AxisInformation {
         opcua::types::ObjectId::AxisInformation_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for AxisInformation {
+impl opcua::types::BinaryEncodable for AxisInformation {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.engineering_units.byte_len();
@@ -57,25 +57,25 @@ impl opcua::types::BinaryEncoder for AxisInformation {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let engineering_units = <super::eu_information::EUInformation as opcua::types::BinaryEncoder>::decode(
+        let engineering_units = <super::eu_information::EUInformation as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let eu_range = <super::range::Range as opcua::types::BinaryEncoder>::decode(
+        let eu_range = <super::range::Range as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let title = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncoder>::decode(
+        let title = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let axis_scale_type = <super::enums::AxisScaleEnumeration as opcua::types::BinaryEncoder>::decode(
+        let axis_scale_type = <super::enums::AxisScaleEnumeration as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let axis_steps = <Option<
             Vec<f64>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             engineering_units,
             eu_range,

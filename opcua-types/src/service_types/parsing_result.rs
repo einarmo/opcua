@@ -30,7 +30,7 @@ impl opcua::types::MessageInfo for ParsingResult {
         opcua::types::ObjectId::ParsingResult_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ParsingResult {
+impl opcua::types::BinaryEncodable for ParsingResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.status_code.byte_len();
@@ -54,16 +54,16 @@ impl opcua::types::BinaryEncoder for ParsingResult {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let status_code = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncoder>::decode(
+        let status_code = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let data_status_codes = <Option<
             Vec<opcua::types::status_code::StatusCode>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let data_diagnostic_infos = <Option<
             Vec<opcua::types::diagnostic_info::DiagnosticInfo>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             status_code,
             data_status_codes,

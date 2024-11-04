@@ -61,7 +61,7 @@ mod json {
 }
 
 /// DateTime encoded as 64-bit signed int
-impl BinaryEncoder for DateTime {
+impl BinaryEncodable for DateTime {
     fn byte_len(&self) -> usize {
         8
     }

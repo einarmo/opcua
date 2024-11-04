@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for ServerOnNetwork {
         opcua::types::ObjectId::ServerOnNetwork_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ServerOnNetwork {
+impl opcua::types::BinaryEncodable for ServerOnNetwork {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.record_id.byte_len();
@@ -55,21 +55,21 @@ impl opcua::types::BinaryEncoder for ServerOnNetwork {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let record_id = <u32 as opcua::types::BinaryEncoder>::decode(
+        let record_id = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let server_name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let server_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let discovery_url = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let discovery_url = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let server_capabilities = <Option<
             Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             record_id,
             server_name,

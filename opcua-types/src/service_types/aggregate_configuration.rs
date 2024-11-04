@@ -30,7 +30,7 @@ impl opcua::types::MessageInfo for AggregateConfiguration {
         opcua::types::ObjectId::AggregateConfiguration_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for AggregateConfiguration {
+impl opcua::types::BinaryEncodable for AggregateConfiguration {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.use_server_capabilities_defaults.byte_len();
@@ -58,23 +58,23 @@ impl opcua::types::BinaryEncoder for AggregateConfiguration {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let use_server_capabilities_defaults = <bool as opcua::types::BinaryEncoder>::decode(
+        let use_server_capabilities_defaults = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let treat_uncertain_as_bad = <bool as opcua::types::BinaryEncoder>::decode(
+        let treat_uncertain_as_bad = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let percent_data_bad = <u8 as opcua::types::BinaryEncoder>::decode(
+        let percent_data_bad = <u8 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let percent_data_good = <u8 as opcua::types::BinaryEncoder>::decode(
+        let percent_data_good = <u8 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let use_sloped_extrapolation = <bool as opcua::types::BinaryEncoder>::decode(
+        let use_sloped_extrapolation = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

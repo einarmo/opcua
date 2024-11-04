@@ -66,7 +66,7 @@ for something that adds variables to the address space and changes their values.
 
 OPC UA defines a lot of types. Some of those correspond to Rust primitives while others are types, structures or enums which are used by the protocol. All types are defined in the [`opcua-types`](../types) crate.
 
-All types can be encoded / decoded to a stream according to the opc.tcp:// binary transport. They do so by implementing a `BinaryEncoder` trait. The three functions on this trait allow a struct to be deserialized, serialized, or the byte size of it to be calculated.
+All types can be encoded / decoded to a stream according to the opc.tcp:// binary transport. They do so by implementing a `BinaryEncodable` trait. The three functions on this trait allow a struct to be deserialized, serialized, or the byte size of it to be calculated.
 
 Typically encoding will begin with a structure, e.g. `CreateSubscriptionRequest` whose implementation will encode each member in turn.
 

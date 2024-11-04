@@ -26,7 +26,7 @@ impl opcua::types::MessageInfo for RelativePath {
         opcua::types::ObjectId::RelativePath_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for RelativePath {
+impl opcua::types::BinaryEncodable for RelativePath {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.elements.byte_len();
@@ -48,7 +48,7 @@ impl opcua::types::BinaryEncoder for RelativePath {
     ) -> opcua::types::EncodingResult<Self> {
         let elements = <Option<
             Vec<super::relative_path_element::RelativePathElement>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self { elements })
     }
 }

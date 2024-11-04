@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for EventFieldList {
         opcua::types::ObjectId::EventFieldList_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for EventFieldList {
+impl opcua::types::BinaryEncodable for EventFieldList {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.client_handle.byte_len();
@@ -49,13 +49,13 @@ impl opcua::types::BinaryEncoder for EventFieldList {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let client_handle = <u32 as opcua::types::BinaryEncoder>::decode(
+        let client_handle = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let event_fields = <Option<
             Vec<opcua::types::variant::Variant>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             client_handle,
             event_fields,
