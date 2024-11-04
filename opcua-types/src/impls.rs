@@ -23,7 +23,8 @@ use crate::{
     status_code::StatusCode,
     string::UAString,
     variant::Variant,
-    AddNodesItem, AddReferencesItem, NumericRange, PubSubState, ServerState,
+    AddNodesItem, AddReferencesItem, ExpandedNodeId, NamespaceMap, NumericRange, PubSubState,
+    ServerState,
 };
 
 use super::{PerformUpdateType, SecurityTokenRequestType};
@@ -36,6 +37,52 @@ pub trait MessageInfo {
     fn json_type_id(&self) -> ObjectId;
     /// The XML type id associated with the message.
     fn xml_type_id(&self) -> ObjectId;
+}
+
+/// Trait implemented by all messages, allowing for custom message types.
+pub trait ExpandedMessageInfo {
+    /// The binary type id associated with the message.
+    fn full_type_id(&self) -> ExpandedNodeId;
+    /// The JSON type id associated with the message.
+    fn full_json_type_id(&self) -> ExpandedNodeId;
+    /// Tge XML type id associated with the message.
+    fn full_xml_type_id(&self) -> ExpandedNodeId;
+}
+
+impl<T> ExpandedMessageInfo for T
+where
+    T: MessageInfo,
+{
+    fn full_type_id(&self) -> ExpandedNodeId {
+        self.type_id().into()
+    }
+
+    fn full_json_type_id(&self) -> ExpandedNodeId {
+        self.json_type_id().into()
+    }
+
+    fn full_xml_type_id(&self) -> ExpandedNodeId {
+        self.xml_type_id().into()
+    }
+}
+
+/// Context for encoding.
+#[derive(Debug, Default)]
+pub struct EncodingContext {
+    namespaces: NamespaceMap,
+}
+
+impl EncodingContext {
+    pub fn new(namespaces: NamespaceMap) -> Self {
+        Self { namespaces }
+    }
+
+    pub fn resolve_node_id<'b>(
+        &self,
+        id: &'b ExpandedNodeId,
+    ) -> Option<std::borrow::Cow<'b, NodeId>> {
+        id.try_resolve(&self.namespaces)
+    }
 }
 
 impl ServiceFault {

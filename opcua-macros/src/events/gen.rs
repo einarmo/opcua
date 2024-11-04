@@ -16,13 +16,13 @@ pub fn generate_event_impls(event: EventStruct) -> syn::Result<TokenStream> {
         let ident = field.ident;
         if field.attr.placeholder {
             placeholder_fields.extend(quote! {
-                if let Some(value) = self.#ident.try_get_value(field, attribute_id, index_range, browse_path.get(1..).unwrap_or(&[])) {
+                if let Some(value) = self.#ident.try_get_value(field, attribute_id, index_range, browse_path.get(1..).unwrap_or(&[]), ctx) {
                     return value;
                 }
             })
         } else if !field.attr.ignore {
             get_arms.extend(quote! {
-                #name => self.#ident.get_value(attribute_id, index_range, browse_path.get(1..).unwrap_or(&[])),
+                #name => self.#ident.get_value(attribute_id, index_range, browse_path.get(1..).unwrap_or(&[]), ctx),
             });
         }
         init_items.extend(quote! {
@@ -139,6 +139,7 @@ pub fn generate_event_impls(event: EventStruct) -> syn::Result<TokenStream> {
                 attribute_id: opcua::types::AttributeId,
                 index_range: &opcua::types::NumericRange,
                 browse_path: &[opcua::types::QualifiedName],
+                ctx: &opcua::types::EncodingContext,
             ) -> opcua::types::Variant {
                 use opcua::nodes::EventField;
 
@@ -146,11 +147,11 @@ pub fn generate_event_impls(event: EventStruct) -> syn::Result<TokenStream> {
                     #type_id_body
                 } {
                     return self.base.get_field(
-                        type_definition_id, attribute_id, index_range, browse_path
+                        type_definition_id, attribute_id, index_range, browse_path, ctx
                     );
                 }
 
-                self.get_value(attribute_id, index_range, browse_path)
+                self.get_value(attribute_id, index_range, browse_path, ctx)
             }
 
             fn time(&self) -> &opcua::types::DateTime {
@@ -164,6 +165,7 @@ pub fn generate_event_impls(event: EventStruct) -> syn::Result<TokenStream> {
                 attribute_id: opcua::types::AttributeId,
                 index_range: &opcua::types::NumericRange,
                 browse_path: &[opcua::types::QualifiedName],
+                ctx: &opcua::types::EncodingContext,
             ) -> opcua::types::Variant {
                 if browse_path.is_empty() {
                     return opcua::types::Variant::Empty;
@@ -173,7 +175,7 @@ pub fn generate_event_impls(event: EventStruct) -> syn::Result<TokenStream> {
                     #get_arms
                     _ => {
                         #placeholder_fields
-                        self.base.get_value(attribute_id, index_range, browse_path)
+                        self.base.get_value(attribute_id, index_range, browse_path, ctx)
                     }
                 }
             }

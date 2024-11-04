@@ -31,7 +31,7 @@ use crate::{
     status_code::StatusCode,
     string::{UAString, XmlElement},
     variant_type_id::*,
-    DataValue, DiagnosticInfo, MessageInfo,
+    DataValue, DiagnosticInfo, EncodingContext, ExpandedMessageInfo, MessageInfo,
 };
 
 use super::DateTimeUtc;
@@ -122,15 +122,18 @@ where
 /// Trait for types that can be converted to a variant from a reference
 /// directly, typically through encoding.
 pub trait AsVariantRef {
-    fn as_variant(&self) -> Variant;
+    fn as_variant(&self, ctx: &EncodingContext) -> Variant;
 }
 
 impl<T> AsVariantRef for T
 where
-    T: BinaryEncoder + MessageInfo,
+    T: BinaryEncoder + ExpandedMessageInfo,
 {
-    fn as_variant(&self) -> Variant {
-        ExtensionObject::from_message(self).into()
+    fn as_variant(&self, ctx: &EncodingContext) -> Variant {
+        ExtensionObject::from_message_full(self, ctx)
+            .map(|e| e.into())
+            .inspect_err(|e| error!("Unable to encode extension object: {e}"))
+            .unwrap_or(Variant::Empty)
     }
 }
 

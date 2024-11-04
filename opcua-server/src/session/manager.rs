@@ -16,7 +16,8 @@ use tokio::sync::Notify;
 use crate::{identity_token::IdentityToken, info::ServerInfo};
 use opcua_types::{
     ActivateSessionRequest, ActivateSessionResponse, CloseSessionRequest, CloseSessionResponse,
-    CreateSessionRequest, CreateSessionResponse, NodeId, ResponseHeader, SignatureData, StatusCode,
+    CreateSessionRequest, CreateSessionResponse, EncodingContext, NodeId, ResponseHeader,
+    SignatureData, StatusCode,
 };
 
 use super::{instance::Session, message_handler::MessageHandler};
@@ -287,6 +288,7 @@ pub(crate) async fn activate_session(
     mgr_lck: &RwLock<SessionManager>,
     channel: &mut SecureChannel,
     request: &ActivateSessionRequest,
+    handler: &mut MessageHandler,
 ) -> Result<ActivateSessionResponse, StatusCode> {
     let security_policy = channel.security_policy();
     let security_mode = channel.security_mode();
@@ -338,34 +340,46 @@ pub(crate) async fn activate_session(
         )
         .await?;
 
-    let mut session = trace_write_lock!(session_lck);
+    let (server_nonce, session_id) = {
+        let mut session = trace_write_lock!(session_lck);
 
-    if !session.is_activated() && session.secure_channel_id() != secure_channel_id {
-        error!("activate session, rejected secure channel id {} for inactive session does not match one used to create session, {}", secure_channel_id, session.secure_channel_id());
-        return Err(StatusCode::BadSecureChannelIdInvalid);
-    } else {
-        // TODO additional secure channel validation here for client certificate and user identity
-        //  token
+        if !session.is_activated() && session.secure_channel_id() != secure_channel_id {
+            error!("activate session, rejected secure channel id {} for inactive session does not match one used to create session, {}", secure_channel_id, session.secure_channel_id());
+            return Err(StatusCode::BadSecureChannelIdInvalid);
+        } else {
+            // TODO additional secure channel validation here for client certificate and user identity
+            //  token
+        }
+
+        // TODO: If the user identity changed here, we need to re-check permissions for any created monitored items.
+        // It may be possible to just create a "fake" UserAccessLevel for each monitored item and pass it to the auth manager.
+        // The standard also mentions that a server may need to
+        // "Tear down connections to an underlying system and re-establish them using the new credentials". We need some way to
+        // handle this eventuality, perhaps a dedicated node-manager endpoint that can be called here.
+        session.activate(
+            secure_channel_id,
+            server_nonce,
+            IdentityToken::new(&request.user_identity_token, &info.decoding_options()),
+            request.locale_ids.clone(),
+            user_token.clone(),
+        );
+        (
+            session.session_nonce().clone(),
+            session.session_id_numeric(),
+        )
+    };
+
+    let namespaces = handler.get_namespaces_for_user(session_lck.clone(), session_id, user_token);
+    {
+        let mut session = trace_write_lock!(session_lck);
+        session.set_context(EncodingContext::new(namespaces));
     }
-
-    // TODO: If the user identity changed here, we need to re-check permissions for any created monitored items.
-    // It may be possible to just create a "fake" UserAccessLevel for each monitored item and pass it to the auth manager.
-    // The standard also mentions that a server may need to
-    // "Tear down connections to an underlying system and re-establish them using the new credentials". We need some way to
-    // handle this eventuality, perhaps a dedicated node-manager endpoint that can be called here.
-    session.activate(
-        secure_channel_id,
-        server_nonce,
-        IdentityToken::new(&request.user_identity_token, &info.decoding_options()),
-        request.locale_ids.clone(),
-        user_token,
-    );
 
     // TODO: Audit
 
     Ok(ActivateSessionResponse {
         response_header: ResponseHeader::new_good(&request.request_header),
-        server_nonce: session.session_nonce().clone(),
+        server_nonce,
         results: None,
         diagnostic_infos: None,
     })

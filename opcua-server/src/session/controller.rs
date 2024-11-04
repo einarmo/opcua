@@ -300,8 +300,13 @@ impl SessionController {
             }
 
             RequestMessage::ActivateSession(request) => {
-                let res =
-                    activate_session(&self.session_manager, &mut self.channel, &request).await;
+                let res = activate_session(
+                    &self.session_manager,
+                    &mut self.channel,
+                    &request,
+                    &mut self.message_handler,
+                )
+                .await;
                 self.process_service_result(res, request.request_header.request_handle, id)
             }
 

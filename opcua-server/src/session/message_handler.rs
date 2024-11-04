@@ -9,13 +9,13 @@ use tokio::task::JoinHandle;
 use crate::{
     authenticator::UserToken,
     info::ServerInfo,
-    node_manager::{NodeManagers, RequestContext},
+    node_manager::{get_namespaces_for_user, NodeManagers, RequestContext},
     session::services,
     subscriptions::{PendingPublish, SubscriptionCache},
 };
 use opcua_types::{
-    PublishRequest, ResponseHeader, ServiceFault, SetTriggeringRequest, SetTriggeringResponse,
-    StatusCode,
+    NamespaceMap, PublishRequest, ResponseHeader, ServiceFault, SetTriggeringRequest,
+    SetTriggeringResponse, StatusCode,
 };
 
 use super::{controller::Response, instance::Session};
@@ -385,6 +385,26 @@ impl MessageHandler {
         {
             warn!("Cleaning up session subscriptions failed: {e}");
         }
+    }
+
+    pub fn get_namespaces_for_user(
+        &mut self,
+        session: Arc<RwLock<Session>>,
+        session_id: u32,
+        token: UserToken,
+    ) -> NamespaceMap {
+        let ctx = RequestContext {
+            session,
+            authenticator: self.info.authenticator.clone(),
+            token,
+            current_node_manager_index: 0,
+            type_tree: self.info.type_tree.clone(),
+            type_tree_getter: self.info.type_tree_getter.clone(),
+            subscriptions: self.subscriptions.clone(),
+            session_id,
+            info: self.info.clone(),
+        };
+        get_namespaces_for_user(&ctx, &self.node_managers)
     }
 
     fn set_triggering(
