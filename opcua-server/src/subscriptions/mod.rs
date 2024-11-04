@@ -207,6 +207,7 @@ impl SubscriptionCache {
                     self.limits,
                     Self::get_key(session),
                     session.clone(),
+                    session.read().context().clone(),
                 )))
             })
             .clone();
@@ -682,6 +683,7 @@ impl SubscriptionCache {
                         self.limits,
                         key.clone(),
                         session.clone(),
+                        session.read().context().clone(),
                     )))
                 })
                 .clone();

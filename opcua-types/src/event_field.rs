@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use crate::{
     Array, AsVariantRef, AttributeId, ByteString, DataValue, DateTime, DiagnosticInfo,
-    ExpandedNodeId, ExtensionObject, Guid, LocalizedText, NodeId, NumericRange, QualifiedName,
-    StatusCode, UAString, Variant, VariantType,
+    EncodingContext, ExpandedNodeId, ExtensionObject, Guid, LocalizedText, NodeId, NumericRange,
+    QualifiedName, StatusCode, UAString, Variant, VariantType,
 };
 
 /// Trait implemented by any type that can be a field in an event.
@@ -20,6 +20,7 @@ pub trait EventField {
         attribute_id: AttributeId,
         index_range: &NumericRange,
         remaining_path: &[QualifiedName],
+        ctx: &EncodingContext,
     ) -> Variant;
 }
 
@@ -32,6 +33,7 @@ where
         attribute_id: AttributeId,
         index_range: &NumericRange,
         remaining_path: &[QualifiedName],
+        ctx: &EncodingContext,
     ) -> Variant {
         if !remaining_path.is_empty()
             || attribute_id != AttributeId::Value
@@ -39,7 +41,7 @@ where
         {
             return Variant::Empty;
         }
-        self.as_variant()
+        self.as_variant(ctx)
     }
 }
 
@@ -52,11 +54,12 @@ where
         attribute_id: AttributeId,
         index_range: &NumericRange,
         remaining_path: &[QualifiedName],
+        ctx: &EncodingContext,
     ) -> Variant {
         let Some(val) = self.as_ref() else {
             return Variant::Empty;
         };
-        val.get_value(attribute_id, index_range, remaining_path)
+        val.get_value(attribute_id, index_range, remaining_path, ctx)
     }
 }
 
@@ -69,63 +72,66 @@ where
         attribute_id: AttributeId,
         index_range: &NumericRange,
         remaining_path: &[QualifiedName],
+        ctx: &EncodingContext,
     ) -> Variant {
         if !remaining_path.is_empty() {
             return Variant::Empty;
         }
 
-        let values: Vec<_> = match index_range {
-            NumericRange::None => self
-                .iter()
-                .map(|v| v.get_value(attribute_id, &NumericRange::None, &[]))
-                .collect(),
-            NumericRange::Index(i) => {
-                return self.get((*i) as usize).cloned().get_value(
-                    attribute_id,
-                    &NumericRange::None,
-                    &[],
-                );
-            }
-            NumericRange::Range(s, e) => {
-                if e <= s {
-                    return Variant::Empty;
+        let values: Vec<_> =
+            match index_range {
+                NumericRange::None => self
+                    .iter()
+                    .map(|v| v.get_value(attribute_id, &NumericRange::None, &[], ctx))
+                    .collect(),
+                NumericRange::Index(i) => {
+                    return self.get((*i) as usize).cloned().get_value(
+                        attribute_id,
+                        &NumericRange::None,
+                        &[],
+                        ctx,
+                    );
                 }
-                let Some(r) = self.get(((*s) as usize)..((*e) as usize)) else {
-                    return Variant::Empty;
-                };
-                r.iter()
-                    .map(|v| v.get_value(attribute_id, &NumericRange::None, &[]))
-                    .collect()
-            }
-            NumericRange::MultipleRanges(r) => {
-                let mut values = Vec::new();
-                for range in r {
-                    match range {
-                        NumericRange::Index(i) => {
-                            values.push(self.get((*i) as usize).cloned().get_value(
-                                attribute_id,
-                                &NumericRange::None,
-                                &[],
-                            ));
-                        }
-                        NumericRange::Range(s, e) => {
-                            if e <= s {
-                                return Variant::Empty;
-                            }
-                            let Some(r) = self.get(((*s) as usize)..((*e) as usize)) else {
-                                continue;
-                            };
-                            values.extend(
-                                r.iter()
-                                    .map(|v| v.get_value(attribute_id, &NumericRange::None, &[])),
-                            )
-                        }
-                        _ => return Variant::Empty,
+                NumericRange::Range(s, e) => {
+                    if e <= s {
+                        return Variant::Empty;
                     }
+                    let Some(r) = self.get(((*s) as usize)..((*e) as usize)) else {
+                        return Variant::Empty;
+                    };
+                    r.iter()
+                        .map(|v| v.get_value(attribute_id, &NumericRange::None, &[], ctx))
+                        .collect()
                 }
-                values
-            }
-        };
+                NumericRange::MultipleRanges(r) => {
+                    let mut values = Vec::new();
+                    for range in r {
+                        match range {
+                            NumericRange::Index(i) => {
+                                values.push(self.get((*i) as usize).cloned().get_value(
+                                    attribute_id,
+                                    &NumericRange::None,
+                                    &[],
+                                    ctx,
+                                ));
+                            }
+                            NumericRange::Range(s, e) => {
+                                if e <= s {
+                                    return Variant::Empty;
+                                }
+                                let Some(r) = self.get(((*s) as usize)..((*e) as usize)) else {
+                                    continue;
+                                };
+                                values.extend(r.iter().map(|v| {
+                                    v.get_value(attribute_id, &NumericRange::None, &[], ctx)
+                                }))
+                            }
+                            _ => return Variant::Empty,
+                        }
+                    }
+                    values
+                }
+            };
 
         let Ok(arr) = Array::new(T::variant_type_id(), values) else {
             return Variant::Empty;
@@ -142,6 +148,7 @@ macro_rules! basic_field_impl {
                 attribute_id: AttributeId,
                 index_range: &NumericRange,
                 remaining_path: &[QualifiedName],
+                _ctx: &EncodingContext,
             ) -> Variant {
                 if remaining_path.len() != 0 || attribute_id != AttributeId::Value {
                     return Variant::Empty;
@@ -185,6 +192,7 @@ impl EventField for Variant {
         attribute_id: AttributeId,
         index_range: &NumericRange,
         remaining_path: &[QualifiedName],
+        _ctx: &EncodingContext,
     ) -> Variant {
         if !remaining_path.is_empty() || attribute_id != AttributeId::Value {
             return Variant::Empty;
@@ -201,6 +209,7 @@ impl EventField for NumericRange {
         attribute_id: AttributeId,
         index_range: &NumericRange,
         remaining_path: &[QualifiedName],
+        _ctx: &EncodingContext,
     ) -> Variant {
         if !remaining_path.is_empty() || attribute_id != AttributeId::Value {
             return Variant::Empty;
@@ -262,10 +271,11 @@ impl<T: EventField> PlaceholderEventField<T> {
         attribute_id: AttributeId,
         index_range: &NumericRange,
         remaining_path: &[QualifiedName],
+        ctx: &EncodingContext,
     ) -> Option<Variant> {
         println!("Get nested {key:?}");
         let field = self.get_field(key)?;
         println!("Found field");
-        Some(field.get_value(attribute_id, index_range, remaining_path))
+        Some(field.get_value(attribute_id, index_range, remaining_path, ctx))
     }
 }

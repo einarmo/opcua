@@ -1244,6 +1244,7 @@ dependencies = [
  "bitflags",
  "byteorder",
  "chrono",
+ "hashbrown 0.14.5",
  "lazy_static",
  "log",
  "opcua-macros",

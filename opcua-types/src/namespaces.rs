@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use hashbrown::HashMap;
 
 /// Utility for handling assignment of namespaces on server startup.
 #[derive(Debug, Default, Clone)]
@@ -12,6 +12,12 @@ impl NamespaceMap {
         known_namespaces.insert("http://opcfoundation.org/UA/".to_owned(), 0u16);
 
         Self { known_namespaces }
+    }
+
+    pub fn new_full(map: HashMap<String, u16>) -> Self {
+        Self {
+            known_namespaces: map,
+        }
     }
 
     pub fn add_namespace(&mut self, namespace: &str) -> u16 {

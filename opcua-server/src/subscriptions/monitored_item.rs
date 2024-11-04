@@ -6,10 +6,10 @@ use opcua_nodes::{Event, ParsedEventFilter, TypeTree};
 use super::MonitoredItemHandle;
 use crate::{info::ServerInfo, node_manager::ParsedReadValueId};
 use opcua_types::{
-    DataChangeFilter, DataValue, DateTime, DecodingOptions, EventFieldList, EventFilter,
-    EventFilterResult, ExtensionObject, MonitoredItemCreateRequest, MonitoredItemModifyRequest,
-    MonitoredItemNotification, MonitoringMode, NumericRange, ObjectId, StatusCode,
-    TimestampsToReturn, Variant,
+    DataChangeFilter, DataValue, DateTime, DecodingOptions, EncodingContext, EventFieldList,
+    EventFilter, EventFilterResult, ExtensionObject, MonitoredItemCreateRequest,
+    MonitoredItemModifyRequest, MonitoredItemNotification, MonitoringMode, NumericRange, ObjectId,
+    StatusCode, TimestampsToReturn, Variant,
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -455,7 +455,7 @@ impl MonitoredItem {
         true
     }
 
-    pub(super) fn notify_event(&mut self, event: &dyn Event) -> bool {
+    pub(super) fn notify_event(&mut self, event: &dyn Event, ctx: &EncodingContext) -> bool {
         if self.monitoring_mode == MonitoringMode::Disabled {
             return false;
         }
@@ -464,7 +464,7 @@ impl MonitoredItem {
             return false;
         };
 
-        let Some(notif) = filter.evaluate(event, self.client_handle) else {
+        let Some(notif) = filter.evaluate(event, self.client_handle, ctx) else {
             return false;
         };
 

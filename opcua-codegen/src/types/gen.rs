@@ -286,7 +286,7 @@ impl CodeGenerator {
 
         impls.push(parse_quote! {
             impl opcua::types::AsVariantRef for #enum_ident {
-                fn as_variant(&self) -> opcua::types::Variant {
+                fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
                     self.bits().into()
                 }
             }
@@ -501,7 +501,7 @@ impl CodeGenerator {
 
         impls.push(parse_quote! {
             impl opcua::types::AsVariantRef for #enum_ident {
-                fn as_variant(&self) -> opcua::types::Variant {
+                fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
                     (*self as #ty).into()
                 }
             }

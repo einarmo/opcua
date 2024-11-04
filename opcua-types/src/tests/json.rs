@@ -7,7 +7,7 @@ use crate::{
     diagnostic_info::DiagnosticInfo, expanded_node_id::ExpandedNodeId, guid::Guid,
     localized_text::LocalizedText, node_id::NodeId, qualified_name::QualifiedName,
     status_code::StatusCode, string::UAString, variant::Variant, Argument, Array, DataTypeId,
-    VariantScalarTypeId,
+    ObjectId, VariantScalarTypeId,
 };
 
 use super::ExtensionObject;
@@ -207,7 +207,7 @@ fn serialize_extension_object() {
         json,
         json!({
             "TypeId": {
-                "Id": 298
+                "Id": ObjectId::Argument_Encoding_DefaultJson as i32
             },
             "Body": {
                 "Name": "Arg",
@@ -536,7 +536,7 @@ fn serialize_variant_extension_object() {
             "Type": 22,
             "Body": {
                 "TypeId": {
-                    "Id": 298
+                    "Id": ObjectId::Argument_Encoding_DefaultJson as i32
                 },
                 "Body": {
                     "Name": "Arg",

@@ -24,6 +24,7 @@ bitflags = { workspace = true }
 log = { workspace = true }
 regex = { workspace = true }
 lazy_static = { workspace = true }
+hashbrown = { workspace = true }
 uuid = { workspace = true }
 chrono = { workspace = true }
 byteorder = { workspace = true }

@@ -37,7 +37,7 @@ pub fn generate_event_field_impls(event: EventFieldStruct) -> syn::Result<TokenS
 
         if field.attr.placeholder {
             placeholder_fields.extend(quote! {
-                if let Some(value) = self.#ident.try_get_value(field, attribute_id, index_range, browse_path.get(1..).unwrap_or(&[])) {
+                if let Some(value) = self.#ident.try_get_value(field, attribute_id, index_range, browse_path.get(1..).unwrap_or(&[]), ctx) {
                     return value;
                 }
             })
@@ -45,7 +45,7 @@ pub fn generate_event_field_impls(event: EventFieldStruct) -> syn::Result<TokenS
             match ident.to_string().as_str() {
                 "base" => {
                     final_arm = quote! {
-                        self.base.get_value(attribute_id, index_range, browse_path)
+                        self.base.get_value(attribute_id, index_range, browse_path, ctx)
                     }
                 }
                 "node_id" => pre_check_block.extend(quote! {
@@ -56,16 +56,16 @@ pub fn generate_event_field_impls(event: EventFieldStruct) -> syn::Result<TokenS
                 }),
                 "value" => pre_check_block.extend(quote! {
                     if browse_path.is_empty() && attribute_id == opcua::types::AttributeId::Value {
-                        return self.value.get_value(attribute_id, index_range, browse_path);
+                        return self.value.get_value(attribute_id, index_range, browse_path, ctx);
                     }
                 }),
                 _ => get_arms.extend(quote! {
-                    #name => self.#ident.get_value(attribute_id, index_range, browse_path.get(1..).unwrap_or(&[])),
+                    #name => self.#ident.get_value(attribute_id, index_range, browse_path.get(1..).unwrap_or(&[]), ctx),
                 })
             }
         } else {
             get_arms.extend(quote! {
-                #name => self.#ident.get_value(attribute_id, index_range, browse_path.get(1..).unwrap_or(&[])),
+                #name => self.#ident.get_value(attribute_id, index_range, browse_path.get(1..).unwrap_or(&[]), ctx),
             });
         }
     }
@@ -83,6 +83,7 @@ pub fn generate_event_field_impls(event: EventFieldStruct) -> syn::Result<TokenS
                 attribute_id: opcua::types::AttributeId,
                 index_range: &opcua::types::NumericRange,
                 browse_path: &[opcua::types::QualifiedName],
+                ctx: &opcua::types::EncodingContext,
             ) -> opcua::types::Variant {
                 #pre_check_block
                 if browse_path.is_empty() {

@@ -12,6 +12,8 @@ use std::{
 
 use log::error;
 
+use crate::{EncodingContext, ExpandedMessageInfo};
+
 use super::{
     byte_string::ByteString, encoding::*, node_id::NodeId, node_ids::ObjectId,
     status_code::StatusCode, string::XmlElement, MessageInfo,
@@ -332,7 +334,39 @@ impl ExtensionObject {
     ) -> Result<ExtensionObject, serde_json::Error> {
         let value = serde_json::to_value(object)?;
         Ok(Self {
-            node_id: object.type_id().into(),
+            node_id: object.json_type_id().into(),
+            body: ExtensionObjectEncoding::Json(value),
+        })
+    }
+
+    pub fn from_message_full<T>(
+        encodable: &T,
+        ctx: &EncodingContext,
+    ) -> Result<ExtensionObject, StatusCode>
+    where
+        T: BinaryEncoder + ExpandedMessageInfo,
+    {
+        let id = ctx
+            .resolve_node_id(&encodable.full_type_id())
+            .ok_or(StatusCode::BadNodeIdUnknown)?
+            .into_owned();
+        Ok(Self::from_encodable(id, encodable))
+    }
+
+    #[cfg(feature = "json")]
+    pub fn from_json_full<T: serde::Serialize + ExpandedMessageInfo>(
+        object: &T,
+        ctx: &EncodingContext,
+    ) -> Result<ExtensionObject, serde_json::Error> {
+        use serde::de::Error;
+
+        let id = ctx
+            .resolve_node_id(&object.full_type_id())
+            .ok_or_else(|| serde_json::Error::custom("Encoding ID cannot be resolved"))?
+            .into_owned();
+        let value = serde_json::to_value(object)?;
+        Ok(Self {
+            node_id: id,
             body: ExtensionObjectEncoding::Json(value),
         })
     }

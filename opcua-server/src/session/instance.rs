@@ -13,7 +13,8 @@ use crate::info::ServerInfo;
 use crate::node_manager::{BrowseContinuationPoint, QueryContinuationPoint};
 use opcua_crypto::X509;
 use opcua_types::{
-    ApplicationDescription, ByteString, MessageSecurityMode, NodeId, StatusCode, UAString,
+    ApplicationDescription, ByteString, EncodingContext, MessageSecurityMode, NodeId, StatusCode,
+    UAString,
 };
 
 /// An instance of an OPC-UA session.
@@ -68,6 +69,8 @@ pub struct Session {
     user_token: Option<UserToken>,
     /// Whether the session has been closed.
     is_closed: bool,
+    /// Static encoding context for this session.
+    context: Arc<EncodingContext>,
 }
 
 impl Session {
@@ -120,6 +123,8 @@ impl Session {
             application_description,
             message_security_mode,
             is_closed: false,
+            // The namespace map is only known once the user is authenticated.
+            context: Arc::default(),
         }
     }
 
@@ -185,6 +190,10 @@ impl Session {
         self.session_nonce = server_nonce;
         self.user_identity = identity;
         self.locale_ids = locale_ids;
+    }
+
+    pub(crate) fn set_context(&mut self, context: EncodingContext) {
+        self.context = Arc::new(context);
     }
 
     pub(crate) fn close(&mut self) {
@@ -329,5 +338,10 @@ impl Session {
     /// Get the security policy URI of this session.
     pub fn security_policy_uri(&self) -> &str {
         &self.security_policy_uri
+    }
+
+    /// Get the encoding context used for events.
+    pub fn context(&self) -> &Arc<EncodingContext> {
+        &self.context
     }
 }
