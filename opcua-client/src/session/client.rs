@@ -212,7 +212,11 @@ impl Client {
     ///
     /// This is used when creating temporary connections to the server, when creating a session,
     /// [`AsyncSession`] manages its own channel.
-    fn channel_from_session_info(&self, session_info: SessionInfo) -> AsyncSecureChannel {
+    fn channel_from_session_info(
+        &self,
+        session_info: SessionInfo,
+        channel_lifetime: u32,
+    ) -> AsyncSecureChannel {
         AsyncSecureChannel::new(
             self.certificate_store.clone(),
             session_info,
@@ -229,6 +233,7 @@ impl Client {
                 max_chunk_count: self.config.decoding_options.max_chunk_count,
             },
             Box::new(TcpConnector),
+            channel_lifetime,
         )
     }
 
@@ -362,7 +367,7 @@ impl Client {
             user_identity_token: IdentityToken::Anonymous,
             preferred_locales,
         };
-        let channel = self.channel_from_session_info(session_info);
+        let channel = self.channel_from_session_info(session_info, self.config.channel_lifetime);
 
         let mut evt_loop = channel.connect().await?;
 
@@ -448,7 +453,7 @@ impl Client {
             user_identity_token: IdentityToken::Anonymous,
             preferred_locales: Vec::new(),
         };
-        let channel = self.channel_from_session_info(session_info);
+        let channel = self.channel_from_session_info(session_info, self.config.channel_lifetime);
 
         let mut evt_loop = channel.connect().await?;
 
@@ -613,7 +618,7 @@ impl Client {
             user_identity_token: IdentityToken::Anonymous,
             preferred_locales: Vec::new(),
         };
-        let channel = self.channel_from_session_info(session_info);
+        let channel = self.channel_from_session_info(session_info, self.config.channel_lifetime);
 
         let mut evt_loop = channel.connect().await?;
 

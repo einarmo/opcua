@@ -5,8 +5,8 @@
 //! Contains the implementation of `View` and `ViewBuilder`.
 use log::error;
 use opcua_types::{
-    service_types::ViewAttributes, AttributeId, AttributesMask, DataValue, NumericRange,
-    StatusCode, TimestampsToReturn, Variant,
+    service_types::ViewAttributes, AttributeId, AttributesMask, DataEncoding, DataValue,
+    NumericRange, StatusCode, TimestampsToReturn, Variant,
 };
 
 use crate::FromAttributesError;
@@ -60,7 +60,7 @@ impl Node for View {
         timestamps_to_return: TimestampsToReturn,
         attribute_id: AttributeId,
         index_range: &NumericRange,
-        data_encoding: &QualifiedName,
+        data_encoding: &DataEncoding,
         max_age: f64,
     ) -> Option<DataValue> {
         match attribute_id {

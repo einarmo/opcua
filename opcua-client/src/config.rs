@@ -295,6 +295,10 @@ pub struct ClientConfig {
     pub(crate) performance: Performance,
     /// Session name
     pub(crate) session_name: String,
+
+    /// Requested channel lifetime in milliseconds.
+    #[serde(default = "defaults::channel_lifetime")]
+    pub(crate) channel_lifetime: u32,
 }
 
 impl Config for ClientConfig {
@@ -549,6 +553,10 @@ mod defaults {
     pub fn max_inflight_messages() -> usize {
         20
     }
+
+    pub fn channel_lifetime() -> u32 {
+        60_000
+    }
 }
 
 impl ClientConfig {
@@ -586,6 +594,7 @@ impl ClientConfig {
             performance: Performance::default(),
             session_name: "Rust OPC UA Client".into(),
             max_failed_keep_alive_count: defaults::max_failed_keep_alive_count(),
+            channel_lifetime: defaults::channel_lifetime(),
         }
     }
 }

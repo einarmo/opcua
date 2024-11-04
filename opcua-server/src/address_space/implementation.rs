@@ -1387,7 +1387,7 @@ mod tests {
             v.value(
                 TimestampsToReturn::Neither,
                 &NumericRange::None,
-                &QualifiedName::null(),
+                &opcua_types::DataEncoding::Binary,
                 0.0
             )
             .value
@@ -1470,7 +1470,7 @@ mod tests {
                 .value(
                     TimestampsToReturn::Neither,
                     &NumericRange::None,
-                    &QualifiedName::null(),
+                    &opcua_types::DataEncoding::Binary,
                     0.0,
                 )
                 .value

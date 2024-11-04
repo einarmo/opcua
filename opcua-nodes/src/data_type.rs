@@ -6,8 +6,9 @@
 
 use log::error;
 use opcua_types::{
-    service_types::DataTypeAttributes, AttributeId, AttributesMask, DataTypeDefinition, DataValue,
-    DecodingOptions, NumericRange, StatusCode, TimestampsToReturn, Variant,
+    service_types::DataTypeAttributes, AttributeId, AttributesMask, DataEncoding,
+    DataTypeDefinition, DataValue, DecodingOptions, NumericRange, StatusCode, TimestampsToReturn,
+    Variant,
 };
 
 use crate::FromAttributesError;
@@ -61,7 +62,7 @@ impl Node for DataType {
         timestamps_to_return: TimestampsToReturn,
         attribute_id: AttributeId,
         index_range: &NumericRange,
-        data_encoding: &QualifiedName,
+        data_encoding: &DataEncoding,
         max_age: f64,
     ) -> Option<DataValue> {
         match attribute_id {

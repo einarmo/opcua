@@ -2,8 +2,8 @@ use crate::node_manager::{ParsedReadValueId, ParsedWriteValue, RequestContext, S
 use log::debug;
 use opcua_nodes::TypeTree;
 use opcua_types::{
-    AttributeId, DataTypeId, DataValue, NumericRange, QualifiedName, StatusCode,
-    TimestampsToReturn, Variant, WriteMask,
+    AttributeId, DataEncoding, DataTypeId, DataValue, NumericRange, StatusCode, TimestampsToReturn,
+    Variant, WriteMask,
 };
 
 use super::{AddressSpace, HasNodeId, NodeType, UserAccessLevel, Variable};
@@ -173,12 +173,8 @@ pub fn validate_node_write(
     Ok(())
 }
 
-pub fn is_supported_data_encoding(data_encoding: &QualifiedName) -> bool {
-    if data_encoding.is_null() {
-        true
-    } else {
-        data_encoding.namespace_index == 0 && data_encoding.name.eq("Default Binary")
-    }
+pub fn is_supported_data_encoding(data_encoding: &DataEncoding) -> bool {
+    matches!(data_encoding, DataEncoding::Binary)
 }
 
 pub fn read_node_value(

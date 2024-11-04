@@ -298,4 +298,12 @@ impl ClientBuilder {
         self.config.session_name = session_name.into();
         self
     }
+
+    /// Requested secure channel token lifetime, in milliseconds.
+    /// The channel will be renewed once 3/4 of the
+    /// lifetime has elapsed. Setting this too low is likely to cause issues.
+    pub fn channel_lifetime(mut self, channel_lifetime: u32) -> Self {
+        self.config.channel_lifetime = channel_lifetime;
+        self
+    }
 }

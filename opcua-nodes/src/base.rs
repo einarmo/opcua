@@ -3,8 +3,8 @@
 // Copyright (C) 2017-2024 Adam Lock
 
 use opcua_types::{
-    status_code::StatusCode, AttributeId, DataValue, LocalizedText, NodeClass, NodeId,
-    NumericRange, QualifiedName, TimestampsToReturn, Variant, WriteMask,
+    status_code::StatusCode, AttributeId, DataEncoding, DataValue, LocalizedText, NodeClass,
+    NodeId, NumericRange, QualifiedName, TimestampsToReturn, Variant, WriteMask,
 };
 
 use super::node::{Node, NodeBase};
@@ -80,7 +80,7 @@ impl Node for Base {
         _timestamps_to_return: TimestampsToReturn,
         attribute_id: AttributeId,
         _index_range: &NumericRange,
-        _data_encoding: &QualifiedName,
+        _data_encoding: &DataEncoding,
         _max_age: f64,
     ) -> Option<DataValue> {
         match attribute_id {
