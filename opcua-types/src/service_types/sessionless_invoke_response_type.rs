@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for SessionlessInvokeResponseType {
         opcua::types::ObjectId::SessionlessInvokeResponseType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for SessionlessInvokeResponseType {
+impl opcua::types::BinaryEncodable for SessionlessInvokeResponseType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.namespace_uris.byte_len();
@@ -54,11 +54,11 @@ impl opcua::types::BinaryEncoder for SessionlessInvokeResponseType {
     ) -> opcua::types::EncodingResult<Self> {
         let namespace_uris = <Option<
             Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let server_uris = <Option<
             Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let service_id = <u32 as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let service_id = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

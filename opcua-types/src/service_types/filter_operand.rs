@@ -24,7 +24,7 @@ impl opcua::types::MessageInfo for FilterOperand {
         opcua::types::ObjectId::FilterOperand_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for FilterOperand {
+impl opcua::types::BinaryEncodable for FilterOperand {
     fn byte_len(&self) -> usize {
         0usize
     }

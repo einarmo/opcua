@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for TimeZoneDataType {
         opcua::types::ObjectId::TimeZoneDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for TimeZoneDataType {
+impl opcua::types::BinaryEncodable for TimeZoneDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.offset.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for TimeZoneDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let offset = <i16 as opcua::types::BinaryEncoder>::decode(
+        let offset = <i16 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let daylight_saving_in_offset = <bool as opcua::types::BinaryEncoder>::decode(
+        let daylight_saving_in_offset = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

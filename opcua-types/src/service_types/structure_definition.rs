@@ -17,7 +17,7 @@ pub struct StructureDefinition {
     pub structure_type: super::enums::StructureType,
     pub fields: Option<Vec<super::structure_field::StructureField>>,
 }
-impl opcua::types::BinaryEncoder for StructureDefinition {
+impl opcua::types::BinaryEncodable for StructureDefinition {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.default_encoding_id.byte_len();
@@ -43,21 +43,21 @@ impl opcua::types::BinaryEncoder for StructureDefinition {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let default_encoding_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let default_encoding_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let base_data_type = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let base_data_type = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let structure_type = <super::enums::StructureType as opcua::types::BinaryEncoder>::decode(
+        let structure_type = <super::enums::StructureType as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let fields = <Option<
             Vec<super::structure_field::StructureField>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             default_encoding_id,
             base_data_type,

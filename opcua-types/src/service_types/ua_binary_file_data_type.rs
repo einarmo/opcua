@@ -36,7 +36,7 @@ impl opcua::types::MessageInfo for UABinaryFileDataType {
         opcua::types::ObjectId::UABinaryFileDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for UABinaryFileDataType {
+impl opcua::types::BinaryEncodable for UABinaryFileDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.namespaces.byte_len();
@@ -70,24 +70,24 @@ impl opcua::types::BinaryEncoder for UABinaryFileDataType {
     ) -> opcua::types::EncodingResult<Self> {
         let namespaces = <Option<
             Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let structure_data_types = <Option<
             Vec<super::structure_description::StructureDescription>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let enum_data_types = <Option<
             Vec<super::enum_description::EnumDescription>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let simple_data_types = <Option<
             Vec<super::simple_type_description::SimpleTypeDescription>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let schema_location = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let schema_location = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let file_header = <Option<
             Vec<super::key_value_pair::KeyValuePair>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let body = <opcua::types::variant::Variant as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let body = <opcua::types::variant::Variant as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

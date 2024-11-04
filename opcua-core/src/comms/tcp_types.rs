@@ -46,7 +46,7 @@ pub struct MessageHeader {
     pub message_size: u32,
 }
 
-impl BinaryEncoder for MessageHeader {
+impl BinaryEncodable for MessageHeader {
     fn byte_len(&self) -> usize {
         MESSAGE_HEADER_LEN
     }
@@ -183,7 +183,7 @@ pub struct HelloMessage {
     pub endpoint_url: UAString,
 }
 
-impl BinaryEncoder for HelloMessage {
+impl BinaryEncodable for HelloMessage {
     fn byte_len(&self) -> usize {
         // 5 * u32 = 20
         self.message_header.byte_len() + 20 + self.endpoint_url.byte_len()
@@ -291,7 +291,7 @@ pub struct AcknowledgeMessage {
     pub max_chunk_count: u32,
 }
 
-impl BinaryEncoder for AcknowledgeMessage {
+impl BinaryEncodable for AcknowledgeMessage {
     fn byte_len(&self) -> usize {
         self.message_header.byte_len() + 20
     }
@@ -354,7 +354,7 @@ pub struct ErrorMessage {
     pub reason: UAString,
 }
 
-impl BinaryEncoder for ErrorMessage {
+impl BinaryEncodable for ErrorMessage {
     fn byte_len(&self) -> usize {
         self.message_header.byte_len() + self.error.byte_len() + self.reason.byte_len()
     }
@@ -400,7 +400,7 @@ mod tests {
     use std::io::Cursor;
 
     use crate::comms::tcp_types::{
-        AcknowledgeMessage, BinaryEncoder, HelloMessage, MessageHeader, MessageType,
+        AcknowledgeMessage, BinaryEncodable, HelloMessage, MessageHeader, MessageType,
     };
     use opcua_types::{
         ApplicationDescription, ByteString, DecodingOptions, EndpointDescription,

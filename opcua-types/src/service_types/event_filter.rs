@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for EventFilter {
         opcua::types::ObjectId::EventFilter_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for EventFilter {
+impl opcua::types::BinaryEncodable for EventFilter {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.select_clauses.byte_len();
@@ -53,8 +53,8 @@ impl opcua::types::BinaryEncoder for EventFilter {
     ) -> opcua::types::EncodingResult<Self> {
         let select_clauses = <Option<
             Vec<super::simple_attribute_operand::SimpleAttributeOperand>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let where_clause = <super::content_filter::ContentFilter as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let where_clause = <super::content_filter::ContentFilter as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

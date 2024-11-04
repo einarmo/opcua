@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for ThreeDFrame {
         opcua::types::ObjectId::ThreeDFrame_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ThreeDFrame {
+impl opcua::types::BinaryEncodable for ThreeDFrame {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.cartesian_coordinates.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for ThreeDFrame {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let cartesian_coordinates = <super::three_d_cartesian_coordinates::ThreeDCartesianCoordinates as opcua::types::BinaryEncoder>::decode(
+        let cartesian_coordinates = <super::three_d_cartesian_coordinates::ThreeDCartesianCoordinates as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let orientation = <super::three_d_orientation::ThreeDOrientation as opcua::types::BinaryEncoder>::decode(
+        let orientation = <super::three_d_orientation::ThreeDOrientation as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

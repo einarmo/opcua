@@ -15,7 +15,7 @@ mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
 pub struct EnumDefinition {
     pub fields: Option<Vec<super::enum_field::EnumField>>,
 }
-impl opcua::types::BinaryEncoder for EnumDefinition {
+impl opcua::types::BinaryEncodable for EnumDefinition {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.fields.byte_len();
@@ -37,7 +37,7 @@ impl opcua::types::BinaryEncoder for EnumDefinition {
     ) -> opcua::types::EncodingResult<Self> {
         let fields = <Option<
             Vec<super::enum_field::EnumField>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self { fields })
     }
 }

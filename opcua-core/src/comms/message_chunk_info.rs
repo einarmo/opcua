@@ -6,7 +6,7 @@ use std::io::Cursor;
 
 use log::error;
 use opcua_crypto::SecurityPolicy;
-use opcua_types::{BinaryEncoder, StatusCode};
+use opcua_types::{BinaryEncodable, StatusCode};
 
 use super::{
     message_chunk::{MessageChunk, MessageChunkHeader},

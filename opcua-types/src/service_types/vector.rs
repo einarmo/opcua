@@ -24,7 +24,7 @@ impl opcua::types::MessageInfo for Vector {
         opcua::types::ObjectId::Vector_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for Vector {
+impl opcua::types::BinaryEncodable for Vector {
     fn byte_len(&self) -> usize {
         0usize
     }

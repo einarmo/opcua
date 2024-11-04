@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for ReadEventDetails {
         opcua::types::ObjectId::ReadEventDetails_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ReadEventDetails {
+impl opcua::types::BinaryEncodable for ReadEventDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.num_values_per_node.byte_len();
@@ -55,19 +55,19 @@ impl opcua::types::BinaryEncoder for ReadEventDetails {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let num_values_per_node = <u32 as opcua::types::BinaryEncoder>::decode(
+        let num_values_per_node = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let start_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncoder>::decode(
+        let start_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let end_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncoder>::decode(
+        let end_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let filter = <super::event_filter::EventFilter as opcua::types::BinaryEncoder>::decode(
+        let filter = <super::event_filter::EventFilter as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

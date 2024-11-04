@@ -32,7 +32,7 @@ impl opcua::types::MessageInfo for StructureField {
         opcua::types::ObjectId::StructureField_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for StructureField {
+impl opcua::types::BinaryEncodable for StructureField {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.name.byte_len();
@@ -64,30 +64,30 @@ impl opcua::types::BinaryEncoder for StructureField {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncoder>::decode(
+        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let data_type = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let data_type = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let value_rank = <i32 as opcua::types::BinaryEncoder>::decode(
+        let value_rank = <i32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let array_dimensions = <Option<
             Vec<u32>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let max_string_length = <u32 as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let max_string_length = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let is_optional = <bool as opcua::types::BinaryEncoder>::decode(
+        let is_optional = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

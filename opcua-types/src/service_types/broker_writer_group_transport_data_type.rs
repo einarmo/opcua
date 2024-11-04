@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for BrokerWriterGroupTransportDataType {
         opcua::types::ObjectId::BrokerWriterGroupTransportDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for BrokerWriterGroupTransportDataType {
+impl opcua::types::BinaryEncodable for BrokerWriterGroupTransportDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.queue_name.byte_len();
@@ -54,19 +54,19 @@ impl opcua::types::BinaryEncoder for BrokerWriterGroupTransportDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let queue_name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let queue_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let resource_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let resource_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let authentication_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let authentication_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let requested_delivery_guarantee = <super::enums::BrokerTransportQualityOfService as opcua::types::BinaryEncoder>::decode(
+        let requested_delivery_guarantee = <super::enums::BrokerTransportQualityOfService as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

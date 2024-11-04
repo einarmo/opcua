@@ -13,7 +13,7 @@ use log::{error, trace};
 
 use crate::{
     encoding::{
-        process_decode_io_result, process_encode_io_result, write_i32, BinaryEncoder,
+        process_decode_io_result, process_encode_io_result, write_i32, BinaryEncodable,
         DecodingOptions, EncodingResult,
     },
     status_code::StatusCode,
@@ -100,7 +100,7 @@ mod json {
     }
 }
 
-impl BinaryEncoder for UAString {
+impl BinaryEncodable for UAString {
     fn byte_len(&self) -> usize {
         // Length plus the actual string length in bytes for a non-null string.
         4 + if self.value.is_none() {

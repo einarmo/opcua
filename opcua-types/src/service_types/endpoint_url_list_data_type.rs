@@ -26,7 +26,7 @@ impl opcua::types::MessageInfo for EndpointUrlListDataType {
         opcua::types::ObjectId::EndpointUrlListDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for EndpointUrlListDataType {
+impl opcua::types::BinaryEncodable for EndpointUrlListDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.endpoint_url_list.byte_len();
@@ -48,7 +48,7 @@ impl opcua::types::BinaryEncoder for EndpointUrlListDataType {
     ) -> opcua::types::EncodingResult<Self> {
         let endpoint_url_list = <Option<
             Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self { endpoint_url_list })
     }
 }

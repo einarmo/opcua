@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for UpdateEventDetails {
         opcua::types::ObjectId::UpdateEventDetails_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for UpdateEventDetails {
+impl opcua::types::BinaryEncodable for UpdateEventDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.node_id.byte_len();
@@ -54,21 +54,21 @@ impl opcua::types::BinaryEncoder for UpdateEventDetails {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let perform_insert_replace = <super::enums::PerformUpdateType as opcua::types::BinaryEncoder>::decode(
+        let perform_insert_replace = <super::enums::PerformUpdateType as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let filter = <super::event_filter::EventFilter as opcua::types::BinaryEncoder>::decode(
+        let filter = <super::event_filter::EventFilter as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let event_data = <Option<
             Vec<super::history_event_field_list::HistoryEventFieldList>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             node_id,
             perform_insert_replace,

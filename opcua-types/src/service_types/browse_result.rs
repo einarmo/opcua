@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for BrowseResult {
         opcua::types::ObjectId::BrowseResult_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for BrowseResult {
+impl opcua::types::BinaryEncodable for BrowseResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.status_code.byte_len();
@@ -52,17 +52,17 @@ impl opcua::types::BinaryEncoder for BrowseResult {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let status_code = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncoder>::decode(
+        let status_code = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let continuation_point = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let continuation_point = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let references = <Option<
             Vec<super::reference_description::ReferenceDescription>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             status_code,
             continuation_point,

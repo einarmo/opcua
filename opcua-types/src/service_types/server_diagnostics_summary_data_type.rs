@@ -37,7 +37,7 @@ impl opcua::types::MessageInfo for ServerDiagnosticsSummaryDataType {
         opcua::types::ObjectId::ServerDiagnosticsSummaryDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ServerDiagnosticsSummaryDataType {
+impl opcua::types::BinaryEncodable for ServerDiagnosticsSummaryDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.server_view_count.byte_len();
@@ -79,51 +79,51 @@ impl opcua::types::BinaryEncoder for ServerDiagnosticsSummaryDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let server_view_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let server_view_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let current_session_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let current_session_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let cumulated_session_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let cumulated_session_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let security_rejected_session_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let security_rejected_session_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let rejected_session_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let rejected_session_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let session_timeout_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let session_timeout_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let session_abort_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let session_abort_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let current_subscription_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let current_subscription_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let cumulated_subscription_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let cumulated_subscription_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let publishing_interval_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let publishing_interval_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let security_rejected_requests_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let security_rejected_requests_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let rejected_requests_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let rejected_requests_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

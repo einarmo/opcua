@@ -253,7 +253,7 @@ impl CodeGenerator {
         let write_method = Ident::new(&format!("write_{}", item.typ), Span::call_site());
 
         impls.push(parse_quote! {
-            impl opcua::types::BinaryEncoder for #enum_ident {
+            impl opcua::types::BinaryEncodable for #enum_ident {
                 fn byte_len(&self) -> usize {
                     #size
                 }
@@ -551,7 +551,7 @@ impl CodeGenerator {
             }
         });
 
-        // BinaryEncoder impl
+        // BinaryEncodable impl
         let size: usize = item.size.try_into().map_err(|_| {
             CodeGenError::Other(format!("Value {} does not fit in a usize", item.size))
         })?;
@@ -559,7 +559,7 @@ impl CodeGenerator {
         let read_method = Ident::new(&format!("read_{}", item.typ), Span::call_site());
 
         impls.push(parse_quote! {
-            impl opcua::types::BinaryEncoder for #enum_ident {
+            impl opcua::types::BinaryEncodable for #enum_ident {
                 fn byte_len(&self) -> usize {
                     #size
                 }
@@ -744,12 +744,12 @@ impl CodeGenerator {
                 });
                 if has_context {
                     decode_impl.extend(quote! {
-                        let #ident = <#ty as opcua::types::BinaryEncoder>::decode(stream, decoding_options)
+                        let #ident = <#ty as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
                             .map_err(|e| e.with_request_handle(__request_handle))?;
                     })
                 } else {
                     decode_impl.extend(quote! {
-                        let #ident = <#ty as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+                        let #ident = <#ty as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
                     });
                 }
 
@@ -783,7 +783,7 @@ impl CodeGenerator {
         }
 
         impls.push(parse_quote! {
-            impl opcua::types::BinaryEncoder for #struct_ident {
+            impl opcua::types::BinaryEncodable for #struct_ident {
                 fn byte_len(&self) -> usize {
                     #len_impl
                 }

@@ -24,7 +24,7 @@ impl opcua::types::MessageInfo for SubscribedDataSetDataType {
         opcua::types::ObjectId::SubscribedDataSetDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for SubscribedDataSetDataType {
+impl opcua::types::BinaryEncodable for SubscribedDataSetDataType {
     fn byte_len(&self) -> usize {
         0usize
     }

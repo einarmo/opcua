@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for Range {
         opcua::types::ObjectId::Range_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for Range {
+impl opcua::types::BinaryEncodable for Range {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.low.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for Range {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let low = <f64 as opcua::types::BinaryEncoder>::decode(
+        let low = <f64 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let high = <f64 as opcua::types::BinaryEncoder>::decode(
+        let high = <f64 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

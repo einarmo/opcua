@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for EUInformation {
         opcua::types::ObjectId::EUInformation_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for EUInformation {
+impl opcua::types::BinaryEncodable for EUInformation {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.namespace_uri.byte_len();
@@ -55,19 +55,19 @@ impl opcua::types::BinaryEncoder for EUInformation {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let namespace_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let namespace_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let unit_id = <i32 as opcua::types::BinaryEncoder>::decode(
+        let unit_id = <i32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let display_name = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncoder>::decode(
+        let display_name = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncoder>::decode(
+        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

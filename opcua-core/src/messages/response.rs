@@ -18,7 +18,7 @@ macro_rules! response_enum {
                 }
             }
         )*
-        impl BinaryEncoder for ResponseMessage {
+        impl BinaryEncodable for ResponseMessage {
             fn byte_len(&self) -> usize {
                 match self {
                     $( Self::$name(value) => value.byte_len(), )*

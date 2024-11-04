@@ -24,7 +24,7 @@ impl opcua::types::MessageInfo for WriterGroupMessageDataType {
         opcua::types::ObjectId::WriterGroupMessageDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for WriterGroupMessageDataType {
+impl opcua::types::BinaryEncodable for WriterGroupMessageDataType {
     fn byte_len(&self) -> usize {
         0usize
     }

@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for TransferResult {
         opcua::types::ObjectId::TransferResult_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for TransferResult {
+impl opcua::types::BinaryEncodable for TransferResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.status_code.byte_len();
@@ -49,13 +49,13 @@ impl opcua::types::BinaryEncoder for TransferResult {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let status_code = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncoder>::decode(
+        let status_code = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let available_sequence_numbers = <Option<
             Vec<u32>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             status_code,
             available_sequence_numbers,

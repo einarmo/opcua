@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for CurrencyUnitType {
         opcua::types::ObjectId::CurrencyUnitType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for CurrencyUnitType {
+impl opcua::types::BinaryEncodable for CurrencyUnitType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.numeric_code.byte_len();
@@ -55,19 +55,19 @@ impl opcua::types::BinaryEncoder for CurrencyUnitType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let numeric_code = <i16 as opcua::types::BinaryEncoder>::decode(
+        let numeric_code = <i16 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let exponent = <i8 as opcua::types::BinaryEncoder>::decode(
+        let exponent = <i8 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let alphabetic_code = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let alphabetic_code = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let currency = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncoder>::decode(
+        let currency = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

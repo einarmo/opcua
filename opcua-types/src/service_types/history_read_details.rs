@@ -24,7 +24,7 @@ impl opcua::types::MessageInfo for HistoryReadDetails {
         opcua::types::ObjectId::HistoryReadDetails_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for HistoryReadDetails {
+impl opcua::types::BinaryEncodable for HistoryReadDetails {
     fn byte_len(&self) -> usize {
         0usize
     }

@@ -34,7 +34,7 @@ impl opcua::types::MessageInfo for UadpDataSetReaderMessageDataType {
         opcua::types::ObjectId::UadpDataSetReaderMessageDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for UadpDataSetReaderMessageDataType {
+impl opcua::types::BinaryEncodable for UadpDataSetReaderMessageDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.group_version.byte_len();
@@ -70,39 +70,39 @@ impl opcua::types::BinaryEncoder for UadpDataSetReaderMessageDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let group_version = <u32 as opcua::types::BinaryEncoder>::decode(
+        let group_version = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let network_message_number = <u16 as opcua::types::BinaryEncoder>::decode(
+        let network_message_number = <u16 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let data_set_offset = <u16 as opcua::types::BinaryEncoder>::decode(
+        let data_set_offset = <u16 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let data_set_class_id = <opcua::types::guid::Guid as opcua::types::BinaryEncoder>::decode(
+        let data_set_class_id = <opcua::types::guid::Guid as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let network_message_content_mask = <super::enums::UadpNetworkMessageContentMask as opcua::types::BinaryEncoder>::decode(
+        let network_message_content_mask = <super::enums::UadpNetworkMessageContentMask as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let data_set_message_content_mask = <super::enums::UadpDataSetMessageContentMask as opcua::types::BinaryEncoder>::decode(
+        let data_set_message_content_mask = <super::enums::UadpDataSetMessageContentMask as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let publishing_interval = <f64 as opcua::types::BinaryEncoder>::decode(
+        let publishing_interval = <f64 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let receive_offset = <f64 as opcua::types::BinaryEncoder>::decode(
+        let receive_offset = <f64 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let processing_offset = <f64 as opcua::types::BinaryEncoder>::decode(
+        let processing_offset = <f64 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

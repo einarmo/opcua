@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for StatusChangeNotification {
         opcua::types::ObjectId::StatusChangeNotification_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for StatusChangeNotification {
+impl opcua::types::BinaryEncodable for StatusChangeNotification {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.status.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for StatusChangeNotification {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let status = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncoder>::decode(
+        let status = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let diagnostic_info = <opcua::types::diagnostic_info::DiagnosticInfo as opcua::types::BinaryEncoder>::decode(
+        let diagnostic_info = <opcua::types::diagnostic_info::DiagnosticInfo as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

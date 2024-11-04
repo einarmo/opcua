@@ -56,7 +56,7 @@ impl opcua::types::MessageInfo for SubscriptionDiagnosticsDataType {
         opcua::types::ObjectId::SubscriptionDiagnosticsDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for SubscriptionDiagnosticsDataType {
+impl opcua::types::BinaryEncodable for SubscriptionDiagnosticsDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.session_id.byte_len();
@@ -136,127 +136,127 @@ impl opcua::types::BinaryEncoder for SubscriptionDiagnosticsDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let session_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let session_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let subscription_id = <u32 as opcua::types::BinaryEncoder>::decode(
+        let subscription_id = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let priority = <u8 as opcua::types::BinaryEncoder>::decode(
+        let priority = <u8 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let publishing_interval = <f64 as opcua::types::BinaryEncoder>::decode(
+        let publishing_interval = <f64 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let max_keep_alive_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let max_keep_alive_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let max_lifetime_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let max_lifetime_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let max_notifications_per_publish = <u32 as opcua::types::BinaryEncoder>::decode(
+        let max_notifications_per_publish = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let publishing_enabled = <bool as opcua::types::BinaryEncoder>::decode(
+        let publishing_enabled = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let modify_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let modify_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let enable_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let enable_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let disable_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let disable_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let republish_request_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let republish_request_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let republish_message_request_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let republish_message_request_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let republish_message_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let republish_message_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let transfer_request_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let transfer_request_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let transferred_to_alt_client_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let transferred_to_alt_client_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let transferred_to_same_client_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let transferred_to_same_client_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let publish_request_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let publish_request_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let data_change_notifications_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let data_change_notifications_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let event_notifications_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let event_notifications_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let notifications_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let notifications_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let late_publish_request_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let late_publish_request_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let current_keep_alive_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let current_keep_alive_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let current_lifetime_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let current_lifetime_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let unacknowledged_message_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let unacknowledged_message_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let discarded_message_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let discarded_message_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let monitored_item_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let monitored_item_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let disabled_monitored_item_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let disabled_monitored_item_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let monitoring_queue_overflow_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let monitoring_queue_overflow_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let next_sequence_number = <u32 as opcua::types::BinaryEncoder>::decode(
+        let next_sequence_number = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let event_queue_over_flow_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let event_queue_over_flow_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

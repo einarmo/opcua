@@ -26,7 +26,7 @@ impl opcua::types::MessageInfo for JsonDataSetWriterMessageDataType {
         opcua::types::ObjectId::JsonDataSetWriterMessageDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for JsonDataSetWriterMessageDataType {
+impl opcua::types::BinaryEncodable for JsonDataSetWriterMessageDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.data_set_message_content_mask.byte_len();
@@ -46,7 +46,7 @@ impl opcua::types::BinaryEncoder for JsonDataSetWriterMessageDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let data_set_message_content_mask = <super::enums::JsonDataSetMessageContentMask as opcua::types::BinaryEncoder>::decode(
+        let data_set_message_content_mask = <super::enums::JsonDataSetMessageContentMask as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

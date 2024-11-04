@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for AliasNameDataType {
         opcua::types::ObjectId::AliasNameDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for AliasNameDataType {
+impl opcua::types::BinaryEncodable for AliasNameDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.alias_name.byte_len();
@@ -49,13 +49,13 @@ impl opcua::types::BinaryEncoder for AliasNameDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let alias_name = <opcua::types::qualified_name::QualifiedName as opcua::types::BinaryEncoder>::decode(
+        let alias_name = <opcua::types::qualified_name::QualifiedName as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let referenced_nodes = <Option<
             Vec<opcua::types::expanded_node_id::ExpandedNodeId>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             alias_name,
             referenced_nodes,

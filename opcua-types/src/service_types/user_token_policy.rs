@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for UserTokenPolicy {
         opcua::types::ObjectId::UserTokenPolicy_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for UserTokenPolicy {
+impl opcua::types::BinaryEncodable for UserTokenPolicy {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.policy_id.byte_len();
@@ -57,23 +57,23 @@ impl opcua::types::BinaryEncoder for UserTokenPolicy {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let policy_id = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let policy_id = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let token_type = <super::enums::UserTokenType as opcua::types::BinaryEncoder>::decode(
+        let token_type = <super::enums::UserTokenType as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let issued_token_type = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let issued_token_type = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let issuer_endpoint_url = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let issuer_endpoint_url = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let security_policy_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let security_policy_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

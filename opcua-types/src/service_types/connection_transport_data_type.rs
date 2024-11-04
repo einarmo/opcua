@@ -24,7 +24,7 @@ impl opcua::types::MessageInfo for ConnectionTransportDataType {
         opcua::types::ObjectId::ConnectionTransportDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ConnectionTransportDataType {
+impl opcua::types::BinaryEncodable for ConnectionTransportDataType {
     fn byte_len(&self) -> usize {
         0usize
     }

@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for BrokerConnectionTransportDataType {
         opcua::types::ObjectId::BrokerConnectionTransportDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for BrokerConnectionTransportDataType {
+impl opcua::types::BinaryEncodable for BrokerConnectionTransportDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.resource_uri.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for BrokerConnectionTransportDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let resource_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let resource_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let authentication_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let authentication_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for ModelChangeStructureDataType {
         opcua::types::ObjectId::ModelChangeStructureDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ModelChangeStructureDataType {
+impl opcua::types::BinaryEncodable for ModelChangeStructureDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.affected.byte_len();
@@ -52,15 +52,15 @@ impl opcua::types::BinaryEncoder for ModelChangeStructureDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let affected = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let affected = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let affected_type = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let affected_type = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let verb = <u8 as opcua::types::BinaryEncoder>::decode(
+        let verb = <u8 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

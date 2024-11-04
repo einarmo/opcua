@@ -30,7 +30,7 @@ impl opcua::types::MessageInfo for PublishedDataSetDataType {
         opcua::types::ObjectId::PublishedDataSetDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for PublishedDataSetDataType {
+impl opcua::types::BinaryEncodable for PublishedDataSetDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.name.byte_len();
@@ -58,21 +58,21 @@ impl opcua::types::BinaryEncoder for PublishedDataSetDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let data_set_folder = <Option<
             Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let data_set_meta_data = <super::data_set_meta_data_type::DataSetMetaDataType as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let data_set_meta_data = <super::data_set_meta_data_type::DataSetMetaDataType as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let extension_fields = <Option<
             Vec<super::key_value_pair::KeyValuePair>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let data_set_source = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let data_set_source = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

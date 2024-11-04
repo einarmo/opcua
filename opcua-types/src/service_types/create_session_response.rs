@@ -37,7 +37,7 @@ impl opcua::types::MessageInfo for CreateSessionResponse {
         opcua::types::ObjectId::CreateSessionResponse_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for CreateSessionResponse {
+impl opcua::types::BinaryEncodable for CreateSessionResponse {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.response_header.byte_len();
@@ -75,50 +75,50 @@ impl opcua::types::BinaryEncoder for CreateSessionResponse {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncoder>::decode(
+        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
-        let session_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let session_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let authentication_token = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let authentication_token = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let revised_session_timeout = <f64 as opcua::types::BinaryEncoder>::decode(
+        let revised_session_timeout = <f64 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let server_nonce = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let server_nonce = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let server_certificate = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let server_certificate = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
         let server_endpoints = <Option<
             Vec<super::endpoint_description::EndpointDescription>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
             .map_err(|e| e.with_request_handle(__request_handle))?;
         let server_software_certificates = <Option<
             Vec<super::signed_software_certificate::SignedSoftwareCertificate>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let server_signature = <super::signature_data::SignatureData as opcua::types::BinaryEncoder>::decode(
+        let server_signature = <super::signature_data::SignatureData as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let max_request_message_size = <u32 as opcua::types::BinaryEncoder>::decode(
+        let max_request_message_size = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )

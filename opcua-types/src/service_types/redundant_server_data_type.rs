@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for RedundantServerDataType {
         opcua::types::ObjectId::RedundantServerDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for RedundantServerDataType {
+impl opcua::types::BinaryEncodable for RedundantServerDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.server_id.byte_len();
@@ -51,15 +51,15 @@ impl opcua::types::BinaryEncoder for RedundantServerDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let server_id = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let server_id = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let service_level = <u8 as opcua::types::BinaryEncoder>::decode(
+        let service_level = <u8 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let server_state = <super::enums::ServerState as opcua::types::BinaryEncoder>::decode(
+        let server_state = <super::enums::ServerState as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

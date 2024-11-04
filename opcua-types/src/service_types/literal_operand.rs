@@ -26,7 +26,7 @@ impl opcua::types::MessageInfo for LiteralOperand {
         opcua::types::ObjectId::LiteralOperand_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for LiteralOperand {
+impl opcua::types::BinaryEncodable for LiteralOperand {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.value.byte_len();
@@ -46,7 +46,7 @@ impl opcua::types::BinaryEncoder for LiteralOperand {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let value = <opcua::types::variant::Variant as opcua::types::BinaryEncoder>::decode(
+        let value = <opcua::types::variant::Variant as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

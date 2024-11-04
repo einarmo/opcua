@@ -30,7 +30,7 @@ impl opcua::types::MessageInfo for EventFilterResult {
         opcua::types::ObjectId::EventFilterResult_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for EventFilterResult {
+impl opcua::types::BinaryEncodable for EventFilterResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.select_clause_results.byte_len();
@@ -56,11 +56,11 @@ impl opcua::types::BinaryEncoder for EventFilterResult {
     ) -> opcua::types::EncodingResult<Self> {
         let select_clause_results = <Option<
             Vec<opcua::types::status_code::StatusCode>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let select_clause_diagnostic_infos = <Option<
             Vec<opcua::types::diagnostic_info::DiagnosticInfo>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let where_clause_result = <super::content_filter_result::ContentFilterResult as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let where_clause_result = <super::content_filter_result::ContentFilterResult as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

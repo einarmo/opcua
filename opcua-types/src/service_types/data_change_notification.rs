@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for DataChangeNotification {
         opcua::types::ObjectId::DataChangeNotification_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for DataChangeNotification {
+impl opcua::types::BinaryEncodable for DataChangeNotification {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.monitored_items.byte_len();
@@ -53,10 +53,10 @@ impl opcua::types::BinaryEncoder for DataChangeNotification {
     ) -> opcua::types::EncodingResult<Self> {
         let monitored_items = <Option<
             Vec<super::monitored_item_notification::MonitoredItemNotification>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let diagnostic_infos = <Option<
             Vec<opcua::types::diagnostic_info::DiagnosticInfo>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             monitored_items,
             diagnostic_infos,

@@ -1,7 +1,7 @@
 use crate::session::{continuation_points::ContinuationPoint, instance::Session};
 use opcua_crypto::random;
 use opcua_types::{
-    BinaryEncoder, ByteString, DecodingOptions, DeleteAtTimeDetails, DeleteEventDetails,
+    BinaryEncodable, ByteString, DecodingOptions, DeleteAtTimeDetails, DeleteEventDetails,
     DeleteRawModifiedDetails, ExtensionObject, HistoryData, HistoryEvent, HistoryModifiedData,
     HistoryReadResult, HistoryReadValueId, HistoryUpdateResult, NodeId, NumericRange, ObjectId,
     QualifiedName, ReadAnnotationDataDetails, ReadAtTimeDetails, ReadEventDetails,
@@ -114,7 +114,7 @@ impl HistoryUpdateDetails {
 }
 
 /// Trait for values storable as history data.
-pub trait HistoryResult: BinaryEncoder + Sized {
+pub trait HistoryResult: BinaryEncodable + Sized {
     /// The object ID of the object encoding.
     const OBJECT_ID: ObjectId;
 

@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for ComplexNumberType {
         opcua::types::ObjectId::ComplexNumberType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ComplexNumberType {
+impl opcua::types::BinaryEncodable for ComplexNumberType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.real.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for ComplexNumberType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let real = <f32 as opcua::types::BinaryEncoder>::decode(
+        let real = <f32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let imaginary = <f32 as opcua::types::BinaryEncoder>::decode(
+        let imaginary = <f32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

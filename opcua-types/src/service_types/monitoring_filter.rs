@@ -24,7 +24,7 @@ impl opcua::types::MessageInfo for MonitoringFilter {
         opcua::types::ObjectId::MonitoringFilter_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for MonitoringFilter {
+impl opcua::types::BinaryEncodable for MonitoringFilter {
     fn byte_len(&self) -> usize {
         0usize
     }

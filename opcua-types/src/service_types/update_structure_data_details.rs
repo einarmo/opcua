@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for UpdateStructureDataDetails {
         opcua::types::ObjectId::UpdateStructureDataDetails_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for UpdateStructureDataDetails {
+impl opcua::types::BinaryEncodable for UpdateStructureDataDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.node_id.byte_len();
@@ -51,17 +51,17 @@ impl opcua::types::BinaryEncoder for UpdateStructureDataDetails {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let perform_insert_replace = <super::enums::PerformUpdateType as opcua::types::BinaryEncoder>::decode(
+        let perform_insert_replace = <super::enums::PerformUpdateType as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let update_values = <Option<
             Vec<opcua::types::data_value::DataValue>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             node_id,
             perform_insert_replace,

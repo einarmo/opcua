@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for UadpWriterGroupMessageDataType {
         opcua::types::ObjectId::UadpWriterGroupMessageDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for UadpWriterGroupMessageDataType {
+impl opcua::types::BinaryEncodable for UadpWriterGroupMessageDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.group_version.byte_len();
@@ -57,25 +57,25 @@ impl opcua::types::BinaryEncoder for UadpWriterGroupMessageDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let group_version = <u32 as opcua::types::BinaryEncoder>::decode(
+        let group_version = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let data_set_ordering = <super::enums::DataSetOrderingType as opcua::types::BinaryEncoder>::decode(
+        let data_set_ordering = <super::enums::DataSetOrderingType as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let network_message_content_mask = <super::enums::UadpNetworkMessageContentMask as opcua::types::BinaryEncoder>::decode(
+        let network_message_content_mask = <super::enums::UadpNetworkMessageContentMask as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let sampling_offset = <f64 as opcua::types::BinaryEncoder>::decode(
+        let sampling_offset = <f64 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let publishing_offset = <Option<
             Vec<f64>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             group_version,
             data_set_ordering,

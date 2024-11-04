@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for TranslateBrowsePathsToNodeIdsRequest {
         opcua::types::ObjectId::TranslateBrowsePathsToNodeIdsRequest_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for TranslateBrowsePathsToNodeIdsRequest {
+impl opcua::types::BinaryEncodable for TranslateBrowsePathsToNodeIdsRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -49,14 +49,14 @@ impl opcua::types::BinaryEncoder for TranslateBrowsePathsToNodeIdsRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncoder>::decode(
+        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
         let browse_paths = <Option<
             Vec<super::browse_path::BrowsePath>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
             .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,

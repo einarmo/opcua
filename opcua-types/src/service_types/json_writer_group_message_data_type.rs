@@ -26,7 +26,7 @@ impl opcua::types::MessageInfo for JsonWriterGroupMessageDataType {
         opcua::types::ObjectId::JsonWriterGroupMessageDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for JsonWriterGroupMessageDataType {
+impl opcua::types::BinaryEncodable for JsonWriterGroupMessageDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.network_message_content_mask.byte_len();
@@ -46,7 +46,7 @@ impl opcua::types::BinaryEncoder for JsonWriterGroupMessageDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let network_message_content_mask = <super::enums::JsonNetworkMessageContentMask as opcua::types::BinaryEncoder>::decode(
+        let network_message_content_mask = <super::enums::JsonNetworkMessageContentMask as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

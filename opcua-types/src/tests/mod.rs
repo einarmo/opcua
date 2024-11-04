@@ -15,14 +15,14 @@ use crate::{argument::Argument, status_code::StatusCode, *};
 
 pub fn serialize_test_and_return<T>(value: T) -> T
 where
-    T: BinaryEncoder + Debug + PartialEq + Clone,
+    T: BinaryEncodable + Debug + PartialEq + Clone,
 {
     serialize_test_and_return_expected(value.clone(), value)
 }
 
 pub fn serialize_as_stream<T>(value: T) -> Cursor<Vec<u8>>
 where
-    T: BinaryEncoder + Debug,
+    T: BinaryEncodable + Debug,
 {
     // Ask the struct for its byte length
     let byte_len = value.byte_len();
@@ -48,7 +48,7 @@ where
 
 pub fn serialize_test_and_return_expected<T>(value: T, expected_value: T) -> T
 where
-    T: BinaryEncoder + Debug + PartialEq,
+    T: BinaryEncodable + Debug + PartialEq,
 {
     let mut stream = serialize_as_stream(value);
 
@@ -61,21 +61,21 @@ where
 
 pub fn serialize_test<T>(value: T)
 where
-    T: BinaryEncoder + Debug + PartialEq + Clone,
+    T: BinaryEncodable + Debug + PartialEq + Clone,
 {
     let _ = serialize_test_and_return(value);
 }
 
 pub fn serialize_test_expected<T>(value: T, expected_value: T)
 where
-    T: BinaryEncoder + Debug + PartialEq,
+    T: BinaryEncodable + Debug + PartialEq,
 {
     let _ = serialize_test_and_return_expected(value, expected_value);
 }
 
 pub fn serialize_and_compare<T>(value: T, expected: &[u8])
 where
-    T: BinaryEncoder + Debug + PartialEq,
+    T: BinaryEncodable + Debug + PartialEq,
 {
     // Ask the struct for its byte length
     let byte_len = value.byte_len();

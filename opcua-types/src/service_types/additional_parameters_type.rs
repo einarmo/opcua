@@ -26,7 +26,7 @@ impl opcua::types::MessageInfo for AdditionalParametersType {
         opcua::types::ObjectId::AdditionalParametersType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for AdditionalParametersType {
+impl opcua::types::BinaryEncodable for AdditionalParametersType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.parameters.byte_len();
@@ -48,7 +48,7 @@ impl opcua::types::BinaryEncoder for AdditionalParametersType {
     ) -> opcua::types::EncodingResult<Self> {
         let parameters = <Option<
             Vec<super::key_value_pair::KeyValuePair>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self { parameters })
     }
 }

@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for RelativePathElement {
         opcua::types::ObjectId::RelativePathElement_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for RelativePathElement {
+impl opcua::types::BinaryEncodable for RelativePathElement {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.reference_type_id.byte_len();
@@ -55,19 +55,19 @@ impl opcua::types::BinaryEncoder for RelativePathElement {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let reference_type_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let reference_type_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let is_inverse = <bool as opcua::types::BinaryEncoder>::decode(
+        let is_inverse = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let include_subtypes = <bool as opcua::types::BinaryEncoder>::decode(
+        let include_subtypes = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let target_name = <opcua::types::qualified_name::QualifiedName as opcua::types::BinaryEncoder>::decode(
+        let target_name = <opcua::types::qualified_name::QualifiedName as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

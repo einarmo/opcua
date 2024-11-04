@@ -31,7 +31,7 @@ impl opcua::types::MessageInfo for ApplicationDescription {
         opcua::types::ObjectId::ApplicationDescription_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ApplicationDescription {
+impl opcua::types::BinaryEncodable for ApplicationDescription {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.application_uri.byte_len();
@@ -63,33 +63,33 @@ impl opcua::types::BinaryEncoder for ApplicationDescription {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let application_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let application_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let product_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let product_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let application_name = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncoder>::decode(
+        let application_name = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let application_type = <super::enums::ApplicationType as opcua::types::BinaryEncoder>::decode(
+        let application_type = <super::enums::ApplicationType as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let gateway_server_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let gateway_server_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let discovery_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let discovery_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let discovery_urls = <Option<
             Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             application_uri,
             product_uri,

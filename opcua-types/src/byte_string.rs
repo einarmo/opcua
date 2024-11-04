@@ -14,7 +14,7 @@ use log::error;
 
 use crate::{
     encoding::{
-        process_decode_io_result, process_encode_io_result, write_i32, BinaryEncoder,
+        process_decode_io_result, process_encode_io_result, write_i32, BinaryEncodable,
         DecodingOptions, EncodingResult,
     },
     status_code::StatusCode,
@@ -70,7 +70,7 @@ mod json {
     }
 }
 
-impl BinaryEncoder for ByteString {
+impl BinaryEncodable for ByteString {
     fn byte_len(&self) -> usize {
         // Length plus the actual length of bytes (if not null)
         4 + if self.value.is_none() {

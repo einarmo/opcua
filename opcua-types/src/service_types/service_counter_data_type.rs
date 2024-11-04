@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for ServiceCounterDataType {
         opcua::types::ObjectId::ServiceCounterDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ServiceCounterDataType {
+impl opcua::types::BinaryEncodable for ServiceCounterDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.total_count.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for ServiceCounterDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let total_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let total_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let error_count = <u32 as opcua::types::BinaryEncoder>::decode(
+        let error_count = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

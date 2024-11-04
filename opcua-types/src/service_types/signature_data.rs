@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for SignatureData {
         opcua::types::ObjectId::SignatureData_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for SignatureData {
+impl opcua::types::BinaryEncodable for SignatureData {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.algorithm.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for SignatureData {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let algorithm = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let algorithm = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let signature = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let signature = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

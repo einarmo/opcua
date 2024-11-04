@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for BrowsePath {
         opcua::types::ObjectId::BrowsePath_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for BrowsePath {
+impl opcua::types::BinaryEncodable for BrowsePath {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.starting_node.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for BrowsePath {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let starting_node = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let starting_node = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let relative_path = <super::relative_path::RelativePath as opcua::types::BinaryEncoder>::decode(
+        let relative_path = <super::relative_path::RelativePath as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

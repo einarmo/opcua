@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for HistoryUpdateResponse {
         opcua::types::ObjectId::HistoryUpdateResponse_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for HistoryUpdateResponse {
+impl opcua::types::BinaryEncodable for HistoryUpdateResponse {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.response_header.byte_len();
@@ -52,18 +52,18 @@ impl opcua::types::BinaryEncoder for HistoryUpdateResponse {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncoder>::decode(
+        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
         let results = <Option<
             Vec<super::history_update_result::HistoryUpdateResult>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
             .map_err(|e| e.with_request_handle(__request_handle))?;
         let diagnostic_infos = <Option<
             Vec<opcua::types::diagnostic_info::DiagnosticInfo>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
             .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             response_header,

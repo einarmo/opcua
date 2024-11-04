@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for FindServersOnNetworkRequest {
         opcua::types::ObjectId::FindServersOnNetworkRequest_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for FindServersOnNetworkRequest {
+impl opcua::types::BinaryEncodable for FindServersOnNetworkRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -55,24 +55,24 @@ impl opcua::types::BinaryEncoder for FindServersOnNetworkRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncoder>::decode(
+        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
-        let starting_record_id = <u32 as opcua::types::BinaryEncoder>::decode(
+        let starting_record_id = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let max_records_to_return = <u32 as opcua::types::BinaryEncoder>::decode(
+        let max_records_to_return = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
         let server_capability_filter = <Option<
             Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
             .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,

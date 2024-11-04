@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for OpenSecureChannelResponse {
         opcua::types::ObjectId::OpenSecureChannelResponse_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for OpenSecureChannelResponse {
+impl opcua::types::BinaryEncodable for OpenSecureChannelResponse {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.response_header.byte_len();
@@ -55,22 +55,22 @@ impl opcua::types::BinaryEncoder for OpenSecureChannelResponse {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncoder>::decode(
+        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
-        let server_protocol_version = <u32 as opcua::types::BinaryEncoder>::decode(
+        let server_protocol_version = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let security_token = <super::channel_security_token::ChannelSecurityToken as opcua::types::BinaryEncoder>::decode(
+        let security_token = <super::channel_security_token::ChannelSecurityToken as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let server_nonce = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let server_nonce = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )

@@ -31,7 +31,7 @@ impl opcua::types::MessageInfo for CallMethodResult {
         opcua::types::ObjectId::CallMethodResult_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for CallMethodResult {
+impl opcua::types::BinaryEncodable for CallMethodResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.status_code.byte_len();
@@ -57,19 +57,19 @@ impl opcua::types::BinaryEncoder for CallMethodResult {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let status_code = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncoder>::decode(
+        let status_code = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let input_argument_results = <Option<
             Vec<opcua::types::status_code::StatusCode>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let input_argument_diagnostic_infos = <Option<
             Vec<opcua::types::diagnostic_info::DiagnosticInfo>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let output_arguments = <Option<
             Vec<opcua::types::variant::Variant>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             status_code,
             input_argument_results,

@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for MonitoredItemModifyRequest {
         opcua::types::ObjectId::MonitoredItemModifyRequest_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for MonitoredItemModifyRequest {
+impl opcua::types::BinaryEncodable for MonitoredItemModifyRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.monitored_item_id.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for MonitoredItemModifyRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let monitored_item_id = <u32 as opcua::types::BinaryEncoder>::decode(
+        let monitored_item_id = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let requested_parameters = <super::monitoring_parameters::MonitoringParameters as opcua::types::BinaryEncoder>::decode(
+        let requested_parameters = <super::monitoring_parameters::MonitoringParameters as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

@@ -8,7 +8,7 @@ use opcua_crypto::{
     x509::{X509Data, X509},
 };
 use opcua_types::{
-    status_code::StatusCode, BinaryEncoder, ByteString, ChannelSecurityToken, DateTime,
+    status_code::StatusCode, BinaryEncodable, ByteString, ChannelSecurityToken, DateTime,
     DecodingOptions, DiagnosticBits, DiagnosticInfo, ExtensionObject, GetEndpointsRequest,
     MessageSecurityMode, NodeId, OpenSecureChannelResponse, RequestHeader, ResponseHeader,
     UAString,
@@ -18,7 +18,7 @@ use crate::{comms::secure_channel::SecureChannel, RequestMessage};
 
 pub fn serialize_test_and_return<T>(value: T) -> T
 where
-    T: BinaryEncoder + Debug + PartialEq,
+    T: BinaryEncodable + Debug + PartialEq,
 {
     // Ask the struct for its byte length
     let byte_len = value.byte_len();
@@ -50,7 +50,7 @@ where
 
 pub fn serialize_test<T>(value: T)
 where
-    T: BinaryEncoder + Debug + PartialEq,
+    T: BinaryEncodable + Debug + PartialEq,
 {
     let _ = serialize_test_and_return(value);
 }

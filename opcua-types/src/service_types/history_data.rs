@@ -26,7 +26,7 @@ impl opcua::types::MessageInfo for HistoryData {
         opcua::types::ObjectId::HistoryData_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for HistoryData {
+impl opcua::types::BinaryEncodable for HistoryData {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.data_values.byte_len();
@@ -48,7 +48,7 @@ impl opcua::types::BinaryEncoder for HistoryData {
     ) -> opcua::types::EncodingResult<Self> {
         let data_values = <Option<
             Vec<opcua::types::data_value::DataValue>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self { data_values })
     }
 }

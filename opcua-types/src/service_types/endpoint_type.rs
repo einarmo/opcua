@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for EndpointType {
         opcua::types::ObjectId::EndpointType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for EndpointType {
+impl opcua::types::BinaryEncodable for EndpointType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.endpoint_url.byte_len();
@@ -54,19 +54,19 @@ impl opcua::types::BinaryEncoder for EndpointType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let endpoint_url = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let endpoint_url = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let security_mode = <super::enums::MessageSecurityMode as opcua::types::BinaryEncoder>::decode(
+        let security_mode = <super::enums::MessageSecurityMode as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let security_policy_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let security_policy_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let transport_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let transport_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

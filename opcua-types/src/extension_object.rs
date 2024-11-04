@@ -207,7 +207,7 @@ impl Default for ExtensionObject {
     }
 }
 
-impl BinaryEncoder for ExtensionObject {
+impl BinaryEncodable for ExtensionObject {
     fn byte_len(&self) -> usize {
         let mut size = self.node_id.byte_len();
         size += match self.body {
@@ -310,7 +310,7 @@ impl ExtensionObject {
     pub fn from_encodable<N, T>(node_id: N, encodable: &T) -> ExtensionObject
     where
         N: Into<NodeId>,
-        T: BinaryEncoder,
+        T: BinaryEncodable,
     {
         // Serialize to extension object
         let mut stream = Cursor::new(vec![0u8; encodable.byte_len()]);
@@ -323,7 +323,7 @@ impl ExtensionObject {
 
     pub fn from_message<T>(encodable: &T) -> ExtensionObject
     where
-        T: BinaryEncoder + MessageInfo,
+        T: BinaryEncodable + MessageInfo,
     {
         Self::from_encodable(encodable.type_id(), encodable)
     }
@@ -344,7 +344,7 @@ impl ExtensionObject {
         ctx: &EncodingContext,
     ) -> Result<ExtensionObject, StatusCode>
     where
-        T: BinaryEncoder + ExpandedMessageInfo,
+        T: BinaryEncodable + ExpandedMessageInfo,
     {
         let id = ctx
             .resolve_node_id(&encodable.full_type_id())
@@ -376,7 +376,7 @@ impl ExtensionObject {
     /// the data. Errors result in a decoding error.
     pub fn decode_inner<T>(&self, decoding_options: &DecodingOptions) -> EncodingResult<T>
     where
-        T: BinaryEncoder,
+        T: BinaryEncodable,
     {
         match self.body {
             ExtensionObjectEncoding::ByteString(ref byte_string) => {

@@ -30,7 +30,7 @@ impl opcua::types::MessageInfo for SetTriggeringRequest {
         opcua::types::ObjectId::SetTriggeringRequest_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for SetTriggeringRequest {
+impl opcua::types::BinaryEncodable for SetTriggeringRequest {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.request_header.byte_len();
@@ -58,28 +58,28 @@ impl opcua::types::BinaryEncoder for SetTriggeringRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncoder>::decode(
+        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
-        let subscription_id = <u32 as opcua::types::BinaryEncoder>::decode(
+        let subscription_id = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
-        let triggering_item_id = <u32 as opcua::types::BinaryEncoder>::decode(
+        let triggering_item_id = <u32 as opcua::types::BinaryEncodable>::decode(
                 stream,
                 decoding_options,
             )
             .map_err(|e| e.with_request_handle(__request_handle))?;
         let links_to_add = <Option<
             Vec<u32>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
             .map_err(|e| e.with_request_handle(__request_handle))?;
         let links_to_remove = <Option<
             Vec<u32>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
             .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,

@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for ConfigurationVersionDataType {
         opcua::types::ObjectId::ConfigurationVersionDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ConfigurationVersionDataType {
+impl opcua::types::BinaryEncodable for ConfigurationVersionDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.major_version.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for ConfigurationVersionDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let major_version = <u32 as opcua::types::BinaryEncoder>::decode(
+        let major_version = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let minor_version = <u32 as opcua::types::BinaryEncoder>::decode(
+        let minor_version = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

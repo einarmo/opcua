@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for TargetVariablesDataType {
         opcua::types::ObjectId::TargetVariablesDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for TargetVariablesDataType {
+impl opcua::types::BinaryEncodable for TargetVariablesDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.target_variables.byte_len();
@@ -50,7 +50,7 @@ impl opcua::types::BinaryEncoder for TargetVariablesDataType {
     ) -> opcua::types::EncodingResult<Self> {
         let target_variables = <Option<
             Vec<super::field_target_data_type::FieldTargetDataType>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self { target_variables })
     }
 }

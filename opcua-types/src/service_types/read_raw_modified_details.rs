@@ -30,7 +30,7 @@ impl opcua::types::MessageInfo for ReadRawModifiedDetails {
         opcua::types::ObjectId::ReadRawModifiedDetails_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ReadRawModifiedDetails {
+impl opcua::types::BinaryEncodable for ReadRawModifiedDetails {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.is_read_modified.byte_len();
@@ -58,23 +58,23 @@ impl opcua::types::BinaryEncoder for ReadRawModifiedDetails {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let is_read_modified = <bool as opcua::types::BinaryEncoder>::decode(
+        let is_read_modified = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let start_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncoder>::decode(
+        let start_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let end_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncoder>::decode(
+        let end_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let num_values_per_node = <u32 as opcua::types::BinaryEncoder>::decode(
+        let num_values_per_node = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let return_bounds = <bool as opcua::types::BinaryEncoder>::decode(
+        let return_bounds = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

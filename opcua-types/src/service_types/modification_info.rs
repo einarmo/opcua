@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for ModificationInfo {
         opcua::types::ObjectId::ModificationInfo_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ModificationInfo {
+impl opcua::types::BinaryEncodable for ModificationInfo {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.modification_time.byte_len();
@@ -51,15 +51,15 @@ impl opcua::types::BinaryEncoder for ModificationInfo {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let modification_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncoder>::decode(
+        let modification_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let update_type = <super::enums::HistoryUpdateType as opcua::types::BinaryEncoder>::decode(
+        let update_type = <super::enums::HistoryUpdateType as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let user_name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let user_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

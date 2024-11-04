@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for ThreeDVector {
         opcua::types::ObjectId::ThreeDVector_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ThreeDVector {
+impl opcua::types::BinaryEncodable for ThreeDVector {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.x.byte_len();
@@ -52,9 +52,9 @@ impl opcua::types::BinaryEncoder for ThreeDVector {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let x = <f64 as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let y = <f64 as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let z = <f64 as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        let x = <f64 as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let y = <f64 as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let z = <f64 as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self { x, y, z })
     }
 }

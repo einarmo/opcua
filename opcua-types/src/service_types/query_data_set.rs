@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for QueryDataSet {
         opcua::types::ObjectId::QueryDataSet_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for QueryDataSet {
+impl opcua::types::BinaryEncodable for QueryDataSet {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.node_id.byte_len();
@@ -52,17 +52,17 @@ impl opcua::types::BinaryEncoder for QueryDataSet {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let node_id = <opcua::types::expanded_node_id::ExpandedNodeId as opcua::types::BinaryEncoder>::decode(
+        let node_id = <opcua::types::expanded_node_id::ExpandedNodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let type_definition_node = <opcua::types::expanded_node_id::ExpandedNodeId as opcua::types::BinaryEncoder>::decode(
+        let type_definition_node = <opcua::types::expanded_node_id::ExpandedNodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let values = <Option<
             Vec<opcua::types::variant::Variant>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             node_id,
             type_definition_node,

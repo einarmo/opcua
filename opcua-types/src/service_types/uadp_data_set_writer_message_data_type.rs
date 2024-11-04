@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for UadpDataSetWriterMessageDataType {
         opcua::types::ObjectId::UadpDataSetWriterMessageDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for UadpDataSetWriterMessageDataType {
+impl opcua::types::BinaryEncodable for UadpDataSetWriterMessageDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.data_set_message_content_mask.byte_len();
@@ -55,19 +55,19 @@ impl opcua::types::BinaryEncoder for UadpDataSetWriterMessageDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let data_set_message_content_mask = <super::enums::UadpDataSetMessageContentMask as opcua::types::BinaryEncoder>::decode(
+        let data_set_message_content_mask = <super::enums::UadpDataSetMessageContentMask as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let configured_size = <u16 as opcua::types::BinaryEncoder>::decode(
+        let configured_size = <u16 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let network_message_number = <u16 as opcua::types::BinaryEncoder>::decode(
+        let network_message_number = <u16 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let data_set_offset = <u16 as opcua::types::BinaryEncoder>::decode(
+        let data_set_offset = <u16 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

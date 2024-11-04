@@ -32,7 +32,7 @@ impl opcua::types::MessageInfo for MethodAttributes {
         opcua::types::ObjectId::MethodAttributes_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for MethodAttributes {
+impl opcua::types::BinaryEncodable for MethodAttributes {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.specified_attributes.byte_len();
@@ -64,31 +64,31 @@ impl opcua::types::BinaryEncoder for MethodAttributes {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let specified_attributes = <u32 as opcua::types::BinaryEncoder>::decode(
+        let specified_attributes = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let display_name = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncoder>::decode(
+        let display_name = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncoder>::decode(
+        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let write_mask = <u32 as opcua::types::BinaryEncoder>::decode(
+        let write_mask = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let user_write_mask = <u32 as opcua::types::BinaryEncoder>::decode(
+        let user_write_mask = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let executable = <bool as opcua::types::BinaryEncoder>::decode(
+        let executable = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let user_executable = <bool as opcua::types::BinaryEncoder>::decode(
+        let user_executable = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

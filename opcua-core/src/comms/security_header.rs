@@ -5,7 +5,7 @@
 use std::io::{Read, Write};
 
 use log::error;
-use opcua_types::BinaryEncoder;
+use opcua_types::BinaryEncodable;
 
 use opcua_types::{constants, status_code::StatusCode, *};
 
@@ -19,7 +19,7 @@ pub enum SecurityHeader {
     Symmetric(SymmetricSecurityHeader),
 }
 
-impl BinaryEncoder for SecurityHeader {
+impl BinaryEncodable for SecurityHeader {
     fn byte_len(&self) -> usize {
         match self {
             SecurityHeader::Asymmetric(value) => value.byte_len(),
@@ -44,7 +44,7 @@ pub struct SymmetricSecurityHeader {
     pub token_id: u32,
 }
 
-impl BinaryEncoder for SymmetricSecurityHeader {
+impl BinaryEncodable for SymmetricSecurityHeader {
     fn byte_len(&self) -> usize {
         4
     }
@@ -66,7 +66,7 @@ pub struct AsymmetricSecurityHeader {
     pub receiver_certificate_thumbprint: ByteString,
 }
 
-impl BinaryEncoder for AsymmetricSecurityHeader {
+impl BinaryEncodable for AsymmetricSecurityHeader {
     fn byte_len(&self) -> usize {
         let mut size = 0;
         size += self.security_policy_uri.byte_len();
@@ -155,7 +155,7 @@ pub struct SequenceHeader {
     pub request_id: u32,
 }
 
-impl BinaryEncoder for SequenceHeader {
+impl BinaryEncodable for SequenceHeader {
     fn byte_len(&self) -> usize {
         8
     }

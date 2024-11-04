@@ -33,7 +33,7 @@ impl opcua::types::MessageInfo for PublishedVariableDataType {
         opcua::types::ObjectId::PublishedVariableDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for PublishedVariableDataType {
+impl opcua::types::BinaryEncodable for PublishedVariableDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.published_variable.byte_len();
@@ -67,37 +67,37 @@ impl opcua::types::BinaryEncoder for PublishedVariableDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let published_variable = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let published_variable = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let attribute_id = <u32 as opcua::types::BinaryEncoder>::decode(
+        let attribute_id = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let sampling_interval_hint = <f64 as opcua::types::BinaryEncoder>::decode(
+        let sampling_interval_hint = <f64 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let deadband_type = <u32 as opcua::types::BinaryEncoder>::decode(
+        let deadband_type = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let deadband_value = <f64 as opcua::types::BinaryEncoder>::decode(
+        let deadband_value = <f64 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let index_range = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let index_range = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let substitute_value = <opcua::types::variant::Variant as opcua::types::BinaryEncoder>::decode(
+        let substitute_value = <opcua::types::variant::Variant as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let meta_data_properties = <Option<
             Vec<opcua::types::qualified_name::QualifiedName>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
             published_variable,
             attribute_id,

@@ -30,7 +30,7 @@ impl opcua::types::MessageInfo for ServerStatusDataType {
         opcua::types::ObjectId::ServerStatusDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for ServerStatusDataType {
+impl opcua::types::BinaryEncodable for ServerStatusDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.start_time.byte_len();
@@ -60,27 +60,27 @@ impl opcua::types::BinaryEncoder for ServerStatusDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let start_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncoder>::decode(
+        let start_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let current_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncoder>::decode(
+        let current_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let state = <super::enums::ServerState as opcua::types::BinaryEncoder>::decode(
+        let state = <super::enums::ServerState as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let build_info = <super::build_info::BuildInfo as opcua::types::BinaryEncoder>::decode(
+        let build_info = <super::build_info::BuildInfo as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let seconds_till_shutdown = <u32 as opcua::types::BinaryEncoder>::decode(
+        let seconds_till_shutdown = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let shutdown_reason = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncoder>::decode(
+        let shutdown_reason = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

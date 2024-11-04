@@ -24,7 +24,7 @@ impl opcua::types::MessageInfo for DataSetReaderMessageDataType {
         opcua::types::ObjectId::DataSetReaderMessageDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for DataSetReaderMessageDataType {
+impl opcua::types::BinaryEncodable for DataSetReaderMessageDataType {
     fn byte_len(&self) -> usize {
         0usize
     }

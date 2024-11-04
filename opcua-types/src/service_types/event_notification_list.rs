@@ -26,7 +26,7 @@ impl opcua::types::MessageInfo for EventNotificationList {
         opcua::types::ObjectId::EventNotificationList_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for EventNotificationList {
+impl opcua::types::BinaryEncodable for EventNotificationList {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.events.byte_len();
@@ -48,7 +48,7 @@ impl opcua::types::BinaryEncoder for EventNotificationList {
     ) -> opcua::types::EncodingResult<Self> {
         let events = <Option<
             Vec<super::event_field_list::EventFieldList>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self { events })
     }
 }

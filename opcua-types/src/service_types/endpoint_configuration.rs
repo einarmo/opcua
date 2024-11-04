@@ -34,7 +34,7 @@ impl opcua::types::MessageInfo for EndpointConfiguration {
         opcua::types::ObjectId::EndpointConfiguration_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for EndpointConfiguration {
+impl opcua::types::BinaryEncodable for EndpointConfiguration {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.operation_timeout.byte_len();
@@ -70,39 +70,39 @@ impl opcua::types::BinaryEncoder for EndpointConfiguration {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let operation_timeout = <i32 as opcua::types::BinaryEncoder>::decode(
+        let operation_timeout = <i32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let use_binary_encoding = <bool as opcua::types::BinaryEncoder>::decode(
+        let use_binary_encoding = <bool as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let max_string_length = <i32 as opcua::types::BinaryEncoder>::decode(
+        let max_string_length = <i32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let max_byte_string_length = <i32 as opcua::types::BinaryEncoder>::decode(
+        let max_byte_string_length = <i32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let max_array_length = <i32 as opcua::types::BinaryEncoder>::decode(
+        let max_array_length = <i32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let max_message_size = <i32 as opcua::types::BinaryEncoder>::decode(
+        let max_message_size = <i32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let max_buffer_size = <i32 as opcua::types::BinaryEncoder>::decode(
+        let max_buffer_size = <i32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let channel_lifetime = <i32 as opcua::types::BinaryEncoder>::decode(
+        let channel_lifetime = <i32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let security_token_lifetime = <i32 as opcua::types::BinaryEncoder>::decode(
+        let security_token_lifetime = <i32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for RolePermissionType {
         opcua::types::ObjectId::RolePermissionType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for RolePermissionType {
+impl opcua::types::BinaryEncodable for RolePermissionType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.role_id.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for RolePermissionType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let role_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let role_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let permissions = <super::enums::PermissionType as opcua::types::BinaryEncoder>::decode(
+        let permissions = <super::enums::PermissionType as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

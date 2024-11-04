@@ -30,7 +30,7 @@ impl opcua::types::MessageInfo for AttributeOperand {
         opcua::types::ObjectId::AttributeOperand_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for AttributeOperand {
+impl opcua::types::BinaryEncodable for AttributeOperand {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.node_id.byte_len();
@@ -58,23 +58,23 @@ impl opcua::types::BinaryEncoder for AttributeOperand {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncoder>::decode(
+        let node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let alias = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let alias = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let browse_path = <super::relative_path::RelativePath as opcua::types::BinaryEncoder>::decode(
+        let browse_path = <super::relative_path::RelativePath as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let attribute_id = <u32 as opcua::types::BinaryEncoder>::decode(
+        let attribute_id = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let index_range = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let index_range = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

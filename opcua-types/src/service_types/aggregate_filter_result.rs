@@ -28,7 +28,7 @@ impl opcua::types::MessageInfo for AggregateFilterResult {
         opcua::types::ObjectId::AggregateFilterResult_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for AggregateFilterResult {
+impl opcua::types::BinaryEncodable for AggregateFilterResult {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.revised_start_time.byte_len();
@@ -52,15 +52,15 @@ impl opcua::types::BinaryEncoder for AggregateFilterResult {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let revised_start_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncoder>::decode(
+        let revised_start_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let revised_processing_interval = <f64 as opcua::types::BinaryEncoder>::decode(
+        let revised_processing_interval = <f64 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let revised_aggregate_configuration = <super::aggregate_configuration::AggregateConfiguration as opcua::types::BinaryEncoder>::decode(
+        let revised_aggregate_configuration = <super::aggregate_configuration::AggregateConfiguration as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

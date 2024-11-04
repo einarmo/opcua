@@ -29,7 +29,7 @@ impl opcua::types::MessageInfo for UserNameIdentityToken {
         opcua::types::ObjectId::UserNameIdentityToken_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for UserNameIdentityToken {
+impl opcua::types::BinaryEncodable for UserNameIdentityToken {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.policy_id.byte_len();
@@ -55,19 +55,19 @@ impl opcua::types::BinaryEncoder for UserNameIdentityToken {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let policy_id = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let policy_id = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let user_name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let user_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let password = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncoder>::decode(
+        let password = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let encryption_algorithm = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        let encryption_algorithm = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

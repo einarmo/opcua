@@ -38,7 +38,7 @@ impl opcua::types::MessageInfo for DataSetMetaDataType {
         opcua::types::ObjectId::DataSetMetaDataType_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for DataSetMetaDataType {
+impl opcua::types::BinaryEncodable for DataSetMetaDataType {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.namespaces.byte_len();
@@ -76,32 +76,32 @@ impl opcua::types::BinaryEncoder for DataSetMetaDataType {
     ) -> opcua::types::EncodingResult<Self> {
         let namespaces = <Option<
             Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let structure_data_types = <Option<
             Vec<super::structure_description::StructureDescription>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let enum_data_types = <Option<
             Vec<super::enum_description::EnumDescription>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         let simple_data_types = <Option<
             Vec<super::simple_type_description::SimpleTypeDescription>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let name = <opcua::types::string::UAString as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncoder>::decode(
+        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
         let fields = <Option<
             Vec<super::field_meta_data::FieldMetaData>,
-        > as opcua::types::BinaryEncoder>::decode(stream, decoding_options)?;
-        let data_set_class_id = <opcua::types::guid::Guid as opcua::types::BinaryEncoder>::decode(
+        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
+        let data_set_class_id = <opcua::types::guid::Guid as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let configuration_version = <super::configuration_version_data_type::ConfigurationVersionDataType as opcua::types::BinaryEncoder>::decode(
+        let configuration_version = <super::configuration_version_data_type::ConfigurationVersionDataType as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

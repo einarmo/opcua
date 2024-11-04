@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for KeyValuePair {
         opcua::types::ObjectId::KeyValuePair_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for KeyValuePair {
+impl opcua::types::BinaryEncodable for KeyValuePair {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.key.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for KeyValuePair {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let key = <opcua::types::qualified_name::QualifiedName as opcua::types::BinaryEncoder>::decode(
+        let key = <opcua::types::qualified_name::QualifiedName as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let value = <opcua::types::variant::Variant as opcua::types::BinaryEncoder>::decode(
+        let value = <opcua::types::variant::Variant as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;

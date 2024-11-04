@@ -11,7 +11,7 @@ use crate::{
     Message,
 };
 
-use opcua_types::{BinaryEncoder, EncodingError, StatusCode};
+use opcua_types::{BinaryEncodable, EncodingError, StatusCode};
 
 use super::tcp_types::{AcknowledgeMessage, ErrorMessage};
 

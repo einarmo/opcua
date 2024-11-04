@@ -4,7 +4,7 @@ use std::{
     io::{Read, Write},
 };
 
-use super::encoding::{read_u32, write_u32, BinaryEncoder, DecodingOptions, EncodingResult};
+use super::encoding::{read_u32, write_u32, BinaryEncodable, DecodingOptions, EncodingResult};
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Default)]
 /// Wrapper around an OPC-UA status code, with utilities for displaying,
@@ -251,7 +251,7 @@ impl std::fmt::Debug for StatusCode {
     }
 }
 
-impl BinaryEncoder for StatusCode {
+impl BinaryEncodable for StatusCode {
     fn byte_len(&self) -> usize {
         4
     }

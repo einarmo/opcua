@@ -27,7 +27,7 @@ impl opcua::types::MessageInfo for MonitoredItemNotification {
         opcua::types::ObjectId::MonitoredItemNotification_Encoding_DefaultXml
     }
 }
-impl opcua::types::BinaryEncoder for MonitoredItemNotification {
+impl opcua::types::BinaryEncodable for MonitoredItemNotification {
     fn byte_len(&self) -> usize {
         let mut size = 0usize;
         size += self.client_handle.byte_len();
@@ -49,11 +49,11 @@ impl opcua::types::BinaryEncoder for MonitoredItemNotification {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let client_handle = <u32 as opcua::types::BinaryEncoder>::decode(
+        let client_handle = <u32 as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
-        let value = <opcua::types::data_value::DataValue as opcua::types::BinaryEncoder>::decode(
+        let value = <opcua::types::data_value::DataValue as opcua::types::BinaryEncodable>::decode(
             stream,
             decoding_options,
         )?;
