@@ -42,7 +42,6 @@ pub struct TcpTransport {
 #[derive(Debug, Clone)]
 pub struct TransportConfiguration {
     pub max_pending_incoming: usize,
-    pub max_inflight: usize,
     pub send_buffer_size: usize,
     pub recv_buffer_size: usize,
     pub max_message_size: usize,
@@ -173,7 +172,6 @@ impl Connector for TcpConnector {
                 channel,
                 outgoing_recv,
                 config.max_pending_incoming,
-                config.max_inflight,
                 ack.send_buffer_size.min(config.recv_buffer_size as u32) as usize,
             ),
             read: framed_read,

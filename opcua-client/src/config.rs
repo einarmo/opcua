@@ -201,9 +201,6 @@ pub struct Performance {
     /// Maximum number of monitored items per request when recreating subscriptions on session recreation.
     #[serde(default = "defaults::recreate_monitored_items_chunk")]
     pub(crate) recreate_monitored_items_chunk: usize,
-    /// Maximum number of inflight messages.
-    #[serde(default = "defaults::max_inflight_messages")]
-    pub(crate) max_inflight_messages: usize,
 }
 
 impl Default for Performance {
@@ -211,7 +208,6 @@ impl Default for Performance {
         Self {
             ignore_clock_skew: false,
             recreate_monitored_items_chunk: defaults::recreate_monitored_items_chunk(),
-            max_inflight_messages: defaults::max_inflight_messages(),
         }
     }
 }
@@ -283,9 +279,6 @@ pub struct ClientConfig {
     /// publish together, which may reduce the number of publish requests if you have a lot of subscriptions.
     #[serde(default = "defaults::min_publish_interval")]
     pub(crate) min_publish_interval: Duration,
-    /// Maximum number of inflight publish requests before further requests are skipped.
-    #[serde(default = "defaults::max_inflight_publish")]
-    pub(crate) max_inflight_publish: usize,
 
     /// Requested session timeout in milliseconds
     #[serde(default = "defaults::session_timeout")]
@@ -514,10 +507,6 @@ mod defaults {
         Duration::from_secs(60)
     }
 
-    pub fn max_inflight_publish() -> usize {
-        2
-    }
-
     pub fn session_timeout() -> u32 {
         60_000
     }
@@ -552,10 +541,6 @@ mod defaults {
 
     pub fn recreate_monitored_items_chunk() -> usize {
         1000
-    }
-
-    pub fn max_inflight_messages() -> usize {
-        20
     }
 
     pub fn channel_lifetime() -> u32 {
@@ -596,7 +581,6 @@ impl ClientConfig {
             request_timeout: defaults::request_timeout(),
             min_publish_interval: defaults::min_publish_interval(),
             publish_timeout: defaults::publish_timeout(),
-            max_inflight_publish: defaults::max_inflight_publish(),
             session_timeout: defaults::session_timeout(),
             decoding_options: DecodingOptions::default(),
             performance: Performance::default(),

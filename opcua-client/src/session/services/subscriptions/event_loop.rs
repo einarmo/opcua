@@ -1,6 +1,7 @@
 use std::{sync::Arc, time::Instant};
 
 use futures::{future::Either, stream::FuturesUnordered, Future, Stream, StreamExt};
+use log::debug;
 use opcua_types::StatusCode;
 
 use crate::{
@@ -25,9 +26,8 @@ pub enum SubscriptionActivity {
 pub struct SubscriptionEventLoop {
     session: Arc<Session>,
     trigger_publish_recv: tokio::sync::watch::Receiver<Instant>,
-    max_inflight_publish: usize,
     last_external_trigger: Instant,
-    // This is true if the client has received a message BadTooManyPublishRequests
+    // This is true if the client has received BadTooManyPublishRequests
     // and is waiting for a response before making further requests.
     is_waiting_for_response: bool,
 }
@@ -47,7 +47,6 @@ impl SubscriptionEventLoop {
     ) -> Self {
         let last_external_trigger = *trigger_publish_recv.borrow();
         Self {
-            max_inflight_publish: session.max_inflight_publish,
             last_external_trigger,
             trigger_publish_recv,
             session,
@@ -67,9 +66,9 @@ impl SubscriptionEventLoop {
                     slf.trigger_publish_recv.clone();
 
                 let res = loop {
-                    // Future for the next periodic publish. We do not send publish requests if there
-                    // are no active subscriptions. In this case, simply return the non-terminating
-                    // future.
+                    // Future for the next periodic publish. We do not send publish requests
+                    // if there are no active subscriptions. In this case, simply return the
+                    // non-terminating future.
                     let next_tick_fut = if let Some(next) = next {
                         if slf.is_waiting_for_response && !futures.is_empty() {
                             Either::Right(futures::future::pending::<()>())
@@ -79,8 +78,9 @@ impl SubscriptionEventLoop {
                     } else {
                         Either::Right(futures::future::pending::<()>())
                     };
-                    // If FuturesUnordered is empty, it will immediately yield `None`. We don't want that,
-                    // so if it is empty we return the non-terminating future.
+
+                    // If FuturesUnordered is empty, it will immediately yield `None`. We don't
+                    // want that, so if it is empty we return the non-terminating future.
                     let next_publish_fut = if futures.is_empty() {
                         Either::Left(futures::future::pending())
                     } else {
@@ -91,44 +91,70 @@ impl SubscriptionEventLoop {
                         // Both internal ticks and external triggers result in publish requests.
                         v = recv.wait_for(|i| i > &slf.last_external_trigger) => {
                             if let Ok(v) = v {
-                                // On an external trigger, we always publish.
-                                futures.push(slf.static_publish());
-                                next = slf.session.next_publish_time(true);
-                                slf.last_external_trigger = *v;
+                                if !slf.is_waiting_for_response {
+                                    debug!("Sending publish due to external trigger");
+                                    // On an external trigger, we always publish.
+                                    futures.push(slf.static_publish());
+                                    next = slf.session.next_publish_time(true);
+                                    slf.last_external_trigger = *v;
+                                } else {
+                                    debug!("Skipping publish due BadTooManyPublishRequests");
+                                }
                             }
                         }
                         _ = next_tick_fut => {
                             // Avoid publishing if there are too many inflight publish requests.
-                            if futures.len() < slf.max_inflight_publish {
-                                futures.push(slf.static_publish());
+                            if futures.len()
+                                < slf
+                                    .session
+                                    .publish_limits_watch_rx
+                                    .borrow()
+                                    .max_publish_requests
+                            {
+                                if !slf.is_waiting_for_response {
+                                    debug!("Sending publish due to internal tick");
+                                    futures.push(slf.static_publish());
+                                } else {
+                                    debug!("Skipping publish due BadTooManyPublishRequests");
+                                }
                             }
                             next = slf.session.next_publish_time(true);
                         }
                         res = next_publish_fut => {
                             match res {
-                                Some(Ok(should_publish_now)) => {
-                                    if should_publish_now {
-                                        futures.push(slf.static_publish());
-                                        // Set the last publish time.
-                                        // We do this to avoid a buildup of publish requests
-                                        // if exhausting the queue takes more time than
-                                        // a single publishing interval.
-                                        slf.session.next_publish_time(true);
+                                Some(Ok(more_notifications)) => {
+                                    if more_notifications
+                                        || futures.len()
+                                            < slf
+                                                .session
+                                                .publish_limits_watch_rx
+                                                .borrow()
+                                                .min_publish_requests
+                                    {
+                                        if !slf.is_waiting_for_response {
+                                            debug!("Sending publish after receiving response");
+                                            futures.push(slf.static_publish());
+                                            // Set the last publish time to to avoid a buildup
+                                            // of publish requests if exhausting the queue takes
+                                            // more time than a single publishing interval.
+                                            slf.session.next_publish_time(true);
+                                        } else {
+                                            debug!("Skipping publish due BadTooManyPublishRequests");
+                                        }
                                     }
                                     slf.is_waiting_for_response = false;
-
                                     break SubscriptionActivity::Publish
                                 }
                                 Some(Err(e)) => {
                                     match e {
                                         StatusCode::BadTimeout => {
-                                            session_debug!(slf.session, "Publish request timed out, sending another");
-                                            if futures.len() < slf.max_inflight_publish {
-                                                futures.push(slf.static_publish());
-                                            }
+                                            session_debug!(slf.session, "Publish request timed out");
                                         }
                                         StatusCode::BadTooManyPublishRequests => {
-                                            session_debug!(slf.session, "Server returned BadTooManyPublishRequests, backing off");
+                                            session_debug!(
+                                                slf.session,
+                                                "Server returned BadTooManyPublishRequests, backing off",
+                                            );
                                             slf.is_waiting_for_response = true;
                                         }
                                         StatusCode::BadSessionClosed
@@ -138,16 +164,22 @@ impl SubscriptionEventLoop {
                                         }
                                         StatusCode::BadNoSubscription
                                         | StatusCode::BadSubscriptionIdInvalid => {
-                                            // TODO: Maybe do something here? This could happen when subscriptions are
-                                            // in the process of being recreated. Make sure to avoid race conditions.
-                                            session_error!(slf.session, "Publish response indicates subscription is dead");
+                                            // TODO: Maybe do something here? This could happen when
+                                            // subscriptions are in the process of being recreated.
+                                            // Make sure to avoid race conditions.
+                                            session_error!(
+                                                slf.session,
+                                                "Publish response indicates subscription is dead",
+                                            );
                                         }
                                         _ => ()
                                     }
                                     break SubscriptionActivity::PublishFailed(e)
                                 }
-                                // Should be impossible
-                                None => break SubscriptionActivity::PublishFailed(StatusCode::BadInvalidState)
+                                // Should be impossible.
+                                None => break SubscriptionActivity::PublishFailed(
+                                    StatusCode::BadInvalidState,
+                                )
                             }
                         }
                     }
