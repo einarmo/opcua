@@ -10,6 +10,7 @@ use arc_swap::ArcSwap;
 
 use crate::{
     retry::SessionRetryPolicy,
+    session::session_warn,
     transport::{tcp::TransportConfiguration, Connector},
     AsyncSecureChannel, ClientConfig,
 };
@@ -24,7 +25,8 @@ use opcua_types::{
 };
 
 use super::{
-    services::subscriptions::state::SubscriptionState, session_warn, SessionEventLoop, SessionInfo,
+    services::subscriptions::{state::SubscriptionState, PublishLimits},
+    SessionEventLoop, SessionInfo,
 };
 
 #[derive(Clone, Copy)]
@@ -59,8 +61,9 @@ pub struct Session {
     pub(super) publish_timeout: Duration,
     pub(super) recreate_monitored_items_chunk: usize,
     pub(super) session_timeout: f64,
-    pub(super) max_inflight_publish: usize,
     pub subscription_state: Mutex<SubscriptionState>,
+    pub(super) publish_limits_watch_rx: tokio::sync::watch::Receiver<PublishLimits>,
+    pub(super) publish_limits_watch_tx: tokio::sync::watch::Sender<PublishLimits>,
     pub(super) monitored_item_handle: AtomicHandle,
     pub(super) trigger_publish_tx: tokio::sync::watch::Sender<Instant>,
     decoding_options: DecodingOptions,
@@ -83,7 +86,9 @@ impl Session {
         connector: Box<dyn Connector>,
         extra_type_loaders: Vec<Arc<dyn TypeLoader>>,
     ) -> (Arc<Self>, SessionEventLoop) {
-        let auth_token: Arc<ArcSwap<NodeId>> = Default::default();
+        let auth_token: Arc<ArcSwap<NodeId>> = Arc::default();
+        let (publish_limits_watch_tx, publish_limits_watch_rx) =
+            tokio::sync::watch::channel(PublishLimits::new());
         let (state_watch_tx, state_watch_rx) =
             tokio::sync::watch::channel(SessionState::Disconnected);
         let (trigger_publish_tx, trigger_publish_rx) = tokio::sync::watch::channel(Instant::now());
@@ -106,7 +111,6 @@ impl Session {
                 auth_token.clone(),
                 TransportConfiguration {
                     max_pending_incoming: 5,
-                    max_inflight: config.performance.max_inflight_messages,
                     send_buffer_size: config.decoding_options.max_chunk_size,
                     recv_buffer_size: config.decoding_options.max_incoming_chunk_size,
                     max_message_size: config.decoding_options.max_message_size,
@@ -128,10 +132,14 @@ impl Session {
             request_timeout: config.request_timeout,
             session_timeout: config.session_timeout as f64,
             publish_timeout: config.publish_timeout,
-            max_inflight_publish: config.max_inflight_publish,
             recreate_monitored_items_chunk: config.performance.recreate_monitored_items_chunk,
-            subscription_state: Mutex::new(SubscriptionState::new(config.min_publish_interval)),
+            subscription_state: Mutex::new(SubscriptionState::new(
+                config.min_publish_interval,
+                publish_limits_watch_tx.clone(),
+            )),
             monitored_item_handle: AtomicHandle::new(1000),
+            publish_limits_watch_rx,
+            publish_limits_watch_tx,
             trigger_publish_tx,
             decoding_options,
             should_reconnect: AtomicBool::new(true),

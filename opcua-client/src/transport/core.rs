@@ -32,8 +32,6 @@ pub(super) struct TransportState {
     outgoing_recv: tokio::sync::mpsc::Receiver<OutgoingMessage>,
     /// State of pending requests
     message_states: HashMap<u32, MessageState>,
-    /// Maximum number of inflight requests, or None if unlimited.
-    max_inflight: usize,
     /// Secure channel
     pub(super) secure_channel: Arc<RwLock<SecureChannel>>,
     /// Max pending incoming messages
@@ -65,14 +63,12 @@ impl TransportState {
         secure_channel: Arc<RwLock<SecureChannel>>,
         outgoing_recv: tokio::sync::mpsc::Receiver<OutgoingMessage>,
         max_pending_incoming: usize,
-        max_inflight: usize,
         receive_buffer_size: usize,
     ) -> Self {
         Self {
             secure_channel,
             outgoing_recv,
             message_states: HashMap::new(),
-            max_inflight,
             max_pending_incoming,
             last_received_sequence_number: 0,
             receive_buffer_size,
@@ -92,9 +88,7 @@ impl TransportState {
                 None => Either::Right(futures::future::pending::<()>()),
             };
 
-            // Only listen for outgoing messages if the number of inflight messages is below the limit.
-            if self.max_inflight > self.message_states.len() {
-                tokio::select! {
+            tokio::select! {
                     _ = timeout_fut => {
                         continue;
                     }
@@ -110,9 +104,6 @@ impl TransportState {
                         }
                         break Some((outgoing.request, request_id));
                     }
-                }
-            } else {
-                timeout_fut.await;
             }
         }
     }

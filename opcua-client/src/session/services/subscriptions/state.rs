@@ -5,15 +5,16 @@ use std::{
 
 use opcua_types::{MonitoringMode, NotificationMessage, SubscriptionAcknowledgement};
 
-use super::{CreateMonitoredItem, ModifyMonitoredItem, Subscription};
+use super::{CreateMonitoredItem, ModifyMonitoredItem, PublishLimits, Subscription};
 
 /// State containing all known subscriptions in the session.
 pub struct SubscriptionState {
-    subscriptions: HashMap<u32, Subscription>,
-    last_publish: Instant,
     acknowledgements: Vec<SubscriptionAcknowledgement>,
     keep_alive_timeout: Option<Duration>,
+    last_publish: Instant,
     min_publish_interval: Duration,
+    publish_limits_watch_tx: tokio::sync::watch::Sender<PublishLimits>,
+    subscriptions: HashMap<u32, Subscription>,
 }
 
 impl SubscriptionState {
@@ -22,14 +23,18 @@ impl SubscriptionState {
     /// # Arguments
     ///
     /// * `min_publishing_interval` - The minimum accepted publishing interval, any lower values
-    ///   will be set to this.
-    pub(crate) fn new(min_publish_interval: Duration) -> Self {
+    /// will be set to this.
+    pub(crate) fn new(
+        min_publish_interval: Duration,
+        publish_limits_watch_tx: tokio::sync::watch::Sender<PublishLimits>,
+    ) -> Self {
         Self {
-            subscriptions: HashMap::new(),
-            last_publish: Instant::now() - min_publish_interval,
             acknowledgements: Vec::new(),
             keep_alive_timeout: None,
+            last_publish: Instant::now() - min_publish_interval,
             min_publish_interval,
+            publish_limits_watch_tx,
+            subscriptions: HashMap::new(),
         }
     }
 
@@ -109,6 +114,7 @@ impl SubscriptionState {
         self.subscriptions
             .insert(subscription.subscription_id(), subscription);
         self.set_keep_alive_timeout();
+        self.update_publish_limits();
     }
 
     pub(crate) fn modify_subscription(
@@ -133,6 +139,7 @@ impl SubscriptionState {
     pub(crate) fn delete_subscription(&mut self, subscription_id: u32) -> Option<Subscription> {
         let subscription = self.subscriptions.remove(&subscription_id);
         self.set_keep_alive_timeout();
+        self.update_publish_limits();
         subscription
     }
 
@@ -218,5 +225,19 @@ impl SubscriptionState {
             .values()
             .map(|v| v.publishing_interval() * v.lifetime_count())
             .min()
+    }
+
+    fn update_publish_limits(&mut self) {
+        let publish_interval = self
+            .subscriptions
+            .values()
+            .filter(|s| s.publishing_enabled())
+            .map(|s| s.publishing_interval().max(self.min_publish_interval))
+            .min()
+            .unwrap_or(Duration::ZERO);
+
+        self.publish_limits_watch_tx.send_modify(|limits| {
+            limits.update_subscriptions(self.subscriptions.len(), publish_interval);
+        });
     }
 }
