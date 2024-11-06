@@ -81,6 +81,10 @@ impl EncodingContext {
     ) -> Option<std::borrow::Cow<'b, NodeId>> {
         id.try_resolve(&self.namespaces)
     }
+
+    pub fn namespaces(&self) -> &NamespaceMap {
+        &self.namespaces
+    }
 }
 
 impl ServiceFault {

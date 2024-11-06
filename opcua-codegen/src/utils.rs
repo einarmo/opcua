@@ -50,3 +50,12 @@ where
         })
     }
 }
+
+pub fn safe_ident(val: &str) -> Ident {
+    let mut val = val.to_string();
+    if val.starts_with(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']) || val == "type" {
+        val = format!("__{val}");
+    }
+
+    Ident::new(&val, Span::call_site())
+}

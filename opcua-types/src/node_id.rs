@@ -702,4 +702,12 @@ impl NodeId {
     pub fn is_byte_string(&self) -> bool {
         matches!(self.identifier, Identifier::ByteString(_))
     }
+
+    /// Get the numeric value of this node ID if it is numeric.
+    pub fn as_u32(&self) -> Option<u32> {
+        match &self.identifier {
+            Identifier::Numeric(i) => Some(*i),
+            _ => None,
+        }
+    }
 }

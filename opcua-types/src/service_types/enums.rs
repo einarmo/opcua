@@ -6,9 +6,7 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua {
-    pub use crate as types;
-}
+mod opcua { pub use crate as types; }
 bitflags::bitflags! {
     #[derive(Debug, Copy, Clone, PartialEq)] pub struct AccessLevelExType : i32 { const
     None = 0i32; const CurrentRead = 1i32; const CurrentWrite = 2i32; const HistoryRead =
@@ -21,17 +19,17 @@ impl opcua::types::BinaryEncodable for AccessLevelExType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i32::decode(
-            stream,
-            decoding_options,
-        )?))
+        Ok(Self::from_bits_truncate(i32::decode(stream, decoding_options)?))
     }
 }
 impl Default for AccessLevelExType {
@@ -68,7 +66,10 @@ impl<'de> serde::de::Deserialize<'de> for AccessLevelExType {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "an i32")
             }
         }
@@ -99,17 +100,17 @@ impl opcua::types::BinaryEncodable for AccessLevelType {
     fn byte_len(&self) -> usize {
         1usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_u8(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(u8::decode(
-            stream,
-            decoding_options,
-        )?))
+        Ok(Self::from_bits_truncate(u8::decode(stream, decoding_options)?))
     }
 }
 impl Default for AccessLevelType {
@@ -146,7 +147,10 @@ impl<'de> serde::de::Deserialize<'de> for AccessLevelType {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = u8;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "an u8")
             }
         }
@@ -176,17 +180,17 @@ impl opcua::types::BinaryEncodable for AccessRestrictionType {
     fn byte_len(&self) -> usize {
         2usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i16(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i16::decode(
-            stream,
-            decoding_options,
-        )?))
+        Ok(Self::from_bits_truncate(i16::decode(stream, decoding_options)?))
     }
 }
 impl Default for AccessRestrictionType {
@@ -223,7 +227,10 @@ impl<'de> serde::de::Deserialize<'de> for AccessRestrictionType {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i16;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "an i16")
             }
         }
@@ -255,16 +262,18 @@ pub enum ApplicationType {
 impl TryFrom<i32> for ApplicationType {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Server,
-            1i32 => Self::Client,
-            2i32 => Self::ClientAndServer,
-            3i32 => Self::DiscoveryServer,
-            r => {
-                log::error!("Got unexpected value for enum ApplicationType: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Server,
+                1i32 => Self::Client,
+                2i32 => Self::ClientAndServer,
+                3i32 => Self::DiscoveryServer,
+                r => {
+                    log::error!("Got unexpected value for enum ApplicationType: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -274,8 +283,12 @@ impl opcua::types::xml::FromXml for ApplicationType {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum ApplicationType: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum ApplicationType: {}", e)
+                })?,
+        )
     }
 }
 impl From<ApplicationType> for i32 {
@@ -303,13 +316,18 @@ impl<'de> serde::de::Deserialize<'de> for ApplicationType {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -328,7 +346,10 @@ impl opcua::types::BinaryEncodable for ApplicationType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -356,17 +377,17 @@ impl opcua::types::BinaryEncodable for AttributeWriteMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i32::decode(
-            stream,
-            decoding_options,
-        )?))
+        Ok(Self::from_bits_truncate(i32::decode(stream, decoding_options)?))
     }
 }
 impl Default for AttributeWriteMask {
@@ -403,7 +424,10 @@ impl<'de> serde::de::Deserialize<'de> for AttributeWriteMask {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "an i32")
             }
         }
@@ -434,15 +458,19 @@ pub enum AxisScaleEnumeration {
 impl TryFrom<i32> for AxisScaleEnumeration {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Linear,
-            1i32 => Self::Log,
-            2i32 => Self::Ln,
-            r => {
-                log::error!("Got unexpected value for enum AxisScaleEnumeration: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Linear,
+                1i32 => Self::Log,
+                2i32 => Self::Ln,
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum AxisScaleEnumeration: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -452,8 +480,12 @@ impl opcua::types::xml::FromXml for AxisScaleEnumeration {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum AxisScaleEnumeration: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum AxisScaleEnumeration: {}", e)
+                })?,
+        )
     }
 }
 impl From<AxisScaleEnumeration> for i32 {
@@ -481,13 +513,18 @@ impl<'de> serde::de::Deserialize<'de> for AxisScaleEnumeration {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -506,7 +543,10 @@ impl opcua::types::BinaryEncodable for AxisScaleEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -529,20 +569,22 @@ pub enum BrokerTransportQualityOfService {
 impl TryFrom<i32> for BrokerTransportQualityOfService {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::NotSpecified,
-            1i32 => Self::BestEffort,
-            2i32 => Self::AtLeastOnce,
-            3i32 => Self::AtMostOnce,
-            4i32 => Self::ExactlyOnce,
-            r => {
-                log::error!(
-                    "Got unexpected value for enum BrokerTransportQualityOfService: {}",
-                    r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::NotSpecified,
+                1i32 => Self::BestEffort,
+                2i32 => Self::AtLeastOnce,
+                3i32 => Self::AtMostOnce,
+                4i32 => Self::ExactlyOnce,
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum BrokerTransportQualityOfService: {}",
+                        r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -552,12 +594,15 @@ impl opcua::types::xml::FromXml for BrokerTransportQualityOfService {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val).map_err(|e| {
-            format!(
-                "Got unexpected value for enum BrokerTransportQualityOfService: {}",
-                e
-            )
-        })?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!(
+                        "Got unexpected value for enum BrokerTransportQualityOfService: {}",
+                        e
+                    )
+                })?,
+        )
     }
 }
 impl From<BrokerTransportQualityOfService> for i32 {
@@ -585,13 +630,18 @@ impl<'de> serde::de::Deserialize<'de> for BrokerTransportQualityOfService {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -610,7 +660,10 @@ impl opcua::types::BinaryEncodable for BrokerTransportQualityOfService {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -632,19 +685,21 @@ pub enum BrowseDirection {
 impl TryFrom<i32> for BrowseDirection {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Forward,
-            1i32 => Self::Inverse,
-            2i32 => Self::Both,
-            3i32 => Self::Invalid,
-            r => {
-                log::warn!(
-                    "Got unexpected value for enum BrowseDirection: {}. Falling back on Invalid",
-                    r
-                );
-                Self::Invalid
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Forward,
+                1i32 => Self::Inverse,
+                2i32 => Self::Both,
+                3i32 => Self::Invalid,
+                r => {
+                    log::warn!(
+                        "Got unexpected value for enum BrowseDirection: {}. Falling back on Invalid",
+                        r
+                    );
+                    Self::Invalid
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -654,8 +709,12 @@ impl opcua::types::xml::FromXml for BrowseDirection {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum BrowseDirection: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum BrowseDirection: {}", e)
+                })?,
+        )
     }
 }
 impl From<BrowseDirection> for i32 {
@@ -683,13 +742,18 @@ impl<'de> serde::de::Deserialize<'de> for BrowseDirection {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -708,7 +772,10 @@ impl opcua::types::BinaryEncodable for BrowseDirection {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -736,22 +803,24 @@ pub enum BrowseResultMask {
 impl TryFrom<i32> for BrowseResultMask {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::None,
-            1i32 => Self::ReferenceTypeId,
-            2i32 => Self::IsForward,
-            4i32 => Self::NodeClass,
-            8i32 => Self::BrowseName,
-            16i32 => Self::DisplayName,
-            32i32 => Self::TypeDefinition,
-            63i32 => Self::All,
-            3i32 => Self::ReferenceTypeInfo,
-            60i32 => Self::TargetInfo,
-            r => {
-                log::error!("Got unexpected value for enum BrowseResultMask: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::None,
+                1i32 => Self::ReferenceTypeId,
+                2i32 => Self::IsForward,
+                4i32 => Self::NodeClass,
+                8i32 => Self::BrowseName,
+                16i32 => Self::DisplayName,
+                32i32 => Self::TypeDefinition,
+                63i32 => Self::All,
+                3i32 => Self::ReferenceTypeInfo,
+                60i32 => Self::TargetInfo,
+                r => {
+                    log::error!("Got unexpected value for enum BrowseResultMask: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -761,8 +830,12 @@ impl opcua::types::xml::FromXml for BrowseResultMask {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum BrowseResultMask: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum BrowseResultMask: {}", e)
+                })?,
+        )
     }
 }
 impl From<BrowseResultMask> for i32 {
@@ -790,13 +863,18 @@ impl<'de> serde::de::Deserialize<'de> for BrowseResultMask {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -815,7 +893,10 @@ impl opcua::types::BinaryEncodable for BrowseResultMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -836,15 +917,19 @@ pub enum DataChangeTrigger {
 impl TryFrom<i32> for DataChangeTrigger {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Status,
-            1i32 => Self::StatusValue,
-            2i32 => Self::StatusValueTimestamp,
-            r => {
-                log::error!("Got unexpected value for enum DataChangeTrigger: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Status,
+                1i32 => Self::StatusValue,
+                2i32 => Self::StatusValueTimestamp,
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum DataChangeTrigger: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -854,8 +939,12 @@ impl opcua::types::xml::FromXml for DataChangeTrigger {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum DataChangeTrigger: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum DataChangeTrigger: {}", e)
+                })?,
+        )
     }
 }
 impl From<DataChangeTrigger> for i32 {
@@ -883,13 +972,18 @@ impl<'de> serde::de::Deserialize<'de> for DataChangeTrigger {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -908,7 +1002,10 @@ impl opcua::types::BinaryEncodable for DataChangeTrigger {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -929,17 +1026,17 @@ impl opcua::types::BinaryEncodable for DataSetFieldContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i32::decode(
-            stream,
-            decoding_options,
-        )?))
+        Ok(Self::from_bits_truncate(i32::decode(stream, decoding_options)?))
     }
 }
 impl Default for DataSetFieldContentMask {
@@ -976,7 +1073,10 @@ impl<'de> serde::de::Deserialize<'de> for DataSetFieldContentMask {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "an i32")
             }
         }
@@ -1005,17 +1105,17 @@ impl opcua::types::BinaryEncodable for DataSetFieldFlags {
     fn byte_len(&self) -> usize {
         2usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i16(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i16::decode(
-            stream,
-            decoding_options,
-        )?))
+        Ok(Self::from_bits_truncate(i16::decode(stream, decoding_options)?))
     }
 }
 impl Default for DataSetFieldFlags {
@@ -1052,7 +1152,10 @@ impl<'de> serde::de::Deserialize<'de> for DataSetFieldFlags {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i16;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "an i16")
             }
         }
@@ -1083,15 +1186,19 @@ pub enum DataSetOrderingType {
 impl TryFrom<i32> for DataSetOrderingType {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Undefined,
-            1i32 => Self::AscendingWriterId,
-            2i32 => Self::AscendingWriterIdSingle,
-            r => {
-                log::error!("Got unexpected value for enum DataSetOrderingType: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Undefined,
+                1i32 => Self::AscendingWriterId,
+                2i32 => Self::AscendingWriterIdSingle,
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum DataSetOrderingType: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -1101,8 +1208,12 @@ impl opcua::types::xml::FromXml for DataSetOrderingType {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum DataSetOrderingType: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum DataSetOrderingType: {}", e)
+                })?,
+        )
     }
 }
 impl From<DataSetOrderingType> for i32 {
@@ -1130,13 +1241,18 @@ impl<'de> serde::de::Deserialize<'de> for DataSetOrderingType {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -1155,7 +1271,10 @@ impl opcua::types::BinaryEncodable for DataSetOrderingType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1176,15 +1295,17 @@ pub enum DeadbandType {
 impl TryFrom<i32> for DeadbandType {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::None,
-            1i32 => Self::Absolute,
-            2i32 => Self::Percent,
-            r => {
-                log::error!("Got unexpected value for enum DeadbandType: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::None,
+                1i32 => Self::Absolute,
+                2i32 => Self::Percent,
+                r => {
+                    log::error!("Got unexpected value for enum DeadbandType: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -1194,8 +1315,12 @@ impl opcua::types::xml::FromXml for DeadbandType {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum DeadbandType: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum DeadbandType: {}", e)
+                })?,
+        )
     }
 }
 impl From<DeadbandType> for i32 {
@@ -1223,13 +1348,18 @@ impl<'de> serde::de::Deserialize<'de> for DeadbandType {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -1248,7 +1378,10 @@ impl opcua::types::BinaryEncodable for DeadbandType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1271,17 +1404,19 @@ pub enum DiagnosticsLevel {
 impl TryFrom<i32> for DiagnosticsLevel {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Basic,
-            1i32 => Self::Advanced,
-            2i32 => Self::Info,
-            3i32 => Self::Log,
-            4i32 => Self::Debug,
-            r => {
-                log::error!("Got unexpected value for enum DiagnosticsLevel: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Basic,
+                1i32 => Self::Advanced,
+                2i32 => Self::Info,
+                3i32 => Self::Log,
+                4i32 => Self::Debug,
+                r => {
+                    log::error!("Got unexpected value for enum DiagnosticsLevel: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -1291,8 +1426,12 @@ impl opcua::types::xml::FromXml for DiagnosticsLevel {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum DiagnosticsLevel: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum DiagnosticsLevel: {}", e)
+                })?,
+        )
     }
 }
 impl From<DiagnosticsLevel> for i32 {
@@ -1320,13 +1459,18 @@ impl<'de> serde::de::Deserialize<'de> for DiagnosticsLevel {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -1345,7 +1489,10 @@ impl opcua::types::BinaryEncodable for DiagnosticsLevel {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1365,17 +1512,17 @@ impl opcua::types::BinaryEncodable for EventNotifierType {
     fn byte_len(&self) -> usize {
         1usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_u8(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(u8::decode(
-            stream,
-            decoding_options,
-        )?))
+        Ok(Self::from_bits_truncate(u8::decode(stream, decoding_options)?))
     }
 }
 impl Default for EventNotifierType {
@@ -1412,7 +1559,10 @@ impl<'de> serde::de::Deserialize<'de> for EventNotifierType {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = u8;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "an u8")
             }
         }
@@ -1445,20 +1595,21 @@ pub enum ExceptionDeviationFormat {
 impl TryFrom<i32> for ExceptionDeviationFormat {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::AbsoluteValue,
-            1i32 => Self::PercentOfValue,
-            2i32 => Self::PercentOfRange,
-            3i32 => Self::PercentOfEURange,
-            4i32 => Self::Unknown,
-            r => {
-                log::error!(
-                    "Got unexpected value for enum ExceptionDeviationFormat: {}",
-                    r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::AbsoluteValue,
+                1i32 => Self::PercentOfValue,
+                2i32 => Self::PercentOfRange,
+                3i32 => Self::PercentOfEURange,
+                4i32 => Self::Unknown,
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum ExceptionDeviationFormat: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -1468,12 +1619,14 @@ impl opcua::types::xml::FromXml for ExceptionDeviationFormat {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val).map_err(|e| {
-            format!(
-                "Got unexpected value for enum ExceptionDeviationFormat: {}",
-                e
-            )
-        })?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!(
+                        "Got unexpected value for enum ExceptionDeviationFormat: {}", e
+                    )
+                })?,
+        )
     }
 }
 impl From<ExceptionDeviationFormat> for i32 {
@@ -1501,13 +1654,18 @@ impl<'de> serde::de::Deserialize<'de> for ExceptionDeviationFormat {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -1526,7 +1684,10 @@ impl opcua::types::BinaryEncodable for ExceptionDeviationFormat {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1562,30 +1723,32 @@ pub enum FilterOperator {
 impl TryFrom<i32> for FilterOperator {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Equals,
-            1i32 => Self::IsNull,
-            2i32 => Self::GreaterThan,
-            3i32 => Self::LessThan,
-            4i32 => Self::GreaterThanOrEqual,
-            5i32 => Self::LessThanOrEqual,
-            6i32 => Self::Like,
-            7i32 => Self::Not,
-            8i32 => Self::Between,
-            9i32 => Self::InList,
-            10i32 => Self::And,
-            11i32 => Self::Or,
-            12i32 => Self::Cast,
-            13i32 => Self::InView,
-            14i32 => Self::OfType,
-            15i32 => Self::RelatedTo,
-            16i32 => Self::BitwiseAnd,
-            17i32 => Self::BitwiseOr,
-            r => {
-                log::error!("Got unexpected value for enum FilterOperator: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Equals,
+                1i32 => Self::IsNull,
+                2i32 => Self::GreaterThan,
+                3i32 => Self::LessThan,
+                4i32 => Self::GreaterThanOrEqual,
+                5i32 => Self::LessThanOrEqual,
+                6i32 => Self::Like,
+                7i32 => Self::Not,
+                8i32 => Self::Between,
+                9i32 => Self::InList,
+                10i32 => Self::And,
+                11i32 => Self::Or,
+                12i32 => Self::Cast,
+                13i32 => Self::InView,
+                14i32 => Self::OfType,
+                15i32 => Self::RelatedTo,
+                16i32 => Self::BitwiseAnd,
+                17i32 => Self::BitwiseOr,
+                r => {
+                    log::error!("Got unexpected value for enum FilterOperator: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -1595,8 +1758,12 @@ impl opcua::types::xml::FromXml for FilterOperator {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum FilterOperator: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum FilterOperator: {}", e)
+                })?,
+        )
     }
 }
 impl From<FilterOperator> for i32 {
@@ -1624,13 +1791,18 @@ impl<'de> serde::de::Deserialize<'de> for FilterOperator {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -1649,7 +1821,10 @@ impl opcua::types::BinaryEncodable for FilterOperator {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1671,16 +1846,20 @@ pub enum HistoryUpdateType {
 impl TryFrom<i32> for HistoryUpdateType {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            1i32 => Self::Insert,
-            2i32 => Self::Replace,
-            3i32 => Self::Update,
-            4i32 => Self::Delete,
-            r => {
-                log::error!("Got unexpected value for enum HistoryUpdateType: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                1i32 => Self::Insert,
+                2i32 => Self::Replace,
+                3i32 => Self::Update,
+                4i32 => Self::Delete,
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum HistoryUpdateType: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -1690,8 +1869,12 @@ impl opcua::types::xml::FromXml for HistoryUpdateType {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum HistoryUpdateType: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum HistoryUpdateType: {}", e)
+                })?,
+        )
     }
 }
 impl From<HistoryUpdateType> for i32 {
@@ -1719,13 +1902,18 @@ impl<'de> serde::de::Deserialize<'de> for HistoryUpdateType {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -1744,7 +1932,10 @@ impl opcua::types::BinaryEncodable for HistoryUpdateType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1768,18 +1959,22 @@ pub enum IdentityCriteriaType {
 impl TryFrom<i32> for IdentityCriteriaType {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            1i32 => Self::UserName,
-            2i32 => Self::Thumbprint,
-            3i32 => Self::Role,
-            4i32 => Self::GroupId,
-            5i32 => Self::Anonymous,
-            6i32 => Self::AuthenticatedUser,
-            r => {
-                log::error!("Got unexpected value for enum IdentityCriteriaType: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                1i32 => Self::UserName,
+                2i32 => Self::Thumbprint,
+                3i32 => Self::Role,
+                4i32 => Self::GroupId,
+                5i32 => Self::Anonymous,
+                6i32 => Self::AuthenticatedUser,
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum IdentityCriteriaType: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -1789,8 +1984,12 @@ impl opcua::types::xml::FromXml for IdentityCriteriaType {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum IdentityCriteriaType: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum IdentityCriteriaType: {}", e)
+                })?,
+        )
     }
 }
 impl From<IdentityCriteriaType> for i32 {
@@ -1818,13 +2017,18 @@ impl<'de> serde::de::Deserialize<'de> for IdentityCriteriaType {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -1843,7 +2047,10 @@ impl opcua::types::BinaryEncodable for IdentityCriteriaType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1865,16 +2072,18 @@ pub enum IdType {
 impl TryFrom<i32> for IdType {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Numeric,
-            1i32 => Self::String,
-            2i32 => Self::Guid,
-            3i32 => Self::Opaque,
-            r => {
-                log::error!("Got unexpected value for enum IdType: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Numeric,
+                1i32 => Self::String,
+                2i32 => Self::Guid,
+                3i32 => Self::Opaque,
+                r => {
+                    log::error!("Got unexpected value for enum IdType: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -1884,8 +2093,10 @@ impl opcua::types::xml::FromXml for IdType {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum IdType: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| format!("Got unexpected value for enum IdType: {}", e))?,
+        )
     }
 }
 impl From<IdType> for i32 {
@@ -1913,13 +2124,18 @@ impl<'de> serde::de::Deserialize<'de> for IdType {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -1938,7 +2154,10 @@ impl opcua::types::BinaryEncodable for IdType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -1958,17 +2177,17 @@ impl opcua::types::BinaryEncodable for JsonDataSetMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i32::decode(
-            stream,
-            decoding_options,
-        )?))
+        Ok(Self::from_bits_truncate(i32::decode(stream, decoding_options)?))
     }
 }
 impl Default for JsonDataSetMessageContentMask {
@@ -2005,7 +2224,10 @@ impl<'de> serde::de::Deserialize<'de> for JsonDataSetMessageContentMask {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "an i32")
             }
         }
@@ -2036,17 +2258,17 @@ impl opcua::types::BinaryEncodable for JsonNetworkMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i32::decode(
-            stream,
-            decoding_options,
-        )?))
+        Ok(Self::from_bits_truncate(i32::decode(stream, decoding_options)?))
     }
 }
 impl Default for JsonNetworkMessageContentMask {
@@ -2083,7 +2305,10 @@ impl<'de> serde::de::Deserialize<'de> for JsonNetworkMessageContentMask {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "an i32")
             }
         }
@@ -2115,19 +2340,21 @@ pub enum MessageSecurityMode {
 impl TryFrom<i32> for MessageSecurityMode {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Invalid,
-            1i32 => Self::None,
-            2i32 => Self::Sign,
-            3i32 => Self::SignAndEncrypt,
-            r => {
-                log::warn!(
+        Ok(
+            match value {
+                0i32 => Self::Invalid,
+                1i32 => Self::None,
+                2i32 => Self::Sign,
+                3i32 => Self::SignAndEncrypt,
+                r => {
+                    log::warn!(
                         "Got unexpected value for enum MessageSecurityMode: {}. Falling back on Invalid",
                         r
                     );
-                Self::Invalid
-            }
-        })
+                    Self::Invalid
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -2137,8 +2364,12 @@ impl opcua::types::xml::FromXml for MessageSecurityMode {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum MessageSecurityMode: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum MessageSecurityMode: {}", e)
+                })?,
+        )
     }
 }
 impl From<MessageSecurityMode> for i32 {
@@ -2166,13 +2397,18 @@ impl<'de> serde::de::Deserialize<'de> for MessageSecurityMode {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -2191,7 +2427,10 @@ impl opcua::types::BinaryEncodable for MessageSecurityMode {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -2214,20 +2453,22 @@ pub enum ModelChangeStructureVerbMask {
 impl TryFrom<i32> for ModelChangeStructureVerbMask {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            1i32 => Self::NodeAdded,
-            2i32 => Self::NodeDeleted,
-            4i32 => Self::ReferenceAdded,
-            8i32 => Self::ReferenceDeleted,
-            16i32 => Self::DataTypeChanged,
-            r => {
-                log::error!(
-                    "Got unexpected value for enum ModelChangeStructureVerbMask: {}",
-                    r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                1i32 => Self::NodeAdded,
+                2i32 => Self::NodeDeleted,
+                4i32 => Self::ReferenceAdded,
+                8i32 => Self::ReferenceDeleted,
+                16i32 => Self::DataTypeChanged,
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum ModelChangeStructureVerbMask: {}",
+                        r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -2237,12 +2478,15 @@ impl opcua::types::xml::FromXml for ModelChangeStructureVerbMask {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val).map_err(|e| {
-            format!(
-                "Got unexpected value for enum ModelChangeStructureVerbMask: {}",
-                e
-            )
-        })?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!(
+                        "Got unexpected value for enum ModelChangeStructureVerbMask: {}",
+                        e
+                    )
+                })?,
+        )
     }
 }
 impl From<ModelChangeStructureVerbMask> for i32 {
@@ -2270,13 +2514,18 @@ impl<'de> serde::de::Deserialize<'de> for ModelChangeStructureVerbMask {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -2295,7 +2544,10 @@ impl opcua::types::BinaryEncodable for ModelChangeStructureVerbMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -2316,15 +2568,17 @@ pub enum MonitoringMode {
 impl TryFrom<i32> for MonitoringMode {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Disabled,
-            1i32 => Self::Sampling,
-            2i32 => Self::Reporting,
-            r => {
-                log::error!("Got unexpected value for enum MonitoringMode: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Disabled,
+                1i32 => Self::Sampling,
+                2i32 => Self::Reporting,
+                r => {
+                    log::error!("Got unexpected value for enum MonitoringMode: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -2334,8 +2588,12 @@ impl opcua::types::xml::FromXml for MonitoringMode {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum MonitoringMode: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum MonitoringMode: {}", e)
+                })?,
+        )
     }
 }
 impl From<MonitoringMode> for i32 {
@@ -2363,13 +2621,18 @@ impl<'de> serde::de::Deserialize<'de> for MonitoringMode {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -2388,7 +2651,10 @@ impl opcua::types::BinaryEncodable for MonitoringMode {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -2409,15 +2675,17 @@ pub enum NamingRuleType {
 impl TryFrom<i32> for NamingRuleType {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            1i32 => Self::Mandatory,
-            2i32 => Self::Optional,
-            3i32 => Self::Constraint,
-            r => {
-                log::error!("Got unexpected value for enum NamingRuleType: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                1i32 => Self::Mandatory,
+                2i32 => Self::Optional,
+                3i32 => Self::Constraint,
+                r => {
+                    log::error!("Got unexpected value for enum NamingRuleType: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -2427,8 +2695,12 @@ impl opcua::types::xml::FromXml for NamingRuleType {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum NamingRuleType: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum NamingRuleType: {}", e)
+                })?,
+        )
     }
 }
 impl From<NamingRuleType> for i32 {
@@ -2456,13 +2728,18 @@ impl<'de> serde::de::Deserialize<'de> for NamingRuleType {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -2481,7 +2758,10 @@ impl opcua::types::BinaryEncodable for NamingRuleType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -2534,47 +2814,51 @@ pub enum NodeAttributesMask {
 impl TryFrom<i32> for NodeAttributesMask {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::None,
-            1i32 => Self::AccessLevel,
-            2i32 => Self::ArrayDimensions,
-            4i32 => Self::BrowseName,
-            8i32 => Self::ContainsNoLoops,
-            16i32 => Self::DataType,
-            32i32 => Self::Description,
-            64i32 => Self::DisplayName,
-            128i32 => Self::EventNotifier,
-            256i32 => Self::Executable,
-            512i32 => Self::Historizing,
-            1024i32 => Self::InverseName,
-            2048i32 => Self::IsAbstract,
-            4096i32 => Self::MinimumSamplingInterval,
-            8192i32 => Self::NodeClass,
-            16384i32 => Self::NodeId,
-            32768i32 => Self::Symmetric,
-            65536i32 => Self::UserAccessLevel,
-            131072i32 => Self::UserExecutable,
-            262144i32 => Self::UserWriteMask,
-            524288i32 => Self::ValueRank,
-            1048576i32 => Self::WriteMask,
-            2097152i32 => Self::Value,
-            4194304i32 => Self::DataTypeDefinition,
-            8388608i32 => Self::RolePermissions,
-            16777216i32 => Self::AccessRestrictions,
-            33554431i32 => Self::All,
-            26501220i32 => Self::BaseNode,
-            26501348i32 => Self::Object,
-            26503268i32 => Self::ObjectType,
-            26571383i32 => Self::Variable,
-            28600438i32 => Self::VariableType,
-            26632548i32 => Self::Method,
-            26537060i32 => Self::ReferenceType,
-            26501356i32 => Self::View,
-            r => {
-                log::error!("Got unexpected value for enum NodeAttributesMask: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::None,
+                1i32 => Self::AccessLevel,
+                2i32 => Self::ArrayDimensions,
+                4i32 => Self::BrowseName,
+                8i32 => Self::ContainsNoLoops,
+                16i32 => Self::DataType,
+                32i32 => Self::Description,
+                64i32 => Self::DisplayName,
+                128i32 => Self::EventNotifier,
+                256i32 => Self::Executable,
+                512i32 => Self::Historizing,
+                1024i32 => Self::InverseName,
+                2048i32 => Self::IsAbstract,
+                4096i32 => Self::MinimumSamplingInterval,
+                8192i32 => Self::NodeClass,
+                16384i32 => Self::NodeId,
+                32768i32 => Self::Symmetric,
+                65536i32 => Self::UserAccessLevel,
+                131072i32 => Self::UserExecutable,
+                262144i32 => Self::UserWriteMask,
+                524288i32 => Self::ValueRank,
+                1048576i32 => Self::WriteMask,
+                2097152i32 => Self::Value,
+                4194304i32 => Self::DataTypeDefinition,
+                8388608i32 => Self::RolePermissions,
+                16777216i32 => Self::AccessRestrictions,
+                33554431i32 => Self::All,
+                26501220i32 => Self::BaseNode,
+                26501348i32 => Self::Object,
+                26503268i32 => Self::ObjectType,
+                26571383i32 => Self::Variable,
+                28600438i32 => Self::VariableType,
+                26632548i32 => Self::Method,
+                26537060i32 => Self::ReferenceType,
+                26501356i32 => Self::View,
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum NodeAttributesMask: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -2584,8 +2868,12 @@ impl opcua::types::xml::FromXml for NodeAttributesMask {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum NodeAttributesMask: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum NodeAttributesMask: {}", e)
+                })?,
+        )
     }
 }
 impl From<NodeAttributesMask> for i32 {
@@ -2613,13 +2901,18 @@ impl<'de> serde::de::Deserialize<'de> for NodeAttributesMask {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -2638,7 +2931,10 @@ impl opcua::types::BinaryEncodable for NodeAttributesMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -2665,21 +2961,23 @@ pub enum NodeClass {
 impl TryFrom<i32> for NodeClass {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Unspecified,
-            1i32 => Self::Object,
-            2i32 => Self::Variable,
-            4i32 => Self::Method,
-            8i32 => Self::ObjectType,
-            16i32 => Self::VariableType,
-            32i32 => Self::ReferenceType,
-            64i32 => Self::DataType,
-            128i32 => Self::View,
-            r => {
-                log::error!("Got unexpected value for enum NodeClass: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Unspecified,
+                1i32 => Self::Object,
+                2i32 => Self::Variable,
+                4i32 => Self::Method,
+                8i32 => Self::ObjectType,
+                16i32 => Self::VariableType,
+                32i32 => Self::ReferenceType,
+                64i32 => Self::DataType,
+                128i32 => Self::View,
+                r => {
+                    log::error!("Got unexpected value for enum NodeClass: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -2689,8 +2987,10 @@ impl opcua::types::xml::FromXml for NodeClass {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum NodeClass: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| format!("Got unexpected value for enum NodeClass: {}", e))?,
+        )
     }
 }
 impl From<NodeClass> for i32 {
@@ -2718,13 +3018,18 @@ impl<'de> serde::de::Deserialize<'de> for NodeClass {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -2743,7 +3048,10 @@ impl opcua::types::BinaryEncodable for NodeClass {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -2768,18 +3076,20 @@ pub enum NodeIdType {
 impl TryFrom<u8> for NodeIdType {
     type Error = opcua::types::StatusCode;
     fn try_from(value: u8) -> Result<Self, <Self as TryFrom<u8>>::Error> {
-        Ok(match value {
-            0u8 => Self::TwoByte,
-            1u8 => Self::FourByte,
-            2u8 => Self::Numeric,
-            3u8 => Self::String,
-            4u8 => Self::Guid,
-            5u8 => Self::ByteString,
-            r => {
-                log::error!("Got unexpected value for enum NodeIdType: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0u8 => Self::TwoByte,
+                1u8 => Self::FourByte,
+                2u8 => Self::Numeric,
+                3u8 => Self::String,
+                4u8 => Self::Guid,
+                5u8 => Self::ByteString,
+                r => {
+                    log::error!("Got unexpected value for enum NodeIdType: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -2789,8 +3099,10 @@ impl opcua::types::xml::FromXml for NodeIdType {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = u8::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum NodeIdType: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| format!("Got unexpected value for enum NodeIdType: {}", e))?,
+        )
     }
 }
 impl From<NodeIdType> for u8 {
@@ -2818,13 +3130,18 @@ impl<'de> serde::de::Deserialize<'de> for NodeIdType {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = u8;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "u8")
             }
         }
         let value = deserializer.deserialize_u8(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "u8", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "u8", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -2843,7 +3160,10 @@ impl opcua::types::BinaryEncodable for NodeIdType {
     fn byte_len(&self) -> usize {
         1usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_u8(stream, *self as u8)
     }
     fn decode<S: std::io::Read>(
@@ -2865,16 +3185,18 @@ pub enum OpenFileMode {
 impl TryFrom<i32> for OpenFileMode {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            1i32 => Self::Read,
-            2i32 => Self::Write,
-            4i32 => Self::EraseExisting,
-            8i32 => Self::Append,
-            r => {
-                log::error!("Got unexpected value for enum OpenFileMode: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                1i32 => Self::Read,
+                2i32 => Self::Write,
+                4i32 => Self::EraseExisting,
+                8i32 => Self::Append,
+                r => {
+                    log::error!("Got unexpected value for enum OpenFileMode: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -2884,8 +3206,12 @@ impl opcua::types::xml::FromXml for OpenFileMode {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum OpenFileMode: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum OpenFileMode: {}", e)
+                })?,
+        )
     }
 }
 impl From<OpenFileMode> for i32 {
@@ -2913,13 +3239,18 @@ impl<'de> serde::de::Deserialize<'de> for OpenFileMode {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -2938,7 +3269,10 @@ impl opcua::types::BinaryEncodable for OpenFileMode {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -2959,15 +3293,19 @@ pub enum OverrideValueHandling {
 impl TryFrom<i32> for OverrideValueHandling {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Disabled,
-            1i32 => Self::LastUsableValue,
-            2i32 => Self::OverrideValue,
-            r => {
-                log::error!("Got unexpected value for enum OverrideValueHandling: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Disabled,
+                1i32 => Self::LastUsableValue,
+                2i32 => Self::OverrideValue,
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum OverrideValueHandling: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -2977,8 +3315,12 @@ impl opcua::types::xml::FromXml for OverrideValueHandling {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum OverrideValueHandling: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum OverrideValueHandling: {}", e)
+                })?,
+        )
     }
 }
 impl From<OverrideValueHandling> for i32 {
@@ -3006,13 +3348,18 @@ impl<'de> serde::de::Deserialize<'de> for OverrideValueHandling {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -3031,7 +3378,10 @@ impl opcua::types::BinaryEncodable for OverrideValueHandling {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -3053,16 +3403,20 @@ pub enum PerformUpdateType {
 impl TryFrom<i32> for PerformUpdateType {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            1i32 => Self::Insert,
-            2i32 => Self::Replace,
-            3i32 => Self::Update,
-            4i32 => Self::Remove,
-            r => {
-                log::error!("Got unexpected value for enum PerformUpdateType: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                1i32 => Self::Insert,
+                2i32 => Self::Replace,
+                3i32 => Self::Update,
+                4i32 => Self::Remove,
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum PerformUpdateType: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -3072,8 +3426,12 @@ impl opcua::types::xml::FromXml for PerformUpdateType {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum PerformUpdateType: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum PerformUpdateType: {}", e)
+                })?,
+        )
     }
 }
 impl From<PerformUpdateType> for i32 {
@@ -3101,13 +3459,18 @@ impl<'de> serde::de::Deserialize<'de> for PerformUpdateType {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -3126,7 +3489,10 @@ impl opcua::types::BinaryEncodable for PerformUpdateType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -3150,17 +3516,17 @@ impl opcua::types::BinaryEncodable for PermissionType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i32::decode(
-            stream,
-            decoding_options,
-        )?))
+        Ok(Self::from_bits_truncate(i32::decode(stream, decoding_options)?))
     }
 }
 impl Default for PermissionType {
@@ -3197,7 +3563,10 @@ impl<'de> serde::de::Deserialize<'de> for PermissionType {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "an i32")
             }
         }
@@ -3227,17 +3596,19 @@ pub enum PubSubDiagnosticsCounterClassification {
 impl TryFrom<i32> for PubSubDiagnosticsCounterClassification {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Information,
-            1i32 => Self::Error,
-            r => {
-                log::error!(
-                    "Got unexpected value for enum PubSubDiagnosticsCounterClassification: {}",
-                    r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Information,
+                1i32 => Self::Error,
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum PubSubDiagnosticsCounterClassification: {}",
+                        r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -3247,12 +3618,15 @@ impl opcua::types::xml::FromXml for PubSubDiagnosticsCounterClassification {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val).map_err(|e| {
-            format!(
-                "Got unexpected value for enum PubSubDiagnosticsCounterClassification: {}",
-                e
-            )
-        })?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!(
+                        "Got unexpected value for enum PubSubDiagnosticsCounterClassification: {}",
+                        e
+                    )
+                })?,
+        )
     }
 }
 impl From<PubSubDiagnosticsCounterClassification> for i32 {
@@ -3280,13 +3654,18 @@ impl<'de> serde::de::Deserialize<'de> for PubSubDiagnosticsCounterClassification
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -3305,7 +3684,10 @@ impl opcua::types::BinaryEncodable for PubSubDiagnosticsCounterClassification {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -3327,16 +3709,18 @@ pub enum PubSubState {
 impl TryFrom<i32> for PubSubState {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Disabled,
-            1i32 => Self::Paused,
-            2i32 => Self::Operational,
-            3i32 => Self::Error,
-            r => {
-                log::error!("Got unexpected value for enum PubSubState: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Disabled,
+                1i32 => Self::Paused,
+                2i32 => Self::Operational,
+                3i32 => Self::Error,
+                r => {
+                    log::error!("Got unexpected value for enum PubSubState: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -3346,8 +3730,12 @@ impl opcua::types::xml::FromXml for PubSubState {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum PubSubState: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum PubSubState: {}", e)
+                })?,
+        )
     }
 }
 impl From<PubSubState> for i32 {
@@ -3375,13 +3763,18 @@ impl<'de> serde::de::Deserialize<'de> for PubSubState {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -3400,7 +3793,10 @@ impl opcua::types::BinaryEncodable for PubSubState {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -3424,18 +3820,22 @@ pub enum RedundancySupport {
 impl TryFrom<i32> for RedundancySupport {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::None,
-            1i32 => Self::Cold,
-            2i32 => Self::Warm,
-            3i32 => Self::Hot,
-            4i32 => Self::Transparent,
-            5i32 => Self::HotAndMirrored,
-            r => {
-                log::error!("Got unexpected value for enum RedundancySupport: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::None,
+                1i32 => Self::Cold,
+                2i32 => Self::Warm,
+                3i32 => Self::Hot,
+                4i32 => Self::Transparent,
+                5i32 => Self::HotAndMirrored,
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum RedundancySupport: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -3445,8 +3845,12 @@ impl opcua::types::xml::FromXml for RedundancySupport {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum RedundancySupport: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum RedundancySupport: {}", e)
+                })?,
+        )
     }
 }
 impl From<RedundancySupport> for i32 {
@@ -3474,13 +3878,18 @@ impl<'de> serde::de::Deserialize<'de> for RedundancySupport {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -3499,7 +3908,10 @@ impl opcua::types::BinaryEncodable for RedundancySupport {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -3519,17 +3931,18 @@ pub enum SecurityTokenRequestType {
 impl TryFrom<i32> for SecurityTokenRequestType {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Issue,
-            1i32 => Self::Renew,
-            r => {
-                log::error!(
-                    "Got unexpected value for enum SecurityTokenRequestType: {}",
-                    r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Issue,
+                1i32 => Self::Renew,
+                r => {
+                    log::error!(
+                        "Got unexpected value for enum SecurityTokenRequestType: {}", r
+                    );
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -3539,12 +3952,14 @@ impl opcua::types::xml::FromXml for SecurityTokenRequestType {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val).map_err(|e| {
-            format!(
-                "Got unexpected value for enum SecurityTokenRequestType: {}",
-                e
-            )
-        })?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!(
+                        "Got unexpected value for enum SecurityTokenRequestType: {}", e
+                    )
+                })?,
+        )
     }
 }
 impl From<SecurityTokenRequestType> for i32 {
@@ -3572,13 +3987,18 @@ impl<'de> serde::de::Deserialize<'de> for SecurityTokenRequestType {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -3597,7 +4017,10 @@ impl opcua::types::BinaryEncodable for SecurityTokenRequestType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -3623,20 +4046,22 @@ pub enum ServerState {
 impl TryFrom<i32> for ServerState {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Running,
-            1i32 => Self::Failed,
-            2i32 => Self::NoConfiguration,
-            3i32 => Self::Suspended,
-            4i32 => Self::Shutdown,
-            5i32 => Self::Test,
-            6i32 => Self::CommunicationFault,
-            7i32 => Self::Unknown,
-            r => {
-                log::error!("Got unexpected value for enum ServerState: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Running,
+                1i32 => Self::Failed,
+                2i32 => Self::NoConfiguration,
+                3i32 => Self::Suspended,
+                4i32 => Self::Shutdown,
+                5i32 => Self::Test,
+                6i32 => Self::CommunicationFault,
+                7i32 => Self::Unknown,
+                r => {
+                    log::error!("Got unexpected value for enum ServerState: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -3646,8 +4071,12 @@ impl opcua::types::xml::FromXml for ServerState {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum ServerState: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum ServerState: {}", e)
+                })?,
+        )
     }
 }
 impl From<ServerState> for i32 {
@@ -3675,13 +4104,18 @@ impl<'de> serde::de::Deserialize<'de> for ServerState {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -3700,7 +4134,10 @@ impl opcua::types::BinaryEncodable for ServerState {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -3721,15 +4158,17 @@ pub enum StructureType {
 impl TryFrom<i32> for StructureType {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Structure,
-            1i32 => Self::StructureWithOptionalFields,
-            2i32 => Self::Union,
-            r => {
-                log::error!("Got unexpected value for enum StructureType: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Structure,
+                1i32 => Self::StructureWithOptionalFields,
+                2i32 => Self::Union,
+                r => {
+                    log::error!("Got unexpected value for enum StructureType: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -3739,8 +4178,12 @@ impl opcua::types::xml::FromXml for StructureType {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum StructureType: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum StructureType: {}", e)
+                })?,
+        )
     }
 }
 impl From<StructureType> for i32 {
@@ -3768,13 +4211,18 @@ impl<'de> serde::de::Deserialize<'de> for StructureType {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -3793,7 +4241,10 @@ impl opcua::types::BinaryEncodable for StructureType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -3816,20 +4267,22 @@ pub enum TimestampsToReturn {
 impl TryFrom<i32> for TimestampsToReturn {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Source,
-            1i32 => Self::Server,
-            2i32 => Self::Both,
-            3i32 => Self::Neither,
-            4i32 => Self::Invalid,
-            r => {
-                log::warn!(
-                    "Got unexpected value for enum TimestampsToReturn: {}. Falling back on Invalid",
-                    r
-                );
-                Self::Invalid
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Source,
+                1i32 => Self::Server,
+                2i32 => Self::Both,
+                3i32 => Self::Neither,
+                4i32 => Self::Invalid,
+                r => {
+                    log::warn!(
+                        "Got unexpected value for enum TimestampsToReturn: {}. Falling back on Invalid",
+                        r
+                    );
+                    Self::Invalid
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -3839,8 +4292,12 @@ impl opcua::types::xml::FromXml for TimestampsToReturn {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum TimestampsToReturn: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum TimestampsToReturn: {}", e)
+                })?,
+        )
     }
 }
 impl From<TimestampsToReturn> for i32 {
@@ -3868,13 +4325,18 @@ impl<'de> serde::de::Deserialize<'de> for TimestampsToReturn {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -3893,7 +4355,10 @@ impl opcua::types::BinaryEncodable for TimestampsToReturn {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -3917,18 +4382,20 @@ pub enum TrustListMasks {
 impl TryFrom<i32> for TrustListMasks {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::None,
-            1i32 => Self::TrustedCertificates,
-            2i32 => Self::TrustedCrls,
-            4i32 => Self::IssuerCertificates,
-            8i32 => Self::IssuerCrls,
-            15i32 => Self::All,
-            r => {
-                log::error!("Got unexpected value for enum TrustListMasks: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::None,
+                1i32 => Self::TrustedCertificates,
+                2i32 => Self::TrustedCrls,
+                4i32 => Self::IssuerCertificates,
+                8i32 => Self::IssuerCrls,
+                15i32 => Self::All,
+                r => {
+                    log::error!("Got unexpected value for enum TrustListMasks: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -3938,8 +4405,12 @@ impl opcua::types::xml::FromXml for TrustListMasks {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum TrustListMasks: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum TrustListMasks: {}", e)
+                })?,
+        )
     }
 }
 impl From<TrustListMasks> for i32 {
@@ -3967,13 +4438,18 @@ impl<'de> serde::de::Deserialize<'de> for TrustListMasks {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -3992,7 +4468,10 @@ impl opcua::types::BinaryEncodable for TrustListMasks {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(
@@ -4013,17 +4492,17 @@ impl opcua::types::BinaryEncodable for UadpDataSetMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i32::decode(
-            stream,
-            decoding_options,
-        )?))
+        Ok(Self::from_bits_truncate(i32::decode(stream, decoding_options)?))
     }
 }
 impl Default for UadpDataSetMessageContentMask {
@@ -4060,7 +4539,10 @@ impl<'de> serde::de::Deserialize<'de> for UadpDataSetMessageContentMask {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "an i32")
             }
         }
@@ -4093,17 +4575,17 @@ impl opcua::types::BinaryEncodable for UadpNetworkMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, self.bits())
     }
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self::from_bits_truncate(i32::decode(
-            stream,
-            decoding_options,
-        )?))
+        Ok(Self::from_bits_truncate(i32::decode(stream, decoding_options)?))
     }
 }
 impl Default for UadpNetworkMessageContentMask {
@@ -4140,7 +4622,10 @@ impl<'de> serde::de::Deserialize<'de> for UadpNetworkMessageContentMask {
         struct BitFieldVisitor;
         impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "an i32")
             }
         }
@@ -4172,16 +4657,18 @@ pub enum UserTokenType {
 impl TryFrom<i32> for UserTokenType {
     type Error = opcua::types::StatusCode;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
-        Ok(match value {
-            0i32 => Self::Anonymous,
-            1i32 => Self::UserName,
-            2i32 => Self::Certificate,
-            3i32 => Self::IssuedToken,
-            r => {
-                log::error!("Got unexpected value for enum UserTokenType: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
-            }
-        })
+        Ok(
+            match value {
+                0i32 => Self::Anonymous,
+                1i32 => Self::UserName,
+                2i32 => Self::Certificate,
+                3i32 => Self::IssuedToken,
+                r => {
+                    log::error!("Got unexpected value for enum UserTokenType: {}", r);
+                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                }
+            },
+        )
     }
 }
 #[cfg(feature = "xml")]
@@ -4191,8 +4678,12 @@ impl opcua::types::xml::FromXml for UserTokenType {
         ctx: &opcua::types::xml::XmlContext<'a>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
-        Ok(Self::try_from(val)
-            .map_err(|e| format!("Got unexpected value for enum UserTokenType: {}", e))?)
+        Ok(
+            Self::try_from(val)
+                .map_err(|e| {
+                    format!("Got unexpected value for enum UserTokenType: {}", e)
+                })?,
+        )
     }
 }
 impl From<UserTokenType> for i32 {
@@ -4220,13 +4711,18 @@ impl<'de> serde::de::Deserialize<'de> for UserTokenType {
         use serde::de::Error;
         impl<'de> serde::de::Visitor<'de> for EnumVisitor {
             type Value = i32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+            fn expecting(
+                &self,
+                formatter: &mut core::fmt::Formatter,
+            ) -> core::fmt::Result {
                 write!(formatter, "i32")
             }
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(&format!("Failed to deserialize {}: {:?}", "i32", e)))
+            .map_err(|e| D::Error::custom(
+                &format!("Failed to deserialize {}: {:?}", "i32", e),
+            ))
     }
 }
 #[cfg(feature = "json")]
@@ -4245,7 +4741,10 @@ impl opcua::types::BinaryEncodable for UserTokenType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
     fn decode<S: std::io::Read>(

@@ -10,11 +10,15 @@ pub struct NodeIdCodeGenTarget {
     pub file_path: String,
     pub output_file: String,
     pub type_name: Option<String>,
+    #[serde(default)]
     pub extra_header: String,
 }
 
-pub fn generate_node_ids(target: &NodeIdCodeGenTarget) -> Result<syn::File, CodeGenError> {
-    let file = File::open(&target.file_path)
+pub fn generate_node_ids(
+    target: &NodeIdCodeGenTarget,
+    root_path: &str,
+) -> Result<syn::File, CodeGenError> {
+    let file = File::open(format!("{}/{}", root_path, target.file_path))
         .map_err(|e| CodeGenError::io("Failed to open node ID file", e))?;
     let data = parse(file, &target.file_path, target.type_name.as_deref())?;
     let mut pairs = data.into_iter().collect::<Vec<_>>();

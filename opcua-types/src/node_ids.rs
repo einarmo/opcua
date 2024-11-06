@@ -5,7 +5,8 @@
 // OPCUA for Rust
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
-mod opcua { pub use crate as types; }#[allow(non_camel_case_types)]
+mod opcua { pub use crate as types; }
+#[allow(non_camel_case_types)]
 #[derive(Debug, PartialEq, Eq, Copy, Clone, Hash)]
 #[repr(u32)]
 pub enum DataTypeId {

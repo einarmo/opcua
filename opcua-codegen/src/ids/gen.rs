@@ -8,7 +8,7 @@ use proc_macro2::Span;
 use quote::quote;
 use syn::{parse_quote, Ident, Item};
 
-use crate::CodeGenError;
+use crate::{utils::safe_ident, CodeGenError};
 
 pub struct IdItem {
     pub name: String,
@@ -65,7 +65,7 @@ pub fn render(item: IdItem) -> Result<Vec<Item>, CodeGenError> {
     let mut vs = quote! {};
     let mut from_arms = quote! {};
     for (val, key) in item.variants {
-        let idt = Ident::new(&key, Span::call_site());
+        let idt = safe_ident(&key);
         vs.extend(quote! { #idt = #val, });
         from_arms.extend(quote! { #val => Self::#idt, });
     }

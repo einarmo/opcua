@@ -150,6 +150,10 @@ impl BsdTypeLoader {
         })
     }
 
+    pub fn target_namespace(&self) -> String {
+        self.xml.target_namespace.clone()
+    }
+
     pub fn from_bsd(mut self) -> Result<Vec<LoadedType>, CodeGenError> {
         let mut types = Vec::new();
         for node in std::mem::take(&mut self.xml.elements) {

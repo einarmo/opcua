@@ -7,9 +7,11 @@ use syn::{
     ItemImpl, ItemMacro, ItemStruct, Lit, LitByte, Path, Token, Type, Visibility,
 };
 
-use crate::{error::CodeGenError, GeneratedOutput, StructuredType};
+use crate::{
+    error::CodeGenError, utils::safe_ident, GeneratedOutput, StructuredType, BASE_NAMESPACE,
+};
 
-use super::{loader::LoadedType, EnumType, ExternalType};
+use super::{enum_type::EnumReprType, loader::LoadedType, EnumType, ExternalType};
 use quote::quote;
 
 pub enum ItemDefinition {
@@ -64,6 +66,7 @@ pub struct CodeGenerator {
     input: HashMap<String, LoadedType>,
     default_excluded: HashSet<String>,
     config: CodeGenItemConfig,
+    target_namespace: String,
 }
 
 impl CodeGenerator {
@@ -72,6 +75,7 @@ impl CodeGenerator {
         input: Vec<LoadedType>,
         default_excluded: HashSet<String>,
         config: CodeGenItemConfig,
+        target_namespace: String,
     ) -> Self {
         Self {
             import_map: external_import_map,
@@ -81,7 +85,12 @@ impl CodeGenerator {
                 .collect(),
             config,
             default_excluded,
+            target_namespace,
         }
+    }
+
+    fn is_base_namespace(&self) -> bool {
+        self.target_namespace == BASE_NAMESPACE
     }
 
     fn is_default_recursive(&self, name: &str) -> bool {
@@ -197,10 +206,10 @@ impl CodeGenerator {
         }
         let mut variants = quote! {};
         for field in &item.values {
-            let name = Ident::new(&field.name, Span::call_site());
+            let name = safe_ident(&field.name);
             let value = field.value;
             let value_token = match item.typ {
-                super::enum_type::EnumReprType::u8 => {
+                EnumReprType::u8 => {
                     let value: u8 = value.try_into().map_err(|_| {
                         CodeGenError::Other(format!(
                             "Unexpected error converting to u8, {} is out of range",
@@ -209,7 +218,7 @@ impl CodeGenerator {
                     })?;
                     Lit::Byte(LitByte::new(value, Span::call_site()))
                 }
-                super::enum_type::EnumReprType::i16 => {
+                EnumReprType::i16 => {
                     let value: i16 = value.try_into().map_err(|_| {
                         CodeGenError::Other(format!(
                             "Unexpected error converting to i16, {} is out of range",
@@ -218,7 +227,7 @@ impl CodeGenerator {
                     })?;
                     parse_quote! { #value }
                 }
-                super::enum_type::EnumReprType::i32 => {
+                EnumReprType::i32 => {
                     let value: i32 = value.try_into().map_err(|_| {
                         CodeGenError::Other(format!(
                             "Unexpected error converting to i32, {} is out of range",
@@ -227,7 +236,7 @@ impl CodeGenerator {
                     })?;
                     parse_quote! { #value }
                 }
-                super::enum_type::EnumReprType::i64 => {
+                EnumReprType::i64 => {
                     parse_quote! { #value }
                 }
             };
@@ -235,7 +244,7 @@ impl CodeGenerator {
                 const #name = #value_token;
             });
         }
-        let enum_ident = Ident::new(&item.name, Span::call_site());
+        let enum_ident = safe_ident(&item.name);
 
         body.extend(quote! {
             bitflags::bitflags! {
@@ -386,10 +395,10 @@ impl CodeGenerator {
         let mut try_from_arms = quote! {};
 
         for field in &item.values {
-            let name = Ident::new(&field.name, Span::call_site());
+            let name = safe_ident(&field.name);
             let value = field.value;
             let value_token = match item.typ {
-                super::enum_type::EnumReprType::u8 => {
+                EnumReprType::u8 => {
                     let value: u8 = value.try_into().map_err(|_| {
                         CodeGenError::Other(format!(
                             "Unexpected error converting to u8, {} is out of range",
@@ -398,7 +407,7 @@ impl CodeGenerator {
                     })?;
                     Lit::Byte(LitByte::new(value, Span::call_site()))
                 }
-                super::enum_type::EnumReprType::i16 => {
+                EnumReprType::i16 => {
                     let value: i16 = value.try_into().map_err(|_| {
                         CodeGenError::Other(format!(
                             "Unexpected error converting to i16, {} is out of range",
@@ -407,7 +416,7 @@ impl CodeGenerator {
                     })?;
                     parse_quote! { #value }
                 }
-                super::enum_type::EnumReprType::i32 => {
+                EnumReprType::i32 => {
                     let value: i32 = value.try_into().map_err(|_| {
                         CodeGenError::Other(format!(
                             "Unexpected error converting to i32, {} is out of range",
@@ -416,7 +425,7 @@ impl CodeGenerator {
                     })?;
                     parse_quote! { #value }
                 }
-                super::enum_type::EnumReprType::i64 => {
+                EnumReprType::i64 => {
                     parse_quote! { #value }
                 }
             };
@@ -455,7 +464,7 @@ impl CodeGenerator {
         }
 
         let mut impls = Vec::new();
-        let enum_ident = Ident::new(&item.name, Span::call_site());
+        let enum_ident = safe_ident(&item.name);
 
         // TryFrom impl
         impls.push(parse_quote! {
@@ -650,7 +659,7 @@ impl CodeGenerator {
         }
 
         let mut impls = Vec::new();
-        let struct_ident = Ident::new(&item.name, Span::call_site());
+        let struct_ident = safe_ident(&item.name);
 
         for field in item.visible_fields() {
             let typ: Type = match &field.typ {
@@ -660,7 +669,7 @@ impl CodeGenerator {
                     parse_quote! { Option<Vec<#path>> }
                 }
             };
-            let ident = Ident::new(&field.name, Span::call_site());
+            let ident = safe_ident(&field.name);
             fields.push(parse_quote! {
                 pub #ident: #typ
             });
@@ -677,31 +686,43 @@ impl CodeGenerator {
             .as_ref()
             .is_some_and(|v| self.is_extension_object(v))
         {
-            let encoding_ident = Ident::new(
-                &format!("{}_Encoding_DefaultBinary", item.name),
-                Span::call_site(),
-            );
-            let json_encoding_ident = Ident::new(
-                &format!("{}_Encoding_DefaultJson", item.name),
-                Span::call_site(),
-            );
-            let xml_encoding_ident = Ident::new(
-                &format!("{}_Encoding_DefaultXml", item.name),
-                Span::call_site(),
-            );
-            impls.push(parse_quote! {
-                impl opcua::types::MessageInfo for #struct_ident {
-                    fn type_id(&self) -> opcua::types::ObjectId {
-                        opcua::types::ObjectId::#encoding_ident
+            let encoding_ident = safe_ident(&format!("{}_Encoding_DefaultBinary", item.name));
+            let json_encoding_ident = safe_ident(&format!("{}_Encoding_DefaultJson", item.name));
+            let xml_encoding_ident = safe_ident(&format!("{}_Encoding_DefaultXml", item.name));
+            if self.is_base_namespace() {
+                impls.push(parse_quote! {
+                    impl opcua::types::MessageInfo for #struct_ident {
+                        fn type_id(&self) -> opcua::types::ObjectId {
+                            opcua::types::ObjectId::#encoding_ident
+                        }
+                        fn json_type_id(&self) -> opcua::types::ObjectId {
+                            opcua::types::ObjectId::#json_encoding_ident
+                        }
+                        fn xml_type_id(&self) -> opcua::types::ObjectId {
+                            opcua::types::ObjectId::#xml_encoding_ident
+                        }
                     }
-                    fn json_type_id(&self) -> opcua::types::ObjectId {
-                        opcua::types::ObjectId::#json_encoding_ident
+                });
+            } else {
+                let namespace = self.target_namespace.as_str();
+                impls.push(parse_quote! {
+                    impl opcua::types::ExpandedMessageInfo for #struct_ident {
+                        fn full_type_id(&self) -> opcua::types::ExpandedNodeId {
+                            let id: opcua::types::NodeId = crate::ObjectId::#encoding_ident.into();
+                            opcua::types::ExpandedNodeId::from((id, #namespace))
+                        }
+                        fn full_json_type_id(&self) -> opcua::types::ExpandedNodeId {
+                            let id: opcua::types::NodeId = crate::ObjectId::#json_encoding_ident.into();
+                            opcua::types::ExpandedNodeId::from((id, #namespace))
+                        }
+                        fn full_xml_type_id(&self) -> opcua::types::ExpandedNodeId {
+                            let id: opcua::types::NodeId = crate::ObjectId::#xml_encoding_ident.into();
+                            opcua::types::ExpandedNodeId::from((id, #namespace))
+                        }
                     }
-                    fn xml_type_id(&self) -> opcua::types::ObjectId {
-                        opcua::types::ObjectId::#xml_encoding_ident
-                    }
-                }
-            });
+                });
+            }
+
             object_id = Some(xml_encoding_ident);
         }
 
@@ -724,7 +745,7 @@ impl CodeGenerator {
                 let mut size = 0usize;
             };
             for field in item.visible_fields() {
-                let ident = Ident::new(&field.name, Span::call_site());
+                let ident = safe_ident(&field.name);
 
                 let ty: Type = match &field.typ {
                     crate::StructureFieldType::Field(f) => syn::parse_str(&self.get_type_path(f))?,
