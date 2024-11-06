@@ -1602,6 +1602,13 @@ impl Variant {
         matches!(self, Variant::Array(_))
     }
 
+    pub fn as_array(&self) -> Option<&Vec<Variant>> {
+        match self {
+            Variant::Array(a) => Some(&a.values),
+            _ => None,
+        }
+    }
+
     pub fn is_array_of_type(&self, variant_type: VariantScalarTypeId) -> bool {
         // A non-numeric value in the array means it is not numeric
         match self {

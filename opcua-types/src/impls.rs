@@ -6,7 +6,6 @@ use crate::{
     attribute::AttributeId,
     byte_string::ByteString,
     constants,
-    data_value::DataValue,
     localized_text::LocalizedText,
     node_id::NodeId,
     node_ids::{DataTypeId, ObjectId},
@@ -14,11 +13,10 @@ use crate::{
     qualified_name::QualifiedName,
     response_header::{AsRequestHandle, ResponseHeader},
     service_types::{
-        enums::DeadbandType, AnonymousIdentityToken, ApplicationDescription, ApplicationType,
-        Argument, CallMethodRequest, DataChangeFilter, DataChangeTrigger, EndpointDescription,
-        MessageSecurityMode, MonitoredItemCreateRequest, MonitoringMode, MonitoringParameters,
-        ReadValueId, ServiceCounterDataType, ServiceFault, SignatureData, UserNameIdentityToken,
-        UserTokenPolicy, UserTokenType,
+        AnonymousIdentityToken, ApplicationDescription, ApplicationType, Argument,
+        CallMethodRequest, EndpointDescription, MessageSecurityMode, MonitoredItemCreateRequest,
+        MonitoringMode, MonitoringParameters, ReadValueId, ServiceCounterDataType, ServiceFault,
+        SignatureData, UserNameIdentityToken, UserTokenPolicy, UserTokenType,
     },
     status_code::StatusCode,
     string::UAString,
@@ -102,119 +100,6 @@ impl UserTokenPolicy {
             issuer_endpoint_url: UAString::null(),
             security_policy_uri: UAString::null(),
         }
-    }
-}
-
-impl DataChangeFilter {
-    /// Compares one data value to another and returns true if they differ, according to their trigger
-    /// type of status, status/value or status/value/timestamp
-    pub fn compare(&self, v1: &DataValue, v2: &DataValue, eu_range: Option<(f64, f64)>) -> bool {
-        match self.trigger {
-            DataChangeTrigger::Status => v1.status == v2.status,
-            DataChangeTrigger::StatusValue => {
-                v1.status == v2.status && self.compare_value_option(&v1.value, &v2.value, eu_range)
-            }
-            DataChangeTrigger::StatusValueTimestamp => {
-                v1.status == v2.status
-                    && self.compare_value_option(&v1.value, &v2.value, eu_range)
-                    && v1.server_timestamp == v2.server_timestamp
-            }
-        }
-    }
-
-    /// Compares two variant values to each other. Returns true if they are considered the "same".
-    pub fn compare_value_option(
-        &self,
-        v1: &Option<Variant>,
-        v2: &Option<Variant>,
-        eu_range: Option<(f64, f64)>,
-    ) -> bool {
-        match (v1, v2) {
-            (Some(_), None) | (None, Some(_)) => false,
-            (None, None) => {
-                // If it's always none then it hasn't changed
-                true
-            }
-            (Some(v1), Some(v2)) => {
-                // Otherwise test the filter
-                self.compare_value(v1, v2, eu_range).unwrap_or(true)
-            }
-        }
-    }
-
-    /// Compares two values, either a straight value compare or a numeric comparison against the
-    /// deadband settings. If deadband is asked for and the values are not convertible into a numeric
-    /// value, the result is false. The value is true if the values are the same within the limits
-    /// set.
-    ///
-    /// The eu_range is the engineering unit range and represents the range that the value should
-    /// typically operate between. It's used for percentage change operations and ignored otherwise.
-    ///
-    /// # Errors
-    ///
-    /// BadDeadbandFilterInvalid indicates the deadband settings were invalid, e.g. an invalid
-    /// type, or the args were invalid. A (low, high) range must be supplied for a percentage deadband compare.
-    pub fn compare_value(
-        &self,
-        v1: &Variant,
-        v2: &Variant,
-        eu_range: Option<(f64, f64)>,
-    ) -> std::result::Result<bool, StatusCode> {
-        // TODO be able to compare arrays of numbers
-        if self.deadband_type == DeadbandType::None as u32 {
-            // Straight comparison of values
-            Ok(v1 == v2)
-        } else {
-            // Absolute
-            match (v1.as_f64(), v2.as_f64()) {
-                (None, _) | (_, None) => Ok(false),
-                (Some(v1), Some(v2)) => {
-                    if self.deadband_value < 0f64 {
-                        Err(StatusCode::BadDeadbandFilterInvalid)
-                    } else if self.deadband_type == DeadbandType::Absolute as u32 {
-                        Ok(DataChangeFilter::abs_compare(v1, v2, self.deadband_value))
-                    } else if self.deadband_type == DeadbandType::Percent as u32 {
-                        match eu_range {
-                            None => Err(StatusCode::BadDeadbandFilterInvalid),
-                            Some((low, high)) => {
-                                if low >= high {
-                                    Err(StatusCode::BadDeadbandFilterInvalid)
-                                } else {
-                                    Ok(DataChangeFilter::pct_compare(
-                                        v1,
-                                        v2,
-                                        low,
-                                        high,
-                                        self.deadband_value,
-                                    ))
-                                }
-                            }
-                        }
-                    } else {
-                        // Type is not recognized
-                        Err(StatusCode::BadDeadbandFilterInvalid)
-                    }
-                }
-            }
-        }
-    }
-
-    /// Compares the difference between v1 and v2 to the threshold. The two values are considered equal
-    /// if their difference is less than or equal to the threshold.
-    pub fn abs_compare(v1: f64, v2: f64, threshold_diff: f64) -> bool {
-        let diff = (v1 - v2).abs();
-        diff <= threshold_diff
-    }
-
-    /// Compares the percentage difference between v1 and v2 using the low-high range as the comparison.
-    /// The two values are considered equal if their perentage difference is less than or equal to the
-    /// threshold.
-    pub fn pct_compare(v1: f64, v2: f64, low: f64, high: f64, threshold_pct_change: f64) -> bool {
-        let v1_pct = 100f64 * (v1 - low) / (high - low);
-        let v2_pct = 100f64 * (v2 - low) / (high - low);
-        let pct_change = (v1_pct - v2_pct).abs();
-        // Comparison is equal if the % change of v1 - v2 < the threshold
-        pct_change <= threshold_pct_change
     }
 }
 

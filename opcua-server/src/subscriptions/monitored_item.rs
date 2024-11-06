@@ -9,7 +9,7 @@ use opcua_types::{
     DataChangeFilter, DataValue, DateTime, DecodingOptions, EncodingContext, EventFieldList,
     EventFilter, EventFilterResult, ExtensionObject, MonitoredItemCreateRequest,
     MonitoredItemModifyRequest, MonitoredItemNotification, MonitoringMode, NumericRange, ObjectId,
-    StatusCode, TimestampsToReturn, Variant,
+    ParsedDataChangeFilter, StatusCode, TimestampsToReturn, Variant,
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -35,7 +35,7 @@ impl From<EventFieldList> for Notification {
 /// Parsed filter type for a monitored item.
 pub enum FilterType {
     None,
-    DataChangeFilter(DataChangeFilter),
+    DataChangeFilter(ParsedDataChangeFilter),
     EventFilter(ParsedEventFilter),
 }
 
@@ -45,6 +45,7 @@ impl FilterType {
     pub fn from_filter(
         filter: &ExtensionObject,
         decoding_options: &DecodingOptions,
+        eu_range: Option<(f64, f64)>,
         type_tree: &dyn TypeTree,
     ) -> (Option<EventFilterResult>, Result<FilterType, StatusCode>) {
         // Check if the filter is a supported filter type
@@ -54,13 +55,15 @@ impl FilterType {
             (None, Ok(FilterType::None))
         } else if let Ok(filter_type_id) = filter_type_id.as_object_id() {
             match filter_type_id {
-                ObjectId::DataChangeFilter_Encoding_DefaultBinary => (
-                    None,
-                    filter
-                        .decode_inner::<DataChangeFilter>(decoding_options)
-                        .map(FilterType::DataChangeFilter)
-                        .map_err(|e| e.status()),
-                ),
+                ObjectId::DataChangeFilter_Encoding_DefaultBinary => {
+                    let r = filter.decode_inner::<DataChangeFilter>(decoding_options);
+                    let raw_filter = match r {
+                        Ok(filter) => filter,
+                        Err(e) => return (None, Err(e.into())),
+                    };
+                    let res = ParsedDataChangeFilter::parse(raw_filter, eu_range);
+                    (None, res.map(FilterType::DataChangeFilter))
+                }
                 ObjectId::EventFilter_Encoding_DefaultBinary => {
                     let r = filter.decode_inner::<EventFilter>(decoding_options);
                     let raw_filter = match r {
@@ -104,6 +107,7 @@ pub struct CreateMonitoredItem {
     filter: FilterType,
     filter_res: Option<EventFilterResult>,
     timestamps_to_return: TimestampsToReturn,
+    eu_range: Option<(f64, f64)>,
 }
 
 /// Takes the requested sampling interval value supplied by client and ensures it is within
@@ -155,10 +159,12 @@ impl CreateMonitoredItem {
         info: &ServerInfo,
         timestamps_to_return: TimestampsToReturn,
         type_tree: &dyn TypeTree,
+        eu_range: Option<(f64, f64)>,
     ) -> Self {
         let (filter_res, filter) = FilterType::from_filter(
             &req.requested_parameters.filter,
             &info.decoding_options(),
+            eu_range,
             type_tree,
         );
         let sampling_interval =
@@ -192,6 +198,7 @@ impl CreateMonitoredItem {
             filter,
             timestamps_to_return,
             filter_res,
+            eu_range,
         }
     }
 
@@ -295,6 +302,7 @@ pub struct MonitoredItem {
     timestamps_to_return: TimestampsToReturn,
     last_data_value: Option<DataValue>,
     any_new_notification: bool,
+    eu_range: Option<(f64, f64)>,
 }
 
 impl MonitoredItem {
@@ -314,6 +322,7 @@ impl MonitoredItem {
             notification_queue: VecDeque::new(),
             queue_overflow: false,
             any_new_notification: false,
+            eu_range: request.eu_range,
         };
         if let Some(val) = request.initial_value.as_ref() {
             v.notify_data_value(val.clone());
@@ -344,6 +353,7 @@ impl MonitoredItem {
         let (filter_res, filter) = FilterType::from_filter(
             &request.requested_parameters.filter,
             &info.decoding_options(),
+            self.eu_range,
             type_tree,
         );
         self.filter = match filter {
@@ -410,7 +420,7 @@ impl MonitoredItem {
 
         let data_change = match (&self.last_data_value, &self.filter) {
             (Some(last_dv), FilterType::DataChangeFilter(filter)) => {
-                !filter.compare(&value, last_dv, None)
+                filter.is_changed(&value, last_dv)
                     && self.filter_by_sampling_interval(last_dv, &value)
             }
             (Some(last_dv), FilterType::None) => {
@@ -618,8 +628,9 @@ pub(super) mod tests {
 
     use crate::{node_manager::ParsedReadValueId, subscriptions::monitored_item::Notification};
     use opcua_types::{
-        AttributeId, DataChangeFilter, DataChangeTrigger, DataValue, DateTime, DeadbandType,
-        MonitoringMode, NodeId, ReadValueId, StatusCode, Variant,
+        AttributeId, DataChangeFilter, DataChangeTrigger, DataValue, DateTime, Deadband,
+        DeadbandType, MonitoringMode, NodeId, ParsedDataChangeFilter, ReadValueId, StatusCode,
+        Variant,
     };
 
     use super::{FilterType, MonitoredItem};
@@ -648,6 +659,7 @@ pub(super) mod tests {
             timestamps_to_return: opcua_types::TimestampsToReturn::Both,
             last_data_value: None,
             any_new_notification: false,
+            eu_range: None,
         };
 
         if let Some(val) = initial_value {
@@ -669,11 +681,12 @@ pub(super) mod tests {
 
     #[test]
     fn data_change_filter() {
-        let mut filter = DataChangeFilter {
+        let filter = DataChangeFilter {
             trigger: DataChangeTrigger::Status,
             deadband_type: DeadbandType::None as u32,
             deadband_value: 0f64,
         };
+        let mut filter = ParsedDataChangeFilter::parse(filter, None).unwrap();
 
         let mut v1 = DataValue {
             value: None,
@@ -693,36 +706,36 @@ pub(super) mod tests {
             server_picoseconds: None,
         };
 
-        assert!(filter.compare(&v1, &v2, None));
+        assert!(!filter.is_changed(&v1, &v2));
 
         // Change v1 status
         v1.status = Some(StatusCode::Good);
-        assert!(!filter.compare(&v1, &v2, None));
+        assert!(filter.is_changed(&v1, &v2));
 
         // Change v2 status
         v2.status = Some(StatusCode::Good);
-        assert!(filter.compare(&v1, &v2, None));
+        assert!(!filter.is_changed(&v1, &v2));
 
         // Change value - but since trigger is status, this should not matter
         v1.value = Some(Variant::Boolean(true));
-        assert!(filter.compare(&v1, &v2, None));
+        assert!(!filter.is_changed(&v1, &v2));
 
         // Change trigger to status-value and change should matter
         filter.trigger = DataChangeTrigger::StatusValue;
-        assert!(!filter.compare(&v1, &v2, None));
+        assert!(filter.is_changed(&v1, &v2));
 
         // Now values are the same
         v2.value = Some(Variant::Boolean(true));
-        assert!(filter.compare(&v1, &v2, None));
+        assert!(!filter.is_changed(&v1, &v2));
 
         // And for status-value-timestamp
         filter.trigger = DataChangeTrigger::StatusValueTimestamp;
-        assert!(filter.compare(&v1, &v2, None));
+        assert!(!filter.is_changed(&v1, &v2));
 
         // Change timestamps to differ
         let now = DateTime::now();
-        v1.server_timestamp = Some(now);
-        assert!(!filter.compare(&v1, &v2, None));
+        v1.source_timestamp = Some(now);
+        assert!(filter.is_changed(&v1, &v2));
     }
 
     #[test]
@@ -733,6 +746,7 @@ pub(super) mod tests {
             deadband_type: DeadbandType::Absolute as u32,
             deadband_value: 1f64,
         };
+        let filter = ParsedDataChangeFilter::parse(filter, None).unwrap();
 
         let v1 = DataValue {
             value: Some(Variant::Double(10f64)),
@@ -753,62 +767,19 @@ pub(super) mod tests {
         };
 
         // Values are the same so deadband should not matter
-        assert!(filter.compare(&v1, &v2, None));
+        assert!(!filter.is_changed(&v1, &v2));
 
         // Adjust by less than deadband
         v2.value = Some(Variant::Double(10.9f64));
-        assert!(filter.compare(&v1, &v2, None));
+        assert!(!filter.is_changed(&v1, &v2));
 
         // Adjust by equal deadband
         v2.value = Some(Variant::Double(11f64));
-        assert!(filter.compare(&v1, &v2, None));
+        assert!(!filter.is_changed(&v1, &v2));
 
         // Adjust by equal deadband plus a little bit
         v2.value = Some(Variant::Double(11.00001f64));
-        assert!(!filter.compare(&v1, &v2, None));
-    }
-
-    // Straight tests of abs function
-    #[test]
-    fn deadband_abs() {
-        assert!(DataChangeFilter::abs_compare(100f64, 100f64, 0f64));
-        assert!(DataChangeFilter::abs_compare(100f64, 100f64, 1f64));
-        assert!(DataChangeFilter::abs_compare(100f64, 101f64, 1f64));
-        assert!(DataChangeFilter::abs_compare(101f64, 100f64, 1f64));
-        assert!(!DataChangeFilter::abs_compare(101.001f64, 100f64, 1f64));
-        assert!(!DataChangeFilter::abs_compare(100f64, 101.001f64, 1f64));
-    }
-
-    // Straight tests of pct function
-    #[test]
-    fn deadband_pct() {
-        assert!(!DataChangeFilter::pct_compare(
-            100f64, 101f64, 0f64, 100f64, 0f64
-        ));
-        assert!(DataChangeFilter::pct_compare(
-            100f64, 101f64, 0f64, 100f64, 1f64
-        ));
-        assert!(!DataChangeFilter::pct_compare(
-            100f64,
-            101.0001f64,
-            0f64,
-            100f64,
-            1f64
-        ));
-        assert!(!DataChangeFilter::pct_compare(
-            101.0001f64,
-            100f64,
-            0f64,
-            100f64,
-            1f64
-        ));
-        assert!(DataChangeFilter::pct_compare(
-            101.0001f64,
-            100f64,
-            0f64,
-            100f64,
-            1.0002f64
-        ));
+        assert!(filter.is_changed(&v1, &v2));
     }
 
     #[test]
@@ -822,11 +793,10 @@ pub(super) mod tests {
                 ..Default::default()
             },
             MonitoringMode::Reporting,
-            FilterType::DataChangeFilter(DataChangeFilter {
+            FilterType::DataChangeFilter(ParsedDataChangeFilter {
                 trigger: DataChangeTrigger::StatusValue,
                 // Abs compare
-                deadband_type: DeadbandType::Absolute as u32,
-                deadband_value: 0.9f64,
+                deadband: Deadband::Absolute(0.9),
             }),
             100.0,
             true,

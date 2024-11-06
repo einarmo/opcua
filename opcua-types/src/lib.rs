@@ -200,6 +200,7 @@ pub mod array;
 pub mod attribute;
 pub mod basic_types;
 pub mod byte_string;
+pub mod data_change;
 pub mod data_type_definition;
 pub mod data_types;
 pub mod data_value;
@@ -234,7 +235,7 @@ pub mod xml;
 pub use opcua_macros::FromXml;
 
 pub use self::{
-    add_node_attributes::AddNodeAttributes, array::*, attribute::*, byte_string::*,
+    add_node_attributes::AddNodeAttributes, array::*, attribute::*, byte_string::*, data_change::*,
     data_type_definition::*, data_types::*, data_value::*, date_time::*, diagnostic_info::*,
     encoding::*, event_field::*, expanded_node_id::*, extension_object::*, guid::*, impls::*,
     localized_text::*, namespaces::*, node_id::*, node_ids::*, numeric_range::*, operand::*,

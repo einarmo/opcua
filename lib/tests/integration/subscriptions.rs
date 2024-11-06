@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::{collections::HashMap, time::Duration};
 
 use crate::utils::{test_server, ChannelNotifications, TestNodeManager, Tester};
 
@@ -6,14 +6,16 @@ use super::utils::setup;
 use opcua::{
     server::address_space::{AccessLevel, UserAccessLevel, VariableBuilder},
     types::{
-        AttributeId, DataTypeId, DataValue, DateTime, MonitoredItemCreateRequest,
-        MonitoredItemModifyRequest, MonitoringMode, MonitoringParameters, NodeId, ObjectId,
-        ReadValueId, ReferenceTypeId, StatusCode, TimestampsToReturn, VariableTypeId, Variant,
+        AttributeId, DataTypeId, DataValue, MonitoredItemCreateRequest, MonitoredItemModifyRequest,
+        MonitoringMode, MonitoringParameters, NodeId, ObjectId, ReadValueId, ReferenceTypeId,
+        StatusCode, TimestampsToReturn, VariableTypeId, Variant,
     },
 };
 use opcua_client::{services::TransferSubscriptions, IdentityToken, Subscription, UARequest};
 use opcua_crypto::SecurityPolicy;
-use opcua_types::MessageSecurityMode;
+use opcua_types::{
+    DataChangeFilter, DataChangeTrigger, DeadbandType, ExtensionObject, MessageSecurityMode, Range,
+};
 use tokio::{sync::mpsc::UnboundedReceiver, time::timeout};
 
 #[tokio::test]
@@ -88,12 +90,7 @@ async fn simple_subscriptions() {
         tester.handle.subscriptions(),
         &id,
         None,
-        DataValue {
-            value: Some(1.into()),
-            status: Some(StatusCode::Good),
-            source_timestamp: Some(DateTime::now()),
-            ..Default::default()
-        },
+        DataValue::new_now(1),
     )
     .unwrap();
     // Now we should get a value once we've sent another publish.
@@ -601,6 +598,197 @@ async fn transfer_subscriptions() {
         _ => panic!("Expected integer value"),
     };
     assert_eq!(-1, val);
+}
+
+#[tokio::test]
+async fn test_data_change_filters() {
+    let (tester, nm, session) = setup().await;
+
+    let id = nm.inner().next_node_id();
+    // Add a pair of nodes
+    nm.inner().add_node(
+        nm.address_space(),
+        tester.handle.type_tree(),
+        VariableBuilder::new(&id, "TestVar1", "TestVar1")
+            .value(0.0f64)
+            .data_type(DataTypeId::Double)
+            .access_level(AccessLevel::CURRENT_READ)
+            .user_access_level(UserAccessLevel::CURRENT_READ)
+            .build()
+            .into(),
+        &ObjectId::ObjectsFolder.into(),
+        &ReferenceTypeId::Organizes.into(),
+        Some(&VariableTypeId::BaseDataVariableType.into()),
+        Vec::new(),
+    );
+    let id2 = nm.inner().next_node_id();
+    nm.inner().add_node(
+        nm.address_space(),
+        tester.handle.type_tree(),
+        VariableBuilder::new(&id2, "TestVar2", "TestVar2")
+            .value(6.0f64)
+            .data_type(DataTypeId::Double)
+            .access_level(AccessLevel::CURRENT_READ)
+            .user_access_level(UserAccessLevel::CURRENT_READ)
+            .build()
+            .into(),
+        &ObjectId::ObjectsFolder.into(),
+        &ReferenceTypeId::Organizes.into(),
+        Some(&VariableTypeId::BaseDataVariableType.into()),
+        Vec::new(),
+    );
+    let prop_id = nm.inner().next_node_id();
+    // And an EURange property
+    nm.inner().add_node(
+        nm.address_space(),
+        tester.handle.type_tree(),
+        VariableBuilder::new(&prop_id, "EURange", "EURange")
+            .value(&Range {
+                low: 5.0,
+                high: 15.0,
+            })
+            .data_type(DataTypeId::Range)
+            .access_level(AccessLevel::CURRENT_READ)
+            .user_access_level(UserAccessLevel::CURRENT_READ)
+            .build()
+            .into(),
+        &id2,
+        &ReferenceTypeId::HasProperty.into(),
+        Some(&VariableTypeId::PropertyType.into()),
+        Vec::new(),
+    );
+
+    let (notifs, mut data, _) = ChannelNotifications::new();
+
+    // Create a subscription
+    let sub_id = session
+        .create_subscription(Duration::from_millis(100), 100, 20, 1000, 0, true, notifs)
+        .await
+        .unwrap();
+
+    let res = session
+        .create_monitored_items(
+            sub_id,
+            TimestampsToReturn::Both,
+            vec![
+                MonitoredItemCreateRequest {
+                    item_to_monitor: ReadValueId {
+                        node_id: id.clone(),
+                        attribute_id: AttributeId::Value as u32,
+                        ..Default::default()
+                    },
+                    monitoring_mode: opcua::types::MonitoringMode::Reporting,
+                    requested_parameters: MonitoringParameters {
+                        sampling_interval: 0.0,
+                        queue_size: 10,
+                        discard_oldest: true,
+                        filter: ExtensionObject::from_message(&DataChangeFilter {
+                            trigger: DataChangeTrigger::StatusValue,
+                            deadband_type: DeadbandType::Absolute as u32,
+                            deadband_value: 2.0,
+                        }),
+                        ..Default::default()
+                    },
+                },
+                MonitoredItemCreateRequest {
+                    item_to_monitor: ReadValueId {
+                        node_id: id2.clone(),
+                        attribute_id: AttributeId::Value as u32,
+                        ..Default::default()
+                    },
+                    monitoring_mode: opcua::types::MonitoringMode::Reporting,
+                    requested_parameters: MonitoringParameters {
+                        sampling_interval: 0.0,
+                        queue_size: 10,
+                        discard_oldest: true,
+                        filter: ExtensionObject::from_message(&DataChangeFilter {
+                            trigger: DataChangeTrigger::StatusValue,
+                            deadband_type: DeadbandType::Percent as u32,
+                            // 20% change is equal to a change of 2, since the range is from 5 to 15
+                            deadband_value: 20.0,
+                        }),
+                        ..Default::default()
+                    },
+                },
+            ],
+        )
+        .await
+        .unwrap();
+    assert_eq!(res.len(), 2);
+    let it = &res[0];
+    assert_eq!(it.status_code, StatusCode::Good);
+    let it = &res[1];
+    assert_eq!(it.status_code, StatusCode::Good);
+
+    // We should quickly get two data values, this is due to the initial queued publish request.
+    let (r1, v1) = timeout(Duration::from_millis(500), data.recv())
+        .await
+        .unwrap()
+        .unwrap();
+    let (r2, v2) = timeout(Duration::from_millis(500), data.recv())
+        .await
+        .unwrap()
+        .unwrap();
+    let mut by_id = HashMap::new();
+    by_id.insert(r1.node_id, v1);
+    by_id.insert(r2.node_id, v2);
+
+    assert_eq!(
+        &Variant::Double(0.0),
+        by_id.get(&id).as_ref().unwrap().value.as_ref().unwrap()
+    );
+    assert_eq!(
+        &Variant::Double(6.0),
+        by_id.get(&id2).as_ref().unwrap().value.as_ref().unwrap()
+    );
+
+    // Update the first node with a change that won't trigger the filter.
+    nm.set_value(
+        tester.handle.subscriptions(),
+        &id,
+        None,
+        DataValue::new_now(1.0),
+    )
+    .unwrap();
+
+    // Update it again, this time with something that would trigger a notification.
+    nm.set_value(
+        tester.handle.subscriptions(),
+        &id,
+        None,
+        DataValue::new_now(3.0),
+    )
+    .unwrap();
+
+    let (r, v) = timeout(Duration::from_millis(500), data.recv())
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(r.node_id, id);
+    assert_eq!(v.value.unwrap(), Variant::Double(3.0));
+
+    // Do the same with the second node.
+    nm.set_value(
+        tester.handle.subscriptions(),
+        &id2,
+        None,
+        DataValue::new_now(7.0),
+    )
+    .unwrap();
+
+    nm.set_value(
+        tester.handle.subscriptions(),
+        &id2,
+        None,
+        DataValue::new_now(9.0),
+    )
+    .unwrap();
+    let (r, v) = timeout(Duration::from_millis(500), data.recv())
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(r.node_id, id2);
+    assert_eq!(v.value.unwrap(), Variant::Double(9.0));
 }
 
 // TODO: Add more detailed high level tests on subscriptions.
