@@ -1,13 +1,143 @@
+use std::collections::HashMap;
+
 use crate::{
-    node_manager::{MonitoredItemRef, NodeManagers},
+    node_manager::{MonitoredItemRef, NodeManagers, RequestContext},
     session::{controller::Response, message_handler::Request},
     subscriptions::CreateMonitoredItem,
 };
+use opcua_core::ResponseMessage;
 use opcua_types::{
-    CreateMonitoredItemsRequest, CreateMonitoredItemsResponse, DeleteMonitoredItemsRequest,
-    DeleteMonitoredItemsResponse, ModifyMonitoredItemsRequest, ModifyMonitoredItemsResponse,
-    ResponseHeader, SetMonitoringModeRequest, SetMonitoringModeResponse, StatusCode,
+    AttributeId, BrowsePath, CreateMonitoredItemsRequest, CreateMonitoredItemsResponse,
+    DataChangeFilter, DeadbandType, DeleteMonitoredItemsRequest, DeleteMonitoredItemsResponse,
+    ModifyMonitoredItemsRequest, ModifyMonitoredItemsResponse, NodeId, ObjectId, Range,
+    ReadRequest, ReferenceTypeId, RelativePath, RelativePathElement, RequestHeader, ResponseHeader,
+    SetMonitoringModeRequest, SetMonitoringModeResponse, StatusCode, TimestampsToReturn,
+    TranslateBrowsePathsToNodeIdsRequest, Variant,
 };
+
+use super::{read, translate_browse_paths};
+
+// OPC-UA is sometimes very painful. In order to actually implement percent-deadband, we need to
+// fetch the EURange property from the node hierarchy. This method does that by calling TranslateBrowsePaths
+// and then Read.
+async fn get_eu_range(
+    items: &[&NodeId],
+    context: &RequestContext,
+    node_managers: &NodeManagers,
+) -> HashMap<NodeId, (f64, f64)> {
+    let mut res = HashMap::with_capacity(items.len());
+    if items.is_empty() {
+        return res;
+    }
+
+    // First we call TranslateBrowsePathsToNodeIds to get the node ID of each EURange item.
+    let req = Request {
+        request: Box::new(TranslateBrowsePathsToNodeIdsRequest {
+            request_header: RequestHeader::dummy(),
+            browse_paths: Some(
+                items
+                    .iter()
+                    .map(|i| BrowsePath {
+                        starting_node: (**i).clone(),
+                        relative_path: RelativePath {
+                            elements: Some(vec![RelativePathElement {
+                                reference_type_id: ReferenceTypeId::HasProperty.into(),
+                                is_inverse: false,
+                                include_subtypes: true,
+                                target_name: "EURange".into(),
+                            }]),
+                        },
+                    })
+                    .collect(),
+            ),
+        }),
+        request_id: 0,
+        request_handle: 0,
+        info: context.info.clone(),
+        session: context.session.clone(),
+        token: context.token.clone(),
+        subscriptions: context.subscriptions.clone(),
+        session_id: context.session_id,
+    };
+    let response = translate_browse_paths(node_managers.clone(), req).await;
+    let ResponseMessage::TranslateBrowsePathsToNodeIds(translated) = response.message else {
+        return res;
+    };
+    if !translated.response_header.service_result.is_good() {
+        return res;
+    }
+    let mut to_read = Vec::new();
+    for (id, r) in items
+        .iter()
+        .zip(translated.results.into_iter().flat_map(|i| i.into_iter()))
+    {
+        // If this somehow results in multiple targets we just use the first.
+        if let Some(p) = r.targets.and_then(|p| p.into_iter().next()) {
+            if !p.target_id.namespace_uri.is_null() || p.target_id.server_index != 0 {
+                continue;
+            }
+            to_read.push((*id, p.target_id.node_id));
+        }
+    }
+    if to_read.is_empty() {
+        return res;
+    }
+
+    // Next we call Read on each discovered EURange node.
+    let read_req = Request {
+        request: Box::new(ReadRequest {
+            request_header: RequestHeader::dummy(),
+            max_age: 0.0,
+            timestamps_to_return: TimestampsToReturn::Neither,
+            nodes_to_read: Some(
+                to_read
+                    .iter()
+                    .map(|r| opcua_types::ReadValueId {
+                        node_id: r.1.clone(),
+                        attribute_id: AttributeId::Value as u32,
+                        ..Default::default()
+                    })
+                    .collect(),
+            ),
+        }),
+        request_id: 0,
+        request_handle: 0,
+        info: context.info.clone(),
+        session: context.session.clone(),
+        token: context.token.clone(),
+        subscriptions: context.subscriptions.clone(),
+        session_id: context.session_id,
+    };
+    let read_res = read(node_managers.clone(), read_req).await;
+    let ResponseMessage::Read(read) = read_res.message else {
+        return res;
+    };
+    if !read.response_header.service_result.is_good() {
+        return res;
+    }
+
+    for (id, dv) in to_read
+        .into_iter()
+        .map(|r| r.0)
+        .zip(read.results.into_iter().flat_map(|r| r.into_iter()))
+    {
+        if dv.status.is_some_and(|s| !s.is_good()) {
+            continue;
+        }
+        let Some(Variant::ExtensionObject(o)) = dv.value else {
+            continue;
+        };
+        if o.node_id != ObjectId::Range_Encoding_DefaultBinary {
+            continue;
+        }
+        let Ok(range) = o.decode_inner::<Range>(&context.info.decoding_options()) else {
+            continue;
+        };
+        res.insert(id.clone(), (range.low, range.high));
+    }
+
+    res
+}
 
 pub async fn create_monitored_items(
     node_managers: NodeManagers,
@@ -36,11 +166,34 @@ pub async fn create_monitored_items(
         return service_fault!(request, StatusCode::BadTooManyMonitoredItems);
     }
 
+    // Try to get EURange for each item with a percent deadband filter.
+    let mut items_needing_deadband = Vec::new();
+    for item in &items_to_create {
+        if item.requested_parameters.filter.node_id
+            != ObjectId::DataChangeFilter_Encoding_DefaultBinary
+        {
+            continue;
+        }
+        // Errors here are dealt with later.
+        let Ok(filter) = item
+            .requested_parameters
+            .filter
+            .decode_inner::<DataChangeFilter>(&request.info.decoding_options())
+        else {
+            continue;
+        };
+        if filter.deadband_type == DeadbandType::Percent as u32 {
+            items_needing_deadband.push(&item.item_to_monitor.node_id);
+        }
+    }
+    let ranges = get_eu_range(&items_needing_deadband, &context, &node_managers).await;
+
     let mut items: Vec<_> = {
         let type_tree = context.get_type_tree_for_user();
         items_to_create
             .into_iter()
             .map(|r| {
+                let range = ranges.get(&r.item_to_monitor.node_id).copied();
                 CreateMonitoredItem::new(
                     r,
                     request.info.monitored_item_id_handle.next(),
@@ -48,6 +201,7 @@ pub async fn create_monitored_items(
                     &request.info,
                     request.request.timestamps_to_return,
                     type_tree.get(),
+                    range,
                 )
             })
             .collect()
