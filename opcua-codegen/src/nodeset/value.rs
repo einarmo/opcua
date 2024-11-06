@@ -111,13 +111,13 @@ impl<'a> ValueBuilder<'a> {
                 }
             }
             Variant::ByteString(v) => {
-                let cleaned = v.replace('\n', "");
+                let cleaned = v.replace(['\n', ' ', '\t', '\r'], "");
                 quote::quote! {
                     opcua::types::ByteString::from_base64(#cleaned).unwrap()
                 }
             }
             Variant::ListOfByteString(v) => {
-                let cleaned = v.iter().map(|v| v.replace('\n', ""));
+                let cleaned = v.iter().map(|v| v.replace(['\n', ' ', '\t', '\r'], ""));
                 quote::quote! {
                     #(opcua::types::ByteString::from_base64(#cleaned).unwrap()),*
                 }
@@ -361,7 +361,6 @@ impl<'a> ValueBuilder<'a> {
                         #snake_name: #rendered,
                     })
                 }
-                // TODO: Handle custom types here
                 let path = e.path;
                 Ok(quote! {
                     #path::#ident {
@@ -629,7 +628,7 @@ impl<'a> ValueBuilder<'a> {
                 })
             }
             "base64Binary" => {
-                let cleaned = data.replace('\n', "");
+                let cleaned = data.replace(['\n', ' ', '\t', '\r'], "");
                 Ok(quote! {
                     opcua::types::ByteString::from_base64(#cleaned).unwrap()
                 })
