@@ -32,7 +32,7 @@ console-logging = ["env_logger"]
 json = ["opcua-types/json"]
 # Includes all the code to populate the address space with the default node set. This is something that embedded
 # systems may or may not require.
-generated-address-space = ["opcua-server/generated-address-space"]
+generated-address-space = ["opcua-server/generated-address-space", "opcua-core-namespace"]
 # Allows a server to register itself with a local discovery server. It does so by becoming a client to the LDS,
 # which brings in a dependency to opcua-client. Omitting the feature saves some memory.
 discovery-server-registration = ["opcua-server/discovery-server-registration"]
@@ -52,6 +52,7 @@ opcua-core = { path = "../opcua-core" }
 opcua-client = { path = "../opcua-client", optional = true }
 opcua-server = { path = "../opcua-server", optional = true, default-features = false }
 opcua-nodes = { path = "../opcua-nodes", optional = true }
+opcua-core-namespace = { path = "../opcua-core-namespace", optional = true }
 
 opcua-macros = { path = "../opcua-macros" }
 

@@ -44,10 +44,18 @@ pub struct NodeSetCodeGenTarget {
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
+pub struct DependentNodeset {
+    pub path: String,
+    pub import_path: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct EventsTarget {
     pub output_dir: String,
     #[serde(default)]
     pub extra_header: String,
+    #[serde(default)]
+    pub dependent_nodesets: Vec<DependentNodeset>,
 }
 
 pub fn make_type_dict(

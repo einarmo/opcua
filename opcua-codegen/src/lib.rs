@@ -162,7 +162,34 @@ pub fn run_codegen(config: &CodeGenConfig, root_path: &str) -> Result<(), CodeGe
 
                 if let Some(events_target) = &n.events {
                     println!("Generating events to {}", events_target.output_dir);
-                    let events = generate_events(nodes)?;
+                    let mut p_sets = Vec::new();
+                    let mut sets = Vec::with_capacity(events_target.dependent_nodesets.len() + 1);
+                    for nodeset_file in &events_target.dependent_nodesets {
+                        println!("Loading dependent node set from {}", nodeset_file.path);
+                        let node_set =
+                            std::fs::read_to_string(format!("{}/{}", root_path, nodeset_file.path))
+                                .map_err(|e| {
+                                    CodeGenError::io(
+                                        &format!("Failed to read file {}", n.file_path),
+                                        e,
+                                    )
+                                })?;
+                        let node_set = load_nodeset2_file(&node_set)?;
+                        p_sets.push((node_set, nodeset_file.import_path.as_str()));
+                    }
+                    for set in &p_sets {
+                        sets.push((
+                            set.0.node_set.as_ref().ok_or_else(|| {
+                                CodeGenError::Other(
+                                    "Missing UANodeSet in dependent xml schema".to_owned(),
+                                )
+                            })?,
+                            set.1,
+                        ));
+                    }
+                    sets.push((nodes, ""));
+
+                    let events = generate_events(&sets)?;
                     let cnt = events.len();
                     let header = make_header(
                         &n.file_path,

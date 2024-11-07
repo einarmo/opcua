@@ -1013,6 +1013,7 @@ dependencies = [
  "opcua",
  "opcua-client",
  "opcua-core",
+ "opcua-core-namespace",
  "opcua-crypto",
  "opcua-macros",
  "opcua-nodes",

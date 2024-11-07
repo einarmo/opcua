@@ -11,5 +11,7 @@ mod opcua {
     pub use opcua_nodes::{Event, EventField};
     pub use opcua_types as types;
 }
+#[allow(unused)]
+use opcua_types as types;
 pub mod generated;
 pub use generated::*;
