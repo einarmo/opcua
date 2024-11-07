@@ -7,6 +7,7 @@ pub enum StructureFieldType {
 #[derive(serde::Serialize, Debug)]
 pub struct StructureField {
     pub name: String,
+    pub original_name: String,
     pub typ: StructureFieldType,
 }
 

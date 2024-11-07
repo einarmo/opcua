@@ -50,16 +50,15 @@ impl opcua::types::BinaryEncodable for MdnsDiscoveryConfiguration {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let mdns_server_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let server_capabilities = <Option<
-            Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
-            mdns_server_name,
-            server_capabilities,
+            mdns_server_name: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            server_capabilities: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

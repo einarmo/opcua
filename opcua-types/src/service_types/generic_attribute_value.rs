@@ -50,14 +50,12 @@ impl opcua::types::BinaryEncodable for GenericAttributeValue {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let attribute_id = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let value = <opcua::types::variant::Variant as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { attribute_id, value })
+        Ok(Self {
+            attribute_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            value: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

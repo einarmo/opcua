@@ -47,9 +47,11 @@ impl opcua::types::BinaryEncodable for EndpointUrlListDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let endpoint_url_list = <Option<
-            Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        Ok(Self { endpoint_url_list })
+        Ok(Self {
+            endpoint_url_list: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+        })
     }
 }

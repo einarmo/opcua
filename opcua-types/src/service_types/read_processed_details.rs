@@ -59,31 +59,21 @@ impl opcua::types::BinaryEncodable for ReadProcessedDetails {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let start_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let end_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let processing_interval = <f64 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let aggregate_type = <Option<
-            Vec<opcua::types::node_id::NodeId>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let aggregate_configuration = <super::aggregate_configuration::AggregateConfiguration as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            start_time,
-            end_time,
-            processing_interval,
-            aggregate_type,
-            aggregate_configuration,
+            start_time: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            end_time: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            processing_interval: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            aggregate_type: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            aggregate_configuration: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

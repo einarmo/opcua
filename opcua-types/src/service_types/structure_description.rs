@@ -52,22 +52,16 @@ impl opcua::types::BinaryEncodable for StructureDescription {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let data_type_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let name = <opcua::types::qualified_name::QualifiedName as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let structure_definition = <super::structure_definition::StructureDefinition as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            data_type_id,
-            name,
-            structure_definition,
+            data_type_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            structure_definition: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

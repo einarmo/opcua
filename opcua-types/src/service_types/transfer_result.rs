@@ -50,16 +50,15 @@ impl opcua::types::BinaryEncodable for TransferResult {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let status_code = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let available_sequence_numbers = <Option<
-            Vec<u32>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
-            status_code,
-            available_sequence_numbers,
+            status_code: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            available_sequence_numbers: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

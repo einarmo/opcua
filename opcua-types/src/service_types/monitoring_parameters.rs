@@ -59,32 +59,21 @@ impl opcua::types::BinaryEncodable for MonitoringParameters {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let client_handle = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let sampling_interval = <f64 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let filter = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let queue_size = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let discard_oldest = <bool as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            client_handle,
-            sampling_interval,
-            filter,
-            queue_size,
-            discard_oldest,
+            client_handle: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            sampling_interval: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            filter: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            queue_size: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            discard_oldest: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

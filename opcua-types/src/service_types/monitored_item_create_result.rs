@@ -59,32 +59,27 @@ impl opcua::types::BinaryEncodable for MonitoredItemCreateResult {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let status_code = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let monitored_item_id = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let revised_sampling_interval = <f64 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let revised_queue_size = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let filter_result = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            status_code,
-            monitored_item_id,
-            revised_sampling_interval,
-            revised_queue_size,
-            filter_result,
+            status_code: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            monitored_item_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            revised_sampling_interval: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            revised_queue_size: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            filter_result: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

@@ -50,14 +50,9 @@ impl opcua::types::BinaryEncodable for OptionSet {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let value = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let valid_bits = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { value, valid_bits })
+        Ok(Self {
+            value: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            valid_bits: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

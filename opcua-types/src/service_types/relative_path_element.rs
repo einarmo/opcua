@@ -56,27 +56,17 @@ impl opcua::types::BinaryEncodable for RelativePathElement {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let reference_type_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let is_inverse = <bool as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let include_subtypes = <bool as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let target_name = <opcua::types::qualified_name::QualifiedName as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            reference_type_id,
-            is_inverse,
-            include_subtypes,
-            target_name,
+            reference_type_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            is_inverse: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            include_subtypes: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            target_name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }

@@ -55,20 +55,19 @@ impl opcua::types::BinaryEncodable for ParsingResult {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let status_code = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let data_status_codes = <Option<
-            Vec<opcua::types::status_code::StatusCode>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let data_diagnostic_infos = <Option<
-            Vec<opcua::types::diagnostic_info::DiagnosticInfo>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
-            status_code,
-            data_status_codes,
-            data_diagnostic_infos,
+            status_code: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            data_status_codes: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            data_diagnostic_infos: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

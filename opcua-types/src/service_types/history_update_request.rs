@@ -52,18 +52,18 @@ impl opcua::types::BinaryEncodable for HistoryUpdateRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncodable>::decode(
+        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryEncodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
-        let history_update_details = <Option<
-            Vec<opcua::types::extension_object::ExtensionObject>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
-            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
-            history_update_details,
+            history_update_details: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }
 }

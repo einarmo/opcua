@@ -50,17 +50,12 @@ impl opcua::types::BinaryEncodable for TimeZoneDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let offset = <i16 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let daylight_saving_in_offset = <bool as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            offset,
-            daylight_saving_in_offset,
+            offset: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            daylight_saving_in_offset: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

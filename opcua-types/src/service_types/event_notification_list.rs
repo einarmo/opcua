@@ -47,9 +47,8 @@ impl opcua::types::BinaryEncodable for EventNotificationList {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let events = <Option<
-            Vec<super::event_field_list::EventFieldList>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        Ok(Self { events })
+        Ok(Self {
+            events: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

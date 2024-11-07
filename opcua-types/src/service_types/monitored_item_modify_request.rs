@@ -50,17 +50,15 @@ impl opcua::types::BinaryEncodable for MonitoredItemModifyRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let monitored_item_id = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let requested_parameters = <super::monitoring_parameters::MonitoringParameters as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            monitored_item_id,
-            requested_parameters,
+            monitored_item_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            requested_parameters: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

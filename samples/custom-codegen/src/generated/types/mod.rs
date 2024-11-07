@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Einar Omang
 #![allow(non_camel_case_types)]
+#![allow(clippy::upper_case_acronyms)]
 pub mod enums;
 pub use enums::*;
 pub mod structs;
@@ -15,11 +16,11 @@ pub use structs::*;
 pub struct TypesXmlLoader;
 #[cfg(feature = "xml")]
 impl opcua::types::xml::XmlLoader for TypesXmlLoader {
-    fn load_extension_object<'a>(
+    fn load_extension_object(
         &self,
         body: &opcua::types::xml::XmlElement,
         node_id: &opcua::types::NodeId,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Option<Result<opcua::types::ExtensionObject, opcua::types::xml::FromXmlError>> {
         use opcua::types::xml::FromXml;
         let idx = ctx
@@ -40,6 +41,10 @@ impl opcua::types::xml::XmlLoader for TypesXmlLoader {
         Some(match object_id {
             r @ crate::ObjectId::PnDeviceDiagnosisDataType_Encoding_DefaultXml => {
                 PnDeviceDiagnosisDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
+            }
+            r @ crate::ObjectId::PnDeviceRoleOptionSet_Encoding_DefaultXml => {
+                PnDeviceRoleOptionSet::from_xml(body, ctx)
                     .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
             }
             r @ crate::ObjectId::PnIM5DataType_Encoding_DefaultXml => {

@@ -50,17 +50,12 @@ impl opcua::types::BinaryEncodable for DeleteNodesItem {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let delete_target_references = <bool as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            node_id,
-            delete_target_references,
+            node_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            delete_target_references: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

@@ -66,40 +66,29 @@ impl opcua::types::BinaryEncodable for PubSubGroupDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let enabled = <bool as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let security_mode = <super::enums::MessageSecurityMode as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let security_group_id = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let security_key_services = <Option<
-            Vec<super::endpoint_description::EndpointDescription>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let max_network_message_size = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let group_properties = <Option<
-            Vec<super::key_value_pair::KeyValuePair>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
-            name,
-            enabled,
-            security_mode,
-            security_group_id,
-            security_key_services,
-            max_network_message_size,
-            group_properties,
+            name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            enabled: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            security_mode: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            security_group_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            security_key_services: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            max_network_message_size: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            group_properties: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

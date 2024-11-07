@@ -53,24 +53,23 @@ impl opcua::types::BinaryEncodable for QueryNextResponse {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncodable>::decode(
+        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryEncodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
-        let query_data_sets = <Option<
-            Vec<super::query_data_set::QueryDataSet>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
-            .map_err(|e| e.with_request_handle(__request_handle))?;
-        let revised_continuation_point = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )
-            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             response_header,
-            query_data_sets,
-            revised_continuation_point,
+            query_data_sets: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            revised_continuation_point: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }
 }

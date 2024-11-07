@@ -64,41 +64,35 @@ impl opcua::types::BinaryEncodable for ApplicationDescription {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let application_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let product_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let application_name = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let application_type = <super::enums::ApplicationType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let gateway_server_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let discovery_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let discovery_urls = <Option<
-            Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
-            application_uri,
-            product_uri,
-            application_name,
-            application_type,
-            gateway_server_uri,
-            discovery_profile_uri,
-            discovery_urls,
+            application_uri: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            product_uri: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            application_name: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            application_type: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            gateway_server_uri: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            discovery_profile_uri: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            discovery_urls: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

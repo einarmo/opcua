@@ -47,10 +47,8 @@ impl opcua::types::BinaryEncodable for LiteralOperand {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let value = <opcua::types::variant::Variant as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { value })
+        Ok(Self {
+            value: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

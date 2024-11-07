@@ -50,14 +50,9 @@ impl opcua::types::BinaryEncodable for ComplexNumberType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let real = <f32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let imaginary = <f32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { real, imaginary })
+        Ok(Self {
+            real: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            imaginary: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

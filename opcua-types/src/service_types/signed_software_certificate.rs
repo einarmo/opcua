@@ -50,17 +50,12 @@ impl opcua::types::BinaryEncodable for SignedSoftwareCertificate {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let certificate_data = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let signature = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            certificate_data,
-            signature,
+            certificate_data: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            signature: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }

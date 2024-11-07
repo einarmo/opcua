@@ -47,7 +47,7 @@ impl opcua::types::BinaryEncodable for CloseSecureChannelResponse {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncodable>::decode(
+        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryEncodable::decode(
             stream,
             decoding_options,
         )?;

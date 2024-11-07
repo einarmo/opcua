@@ -65,49 +65,40 @@ impl opcua::types::BinaryEncodable for CreateSubscriptionRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncodable>::decode(
+        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryEncodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
-        let requested_publishing_interval = <f64 as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )
-            .map_err(|e| e.with_request_handle(__request_handle))?;
-        let requested_lifetime_count = <u32 as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )
-            .map_err(|e| e.with_request_handle(__request_handle))?;
-        let requested_max_keep_alive_count = <u32 as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )
-            .map_err(|e| e.with_request_handle(__request_handle))?;
-        let max_notifications_per_publish = <u32 as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )
-            .map_err(|e| e.with_request_handle(__request_handle))?;
-        let publishing_enabled = <bool as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )
-            .map_err(|e| e.with_request_handle(__request_handle))?;
-        let priority = <u8 as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )
-            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
-            requested_publishing_interval,
-            requested_lifetime_count,
-            requested_max_keep_alive_count,
-            max_notifications_per_publish,
-            publishing_enabled,
-            priority,
+            requested_publishing_interval: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            requested_lifetime_count: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            requested_max_keep_alive_count: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            max_notifications_per_publish: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            publishing_enabled: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            priority: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+                .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }
 }

@@ -53,23 +53,23 @@ impl opcua::types::BinaryEncodable for RegisterServer2Response {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncodable>::decode(
+        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryEncodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
-        let configuration_results = <Option<
-            Vec<opcua::types::status_code::StatusCode>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
-            .map_err(|e| e.with_request_handle(__request_handle))?;
-        let diagnostic_infos = <Option<
-            Vec<opcua::types::diagnostic_info::DiagnosticInfo>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
-            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             response_header,
-            configuration_results,
-            diagnostic_infos,
+            configuration_results: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            diagnostic_infos: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }
 }

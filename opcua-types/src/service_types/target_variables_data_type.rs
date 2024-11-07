@@ -49,9 +49,11 @@ impl opcua::types::BinaryEncodable for TargetVariablesDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let target_variables = <Option<
-            Vec<super::field_target_data_type::FieldTargetDataType>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        Ok(Self { target_variables })
+        Ok(Self {
+            target_variables: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+        })
     }
 }

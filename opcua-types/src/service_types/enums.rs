@@ -49,9 +49,9 @@ impl opcua::types::AsVariantRef for AccessLevelExType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for AccessLevelExType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(Self::from_bits_truncate(val))
@@ -130,9 +130,9 @@ impl opcua::types::AsVariantRef for AccessLevelType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for AccessLevelType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = u8::from_xml(element, ctx)?;
         Ok(Self::from_bits_truncate(val))
@@ -210,9 +210,9 @@ impl opcua::types::AsVariantRef for AccessRestrictionType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for AccessRestrictionType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i16::from_xml(element, ctx)?;
         Ok(Self::from_bits_truncate(val))
@@ -278,9 +278,9 @@ impl TryFrom<i32> for ApplicationType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for ApplicationType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -325,9 +325,7 @@ impl<'de> serde::de::Deserialize<'de> for ApplicationType {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -407,9 +405,9 @@ impl opcua::types::AsVariantRef for AttributeWriteMask {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for AttributeWriteMask {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(Self::from_bits_truncate(val))
@@ -475,9 +473,9 @@ impl TryFrom<i32> for AxisScaleEnumeration {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for AxisScaleEnumeration {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -522,9 +520,7 @@ impl<'de> serde::de::Deserialize<'de> for AxisScaleEnumeration {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -589,9 +585,9 @@ impl TryFrom<i32> for BrokerTransportQualityOfService {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for BrokerTransportQualityOfService {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -639,9 +635,7 @@ impl<'de> serde::de::Deserialize<'de> for BrokerTransportQualityOfService {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -704,9 +698,9 @@ impl TryFrom<i32> for BrowseDirection {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for BrowseDirection {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -751,9 +745,7 @@ impl<'de> serde::de::Deserialize<'de> for BrowseDirection {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -825,9 +817,9 @@ impl TryFrom<i32> for BrowseResultMask {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for BrowseResultMask {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -872,9 +864,7 @@ impl<'de> serde::de::Deserialize<'de> for BrowseResultMask {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -934,9 +924,9 @@ impl TryFrom<i32> for DataChangeTrigger {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for DataChangeTrigger {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -981,9 +971,7 @@ impl<'de> serde::de::Deserialize<'de> for DataChangeTrigger {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -1056,9 +1044,9 @@ impl opcua::types::AsVariantRef for DataSetFieldContentMask {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for DataSetFieldContentMask {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(Self::from_bits_truncate(val))
@@ -1135,9 +1123,9 @@ impl opcua::types::AsVariantRef for DataSetFieldFlags {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for DataSetFieldFlags {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i16::from_xml(element, ctx)?;
         Ok(Self::from_bits_truncate(val))
@@ -1203,9 +1191,9 @@ impl TryFrom<i32> for DataSetOrderingType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for DataSetOrderingType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -1250,9 +1238,7 @@ impl<'de> serde::de::Deserialize<'de> for DataSetOrderingType {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -1310,9 +1296,9 @@ impl TryFrom<i32> for DeadbandType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for DeadbandType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -1357,9 +1343,7 @@ impl<'de> serde::de::Deserialize<'de> for DeadbandType {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -1421,9 +1405,9 @@ impl TryFrom<i32> for DiagnosticsLevel {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for DiagnosticsLevel {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -1468,9 +1452,7 @@ impl<'de> serde::de::Deserialize<'de> for DiagnosticsLevel {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -1542,9 +1524,9 @@ impl opcua::types::AsVariantRef for EventNotifierType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for EventNotifierType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = u8::from_xml(element, ctx)?;
         Ok(Self::from_bits_truncate(val))
@@ -1614,9 +1596,9 @@ impl TryFrom<i32> for ExceptionDeviationFormat {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for ExceptionDeviationFormat {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -1663,9 +1645,7 @@ impl<'de> serde::de::Deserialize<'de> for ExceptionDeviationFormat {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -1753,9 +1733,9 @@ impl TryFrom<i32> for FilterOperator {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for FilterOperator {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -1800,9 +1780,7 @@ impl<'de> serde::de::Deserialize<'de> for FilterOperator {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -1864,9 +1842,9 @@ impl TryFrom<i32> for HistoryUpdateType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for HistoryUpdateType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -1911,9 +1889,7 @@ impl<'de> serde::de::Deserialize<'de> for HistoryUpdateType {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -1979,9 +1955,9 @@ impl TryFrom<i32> for IdentityCriteriaType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for IdentityCriteriaType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -2026,9 +2002,7 @@ impl<'de> serde::de::Deserialize<'de> for IdentityCriteriaType {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -2088,9 +2062,9 @@ impl TryFrom<i32> for IdType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for IdType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -2133,9 +2107,7 @@ impl<'de> serde::de::Deserialize<'de> for IdType {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -2207,9 +2179,9 @@ impl opcua::types::AsVariantRef for JsonDataSetMessageContentMask {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for JsonDataSetMessageContentMask {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(Self::from_bits_truncate(val))
@@ -2288,9 +2260,9 @@ impl opcua::types::AsVariantRef for JsonNetworkMessageContentMask {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for JsonNetworkMessageContentMask {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(Self::from_bits_truncate(val))
@@ -2359,9 +2331,9 @@ impl TryFrom<i32> for MessageSecurityMode {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for MessageSecurityMode {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -2406,9 +2378,7 @@ impl<'de> serde::de::Deserialize<'de> for MessageSecurityMode {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -2473,9 +2443,9 @@ impl TryFrom<i32> for ModelChangeStructureVerbMask {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for ModelChangeStructureVerbMask {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -2523,9 +2493,7 @@ impl<'de> serde::de::Deserialize<'de> for ModelChangeStructureVerbMask {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -2583,9 +2551,9 @@ impl TryFrom<i32> for MonitoringMode {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for MonitoringMode {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -2630,9 +2598,7 @@ impl<'de> serde::de::Deserialize<'de> for MonitoringMode {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -2690,9 +2656,9 @@ impl TryFrom<i32> for NamingRuleType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for NamingRuleType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -2737,9 +2703,7 @@ impl<'de> serde::de::Deserialize<'de> for NamingRuleType {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -2863,9 +2827,9 @@ impl TryFrom<i32> for NodeAttributesMask {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for NodeAttributesMask {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -2910,9 +2874,7 @@ impl<'de> serde::de::Deserialize<'de> for NodeAttributesMask {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -2982,9 +2944,9 @@ impl TryFrom<i32> for NodeClass {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for NodeClass {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -3027,9 +2989,7 @@ impl<'de> serde::de::Deserialize<'de> for NodeClass {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -3094,9 +3054,9 @@ impl TryFrom<u8> for NodeIdType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for NodeIdType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = u8::from_xml(element, ctx)?;
         Ok(
@@ -3139,9 +3099,7 @@ impl<'de> serde::de::Deserialize<'de> for NodeIdType {
         }
         let value = deserializer.deserialize_u8(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "u8", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize u8: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -3201,9 +3159,9 @@ impl TryFrom<i32> for OpenFileMode {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for OpenFileMode {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -3248,9 +3206,7 @@ impl<'de> serde::de::Deserialize<'de> for OpenFileMode {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -3310,9 +3266,9 @@ impl TryFrom<i32> for OverrideValueHandling {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for OverrideValueHandling {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -3357,9 +3313,7 @@ impl<'de> serde::de::Deserialize<'de> for OverrideValueHandling {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -3421,9 +3375,9 @@ impl TryFrom<i32> for PerformUpdateType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for PerformUpdateType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -3468,9 +3422,7 @@ impl<'de> serde::de::Deserialize<'de> for PerformUpdateType {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -3546,9 +3498,9 @@ impl opcua::types::AsVariantRef for PermissionType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for PermissionType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(Self::from_bits_truncate(val))
@@ -3613,9 +3565,9 @@ impl TryFrom<i32> for PubSubDiagnosticsCounterClassification {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for PubSubDiagnosticsCounterClassification {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -3663,9 +3615,7 @@ impl<'de> serde::de::Deserialize<'de> for PubSubDiagnosticsCounterClassification
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -3725,9 +3675,9 @@ impl TryFrom<i32> for PubSubState {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for PubSubState {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -3772,9 +3722,7 @@ impl<'de> serde::de::Deserialize<'de> for PubSubState {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -3840,9 +3788,9 @@ impl TryFrom<i32> for RedundancySupport {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for RedundancySupport {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -3887,9 +3835,7 @@ impl<'de> serde::de::Deserialize<'de> for RedundancySupport {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -3947,9 +3893,9 @@ impl TryFrom<i32> for SecurityTokenRequestType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for SecurityTokenRequestType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -3996,9 +3942,7 @@ impl<'de> serde::de::Deserialize<'de> for SecurityTokenRequestType {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -4066,9 +4010,9 @@ impl TryFrom<i32> for ServerState {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for ServerState {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -4113,9 +4057,7 @@ impl<'de> serde::de::Deserialize<'de> for ServerState {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -4173,9 +4115,9 @@ impl TryFrom<i32> for StructureType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for StructureType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -4220,9 +4162,7 @@ impl<'de> serde::de::Deserialize<'de> for StructureType {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -4287,9 +4227,9 @@ impl TryFrom<i32> for TimestampsToReturn {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for TimestampsToReturn {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -4334,9 +4274,7 @@ impl<'de> serde::de::Deserialize<'de> for TimestampsToReturn {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -4400,9 +4338,9 @@ impl TryFrom<i32> for TrustListMasks {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for TrustListMasks {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -4447,9 +4385,7 @@ impl<'de> serde::de::Deserialize<'de> for TrustListMasks {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]
@@ -4522,9 +4458,9 @@ impl opcua::types::AsVariantRef for UadpDataSetMessageContentMask {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for UadpDataSetMessageContentMask {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(Self::from_bits_truncate(val))
@@ -4605,9 +4541,9 @@ impl opcua::types::AsVariantRef for UadpNetworkMessageContentMask {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for UadpNetworkMessageContentMask {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(Self::from_bits_truncate(val))
@@ -4673,9 +4609,9 @@ impl TryFrom<i32> for UserTokenType {
 }
 #[cfg(feature = "xml")]
 impl opcua::types::xml::FromXml for UserTokenType {
-    fn from_xml<'a>(
+    fn from_xml(
         element: &opcua::types::xml::XmlElement,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Result<Self, opcua::types::xml::FromXmlError> {
         let val = i32::from_xml(element, ctx)?;
         Ok(
@@ -4720,9 +4656,7 @@ impl<'de> serde::de::Deserialize<'de> for UserTokenType {
         }
         let value = deserializer.deserialize_i32(EnumVisitor)?;
         Self::try_from(value)
-            .map_err(|e| D::Error::custom(
-                &format!("Failed to deserialize {}: {:?}", "i32", e),
-            ))
+            .map_err(|e| D::Error::custom(format!("Failed to deserialize i32: {:?}", e)))
     }
 }
 #[cfg(feature = "json")]

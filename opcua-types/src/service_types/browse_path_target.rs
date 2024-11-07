@@ -50,17 +50,12 @@ impl opcua::types::BinaryEncodable for BrowsePathTarget {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let target_id = <opcua::types::expanded_node_id::ExpandedNodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let remaining_path_index = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            target_id,
-            remaining_path_index,
+            target_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            remaining_path_index: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

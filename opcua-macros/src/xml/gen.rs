@@ -24,7 +24,12 @@ impl Parse for XmlFieldAttribute {
                 }
                 _ => return Err(syn::Error::new_spanned(ident, "Unknown attribute value")),
             }
+            if !input.peek(Token![,]) {
+                break;
+            }
+            input.parse::<Token![,]>()?;
         }
+        Ok(slf)
     }
 }
 

@@ -53,22 +53,13 @@ impl opcua::types::BinaryEncodable for ModelChangeStructureDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let affected = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let affected_type = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let verb = <u8 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            affected,
-            affected_type,
-            verb,
+            affected: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            affected_type: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            verb: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }

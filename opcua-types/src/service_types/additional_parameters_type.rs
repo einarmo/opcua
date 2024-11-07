@@ -47,9 +47,8 @@ impl opcua::types::BinaryEncodable for AdditionalParametersType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let parameters = <Option<
-            Vec<super::key_value_pair::KeyValuePair>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        Ok(Self { parameters })
+        Ok(Self {
+            parameters: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

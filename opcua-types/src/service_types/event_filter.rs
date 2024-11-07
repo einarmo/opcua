@@ -52,16 +52,15 @@ impl opcua::types::BinaryEncodable for EventFilter {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let select_clauses = <Option<
-            Vec<super::simple_attribute_operand::SimpleAttributeOperand>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let where_clause = <super::content_filter::ContentFilter as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            select_clauses,
-            where_clause,
+            select_clauses: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            where_clause: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

@@ -50,14 +50,9 @@ impl opcua::types::BinaryEncodable for XVType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let x = <f64 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let value = <f32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { x, value })
+        Ok(Self {
+            x: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            value: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

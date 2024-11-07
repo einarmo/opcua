@@ -50,13 +50,9 @@ impl opcua::types::BinaryEncodable for DeleteAtTimeDetails {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let req_times = <Option<
-            Vec<opcua::types::date_time::DateTime>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        Ok(Self { node_id, req_times })
+        Ok(Self {
+            node_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            req_times: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

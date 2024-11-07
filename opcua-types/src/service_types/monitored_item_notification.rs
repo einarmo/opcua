@@ -50,14 +50,12 @@ impl opcua::types::BinaryEncodable for MonitoredItemNotification {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let client_handle = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let value = <opcua::types::data_value::DataValue as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { client_handle, value })
+        Ok(Self {
+            client_handle: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            value: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

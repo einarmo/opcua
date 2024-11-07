@@ -47,9 +47,8 @@ impl opcua::types::BinaryEncodable for HistoryEvent {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let events = <Option<
-            Vec<super::history_event_field_list::HistoryEventFieldList>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        Ok(Self { events })
+        Ok(Self {
+            events: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

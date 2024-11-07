@@ -71,51 +71,37 @@ impl opcua::types::BinaryEncodable for DataSetWriterDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let enabled = <bool as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let data_set_writer_id = <u16 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let data_set_field_content_mask = <super::enums::DataSetFieldContentMask as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let key_frame_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let data_set_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let data_set_writer_properties = <Option<
-            Vec<super::key_value_pair::KeyValuePair>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let transport_settings = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let message_settings = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            name,
-            enabled,
-            data_set_writer_id,
-            data_set_field_content_mask,
-            key_frame_count,
-            data_set_name,
-            data_set_writer_properties,
-            transport_settings,
-            message_settings,
+            name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            enabled: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            data_set_writer_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            data_set_field_content_mask: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            key_frame_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            data_set_name: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            data_set_writer_properties: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            transport_settings: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            message_settings: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

@@ -53,22 +53,13 @@ impl opcua::types::BinaryEncodable for ViewDescription {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let view_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let timestamp = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let view_version = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            view_id,
-            timestamp,
-            view_version,
+            view_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            timestamp: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            view_version: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

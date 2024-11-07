@@ -50,16 +50,15 @@ impl opcua::types::BinaryEncodable for EventFieldList {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let client_handle = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let event_fields = <Option<
-            Vec<opcua::types::variant::Variant>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
-            client_handle,
-            event_fields,
+            client_handle: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            event_fields: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

@@ -47,10 +47,11 @@ impl opcua::types::BinaryEncodable for NetworkAddressDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let network_interface = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { network_interface })
+        Ok(Self {
+            network_interface: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+        })
     }
 }

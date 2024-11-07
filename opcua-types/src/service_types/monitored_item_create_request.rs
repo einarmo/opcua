@@ -52,22 +52,19 @@ impl opcua::types::BinaryEncodable for MonitoredItemCreateRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let item_to_monitor = <super::read_value_id::ReadValueId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let monitoring_mode = <super::enums::MonitoringMode as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let requested_parameters = <super::monitoring_parameters::MonitoringParameters as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            item_to_monitor,
-            monitoring_mode,
-            requested_parameters,
+            item_to_monitor: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            monitoring_mode: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            requested_parameters: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

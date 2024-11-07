@@ -36,9 +36,8 @@ impl opcua::types::BinaryEncodable for EnumDefinition {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let fields = <Option<
-            Vec<super::enum_field::EnumField>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        Ok(Self { fields })
+        Ok(Self {
+            fields: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

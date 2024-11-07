@@ -176,7 +176,7 @@ mod json {
                             ExtensionObjectEncoding::XmlElement(s.into())
                         }
                         r => {
-                            return Err(de::Error::custom(&format!(
+                            return Err(de::Error::custom(format!(
                                 "Expected 0, 1, or 2 as ExtensionObject encoding, got {r}"
                             )));
                         }

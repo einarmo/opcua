@@ -47,10 +47,11 @@ impl opcua::types::BinaryEncodable for DatagramConnectionTransportDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let discovery_address = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { discovery_address })
+        Ok(Self {
+            discovery_address: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+        })
     }
 }

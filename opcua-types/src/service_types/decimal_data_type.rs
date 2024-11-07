@@ -50,14 +50,9 @@ impl opcua::types::BinaryEncodable for DecimalDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let scale = <i16 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let value = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { scale, value })
+        Ok(Self {
+            scale: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            value: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

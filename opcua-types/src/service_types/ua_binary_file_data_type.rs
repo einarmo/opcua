@@ -69,37 +69,29 @@ impl opcua::types::BinaryEncodable for UABinaryFileDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let namespaces = <Option<
-            Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let structure_data_types = <Option<
-            Vec<super::structure_description::StructureDescription>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let enum_data_types = <Option<
-            Vec<super::enum_description::EnumDescription>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let simple_data_types = <Option<
-            Vec<super::simple_type_description::SimpleTypeDescription>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let schema_location = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let file_header = <Option<
-            Vec<super::key_value_pair::KeyValuePair>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let body = <opcua::types::variant::Variant as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            namespaces,
-            structure_data_types,
-            enum_data_types,
-            simple_data_types,
-            schema_location,
-            file_header,
-            body,
+            namespaces: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            structure_data_types: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            enum_data_types: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            simple_data_types: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            schema_location: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            file_header: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            body: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }

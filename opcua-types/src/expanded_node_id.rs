@@ -176,7 +176,7 @@ mod json {
                             serde_json::from_value(value).map_err(de::Error::custom)?,
                         ),
                         Some(r) => {
-                            return Err(de::Error::custom(&format!(
+                            return Err(de::Error::custom(format!(
                                 "Failed to deserialize NodeId, got unexpected IdType {r}"
                             )))
                         }

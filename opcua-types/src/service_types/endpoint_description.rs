@@ -67,46 +67,36 @@ impl opcua::types::BinaryEncodable for EndpointDescription {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let endpoint_url = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let server = <super::application_description::ApplicationDescription as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let server_certificate = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let security_mode = <super::enums::MessageSecurityMode as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let security_policy_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let user_identity_tokens = <Option<
-            Vec<super::user_token_policy::UserTokenPolicy>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let transport_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let security_level = <u8 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            endpoint_url,
-            server,
-            server_certificate,
-            security_mode,
-            security_policy_uri,
-            user_identity_tokens,
-            transport_profile_uri,
-            security_level,
+            endpoint_url: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            server: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            server_certificate: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            security_mode: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            security_policy_uri: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            user_identity_tokens: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            transport_profile_uri: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            security_level: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

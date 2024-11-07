@@ -53,22 +53,19 @@ impl opcua::types::BinaryEncodable for HistoryReadResult {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let status_code = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let continuation_point = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let history_data = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            status_code,
-            continuation_point,
-            history_data,
+            status_code: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            continuation_point: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            history_data: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

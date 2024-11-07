@@ -50,14 +50,9 @@ impl opcua::types::BinaryEncodable for RationalNumber {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let numerator = <i32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let denominator = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { numerator, denominator })
+        Ok(Self {
+            numerator: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            denominator: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

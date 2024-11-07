@@ -50,14 +50,9 @@ impl opcua::types::BinaryEncodable for KeyValuePair {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let key = <opcua::types::qualified_name::QualifiedName as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let value = <opcua::types::variant::Variant as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { key, value })
+        Ok(Self {
+            key: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            value: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

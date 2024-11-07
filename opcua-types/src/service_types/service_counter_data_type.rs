@@ -50,14 +50,12 @@ impl opcua::types::BinaryEncodable for ServiceCounterDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let total_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let error_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { total_count, error_count })
+        Ok(Self {
+            total_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            error_count: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

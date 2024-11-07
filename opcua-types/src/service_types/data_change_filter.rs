@@ -52,22 +52,16 @@ impl opcua::types::BinaryEncodable for DataChangeFilter {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let trigger = <super::enums::DataChangeTrigger as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let deadband_type = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let deadband_value = <f64 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            trigger,
-            deadband_type,
-            deadband_value,
+            trigger: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            deadband_type: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            deadband_value: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

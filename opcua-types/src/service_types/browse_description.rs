@@ -61,37 +61,25 @@ impl opcua::types::BinaryEncodable for BrowseDescription {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let browse_direction = <super::enums::BrowseDirection as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let reference_type_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let include_subtypes = <bool as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let node_class_mask = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let result_mask = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            node_id,
-            browse_direction,
-            reference_type_id,
-            include_subtypes,
-            node_class_mask,
-            result_mask,
+            node_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            browse_direction: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            reference_type_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            include_subtypes: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            node_class_mask: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            result_mask: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }

@@ -67,45 +67,33 @@ impl opcua::types::BinaryEncodable for RegisteredServer {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let server_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let product_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let server_names = <Option<
-            Vec<opcua::types::localized_text::LocalizedText>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let server_type = <super::enums::ApplicationType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let gateway_server_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let discovery_urls = <Option<
-            Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let semaphore_file_path = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let is_online = <bool as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            server_uri,
-            product_uri,
-            server_names,
-            server_type,
-            gateway_server_uri,
-            discovery_urls,
-            semaphore_file_path,
-            is_online,
+            server_uri: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            product_uri: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            server_names: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            server_type: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            gateway_server_uri: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            discovery_urls: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            semaphore_file_path: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            is_online: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }

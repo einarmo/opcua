@@ -52,22 +52,16 @@ impl opcua::types::BinaryEncodable for ModificationInfo {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let modification_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let update_type = <super::enums::HistoryUpdateType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let user_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            modification_time,
-            update_type,
-            user_name,
+            modification_time: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            update_type: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            user_name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }

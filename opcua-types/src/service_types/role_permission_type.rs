@@ -50,14 +50,9 @@ impl opcua::types::BinaryEncodable for RolePermissionType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let role_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let permissions = <super::enums::PermissionType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { role_id, permissions })
+        Ok(Self {
+            role_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            permissions: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

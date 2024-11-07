@@ -58,32 +58,24 @@ impl opcua::types::BinaryEncodable for BrokerDataSetReaderTransportDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let queue_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let resource_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let authentication_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let requested_delivery_guarantee = <super::enums::BrokerTransportQualityOfService as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let meta_data_queue_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            queue_name,
-            resource_uri,
-            authentication_profile_uri,
-            requested_delivery_guarantee,
-            meta_data_queue_name,
+            queue_name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            resource_uri: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            authentication_profile_uri: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            requested_delivery_guarantee: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            meta_data_queue_name: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

@@ -49,14 +49,12 @@ impl opcua::types::BinaryEncodable for IdentityMappingRuleType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let criteria_type = <super::enums::IdentityCriteriaType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let criteria = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { criteria_type, criteria })
+        Ok(Self {
+            criteria_type: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            criteria: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

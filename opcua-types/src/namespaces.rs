@@ -49,7 +49,7 @@ impl NamespaceMap {
         &self,
         id: &'b ExpandedNodeId,
     ) -> Option<std::borrow::Cow<'b, NodeId>> {
-        id.try_resolve(&self)
+        id.try_resolve(self)
     }
 }
 

@@ -53,20 +53,16 @@ impl opcua::types::BinaryEncodable for SessionlessInvokeResponseType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let namespace_uris = <Option<
-            Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let server_uris = <Option<
-            Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let service_id = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            namespace_uris,
-            server_uris,
-            service_id,
+            namespace_uris: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            server_uris: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            service_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }

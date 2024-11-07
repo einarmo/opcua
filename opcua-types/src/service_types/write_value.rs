@@ -56,27 +56,17 @@ impl opcua::types::BinaryEncodable for WriteValue {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let attribute_id = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let index_range = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let value = <opcua::types::data_value::DataValue as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            node_id,
-            attribute_id,
-            index_range,
-            value,
+            node_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            attribute_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            index_range: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            value: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }

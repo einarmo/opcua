@@ -54,7 +54,7 @@ mod json {
         {
             let v = String::deserialize(deserializer)?;
             let dt = DateTime::parse_from_rfc3339(&v)
-                .map_err(|e| D::Error::custom(&format!("Cannot parse date time: {e}")))?;
+                .map_err(|e| D::Error::custom(format!("Cannot parse date time: {e}")))?;
             Ok(dt)
         }
     }

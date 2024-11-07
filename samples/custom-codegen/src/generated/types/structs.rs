@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Einar Omang
 #![allow(non_camel_case_types)]
+#![allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
@@ -16,6 +17,8 @@ pub struct PnDeviceDiagnosisDataType {
     pub slot: u16,
     pub subslot: u16,
     pub channel_number: u16,
+    #[cfg_attr(feature = "xml", opcua(rename = "Type"))]
+    #[cfg_attr(feature = "json", serde(rename = "Type"))]
     pub __type: super::enums::PnChannelTypeEnumeration,
     pub accumulative: super::enums::PnChannelAccumulativeEnumeration,
     pub maintenance: super::enums::PnChannelMaintenanceEnumeration,
@@ -96,77 +99,33 @@ impl opcua::types::BinaryEncodable for PnDeviceDiagnosisDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let api = <u32 as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let slot = <u16 as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let subslot = <u16 as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let channel_number =
-            <u16 as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let __type =
-            <super::enums::PnChannelTypeEnumeration as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )?;
-        let accumulative = <super::enums::PnChannelAccumulativeEnumeration as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let maintenance = <super::enums::PnChannelMaintenanceEnumeration as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let specifier =
-            <super::enums::PnChannelSpecifierEnumeration as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )?;
-        let direction =
-            <super::enums::PnChannelDirectionEnumeration as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )?;
-        let user_structure_identifier =
-            <u16 as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let channel_error_type =
-            <u16 as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let ext_channel_error_type =
-            <u16 as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let ext_channel_add_value =
-            <u32 as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let qualified_channel_qualifier =
-            <u32 as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let manufacturer_data =
-            <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )?;
-        let message =
-            <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )?;
-        let help_text =
-            <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )?;
         Ok(Self {
-            api,
-            slot,
-            subslot,
-            channel_number,
-            __type,
-            accumulative,
-            maintenance,
-            specifier,
-            direction,
-            user_structure_identifier,
-            channel_error_type,
-            ext_channel_error_type,
-            ext_channel_add_value,
-            qualified_channel_qualifier,
-            manufacturer_data,
-            message,
-            help_text,
+            api: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            slot: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            subslot: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            channel_number: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            __type: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            accumulative: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            maintenance: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            specifier: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            direction: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            user_structure_identifier: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            channel_error_type: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            ext_channel_error_type: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            ext_channel_add_value: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            qualified_channel_qualifier: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            manufacturer_data: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            message: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            help_text: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }
@@ -179,6 +138,23 @@ impl opcua::types::BinaryEncodable for PnDeviceDiagnosisDataType {
 pub struct PnDeviceRoleOptionSet {
     pub value: opcua::types::byte_string::ByteString,
     pub valid_bits: opcua::types::byte_string::ByteString,
+}
+impl opcua::types::ExpandedMessageInfo for PnDeviceRoleOptionSet {
+    fn full_type_id(&self) -> opcua::types::ExpandedNodeId {
+        let id: opcua::types::NodeId =
+            crate::ObjectId::PnDeviceRoleOptionSet_Encoding_DefaultBinary.into();
+        opcua::types::ExpandedNodeId::from((id, "http://opcfoundation.org/UA/PROFINET/"))
+    }
+    fn full_json_type_id(&self) -> opcua::types::ExpandedNodeId {
+        let id: opcua::types::NodeId =
+            crate::ObjectId::PnDeviceRoleOptionSet_Encoding_DefaultJson.into();
+        opcua::types::ExpandedNodeId::from((id, "http://opcfoundation.org/UA/PROFINET/"))
+    }
+    fn full_xml_type_id(&self) -> opcua::types::ExpandedNodeId {
+        let id: opcua::types::NodeId =
+            crate::ObjectId::PnDeviceRoleOptionSet_Encoding_DefaultXml.into();
+        opcua::types::ExpandedNodeId::from((id, "http://opcfoundation.org/UA/PROFINET/"))
+    }
 }
 impl opcua::types::BinaryEncodable for PnDeviceRoleOptionSet {
     fn byte_len(&self) -> usize {
@@ -199,17 +175,10 @@ impl opcua::types::BinaryEncodable for PnDeviceRoleOptionSet {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let value =
-            <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )?;
-        let valid_bits =
-            <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )?;
-        Ok(Self { value, valid_bits })
+        Ok(Self {
+            value: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            valid_bits: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }
 ///Contains the fields of the APDU element I&M5 | I&M5Data
@@ -268,37 +237,13 @@ impl opcua::types::BinaryEncodable for PnIM5DataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let annotation = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let order_id = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let vendor_id = <u16 as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let serial_number =
-            <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )?;
-        let hardware_revision =
-            <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )?;
-        let software_revision =
-            <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )?;
         Ok(Self {
-            annotation,
-            order_id,
-            vendor_id,
-            serial_number,
-            hardware_revision,
-            software_revision,
+            annotation: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            order_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            vendor_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            serial_number: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            hardware_revision: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            software_revision: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }

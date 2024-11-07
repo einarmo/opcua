@@ -47,10 +47,8 @@ impl opcua::types::BinaryEncodable for ElementOperand {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let index = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { index })
+        Ok(Self {
+            index: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

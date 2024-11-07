@@ -55,27 +55,23 @@ impl opcua::types::BinaryEncodable for EndpointType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let endpoint_url = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let security_mode = <super::enums::MessageSecurityMode as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let security_policy_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let transport_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            endpoint_url,
-            security_mode,
-            security_policy_uri,
-            transport_profile_uri,
+            endpoint_url: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            security_mode: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            security_policy_uri: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            transport_profile_uri: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

@@ -576,11 +576,11 @@ pub use xv_type::*;
 pub struct TypesXmlLoader;
 #[cfg(feature = "xml")]
 impl opcua::types::xml::XmlLoader for TypesXmlLoader {
-    fn load_extension_object<'a>(
+    fn load_extension_object(
         &self,
         body: &opcua::types::xml::XmlElement,
         node_id: &opcua::types::NodeId,
-        ctx: &opcua::types::xml::XmlContext<'a>,
+        ctx: &opcua::types::xml::XmlContext<'_>,
     ) -> Option<Result<opcua::types::ExtensionObject, opcua::types::xml::FromXmlError>> {
         use opcua::types::xml::FromXml;
         if node_id.namespace != 0 {

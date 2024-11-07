@@ -50,17 +50,12 @@ impl opcua::types::BinaryEncodable for X509IdentityToken {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let policy_id = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let certificate_data = <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            policy_id,
-            certificate_data,
+            policy_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            certificate_data: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

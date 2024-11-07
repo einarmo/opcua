@@ -318,7 +318,7 @@ impl<'a> ValueBuilder<'a> {
     ) -> Result<TokenStream, CodeGenError> {
         match ty {
             TypeRef::Enum(e) => {
-                let ident = safe_ident(e.name);
+                let (ident, _) = safe_ident(e.name);
                 // An enum must have content
                 let Some(val) = &node.text else {
                     return Err(CodeGenError::Other(format!(
@@ -344,7 +344,7 @@ impl<'a> ValueBuilder<'a> {
                         )));
                     };
                     let key = &val[..end];
-                    let key_ident = safe_ident(&key);
+                    let (key_ident, _) = safe_ident(key);
                     let path = e.path;
                     Ok(quote! {
                         #path::#ident::#key_ident
@@ -352,11 +352,11 @@ impl<'a> ValueBuilder<'a> {
                 }
             }
             TypeRef::Struct(e) => {
-                let ident = safe_ident(e.name);
+                let (ident, _) = safe_ident(e.name);
                 let mut fields = quote! {};
                 for (name, field) in &e.fields {
                     let rendered = self.render_field(name, field, node)?;
-                    let snake_name = safe_ident(&name.to_case(Case::Snake));
+                    let (snake_name, _) = safe_ident(&name.to_case(Case::Snake));
                     fields.extend(quote! {
                         #snake_name: #rendered,
                     })

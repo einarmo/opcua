@@ -10,6 +10,7 @@ targets:
     structs_single_file: true
     extra_header: |
       #![allow(non_camel_case_types)]
+      #![allow(clippy::upper_case_acronyms)]
   - type: nodes
     file_path: schema/Opc.Ua.Pn.NodeSet2.xml
     output_dir: src/generated/nodeset

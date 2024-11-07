@@ -53,22 +53,16 @@ impl opcua::types::BinaryEncodable for QueryDataDescription {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let relative_path = <super::relative_path::RelativePath as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let attribute_id = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let index_range = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            relative_path,
-            attribute_id,
-            index_range,
+            relative_path: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            attribute_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            index_range: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }

@@ -65,7 +65,7 @@ pub fn render(item: IdItem) -> Result<Vec<Item>, CodeGenError> {
     let mut vs = quote! {};
     let mut from_arms = quote! {};
     for (val, key) in item.variants {
-        let idt = safe_ident(&key);
+        let (idt, _) = safe_ident(&key);
         vs.extend(quote! { #idt = #val, });
         from_arms.extend(quote! { #val => Self::#idt, });
     }
@@ -73,7 +73,7 @@ pub fn render(item: IdItem) -> Result<Vec<Item>, CodeGenError> {
     let name = Ident::new(&format!("{}Id", item.name), Span::call_site());
 
     items.push(Item::Enum(parse_quote! {
-        #[allow(non_camel_case_types)]
+        #[allow(non_camel_case_types, clippy::enum_variant_names)]
         #[derive(Debug, PartialEq, Eq, Copy, Clone, Hash)]
         #[repr(u32)]
         pub enum #name {

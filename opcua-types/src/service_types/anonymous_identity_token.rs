@@ -46,10 +46,8 @@ impl opcua::types::BinaryEncodable for AnonymousIdentityToken {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let policy_id = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { policy_id })
+        Ok(Self {
+            policy_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

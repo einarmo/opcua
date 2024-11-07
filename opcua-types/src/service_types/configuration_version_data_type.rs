@@ -50,17 +50,15 @@ impl opcua::types::BinaryEncodable for ConfigurationVersionDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let major_version = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let minor_version = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            major_version,
-            minor_version,
+            major_version: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            minor_version: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

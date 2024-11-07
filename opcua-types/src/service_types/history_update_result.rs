@@ -53,20 +53,19 @@ impl opcua::types::BinaryEncodable for HistoryUpdateResult {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let status_code = <opcua::types::status_code::StatusCode as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let operation_results = <Option<
-            Vec<opcua::types::status_code::StatusCode>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let diagnostic_infos = <Option<
-            Vec<opcua::types::diagnostic_info::DiagnosticInfo>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
-            status_code,
-            operation_results,
-            diagnostic_infos,
+            status_code: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            operation_results: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            diagnostic_infos: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

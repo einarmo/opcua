@@ -30,7 +30,7 @@ opcua-codegen [config].yml
     let mut path_str = root_path
         .to_str()
         .expect("Config file path must be a valid UTF-8 string");
-    if path_str == "" {
+    if path_str.is_empty() {
         path_str = ".";
     }
 

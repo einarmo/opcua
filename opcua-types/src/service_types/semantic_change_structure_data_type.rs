@@ -50,14 +50,12 @@ impl opcua::types::BinaryEncodable for SemanticChangeStructureDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let affected = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let affected_type = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { affected, affected_type })
+        Ok(Self {
+            affected: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            affected_type: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+        })
     }
 }

@@ -53,18 +53,10 @@ impl opcua::types::BinaryEncodable for ThreeDCartesianCoordinates {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let x = <f64 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let y = <f64 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let z = <f64 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { x, y, z })
+        Ok(Self {
+            x: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            y: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            z: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

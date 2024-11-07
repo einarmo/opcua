@@ -53,22 +53,13 @@ impl opcua::types::BinaryEncodable for Annotation {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let message = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let user_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let annotation_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            message,
-            user_name,
-            annotation_time,
+            message: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            user_name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            annotation_time: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

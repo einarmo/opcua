@@ -50,15 +50,15 @@ impl opcua::types::BinaryEncodable for HistoryModifiedData {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let data_values = <Option<
-            Vec<opcua::types::data_value::DataValue>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let modification_infos = <Option<
-            Vec<super::modification_info::ModificationInfo>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
-            data_values,
-            modification_infos,
+            data_values: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            modification_infos: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

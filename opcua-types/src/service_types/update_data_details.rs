@@ -52,21 +52,16 @@ impl opcua::types::BinaryEncodable for UpdateDataDetails {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let perform_insert_replace = <super::enums::PerformUpdateType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let update_values = <Option<
-            Vec<opcua::types::data_value::DataValue>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
-            node_id,
-            perform_insert_replace,
-            update_values,
+            node_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            perform_insert_replace: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            update_values: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

@@ -47,9 +47,8 @@ impl opcua::types::BinaryEncodable for RelativePath {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let elements = <Option<
-            Vec<super::relative_path_element::RelativePathElement>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        Ok(Self { elements })
+        Ok(Self {
+            elements: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

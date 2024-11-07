@@ -59,31 +59,15 @@ impl opcua::types::BinaryEncodable for Argument {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let data_type = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let value_rank = <i32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let array_dimensions = <Option<
-            Vec<u32>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            name,
-            data_type,
-            value_rank,
-            array_dimensions,
-            description,
+            name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            data_type: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            value_rank: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            array_dimensions: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            description: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }

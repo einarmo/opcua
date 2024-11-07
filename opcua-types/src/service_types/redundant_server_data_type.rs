@@ -52,22 +52,16 @@ impl opcua::types::BinaryEncodable for RedundantServerDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let server_id = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let service_level = <u8 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let server_state = <super::enums::ServerState as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            server_id,
-            service_level,
-            server_state,
+            server_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            service_level: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            server_state: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

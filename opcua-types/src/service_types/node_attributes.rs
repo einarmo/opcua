@@ -59,32 +59,24 @@ impl opcua::types::BinaryEncodable for NodeAttributes {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let specified_attributes = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let display_name = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let write_mask = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let user_write_mask = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            specified_attributes,
-            display_name,
-            description,
-            write_mask,
-            user_write_mask,
+            specified_attributes: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            display_name: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            description: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            write_mask: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            user_write_mask: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

@@ -50,18 +50,18 @@ impl opcua::types::BinaryEncodable for AddReferencesRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncodable>::decode(
+        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryEncodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
-        let references_to_add = <Option<
-            Vec<super::add_references_item::AddReferencesItem>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
-            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
-            references_to_add,
+            references_to_add: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }
 }

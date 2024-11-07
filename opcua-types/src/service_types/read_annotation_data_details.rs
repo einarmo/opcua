@@ -47,9 +47,8 @@ impl opcua::types::BinaryEncodable for ReadAnnotationDataDetails {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let req_times = <Option<
-            Vec<opcua::types::date_time::DateTime>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        Ok(Self { req_times })
+        Ok(Self {
+            req_times: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

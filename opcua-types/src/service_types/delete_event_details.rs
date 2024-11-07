@@ -50,13 +50,9 @@ impl opcua::types::BinaryEncodable for DeleteEventDetails {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let node_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let event_ids = <Option<
-            Vec<opcua::types::byte_string::ByteString>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        Ok(Self { node_id, event_ids })
+        Ok(Self {
+            node_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            event_ids: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

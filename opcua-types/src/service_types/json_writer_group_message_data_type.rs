@@ -47,12 +47,11 @@ impl opcua::types::BinaryEncodable for JsonWriterGroupMessageDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let network_message_content_mask = <super::enums::JsonNetworkMessageContentMask as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            network_message_content_mask,
+            network_message_content_mask: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

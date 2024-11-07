@@ -49,9 +49,11 @@ impl opcua::types::BinaryEncodable for PublishedDataItemsDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let published_data = <Option<
-            Vec<super::published_variable_data_type::PublishedVariableDataType>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        Ok(Self { published_data })
+        Ok(Self {
+            published_data: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+        })
     }
 }

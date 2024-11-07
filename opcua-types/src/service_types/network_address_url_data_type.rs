@@ -50,14 +50,12 @@ impl opcua::types::BinaryEncodable for NetworkAddressUrlDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let network_interface = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let url = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        Ok(Self { network_interface, url })
+        Ok(Self {
+            network_interface: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            url: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+        })
     }
 }

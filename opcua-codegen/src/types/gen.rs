@@ -206,7 +206,7 @@ impl CodeGenerator {
         }
         let mut variants = quote! {};
         for field in &item.values {
-            let name = safe_ident(&field.name);
+            let (name, _) = safe_ident(&field.name);
             let value = field.value;
             let value_token = match item.typ {
                 EnumReprType::u8 => {
@@ -244,7 +244,7 @@ impl CodeGenerator {
                 const #name = #value_token;
             });
         }
-        let enum_ident = safe_ident(&item.name);
+        let (enum_ident, _) = safe_ident(&item.name);
 
         body.extend(quote! {
             bitflags::bitflags! {
@@ -305,9 +305,9 @@ impl CodeGenerator {
         impls.push(parse_quote! {
             #[cfg(feature = "xml")]
             impl opcua::types::xml::FromXml for #enum_ident {
-                fn from_xml<'a>(
+                fn from_xml(
                     element: &opcua::types::xml::XmlElement,
-                    ctx: &opcua::types::xml::XmlContext<'a>
+                    ctx: &opcua::types::xml::XmlContext<'_>
                 ) -> Result<Self, opcua::types::xml::FromXmlError> {
                     let val = #ty::from_xml(element, ctx)?;
                     Ok(Self::from_bits_truncate(val))
@@ -395,7 +395,7 @@ impl CodeGenerator {
         let mut try_from_arms = quote! {};
 
         for field in &item.values {
-            let name = safe_ident(&field.name);
+            let (name, _) = safe_ident(&field.name);
             let value = field.value;
             let value_token = match item.typ {
                 EnumReprType::u8 => {
@@ -464,7 +464,7 @@ impl CodeGenerator {
         }
 
         let mut impls = Vec::new();
-        let enum_ident = safe_ident(&item.name);
+        let (enum_ident, _) = safe_ident(&item.name);
 
         // TryFrom impl
         impls.push(parse_quote! {
@@ -483,9 +483,9 @@ impl CodeGenerator {
         impls.push(parse_quote! {
             #[cfg(feature = "xml")]
             impl opcua::types::xml::FromXml for #enum_ident {
-                fn from_xml<'a>(
+                fn from_xml(
                     element: &opcua::types::xml::XmlElement,
-                    ctx: &opcua::types::xml::XmlContext<'a>
+                    ctx: &opcua::types::xml::XmlContext<'_>
                 ) -> Result<Self, opcua::types::xml::FromXmlError> {
                     let val = #ty::from_xml(element, ctx)?;
                     Ok(Self::try_from(val).map_err(|e| format!(#fail_xml_msg, e))?)
@@ -521,6 +521,7 @@ impl CodeGenerator {
         let typ_str = format!("{}", item.typ);
         let typ_name_str = item.typ.to_string();
 
+        let failure_str = format!("Failed to deserialize {}: {{:?}}", typ_name_str);
         impls.push(parse_quote! {
             #[cfg(feature = "json")]
             impl<'de> serde::de::Deserialize<'de> for #enum_ident {
@@ -541,7 +542,7 @@ impl CodeGenerator {
 
                     let value = deserializer.#deser_method(EnumVisitor)?;
                     Self::try_from(value).map_err(|e| D::Error::custom(
-                        &format!("Failed to deserialize {}: {:?}", #typ_name_str, e)
+                        format!(#failure_str, e)
                     ))
                 }
             }
@@ -608,7 +609,7 @@ impl CodeGenerator {
     }
 
     fn is_extension_object(&self, typ: &str) -> bool {
-        if typ == "ua:ExtensionObject" {
+        if typ == "ua:ExtensionObject" || typ == "ua:OptionSet" {
             return true;
         }
 
@@ -659,7 +660,7 @@ impl CodeGenerator {
         }
 
         let mut impls = Vec::new();
-        let struct_ident = safe_ident(&item.name);
+        let (struct_ident, _) = safe_ident(&item.name);
 
         for field in item.visible_fields() {
             let typ: Type = match &field.typ {
@@ -669,8 +670,17 @@ impl CodeGenerator {
                     parse_quote! { Option<Vec<#path>> }
                 }
             };
-            let ident = safe_ident(&field.name);
+            let (ident, changed) = safe_ident(&field.name);
+            let mut attrs = quote! {};
+            if changed {
+                let orig = &field.original_name;
+                attrs = quote! {
+                    #[cfg_attr(feature = "xml", opcua(rename = #orig))]
+                    #[cfg_attr(feature = "json", serde(rename = #orig))]
+                };
+            }
             fields.push(parse_quote! {
+                #attrs
                 pub #ident: #typ
             });
         }
@@ -686,9 +696,10 @@ impl CodeGenerator {
             .as_ref()
             .is_some_and(|v| self.is_extension_object(v))
         {
-            let encoding_ident = safe_ident(&format!("{}_Encoding_DefaultBinary", item.name));
-            let json_encoding_ident = safe_ident(&format!("{}_Encoding_DefaultJson", item.name));
-            let xml_encoding_ident = safe_ident(&format!("{}_Encoding_DefaultXml", item.name));
+            let (encoding_ident, _) = safe_ident(&format!("{}_Encoding_DefaultBinary", item.name));
+            let (json_encoding_ident, _) =
+                safe_ident(&format!("{}_Encoding_DefaultJson", item.name));
+            let (xml_encoding_ident, _) = safe_ident(&format!("{}_Encoding_DefaultXml", item.name));
             if self.is_base_namespace() {
                 impls.push(parse_quote! {
                     impl opcua::types::MessageInfo for #struct_ident {
@@ -745,7 +756,7 @@ impl CodeGenerator {
                 let mut size = 0usize;
             };
             for field in item.visible_fields() {
-                let ident = safe_ident(&field.name);
+                let (ident, _) = safe_ident(&field.name);
 
                 let ty: Type = match &field.typ {
                     crate::StructureFieldType::Field(f) => syn::parse_str(&self.get_type_path(f))?,
@@ -763,31 +774,33 @@ impl CodeGenerator {
                 encode_impl.extend(quote! {
                     size += self.#ident.encode(stream)?;
                 });
-                if has_context {
-                    decode_impl.extend(quote! {
-                        let #ident = <#ty as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
-                            .map_err(|e| e.with_request_handle(__request_handle))?;
-                    })
-                } else {
-                    decode_impl.extend(quote! {
-                        let #ident = <#ty as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-                    });
-                }
-
-                decode_build.extend(quote! {
-                    #ident,
-                });
-
                 if field.name == "request_header" {
                     decode_impl.extend(quote! {
+                        let request_header: #ty = opcua::types::BinaryEncodable::decode(stream, decoding_options)?;
                         let __request_handle = request_header.request_handle;
+                    });
+                    decode_build.extend(quote! {
+                        request_header,
                     });
                     has_context = true;
                 } else if field.name == "response_header" {
                     decode_impl.extend(quote! {
+                        let response_header: #ty = opcua::types::BinaryEncodable::decode(stream, decoding_options)?;
                         let __request_handle = response_header.request_handle;
                     });
+                    decode_build.extend(quote! {
+                        response_header,
+                    });
                     has_context = true;
+                } else if has_context {
+                    decode_build.extend(quote! {
+                        #ident: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+                            .map_err(|e| e.with_request_handle(__request_handle))?,
+                    });
+                } else {
+                    decode_build.extend(quote! {
+                        #ident: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+                    });
                 }
             }
             len_impl.extend(quote! {

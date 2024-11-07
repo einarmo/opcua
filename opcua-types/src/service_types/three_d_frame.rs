@@ -50,17 +50,12 @@ impl opcua::types::BinaryEncodable for ThreeDFrame {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let cartesian_coordinates = <super::three_d_cartesian_coordinates::ThreeDCartesianCoordinates as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let orientation = <super::three_d_orientation::ThreeDOrientation as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            cartesian_coordinates,
-            orientation,
+            cartesian_coordinates: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            orientation: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }
