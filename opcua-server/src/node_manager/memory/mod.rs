@@ -1,9 +1,13 @@
-mod core;
 mod diagnostics;
 mod implementation;
 mod simple;
 
+#[cfg(feature = "generated-address-space")]
+mod core;
+
+#[cfg(feature = "generated-address-space")]
 pub use core::{CoreNodeManager, CoreNodeManagerBuilder, CoreNodeManagerImpl};
+
 pub use diagnostics::{DiagnosticsNodeManager, DiagnosticsNodeManagerBuilder, NamespaceMetadata};
 pub use implementation::*;
 use log::warn;

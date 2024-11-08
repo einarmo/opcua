@@ -9,15 +9,8 @@ use opcua_crypto::SecurityPolicy;
 use opcua_types::{BuildInfo, MessageSecurityMode};
 
 use super::{
-    authenticator::AuthManager,
-    node_manager::{
-        memory::{
-            CoreNodeManagerBuilder, DiagnosticsNodeManagerBuilder, InMemoryNodeManagerBuilder,
-        },
-        NodeManagerBuilder,
-    },
-    Limits, Server, ServerConfig, ServerEndpoint, ServerHandle, ServerUserToken,
-    ANONYMOUS_USER_TOKEN_ID,
+    authenticator::AuthManager, node_manager::NodeManagerBuilder, Limits, Server, ServerConfig,
+    ServerEndpoint, ServerHandle, ServerUserToken, ANONYMOUS_USER_TOKEN_ID,
 };
 
 pub struct ServerBuilder {
@@ -39,9 +32,18 @@ impl Default for ServerBuilder {
             type_tree_getter: None,
             build_info: BuildInfo::default(),
         };
+        #[cfg(feature = "generated-address-space")]
+        {
+            builder
+                .with_node_manager(
+                    super::node_manager::memory::InMemoryNodeManagerBuilder::new(
+                        super::node_manager::memory::CoreNodeManagerBuilder,
+                    ),
+                )
+                .with_node_manager(super::node_manager::memory::DiagnosticsNodeManagerBuilder)
+        }
+        #[cfg(not(feature = "generated-address-space"))]
         builder
-            .with_node_manager(InMemoryNodeManagerBuilder::new(CoreNodeManagerBuilder))
-            .with_node_manager(DiagnosticsNodeManagerBuilder)
     }
 }
 

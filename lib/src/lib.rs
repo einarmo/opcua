@@ -1,4 +1,4 @@
-#[macro_use]
+#[cfg_attr(feature = "console-logging", macro_use)]
 extern crate log;
 #[cfg(test)]
 extern crate serde_json;

@@ -11,10 +11,13 @@ use opcua_types::{
 
 use crate::{node_manager::SyncSampler, SubscriptionCache};
 
+// Note: some of these are unused if the generated namespace feature is disabled.
+
 /// Wrapper for managing the `ServerStatus` variable on the server.
 pub struct ServerStatusWrapper {
     status: Arc<Mutex<ServerStatusDataType>>,
     subscriptions: Arc<SubscriptionCache>,
+    #[allow(unused)]
     sampler: SyncSampler,
     shutdown: Arc<OnceLock<ShutdownTarget>>,
 }
@@ -22,9 +25,11 @@ pub struct ServerStatusWrapper {
 struct ShutdownTarget {
     reason: LocalizedText,
     deadline: Instant,
+    #[allow(unused)]
     time: DateTime,
 }
 
+#[allow(unused)]
 impl ServerStatusWrapper {
     pub(crate) fn new(build_info: BuildInfo, subscriptions: Arc<SubscriptionCache>) -> Self {
         let sampler = SyncSampler::new();

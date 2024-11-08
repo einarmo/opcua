@@ -45,12 +45,6 @@ impl InMemoryNodeManagerImplBuilder for CoreNodeManagerBuilder {
         {
             let mut type_tree = context.type_tree.write();
             address_space.import_node_set(&CoreNamespace, type_tree.namespaces_mut());
-            /* address_space.add_namespace(
-                "http://opcfoundation.org/UA/",
-                type_tree
-                    .namespaces_mut()
-                    .add_namespace("http://opcfoundation.org/UA/"),
-            ); */
         }
 
         CoreNodeManagerImpl::new(context.node_managers.clone(), context.status.clone())

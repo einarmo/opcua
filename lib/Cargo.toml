@@ -23,7 +23,9 @@ appveyor = { repository = "locka99/opcua" }
 default = ["server", "client"]
 all = ["server", "client", "console-logging"]
 # Server default settings
-server = ["opcua-server", "opcua-nodes", "generated-address-space", "discovery-server-registration"]
+server = ["base-server", "generated-address-space"]
+# Base server, without the core address space and discovery server registration
+base-server = ["opcua-server", "opcua-nodes"]
 # Client default settings
 client = ["opcua-client"]
 # Console logging just installs a logger that writes out to the screen, useful for general logging
