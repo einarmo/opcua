@@ -594,1126 +594,1977 @@ impl opcua::types::xml::XmlLoader for TypesXmlLoader {
             Ok(i) => i,
             Err(e) => return Some(Err(e.into())),
         };
-        Some(
-            match object_id {
-                r @ crate::ObjectId::ActivateSessionRequest_Encoding_DefaultXml => {
-                    ActivateSessionRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ActivateSessionResponse_Encoding_DefaultXml => {
-                    ActivateSessionResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::AddNodesItem_Encoding_DefaultXml => {
-                    AddNodesItem::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::AddNodesRequest_Encoding_DefaultXml => {
-                    AddNodesRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::AddNodesResponse_Encoding_DefaultXml => {
-                    AddNodesResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::AddNodesResult_Encoding_DefaultXml => {
-                    AddNodesResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::AddReferencesItem_Encoding_DefaultXml => {
-                    AddReferencesItem::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::AddReferencesRequest_Encoding_DefaultXml => {
-                    AddReferencesRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::AddReferencesResponse_Encoding_DefaultXml => {
-                    AddReferencesResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::AdditionalParametersType_Encoding_DefaultXml => {
-                    AdditionalParametersType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::AggregateConfiguration_Encoding_DefaultXml => {
-                    AggregateConfiguration::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::AggregateFilter_Encoding_DefaultXml => {
-                    AggregateFilter::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::AggregateFilterResult_Encoding_DefaultXml => {
-                    AggregateFilterResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::AliasNameDataType_Encoding_DefaultXml => {
-                    AliasNameDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::Annotation_Encoding_DefaultXml => {
-                    Annotation::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::AnonymousIdentityToken_Encoding_DefaultXml => {
-                    AnonymousIdentityToken::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ApplicationDescription_Encoding_DefaultXml => {
-                    ApplicationDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::Argument_Encoding_DefaultXml => {
-                    Argument::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::AttributeOperand_Encoding_DefaultXml => {
-                    AttributeOperand::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::AxisInformation_Encoding_DefaultXml => {
-                    AxisInformation::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::BrokerConnectionTransportDataType_Encoding_DefaultXml => {
-                    BrokerConnectionTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::BrokerDataSetReaderTransportDataType_Encoding_DefaultXml => {
-                    BrokerDataSetReaderTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::BrokerDataSetWriterTransportDataType_Encoding_DefaultXml => {
-                    BrokerDataSetWriterTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::BrokerWriterGroupTransportDataType_Encoding_DefaultXml => {
-                    BrokerWriterGroupTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::BrowseDescription_Encoding_DefaultXml => {
-                    BrowseDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::BrowseNextRequest_Encoding_DefaultXml => {
-                    BrowseNextRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::BrowseNextResponse_Encoding_DefaultXml => {
-                    BrowseNextResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::BrowsePath_Encoding_DefaultXml => {
-                    BrowsePath::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::BrowsePathResult_Encoding_DefaultXml => {
-                    BrowsePathResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::BrowsePathTarget_Encoding_DefaultXml => {
-                    BrowsePathTarget::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::BrowseRequest_Encoding_DefaultXml => {
-                    BrowseRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::BrowseResponse_Encoding_DefaultXml => {
-                    BrowseResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::BrowseResult_Encoding_DefaultXml => {
-                    BrowseResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::BuildInfo_Encoding_DefaultXml => {
-                    BuildInfo::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CallMethodRequest_Encoding_DefaultXml => {
-                    CallMethodRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CallMethodResult_Encoding_DefaultXml => {
-                    CallMethodResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CallRequest_Encoding_DefaultXml => {
-                    CallRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CallResponse_Encoding_DefaultXml => {
-                    CallResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CancelRequest_Encoding_DefaultXml => {
-                    CancelRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CancelResponse_Encoding_DefaultXml => {
-                    CancelResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CartesianCoordinates_Encoding_DefaultXml => {
-                    CartesianCoordinates::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ChannelSecurityToken_Encoding_DefaultXml => {
-                    ChannelSecurityToken::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CloseSecureChannelRequest_Encoding_DefaultXml => {
-                    CloseSecureChannelRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CloseSecureChannelResponse_Encoding_DefaultXml => {
-                    CloseSecureChannelResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CloseSessionRequest_Encoding_DefaultXml => {
-                    CloseSessionRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CloseSessionResponse_Encoding_DefaultXml => {
-                    CloseSessionResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ComplexNumberType_Encoding_DefaultXml => {
-                    ComplexNumberType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ConfigurationVersionDataType_Encoding_DefaultXml => {
-                    ConfigurationVersionDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ConnectionTransportDataType_Encoding_DefaultXml => {
-                    ConnectionTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ContentFilter_Encoding_DefaultXml => {
-                    ContentFilter::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ContentFilterElement_Encoding_DefaultXml => {
-                    ContentFilterElement::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ContentFilterElementResult_Encoding_DefaultXml => {
-                    ContentFilterElementResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ContentFilterResult_Encoding_DefaultXml => {
-                    ContentFilterResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CreateMonitoredItemsRequest_Encoding_DefaultXml => {
-                    CreateMonitoredItemsRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CreateMonitoredItemsResponse_Encoding_DefaultXml => {
-                    CreateMonitoredItemsResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CreateSessionRequest_Encoding_DefaultXml => {
-                    CreateSessionRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CreateSessionResponse_Encoding_DefaultXml => {
-                    CreateSessionResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CreateSubscriptionRequest_Encoding_DefaultXml => {
-                    CreateSubscriptionRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CreateSubscriptionResponse_Encoding_DefaultXml => {
-                    CreateSubscriptionResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::CurrencyUnitType_Encoding_DefaultXml => {
-                    CurrencyUnitType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DataChangeFilter_Encoding_DefaultXml => {
-                    DataChangeFilter::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DataChangeNotification_Encoding_DefaultXml => {
-                    DataChangeNotification::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DataSetMetaDataType_Encoding_DefaultXml => {
-                    DataSetMetaDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DataSetReaderDataType_Encoding_DefaultXml => {
-                    DataSetReaderDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DataSetReaderMessageDataType_Encoding_DefaultXml => {
-                    DataSetReaderMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DataSetReaderTransportDataType_Encoding_DefaultXml => {
-                    DataSetReaderTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DataSetWriterDataType_Encoding_DefaultXml => {
-                    DataSetWriterDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DataSetWriterMessageDataType_Encoding_DefaultXml => {
-                    DataSetWriterMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DataSetWriterTransportDataType_Encoding_DefaultXml => {
-                    DataSetWriterTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DataTypeAttributes_Encoding_DefaultXml => {
-                    DataTypeAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DataTypeDescription_Encoding_DefaultXml => {
-                    DataTypeDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DataTypeSchemaHeader_Encoding_DefaultXml => {
-                    DataTypeSchemaHeader::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DatagramConnectionTransportDataType_Encoding_DefaultXml => {
-                    DatagramConnectionTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DatagramWriterGroupTransportDataType_Encoding_DefaultXml => {
-                    DatagramWriterGroupTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DecimalDataType_Encoding_DefaultXml => {
-                    DecimalDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DeleteAtTimeDetails_Encoding_DefaultXml => {
-                    DeleteAtTimeDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DeleteEventDetails_Encoding_DefaultXml => {
-                    DeleteEventDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DeleteMonitoredItemsRequest_Encoding_DefaultXml => {
-                    DeleteMonitoredItemsRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DeleteMonitoredItemsResponse_Encoding_DefaultXml => {
-                    DeleteMonitoredItemsResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DeleteNodesItem_Encoding_DefaultXml => {
-                    DeleteNodesItem::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DeleteNodesRequest_Encoding_DefaultXml => {
-                    DeleteNodesRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DeleteNodesResponse_Encoding_DefaultXml => {
-                    DeleteNodesResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DeleteRawModifiedDetails_Encoding_DefaultXml => {
-                    DeleteRawModifiedDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DeleteReferencesItem_Encoding_DefaultXml => {
-                    DeleteReferencesItem::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DeleteReferencesRequest_Encoding_DefaultXml => {
-                    DeleteReferencesRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DeleteReferencesResponse_Encoding_DefaultXml => {
-                    DeleteReferencesResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DeleteSubscriptionsRequest_Encoding_DefaultXml => {
-                    DeleteSubscriptionsRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DeleteSubscriptionsResponse_Encoding_DefaultXml => {
-                    DeleteSubscriptionsResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DiscoveryConfiguration_Encoding_DefaultXml => {
-                    DiscoveryConfiguration::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::DoubleComplexNumberType_Encoding_DefaultXml => {
-                    DoubleComplexNumberType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::EUInformation_Encoding_DefaultXml => {
-                    EUInformation::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ElementOperand_Encoding_DefaultXml => {
-                    ElementOperand::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::EndpointConfiguration_Encoding_DefaultXml => {
-                    EndpointConfiguration::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::EndpointDescription_Encoding_DefaultXml => {
-                    EndpointDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::EndpointType_Encoding_DefaultXml => {
-                    EndpointType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::EndpointUrlListDataType_Encoding_DefaultXml => {
-                    EndpointUrlListDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::EnumDescription_Encoding_DefaultXml => {
-                    EnumDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::EnumField_Encoding_DefaultXml => {
-                    EnumField::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::EnumValueType_Encoding_DefaultXml => {
-                    EnumValueType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::EphemeralKeyType_Encoding_DefaultXml => {
-                    EphemeralKeyType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::EventFieldList_Encoding_DefaultXml => {
-                    EventFieldList::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::EventFilter_Encoding_DefaultXml => {
-                    EventFilter::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::EventFilterResult_Encoding_DefaultXml => {
-                    EventFilterResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::EventNotificationList_Encoding_DefaultXml => {
-                    EventNotificationList::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::FieldMetaData_Encoding_DefaultXml => {
-                    FieldMetaData::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::FieldTargetDataType_Encoding_DefaultXml => {
-                    FieldTargetDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::FilterOperand_Encoding_DefaultXml => {
-                    FilterOperand::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::FindServersOnNetworkRequest_Encoding_DefaultXml => {
-                    FindServersOnNetworkRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::FindServersOnNetworkResponse_Encoding_DefaultXml => {
-                    FindServersOnNetworkResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::FindServersRequest_Encoding_DefaultXml => {
-                    FindServersRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::FindServersResponse_Encoding_DefaultXml => {
-                    FindServersResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::Frame_Encoding_DefaultXml => {
-                    Frame::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::GenericAttributeValue_Encoding_DefaultXml => {
-                    GenericAttributeValue::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::GenericAttributes_Encoding_DefaultXml => {
-                    GenericAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::GetEndpointsRequest_Encoding_DefaultXml => {
-                    GetEndpointsRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::GetEndpointsResponse_Encoding_DefaultXml => {
-                    GetEndpointsResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::HistoryData_Encoding_DefaultXml => {
-                    HistoryData::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::HistoryEvent_Encoding_DefaultXml => {
-                    HistoryEvent::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::HistoryEventFieldList_Encoding_DefaultXml => {
-                    HistoryEventFieldList::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::HistoryModifiedData_Encoding_DefaultXml => {
-                    HistoryModifiedData::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::HistoryReadDetails_Encoding_DefaultXml => {
-                    HistoryReadDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::HistoryReadRequest_Encoding_DefaultXml => {
-                    HistoryReadRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::HistoryReadResponse_Encoding_DefaultXml => {
-                    HistoryReadResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::HistoryReadResult_Encoding_DefaultXml => {
-                    HistoryReadResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::HistoryReadValueId_Encoding_DefaultXml => {
-                    HistoryReadValueId::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::HistoryUpdateDetails_Encoding_DefaultXml => {
-                    HistoryUpdateDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::HistoryUpdateRequest_Encoding_DefaultXml => {
-                    HistoryUpdateRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::HistoryUpdateResponse_Encoding_DefaultXml => {
-                    HistoryUpdateResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::HistoryUpdateResult_Encoding_DefaultXml => {
-                    HistoryUpdateResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::IdentityMappingRuleType_Encoding_DefaultXml => {
-                    IdentityMappingRuleType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::IssuedIdentityToken_Encoding_DefaultXml => {
-                    IssuedIdentityToken::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::JsonDataSetReaderMessageDataType_Encoding_DefaultXml => {
-                    JsonDataSetReaderMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::JsonDataSetWriterMessageDataType_Encoding_DefaultXml => {
-                    JsonDataSetWriterMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::JsonWriterGroupMessageDataType_Encoding_DefaultXml => {
-                    JsonWriterGroupMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::KeyValuePair_Encoding_DefaultXml => {
-                    KeyValuePair::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::LiteralOperand_Encoding_DefaultXml => {
-                    LiteralOperand::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::MdnsDiscoveryConfiguration_Encoding_DefaultXml => {
-                    MdnsDiscoveryConfiguration::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::MethodAttributes_Encoding_DefaultXml => {
-                    MethodAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ModelChangeStructureDataType_Encoding_DefaultXml => {
-                    ModelChangeStructureDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ModificationInfo_Encoding_DefaultXml => {
-                    ModificationInfo::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ModifyMonitoredItemsRequest_Encoding_DefaultXml => {
-                    ModifyMonitoredItemsRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ModifyMonitoredItemsResponse_Encoding_DefaultXml => {
-                    ModifyMonitoredItemsResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ModifySubscriptionRequest_Encoding_DefaultXml => {
-                    ModifySubscriptionRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ModifySubscriptionResponse_Encoding_DefaultXml => {
-                    ModifySubscriptionResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::MonitoredItemCreateRequest_Encoding_DefaultXml => {
-                    MonitoredItemCreateRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::MonitoredItemCreateResult_Encoding_DefaultXml => {
-                    MonitoredItemCreateResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::MonitoredItemModifyRequest_Encoding_DefaultXml => {
-                    MonitoredItemModifyRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::MonitoredItemModifyResult_Encoding_DefaultXml => {
-                    MonitoredItemModifyResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::MonitoredItemNotification_Encoding_DefaultXml => {
-                    MonitoredItemNotification::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::MonitoringFilter_Encoding_DefaultXml => {
-                    MonitoringFilter::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::MonitoringFilterResult_Encoding_DefaultXml => {
-                    MonitoringFilterResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::MonitoringParameters_Encoding_DefaultXml => {
-                    MonitoringParameters::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::NetworkAddressDataType_Encoding_DefaultXml => {
-                    NetworkAddressDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::NetworkAddressUrlDataType_Encoding_DefaultXml => {
-                    NetworkAddressUrlDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::NetworkGroupDataType_Encoding_DefaultXml => {
-                    NetworkGroupDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::NodeAttributes_Encoding_DefaultXml => {
-                    NodeAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::NodeReference_Encoding_DefaultXml => {
-                    NodeReference::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::NodeTypeDescription_Encoding_DefaultXml => {
-                    NodeTypeDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::NotificationData_Encoding_DefaultXml => {
-                    NotificationData::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::NotificationMessage_Encoding_DefaultXml => {
-                    NotificationMessage::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ObjectAttributes_Encoding_DefaultXml => {
-                    ObjectAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ObjectTypeAttributes_Encoding_DefaultXml => {
-                    ObjectTypeAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::OpenSecureChannelRequest_Encoding_DefaultXml => {
-                    OpenSecureChannelRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::OpenSecureChannelResponse_Encoding_DefaultXml => {
-                    OpenSecureChannelResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::OptionSet_Encoding_DefaultXml => {
-                    OptionSet::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::Orientation_Encoding_DefaultXml => {
-                    Orientation::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ParsingResult_Encoding_DefaultXml => {
-                    ParsingResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ProgramDiagnostic2DataType_Encoding_DefaultXml => {
-                    ProgramDiagnostic2DataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ProgramDiagnosticDataType_Encoding_DefaultXml => {
-                    ProgramDiagnosticDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::PubSubConfigurationDataType_Encoding_DefaultXml => {
-                    PubSubConfigurationDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::PubSubConnectionDataType_Encoding_DefaultXml => {
-                    PubSubConnectionDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::PubSubGroupDataType_Encoding_DefaultXml => {
-                    PubSubGroupDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::PublishRequest_Encoding_DefaultXml => {
-                    PublishRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::PublishResponse_Encoding_DefaultXml => {
-                    PublishResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::PublishedDataItemsDataType_Encoding_DefaultXml => {
-                    PublishedDataItemsDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::PublishedDataSetDataType_Encoding_DefaultXml => {
-                    PublishedDataSetDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::PublishedDataSetSourceDataType_Encoding_DefaultXml => {
-                    PublishedDataSetSourceDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::PublishedEventsDataType_Encoding_DefaultXml => {
-                    PublishedEventsDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::PublishedVariableDataType_Encoding_DefaultXml => {
-                    PublishedVariableDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::QueryDataDescription_Encoding_DefaultXml => {
-                    QueryDataDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::QueryDataSet_Encoding_DefaultXml => {
-                    QueryDataSet::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::QueryFirstRequest_Encoding_DefaultXml => {
-                    QueryFirstRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::QueryFirstResponse_Encoding_DefaultXml => {
-                    QueryFirstResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::QueryNextRequest_Encoding_DefaultXml => {
-                    QueryNextRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::QueryNextResponse_Encoding_DefaultXml => {
-                    QueryNextResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::Range_Encoding_DefaultXml => {
-                    Range::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::RationalNumber_Encoding_DefaultXml => {
-                    RationalNumber::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ReadAnnotationDataDetails_Encoding_DefaultXml => {
-                    ReadAnnotationDataDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ReadAtTimeDetails_Encoding_DefaultXml => {
-                    ReadAtTimeDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ReadEventDetails_Encoding_DefaultXml => {
-                    ReadEventDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ReadProcessedDetails_Encoding_DefaultXml => {
-                    ReadProcessedDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ReadRawModifiedDetails_Encoding_DefaultXml => {
-                    ReadRawModifiedDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ReadRequest_Encoding_DefaultXml => {
-                    ReadRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ReadResponse_Encoding_DefaultXml => {
-                    ReadResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ReadValueId_Encoding_DefaultXml => {
-                    ReadValueId::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ReaderGroupDataType_Encoding_DefaultXml => {
-                    ReaderGroupDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ReaderGroupMessageDataType_Encoding_DefaultXml => {
-                    ReaderGroupMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ReaderGroupTransportDataType_Encoding_DefaultXml => {
-                    ReaderGroupTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::RedundantServerDataType_Encoding_DefaultXml => {
-                    RedundantServerDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ReferenceDescription_Encoding_DefaultXml => {
-                    ReferenceDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ReferenceTypeAttributes_Encoding_DefaultXml => {
-                    ReferenceTypeAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::RegisterNodesRequest_Encoding_DefaultXml => {
-                    RegisterNodesRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::RegisterNodesResponse_Encoding_DefaultXml => {
-                    RegisterNodesResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::RegisterServer2Request_Encoding_DefaultXml => {
-                    RegisterServer2Request::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::RegisterServer2Response_Encoding_DefaultXml => {
-                    RegisterServer2Response::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::RegisterServerRequest_Encoding_DefaultXml => {
-                    RegisterServerRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::RegisterServerResponse_Encoding_DefaultXml => {
-                    RegisterServerResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::RegisteredServer_Encoding_DefaultXml => {
-                    RegisteredServer::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::RelativePath_Encoding_DefaultXml => {
-                    RelativePath::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::RelativePathElement_Encoding_DefaultXml => {
-                    RelativePathElement::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::RepublishRequest_Encoding_DefaultXml => {
-                    RepublishRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::RepublishResponse_Encoding_DefaultXml => {
-                    RepublishResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::RolePermissionType_Encoding_DefaultXml => {
-                    RolePermissionType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SamplingIntervalDiagnosticsDataType_Encoding_DefaultXml => {
-                    SamplingIntervalDiagnosticsDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SemanticChangeStructureDataType_Encoding_DefaultXml => {
-                    SemanticChangeStructureDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ServerDiagnosticsSummaryDataType_Encoding_DefaultXml => {
-                    ServerDiagnosticsSummaryDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ServerOnNetwork_Encoding_DefaultXml => {
-                    ServerOnNetwork::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ServerStatusDataType_Encoding_DefaultXml => {
-                    ServerStatusDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ServiceCounterDataType_Encoding_DefaultXml => {
-                    ServiceCounterDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ServiceFault_Encoding_DefaultXml => {
-                    ServiceFault::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SessionDiagnosticsDataType_Encoding_DefaultXml => {
-                    SessionDiagnosticsDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SessionSecurityDiagnosticsDataType_Encoding_DefaultXml => {
-                    SessionSecurityDiagnosticsDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SessionlessInvokeRequestType_Encoding_DefaultXml => {
-                    SessionlessInvokeRequestType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SessionlessInvokeResponseType_Encoding_DefaultXml => {
-                    SessionlessInvokeResponseType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SetMonitoringModeRequest_Encoding_DefaultXml => {
-                    SetMonitoringModeRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SetMonitoringModeResponse_Encoding_DefaultXml => {
-                    SetMonitoringModeResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SetPublishingModeRequest_Encoding_DefaultXml => {
-                    SetPublishingModeRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SetPublishingModeResponse_Encoding_DefaultXml => {
-                    SetPublishingModeResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SetTriggeringRequest_Encoding_DefaultXml => {
-                    SetTriggeringRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SetTriggeringResponse_Encoding_DefaultXml => {
-                    SetTriggeringResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SignatureData_Encoding_DefaultXml => {
-                    SignatureData::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SignedSoftwareCertificate_Encoding_DefaultXml => {
-                    SignedSoftwareCertificate::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SimpleAttributeOperand_Encoding_DefaultXml => {
-                    SimpleAttributeOperand::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SimpleTypeDescription_Encoding_DefaultXml => {
-                    SimpleTypeDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::StatusChangeNotification_Encoding_DefaultXml => {
-                    StatusChangeNotification::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::StatusResult_Encoding_DefaultXml => {
-                    StatusResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::StructureDescription_Encoding_DefaultXml => {
-                    StructureDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::StructureField_Encoding_DefaultXml => {
-                    StructureField::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SubscribedDataSetDataType_Encoding_DefaultXml => {
-                    SubscribedDataSetDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SubscribedDataSetMirrorDataType_Encoding_DefaultXml => {
-                    SubscribedDataSetMirrorDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SubscriptionAcknowledgement_Encoding_DefaultXml => {
-                    SubscriptionAcknowledgement::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::SubscriptionDiagnosticsDataType_Encoding_DefaultXml => {
-                    SubscriptionDiagnosticsDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::TargetVariablesDataType_Encoding_DefaultXml => {
-                    TargetVariablesDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ThreeDCartesianCoordinates_Encoding_DefaultXml => {
-                    ThreeDCartesianCoordinates::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ThreeDFrame_Encoding_DefaultXml => {
-                    ThreeDFrame::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ThreeDOrientation_Encoding_DefaultXml => {
-                    ThreeDOrientation::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ThreeDVector_Encoding_DefaultXml => {
-                    ThreeDVector::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::TimeZoneDataType_Encoding_DefaultXml => {
-                    TimeZoneDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::TransferResult_Encoding_DefaultXml => {
-                    TransferResult::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::TransferSubscriptionsRequest_Encoding_DefaultXml => {
-                    TransferSubscriptionsRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::TransferSubscriptionsResponse_Encoding_DefaultXml => {
-                    TransferSubscriptionsResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::TranslateBrowsePathsToNodeIdsRequest_Encoding_DefaultXml => {
-                    TranslateBrowsePathsToNodeIdsRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::TranslateBrowsePathsToNodeIdsResponse_Encoding_DefaultXml => {
-                    TranslateBrowsePathsToNodeIdsResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::TrustListDataType_Encoding_DefaultXml => {
-                    TrustListDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::UABinaryFileDataType_Encoding_DefaultXml => {
-                    UABinaryFileDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::UadpDataSetReaderMessageDataType_Encoding_DefaultXml => {
-                    UadpDataSetReaderMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::UadpDataSetWriterMessageDataType_Encoding_DefaultXml => {
-                    UadpDataSetWriterMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::UadpWriterGroupMessageDataType_Encoding_DefaultXml => {
-                    UadpWriterGroupMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::UnregisterNodesRequest_Encoding_DefaultXml => {
-                    UnregisterNodesRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::UnregisterNodesResponse_Encoding_DefaultXml => {
-                    UnregisterNodesResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::UpdateDataDetails_Encoding_DefaultXml => {
-                    UpdateDataDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::UpdateEventDetails_Encoding_DefaultXml => {
-                    UpdateEventDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::UpdateStructureDataDetails_Encoding_DefaultXml => {
-                    UpdateStructureDataDetails::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::UserIdentityToken_Encoding_DefaultXml => {
-                    UserIdentityToken::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::UserNameIdentityToken_Encoding_DefaultXml => {
-                    UserNameIdentityToken::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::UserTokenPolicy_Encoding_DefaultXml => {
-                    UserTokenPolicy::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::VariableAttributes_Encoding_DefaultXml => {
-                    VariableAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::VariableTypeAttributes_Encoding_DefaultXml => {
-                    VariableTypeAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::Vector_Encoding_DefaultXml => {
-                    Vector::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ViewAttributes_Encoding_DefaultXml => {
-                    ViewAttributes::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::ViewDescription_Encoding_DefaultXml => {
-                    ViewDescription::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::WriteRequest_Encoding_DefaultXml => {
-                    WriteRequest::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::WriteResponse_Encoding_DefaultXml => {
-                    WriteResponse::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::WriteValue_Encoding_DefaultXml => {
-                    WriteValue::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::WriterGroupDataType_Encoding_DefaultXml => {
-                    WriterGroupDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::WriterGroupMessageDataType_Encoding_DefaultXml => {
-                    WriterGroupMessageDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::WriterGroupTransportDataType_Encoding_DefaultXml => {
-                    WriterGroupTransportDataType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::X509IdentityToken_Encoding_DefaultXml => {
-                    X509IdentityToken::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                r @ crate::ObjectId::XVType_Encoding_DefaultXml => {
-                    XVType::from_xml(body, ctx)
-                        .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v))
-                }
-                _ => return None,
-            },
-        )
+        let r = match object_id {
+            crate::ObjectId::ActivateSessionRequest_Encoding_DefaultXml => {
+                ActivateSessionRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ActivateSessionResponse_Encoding_DefaultXml => {
+                ActivateSessionResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::AddNodesItem_Encoding_DefaultXml => {
+                AddNodesItem::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::AddNodesRequest_Encoding_DefaultXml => {
+                AddNodesRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::AddNodesResponse_Encoding_DefaultXml => {
+                AddNodesResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::AddNodesResult_Encoding_DefaultXml => {
+                AddNodesResult::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::AddReferencesItem_Encoding_DefaultXml => {
+                AddReferencesItem::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::AddReferencesRequest_Encoding_DefaultXml => {
+                AddReferencesRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::AddReferencesResponse_Encoding_DefaultXml => {
+                AddReferencesResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::AdditionalParametersType_Encoding_DefaultXml => {
+                AdditionalParametersType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::AggregateConfiguration_Encoding_DefaultXml => {
+                AggregateConfiguration::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::AggregateFilter_Encoding_DefaultXml => {
+                AggregateFilter::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::AggregateFilterResult_Encoding_DefaultXml => {
+                AggregateFilterResult::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::AliasNameDataType_Encoding_DefaultXml => {
+                AliasNameDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::Annotation_Encoding_DefaultXml => {
+                Annotation::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::AnonymousIdentityToken_Encoding_DefaultXml => {
+                AnonymousIdentityToken::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ApplicationDescription_Encoding_DefaultXml => {
+                ApplicationDescription::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::Argument_Encoding_DefaultXml => {
+                Argument::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::AttributeOperand_Encoding_DefaultXml => {
+                AttributeOperand::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::AxisInformation_Encoding_DefaultXml => {
+                AxisInformation::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::BrokerConnectionTransportDataType_Encoding_DefaultXml => {
+                BrokerConnectionTransportDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::BrokerDataSetReaderTransportDataType_Encoding_DefaultXml => {
+                BrokerDataSetReaderTransportDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::BrokerDataSetWriterTransportDataType_Encoding_DefaultXml => {
+                BrokerDataSetWriterTransportDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::BrokerWriterGroupTransportDataType_Encoding_DefaultXml => {
+                BrokerWriterGroupTransportDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::BrowseDescription_Encoding_DefaultXml => {
+                BrowseDescription::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::BrowseNextRequest_Encoding_DefaultXml => {
+                BrowseNextRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::BrowseNextResponse_Encoding_DefaultXml => {
+                BrowseNextResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::BrowsePath_Encoding_DefaultXml => {
+                BrowsePath::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::BrowsePathResult_Encoding_DefaultXml => {
+                BrowsePathResult::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::BrowsePathTarget_Encoding_DefaultXml => {
+                BrowsePathTarget::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::BrowseRequest_Encoding_DefaultXml => {
+                BrowseRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::BrowseResponse_Encoding_DefaultXml => {
+                BrowseResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::BrowseResult_Encoding_DefaultXml => {
+                BrowseResult::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::BuildInfo_Encoding_DefaultXml => {
+                BuildInfo::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CallMethodRequest_Encoding_DefaultXml => {
+                CallMethodRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CallMethodResult_Encoding_DefaultXml => {
+                CallMethodResult::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CallRequest_Encoding_DefaultXml => {
+                CallRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CallResponse_Encoding_DefaultXml => {
+                CallResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CancelRequest_Encoding_DefaultXml => {
+                CancelRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CancelResponse_Encoding_DefaultXml => {
+                CancelResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CartesianCoordinates_Encoding_DefaultXml => {
+                CartesianCoordinates::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ChannelSecurityToken_Encoding_DefaultXml => {
+                ChannelSecurityToken::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CloseSecureChannelRequest_Encoding_DefaultXml => {
+                CloseSecureChannelRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CloseSecureChannelResponse_Encoding_DefaultXml => {
+                CloseSecureChannelResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CloseSessionRequest_Encoding_DefaultXml => {
+                CloseSessionRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CloseSessionResponse_Encoding_DefaultXml => {
+                CloseSessionResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ComplexNumberType_Encoding_DefaultXml => {
+                ComplexNumberType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ConfigurationVersionDataType_Encoding_DefaultXml => {
+                ConfigurationVersionDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ConnectionTransportDataType_Encoding_DefaultXml => {
+                ConnectionTransportDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ContentFilter_Encoding_DefaultXml => {
+                ContentFilter::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ContentFilterElement_Encoding_DefaultXml => {
+                ContentFilterElement::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ContentFilterElementResult_Encoding_DefaultXml => {
+                ContentFilterElementResult::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ContentFilterResult_Encoding_DefaultXml => {
+                ContentFilterResult::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CreateMonitoredItemsRequest_Encoding_DefaultXml => {
+                CreateMonitoredItemsRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CreateMonitoredItemsResponse_Encoding_DefaultXml => {
+                CreateMonitoredItemsResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CreateSessionRequest_Encoding_DefaultXml => {
+                CreateSessionRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CreateSessionResponse_Encoding_DefaultXml => {
+                CreateSessionResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CreateSubscriptionRequest_Encoding_DefaultXml => {
+                CreateSubscriptionRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CreateSubscriptionResponse_Encoding_DefaultXml => {
+                CreateSubscriptionResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::CurrencyUnitType_Encoding_DefaultXml => {
+                CurrencyUnitType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DataChangeFilter_Encoding_DefaultXml => {
+                DataChangeFilter::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DataChangeNotification_Encoding_DefaultXml => {
+                DataChangeNotification::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DataSetMetaDataType_Encoding_DefaultXml => {
+                DataSetMetaDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DataSetReaderDataType_Encoding_DefaultXml => {
+                DataSetReaderDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DataSetReaderMessageDataType_Encoding_DefaultXml => {
+                DataSetReaderMessageDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DataSetReaderTransportDataType_Encoding_DefaultXml => {
+                DataSetReaderTransportDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DataSetWriterDataType_Encoding_DefaultXml => {
+                DataSetWriterDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DataSetWriterMessageDataType_Encoding_DefaultXml => {
+                DataSetWriterMessageDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DataSetWriterTransportDataType_Encoding_DefaultXml => {
+                DataSetWriterTransportDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DataTypeAttributes_Encoding_DefaultXml => {
+                DataTypeAttributes::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DataTypeDescription_Encoding_DefaultXml => {
+                DataTypeDescription::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DataTypeSchemaHeader_Encoding_DefaultXml => {
+                DataTypeSchemaHeader::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DatagramConnectionTransportDataType_Encoding_DefaultXml => {
+                DatagramConnectionTransportDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DatagramWriterGroupTransportDataType_Encoding_DefaultXml => {
+                DatagramWriterGroupTransportDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DecimalDataType_Encoding_DefaultXml => {
+                DecimalDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DeleteAtTimeDetails_Encoding_DefaultXml => {
+                DeleteAtTimeDetails::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DeleteEventDetails_Encoding_DefaultXml => {
+                DeleteEventDetails::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DeleteMonitoredItemsRequest_Encoding_DefaultXml => {
+                DeleteMonitoredItemsRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DeleteMonitoredItemsResponse_Encoding_DefaultXml => {
+                DeleteMonitoredItemsResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DeleteNodesItem_Encoding_DefaultXml => {
+                DeleteNodesItem::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DeleteNodesRequest_Encoding_DefaultXml => {
+                DeleteNodesRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DeleteNodesResponse_Encoding_DefaultXml => {
+                DeleteNodesResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DeleteRawModifiedDetails_Encoding_DefaultXml => {
+                DeleteRawModifiedDetails::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DeleteReferencesItem_Encoding_DefaultXml => {
+                DeleteReferencesItem::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DeleteReferencesRequest_Encoding_DefaultXml => {
+                DeleteReferencesRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DeleteReferencesResponse_Encoding_DefaultXml => {
+                DeleteReferencesResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DeleteSubscriptionsRequest_Encoding_DefaultXml => {
+                DeleteSubscriptionsRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DeleteSubscriptionsResponse_Encoding_DefaultXml => {
+                DeleteSubscriptionsResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DiscoveryConfiguration_Encoding_DefaultXml => {
+                DiscoveryConfiguration::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::DoubleComplexNumberType_Encoding_DefaultXml => {
+                DoubleComplexNumberType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::EUInformation_Encoding_DefaultXml => {
+                EUInformation::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ElementOperand_Encoding_DefaultXml => {
+                ElementOperand::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::EndpointConfiguration_Encoding_DefaultXml => {
+                EndpointConfiguration::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::EndpointDescription_Encoding_DefaultXml => {
+                EndpointDescription::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::EndpointType_Encoding_DefaultXml => {
+                EndpointType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::EndpointUrlListDataType_Encoding_DefaultXml => {
+                EndpointUrlListDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::EnumDescription_Encoding_DefaultXml => {
+                EnumDescription::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::EnumField_Encoding_DefaultXml => {
+                EnumField::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::EnumValueType_Encoding_DefaultXml => {
+                EnumValueType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::EphemeralKeyType_Encoding_DefaultXml => {
+                EphemeralKeyType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::EventFieldList_Encoding_DefaultXml => {
+                EventFieldList::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::EventFilter_Encoding_DefaultXml => {
+                EventFilter::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::EventFilterResult_Encoding_DefaultXml => {
+                EventFilterResult::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::EventNotificationList_Encoding_DefaultXml => {
+                EventNotificationList::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::FieldMetaData_Encoding_DefaultXml => {
+                FieldMetaData::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::FieldTargetDataType_Encoding_DefaultXml => {
+                FieldTargetDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::FilterOperand_Encoding_DefaultXml => {
+                FilterOperand::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::FindServersOnNetworkRequest_Encoding_DefaultXml => {
+                FindServersOnNetworkRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::FindServersOnNetworkResponse_Encoding_DefaultXml => {
+                FindServersOnNetworkResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::FindServersRequest_Encoding_DefaultXml => {
+                FindServersRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::FindServersResponse_Encoding_DefaultXml => {
+                FindServersResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::Frame_Encoding_DefaultXml => {
+                Frame::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::GenericAttributeValue_Encoding_DefaultXml => {
+                GenericAttributeValue::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::GenericAttributes_Encoding_DefaultXml => {
+                GenericAttributes::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::GetEndpointsRequest_Encoding_DefaultXml => {
+                GetEndpointsRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::GetEndpointsResponse_Encoding_DefaultXml => {
+                GetEndpointsResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::HistoryData_Encoding_DefaultXml => {
+                HistoryData::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::HistoryEvent_Encoding_DefaultXml => {
+                HistoryEvent::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::HistoryEventFieldList_Encoding_DefaultXml => {
+                HistoryEventFieldList::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::HistoryModifiedData_Encoding_DefaultXml => {
+                HistoryModifiedData::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::HistoryReadDetails_Encoding_DefaultXml => {
+                HistoryReadDetails::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::HistoryReadRequest_Encoding_DefaultXml => {
+                HistoryReadRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::HistoryReadResponse_Encoding_DefaultXml => {
+                HistoryReadResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::HistoryReadResult_Encoding_DefaultXml => {
+                HistoryReadResult::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::HistoryReadValueId_Encoding_DefaultXml => {
+                HistoryReadValueId::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::HistoryUpdateDetails_Encoding_DefaultXml => {
+                HistoryUpdateDetails::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::HistoryUpdateRequest_Encoding_DefaultXml => {
+                HistoryUpdateRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::HistoryUpdateResponse_Encoding_DefaultXml => {
+                HistoryUpdateResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::HistoryUpdateResult_Encoding_DefaultXml => {
+                HistoryUpdateResult::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::IdentityMappingRuleType_Encoding_DefaultXml => {
+                IdentityMappingRuleType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::IssuedIdentityToken_Encoding_DefaultXml => {
+                IssuedIdentityToken::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::JsonDataSetReaderMessageDataType_Encoding_DefaultXml => {
+                JsonDataSetReaderMessageDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::JsonDataSetWriterMessageDataType_Encoding_DefaultXml => {
+                JsonDataSetWriterMessageDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::JsonWriterGroupMessageDataType_Encoding_DefaultXml => {
+                JsonWriterGroupMessageDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::KeyValuePair_Encoding_DefaultXml => {
+                KeyValuePair::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::LiteralOperand_Encoding_DefaultXml => {
+                LiteralOperand::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::MdnsDiscoveryConfiguration_Encoding_DefaultXml => {
+                MdnsDiscoveryConfiguration::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::MethodAttributes_Encoding_DefaultXml => {
+                MethodAttributes::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ModelChangeStructureDataType_Encoding_DefaultXml => {
+                ModelChangeStructureDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ModificationInfo_Encoding_DefaultXml => {
+                ModificationInfo::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ModifyMonitoredItemsRequest_Encoding_DefaultXml => {
+                ModifyMonitoredItemsRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ModifyMonitoredItemsResponse_Encoding_DefaultXml => {
+                ModifyMonitoredItemsResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ModifySubscriptionRequest_Encoding_DefaultXml => {
+                ModifySubscriptionRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ModifySubscriptionResponse_Encoding_DefaultXml => {
+                ModifySubscriptionResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::MonitoredItemCreateRequest_Encoding_DefaultXml => {
+                MonitoredItemCreateRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::MonitoredItemCreateResult_Encoding_DefaultXml => {
+                MonitoredItemCreateResult::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::MonitoredItemModifyRequest_Encoding_DefaultXml => {
+                MonitoredItemModifyRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::MonitoredItemModifyResult_Encoding_DefaultXml => {
+                MonitoredItemModifyResult::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::MonitoredItemNotification_Encoding_DefaultXml => {
+                MonitoredItemNotification::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::MonitoringFilter_Encoding_DefaultXml => {
+                MonitoringFilter::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::MonitoringFilterResult_Encoding_DefaultXml => {
+                MonitoringFilterResult::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::MonitoringParameters_Encoding_DefaultXml => {
+                MonitoringParameters::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::NetworkAddressDataType_Encoding_DefaultXml => {
+                NetworkAddressDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::NetworkAddressUrlDataType_Encoding_DefaultXml => {
+                NetworkAddressUrlDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::NetworkGroupDataType_Encoding_DefaultXml => {
+                NetworkGroupDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::NodeAttributes_Encoding_DefaultXml => {
+                NodeAttributes::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::NodeReference_Encoding_DefaultXml => {
+                NodeReference::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::NodeTypeDescription_Encoding_DefaultXml => {
+                NodeTypeDescription::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::NotificationData_Encoding_DefaultXml => {
+                NotificationData::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::NotificationMessage_Encoding_DefaultXml => {
+                NotificationMessage::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ObjectAttributes_Encoding_DefaultXml => {
+                ObjectAttributes::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ObjectTypeAttributes_Encoding_DefaultXml => {
+                ObjectTypeAttributes::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::OpenSecureChannelRequest_Encoding_DefaultXml => {
+                OpenSecureChannelRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::OpenSecureChannelResponse_Encoding_DefaultXml => {
+                OpenSecureChannelResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::OptionSet_Encoding_DefaultXml => {
+                OptionSet::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::Orientation_Encoding_DefaultXml => {
+                Orientation::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ParsingResult_Encoding_DefaultXml => {
+                ParsingResult::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ProgramDiagnostic2DataType_Encoding_DefaultXml => {
+                ProgramDiagnostic2DataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ProgramDiagnosticDataType_Encoding_DefaultXml => {
+                ProgramDiagnosticDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::PubSubConfigurationDataType_Encoding_DefaultXml => {
+                PubSubConfigurationDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::PubSubConnectionDataType_Encoding_DefaultXml => {
+                PubSubConnectionDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::PubSubGroupDataType_Encoding_DefaultXml => {
+                PubSubGroupDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::PublishRequest_Encoding_DefaultXml => {
+                PublishRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::PublishResponse_Encoding_DefaultXml => {
+                PublishResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::PublishedDataItemsDataType_Encoding_DefaultXml => {
+                PublishedDataItemsDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::PublishedDataSetDataType_Encoding_DefaultXml => {
+                PublishedDataSetDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::PublishedDataSetSourceDataType_Encoding_DefaultXml => {
+                PublishedDataSetSourceDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::PublishedEventsDataType_Encoding_DefaultXml => {
+                PublishedEventsDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::PublishedVariableDataType_Encoding_DefaultXml => {
+                PublishedVariableDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::QueryDataDescription_Encoding_DefaultXml => {
+                QueryDataDescription::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::QueryDataSet_Encoding_DefaultXml => {
+                QueryDataSet::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::QueryFirstRequest_Encoding_DefaultXml => {
+                QueryFirstRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::QueryFirstResponse_Encoding_DefaultXml => {
+                QueryFirstResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::QueryNextRequest_Encoding_DefaultXml => {
+                QueryNextRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::QueryNextResponse_Encoding_DefaultXml => {
+                QueryNextResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::Range_Encoding_DefaultXml => {
+                Range::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::RationalNumber_Encoding_DefaultXml => {
+                RationalNumber::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ReadAnnotationDataDetails_Encoding_DefaultXml => {
+                ReadAnnotationDataDetails::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ReadAtTimeDetails_Encoding_DefaultXml => {
+                ReadAtTimeDetails::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ReadEventDetails_Encoding_DefaultXml => {
+                ReadEventDetails::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ReadProcessedDetails_Encoding_DefaultXml => {
+                ReadProcessedDetails::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ReadRawModifiedDetails_Encoding_DefaultXml => {
+                ReadRawModifiedDetails::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ReadRequest_Encoding_DefaultXml => {
+                ReadRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ReadResponse_Encoding_DefaultXml => {
+                ReadResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ReadValueId_Encoding_DefaultXml => {
+                ReadValueId::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ReaderGroupDataType_Encoding_DefaultXml => {
+                ReaderGroupDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ReaderGroupMessageDataType_Encoding_DefaultXml => {
+                ReaderGroupMessageDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ReaderGroupTransportDataType_Encoding_DefaultXml => {
+                ReaderGroupTransportDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::RedundantServerDataType_Encoding_DefaultXml => {
+                RedundantServerDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ReferenceDescription_Encoding_DefaultXml => {
+                ReferenceDescription::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ReferenceTypeAttributes_Encoding_DefaultXml => {
+                ReferenceTypeAttributes::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::RegisterNodesRequest_Encoding_DefaultXml => {
+                RegisterNodesRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::RegisterNodesResponse_Encoding_DefaultXml => {
+                RegisterNodesResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::RegisterServer2Request_Encoding_DefaultXml => {
+                RegisterServer2Request::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::RegisterServer2Response_Encoding_DefaultXml => {
+                RegisterServer2Response::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::RegisterServerRequest_Encoding_DefaultXml => {
+                RegisterServerRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::RegisterServerResponse_Encoding_DefaultXml => {
+                RegisterServerResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::RegisteredServer_Encoding_DefaultXml => {
+                RegisteredServer::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::RelativePath_Encoding_DefaultXml => {
+                RelativePath::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::RelativePathElement_Encoding_DefaultXml => {
+                RelativePathElement::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::RepublishRequest_Encoding_DefaultXml => {
+                RepublishRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::RepublishResponse_Encoding_DefaultXml => {
+                RepublishResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::RolePermissionType_Encoding_DefaultXml => {
+                RolePermissionType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SamplingIntervalDiagnosticsDataType_Encoding_DefaultXml => {
+                SamplingIntervalDiagnosticsDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SemanticChangeStructureDataType_Encoding_DefaultXml => {
+                SemanticChangeStructureDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ServerDiagnosticsSummaryDataType_Encoding_DefaultXml => {
+                ServerDiagnosticsSummaryDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ServerOnNetwork_Encoding_DefaultXml => {
+                ServerOnNetwork::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ServerStatusDataType_Encoding_DefaultXml => {
+                ServerStatusDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ServiceCounterDataType_Encoding_DefaultXml => {
+                ServiceCounterDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ServiceFault_Encoding_DefaultXml => {
+                ServiceFault::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SessionDiagnosticsDataType_Encoding_DefaultXml => {
+                SessionDiagnosticsDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SessionSecurityDiagnosticsDataType_Encoding_DefaultXml => {
+                SessionSecurityDiagnosticsDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SessionlessInvokeRequestType_Encoding_DefaultXml => {
+                SessionlessInvokeRequestType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SessionlessInvokeResponseType_Encoding_DefaultXml => {
+                SessionlessInvokeResponseType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SetMonitoringModeRequest_Encoding_DefaultXml => {
+                SetMonitoringModeRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SetMonitoringModeResponse_Encoding_DefaultXml => {
+                SetMonitoringModeResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SetPublishingModeRequest_Encoding_DefaultXml => {
+                SetPublishingModeRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SetPublishingModeResponse_Encoding_DefaultXml => {
+                SetPublishingModeResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SetTriggeringRequest_Encoding_DefaultXml => {
+                SetTriggeringRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SetTriggeringResponse_Encoding_DefaultXml => {
+                SetTriggeringResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SignatureData_Encoding_DefaultXml => {
+                SignatureData::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SignedSoftwareCertificate_Encoding_DefaultXml => {
+                SignedSoftwareCertificate::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SimpleAttributeOperand_Encoding_DefaultXml => {
+                SimpleAttributeOperand::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SimpleTypeDescription_Encoding_DefaultXml => {
+                SimpleTypeDescription::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::StatusChangeNotification_Encoding_DefaultXml => {
+                StatusChangeNotification::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::StatusResult_Encoding_DefaultXml => {
+                StatusResult::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::StructureDescription_Encoding_DefaultXml => {
+                StructureDescription::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::StructureField_Encoding_DefaultXml => {
+                StructureField::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SubscribedDataSetDataType_Encoding_DefaultXml => {
+                SubscribedDataSetDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SubscribedDataSetMirrorDataType_Encoding_DefaultXml => {
+                SubscribedDataSetMirrorDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SubscriptionAcknowledgement_Encoding_DefaultXml => {
+                SubscriptionAcknowledgement::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::SubscriptionDiagnosticsDataType_Encoding_DefaultXml => {
+                SubscriptionDiagnosticsDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::TargetVariablesDataType_Encoding_DefaultXml => {
+                TargetVariablesDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ThreeDCartesianCoordinates_Encoding_DefaultXml => {
+                ThreeDCartesianCoordinates::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ThreeDFrame_Encoding_DefaultXml => {
+                ThreeDFrame::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ThreeDOrientation_Encoding_DefaultXml => {
+                ThreeDOrientation::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ThreeDVector_Encoding_DefaultXml => {
+                ThreeDVector::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::TimeZoneDataType_Encoding_DefaultXml => {
+                TimeZoneDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::TransferResult_Encoding_DefaultXml => {
+                TransferResult::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::TransferSubscriptionsRequest_Encoding_DefaultXml => {
+                TransferSubscriptionsRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::TransferSubscriptionsResponse_Encoding_DefaultXml => {
+                TransferSubscriptionsResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::TranslateBrowsePathsToNodeIdsRequest_Encoding_DefaultXml => {
+                TranslateBrowsePathsToNodeIdsRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::TranslateBrowsePathsToNodeIdsResponse_Encoding_DefaultXml => {
+                TranslateBrowsePathsToNodeIdsResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::TrustListDataType_Encoding_DefaultXml => {
+                TrustListDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::UABinaryFileDataType_Encoding_DefaultXml => {
+                UABinaryFileDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::UadpDataSetReaderMessageDataType_Encoding_DefaultXml => {
+                UadpDataSetReaderMessageDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::UadpDataSetWriterMessageDataType_Encoding_DefaultXml => {
+                UadpDataSetWriterMessageDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::UadpWriterGroupMessageDataType_Encoding_DefaultXml => {
+                UadpWriterGroupMessageDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::UnregisterNodesRequest_Encoding_DefaultXml => {
+                UnregisterNodesRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::UnregisterNodesResponse_Encoding_DefaultXml => {
+                UnregisterNodesResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::UpdateDataDetails_Encoding_DefaultXml => {
+                UpdateDataDetails::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::UpdateEventDetails_Encoding_DefaultXml => {
+                UpdateEventDetails::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::UpdateStructureDataDetails_Encoding_DefaultXml => {
+                UpdateStructureDataDetails::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::UserIdentityToken_Encoding_DefaultXml => {
+                UserIdentityToken::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::UserNameIdentityToken_Encoding_DefaultXml => {
+                UserNameIdentityToken::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::UserTokenPolicy_Encoding_DefaultXml => {
+                UserTokenPolicy::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::VariableAttributes_Encoding_DefaultXml => {
+                VariableAttributes::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::VariableTypeAttributes_Encoding_DefaultXml => {
+                VariableTypeAttributes::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::Vector_Encoding_DefaultXml => {
+                Vector::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ViewAttributes_Encoding_DefaultXml => {
+                ViewAttributes::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::ViewDescription_Encoding_DefaultXml => {
+                ViewDescription::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::WriteRequest_Encoding_DefaultXml => {
+                WriteRequest::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::WriteResponse_Encoding_DefaultXml => {
+                WriteResponse::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::WriteValue_Encoding_DefaultXml => {
+                WriteValue::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::WriterGroupDataType_Encoding_DefaultXml => {
+                WriterGroupDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::WriterGroupMessageDataType_Encoding_DefaultXml => {
+                WriterGroupMessageDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::WriterGroupTransportDataType_Encoding_DefaultXml => {
+                WriterGroupTransportDataType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::X509IdentityToken_Encoding_DefaultXml => {
+                X509IdentityToken::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            crate::ObjectId::XVType_Encoding_DefaultXml => {
+                XVType::from_xml(body, ctx)
+                    .map(|v| opcua::types::ExtensionObject::from_message_full(
+                        &v,
+                        ctx.ns_map(),
+                    ))
+            }
+            _ => return None,
+        };
+        match r {
+            Ok(r) => {
+                Some(
+                    r
+                        .map_err(|_| {
+                            opcua::types::xml::FromXmlError::from(
+                                format!(
+                                    "Invalid XML type, missing binary encoding ID: {:?}",
+                                    object_id
+                                ),
+                            )
+                        }),
+                )
+            }
+            Err(e) => Some(Err(e)),
+        }
     }
 }

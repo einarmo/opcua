@@ -154,7 +154,7 @@ impl<'a> EventGenerator<'a> {
             let typ = match field.type_id {
                 FieldKind::Object(v) => {
                     let typ = self.types.get(v).unwrap();
-                    let typ_ident = safe_ident(&typ.name).0;
+                    let typ_ident = safe_ident(typ.name).0;
                     syn::parse_str(&format!("{}{}", typ.import_path, typ_ident))?
                 }
                 FieldKind::Variable(v) => {
@@ -166,7 +166,7 @@ impl<'a> EventGenerator<'a> {
 
                         self.get_data_type(data_type_id)?
                     } else {
-                        let typ_ident = safe_ident(&typ.name).0;
+                        let typ_ident = safe_ident(typ.name).0;
                         syn::parse_str(&format!("{}{}", typ.import_path, typ_ident))?
                     }
                 }

@@ -5,6 +5,7 @@
 // OPCUA for Rust
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Einar Omang
+#[allow(unused)]
 mod types {
     pub use crate::generated::types::*;
     pub use ::opcua::types::*;
@@ -14,7 +15,6 @@ mod types {
     identifier = "i=1003",
     namespace = "http://opcfoundation.org/UA/PROFINET/"
 )]
-
 pub struct PnAssetChangedEventType {
     pub base: opcua::nodes::BaseEventType,
     pub own_namespace_index: u16,

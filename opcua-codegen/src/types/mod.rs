@@ -71,8 +71,8 @@ pub fn generate_xml_loader_impl(ids: HashMap<String, String>, namespace: &str) -
         let field_ident = Ident::new(&field, Span::call_site());
         let typ_ident = Ident::new(&typ, Span::call_site());
         fields.extend(quote! {
-            r @ crate::ObjectId::#field_ident => #typ_ident::from_xml(body, ctx)
-                .map(|v| opcua::types::ExtensionObject::from_encodable(r, &v)),
+            crate::ObjectId::#field_ident => #typ_ident::from_xml(body, ctx)
+                .map(|v| opcua::types::ExtensionObject::from_message_full(&v, ctx.ns_map())),
         });
     }
 
@@ -118,10 +118,20 @@ pub fn generate_xml_loader_impl(ids: HashMap<String, String>, namespace: &str) -
                     Ok(i) => i,
                     Err(e) => return Some(Err(e.into()))
                 };
-                Some(match object_id {
+                let r = match object_id {
                     #fields
                     _ => return None,
-                })
+                };
+
+                match r {
+                    Ok(r) => Some(r.map_err(|_| {
+                        opcua::types::xml::FromXmlError::from(format!(
+                            "Invalid XML type, missing binary encoding ID: {:?}",
+                            object_id
+                        ))
+                    })),
+                    Err(e) => Some(Err(e)),
+                }
             }
         }
     }));

@@ -6,8 +6,8 @@ use thiserror::Error;
 
 use crate::{
     Array, ByteString, DataValue, DateTime, ExpandedNodeId, ExtensionObject, Guid, LocalizedText,
-    NodeId, NodeSetNamespaceMapper, QualifiedName, StatusCode, UAString, UninitializedIndex,
-    Variant, VariantScalarTypeId,
+    NamespaceMap, NodeId, NodeSetNamespaceMapper, QualifiedName, StatusCode, UAString,
+    UninitializedIndex, Variant, VariantScalarTypeId,
 };
 
 #[derive(Error, Debug)]
@@ -79,6 +79,10 @@ impl<'a> XmlContext<'a> {
         Err(FromXmlError::Other(format!(
             "No loader defined for type {node_id}"
         )))
+    }
+
+    pub fn ns_map(&self) -> &NamespaceMap {
+        self.namespaces.namespaces()
     }
 }
 
