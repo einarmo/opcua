@@ -98,6 +98,7 @@ pub fn basic_types_import_map() -> HashMap<String, ExternalType> {
 pub fn base_native_type_mappings() -> HashMap<String, String> {
     [
         ("String", "UAString"),
+        ("CharArray", "UAString"),
         ("Boolean", "bool"),
         ("SByte", "i8"),
         ("Byte", "u8"),

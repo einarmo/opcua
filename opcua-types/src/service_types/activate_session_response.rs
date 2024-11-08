@@ -6,9 +6,7 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua {
-    pub use crate as types;
-}
+mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
@@ -42,7 +40,10 @@ impl opcua::types::BinaryEncodable for ActivateSessionResponse {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.response_header.encode(stream)?;
         size += self.server_nonce.encode(stream)?;
@@ -55,30 +56,22 @@ impl opcua::types::BinaryEncodable for ActivateSessionResponse {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header = <opcua::types::response_header::ResponseHeader as opcua::types::BinaryEncodable>::decode(
+        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryEncodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
-        let server_nonce =
-            <opcua::types::byte_string::ByteString as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )
-            .map_err(|e| e.with_request_handle(__request_handle))?;
-        let results = <Option<
-            Vec<opcua::types::status_code::StatusCode>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
-            .map_err(|e| e.with_request_handle(__request_handle))?;
-        let diagnostic_infos = <Option<
-            Vec<opcua::types::diagnostic_info::DiagnosticInfo>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
-            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             response_header,
-            server_nonce,
-            results,
-            diagnostic_infos,
+            server_nonce: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            results: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            diagnostic_infos: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }
 }

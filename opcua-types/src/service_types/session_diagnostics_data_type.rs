@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
+mod opcua { pub use crate as types; }
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
@@ -171,221 +172,164 @@ impl opcua::types::BinaryEncodable for SessionDiagnosticsDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let session_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let session_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let client_description = <super::application_description::ApplicationDescription as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let server_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let endpoint_url = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let locale_ids = <Option<
-            Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let actual_session_timeout = <f64 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let max_response_message_size = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let client_connection_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let client_last_contact_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let current_subscriptions_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let current_monitored_items_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let current_publish_requests_in_queue = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let total_request_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let unauthorized_request_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let read_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let history_read_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let write_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let history_update_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let call_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let create_monitored_items_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let modify_monitored_items_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let set_monitoring_mode_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let set_triggering_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let delete_monitored_items_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let create_subscription_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let modify_subscription_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let set_publishing_mode_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let publish_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let republish_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let transfer_subscriptions_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let delete_subscriptions_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let add_nodes_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let add_references_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let delete_nodes_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let delete_references_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let browse_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let browse_next_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let translate_browse_paths_to_node_ids_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let query_first_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let query_next_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let register_nodes_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let unregister_nodes_count = <super::service_counter_data_type::ServiceCounterDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            session_id,
-            session_name,
-            client_description,
-            server_uri,
-            endpoint_url,
-            locale_ids,
-            actual_session_timeout,
-            max_response_message_size,
-            client_connection_time,
-            client_last_contact_time,
-            current_subscriptions_count,
-            current_monitored_items_count,
-            current_publish_requests_in_queue,
-            total_request_count,
-            unauthorized_request_count,
-            read_count,
-            history_read_count,
-            write_count,
-            history_update_count,
-            call_count,
-            create_monitored_items_count,
-            modify_monitored_items_count,
-            set_monitoring_mode_count,
-            set_triggering_count,
-            delete_monitored_items_count,
-            create_subscription_count,
-            modify_subscription_count,
-            set_publishing_mode_count,
-            publish_count,
-            republish_count,
-            transfer_subscriptions_count,
-            delete_subscriptions_count,
-            add_nodes_count,
-            add_references_count,
-            delete_nodes_count,
-            delete_references_count,
-            browse_count,
-            browse_next_count,
-            translate_browse_paths_to_node_ids_count,
-            query_first_count,
-            query_next_count,
-            register_nodes_count,
-            unregister_nodes_count,
+            session_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            session_name: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            client_description: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            server_uri: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            endpoint_url: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            locale_ids: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            actual_session_timeout: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            max_response_message_size: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            client_connection_time: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            client_last_contact_time: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            current_subscriptions_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            current_monitored_items_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            current_publish_requests_in_queue: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            total_request_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            unauthorized_request_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            read_count: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            history_read_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            write_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            history_update_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            call_count: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            create_monitored_items_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            modify_monitored_items_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            set_monitoring_mode_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            set_triggering_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            delete_monitored_items_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            create_subscription_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            modify_subscription_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            set_publishing_mode_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            publish_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            republish_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            transfer_subscriptions_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            delete_subscriptions_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            add_nodes_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            add_references_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            delete_nodes_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            delete_references_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            browse_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            browse_next_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            translate_browse_paths_to_node_ids_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            query_first_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            query_next_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            register_nodes_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            unregister_nodes_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

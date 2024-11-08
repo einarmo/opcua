@@ -16,11 +16,14 @@ use quote::quote;
 pub use structure::{StructureField, StructureFieldType, StructuredType};
 use syn::{parse_quote, Ident, Item};
 
-use crate::{CodeGenError, TypeCodeGenTarget};
+use crate::{CodeGenError, TypeCodeGenTarget, BASE_NAMESPACE};
 
-pub fn generate_types(target: &TypeCodeGenTarget) -> Result<Vec<GeneratedItem>, CodeGenError> {
+pub fn generate_types(
+    target: &TypeCodeGenTarget,
+    root_path: &str,
+) -> Result<(Vec<GeneratedItem>, String), CodeGenError> {
     println!("Loading types from {}", target.file_path);
-    let data = std::fs::read_to_string(&target.file_path)
+    let data = std::fs::read_to_string(format!("{}/{}", root_path, &target.file_path))
         .map_err(|e| CodeGenError::io(&format!("Failed to read file {}", target.file_path), e))?;
     let type_dictionary = load_bsd_file(&data)?;
     println!(
@@ -37,6 +40,7 @@ pub fn generate_types(target: &TypeCodeGenTarget) -> Result<Vec<GeneratedItem>, 
         base_native_type_mappings(),
         type_dictionary,
     )?;
+    let target_namespace = type_loader.target_namespace();
     let types = type_loader.from_bsd()?;
     println!("Generated code for {} types", types.len());
 
@@ -53,21 +57,40 @@ pub fn generate_types(target: &TypeCodeGenTarget) -> Result<Vec<GeneratedItem>, 
             enums_single_file: target.enums_single_file,
             structs_single_file: target.structs_single_file,
         },
+        target_namespace.clone(),
     );
 
-    generator.generate_types()
+    Ok((generator.generate_types()?, target_namespace))
 }
 
-pub fn generate_xml_loader_impl(ids: HashMap<String, String>) -> Vec<Item> {
+pub fn generate_xml_loader_impl(ids: HashMap<String, String>, namespace: &str) -> Vec<Item> {
+    let mut ids: Vec<_> = ids.into_iter().collect();
+    ids.sort_by(|a, b| a.1.cmp(&b.1));
     let mut fields = quote! {};
     for (field, typ) in ids {
         let field_ident = Ident::new(&field, Span::call_site());
         let typ_ident = Ident::new(&typ, Span::call_site());
         fields.extend(quote! {
-            opcua::types::ObjectId::#field_ident => #typ_ident::from_xml(body, ctx)
-                .map(|v| opcua::types::ExtensionObject::from_message(&v)),
+            crate::ObjectId::#field_ident => #typ_ident::from_xml(body, ctx)
+                .map(|v| opcua::types::ExtensionObject::from_message_full(&v, ctx.ns_map())),
         });
     }
+
+    let index_check = if namespace != BASE_NAMESPACE {
+        quote! {
+            let idx = ctx.namespaces.namespaces().get_index(#namespace)?;
+            if idx != node_id.namespace {
+                return None;
+            }
+        }
+    } else {
+        quote! {
+            if node_id.namespace != 0 {
+                return None;
+            }
+        }
+    };
+
     let mut items = Vec::new();
     items.push(Item::Struct(parse_quote! {
         #[cfg(feature = "xml")]
@@ -77,22 +100,38 @@ pub fn generate_xml_loader_impl(ids: HashMap<String, String>) -> Vec<Item> {
     items.push(Item::Impl(parse_quote! {
         #[cfg(feature = "xml")]
         impl opcua::types::xml::XmlLoader for TypesXmlLoader {
-            fn load_extension_object<'a>(
+            fn load_extension_object(
                 &self,
                 body: &opcua::types::xml::XmlElement,
                 node_id: &opcua::types::NodeId,
-                ctx: &opcua::types::xml::XmlContext<'a>
+                ctx: &opcua::types::xml::XmlContext<'_>
             ) -> Option<Result<opcua::types::ExtensionObject, opcua::types::xml::FromXmlError>> {
                 use opcua::types::xml::FromXml;
 
-                let object_id = match node_id.as_object_id().map_err(|_| "Invalid object ID".to_owned()) {
+                #index_check
+
+                let object_id = match node_id
+                    .as_u32()
+                    .and_then(|v| crate::ObjectId::try_from(v).ok())
+                    .ok_or_else(|| format!("Invalid object ID: {node_id}"))
+                {
                     Ok(i) => i,
                     Err(e) => return Some(Err(e.into()))
                 };
-                Some(match object_id {
+                let r = match object_id {
                     #fields
                     _ => return None,
-                })
+                };
+
+                match r {
+                    Ok(r) => Some(r.map_err(|_| {
+                        opcua::types::xml::FromXmlError::from(format!(
+                            "Invalid XML type, missing binary encoding ID: {:?}",
+                            object_id
+                        ))
+                    })),
+                    Err(e) => Some(Err(e)),
+                }
             }
         }
     }));

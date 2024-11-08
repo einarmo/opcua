@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
+mod opcua { pub use crate as types; }
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
@@ -61,42 +62,29 @@ impl opcua::types::BinaryEncodable for QueryFirstRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header = <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncodable>::decode(
+        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryEncodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
-        let view = <super::view_description::ViewDescription as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )
-            .map_err(|e| e.with_request_handle(__request_handle))?;
-        let node_types = <Option<
-            Vec<super::node_type_description::NodeTypeDescription>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)
-            .map_err(|e| e.with_request_handle(__request_handle))?;
-        let filter = <super::content_filter::ContentFilter as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )
-            .map_err(|e| e.with_request_handle(__request_handle))?;
-        let max_data_sets_to_return = <u32 as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )
-            .map_err(|e| e.with_request_handle(__request_handle))?;
-        let max_references_to_return = <u32 as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )
-            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
-            view,
-            node_types,
-            filter,
-            max_data_sets_to_return,
-            max_references_to_return,
+            view: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            node_types: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            filter: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            max_data_sets_to_return: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            max_references_to_return: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }
 }

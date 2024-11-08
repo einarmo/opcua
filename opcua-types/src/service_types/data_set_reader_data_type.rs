@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
+mod opcua { pub use crate as types; }
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
@@ -95,90 +96,69 @@ impl opcua::types::BinaryEncodable for DataSetReaderDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let enabled = <bool as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let publisher_id = <opcua::types::variant::Variant as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let writer_group_id = <u16 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let data_set_writer_id = <u16 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let data_set_meta_data = <super::data_set_meta_data_type::DataSetMetaDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let data_set_field_content_mask = <super::enums::DataSetFieldContentMask as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let message_receive_timeout = <f64 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let key_frame_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let header_layout_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let security_mode = <super::enums::MessageSecurityMode as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let security_group_id = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let security_key_services = <Option<
-            Vec<super::endpoint_description::EndpointDescription>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let data_set_reader_properties = <Option<
-            Vec<super::key_value_pair::KeyValuePair>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let transport_settings = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let message_settings = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let subscribed_data_set = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            name,
-            enabled,
-            publisher_id,
-            writer_group_id,
-            data_set_writer_id,
-            data_set_meta_data,
-            data_set_field_content_mask,
-            message_receive_timeout,
-            key_frame_count,
-            header_layout_uri,
-            security_mode,
-            security_group_id,
-            security_key_services,
-            data_set_reader_properties,
-            transport_settings,
-            message_settings,
-            subscribed_data_set,
+            name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            enabled: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            publisher_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            writer_group_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            data_set_writer_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            data_set_meta_data: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            data_set_field_content_mask: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            message_receive_timeout: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            key_frame_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            header_layout_uri: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            security_mode: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            security_group_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            security_key_services: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            data_set_reader_properties: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            transport_settings: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            message_settings: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            subscribed_data_set: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

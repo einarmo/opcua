@@ -24,3 +24,6 @@ pub use opcua_server as server;
 pub use opcua_core as core;
 pub use opcua_crypto as crypto;
 pub use opcua_types as types;
+
+#[cfg(feature = "generated-address-space")]
+pub use opcua_core_namespace as core_namespace;

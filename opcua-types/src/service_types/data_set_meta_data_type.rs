@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
+mod opcua { pub use crate as types; }
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
@@ -74,47 +75,34 @@ impl opcua::types::BinaryEncodable for DataSetMetaDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let namespaces = <Option<
-            Vec<opcua::types::string::UAString>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let structure_data_types = <Option<
-            Vec<super::structure_description::StructureDescription>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let enum_data_types = <Option<
-            Vec<super::enum_description::EnumDescription>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let simple_data_types = <Option<
-            Vec<super::simple_type_description::SimpleTypeDescription>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let fields = <Option<
-            Vec<super::field_meta_data::FieldMetaData>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let data_set_class_id = <opcua::types::guid::Guid as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let configuration_version = <super::configuration_version_data_type::ConfigurationVersionDataType as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            namespaces,
-            structure_data_types,
-            enum_data_types,
-            simple_data_types,
-            name,
-            description,
-            fields,
-            data_set_class_id,
-            configuration_version,
+            namespaces: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            structure_data_types: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            enum_data_types: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            simple_data_types: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            description: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            fields: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            data_set_class_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            configuration_version: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

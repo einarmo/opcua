@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
+mod opcua { pub use crate as types; }
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
@@ -55,27 +56,14 @@ impl opcua::types::BinaryEncodable for ChannelSecurityToken {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let channel_id = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let token_id = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let created_at = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let revised_lifetime = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            channel_id,
-            token_id,
-            created_at,
-            revised_lifetime,
+            channel_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            token_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            created_at: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            revised_lifetime: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

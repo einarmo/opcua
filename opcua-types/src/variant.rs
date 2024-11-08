@@ -130,7 +130,7 @@ where
     T: BinaryEncodable + ExpandedMessageInfo,
 {
     fn as_variant(&self, ctx: &EncodingContext) -> Variant {
-        ExtensionObject::from_message_full(self, ctx)
+        ExtensionObject::from_message_full(self, ctx.namespaces())
             .map(|e| e.into())
             .inspect_err(|e| error!("Unable to encode extension object: {e}"))
             .unwrap_or(Variant::Empty)

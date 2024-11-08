@@ -623,13 +623,17 @@ fn make_variable_2188(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 3u32),
-                    description: Default::default(),
-                    name: "Mode".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 3u32),
+                        description: Default::default(),
+                        name: "Mode".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -675,13 +679,17 @@ fn make_variable_2189(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -771,13 +779,17 @@ fn make_variable_2191(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -823,20 +835,28 @@ fn make_variable_2193(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 6u32),
-                    description: Default::default(),
-                    name: "Length".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 6u32),
+                        description: Default::default(),
+                        name: "Length".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -882,13 +902,17 @@ fn make_variable_2194(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 15u32),
-                    description: Default::default(),
-                    name: "Data".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 15u32),
+                        description: Default::default(),
+                        name: "Data".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -934,20 +958,28 @@ fn make_variable_2196(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 15u32),
-                    description: Default::default(),
-                    name: "Data".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 15u32),
+                        description: Default::default(),
+                        name: "Data".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -993,13 +1025,17 @@ fn make_variable_2198(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -1045,13 +1081,17 @@ fn make_variable_2199(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 9u32),
-                    description: Default::default(),
-                    name: "Position".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 9u32),
+                        description: Default::default(),
+                        name: "Position".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -1141,20 +1181,28 @@ fn make_variable_2201(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 9u32),
-                    description: Default::default(),
-                    name: "Position".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 9u32),
+                        description: Default::default(),
+                        name: "Position".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -1244,13 +1292,17 @@ fn make_variable_2204(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "Masks".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "Masks".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -1296,13 +1348,17 @@ fn make_variable_2205(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -1348,13 +1404,17 @@ fn make_variable_2207(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -1400,13 +1460,17 @@ fn make_variable_2208(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 1u32),
-                    description: Default::default(),
-                    name: "ApplyChangesRequired".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 1u32),
+                        description: Default::default(),
+                        name: "ApplyChangesRequired".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -1496,20 +1560,28 @@ fn make_variable_2210(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 15u32),
-                    description: Default::default(),
-                    name: "Certificate".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 1u32),
-                    description: Default::default(),
-                    name: "IsTrustedCertificate".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 15u32),
+                        description: Default::default(),
+                        name: "Certificate".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 1u32),
+                        description: Default::default(),
+                        name: "IsTrustedCertificate".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -1555,20 +1627,28 @@ fn make_variable_2212(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 12u32),
-                    description: Default::default(),
-                    name: "Thumbprint".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 1u32),
-                    description: Default::default(),
-                    name: "IsTrustedCertificate".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 12u32),
+                        description: Default::default(),
+                        name: "Thumbprint".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 1u32),
+                        description: Default::default(),
+                        name: "IsTrustedCertificate".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -1878,13 +1958,17 @@ fn make_variable_2221(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 3u32),
-                    description: Default::default(),
-                    name: "Mode".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 3u32),
+                        description: Default::default(),
+                        name: "Mode".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -1930,13 +2014,17 @@ fn make_variable_2222(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -1982,13 +2070,17 @@ fn make_variable_2224(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -2034,20 +2126,28 @@ fn make_variable_2226(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 6u32),
-                    description: Default::default(),
-                    name: "Length".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 6u32),
+                        description: Default::default(),
+                        name: "Length".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -2093,13 +2193,17 @@ fn make_variable_2227(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 15u32),
-                    description: Default::default(),
-                    name: "Data".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 15u32),
+                        description: Default::default(),
+                        name: "Data".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -2145,20 +2249,28 @@ fn make_variable_2229(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 15u32),
-                    description: Default::default(),
-                    name: "Data".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 15u32),
+                        description: Default::default(),
+                        name: "Data".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -2248,13 +2360,17 @@ fn make_variable_2231(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -2300,13 +2416,17 @@ fn make_variable_2232(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 9u32),
-                    description: Default::default(),
-                    name: "Position".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 9u32),
+                        description: Default::default(),
+                        name: "Position".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -2352,20 +2472,28 @@ fn make_variable_2234(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 9u32),
-                    description: Default::default(),
-                    name: "Position".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 9u32),
+                        description: Default::default(),
+                        name: "Position".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -2455,13 +2583,17 @@ fn make_variable_2237(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "Masks".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "Masks".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -2507,13 +2639,17 @@ fn make_variable_2238(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -2603,13 +2739,17 @@ fn make_variable_2240(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -2655,13 +2795,17 @@ fn make_variable_2241(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 1u32),
-                    description: Default::default(),
-                    name: "ApplyChangesRequired".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 1u32),
+                        description: Default::default(),
+                        name: "ApplyChangesRequired".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -2707,20 +2851,28 @@ fn make_variable_2243(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 15u32),
-                    description: Default::default(),
-                    name: "Certificate".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 1u32),
-                    description: Default::default(),
-                    name: "IsTrustedCertificate".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 15u32),
+                        description: Default::default(),
+                        name: "Certificate".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 1u32),
+                        description: Default::default(),
+                        name: "IsTrustedCertificate".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -2766,20 +2918,28 @@ fn make_variable_2245(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 12u32),
-                    description: Default::default(),
-                    name: "Thumbprint".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 1u32),
-                    description: Default::default(),
-                    name: "IsTrustedCertificate".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 12u32),
+                        description: Default::default(),
+                        name: "Thumbprint".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 1u32),
+                        description: Default::default(),
+                        name: "IsTrustedCertificate".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -3045,13 +3205,17 @@ fn make_variable_2254(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 3u32),
-                    description: Default::default(),
-                    name: "Mode".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 3u32),
+                        description: Default::default(),
+                        name: "Mode".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -3097,13 +3261,17 @@ fn make_variable_2255(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -3149,13 +3317,17 @@ fn make_variable_2257(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -3201,20 +3373,28 @@ fn make_variable_2259(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 6u32),
-                    description: Default::default(),
-                    name: "Length".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 6u32),
+                        description: Default::default(),
+                        name: "Length".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -3364,13 +3544,17 @@ fn make_variable_2260(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 15u32),
-                    description: Default::default(),
-                    name: "Data".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 15u32),
+                        description: Default::default(),
+                        name: "Data".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -3416,20 +3600,28 @@ fn make_variable_2262(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 15u32),
-                    description: Default::default(),
-                    name: "Data".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 15u32),
+                        description: Default::default(),
+                        name: "Data".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -3475,13 +3667,17 @@ fn make_variable_2264(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -3527,13 +3723,17 @@ fn make_variable_2265(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 9u32),
-                    description: Default::default(),
-                    name: "Position".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 9u32),
+                        description: Default::default(),
+                        name: "Position".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -3579,20 +3779,28 @@ fn make_variable_2267(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 9u32),
-                    description: Default::default(),
-                    name: "Position".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 9u32),
+                        description: Default::default(),
+                        name: "Position".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -3726,13 +3934,17 @@ fn make_variable_2270(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "Masks".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "Masks".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -3778,13 +3990,17 @@ fn make_variable_2271(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -3830,13 +4046,17 @@ fn make_variable_2273(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -3882,13 +4102,17 @@ fn make_variable_2274(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 1u32),
-                    description: Default::default(),
-                    name: "ApplyChangesRequired".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 1u32),
+                        description: Default::default(),
+                        name: "ApplyChangesRequired".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -3934,20 +4158,28 @@ fn make_variable_2276(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 15u32),
-                    description: Default::default(),
-                    name: "Certificate".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 1u32),
-                    description: Default::default(),
-                    name: "IsTrustedCertificate".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 15u32),
+                        description: Default::default(),
+                        name: "Certificate".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 1u32),
+                        description: Default::default(),
+                        name: "IsTrustedCertificate".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -3993,20 +4225,28 @@ fn make_variable_2278(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 12u32),
-                    description: Default::default(),
-                    name: "Thumbprint".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 1u32),
-                    description: Default::default(),
-                    name: "IsTrustedCertificate".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 12u32),
+                        description: Default::default(),
+                        name: "Thumbprint".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 1u32),
+                        description: Default::default(),
+                        name: "IsTrustedCertificate".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -4316,13 +4556,17 @@ fn make_variable_2287(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 3u32),
-                    description: Default::default(),
-                    name: "Mode".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 3u32),
+                        description: Default::default(),
+                        name: "Mode".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -4368,13 +4612,17 @@ fn make_variable_2288(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -4464,13 +4712,17 @@ fn make_variable_2290(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -4516,20 +4768,28 @@ fn make_variable_2292(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 6u32),
-                    description: Default::default(),
-                    name: "Length".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 6u32),
+                        description: Default::default(),
+                        name: "Length".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -4575,13 +4835,17 @@ fn make_variable_2293(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 15u32),
-                    description: Default::default(),
-                    name: "Data".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 15u32),
+                        description: Default::default(),
+                        name: "Data".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -4627,20 +4891,28 @@ fn make_variable_2295(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 15u32),
-                    description: Default::default(),
-                    name: "Data".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 15u32),
+                        description: Default::default(),
+                        name: "Data".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -4686,13 +4958,17 @@ fn make_variable_2297(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -4738,13 +5014,17 @@ fn make_variable_2298(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 9u32),
-                    description: Default::default(),
-                    name: "Position".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 9u32),
+                        description: Default::default(),
+                        name: "Position".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -4834,20 +5114,28 @@ fn make_variable_2300(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 9u32),
-                    description: Default::default(),
-                    name: "Position".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 9u32),
+                        description: Default::default(),
+                        name: "Position".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -4937,13 +5225,17 @@ fn make_variable_2303(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "Masks".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "Masks".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -4989,13 +5281,17 @@ fn make_variable_2304(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -5041,13 +5337,17 @@ fn make_variable_2306(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 7u32),
-                    description: Default::default(),
-                    name: "FileHandle".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 7u32),
+                        description: Default::default(),
+                        name: "FileHandle".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -5093,13 +5393,17 @@ fn make_variable_2307(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 1u32),
-                    description: Default::default(),
-                    name: "ApplyChangesRequired".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 1u32),
+                        description: Default::default(),
+                        name: "ApplyChangesRequired".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -5145,20 +5449,28 @@ fn make_variable_2309(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 15u32),
-                    description: Default::default(),
-                    name: "Certificate".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 1u32),
-                    description: Default::default(),
-                    name: "IsTrustedCertificate".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 15u32),
+                        description: Default::default(),
+                        name: "Certificate".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 1u32),
+                        description: Default::default(),
+                        name: "IsTrustedCertificate".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,

@@ -90,7 +90,7 @@ impl NodeSet2Import {
         nodeset: &str,
         dependent_namespaces: Vec<String>,
     ) -> Result<Self, LoadXmlError> {
-        let nodeset = load_nodeset2_file(&nodeset)?;
+        let nodeset = load_nodeset2_file(nodeset)?;
         let nodeset = nodeset
             .node_set
             .ok_or_else(|| LoadXmlError::MissingNodeSet)?;
@@ -126,7 +126,7 @@ impl NodeSet2Import {
     fn select_localized_text(&self, texts: &[ua_node_set::LocalizedText]) -> Option<LocalizedText> {
         let mut selected_str = None;
         for text in texts {
-            if text.locale.0 == "" && selected_str.is_none()
+            if text.locale.0.is_empty() && selected_str.is_none()
                 || text.locale.0 == self.preferred_locale
             {
                 selected_str = Some(text);
@@ -322,7 +322,7 @@ impl NodeSet2Import {
     ) -> Result<ImportedItem, FromXmlError> {
         let base = self.make_base(ctx, &node.base.base, NodeClass::Object)?;
         Ok(ImportedItem {
-            references: self.make_references(&ctx, &base, &node.base.base.references)?,
+            references: self.make_references(ctx, &base, &node.base.base.references)?,
             node: Object::new_full(
                 base,
                 EventNotifier::from_bits_truncate(node.event_notifier.0),
@@ -352,7 +352,7 @@ impl NodeSet2Import {
                         )?))
                     })
                     .transpose()?
-                    .unwrap_or_else(|| DataValue::null()),
+                    .unwrap_or_else(DataValue::null),
                 node.access_level.0,
                 node.user_access_level.0,
                 self.make_array_dimensions(&node.array_dimensions)?,
@@ -437,7 +437,7 @@ impl NodeSet2Import {
                 node.base.is_abstract,
                 node.definition
                     .as_ref()
-                    .map(|v| Ok::<_, FromXmlError>(self.make_data_type_def(v, ctx)?))
+                    .map(|v| self.make_data_type_def(v, ctx))
                     .transpose()?,
             )
             .into(),

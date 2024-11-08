@@ -623,13 +623,17 @@ fn make_variable_1672(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 290u32),
-                    description: Default::default(),
-                    name: "ShelvingTime".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 290u32),
+                        description: Default::default(),
+                        name: "ShelvingTime".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -675,20 +679,28 @@ fn make_variable_1674(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 290u32),
-                    description: Default::default(),
-                    name: "ShelvingTime".into(),
-                    value_rank: -1i32,
-                }),
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 21u32),
-                    description: Default::default(),
-                    name: "Comment".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 290u32),
+                        description: Default::default(),
+                        name: "ShelvingTime".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 21u32),
+                        description: Default::default(),
+                        name: "Comment".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -734,13 +746,17 @@ fn make_variable_1677(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 21u32),
-                    description: Default::default(),
-                    name: "Comment".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 21u32),
+                        description: Default::default(),
+                        name: "Comment".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,
@@ -830,13 +846,17 @@ fn make_variable_1680(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message(&opcua::types::Argument {
-                    array_dimensions: None,
-                    data_type: opcua::types::NodeId::new(0u16, 21u32),
-                    description: Default::default(),
-                    name: "Comment".into(),
-                    value_rank: -1i32,
-                }),
+                opcua::types::ExtensionObject::from_message_full(
+                    &opcua::types::Argument {
+                        array_dimensions: None,
+                        data_type: opcua::types::NodeId::new(0u16, 21u32),
+                        description: Default::default(),
+                        name: "Comment".into(),
+                        value_rank: -1i32,
+                    },
+                    ns_map.namespaces(),
+                )
+                .expect("Invalid encoding ID"),
             ])),
             1u8,
             1u8,

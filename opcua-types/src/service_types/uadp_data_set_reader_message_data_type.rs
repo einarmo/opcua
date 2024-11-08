@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
+mod opcua { pub use crate as types; }
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
@@ -70,52 +71,43 @@ impl opcua::types::BinaryEncodable for UadpDataSetReaderMessageDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let group_version = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let network_message_number = <u16 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let data_set_offset = <u16 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let data_set_class_id = <opcua::types::guid::Guid as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let network_message_content_mask = <super::enums::UadpNetworkMessageContentMask as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let data_set_message_content_mask = <super::enums::UadpDataSetMessageContentMask as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let publishing_interval = <f64 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let receive_offset = <f64 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let processing_offset = <f64 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            group_version,
-            network_message_number,
-            data_set_offset,
-            data_set_class_id,
-            network_message_content_mask,
-            data_set_message_content_mask,
-            publishing_interval,
-            receive_offset,
-            processing_offset,
+            group_version: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            network_message_number: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            data_set_offset: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            data_set_class_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            network_message_content_mask: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            data_set_message_content_mask: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            publishing_interval: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            receive_offset: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            processing_offset: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

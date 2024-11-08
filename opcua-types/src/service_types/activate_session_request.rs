@@ -6,9 +6,7 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua {
-    pub use crate as types;
-}
+mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
@@ -18,8 +16,9 @@ mod opcua {
 pub struct ActivateSessionRequest {
     pub request_header: opcua::types::request_header::RequestHeader,
     pub client_signature: super::signature_data::SignatureData,
-    pub client_software_certificates:
-        Option<Vec<super::signed_software_certificate::SignedSoftwareCertificate>>,
+    pub client_software_certificates: Option<
+        Vec<super::signed_software_certificate::SignedSoftwareCertificate>,
+    >,
     pub locale_ids: Option<Vec<opcua::types::string::UAString>>,
     pub user_identity_token: opcua::types::extension_object::ExtensionObject,
     pub user_token_signature: super::signature_data::SignatureData,
@@ -47,7 +46,10 @@ impl opcua::types::BinaryEncodable for ActivateSessionRequest {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.request_header.encode(stream)?;
         size += self.client_signature.encode(stream)?;
@@ -62,48 +64,35 @@ impl opcua::types::BinaryEncodable for ActivateSessionRequest {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header =
-            <opcua::types::request_header::RequestHeader as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )?;
+        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryEncodable::decode(
+            stream,
+            decoding_options,
+        )?;
         let __request_handle = request_header.request_handle;
-        let client_signature =
-            <super::signature_data::SignatureData as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )
-            .map_err(|e| e.with_request_handle(__request_handle))?;
-        let client_software_certificates = <Option<
-            Vec<super::signed_software_certificate::SignedSoftwareCertificate>,
-        > as opcua::types::BinaryEncodable>::decode(
-            stream, decoding_options
-        )
-        .map_err(|e| e.with_request_handle(__request_handle))?;
-        let locale_ids =
-            <Option<Vec<opcua::types::string::UAString>> as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )
-            .map_err(|e| e.with_request_handle(__request_handle))?;
-        let user_identity_token = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )
-            .map_err(|e| e.with_request_handle(__request_handle))?;
-        let user_token_signature =
-            <super::signature_data::SignatureData as opcua::types::BinaryEncodable>::decode(
-                stream,
-                decoding_options,
-            )
-            .map_err(|e| e.with_request_handle(__request_handle))?;
         Ok(Self {
             request_header,
-            client_signature,
-            client_software_certificates,
-            locale_ids,
-            user_identity_token,
-            user_token_signature,
+            client_signature: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            client_software_certificates: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            locale_ids: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            user_identity_token: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
+            user_token_signature: opcua::types::BinaryEncodable::decode(
+                    stream,
+                    decoding_options,
+                )
+                .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }
 }

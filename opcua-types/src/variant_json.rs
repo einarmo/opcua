@@ -214,7 +214,7 @@ fn parse_f64(value: Value) -> Result<f64, String> {
             let Some(v) = number.as_f64() else {
                 return Err("Invalid float".to_string());
             };
-            Ok(v as f64)
+            Ok(v)
         }
         Value::String(s) => match s.as_str() {
             VALUE_INFINITY => Ok(f64::INFINITY),
@@ -254,7 +254,7 @@ impl<'de> Visitor<'de> for VariantVisitor {
         }
 
         let type_id = VariantScalarTypeId::try_from(v.variant_type).map_err(|_| {
-            de::Error::custom(&format!("Unexpected variant type {}", v.variant_type))
+            de::Error::custom(format!("Unexpected variant type {}", v.variant_type))
         })?;
 
         Ok(match type_id {

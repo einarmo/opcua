@@ -1,0 +1,41 @@
+extra_header: |
+  // OPCUA for Rust
+  // SPDX-License-Identifier: MPL-2.0
+  // Copyright (C) 2017-2024 Einar Omang
+targets:
+  - type: types
+    file_path: schema/Opc.Ua.Pn.Types.bsd
+    output_dir: src/generated/types
+    enums_single_file: true
+    structs_single_file: true
+    extra_header: |
+      #![allow(non_camel_case_types)]
+      #![allow(clippy::upper_case_acronyms)]
+  - type: nodes
+    file_path: schema/Opc.Ua.Pn.NodeSet2.xml
+    output_dir: src/generated/nodeset
+    max_nodes_per_file: 100
+    types:
+      - file_path: schema/Opc.Ua.Pn.Types.xsd
+        root_path: crate::generated::types
+      - file_path: ../../schemas/1.05/Opc.Ua.Types.xsd
+        root_path: opcua::types
+    own_namespaces:
+      - "http://opcfoundation.org/UA/PROFINET/"
+    imported_namespaces:
+      - "http://opcfoundation.org/UA/"
+    name: ProfinetNamespace
+    events:
+      output_dir: src/generated/events
+      dependent_nodesets:
+        - path: ../../schemas/1.05/Opc.Ua.NodeSet2.xml
+          import_path: "opcua::core_namespace::events::"
+      extra_header: |
+        #[allow(unused)]
+        mod types {
+          pub use crate::generated::types::*;
+          pub use ::opcua::types::*;
+        }
+  - type: ids
+    file_path: schema/Opc.Ua.Pn.NodeIds.csv
+    output_file: src/generated/node_ids.rs

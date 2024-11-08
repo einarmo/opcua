@@ -31,6 +31,8 @@ targets:
       extra_header: |
         #[allow(unused)]
         mod opcua { pub use opcua_types as types; pub use opcua_nodes as nodes; pub use opcua_nodes::{Event, EventField}; }
+        #[allow(unused)]
+        use opcua_types as types;
   - type: ids
     file_path: schemas/1.05/NodeIds.csv
     extra_header: |

@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
+mod opcua { pub use crate as types; }
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
@@ -58,28 +59,24 @@ impl opcua::types::BinaryEncodable for TrustListDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let specified_lists = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let trusted_certificates = <Option<
-            Vec<opcua::types::byte_string::ByteString>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let trusted_crls = <Option<
-            Vec<opcua::types::byte_string::ByteString>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let issuer_certificates = <Option<
-            Vec<opcua::types::byte_string::ByteString>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let issuer_crls = <Option<
-            Vec<opcua::types::byte_string::ByteString>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
-            specified_lists,
-            trusted_certificates,
-            trusted_crls,
-            issuer_certificates,
-            issuer_crls,
+            specified_lists: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            trusted_certificates: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            trusted_crls: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            issuer_certificates: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            issuer_crls: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }

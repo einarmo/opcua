@@ -116,7 +116,7 @@ impl<'a> NodeSetCodeGenerator<'a> {
         for f in &def.fields {
             let description = self.get_localized_text(&f.descriptions).render()?;
             let name = &f.name;
-            let data_type = f.data_type.render()?;
+            let data_type = self.resolve_node_id(&f.data_type)?;
             let value_rank = f.value_rank.0;
             let array_dimensions = self
                 .parse_array_dimensions(&f.array_dimensions)?

@@ -2,10 +2,10 @@ use std::collections::HashMap;
 
 use convert_case::{Case, Casing};
 use proc_macro2::{Span, TokenStream};
-use quote::{quote, ToTokens};
-use syn::{parse_quote, Ident, ItemStruct};
+use quote::quote;
+use syn::{parse_quote, Ident, ItemStruct, Path};
 
-use crate::{nodeset::render::split_node_id, CodeGenError};
+use crate::{nodeset::render::split_node_id, utils::safe_ident, CodeGenError};
 
 use super::collector::{CollectedType, FieldKind, TypeKind};
 
@@ -13,6 +13,7 @@ pub struct EventGenerator<'a> {
     types: HashMap<&'a str, CollectedType<'a>>,
     namespaces: &'a [String],
     type_mappings: HashMap<String, String>,
+    nodeset_index: usize,
 }
 
 pub struct EventItem {
@@ -25,21 +26,21 @@ impl<'a> EventGenerator<'a> {
         types: HashMap<&'a str, CollectedType<'a>>,
         namespaces: &'a [String],
         type_mappings: HashMap<String, String>,
+        nodeset_index: usize,
     ) -> Self {
         Self {
             types,
             namespaces,
             type_mappings,
+            nodeset_index,
         }
     }
 
     pub fn render(&self) -> Result<Vec<EventItem>, CodeGenError> {
         let mut collected = HashMap::new();
-        for (ty, _) in self
-            .types
-            .iter()
-            .filter(|t| matches!(t.1.kind, TypeKind::EventType))
-        {
+        for (ty, _) in self.types.iter().filter(|t| {
+            matches!(t.1.kind, TypeKind::EventType) && t.1.nodeset_index == self.nodeset_index
+        }) {
             self.add_type_to_render(ty, &mut collected)?;
         }
 
@@ -80,6 +81,10 @@ impl<'a> EventGenerator<'a> {
 
         let typ = self.types.get(ty).unwrap();
 
+        if typ.nodeset_index != self.nodeset_index {
+            return Ok(());
+        }
+
         collected.insert(ty, typ.clone());
         for field in typ.fields.values() {
             match field.type_id {
@@ -117,7 +122,7 @@ impl<'a> EventGenerator<'a> {
         if data_type_id == "i=24" {
             let ident = Ident::new("Variant", Span::call_site());
             Ok(quote! {
-                opcua::types::#ident
+                types::#ident
             })
         } else if let Some(mapped) = self.type_mappings.get(data_type.name) {
             if mapped == "UAString" {
@@ -133,7 +138,7 @@ impl<'a> EventGenerator<'a> {
         } else {
             let ident = Ident::new(data_type.name, Span::call_site());
             Ok(quote! {
-                opcua::types::#ident
+                types::#ident
             })
         }
     }
@@ -149,7 +154,8 @@ impl<'a> EventGenerator<'a> {
             let typ = match field.type_id {
                 FieldKind::Object(v) => {
                     let typ = self.types.get(v).unwrap();
-                    Ident::new(typ.name, Span::call_site()).into_token_stream()
+                    let typ_ident = safe_ident(typ.name).0;
+                    syn::parse_str(&format!("{}{}", typ.import_path, typ_ident))?
                 }
                 FieldKind::Variable(v) => {
                     let typ = self.types.get(v).unwrap();
@@ -160,7 +166,8 @@ impl<'a> EventGenerator<'a> {
 
                         self.get_data_type(data_type_id)?
                     } else {
-                        Ident::new(typ.name, Span::call_site()).into_token_stream()
+                        let typ_ident = safe_ident(typ.name).0;
+                        syn::parse_str(&format!("{}{}", typ.import_path, typ_ident))?
                     }
                 }
                 FieldKind::Method => {
@@ -170,7 +177,7 @@ impl<'a> EventGenerator<'a> {
                 }
             };
 
-            let name = if field.placeholder {
+            let (name, renamed) = if field.placeholder {
                 // Sanitize placeholder name.
                 let key = format!(
                     "{}s",
@@ -178,9 +185,9 @@ impl<'a> EventGenerator<'a> {
                         .trim_end_matches(">")
                         .to_case(Case::Snake)
                 );
-                Ident::new(&key, Span::call_site())
+                safe_ident(&key)
             } else {
-                Ident::new(&key.to_case(Case::Snake), Span::call_site())
+                safe_ident(&key.to_case(Case::Snake))
             };
 
             if field.placeholder {
@@ -189,6 +196,11 @@ impl<'a> EventGenerator<'a> {
                     pub #name: opcua::types::PlaceholderEventField<#typ>,
                 });
             } else {
+                if renamed {
+                    fields.extend(quote! {
+                        #[opcua(rename = #key)]
+                    });
+                }
                 fields.extend(quote! {
                     pub #name: #typ,
                 });
@@ -203,9 +215,12 @@ impl<'a> EventGenerator<'a> {
         if let Some(parent) = ty.parent {
             if !self.is_simple(parent) {
                 let parent_typ = self.types.get(parent).unwrap();
-                let parent_ident = Ident::new(parent_typ.name, Span::call_site());
+                let parent_ident = safe_ident(parent_typ.name).0;
+                let parent_path: Path =
+                    syn::parse_str(&format!("{}{}", parent_typ.import_path, parent_ident))?;
+
                 fields.extend(quote! {
-                    pub base: #parent_ident,
+                    pub base: #parent_path,
                 });
             }
         }
@@ -234,9 +249,11 @@ impl<'a> EventGenerator<'a> {
         if let Some(parent) = ty.parent {
             if !self.is_simple(parent) {
                 let parent_typ = self.types.get(parent).unwrap();
-                let parent_ident = Ident::new(parent_typ.name, Span::call_site());
+                let parent_ident = safe_ident(parent_typ.name).0;
+                let parent_path: Path =
+                    syn::parse_str(&format!("{}{}", parent_typ.import_path, parent_ident))?;
                 fields.extend(quote! {
-                    pub base: #parent_ident,
+                    pub base: #parent_path,
                 });
                 value_in_parent = true;
             }
@@ -284,9 +301,11 @@ impl<'a> EventGenerator<'a> {
             });
         } else {
             let parent_typ = self.types.get(parent).unwrap();
-            let parent_ident = Ident::new(parent_typ.name, Span::call_site());
+            let parent_ident = safe_ident(parent_typ.name).0;
+            let parent_path: Path =
+                syn::parse_str(&format!("{}{}", parent_typ.import_path, parent_ident))?;
             fields.extend(quote! {
-                pub base: #parent_ident,
+                pub base: #parent_path,
             });
         }
 

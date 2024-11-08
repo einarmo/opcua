@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
+mod opcua { pub use crate as types; }
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
@@ -57,31 +58,18 @@ impl opcua::types::BinaryEncodable for AxisInformation {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let engineering_units = <super::eu_information::EUInformation as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let eu_range = <super::range::Range as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let title = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let axis_scale_type = <super::enums::AxisScaleEnumeration as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let axis_steps = <Option<
-            Vec<f64>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
-            engineering_units,
-            eu_range,
-            title,
-            axis_scale_type,
-            axis_steps,
+            engineering_units: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            eu_range: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            title: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            axis_scale_type: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            axis_steps: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }

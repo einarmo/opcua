@@ -5,7 +5,8 @@
 // OPCUA for Rust
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
-mod opcua { pub use crate as types; }#[allow(non_camel_case_types)]
+mod opcua { pub use crate as types; }
+#[allow(non_camel_case_types, clippy::enum_variant_names)]
 #[derive(Debug, PartialEq, Eq, Copy, Clone, Hash)]
 #[repr(u32)]
 pub enum DataTypeId {
@@ -931,7 +932,7 @@ impl TryFrom<u32> for DataTypeId {
         )
     }
 }
-#[allow(non_camel_case_types)]
+#[allow(non_camel_case_types, clippy::enum_variant_names)]
 #[derive(Debug, PartialEq, Eq, Copy, Clone, Hash)]
 #[repr(u32)]
 pub enum MethodId {
@@ -5423,7 +5424,7 @@ impl TryFrom<u32> for MethodId {
         )
     }
 }
-#[allow(non_camel_case_types)]
+#[allow(non_camel_case_types, clippy::enum_variant_names)]
 #[derive(Debug, PartialEq, Eq, Copy, Clone, Hash)]
 #[repr(u32)]
 pub enum ObjectId {
@@ -8681,7 +8682,7 @@ impl TryFrom<u32> for ObjectId {
         )
     }
 }
-#[allow(non_camel_case_types)]
+#[allow(non_camel_case_types, clippy::enum_variant_names)]
 #[derive(Debug, PartialEq, Eq, Copy, Clone, Hash)]
 #[repr(u32)]
 pub enum ObjectTypeId {
@@ -9241,7 +9242,7 @@ impl TryFrom<u32> for ObjectTypeId {
         )
     }
 }
-#[allow(non_camel_case_types)]
+#[allow(non_camel_case_types, clippy::enum_variant_names)]
 #[derive(Debug, PartialEq, Eq, Copy, Clone, Hash)]
 #[repr(u32)]
 pub enum ReferenceTypeId {
@@ -9419,7 +9420,7 @@ impl TryFrom<u32> for ReferenceTypeId {
         )
     }
 }
-#[allow(non_camel_case_types)]
+#[allow(non_camel_case_types, clippy::enum_variant_names)]
 #[derive(Debug, PartialEq, Eq, Copy, Clone, Hash)]
 #[repr(u32)]
 pub enum VariableId {
@@ -40381,7 +40382,7 @@ impl TryFrom<u32> for VariableId {
         )
     }
 }
-#[allow(non_camel_case_types)]
+#[allow(non_camel_case_types, clippy::enum_variant_names)]
 #[derive(Debug, PartialEq, Eq, Copy, Clone, Hash)]
 #[repr(u32)]
 pub enum VariableTypeId {

@@ -15,7 +15,7 @@ members = [
     "opcua-macros",
     "opcua-xml",
     "opcua-types"
-, "opcua-crypto", "opcua-core", "opcua-client", "opcua-server", "opcua-nodes", "opcua-core-namespace"]
+, "opcua-crypto", "opcua-core", "opcua-client", "opcua-server", "opcua-nodes", "opcua-core-namespace", "samples/custom-codegen"]
 
 [workspace.dependencies]
 async-trait = "0.1.79"

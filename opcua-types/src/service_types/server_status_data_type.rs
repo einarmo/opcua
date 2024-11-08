@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
+mod opcua { pub use crate as types; }
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
@@ -60,37 +61,22 @@ impl opcua::types::BinaryEncodable for ServerStatusDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let start_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let current_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let state = <super::enums::ServerState as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let build_info = <super::build_info::BuildInfo as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let seconds_till_shutdown = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let shutdown_reason = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            start_time,
-            current_time,
-            state,
-            build_info,
-            seconds_till_shutdown,
-            shutdown_reason,
+            start_time: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            current_time: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            state: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            build_info: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            seconds_till_shutdown: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            shutdown_reason: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

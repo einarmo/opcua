@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
+mod opcua { pub use crate as types; }
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
@@ -73,55 +74,47 @@ impl opcua::types::BinaryEncodable for ProgramDiagnosticDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let create_session_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let create_client_name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let invocation_creation_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let last_transition_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let last_method_call = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let last_method_session_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let last_method_input_arguments = <Option<
-            Vec<super::argument::Argument>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let last_method_output_arguments = <Option<
-            Vec<super::argument::Argument>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let last_method_call_time = <opcua::types::date_time::DateTime as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let last_method_return_status = <super::status_result::StatusResult as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            create_session_id,
-            create_client_name,
-            invocation_creation_time,
-            last_transition_time,
-            last_method_call,
-            last_method_session_id,
-            last_method_input_arguments,
-            last_method_output_arguments,
-            last_method_call_time,
-            last_method_return_status,
+            create_session_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            create_client_name: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            invocation_creation_time: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            last_transition_time: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            last_method_call: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            last_method_session_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            last_method_input_arguments: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            last_method_output_arguments: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            last_method_call_time: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            last_method_return_status: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

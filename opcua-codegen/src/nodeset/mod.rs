@@ -38,24 +38,34 @@ pub struct NodeSetCodeGenTarget {
     pub own_namespaces: Vec<String>,
     pub imported_namespaces: Vec<String>,
     pub name: String,
+    #[serde(default)]
     pub extra_header: String,
     pub events: Option<EventsTarget>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
+pub struct DependentNodeset {
+    pub path: String,
+    pub import_path: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct EventsTarget {
     pub output_dir: String,
+    #[serde(default)]
     pub extra_header: String,
+    #[serde(default)]
+    pub dependent_nodesets: Vec<DependentNodeset>,
 }
 
 pub fn make_type_dict(
     target: &NodeSetCodeGenTarget,
+    root_path: &str,
 ) -> Result<HashMap<String, XsdTypeWithPath>, CodeGenError> {
     let mut res = HashMap::new();
     for file in &target.types {
-        let xsd_file = std::fs::read_to_string(&file.file_path).map_err(|e| {
-            CodeGenError::io(&format!("Failed to read file {}", target.file_path), e)
-        })?;
+        let xsd_file = std::fs::read_to_string(format!("{}/{}", root_path, file.file_path))
+            .map_err(|e| CodeGenError::io(&format!("Failed to read file {}", file.file_path), e))?;
         let path: Path = parse_str(&file.root_path)?;
         let xsd_file = load_xsd_schema(&xsd_file)?;
 
@@ -141,8 +151,9 @@ pub fn generate_target(
     config: &NodeSetCodeGenTarget,
     nodes: &UANodeSet,
     preferred_locale: &str,
+    root_path: &str,
 ) -> Result<Vec<NodeSetChunk>, CodeGenError> {
-    let types = make_type_dict(config)?;
+    let types = make_type_dict(config, root_path)?;
 
     let mut generator = NodeSetCodeGenerator::new(preferred_locale, nodes.aliases.as_ref(), types)?;
 

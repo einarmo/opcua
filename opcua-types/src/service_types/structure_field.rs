@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
+mod opcua { pub use crate as types; }
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
@@ -64,41 +65,23 @@ impl opcua::types::BinaryEncodable for StructureField {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let data_type = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let value_rank = <i32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let array_dimensions = <Option<
-            Vec<u32>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let max_string_length = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let is_optional = <bool as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            name,
-            description,
-            data_type,
-            value_rank,
-            array_dimensions,
-            max_string_length,
-            is_optional,
+            name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            description: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            data_type: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            value_rank: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            array_dimensions: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            max_string_length: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            is_optional: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }

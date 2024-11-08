@@ -12,7 +12,7 @@ use std::{
 
 use log::error;
 
-use crate::{EncodingContext, ExpandedMessageInfo};
+use crate::{ExpandedMessageInfo, NamespaceMap};
 
 use super::{
     byte_string::ByteString, encoding::*, node_id::NodeId, node_ids::ObjectId,
@@ -176,7 +176,7 @@ mod json {
                             ExtensionObjectEncoding::XmlElement(s.into())
                         }
                         r => {
-                            return Err(de::Error::custom(&format!(
+                            return Err(de::Error::custom(format!(
                                 "Expected 0, 1, or 2 as ExtensionObject encoding, got {r}"
                             )));
                         }
@@ -341,7 +341,7 @@ impl ExtensionObject {
 
     pub fn from_message_full<T>(
         encodable: &T,
-        ctx: &EncodingContext,
+        ctx: &NamespaceMap,
     ) -> Result<ExtensionObject, StatusCode>
     where
         T: BinaryEncodable + ExpandedMessageInfo,
@@ -356,7 +356,7 @@ impl ExtensionObject {
     #[cfg(feature = "json")]
     pub fn from_json_full<T: serde::Serialize + ExpandedMessageInfo>(
         object: &T,
-        ctx: &EncodingContext,
+        ctx: &crate::EncodingContext,
     ) -> Result<ExtensionObject, serde_json::Error> {
         use serde::de::Error;
 

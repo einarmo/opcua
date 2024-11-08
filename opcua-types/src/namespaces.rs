@@ -1,5 +1,7 @@
 use hashbrown::HashMap;
 
+use crate::{ExpandedNodeId, NodeId};
+
 /// Utility for handling assignment of namespaces on server startup.
 #[derive(Debug, Default, Clone)]
 pub struct NamespaceMap {
@@ -41,6 +43,13 @@ impl NamespaceMap {
 
     pub fn get_index(&self, ns: &str) -> Option<u16> {
         self.known_namespaces.get(ns).copied()
+    }
+
+    pub fn resolve_node_id<'b>(
+        &self,
+        id: &'b ExpandedNodeId,
+    ) -> Option<std::borrow::Cow<'b, NodeId>> {
+        id.try_resolve(self)
     }
 }
 

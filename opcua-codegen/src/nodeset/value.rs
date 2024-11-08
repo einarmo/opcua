@@ -9,11 +9,14 @@ use opcua_xml::schema::{
         SimpleDerivation, TypeDefParticle, XsdFileType,
     },
 };
-use proc_macro2::{Span, TokenStream};
+use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
-use syn::{Ident, Path};
+use syn::Path;
 
-use crate::{utils::RenderExpr, CodeGenError};
+use crate::{
+    utils::{safe_ident, RenderExpr},
+    CodeGenError,
+};
 
 use super::XsdTypeWithPath;
 
@@ -108,13 +111,13 @@ impl<'a> ValueBuilder<'a> {
                 }
             }
             Variant::ByteString(v) => {
-                let cleaned = v.replace('\n', "");
+                let cleaned = v.replace(['\n', ' ', '\t', '\r'], "");
                 quote::quote! {
                     opcua::types::ByteString::from_base64(#cleaned).unwrap()
                 }
             }
             Variant::ListOfByteString(v) => {
-                let cleaned = v.iter().map(|v| v.replace('\n', ""));
+                let cleaned = v.iter().map(|v| v.replace(['\n', ' ', '\t', '\r'], ""));
                 quote::quote! {
                     #(opcua::types::ByteString::from_base64(#cleaned).unwrap()),*
                 }
@@ -270,7 +273,7 @@ impl<'a> ValueBuilder<'a> {
         let content = self.render_extension_object_inner(&body.data)?;
 
         Ok(quote! {
-            opcua::types::ExtensionObject::from_message(&#content)
+            opcua::types::ExtensionObject::from_message_full(&#content, ns_map.namespaces()).expect("Invalid encoding ID")
         })
     }
 
@@ -315,7 +318,7 @@ impl<'a> ValueBuilder<'a> {
     ) -> Result<TokenStream, CodeGenError> {
         match ty {
             TypeRef::Enum(e) => {
-                let ident = Ident::new(e.name, Span::call_site());
+                let (ident, _) = safe_ident(e.name);
                 // An enum must have content
                 let Some(val) = &node.text else {
                     return Err(CodeGenError::Other(format!(
@@ -335,12 +338,13 @@ impl<'a> ValueBuilder<'a> {
                     })
                 } else {
                     // Else it should be on the form Key_0, parse it
-                    let (key, _) = val.split_once("_").ok_or_else(|| {
-                        CodeGenError::Other(format!(
+                    let Some(end) = val.rfind("_") else {
+                        return Err(CodeGenError::Other(format!(
                             "Invalid enum value: {val}, should be on the form Key_0"
-                        ))
-                    })?;
-                    let key_ident = Ident::new(key, Span::call_site());
+                        )));
+                    };
+                    let key = &val[..end];
+                    let (key_ident, _) = safe_ident(key);
                     let path = e.path;
                     Ok(quote! {
                         #path::#ident::#key_ident
@@ -348,16 +352,15 @@ impl<'a> ValueBuilder<'a> {
                 }
             }
             TypeRef::Struct(e) => {
-                let ident = Ident::new(e.name, Span::call_site());
+                let (ident, _) = safe_ident(e.name);
                 let mut fields = quote! {};
                 for (name, field) in &e.fields {
                     let rendered = self.render_field(name, field, node)?;
-                    let snake_name = Ident::new(&name.to_case(Case::Snake), Span::call_site());
+                    let (snake_name, _) = safe_ident(&name.to_case(Case::Snake));
                     fields.extend(quote! {
                         #snake_name: #rendered,
                     })
                 }
-                // TODO: Handle custom types here
                 let path = e.path;
                 Ok(quote! {
                     #path::#ident {
@@ -625,7 +628,7 @@ impl<'a> ValueBuilder<'a> {
                 })
             }
             "base64Binary" => {
-                let cleaned = data.replace('\n', "");
+                let cleaned = data.replace(['\n', ' ', '\t', '\r'], "");
                 Ok(quote! {
                     opcua::types::ByteString::from_base64(#cleaned).unwrap()
                 })

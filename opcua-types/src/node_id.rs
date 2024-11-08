@@ -291,7 +291,7 @@ mod json {
                             serde_json::from_value(value).map_err(de::Error::custom)?,
                         ),
                         Some(r) => {
-                            return Err(de::Error::custom(&format!(
+                            return Err(de::Error::custom(format!(
                                 "Failed to deserialize NodeId, got unexpected IdType {r}"
                             )))
                         }
@@ -701,5 +701,13 @@ impl NodeId {
     /// Test if the node id us a byte string
     pub fn is_byte_string(&self) -> bool {
         matches!(self.identifier, Identifier::ByteString(_))
+    }
+
+    /// Get the numeric value of this node ID if it is numeric.
+    pub fn as_u32(&self) -> Option<u32> {
+        match &self.identifier {
+            Identifier::Numeric(i) => Some(*i),
+            _ => None,
+        }
     }
 }

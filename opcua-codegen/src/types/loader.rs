@@ -84,12 +84,14 @@ impl BsdTypeLoader {
             if let Some(length_field) = field.length_field {
                 fields_to_add.push(StructureField {
                     name: field_name,
+                    original_name: field.name,
                     typ: StructureFieldType::Array(typ),
                 });
                 fields_to_hide.push(to_snake_case(&length_field))
             } else {
                 fields_to_add.push(StructureField {
                     name: field_name,
+                    original_name: field.name,
                     typ: StructureFieldType::Field(typ),
                 });
             }
@@ -148,6 +150,10 @@ impl BsdTypeLoader {
             size: len_bytes,
             default_value: None,
         })
+    }
+
+    pub fn target_namespace(&self) -> String {
+        self.xml.target_namespace.clone()
     }
 
     pub fn from_bsd(mut self) -> Result<Vec<LoadedType>, CodeGenError> {

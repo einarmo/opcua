@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
+mod opcua { pub use crate as types; }
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
@@ -82,71 +83,44 @@ impl opcua::types::BinaryEncodable for VariableAttributes {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let specified_attributes = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let display_name = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let description = <opcua::types::localized_text::LocalizedText as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let write_mask = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let user_write_mask = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let value = <opcua::types::variant::Variant as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let data_type = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let value_rank = <i32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let array_dimensions = <Option<
-            Vec<u32>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let access_level = <u8 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let user_access_level = <u8 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let minimum_sampling_interval = <f64 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let historizing = <bool as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            specified_attributes,
-            display_name,
-            description,
-            write_mask,
-            user_write_mask,
-            value,
-            data_type,
-            value_rank,
-            array_dimensions,
-            access_level,
-            user_access_level,
-            minimum_sampling_interval,
-            historizing,
+            specified_attributes: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            display_name: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            description: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            write_mask: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            user_write_mask: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            value: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            data_type: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            value_rank: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            array_dimensions: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            access_level: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            user_access_level: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            minimum_sampling_interval: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            historizing: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
         })
     }
 }

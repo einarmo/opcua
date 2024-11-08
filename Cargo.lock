@@ -322,6 +322,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "custom-codegen"
+version = "0.1.0"
+dependencies = [
+ "log",
+ "opcua",
+ "serde",
+ "serde_json",
+ "serde_with",
+ "tokio",
+]
+
+[[package]]
 name = "darling"
 version = "0.20.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1001,6 +1013,7 @@ dependencies = [
  "opcua",
  "opcua-client",
  "opcua-core",
+ "opcua-core-namespace",
  "opcua-crypto",
  "opcua-macros",
  "opcua-nodes",

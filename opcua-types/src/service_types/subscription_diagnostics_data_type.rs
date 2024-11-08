@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
+mod opcua { pub use crate as types; }
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
@@ -136,162 +137,125 @@ impl opcua::types::BinaryEncodable for SubscriptionDiagnosticsDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let session_id = <opcua::types::node_id::NodeId as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let subscription_id = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let priority = <u8 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let publishing_interval = <f64 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let max_keep_alive_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let max_lifetime_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let max_notifications_per_publish = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let publishing_enabled = <bool as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let modify_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let enable_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let disable_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let republish_request_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let republish_message_request_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let republish_message_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let transfer_request_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let transferred_to_alt_client_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let transferred_to_same_client_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let publish_request_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let data_change_notifications_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let event_notifications_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let notifications_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let late_publish_request_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let current_keep_alive_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let current_lifetime_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let unacknowledged_message_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let discarded_message_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let monitored_item_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let disabled_monitored_item_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let monitoring_queue_overflow_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let next_sequence_number = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let event_queue_over_flow_count = <u32 as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
         Ok(Self {
-            session_id,
-            subscription_id,
-            priority,
-            publishing_interval,
-            max_keep_alive_count,
-            max_lifetime_count,
-            max_notifications_per_publish,
-            publishing_enabled,
-            modify_count,
-            enable_count,
-            disable_count,
-            republish_request_count,
-            republish_message_request_count,
-            republish_message_count,
-            transfer_request_count,
-            transferred_to_alt_client_count,
-            transferred_to_same_client_count,
-            publish_request_count,
-            data_change_notifications_count,
-            event_notifications_count,
-            notifications_count,
-            late_publish_request_count,
-            current_keep_alive_count,
-            current_lifetime_count,
-            unacknowledged_message_count,
-            discarded_message_count,
-            monitored_item_count,
-            disabled_monitored_item_count,
-            monitoring_queue_overflow_count,
-            next_sequence_number,
-            event_queue_over_flow_count,
+            session_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            subscription_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            priority: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            publishing_interval: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            max_keep_alive_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            max_lifetime_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            max_notifications_per_publish: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            publishing_enabled: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            modify_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            enable_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            disable_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            republish_request_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            republish_message_request_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            republish_message_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            transfer_request_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            transferred_to_alt_client_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            transferred_to_same_client_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            publish_request_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            data_change_notifications_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            event_notifications_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            notifications_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            late_publish_request_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            current_keep_alive_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            current_lifetime_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            unacknowledged_message_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            discarded_message_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            monitored_item_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            disabled_monitored_item_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            monitoring_queue_overflow_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            next_sequence_number: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            event_queue_over_flow_count: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

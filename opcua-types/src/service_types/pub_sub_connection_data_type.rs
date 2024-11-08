@@ -6,7 +6,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock, Einar Omang
 #[allow(unused)]
-mod opcua { pub use crate as types; }#[derive(Debug, Clone, PartialEq)]
+mod opcua { pub use crate as types; }
+#[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
 #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
@@ -70,49 +71,34 @@ impl opcua::types::BinaryEncodable for PubSubConnectionDataType {
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let name = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let enabled = <bool as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let publisher_id = <opcua::types::variant::Variant as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let transport_profile_uri = <opcua::types::string::UAString as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let address = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let connection_properties = <Option<
-            Vec<super::key_value_pair::KeyValuePair>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let transport_settings = <opcua::types::extension_object::ExtensionObject as opcua::types::BinaryEncodable>::decode(
-            stream,
-            decoding_options,
-        )?;
-        let writer_groups = <Option<
-            Vec<super::writer_group_data_type::WriterGroupDataType>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
-        let reader_groups = <Option<
-            Vec<super::reader_group_data_type::ReaderGroupDataType>,
-        > as opcua::types::BinaryEncodable>::decode(stream, decoding_options)?;
         Ok(Self {
-            name,
-            enabled,
-            publisher_id,
-            transport_profile_uri,
-            address,
-            connection_properties,
-            transport_settings,
-            writer_groups,
-            reader_groups,
+            name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            enabled: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            publisher_id: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            transport_profile_uri: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            address: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            connection_properties: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            transport_settings: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            writer_groups: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
+            reader_groups: opcua::types::BinaryEncodable::decode(
+                stream,
+                decoding_options,
+            )?,
         })
     }
 }

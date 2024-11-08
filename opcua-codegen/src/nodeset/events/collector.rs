@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use opcua_xml::schema::ua_node_set::{AliasTable, UANode};
+use opcua_xml::schema::ua_node_set::UANode;
 
 use crate::{nodeset::render::split_qualified_name, CodeGenError};
 
@@ -36,12 +36,13 @@ pub struct CollectedType<'a> {
     /// References to other types, each field of an event should itself be a remote type.
     pub fields: HashMap<&'a str, CollectedField<'a>>,
     pub kind: TypeKind,
+    pub nodeset_index: usize,
+    pub import_path: &'a str,
 }
 
 pub struct TypeCollector<'a> {
-    nodes: HashMap<String, &'a UANode>,
+    nodes: HashMap<String, NodeToCollect<'a>>,
     references: References<'a>,
-    aliases: HashMap<&'a str, &'a str>,
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -58,11 +59,12 @@ pub struct References<'a> {
 }
 
 impl<'a> References<'a> {
-    pub fn new(nodes: impl Iterator<Item = &'a UANode>) -> Self {
+    pub fn new(nodes: impl Iterator<Item = NodeToCollect<'a>>) -> Self {
         let mut by_source: HashMap<_, Vec<_>> = HashMap::new();
         let mut by_target: HashMap<_, Vec<_>> = HashMap::new();
         for node in nodes {
             for rf in node
+                .node
                 .base()
                 .references
                 .as_ref()
@@ -71,14 +73,14 @@ impl<'a> References<'a> {
             {
                 let reference = if rf.is_forward {
                     Reference {
-                        source: &node.base().node_id.0,
+                        source: &node.node.base().node_id.0,
                         target: &rf.node_id.0,
                         type_id: &rf.reference_type.0,
                     }
                 } else {
                     Reference {
                         source: &rf.node_id.0,
-                        target: &node.base().node_id.0,
+                        target: &node.node.base().node_id.0,
                         type_id: &rf.reference_type.0,
                     }
                 };
@@ -101,21 +103,34 @@ impl<'a> References<'a> {
     }
 }
 
-impl<'a> TypeCollector<'a> {
-    pub fn new(nodes: impl Iterator<Item = &'a UANode>, aliases: Option<&'a AliasTable>) -> Self {
-        let nodes_map: HashMap<_, _> = nodes.map(|n| (n.base().node_id.0.to_owned(), n)).collect();
-        let references = References::new(nodes_map.values().copied());
+#[derive(Clone, Copy)]
+pub struct NodeToCollect<'a> {
+    pub node: &'a UANode,
+    pub aliases: &'a HashMap<&'a str, &'a str>,
+    pub nodeset_index: usize,
+    pub import_path: &'a str,
+}
 
-        let aliases = aliases
-            .iter()
-            .flat_map(|a| a.aliases.iter())
-            .map(|v| (v.alias.as_str(), v.id.0.as_str()))
+impl<'a> NodeToCollect<'a> {
+    fn lookup_node_id(&self, key: &'a str) -> &'a str {
+        if let Some(aliased) = self.aliases.get(key) {
+            aliased
+        } else {
+            key
+        }
+    }
+}
+
+impl<'a> TypeCollector<'a> {
+    pub fn new(nodes: impl Iterator<Item = NodeToCollect<'a>>) -> Self {
+        let nodes_map: HashMap<_, _> = nodes
+            .map(|n| (n.node.base().node_id.0.to_owned(), n))
             .collect();
+        let references = References::new(nodes_map.values().copied());
 
         Self {
             nodes: nodes_map,
             references,
-            aliases,
         }
     }
 
@@ -130,15 +145,7 @@ impl<'a> TypeCollector<'a> {
         Ok(result)
     }
 
-    fn lookup_node_id(&self, key: &'a str) -> &'a str {
-        if let Some(aliased) = self.aliases.get(key) {
-            aliased
-        } else {
-            key
-        }
-    }
-
-    fn is_hierarchical_ref_type(&self, ty: &str) -> bool {
+    fn is_hierarchical_ref_type(&self, ty: &str, ctx: NodeToCollect<'a>) -> bool {
         if ty == "i=33" {
             return true;
         }
@@ -146,11 +153,11 @@ impl<'a> TypeCollector<'a> {
             .references
             .by_target
             .get(ty)
-            .and_then(|m| m.iter().find(|f| self.lookup_node_id(f.type_id) == "i=45"))
+            .and_then(|m| m.iter().find(|f| ctx.lookup_node_id(f.type_id) == "i=45"))
         else {
             return false;
         };
-        self.is_hierarchical_ref_type(parent_ref.source)
+        self.is_hierarchical_ref_type(parent_ref.source, ctx)
     }
 
     fn collect_type(
@@ -182,23 +189,23 @@ impl<'a> TypeCollector<'a> {
             .iter()
             .flat_map(|f| f.iter())
         {
-            let rf_type_id = self.lookup_node_id(rf.type_id);
+            let rf_type_id = node.lookup_node_id(rf.type_id);
             match rf_type_id {
                 // HasSubtype
                 "i=45" => {
                     self.collect_type(
                         collected,
-                        self.lookup_node_id(rf.target),
+                        node.lookup_node_id(rf.target),
                         Some(type_id),
                         kind,
                     )?;
                 }
 
-                r if self.is_hierarchical_ref_type(r) => {
+                r if self.is_hierarchical_ref_type(r, *node) => {
                     let mut is_placeholder = false;
                     let mut type_def: Option<&'a str> = None;
                     let mut data_type_id: Option<&'a str> = None;
-                    let target = self.lookup_node_id(rf.target);
+                    let target = node.lookup_node_id(rf.target);
                     for crf in self
                         .references
                         .by_source
@@ -206,16 +213,16 @@ impl<'a> TypeCollector<'a> {
                         .iter()
                         .flat_map(|f| f.iter())
                     {
-                        let crf_type_id = self.lookup_node_id(crf.type_id);
+                        let crf_type_id = node.lookup_node_id(crf.type_id);
                         if crf_type_id == "i=37" {
-                            let ctarget = self.lookup_node_id(crf.target);
+                            let ctarget = node.lookup_node_id(crf.target);
                             // Is the modelling rule equal to OptionalPlaceholder or
                             // MandatoryPlaceholder
                             is_placeholder = matches!(ctarget, "i=11508" | "i=11510");
                         } else if crf_type_id == "i=40" {
-                            let ctarget = self.lookup_node_id(crf.target);
+                            let ctarget = node.lookup_node_id(crf.target);
                             // Type definition
-                            type_def = Some(self.lookup_node_id(ctarget));
+                            type_def = Some(node.lookup_node_id(ctarget));
                         }
                     }
 
@@ -225,7 +232,7 @@ impl<'a> TypeCollector<'a> {
                         )));
                     };
 
-                    let kind = match target_node {
+                    let kind = match &target_node.node {
                         UANode::Object(_) => {
                             let Some(type_def) = type_def else {
                                 return Err(CodeGenError::Other(format!(
@@ -240,7 +247,7 @@ impl<'a> TypeCollector<'a> {
                                     "Property {target} is missing type definition"
                                 )));
                             };
-                            data_type_id = Some(self.lookup_node_id(v.data_type.0.as_str()));
+                            data_type_id = Some(target_node.lookup_node_id(v.data_type.0.as_str()));
                             FieldKind::Variable(type_def)
                         }
                         UANode::Method(_) => FieldKind::Method,
@@ -251,8 +258,11 @@ impl<'a> TypeCollector<'a> {
                         }
                     };
 
+                    let browse_name = target_node.node.base().browse_name.0.as_str();
+                    let (name, _) = split_qualified_name(browse_name)?;
+
                     fields.insert(
-                        target_node.base().browse_name.0.as_str(),
+                        name,
                         CollectedField {
                             placeholder: is_placeholder,
                             type_id: kind,
@@ -265,20 +275,22 @@ impl<'a> TypeCollector<'a> {
             }
         }
 
-        let data_type_id = if let UANode::VariableType(v) = node {
-            Some(self.lookup_node_id(&v.data_type.0))
+        let data_type_id = if let UANode::VariableType(v) = node.node {
+            Some(node.lookup_node_id(&v.data_type.0))
         } else {
             None
         };
 
         collected.insert(
-            node.base().node_id.0.as_str(),
+            node.node.base().node_id.0.as_str(),
             CollectedType {
                 parent,
                 fields,
                 kind,
-                name: split_qualified_name(&node.base().browse_name.0)?.0,
+                name: split_qualified_name(&node.node.base().browse_name.0)?.0,
                 data_type_id,
+                nodeset_index: node.nodeset_index,
+                import_path: node.import_path,
             },
         );
 

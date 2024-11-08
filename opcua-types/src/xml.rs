@@ -6,8 +6,8 @@ use thiserror::Error;
 
 use crate::{
     Array, ByteString, DataValue, DateTime, ExpandedNodeId, ExtensionObject, Guid, LocalizedText,
-    NodeId, NodeSetNamespaceMapper, QualifiedName, StatusCode, UAString, UninitializedIndex,
-    Variant, VariantScalarTypeId,
+    NamespaceMap, NodeId, NodeSetNamespaceMapper, QualifiedName, StatusCode, UAString,
+    UninitializedIndex, Variant, VariantScalarTypeId,
 };
 
 #[derive(Error, Debug)]
@@ -31,10 +31,7 @@ impl From<UninitializedIndex> for FromXmlError {
 macro_rules! from_xml_number {
     ($n:ty) => {
         impl FromXml for $n {
-            fn from_xml<'a>(
-                element: &XmlElement,
-                _ctx: &XmlContext<'a>,
-            ) -> Result<Self, FromXmlError> {
+            fn from_xml(element: &XmlElement, _ctx: &XmlContext<'_>) -> Result<Self, FromXmlError> {
                 let Some(c) = element.text.as_ref() else {
                     return Ok(Self::default());
                 };
@@ -83,12 +80,16 @@ impl<'a> XmlContext<'a> {
             "No loader defined for type {node_id}"
         )))
     }
+
+    pub fn ns_map(&self) -> &NamespaceMap {
+        self.namespaces.namespaces()
+    }
 }
 
 /// `FromXml` is implemented by types that can be loaded from a NodeSet2 XML node.
 pub trait FromXml: Sized {
     /// Attempt to load the type from the given XML node.
-    fn from_xml<'a>(element: &XmlElement, ctx: &XmlContext<'a>) -> Result<Self, FromXmlError>;
+    fn from_xml(element: &XmlElement, ctx: &XmlContext<'_>) -> Result<Self, FromXmlError>;
     /// Get the default value of the field, or fail with a `MissingRequired` error.
     /// Workaround for specialization.
     fn default_or_required(name: &'static str) -> Result<Self, FromXmlError> {
@@ -102,16 +103,16 @@ pub trait XmlLoader {
     /// Try to create an extension object from `body`. If `node_id` is not known,
     /// this should return [`None`], else it should return the result of calling [`FromXml::from_xml`]
     /// for the specified type.
-    fn load_extension_object<'a>(
+    fn load_extension_object(
         &self,
         body: &XmlElement,
         node_id: &NodeId,
-        ctx: &XmlContext<'a>,
+        ctx: &XmlContext<'_>,
     ) -> Option<Result<ExtensionObject, FromXmlError>>;
 }
 
 impl FromXml for UAString {
-    fn from_xml<'a>(element: &XmlElement, _ctx: &XmlContext<'a>) -> Result<Self, FromXmlError> {
+    fn from_xml(element: &XmlElement, _ctx: &XmlContext<'_>) -> Result<Self, FromXmlError> {
         Ok(element.text.clone().into())
     }
 
@@ -121,7 +122,7 @@ impl FromXml for UAString {
 }
 
 impl FromXml for LocalizedText {
-    fn from_xml<'a>(element: &XmlElement, _ctx: &XmlContext<'a>) -> Result<Self, FromXmlError> {
+    fn from_xml(element: &XmlElement, _ctx: &XmlContext<'_>) -> Result<Self, FromXmlError> {
         Ok(LocalizedText::new(
             element.child_content("Locale").unwrap_or("").trim(),
             element.child_content("Text").unwrap_or("").trim(),
@@ -134,7 +135,7 @@ impl FromXml for LocalizedText {
 }
 
 impl FromXml for Guid {
-    fn from_xml<'a>(element: &XmlElement, _ctx: &XmlContext<'a>) -> Result<Self, FromXmlError> {
+    fn from_xml(element: &XmlElement, _ctx: &XmlContext<'_>) -> Result<Self, FromXmlError> {
         if let Some(data) = element.child_content("String") {
             Ok(Guid::from_str(data).map_err(|_| "Failed to parse UUID".to_owned())?)
         } else {
@@ -148,7 +149,7 @@ impl FromXml for Guid {
 }
 
 impl FromXml for NodeId {
-    fn from_xml<'a>(element: &XmlElement, ctx: &XmlContext<'a>) -> Result<Self, FromXmlError> {
+    fn from_xml(element: &XmlElement, ctx: &XmlContext<'_>) -> Result<Self, FromXmlError> {
         let Some(id) = element.child_content("Identifier") else {
             return Ok(NodeId::null());
         };
@@ -171,13 +172,13 @@ impl FromXml for NodeId {
 }
 
 impl FromXml for ExpandedNodeId {
-    fn from_xml<'a>(element: &XmlElement, ctx: &XmlContext<'a>) -> Result<Self, FromXmlError> {
+    fn from_xml(element: &XmlElement, ctx: &XmlContext<'_>) -> Result<Self, FromXmlError> {
         Ok(ExpandedNodeId::new(NodeId::from_xml(element, ctx)?))
     }
 }
 
 impl FromXml for StatusCode {
-    fn from_xml<'a>(element: &XmlElement, ctx: &XmlContext<'a>) -> Result<Self, FromXmlError> {
+    fn from_xml(element: &XmlElement, ctx: &XmlContext<'_>) -> Result<Self, FromXmlError> {
         let code = element
             .first_child_with_name("Code")
             .map(|v| u32::from_xml(v, ctx))
@@ -192,10 +193,10 @@ impl FromXml for StatusCode {
 }
 
 impl FromXml for ExtensionObject {
-    fn from_xml<'a>(element: &XmlElement, ctx: &XmlContext<'a>) -> Result<Self, FromXmlError> {
+    fn from_xml(element: &XmlElement, ctx: &XmlContext<'_>) -> Result<Self, FromXmlError> {
         let type_id = element
             .first_child_with_name("TypeId")
-            .ok_or_else(|| FromXmlError::MissingRequired("TypeId"))?;
+            .ok_or(FromXmlError::MissingRequired("TypeId"))?;
         let type_id = NodeId::from_xml(type_id, ctx)?;
         let body = element
             .first_child_with_name("Body")
@@ -214,12 +215,12 @@ impl FromXml for ExtensionObject {
 }
 
 impl FromXml for DateTime {
-    fn from_xml<'a>(element: &XmlElement, _ctx: &XmlContext<'a>) -> Result<Self, FromXmlError> {
+    fn from_xml(element: &XmlElement, _ctx: &XmlContext<'_>) -> Result<Self, FromXmlError> {
         Ok(DateTime::from_str(
             element
                 .text
                 .as_deref()
-                .ok_or_else(|| FromXmlError::MissingContent("DateTime"))?,
+                .ok_or(FromXmlError::MissingContent("DateTime"))?,
         )
         .map_err(|e| e.to_string())?)
     }
@@ -230,7 +231,7 @@ impl FromXml for DateTime {
 }
 
 impl FromXml for ByteString {
-    fn from_xml<'a>(element: &XmlElement, _ctx: &XmlContext<'a>) -> Result<Self, FromXmlError> {
+    fn from_xml(element: &XmlElement, _ctx: &XmlContext<'_>) -> Result<Self, FromXmlError> {
         let Some(c) = element.text.as_ref() else {
             return Ok(ByteString::null());
         };
@@ -244,7 +245,7 @@ impl FromXml for ByteString {
 }
 
 impl FromXml for QualifiedName {
-    fn from_xml<'a>(element: &XmlElement, ctx: &XmlContext<'a>) -> Result<Self, FromXmlError> {
+    fn from_xml(element: &XmlElement, ctx: &XmlContext<'_>) -> Result<Self, FromXmlError> {
         let index = element.child_content("NamespaceIndex");
         let index = if let Some(index) = index {
             index.parse::<u16>().map_err(|e| e.to_string())?
@@ -262,7 +263,7 @@ impl FromXml for QualifiedName {
 }
 
 impl FromXml for DataValue {
-    fn from_xml<'a>(element: &XmlElement, ctx: &XmlContext<'a>) -> Result<Self, FromXmlError> {
+    fn from_xml(element: &XmlElement, ctx: &XmlContext<'_>) -> Result<Self, FromXmlError> {
         let value = XmlField::get_xml_field(element, "Value", ctx)?;
         let status = XmlField::get_xml_field(element, "StatusCode", ctx)?;
         let source_timestamp = XmlField::get_xml_field(element, "SourceTimestamp", ctx)?;
@@ -296,7 +297,7 @@ fn children_with_name<T: FromXml>(
 }
 
 impl FromXml for Variant {
-    fn from_xml<'a>(element: &XmlElement, ctx: &XmlContext<'a>) -> Result<Self, FromXmlError> {
+    fn from_xml(element: &XmlElement, ctx: &XmlContext<'_>) -> Result<Self, FromXmlError> {
         let Some((_, body)) = element.children.iter().next() else {
             return Ok(Variant::Empty);
         };
@@ -389,7 +390,7 @@ impl<T> FromXml for Box<T>
 where
     T: FromXml,
 {
-    fn from_xml<'a>(element: &XmlElement, ctx: &XmlContext<'a>) -> Result<Self, FromXmlError> {
+    fn from_xml(element: &XmlElement, ctx: &XmlContext<'_>) -> Result<Self, FromXmlError> {
         Ok(Box::new(T::from_xml(element, ctx)?))
     }
 
@@ -402,10 +403,10 @@ where
 /// XML node to extract is one or more fields of a parent node.
 /// It is implemented for `T`, `Vec<T>`, `Option<T>`, and `Option<Vec<T>>`, notably.
 pub trait XmlField: Sized {
-    fn get_xml_field<'a>(
+    fn get_xml_field(
         parent: &XmlElement,
         name: &'static str,
-        ctx: &XmlContext<'a>,
+        ctx: &XmlContext<'_>,
     ) -> Result<Self, FromXmlError>;
 }
 
@@ -413,15 +414,15 @@ impl<T> XmlField for T
 where
     T: FromXml,
 {
-    fn get_xml_field<'a>(
+    fn get_xml_field(
         parent: &XmlElement,
         name: &'static str,
-        ctx: &XmlContext<'a>,
+        ctx: &XmlContext<'_>,
     ) -> Result<Self, FromXmlError> {
         let Some(own) = parent.first_child_with_name(name) else {
             return T::default_or_required(name);
         };
-        Ok(FromXml::from_xml(own, ctx)?)
+        FromXml::from_xml(own, ctx)
     }
 }
 
@@ -429,10 +430,10 @@ impl<T> XmlField for Option<T>
 where
     T: FromXml,
 {
-    fn get_xml_field<'a>(
+    fn get_xml_field(
         parent: &XmlElement,
         name: &'static str,
-        ctx: &XmlContext<'a>,
+        ctx: &XmlContext<'_>,
     ) -> Result<Self, FromXmlError> {
         let Some(own) = parent.first_child_with_name(name) else {
             return Ok(None);
@@ -445,10 +446,10 @@ impl<T> XmlField for Vec<T>
 where
     T: FromXml,
 {
-    fn get_xml_field<'a>(
+    fn get_xml_field(
         parent: &XmlElement,
         name: &'static str,
-        ctx: &XmlContext<'a>,
+        ctx: &XmlContext<'_>,
     ) -> Result<Self, FromXmlError> {
         parent
             .children_with_name(name)
@@ -461,10 +462,10 @@ impl<T> XmlField for Option<Vec<T>>
 where
     T: FromXml,
 {
-    fn get_xml_field<'a>(
+    fn get_xml_field(
         parent: &XmlElement,
         name: &'static str,
-        ctx: &XmlContext<'a>,
+        ctx: &XmlContext<'_>,
     ) -> Result<Self, FromXmlError> {
         let v: Vec<T> = parent
             .children_with_name(name)
@@ -516,10 +517,7 @@ impl Variant {
     /// Create a Variant value from a NodeSet2 variant object.
     /// Note that this is different from the `FromXml` implementation of `Variant`,
     /// which accepts an untyped XML node.
-    pub fn from_nodeset<'a>(
-        val: &XmlVariant,
-        ctx: &XmlContext<'a>,
-    ) -> Result<Variant, FromXmlError> {
+    pub fn from_nodeset(val: &XmlVariant, ctx: &XmlContext<'_>) -> Result<Variant, FromXmlError> {
         Ok(match val {
             XmlVariant::Boolean(v) => (*v).into(),
             XmlVariant::ListOfBoolean(v) => v.into(),
@@ -637,14 +635,14 @@ impl Variant {
                 .collect::<Result<Vec<_>, _>>()?
                 .into(),
             XmlVariant::Variant(variant) => {
-                let inner = Variant::from_nodeset(&*variant, ctx)?;
+                let inner = Variant::from_nodeset(variant, ctx)?;
                 Variant::Variant(Box::new(inner))
             }
             XmlVariant::ListOfVariant(vec) => Variant::Array(Box::new(Array {
                 value_type: VariantScalarTypeId::Variant,
                 values: vec
                     .iter()
-                    .map(|v| Ok(Variant::Variant(Box::new(Variant::from_nodeset(&*v, ctx)?))))
+                    .map(|v| Ok(Variant::Variant(Box::new(Variant::from_nodeset(v, ctx)?))))
                     .collect::<Result<Vec<_>, FromXmlError>>()?,
                 dimensions: None,
             })),
