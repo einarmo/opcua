@@ -15,6 +15,7 @@ use opcua_core::{sync::RwLock, trace_read_lock, trace_write_lock};
 use opcua_nodes::DefaultTypeTree;
 use tokio::{
     net::TcpListener,
+    pin,
     sync::Notify,
     task::{JoinError, JoinHandle},
 };
@@ -35,7 +36,6 @@ use super::{
     authenticator::DefaultAuthenticator,
     builder::ServerBuilder,
     config::ServerConfig,
-    discovery::periodic_discovery_server_registration,
     info::ServerInfo,
     node_manager::{NodeManagers, NodeManagersRef},
     server_handle::ServerHandle,
@@ -250,6 +250,7 @@ impl Server {
         Ok(())
     }
 
+    #[cfg(feature = "discovery-server-registration")]
     async fn run_discovery_server_registration(info: Arc<ServerInfo>) -> Never {
         let registered_server = info.registered_server();
         let Some(discovery_server_url) = info.config.discovery_server_url.as_ref() else {
@@ -257,7 +258,7 @@ impl Server {
                 futures::future::pending::<()>().await;
             }
         };
-        periodic_discovery_server_registration(
+        crate::discovery::periodic_discovery_server_registration(
             discovery_server_url,
             registered_server,
             info.config.pki_dir.clone(),
@@ -301,6 +302,22 @@ impl Server {
 
         let mut connection_counter = 0;
 
+        #[cfg(feature = "discovery-server-registration")]
+        let discovery_fut = Self::run_discovery_server_registration(self.info.clone());
+
+        #[cfg(not(feature = "discovery-server-registration"))]
+        let discovery_fut = futures::future::pending();
+
+        pin!(discovery_fut);
+
+        let subscription_fut =
+            Self::run_subscription_ticks(self.config.subscription_poll_interval_ms, &context);
+        pin!(subscription_fut);
+
+        let session_expiry_fut =
+            Self::run_session_expiry(&self.session_manager, &self.session_notify);
+        pin!(session_expiry_fut);
+
         loop {
             let conn_fut = if self.connections.is_empty() {
                 if self.token.is_cancelled() {
@@ -321,9 +338,9 @@ impl Server {
                         Err(e) => error!("Connection panic! {e}")
                     }
                 }
-                _ = Self::run_subscription_ticks(self.config.subscription_poll_interval_ms, &context) => {}
-                _ = Self::run_discovery_server_registration(self.info.clone()) => {}
-                _ = Self::run_session_expiry(&self.session_manager, &self.session_notify) => {}
+                _ = &mut subscription_fut => {}
+                _ = &mut discovery_fut => {}
+                _ = &mut session_expiry_fut => {}
                 rs = listener.accept() => {
                     match rs {
                         Ok((socket, addr)) => {
