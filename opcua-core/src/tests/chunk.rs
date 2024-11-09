@@ -487,7 +487,7 @@ fn security_policy_symmetric_encrypt_decrypt() {
 
     let mut src2 = vec![0u8; 200];
     let decrypted_len = secure_channel2
-        .symmetric_decrypt_and_verify(&dst, 0..80, 20..100, &mut src2)
+        .symmetric_decrypt_and_verify(&dst, 0..80, 20..100, 0, &mut src2)
         .unwrap();
     // End is at 100 - signature (20) - 1
     assert_eq!(decrypted_len, 79);
