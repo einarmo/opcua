@@ -1995,8 +1995,6 @@ impl Session {
     /// This code attempts to take the existing subscriptions created by a previous session and
     /// either transfer them to this session, or construct them from scratch.
     pub(crate) async fn transfer_subscriptions_from_old_session(&self) {
-        // TODO: This whole thing should probably be optional, so that users can
-        // customize the process.
         let subscription_ids = {
             let subscription_state = trace_lock!(self.subscription_state);
             subscription_state.subscription_ids()

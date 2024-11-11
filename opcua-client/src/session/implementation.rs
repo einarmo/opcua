@@ -64,6 +64,7 @@ pub struct Session {
     pub(super) trigger_publish_tx: tokio::sync::watch::Sender<Instant>,
     decoding_options: DecodingOptions,
     pub(super) should_reconnect: AtomicBool,
+    pub(super) auto_recreate_subscriptions: bool,
 }
 
 impl Session {
@@ -122,6 +123,7 @@ impl Session {
             trigger_publish_tx,
             decoding_options,
             should_reconnect: AtomicBool::new(true),
+            auto_recreate_subscriptions: config.auto_recreate_subscriptions,
         });
 
         (

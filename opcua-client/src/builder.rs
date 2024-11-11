@@ -306,4 +306,15 @@ impl ClientBuilder {
         self.config.channel_lifetime = channel_lifetime;
         self
     }
+
+    /// Automatically recreate subscriptions on reconnect, by first calling
+    /// [`crate::Session::transfer_subscriptions`], then attempting to recreate
+    /// subscriptions if that fails.
+    ///
+    /// Defaults to `true`. Note that if you disable this feature, you will need to
+    /// handle cleanup of the subscriptions in the session yourself.
+    pub fn auto_recreate_subscriptions(mut self, auto_recreate_subscriptions: bool) -> Self {
+        self.config.auto_recreate_subscriptions = auto_recreate_subscriptions;
+        self
+    }
 }
