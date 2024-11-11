@@ -7,7 +7,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use log::{error, info, warn};
+use log::{error, info};
 use opcua_core::{comms::secure_channel::SecureChannel, trace_read_lock, trace_write_lock};
 use opcua_crypto::{random, security_policy::SecurityPolicy, CertificateStore};
 use parking_lot::RwLock;
@@ -271,9 +271,8 @@ pub(crate) async fn close_session(
             handler
                 .delete_session_subscriptions(id, session, token)
                 .await;
-        } else {
-            warn!("Attempted to delete subscriptions for a session without token, this should be impossible");
         }
+        // The token might be None if the session was never activated. No need to delete subscriptions in that case.
     }
 
     Ok(CloseSessionResponse {

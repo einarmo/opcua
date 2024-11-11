@@ -299,6 +299,10 @@ pub struct ClientConfig {
     /// Requested channel lifetime in milliseconds.
     #[serde(default = "defaults::channel_lifetime")]
     pub(crate) channel_lifetime: u32,
+    /// Automatically recreate subscriptions on reconnect, by first calling
+    /// `transfer_subscriptions`, then attempting to recreate subscriptions if that fails.
+    #[serde(default = "defaults::auto_recreate_subscriptions")]
+    pub(crate) auto_recreate_subscriptions: bool,
 }
 
 impl Config for ClientConfig {
@@ -557,6 +561,10 @@ mod defaults {
     pub fn channel_lifetime() -> u32 {
         60_000
     }
+
+    pub fn auto_recreate_subscriptions() -> bool {
+        true
+    }
 }
 
 impl ClientConfig {
@@ -595,6 +603,7 @@ impl ClientConfig {
             session_name: "Rust OPC UA Client".into(),
             max_failed_keep_alive_count: defaults::max_failed_keep_alive_count(),
             channel_lifetime: defaults::channel_lifetime(),
+            auto_recreate_subscriptions: defaults::auto_recreate_subscriptions(),
         }
     }
 }
