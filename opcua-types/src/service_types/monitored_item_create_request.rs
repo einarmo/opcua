@@ -47,21 +47,23 @@ impl opcua::types::BinaryEncodable for MonitoredItemCreateRequest {
         size += self.requested_parameters.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for MonitoredItemCreateRequest {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            item_to_monitor: opcua::types::BinaryEncodable::decode(
+            item_to_monitor: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            monitoring_mode: opcua::types::BinaryEncodable::decode(
+            monitoring_mode: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            requested_parameters: opcua::types::BinaryEncodable::decode(
+            requested_parameters: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

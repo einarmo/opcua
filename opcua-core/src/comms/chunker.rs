@@ -18,7 +18,7 @@ use log::{debug, error, trace};
 use opcua_crypto::SecurityPolicy;
 use opcua_types::{
     encoding::BinaryEncodable, node_id::NodeId, node_ids::ObjectId, status_code::StatusCode,
-    EncodingError,
+    BinaryDecodable, EncodingError,
 };
 
 /// Read implementation for a sequence of message chunks.

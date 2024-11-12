@@ -71,7 +71,9 @@ impl BinaryEncodable for Guid {
         size += process_encode_io_result(stream.write(self.uuid.as_bytes()))?;
         Ok(size)
     }
+}
 
+impl BinaryDecodable for Guid {
     fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         let mut bytes = [0u8; 16];
         process_decode_io_result(stream.read_exact(&mut bytes))?;

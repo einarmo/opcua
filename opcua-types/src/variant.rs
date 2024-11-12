@@ -689,7 +689,9 @@ impl BinaryEncodable for Variant {
         assert_eq!(size, self.byte_len());
         Ok(size)
     }
+}
 
+impl BinaryDecodable for Variant {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let encoding_mask = u8::decode(stream, decoding_options)?;
         let element_encoding_mask = encoding_mask & !EncodingMask::ARRAY_MASK;

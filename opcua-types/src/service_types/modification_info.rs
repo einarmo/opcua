@@ -47,21 +47,23 @@ impl opcua::types::BinaryEncodable for ModificationInfo {
         size += self.user_name.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ModificationInfo {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            modification_time: opcua::types::BinaryEncodable::decode(
+            modification_time: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            update_type: opcua::types::BinaryEncodable::decode(
+            update_type: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            user_name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            user_name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

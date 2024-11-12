@@ -42,12 +42,14 @@ impl opcua::types::BinaryEncodable for RegisterServerResponse {
         size += self.response_header.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for RegisterServerResponse {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryEncodable::decode(
+        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryDecodable::decode(
             stream,
             decoding_options,
         )?;

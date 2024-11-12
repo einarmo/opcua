@@ -45,14 +45,16 @@ impl opcua::types::BinaryEncodable for SemanticChangeStructureDataType {
         size += self.affected_type.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for SemanticChangeStructureDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            affected: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            affected_type: opcua::types::BinaryEncodable::decode(
+            affected: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            affected_type: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

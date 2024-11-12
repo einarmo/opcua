@@ -45,14 +45,16 @@ impl opcua::types::BinaryEncodable for DeleteAtTimeDetails {
         size += self.req_times.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for DeleteAtTimeDetails {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            node_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            req_times: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            node_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            req_times: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

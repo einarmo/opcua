@@ -33,10 +33,6 @@ impl BinaryEncodable for SecurityHeader {
             SecurityHeader::Symmetric(value) => value.encode(stream),
         }
     }
-
-    fn decode<S: Read>(_: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
-        unimplemented!();
-    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -52,7 +48,9 @@ impl BinaryEncodable for SymmetricSecurityHeader {
     fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
         self.token_id.encode(stream)
     }
+}
 
+impl BinaryDecodable for SymmetricSecurityHeader {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let token_id = u32::decode(stream, decoding_options)?;
         Ok(SymmetricSecurityHeader { token_id })
@@ -83,7 +81,9 @@ impl BinaryEncodable for AsymmetricSecurityHeader {
         assert_eq!(size, self.byte_len());
         Ok(size)
     }
+}
 
+impl BinaryDecodable for AsymmetricSecurityHeader {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let security_policy_uri = UAString::decode(stream, decoding_options)?;
         let sender_certificate = ByteString::decode(stream, decoding_options)?;
@@ -166,7 +166,9 @@ impl BinaryEncodable for SequenceHeader {
         size += self.request_id.encode(stream)?;
         Ok(size)
     }
+}
 
+impl BinaryDecodable for SequenceHeader {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let sequence_number = u32::decode(stream, decoding_options)?;
         let request_id = u32::decode(stream, decoding_options)?;

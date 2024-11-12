@@ -36,6 +36,8 @@ impl opcua::types::BinaryEncodable for WriterGroupMessageDataType {
     ) -> opcua::types::EncodingResult<usize> {
         Ok(0)
     }
+}
+impl opcua::types::BinaryDecodable for WriterGroupMessageDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,

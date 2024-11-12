@@ -51,25 +51,27 @@ impl opcua::types::BinaryEncodable for UadpDataSetWriterMessageDataType {
         size += self.data_set_offset.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for UadpDataSetWriterMessageDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            data_set_message_content_mask: opcua::types::BinaryEncodable::decode(
+            data_set_message_content_mask: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            configured_size: opcua::types::BinaryEncodable::decode(
+            configured_size: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            network_message_number: opcua::types::BinaryEncodable::decode(
+            network_message_number: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            data_set_offset: opcua::types::BinaryEncodable::decode(
+            data_set_offset: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

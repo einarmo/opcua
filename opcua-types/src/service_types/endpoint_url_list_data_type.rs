@@ -42,13 +42,15 @@ impl opcua::types::BinaryEncodable for EndpointUrlListDataType {
         size += self.endpoint_url_list.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for EndpointUrlListDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            endpoint_url_list: opcua::types::BinaryEncodable::decode(
+            endpoint_url_list: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

@@ -44,17 +44,19 @@ impl opcua::types::BinaryEncodable for IdentityMappingRuleType {
         size += self.criteria.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for IdentityMappingRuleType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            criteria_type: opcua::types::BinaryEncodable::decode(
+            criteria_type: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            criteria: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            criteria: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

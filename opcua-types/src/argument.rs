@@ -61,7 +61,9 @@ impl BinaryEncodable for Argument {
         size += self.description.encode(stream)?;
         Ok(size)
     }
+}
 
+impl BinaryDecodable for Argument {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let name = UAString::decode(stream, decoding_options)?;
         let data_type = NodeId::decode(stream, decoding_options)?;

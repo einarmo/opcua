@@ -45,17 +45,19 @@ impl opcua::types::BinaryEncodable for HistoryModifiedData {
         size += self.modification_infos.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for HistoryModifiedData {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            data_values: opcua::types::BinaryEncodable::decode(
+            data_values: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            modification_infos: opcua::types::BinaryEncodable::decode(
+            modification_infos: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

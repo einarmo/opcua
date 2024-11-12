@@ -42,13 +42,15 @@ impl opcua::types::BinaryEncodable for HistoryUpdateDetails {
         size += self.node_id.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for HistoryUpdateDetails {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            node_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            node_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

@@ -45,17 +45,19 @@ impl opcua::types::BinaryEncodable for GenericAttributeValue {
         size += self.value.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for GenericAttributeValue {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            attribute_id: opcua::types::BinaryEncodable::decode(
+            attribute_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            value: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            value: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

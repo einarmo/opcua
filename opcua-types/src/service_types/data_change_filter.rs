@@ -47,18 +47,20 @@ impl opcua::types::BinaryEncodable for DataChangeFilter {
         size += self.deadband_value.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for DataChangeFilter {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            trigger: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            deadband_type: opcua::types::BinaryEncodable::decode(
+            trigger: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            deadband_type: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            deadband_value: opcua::types::BinaryEncodable::decode(
+            deadband_value: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

@@ -47,18 +47,20 @@ impl opcua::types::BinaryEncodable for RedundantServerDataType {
         size += self.server_state.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for RedundantServerDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            server_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            service_level: opcua::types::BinaryEncodable::decode(
+            server_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            service_level: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            server_state: opcua::types::BinaryEncodable::decode(
+            server_state: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

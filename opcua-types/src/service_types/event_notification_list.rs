@@ -42,13 +42,15 @@ impl opcua::types::BinaryEncodable for EventNotificationList {
         size += self.events.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for EventNotificationList {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            events: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            events: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

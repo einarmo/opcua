@@ -186,7 +186,9 @@ impl BinaryEncodable for DiagnosticInfo {
         }
         Ok(size)
     }
+}
 
+impl BinaryDecodable for DiagnosticInfo {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let encoding_mask =
             DiagnosticInfoMask::from_bits_truncate(u8::decode(stream, decoding_options)?);

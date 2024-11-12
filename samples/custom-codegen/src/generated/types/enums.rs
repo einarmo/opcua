@@ -99,6 +99,8 @@ impl opcua::types::BinaryEncodable for IMTagSelectorEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for IMTagSelectorEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
@@ -196,6 +198,8 @@ impl opcua::types::BinaryEncodable for PnARStateEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for PnARStateEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
@@ -291,6 +295,8 @@ impl opcua::types::BinaryEncodable for PnARTypeEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for PnARTypeEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
@@ -391,6 +397,8 @@ impl opcua::types::BinaryEncodable for PnAssetChangeEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for PnAssetChangeEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
@@ -493,6 +501,8 @@ impl opcua::types::BinaryEncodable for PnAssetTypeEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for PnAssetTypeEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
@@ -591,6 +601,8 @@ impl opcua::types::BinaryEncodable for PnChannelAccumulativeEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for PnChannelAccumulativeEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
@@ -693,6 +705,8 @@ impl opcua::types::BinaryEncodable for PnChannelDirectionEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for PnChannelDirectionEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
@@ -795,6 +809,8 @@ impl opcua::types::BinaryEncodable for PnChannelMaintenanceEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for PnChannelMaintenanceEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
@@ -897,6 +913,8 @@ impl opcua::types::BinaryEncodable for PnChannelSpecifierEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for PnChannelSpecifierEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
@@ -1007,6 +1025,8 @@ impl opcua::types::BinaryEncodable for PnChannelTypeEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for PnChannelTypeEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
@@ -1109,6 +1129,8 @@ impl opcua::types::BinaryEncodable for PnDeviceStateEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for PnDeviceStateEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
@@ -1217,6 +1239,8 @@ impl opcua::types::BinaryEncodable for PnLinkStateEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for PnLinkStateEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
@@ -1321,6 +1345,8 @@ impl opcua::types::BinaryEncodable for PnModuleStateEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for PnModuleStateEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
@@ -1429,6 +1455,8 @@ impl opcua::types::BinaryEncodable for PnPortStateEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for PnPortStateEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
@@ -1527,6 +1555,8 @@ impl opcua::types::BinaryEncodable for PnSubmoduleAddInfoEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for PnSubmoduleAddInfoEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
@@ -1631,6 +1661,8 @@ impl opcua::types::BinaryEncodable for PnSubmoduleARInfoEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for PnSubmoduleARInfoEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
@@ -1733,6 +1765,8 @@ impl opcua::types::BinaryEncodable for PnSubmoduleIdentInfoEnumeration {
     fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
+}
+impl opcua::types::BinaryDecodable for PnSubmoduleIdentInfoEnumeration {
     fn decode<S: std::io::Read>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,

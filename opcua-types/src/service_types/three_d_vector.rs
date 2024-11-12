@@ -48,15 +48,17 @@ impl opcua::types::BinaryEncodable for ThreeDVector {
         size += self.z.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ThreeDVector {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            x: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            y: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            z: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            x: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            y: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            z: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

@@ -45,14 +45,16 @@ impl opcua::types::BinaryEncodable for X509IdentityToken {
         size += self.certificate_data.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for X509IdentityToken {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            policy_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            certificate_data: opcua::types::BinaryEncodable::decode(
+            policy_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            certificate_data: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

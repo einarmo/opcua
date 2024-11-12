@@ -70,7 +70,9 @@ impl BinaryEncodable for DateTime {
         let ticks = self.checked_ticks();
         write_i64(stream, ticks)
     }
+}
 
+impl BinaryDecodable for DateTime {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let ticks = read_i64(stream)?;
         let date_time = DateTime::from(ticks);

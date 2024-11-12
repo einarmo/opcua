@@ -5,6 +5,7 @@
 //! Contains the implementation of `ExtensionObject`.
 
 use std::{
+    any::Any,
     error::Error,
     fmt,
     io::{Cursor, Read, Write},
@@ -25,6 +26,19 @@ pub struct ExtensionObjectError;
 impl fmt::Display for ExtensionObjectError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "ExtensionObjectError")
+    }
+}
+
+pub trait DynEncodable: Any {
+    fn encode(&self, stream: &mut dyn std::io::Write) -> EncodingResult<usize>;
+}
+
+impl<T> DynEncodable for T
+where
+    T: BinaryEncodable + Any,
+{
+    fn encode(&self, stream: &mut dyn std::io::Write) -> EncodingResult<usize> {
+        BinaryEncodable::encode(&self, stream)
     }
 }
 
@@ -255,7 +269,8 @@ impl BinaryEncodable for ExtensionObject {
         assert_eq!(size, self.byte_len());
         Ok(size)
     }
-
+}
+impl BinaryDecodable for ExtensionObject {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         // Extension object is depth checked to prevent deep recursion
         let _depth_lock = decoding_options.depth_lock()?;
@@ -376,7 +391,7 @@ impl ExtensionObject {
     /// the data. Errors result in a decoding error.
     pub fn decode_inner<T>(&self, decoding_options: &DecodingOptions) -> EncodingResult<T>
     where
-        T: BinaryEncodable,
+        T: BinaryDecodable,
     {
         match self.body {
             ExtensionObjectEncoding::ByteString(ref byte_string) => {

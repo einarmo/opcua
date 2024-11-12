@@ -54,23 +54,25 @@ impl opcua::types::BinaryEncodable for ReadRawModifiedDetails {
         size += self.return_bounds.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ReadRawModifiedDetails {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            is_read_modified: opcua::types::BinaryEncodable::decode(
+            is_read_modified: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            start_time: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            end_time: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            num_values_per_node: opcua::types::BinaryEncodable::decode(
+            start_time: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            end_time: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            num_values_per_node: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            return_bounds: opcua::types::BinaryEncodable::decode(
+            return_bounds: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

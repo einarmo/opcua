@@ -10,7 +10,7 @@ use std::io::{Cursor, Read, Write};
 use log::{error, trace};
 use opcua_types::{
     process_decode_io_result, process_encode_io_result, read_u32, read_u8, status_code::StatusCode,
-    write_u32, write_u8, BinaryEncodable, DecodingOptions, EncodingResult,
+    write_u32, write_u8, BinaryDecodable, BinaryEncodable, DecodingOptions, EncodingResult,
 };
 
 use super::{
@@ -89,7 +89,9 @@ impl BinaryEncodable for MessageChunkHeader {
         assert_eq!(size, self.byte_len());
         Ok(size)
     }
+}
 
+impl BinaryDecodable for MessageChunkHeader {
     fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         let mut message_type_code = [0u8; 3];
         process_decode_io_result(stream.read_exact(&mut message_type_code))?;
@@ -149,7 +151,9 @@ impl BinaryEncodable for MessageChunk {
             StatusCode::BadEncodingError.into()
         })
     }
+}
 
+impl BinaryDecodable for MessageChunk {
     fn decode<S: Read>(
         in_stream: &mut S,
         decoding_options: &DecodingOptions,

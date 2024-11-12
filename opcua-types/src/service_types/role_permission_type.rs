@@ -45,14 +45,16 @@ impl opcua::types::BinaryEncodable for RolePermissionType {
         size += self.permissions.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for RolePermissionType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            role_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            permissions: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            role_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            permissions: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

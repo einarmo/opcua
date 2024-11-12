@@ -48,15 +48,17 @@ impl opcua::types::BinaryEncodable for ViewDescription {
         size += self.view_version.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ViewDescription {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            view_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            timestamp: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            view_version: opcua::types::BinaryEncodable::decode(
+            view_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            timestamp: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            view_version: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

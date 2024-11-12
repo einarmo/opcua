@@ -48,15 +48,17 @@ impl opcua::types::BinaryEncodable for Annotation {
         size += self.annotation_time.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for Annotation {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            message: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            user_name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            annotation_time: opcua::types::BinaryEncodable::decode(
+            message: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            user_name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            annotation_time: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

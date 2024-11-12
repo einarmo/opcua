@@ -56,7 +56,9 @@ impl BinaryEncodable for ResponseHeader {
         assert_eq!(size, self.byte_len());
         Ok(size)
     }
+}
 
+impl BinaryDecodable for ResponseHeader {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let timestamp = UtcTime::decode(stream, decoding_options)?;
         let request_handle = IntegerId::decode(stream, decoding_options)?;

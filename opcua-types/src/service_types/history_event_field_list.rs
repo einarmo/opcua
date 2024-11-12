@@ -42,13 +42,15 @@ impl opcua::types::BinaryEncodable for HistoryEventFieldList {
         size += self.event_fields.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for HistoryEventFieldList {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            event_fields: opcua::types::BinaryEncodable::decode(
+            event_fields: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

@@ -32,7 +32,9 @@ impl BinaryEncodable for bool {
         // 0, or 1 for true or false, single byte
         write_u8(stream, if *self { 1 } else { 0 })
     }
+}
 
+impl BinaryDecodable for bool {
     fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         Ok(read_u8(stream)? == 1)
     }
@@ -46,7 +48,9 @@ impl BinaryEncodable for i8 {
     fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_u8(stream, *self as u8)
     }
+}
 
+impl BinaryDecodable for i8 {
     fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         Ok(read_u8(stream)? as i8)
     }
@@ -61,7 +65,9 @@ impl BinaryEncodable for u8 {
     fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_u8(stream, *self)
     }
+}
 
+impl BinaryDecodable for u8 {
     fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         read_u8(stream)
     }
@@ -76,7 +82,9 @@ impl BinaryEncodable for i16 {
     fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_i16(stream, *self)
     }
+}
 
+impl BinaryDecodable for i16 {
     fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         read_i16(stream)
     }
@@ -91,7 +99,9 @@ impl BinaryEncodable for u16 {
     fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_u16(stream, *self)
     }
+}
 
+impl BinaryDecodable for u16 {
     fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         read_u16(stream)
     }
@@ -106,7 +116,9 @@ impl BinaryEncodable for i32 {
     fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_i32(stream, *self)
     }
+}
 
+impl BinaryDecodable for i32 {
     fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         read_i32(stream)
     }
@@ -121,7 +133,8 @@ impl BinaryEncodable for u32 {
     fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_u32(stream, *self)
     }
-
+}
+impl BinaryDecodable for u32 {
     fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         read_u32(stream)
     }
@@ -136,7 +149,9 @@ impl BinaryEncodable for i64 {
     fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_i64(stream, *self)
     }
+}
 
+impl BinaryDecodable for i64 {
     fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         read_i64(stream)
     }
@@ -151,7 +166,9 @@ impl BinaryEncodable for u64 {
     fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_u64(stream, *self)
     }
+}
 
+impl BinaryDecodable for u64 {
     fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         read_u64(stream)
     }
@@ -166,7 +183,9 @@ impl BinaryEncodable for f32 {
     fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_f32(stream, *self)
     }
+}
 
+impl BinaryDecodable for f32 {
     fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         read_f32(stream)
     }
@@ -181,7 +200,9 @@ impl BinaryEncodable for f64 {
     fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_f64(stream, *self)
     }
+}
 
+impl BinaryDecodable for f64 {
     fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         read_f64(stream)
     }

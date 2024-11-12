@@ -36,6 +36,8 @@ impl opcua::types::BinaryEncodable for SubscribedDataSetDataType {
     ) -> opcua::types::EncodingResult<usize> {
         Ok(0)
     }
+}
+impl opcua::types::BinaryDecodable for SubscribedDataSetDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,

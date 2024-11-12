@@ -42,13 +42,15 @@ impl opcua::types::BinaryEncodable for AdditionalParametersType {
         size += self.parameters.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for AdditionalParametersType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            parameters: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            parameters: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

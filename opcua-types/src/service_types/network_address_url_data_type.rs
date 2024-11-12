@@ -45,17 +45,19 @@ impl opcua::types::BinaryEncodable for NetworkAddressUrlDataType {
         size += self.url.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for NetworkAddressUrlDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            network_interface: opcua::types::BinaryEncodable::decode(
+            network_interface: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            url: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            url: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

@@ -369,7 +369,9 @@ impl BinaryEncodable for NodeId {
         assert_eq!(size, self.byte_len());
         Ok(size)
     }
+}
 
+impl BinaryDecodable for NodeId {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let identifier = read_u8(stream)?;
         let node_id = match identifier {

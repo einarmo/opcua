@@ -133,7 +133,9 @@ impl BinaryEncodable for RequestHeader {
         size += self.additional_header.encode(stream)?;
         Ok(size)
     }
+}
 
+impl BinaryDecodable for RequestHeader {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let authentication_token = NodeId::decode(stream, decoding_options)?;
         let timestamp = UtcTime::decode(stream, decoding_options)?;

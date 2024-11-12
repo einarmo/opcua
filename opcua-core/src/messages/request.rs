@@ -30,11 +30,6 @@ macro_rules! request_enum {
                     $( Self::$name(value) => value.encode(stream), )*
                 }
             }
-
-            fn decode<S: Read>(_: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
-                // THIS WILL NOT DO ANYTHING
-                panic!("Cannot decode a stream to a request message");
-            }
         }
 
         impl RequestMessage {

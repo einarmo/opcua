@@ -69,7 +69,9 @@ impl BinaryEncodable for MessageHeader {
         size += write_u32(stream, self.message_size)?;
         Ok(size)
     }
+}
 
+impl BinaryDecodable for MessageHeader {
     fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         let mut message_type = [0u8; 4];
         process_decode_io_result(stream.read_exact(&mut message_type))?;
@@ -200,7 +202,9 @@ impl BinaryEncodable for HelloMessage {
         size += self.endpoint_url.encode(stream)?;
         Ok(size)
     }
+}
 
+impl BinaryDecodable for HelloMessage {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let message_header = MessageHeader::decode(stream, decoding_options)?;
         let protocol_version = u32::decode(stream, decoding_options)?;
@@ -306,7 +310,9 @@ impl BinaryEncodable for AcknowledgeMessage {
         size += self.max_chunk_count.encode(stream)?;
         Ok(size)
     }
+}
 
+impl BinaryDecodable for AcknowledgeMessage {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let message_header = MessageHeader::decode(stream, decoding_options)?;
         let protocol_version = u32::decode(stream, decoding_options)?;
@@ -366,7 +372,9 @@ impl BinaryEncodable for ErrorMessage {
         size += self.reason.encode(stream)?;
         Ok(size)
     }
+}
 
+impl BinaryDecodable for ErrorMessage {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let message_header = MessageHeader::decode(stream, decoding_options)?;
         let error = u32::decode(stream, decoding_options)?;
@@ -400,7 +408,7 @@ mod tests {
     use std::io::Cursor;
 
     use crate::comms::tcp_types::{
-        AcknowledgeMessage, BinaryEncodable, HelloMessage, MessageHeader, MessageType,
+        AcknowledgeMessage, BinaryDecodable, HelloMessage, MessageHeader, MessageType,
     };
     use opcua_types::{
         ApplicationDescription, ByteString, DecodingOptions, EndpointDescription,

@@ -45,17 +45,19 @@ impl opcua::types::BinaryEncodable for BrowsePathResult {
         size += self.targets.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for BrowsePathResult {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            status_code: opcua::types::BinaryEncodable::decode(
+            status_code: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            targets: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            targets: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

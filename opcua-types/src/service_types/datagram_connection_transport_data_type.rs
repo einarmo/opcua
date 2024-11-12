@@ -42,13 +42,15 @@ impl opcua::types::BinaryEncodable for DatagramConnectionTransportDataType {
         size += self.discovery_address.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for DatagramConnectionTransportDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            discovery_address: opcua::types::BinaryEncodable::decode(
+            discovery_address: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

@@ -101,7 +101,9 @@ impl BinaryEncodable for LocalizedText {
         }
         Ok(size)
     }
+}
 
+impl BinaryDecodable for LocalizedText {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let encoding_mask = u8::decode(stream, decoding_options)?;
         let locale = if encoding_mask & 0x1 != 0 {

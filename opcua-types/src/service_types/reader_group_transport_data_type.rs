@@ -36,6 +36,8 @@ impl opcua::types::BinaryEncodable for ReaderGroupTransportDataType {
     ) -> opcua::types::EncodingResult<usize> {
         Ok(0)
     }
+}
+impl opcua::types::BinaryDecodable for ReaderGroupTransportDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,

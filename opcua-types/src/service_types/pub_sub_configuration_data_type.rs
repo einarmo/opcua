@@ -52,21 +52,23 @@ impl opcua::types::BinaryEncodable for PubSubConfigurationDataType {
         size += self.enabled.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for PubSubConfigurationDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            published_data_sets: opcua::types::BinaryEncodable::decode(
+            published_data_sets: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            connections: opcua::types::BinaryEncodable::decode(
+            connections: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            enabled: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            enabled: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

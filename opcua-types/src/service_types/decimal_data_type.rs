@@ -45,14 +45,16 @@ impl opcua::types::BinaryEncodable for DecimalDataType {
         size += self.value.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for DecimalDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            scale: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            value: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            scale: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            value: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

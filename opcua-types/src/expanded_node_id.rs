@@ -273,7 +273,9 @@ impl BinaryEncodable for ExpandedNodeId {
         assert_eq!(size, self.byte_len());
         Ok(size)
     }
+}
 
+impl BinaryDecodable for ExpandedNodeId {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let data_encoding = read_u8(stream)?;
         let identifier = data_encoding & 0x0f;
