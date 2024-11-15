@@ -153,7 +153,7 @@ impl BinaryEncodable for DiagnosticInfo {
         size
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size: usize = 0;
         size += write_u8(stream, self.encoding_mask().bits())?;
         if let Some(ref symbolic_id) = self.symbolic_id {

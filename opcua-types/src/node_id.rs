@@ -329,7 +329,7 @@ impl BinaryEncodable for NodeId {
         size
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size: usize = 0;
         // Type determines the byte code
         match &self.identifier {

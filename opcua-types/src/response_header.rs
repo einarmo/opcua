@@ -45,7 +45,7 @@ impl BinaryEncodable for ResponseHeader {
         size
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size = 0;
         size += self.timestamp.encode(stream)?;
         size += self.request_handle.encode(stream)?;

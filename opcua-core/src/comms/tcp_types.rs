@@ -51,7 +51,7 @@ impl BinaryEncodable for MessageHeader {
         MESSAGE_HEADER_LEN
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size: usize = 0;
         let result = match self.message_type {
             MessageType::Hello => stream.write(HELLO_MESSAGE),
@@ -191,7 +191,7 @@ impl BinaryEncodable for HelloMessage {
         self.message_header.byte_len() + 20 + self.endpoint_url.byte_len()
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size = 0;
         size += self.message_header.encode(stream)?;
         size += self.protocol_version.encode(stream)?;
@@ -300,7 +300,7 @@ impl BinaryEncodable for AcknowledgeMessage {
         self.message_header.byte_len() + 20
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size: usize = 0;
         size += self.message_header.encode(stream)?;
         size += self.protocol_version.encode(stream)?;
@@ -365,7 +365,7 @@ impl BinaryEncodable for ErrorMessage {
         self.message_header.byte_len() + self.error.byte_len() + self.reason.byte_len()
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size: usize = 0;
         size += self.message_header.encode(stream)?;
         size += self.error.encode(stream)?;

@@ -218,7 +218,7 @@ impl BinaryEncodable for ExpandedNodeId {
         size
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size: usize = 0;
 
         let mut data_encoding = 0;

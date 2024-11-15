@@ -79,7 +79,7 @@ impl BinaryEncodable for LocalizedText {
         size
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size = 0;
         // A bit mask that indicates which fields are present in the stream.
         // The mask has the following bits:

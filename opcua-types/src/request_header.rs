@@ -122,7 +122,7 @@ impl BinaryEncodable for RequestHeader {
         size
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size: usize = 0;
         size += self.authentication_token.encode(stream)?;
         size += self.timestamp.encode(stream)?;

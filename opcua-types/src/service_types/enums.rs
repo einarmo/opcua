@@ -19,7 +19,7 @@ impl opcua::types::BinaryEncodable for AccessLevelExType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -102,7 +102,7 @@ impl opcua::types::BinaryEncodable for AccessLevelType {
     fn byte_len(&self) -> usize {
         1usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -184,7 +184,7 @@ impl opcua::types::BinaryEncodable for AccessRestrictionType {
     fn byte_len(&self) -> usize {
         2usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -350,7 +350,7 @@ impl opcua::types::BinaryEncodable for ApplicationType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -383,7 +383,7 @@ impl opcua::types::BinaryEncodable for AttributeWriteMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -549,7 +549,7 @@ impl opcua::types::BinaryEncodable for AxisScaleEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -666,7 +666,7 @@ impl opcua::types::BinaryEncodable for BrokerTransportQualityOfService {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -778,7 +778,7 @@ impl opcua::types::BinaryEncodable for BrowseDirection {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -899,7 +899,7 @@ impl opcua::types::BinaryEncodable for BrowseResultMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -1008,7 +1008,7 @@ impl opcua::types::BinaryEncodable for DataChangeTrigger {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -1034,7 +1034,7 @@ impl opcua::types::BinaryEncodable for DataSetFieldContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -1115,7 +1115,7 @@ impl opcua::types::BinaryEncodable for DataSetFieldFlags {
     fn byte_len(&self) -> usize {
         2usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -1281,7 +1281,7 @@ impl opcua::types::BinaryEncodable for DataSetOrderingType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -1388,7 +1388,7 @@ impl opcua::types::BinaryEncodable for DeadbandType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -1499,7 +1499,7 @@ impl opcua::types::BinaryEncodable for DiagnosticsLevel {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -1524,7 +1524,7 @@ impl opcua::types::BinaryEncodable for EventNotifierType {
     fn byte_len(&self) -> usize {
         1usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -1696,7 +1696,7 @@ impl opcua::types::BinaryEncodable for ExceptionDeviationFormat {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -1833,7 +1833,7 @@ impl opcua::types::BinaryEncodable for FilterOperator {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -1944,7 +1944,7 @@ impl opcua::types::BinaryEncodable for HistoryUpdateType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -2059,7 +2059,7 @@ impl opcua::types::BinaryEncodable for IdentityCriteriaType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -2166,7 +2166,7 @@ impl opcua::types::BinaryEncodable for IdType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -2191,7 +2191,7 @@ impl opcua::types::BinaryEncodable for JsonDataSetMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -2274,7 +2274,7 @@ impl opcua::types::BinaryEncodable for JsonNetworkMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -2443,7 +2443,7 @@ impl opcua::types::BinaryEncodable for MessageSecurityMode {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -2560,7 +2560,7 @@ impl opcua::types::BinaryEncodable for ModelChangeStructureVerbMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -2667,7 +2667,7 @@ impl opcua::types::BinaryEncodable for MonitoringMode {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -2774,7 +2774,7 @@ impl opcua::types::BinaryEncodable for NamingRuleType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -2947,7 +2947,7 @@ impl opcua::types::BinaryEncodable for NodeAttributesMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -3064,7 +3064,7 @@ impl opcua::types::BinaryEncodable for NodeClass {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -3176,7 +3176,7 @@ impl opcua::types::BinaryEncodable for NodeIdType {
     fn byte_len(&self) -> usize {
         1usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -3285,7 +3285,7 @@ impl opcua::types::BinaryEncodable for OpenFileMode {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -3394,7 +3394,7 @@ impl opcua::types::BinaryEncodable for OverrideValueHandling {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -3505,7 +3505,7 @@ impl opcua::types::BinaryEncodable for PerformUpdateType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -3534,7 +3534,7 @@ impl opcua::types::BinaryEncodable for PermissionType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -3702,7 +3702,7 @@ impl opcua::types::BinaryEncodable for PubSubDiagnosticsCounterClassification {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -3811,7 +3811,7 @@ impl opcua::types::BinaryEncodable for PubSubState {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -3926,7 +3926,7 @@ impl opcua::types::BinaryEncodable for RedundancySupport {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -4035,7 +4035,7 @@ impl opcua::types::BinaryEncodable for SecurityTokenRequestType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -4152,7 +4152,7 @@ impl opcua::types::BinaryEncodable for ServerState {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -4259,7 +4259,7 @@ impl opcua::types::BinaryEncodable for StructureType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -4373,7 +4373,7 @@ impl opcua::types::BinaryEncodable for TimestampsToReturn {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -4486,7 +4486,7 @@ impl opcua::types::BinaryEncodable for TrustListMasks {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -4512,7 +4512,7 @@ impl opcua::types::BinaryEncodable for UadpDataSetMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -4597,7 +4597,7 @@ impl opcua::types::BinaryEncodable for UadpNetworkMessageContentMask {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -4763,7 +4763,7 @@ impl opcua::types::BinaryEncodable for UserTokenType {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {

@@ -28,7 +28,7 @@ impl BinaryEncodable for bool {
         1
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         // 0, or 1 for true or false, single byte
         write_u8(stream, if *self { 1 } else { 0 })
     }
@@ -45,7 +45,7 @@ impl BinaryEncodable for i8 {
         1
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_u8(stream, *self as u8)
     }
 }
@@ -62,7 +62,7 @@ impl BinaryEncodable for u8 {
         1
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_u8(stream, *self)
     }
 }
@@ -79,7 +79,7 @@ impl BinaryEncodable for i16 {
         2
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_i16(stream, *self)
     }
 }
@@ -96,7 +96,7 @@ impl BinaryEncodable for u16 {
         2
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_u16(stream, *self)
     }
 }
@@ -113,7 +113,7 @@ impl BinaryEncodable for i32 {
         4
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_i32(stream, *self)
     }
 }
@@ -130,7 +130,7 @@ impl BinaryEncodable for u32 {
         4
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_u32(stream, *self)
     }
 }
@@ -146,7 +146,7 @@ impl BinaryEncodable for i64 {
         8
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_i64(stream, *self)
     }
 }
@@ -163,7 +163,7 @@ impl BinaryEncodable for u64 {
         8
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_u64(stream, *self)
     }
 }
@@ -180,7 +180,7 @@ impl BinaryEncodable for f32 {
         4
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_f32(stream, *self)
     }
 }
@@ -197,7 +197,7 @@ impl BinaryEncodable for f64 {
         8
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_f64(stream, *self)
     }
 }

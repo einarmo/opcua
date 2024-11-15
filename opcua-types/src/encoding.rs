@@ -262,7 +262,7 @@ pub trait BinaryEncodable {
     /// This may be called prior to writing to ensure the correct amount of space is available.
     fn byte_len(&self) -> usize;
     /// Encodes the instance to the write stream.
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize>;
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize>;
 
     // Convenience method for encoding a message straight into an array of bytes. It is preferable to reuse buffers than
     // to call this so it should be reserved for tests and trivial code.
@@ -311,7 +311,7 @@ where
         size
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size = 0;
         if let Some(ref values) = self {
             size += write_i32(stream, values.len() as i32)?;
@@ -365,7 +365,7 @@ pub fn byte_len_array<T: BinaryEncodable>(values: &Option<Vec<T>>) -> usize {
 }
 
 /// Write an array of the encoded type to stream, preserving distinction between null array and empty array
-pub fn write_array<S: Write, T: BinaryEncodable>(
+pub fn write_array<S: Write + ?Sized, T: BinaryEncodable>(
     stream: &mut S,
     values: &Option<Vec<T>>,
 ) -> EncodingResult<usize> {

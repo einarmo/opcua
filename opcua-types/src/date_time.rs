@@ -66,7 +66,7 @@ impl BinaryEncodable for DateTime {
         8
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let ticks = self.checked_ticks();
         write_i64(stream, ticks)
     }

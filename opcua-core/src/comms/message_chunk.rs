@@ -68,7 +68,7 @@ impl BinaryEncodable for MessageChunkHeader {
         MESSAGE_CHUNK_HEADER_SIZE
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let message_type = match self.message_type {
             MessageChunkType::Message => CHUNK_MESSAGE,
             MessageChunkType::OpenSecureChannel => OPEN_SECURE_CHANNEL_MESSAGE,
@@ -145,7 +145,7 @@ impl BinaryEncodable for MessageChunk {
         self.data.len()
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         stream.write(&self.data).map_err(|_| {
             error!("Encoding error while writing to stream");
             StatusCode::BadEncodingError.into()

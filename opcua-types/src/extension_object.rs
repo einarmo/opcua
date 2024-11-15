@@ -29,16 +29,46 @@ impl fmt::Display for ExtensionObjectError {
     }
 }
 
-pub trait DynEncodable: Any {
-    fn encode(&self, stream: &mut dyn std::io::Write) -> EncodingResult<usize>;
+pub trait DynEncodable: Any + std::fmt::Debug {
+    fn encode_dyn(&self, stream: &mut dyn std::io::Write) -> EncodingResult<usize>;
+
+    fn byte_len_dyn(&self) -> usize;
 }
 
 impl<T> DynEncodable for T
 where
-    T: BinaryEncodable + Any,
+    T: BinaryEncodable + Any + std::fmt::Debug,
 {
-    fn encode(&self, stream: &mut dyn std::io::Write) -> EncodingResult<usize> {
-        BinaryEncodable::encode(&self, stream)
+    fn encode_dyn(&self, stream: &mut dyn std::io::Write) -> EncodingResult<usize> {
+        BinaryEncodable::encode(self, stream)
+    }
+
+    fn byte_len_dyn(&self) -> usize {
+        BinaryEncodable::byte_len(self)
+    }
+}
+
+impl PartialEq for dyn DynEncodable {
+    fn eq(&self, other: &dyn DynEncodable) -> bool {
+        if self.byte_len_dyn() != other.byte_len_dyn() {
+            return false;
+        }
+        if self.type_id() != other.type_id() {
+            return false;
+        }
+        // For equality, just serialize both sides.
+        let mut cursor = Vec::<u8>::with_capacity(self.byte_len_dyn());
+        let mut cursor2 = Vec::<u8>::with_capacity(self.byte_len_dyn());
+
+        if self.encode_dyn(&mut cursor).is_err() {
+            return false;
+        }
+
+        if other.encode_dyn(&mut cursor2).is_err() {
+            return false;
+        }
+
+        cursor == cursor2
     }
 }
 
@@ -243,7 +273,7 @@ impl BinaryEncodable for ExtensionObject {
         size
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size = 0;
         size += self.node_id.encode(stream)?;
         match self.body {

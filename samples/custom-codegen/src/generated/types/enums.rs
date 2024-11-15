@@ -96,7 +96,10 @@ impl opcua::types::BinaryEncodable for IMTagSelectorEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -195,7 +198,10 @@ impl opcua::types::BinaryEncodable for PnARStateEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -292,7 +298,10 @@ impl opcua::types::BinaryEncodable for PnARTypeEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -394,7 +403,10 @@ impl opcua::types::BinaryEncodable for PnAssetChangeEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -498,7 +510,10 @@ impl opcua::types::BinaryEncodable for PnAssetTypeEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -598,7 +613,10 @@ impl opcua::types::BinaryEncodable for PnChannelAccumulativeEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -702,7 +720,10 @@ impl opcua::types::BinaryEncodable for PnChannelDirectionEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -806,7 +827,10 @@ impl opcua::types::BinaryEncodable for PnChannelMaintenanceEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -910,7 +934,10 @@ impl opcua::types::BinaryEncodable for PnChannelSpecifierEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1022,7 +1049,10 @@ impl opcua::types::BinaryEncodable for PnChannelTypeEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1126,7 +1156,10 @@ impl opcua::types::BinaryEncodable for PnDeviceStateEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1236,7 +1269,10 @@ impl opcua::types::BinaryEncodable for PnLinkStateEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1342,7 +1378,10 @@ impl opcua::types::BinaryEncodable for PnModuleStateEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1452,7 +1491,10 @@ impl opcua::types::BinaryEncodable for PnPortStateEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1552,7 +1594,10 @@ impl opcua::types::BinaryEncodable for PnSubmoduleAddInfoEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1658,7 +1703,10 @@ impl opcua::types::BinaryEncodable for PnSubmoduleARInfoEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1762,7 +1810,10 @@ impl opcua::types::BinaryEncodable for PnSubmoduleIdentInfoEnumeration {
     fn byte_len(&self) -> usize {
         4usize
     }
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }

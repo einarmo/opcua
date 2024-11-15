@@ -84,7 +84,7 @@ impl BinaryEncodable for DataValue {
         size
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size = 0;
 
         let encoding_mask = self.encoding_mask();

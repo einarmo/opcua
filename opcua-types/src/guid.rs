@@ -66,7 +66,7 @@ impl BinaryEncodable for Guid {
         16
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size: usize = 0;
         size += process_encode_io_result(stream.write(self.uuid.as_bytes()))?;
         Ok(size)

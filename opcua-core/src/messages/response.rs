@@ -25,7 +25,7 @@ macro_rules! response_enum {
                 }
             }
 
-            fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+            fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
                 match self {
                     $( Self::$name(value) => value.encode(stream), )*
                 }

@@ -73,7 +73,10 @@ impl opcua::types::BinaryEncodable for PnDeviceDiagnosisDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.api.encode(stream)?;
         size += self.slot.encode(stream)?;
@@ -166,7 +169,10 @@ impl opcua::types::BinaryEncodable for PnDeviceRoleOptionSet {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.value.encode(stream)?;
         size += self.valid_bits.encode(stream)?;
@@ -226,7 +232,10 @@ impl opcua::types::BinaryEncodable for PnIM5DataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+    fn encode<S: std::io::Write + ?Sized>(
+        &self,
+        stream: &mut S,
+    ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
         size += self.annotation.encode(stream)?;
         size += self.order_id.encode(stream)?;
