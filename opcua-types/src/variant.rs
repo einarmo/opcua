@@ -633,7 +633,7 @@ impl BinaryEncodable for Variant {
         size
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size: usize = 0;
 
         // Encoding mask will include the array bits if applicable for the type
@@ -689,7 +689,9 @@ impl BinaryEncodable for Variant {
         assert_eq!(size, self.byte_len());
         Ok(size)
     }
+}
 
+impl BinaryDecodable for Variant {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let encoding_mask = u8::decode(stream, decoding_options)?;
         let element_encoding_mask = encoding_mask & !EncodingMask::ARRAY_MASK;
@@ -853,7 +855,10 @@ impl Variant {
     }
 
     /// Encodes just the value, not the encoding flag
-    fn encode_variant_value<S: Write>(stream: &mut S, value: &Variant) -> EncodingResult<usize> {
+    fn encode_variant_value<S: Write + ?Sized>(
+        stream: &mut S,
+        value: &Variant,
+    ) -> EncodingResult<usize> {
         match value {
             Variant::Empty => Ok(0),
             Variant::Boolean(value) => value.encode(stream),

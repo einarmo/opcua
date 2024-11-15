@@ -257,16 +257,12 @@ impl DecodingOptions {
 /// OPC UA Binary Encoding interface. Anything that encodes to binary must implement this. It provides
 /// functions to calculate the size in bytes of the struct (for allocating memory), encoding to a stream
 /// and decoding from a stream.
-pub trait BinaryEncodable: Sized {
+pub trait BinaryEncodable {
     /// Returns the exact byte length of the structure as it would be if `encode` were called.
     /// This may be called prior to writing to ensure the correct amount of space is available.
     fn byte_len(&self) -> usize;
     /// Encodes the instance to the write stream.
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize>;
-    /// Decodes an instance from the read stream. The decoding options contains restrictions set by
-    /// the server / client on the length of strings, arrays etc. If these limits are exceeded the
-    /// implementation should return with a `BadDecodingError` as soon as possible.
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self>;
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize>;
 
     // Convenience method for encoding a message straight into an array of bytes. It is preferable to reuse buffers than
     // to call this so it should be reserved for tests and trivial code.
@@ -275,6 +271,13 @@ pub trait BinaryEncodable: Sized {
         let _ = self.encode(&mut buffer);
         buffer.into_inner()
     }
+}
+
+pub trait BinaryDecodable: Sized {
+    /// Decodes an instance from the read stream. The decoding options contains restrictions set by
+    /// the server / client on the length of strings, arrays etc. If these limits are exceeded the
+    /// implementation should return with a `BadDecodingError` as soon as possible.
+    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self>;
 }
 
 /// Converts an IO encoding error (and logs when in error) into an EncodingResult
@@ -308,7 +311,7 @@ where
         size
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size = 0;
         if let Some(ref values) = self {
             size += write_i32(stream, values.len() as i32)?;
@@ -320,7 +323,12 @@ where
         }
         Ok(size)
     }
+}
 
+impl<T> BinaryDecodable for Option<Vec<T>>
+where
+    T: BinaryDecodable,
+{
     fn decode<S: Read>(
         stream: &mut S,
         decoding_options: &DecodingOptions,
@@ -357,7 +365,7 @@ pub fn byte_len_array<T: BinaryEncodable>(values: &Option<Vec<T>>) -> usize {
 }
 
 /// Write an array of the encoded type to stream, preserving distinction between null array and empty array
-pub fn write_array<S: Write, T: BinaryEncodable>(
+pub fn write_array<S: Write + ?Sized, T: BinaryEncodable>(
     stream: &mut S,
     values: &Option<Vec<T>>,
 ) -> EncodingResult<usize> {
@@ -374,7 +382,7 @@ pub fn write_array<S: Write, T: BinaryEncodable>(
 }
 
 /// Reads an array of the encoded type from a stream, preserving distinction between null array and empty array
-pub fn read_array<S: Read, T: BinaryEncodable>(
+pub fn read_array<S: Read, T: BinaryDecodable>(
     stream: &mut S,
     decoding_options: &DecodingOptions,
 ) -> EncodingResult<Option<Vec<T>>> {
@@ -400,7 +408,11 @@ pub fn read_array<S: Read, T: BinaryEncodable>(
 }
 
 /// Writes a series of identical bytes to the stream
-pub fn write_bytes(stream: &mut dyn Write, value: u8, count: usize) -> EncodingResult<usize> {
+pub fn write_bytes<W: Write + ?Sized>(
+    stream: &mut W,
+    value: u8,
+    count: usize,
+) -> EncodingResult<usize> {
     for _ in 0..count {
         stream
             .write_u8(value)
@@ -410,7 +422,7 @@ pub fn write_bytes(stream: &mut dyn Write, value: u8, count: usize) -> EncodingR
 }
 
 /// Writes an unsigned byte to the stream
-pub fn write_u8<T>(stream: &mut dyn Write, value: T) -> EncodingResult<usize>
+pub fn write_u8<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
 where
     T: Into<u8>,
 {
@@ -419,7 +431,7 @@ where
 }
 
 /// Writes a signed 16-bit value to the stream
-pub fn write_i16<T>(stream: &mut dyn Write, value: T) -> EncodingResult<usize>
+pub fn write_i16<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
 where
     T: Into<i16>,
 {
@@ -429,7 +441,7 @@ where
 }
 
 /// Writes an unsigned 16-bit value to the stream
-pub fn write_u16<T>(stream: &mut dyn Write, value: T) -> EncodingResult<usize>
+pub fn write_u16<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
 where
     T: Into<u16>,
 {
@@ -439,7 +451,7 @@ where
 }
 
 /// Writes a signed 32-bit value to the stream
-pub fn write_i32<T>(stream: &mut dyn Write, value: T) -> EncodingResult<usize>
+pub fn write_i32<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
 where
     T: Into<i32>,
 {
@@ -449,7 +461,7 @@ where
 }
 
 /// Writes an unsigned 32-bit value to the stream
-pub fn write_u32<T>(stream: &mut dyn Write, value: T) -> EncodingResult<usize>
+pub fn write_u32<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
 where
     T: Into<u32>,
 {
@@ -459,7 +471,7 @@ where
 }
 
 /// Writes a signed 64-bit value to the stream
-pub fn write_i64<T>(stream: &mut dyn Write, value: T) -> EncodingResult<usize>
+pub fn write_i64<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
 where
     T: Into<i64>,
 {
@@ -469,7 +481,7 @@ where
 }
 
 /// Writes an unsigned 64-bit value to the stream
-pub fn write_u64<T>(stream: &mut dyn Write, value: T) -> EncodingResult<usize>
+pub fn write_u64<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
 where
     T: Into<u64>,
 {
@@ -479,7 +491,7 @@ where
 }
 
 /// Writes a 32-bit precision value to the stream
-pub fn write_f32<T>(stream: &mut dyn Write, value: T) -> EncodingResult<usize>
+pub fn write_f32<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
 where
     T: Into<f32>,
 {
@@ -489,7 +501,7 @@ where
 }
 
 /// Writes a 64-bit precision value to the stream
-pub fn write_f64<T>(stream: &mut dyn Write, value: T) -> EncodingResult<usize>
+pub fn write_f64<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
 where
     T: Into<f64>,
 {

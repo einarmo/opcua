@@ -37,7 +37,7 @@ impl opcua::types::BinaryEncodable for UpdateStructureDataDetails {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -47,18 +47,20 @@ impl opcua::types::BinaryEncodable for UpdateStructureDataDetails {
         size += self.update_values.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for UpdateStructureDataDetails {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            node_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            perform_insert_replace: opcua::types::BinaryEncodable::decode(
+            node_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            perform_insert_replace: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            update_values: opcua::types::BinaryEncodable::decode(
+            update_values: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

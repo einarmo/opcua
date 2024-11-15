@@ -42,7 +42,7 @@ impl opcua::types::BinaryEncodable for ReadProcessedDetails {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -54,23 +54,25 @@ impl opcua::types::BinaryEncodable for ReadProcessedDetails {
         size += self.aggregate_configuration.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ReadProcessedDetails {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            start_time: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            end_time: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            processing_interval: opcua::types::BinaryEncodable::decode(
+            start_time: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            end_time: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            processing_interval: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            aggregate_type: opcua::types::BinaryEncodable::decode(
+            aggregate_type: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            aggregate_configuration: opcua::types::BinaryEncodable::decode(
+            aggregate_configuration: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

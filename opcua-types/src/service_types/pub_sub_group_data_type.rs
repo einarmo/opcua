@@ -47,7 +47,7 @@ impl opcua::types::BinaryEncodable for PubSubGroupDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -61,31 +61,33 @@ impl opcua::types::BinaryEncodable for PubSubGroupDataType {
         size += self.group_properties.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for PubSubGroupDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            enabled: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            security_mode: opcua::types::BinaryEncodable::decode(
+            name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            enabled: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            security_mode: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            security_group_id: opcua::types::BinaryEncodable::decode(
+            security_group_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            security_key_services: opcua::types::BinaryEncodable::decode(
+            security_key_services: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            max_network_message_size: opcua::types::BinaryEncodable::decode(
+            max_network_message_size: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            group_properties: opcua::types::BinaryEncodable::decode(
+            group_properties: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

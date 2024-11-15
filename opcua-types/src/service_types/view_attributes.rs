@@ -46,7 +46,7 @@ impl opcua::types::BinaryEncodable for ViewAttributes {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -60,34 +60,36 @@ impl opcua::types::BinaryEncodable for ViewAttributes {
         size += self.event_notifier.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ViewAttributes {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            specified_attributes: opcua::types::BinaryEncodable::decode(
+            specified_attributes: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            display_name: opcua::types::BinaryEncodable::decode(
+            display_name: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            description: opcua::types::BinaryEncodable::decode(
+            description: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            write_mask: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            user_write_mask: opcua::types::BinaryEncodable::decode(
+            write_mask: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            user_write_mask: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            contains_no_loops: opcua::types::BinaryEncodable::decode(
+            contains_no_loops: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            event_notifier: opcua::types::BinaryEncodable::decode(
+            event_notifier: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

@@ -40,7 +40,7 @@ impl opcua::types::BinaryEncodable for SamplingIntervalDiagnosticsDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -51,25 +51,27 @@ impl opcua::types::BinaryEncodable for SamplingIntervalDiagnosticsDataType {
         size += self.disabled_monitored_item_count.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for SamplingIntervalDiagnosticsDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            sampling_interval: opcua::types::BinaryEncodable::decode(
+            sampling_interval: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            monitored_item_count: opcua::types::BinaryEncodable::decode(
+            monitored_item_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            max_monitored_item_count: opcua::types::BinaryEncodable::decode(
+            max_monitored_item_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            disabled_monitored_item_count: opcua::types::BinaryEncodable::decode(
+            disabled_monitored_item_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

@@ -38,7 +38,7 @@ impl opcua::types::BinaryEncodable for SetPublishingModeRequest {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -48,24 +48,26 @@ impl opcua::types::BinaryEncodable for SetPublishingModeRequest {
         size += self.subscription_ids.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for SetPublishingModeRequest {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryEncodable::decode(
+        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryDecodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
         Ok(Self {
             request_header,
-            publishing_enabled: opcua::types::BinaryEncodable::decode(
+            publishing_enabled: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            subscription_ids: opcua::types::BinaryEncodable::decode(
+            subscription_ids: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )

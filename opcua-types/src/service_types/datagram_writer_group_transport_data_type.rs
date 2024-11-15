@@ -36,7 +36,7 @@ impl opcua::types::BinaryEncodable for DatagramWriterGroupTransportDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -45,17 +45,19 @@ impl opcua::types::BinaryEncodable for DatagramWriterGroupTransportDataType {
         size += self.message_repeat_delay.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for DatagramWriterGroupTransportDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            message_repeat_count: opcua::types::BinaryEncodable::decode(
+            message_repeat_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            message_repeat_delay: opcua::types::BinaryEncodable::decode(
+            message_repeat_delay: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

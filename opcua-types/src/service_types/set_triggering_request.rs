@@ -42,7 +42,7 @@ impl opcua::types::BinaryEncodable for SetTriggeringRequest {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -54,31 +54,33 @@ impl opcua::types::BinaryEncodable for SetTriggeringRequest {
         size += self.links_to_remove.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for SetTriggeringRequest {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryEncodable::decode(
+        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryDecodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
         Ok(Self {
             request_header,
-            subscription_id: opcua::types::BinaryEncodable::decode(
+            subscription_id: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            triggering_item_id: opcua::types::BinaryEncodable::decode(
+            triggering_item_id: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            links_to_add: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+            links_to_add: opcua::types::BinaryDecodable::decode(stream, decoding_options)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            links_to_remove: opcua::types::BinaryEncodable::decode(
+            links_to_remove: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )

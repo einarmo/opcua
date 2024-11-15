@@ -38,7 +38,7 @@ impl opcua::types::BinaryEncodable for SessionlessInvokeResponseType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -48,21 +48,23 @@ impl opcua::types::BinaryEncodable for SessionlessInvokeResponseType {
         size += self.service_id.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for SessionlessInvokeResponseType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            namespace_uris: opcua::types::BinaryEncodable::decode(
+            namespace_uris: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            server_uris: opcua::types::BinaryEncodable::decode(
+            server_uris: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            service_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            service_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

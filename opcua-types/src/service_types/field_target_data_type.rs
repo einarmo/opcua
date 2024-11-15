@@ -45,7 +45,7 @@ impl opcua::types::BinaryEncodable for FieldTargetDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -59,37 +59,39 @@ impl opcua::types::BinaryEncodable for FieldTargetDataType {
         size += self.override_value.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for FieldTargetDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            data_set_field_id: opcua::types::BinaryEncodable::decode(
+            data_set_field_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            receiver_index_range: opcua::types::BinaryEncodable::decode(
+            receiver_index_range: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            target_node_id: opcua::types::BinaryEncodable::decode(
+            target_node_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            attribute_id: opcua::types::BinaryEncodable::decode(
+            attribute_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            write_index_range: opcua::types::BinaryEncodable::decode(
+            write_index_range: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            override_value_handling: opcua::types::BinaryEncodable::decode(
+            override_value_handling: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            override_value: opcua::types::BinaryEncodable::decode(
+            override_value: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

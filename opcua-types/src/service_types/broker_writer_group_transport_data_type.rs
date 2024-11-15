@@ -39,7 +39,7 @@ impl opcua::types::BinaryEncodable for BrokerWriterGroupTransportDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -50,22 +50,24 @@ impl opcua::types::BinaryEncodable for BrokerWriterGroupTransportDataType {
         size += self.requested_delivery_guarantee.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for BrokerWriterGroupTransportDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            queue_name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            resource_uri: opcua::types::BinaryEncodable::decode(
+            queue_name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            resource_uri: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            authentication_profile_uri: opcua::types::BinaryEncodable::decode(
+            authentication_profile_uri: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            requested_delivery_guarantee: opcua::types::BinaryEncodable::decode(
+            requested_delivery_guarantee: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

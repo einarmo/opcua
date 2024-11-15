@@ -54,7 +54,7 @@ impl opcua::types::BinaryEncodable for CreateSessionResponse {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -71,53 +71,55 @@ impl opcua::types::BinaryEncodable for CreateSessionResponse {
         size += self.max_request_message_size.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for CreateSessionResponse {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryEncodable::decode(
+        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryDecodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
         Ok(Self {
             response_header,
-            session_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+            session_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            authentication_token: opcua::types::BinaryEncodable::decode(
+            authentication_token: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            revised_session_timeout: opcua::types::BinaryEncodable::decode(
+            revised_session_timeout: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            server_nonce: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+            server_nonce: opcua::types::BinaryDecodable::decode(stream, decoding_options)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            server_certificate: opcua::types::BinaryEncodable::decode(
+            server_certificate: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            server_endpoints: opcua::types::BinaryEncodable::decode(
+            server_endpoints: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            server_software_certificates: opcua::types::BinaryEncodable::decode(
+            server_software_certificates: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            server_signature: opcua::types::BinaryEncodable::decode(
+            server_signature: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            max_request_message_size: opcua::types::BinaryEncodable::decode(
+            max_request_message_size: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )

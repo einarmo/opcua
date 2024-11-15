@@ -38,7 +38,7 @@ impl opcua::types::BinaryEncodable for ThreeDOrientation {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -48,15 +48,17 @@ impl opcua::types::BinaryEncodable for ThreeDOrientation {
         size += self.c.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ThreeDOrientation {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            a: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            b: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            c: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            a: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            b: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            c: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

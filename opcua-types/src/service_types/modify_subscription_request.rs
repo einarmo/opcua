@@ -46,7 +46,7 @@ impl opcua::types::BinaryEncodable for ModifySubscriptionRequest {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -60,44 +60,46 @@ impl opcua::types::BinaryEncodable for ModifySubscriptionRequest {
         size += self.priority.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ModifySubscriptionRequest {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryEncodable::decode(
+        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryDecodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
         Ok(Self {
             request_header,
-            subscription_id: opcua::types::BinaryEncodable::decode(
+            subscription_id: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            requested_publishing_interval: opcua::types::BinaryEncodable::decode(
+            requested_publishing_interval: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            requested_lifetime_count: opcua::types::BinaryEncodable::decode(
+            requested_lifetime_count: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            requested_max_keep_alive_count: opcua::types::BinaryEncodable::decode(
+            requested_max_keep_alive_count: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            max_notifications_per_publish: opcua::types::BinaryEncodable::decode(
+            max_notifications_per_publish: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            priority: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+            priority: opcua::types::BinaryDecodable::decode(stream, decoding_options)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }

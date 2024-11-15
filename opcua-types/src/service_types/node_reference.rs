@@ -40,7 +40,7 @@ impl opcua::types::BinaryEncodable for NodeReference {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -51,19 +51,21 @@ impl opcua::types::BinaryEncodable for NodeReference {
         size += self.referenced_node_ids.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for NodeReference {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            node_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            reference_type_id: opcua::types::BinaryEncodable::decode(
+            node_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            reference_type_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            is_forward: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            referenced_node_ids: opcua::types::BinaryEncodable::decode(
+            is_forward: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            referenced_node_ids: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

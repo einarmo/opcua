@@ -38,7 +38,7 @@ impl opcua::types::BinaryEncodable for NodeTypeDescription {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -48,21 +48,23 @@ impl opcua::types::BinaryEncodable for NodeTypeDescription {
         size += self.data_to_return.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for NodeTypeDescription {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            type_definition_node: opcua::types::BinaryEncodable::decode(
+            type_definition_node: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            include_sub_types: opcua::types::BinaryEncodable::decode(
+            include_sub_types: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            data_to_return: opcua::types::BinaryEncodable::decode(
+            data_to_return: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

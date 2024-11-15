@@ -44,7 +44,7 @@ impl opcua::types::BinaryEncodable for QueryFirstResponse {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -57,39 +57,41 @@ impl opcua::types::BinaryEncodable for QueryFirstResponse {
         size += self.filter_result.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for QueryFirstResponse {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryEncodable::decode(
+        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryDecodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
         Ok(Self {
             response_header,
-            query_data_sets: opcua::types::BinaryEncodable::decode(
+            query_data_sets: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            continuation_point: opcua::types::BinaryEncodable::decode(
+            continuation_point: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            parsing_results: opcua::types::BinaryEncodable::decode(
+            parsing_results: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            diagnostic_infos: opcua::types::BinaryEncodable::decode(
+            diagnostic_infos: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            filter_result: opcua::types::BinaryEncodable::decode(
+            filter_result: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )

@@ -36,7 +36,7 @@ impl opcua::types::BinaryEncodable for TimeZoneDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -45,14 +45,16 @@ impl opcua::types::BinaryEncodable for TimeZoneDataType {
         size += self.daylight_saving_in_offset.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for TimeZoneDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            offset: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            daylight_saving_in_offset: opcua::types::BinaryEncodable::decode(
+            offset: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            daylight_saving_in_offset: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

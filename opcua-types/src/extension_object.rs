@@ -5,6 +5,7 @@
 //! Contains the implementation of `ExtensionObject`.
 
 use std::{
+    any::Any,
     error::Error,
     fmt,
     io::{Cursor, Read, Write},
@@ -25,6 +26,49 @@ pub struct ExtensionObjectError;
 impl fmt::Display for ExtensionObjectError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "ExtensionObjectError")
+    }
+}
+
+pub trait DynEncodable: Any + std::fmt::Debug {
+    fn encode_dyn(&self, stream: &mut dyn std::io::Write) -> EncodingResult<usize>;
+
+    fn byte_len_dyn(&self) -> usize;
+}
+
+impl<T> DynEncodable for T
+where
+    T: BinaryEncodable + Any + std::fmt::Debug,
+{
+    fn encode_dyn(&self, stream: &mut dyn std::io::Write) -> EncodingResult<usize> {
+        BinaryEncodable::encode(self, stream)
+    }
+
+    fn byte_len_dyn(&self) -> usize {
+        BinaryEncodable::byte_len(self)
+    }
+}
+
+impl PartialEq for dyn DynEncodable {
+    fn eq(&self, other: &dyn DynEncodable) -> bool {
+        if self.byte_len_dyn() != other.byte_len_dyn() {
+            return false;
+        }
+        if self.type_id() != other.type_id() {
+            return false;
+        }
+        // For equality, just serialize both sides.
+        let mut cursor = Vec::<u8>::with_capacity(self.byte_len_dyn());
+        let mut cursor2 = Vec::<u8>::with_capacity(self.byte_len_dyn());
+
+        if self.encode_dyn(&mut cursor).is_err() {
+            return false;
+        }
+
+        if other.encode_dyn(&mut cursor2).is_err() {
+            return false;
+        }
+
+        cursor == cursor2
     }
 }
 
@@ -229,7 +273,7 @@ impl BinaryEncodable for ExtensionObject {
         size
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size = 0;
         size += self.node_id.encode(stream)?;
         match self.body {
@@ -255,7 +299,8 @@ impl BinaryEncodable for ExtensionObject {
         assert_eq!(size, self.byte_len());
         Ok(size)
     }
-
+}
+impl BinaryDecodable for ExtensionObject {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         // Extension object is depth checked to prevent deep recursion
         let _depth_lock = decoding_options.depth_lock()?;
@@ -376,7 +421,7 @@ impl ExtensionObject {
     /// the data. Errors result in a decoding error.
     pub fn decode_inner<T>(&self, decoding_options: &DecodingOptions) -> EncodingResult<T>
     where
-        T: BinaryEncodable,
+        T: BinaryDecodable,
     {
         match self.body {
             ExtensionObjectEncoding::ByteString(ref byte_string) => {

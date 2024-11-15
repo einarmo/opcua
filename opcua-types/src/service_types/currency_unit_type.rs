@@ -40,7 +40,7 @@ impl opcua::types::BinaryEncodable for CurrencyUnitType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -51,22 +51,24 @@ impl opcua::types::BinaryEncodable for CurrencyUnitType {
         size += self.currency.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for CurrencyUnitType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            numeric_code: opcua::types::BinaryEncodable::decode(
+            numeric_code: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            exponent: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            alphabetic_code: opcua::types::BinaryEncodable::decode(
+            exponent: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            alphabetic_code: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            currency: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            currency: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

@@ -40,7 +40,7 @@ impl opcua::types::BinaryEncodable for DeleteRawModifiedDetails {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -51,19 +51,21 @@ impl opcua::types::BinaryEncodable for DeleteRawModifiedDetails {
         size += self.end_time.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for DeleteRawModifiedDetails {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            node_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            is_delete_modified: opcua::types::BinaryEncodable::decode(
+            node_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            is_delete_modified: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            start_time: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            end_time: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            start_time: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            end_time: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

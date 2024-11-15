@@ -36,7 +36,7 @@ impl opcua::types::BinaryEncodable for AliasNameDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -45,14 +45,16 @@ impl opcua::types::BinaryEncodable for AliasNameDataType {
         size += self.referenced_nodes.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for AliasNameDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            alias_name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            referenced_nodes: opcua::types::BinaryEncodable::decode(
+            alias_name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            referenced_nodes: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

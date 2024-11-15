@@ -41,7 +41,7 @@ impl opcua::types::BinaryEncodable for UserTokenPolicy {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -53,23 +53,25 @@ impl opcua::types::BinaryEncodable for UserTokenPolicy {
         size += self.security_policy_uri.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for UserTokenPolicy {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            policy_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            token_type: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            issued_token_type: opcua::types::BinaryEncodable::decode(
+            policy_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            token_type: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            issued_token_type: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            issuer_endpoint_url: opcua::types::BinaryEncodable::decode(
+            issuer_endpoint_url: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            security_policy_uri: opcua::types::BinaryEncodable::decode(
+            security_policy_uri: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

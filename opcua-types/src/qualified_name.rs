@@ -87,14 +87,15 @@ impl BinaryEncodable for QualifiedName {
         size
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size: usize = 0;
         size += self.namespace_index.encode(stream)?;
         size += self.name.encode(stream)?;
         assert_eq!(size, self.byte_len());
         Ok(size)
     }
-
+}
+impl BinaryDecodable for QualifiedName {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let namespace_index = u16::decode(stream, decoding_options)?;
         let name = UAString::decode(stream, decoding_options)?;

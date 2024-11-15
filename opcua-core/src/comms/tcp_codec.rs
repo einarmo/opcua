@@ -18,7 +18,7 @@ use log::error;
 use tokio_util::codec::{Decoder, Encoder};
 
 use opcua_types::{
-    encoding::{BinaryEncodable, DecodingOptions},
+    encoding::{BinaryDecodable, BinaryEncodable, DecodingOptions},
     status_code::StatusCode,
 };
 

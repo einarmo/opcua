@@ -40,7 +40,7 @@ impl opcua::types::BinaryEncodable for ModifySubscriptionResponse {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -51,29 +51,31 @@ impl opcua::types::BinaryEncodable for ModifySubscriptionResponse {
         size += self.revised_max_keep_alive_count.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ModifySubscriptionResponse {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryEncodable::decode(
+        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryDecodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
         Ok(Self {
             response_header,
-            revised_publishing_interval: opcua::types::BinaryEncodable::decode(
+            revised_publishing_interval: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            revised_lifetime_count: opcua::types::BinaryEncodable::decode(
+            revised_lifetime_count: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            revised_max_keep_alive_count: opcua::types::BinaryEncodable::decode(
+            revised_max_keep_alive_count: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )

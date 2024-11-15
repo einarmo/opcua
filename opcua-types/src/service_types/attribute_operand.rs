@@ -42,7 +42,7 @@ impl opcua::types::BinaryEncodable for AttributeOperand {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -54,23 +54,25 @@ impl opcua::types::BinaryEncodable for AttributeOperand {
         size += self.index_range.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for AttributeOperand {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            node_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            alias: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            browse_path: opcua::types::BinaryEncodable::decode(
+            node_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            alias: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            browse_path: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            attribute_id: opcua::types::BinaryEncodable::decode(
+            attribute_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            index_range: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            index_range: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

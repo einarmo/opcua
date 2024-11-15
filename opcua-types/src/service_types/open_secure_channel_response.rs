@@ -40,7 +40,7 @@ impl opcua::types::BinaryEncodable for OpenSecureChannelResponse {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -51,29 +51,31 @@ impl opcua::types::BinaryEncodable for OpenSecureChannelResponse {
         size += self.server_nonce.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for OpenSecureChannelResponse {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryEncodable::decode(
+        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryDecodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
         Ok(Self {
             response_header,
-            server_protocol_version: opcua::types::BinaryEncodable::decode(
+            server_protocol_version: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            security_token: opcua::types::BinaryEncodable::decode(
+            security_token: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            server_nonce: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+            server_nonce: opcua::types::BinaryDecodable::decode(stream, decoding_options)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }

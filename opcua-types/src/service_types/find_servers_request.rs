@@ -40,7 +40,7 @@ impl opcua::types::BinaryEncodable for FindServersRequest {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -51,23 +51,25 @@ impl opcua::types::BinaryEncodable for FindServersRequest {
         size += self.server_uris.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for FindServersRequest {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryEncodable::decode(
+        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryDecodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
         Ok(Self {
             request_header,
-            endpoint_url: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+            endpoint_url: opcua::types::BinaryDecodable::decode(stream, decoding_options)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            locale_ids: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+            locale_ids: opcua::types::BinaryDecodable::decode(stream, decoding_options)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            server_uris: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+            server_uris: opcua::types::BinaryDecodable::decode(stream, decoding_options)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }

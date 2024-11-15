@@ -51,7 +51,7 @@ impl BinaryEncodable for MessageHeader {
         MESSAGE_HEADER_LEN
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size: usize = 0;
         let result = match self.message_type {
             MessageType::Hello => stream.write(HELLO_MESSAGE),
@@ -69,7 +69,9 @@ impl BinaryEncodable for MessageHeader {
         size += write_u32(stream, self.message_size)?;
         Ok(size)
     }
+}
 
+impl BinaryDecodable for MessageHeader {
     fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         let mut message_type = [0u8; 4];
         process_decode_io_result(stream.read_exact(&mut message_type))?;
@@ -189,7 +191,7 @@ impl BinaryEncodable for HelloMessage {
         self.message_header.byte_len() + 20 + self.endpoint_url.byte_len()
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size = 0;
         size += self.message_header.encode(stream)?;
         size += self.protocol_version.encode(stream)?;
@@ -200,7 +202,9 @@ impl BinaryEncodable for HelloMessage {
         size += self.endpoint_url.encode(stream)?;
         Ok(size)
     }
+}
 
+impl BinaryDecodable for HelloMessage {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let message_header = MessageHeader::decode(stream, decoding_options)?;
         let protocol_version = u32::decode(stream, decoding_options)?;
@@ -296,7 +300,7 @@ impl BinaryEncodable for AcknowledgeMessage {
         self.message_header.byte_len() + 20
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size: usize = 0;
         size += self.message_header.encode(stream)?;
         size += self.protocol_version.encode(stream)?;
@@ -306,7 +310,9 @@ impl BinaryEncodable for AcknowledgeMessage {
         size += self.max_chunk_count.encode(stream)?;
         Ok(size)
     }
+}
 
+impl BinaryDecodable for AcknowledgeMessage {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let message_header = MessageHeader::decode(stream, decoding_options)?;
         let protocol_version = u32::decode(stream, decoding_options)?;
@@ -359,14 +365,16 @@ impl BinaryEncodable for ErrorMessage {
         self.message_header.byte_len() + self.error.byte_len() + self.reason.byte_len()
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size: usize = 0;
         size += self.message_header.encode(stream)?;
         size += self.error.encode(stream)?;
         size += self.reason.encode(stream)?;
         Ok(size)
     }
+}
 
+impl BinaryDecodable for ErrorMessage {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let message_header = MessageHeader::decode(stream, decoding_options)?;
         let error = u32::decode(stream, decoding_options)?;
@@ -400,7 +408,7 @@ mod tests {
     use std::io::Cursor;
 
     use crate::comms::tcp_types::{
-        AcknowledgeMessage, BinaryEncodable, HelloMessage, MessageHeader, MessageType,
+        AcknowledgeMessage, BinaryDecodable, HelloMessage, MessageHeader, MessageType,
     };
     use opcua_types::{
         ApplicationDescription, ByteString, DecodingOptions, EndpointDescription,

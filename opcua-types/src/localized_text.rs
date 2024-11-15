@@ -79,7 +79,7 @@ impl BinaryEncodable for LocalizedText {
         size
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size = 0;
         // A bit mask that indicates which fields are present in the stream.
         // The mask has the following bits:
@@ -101,7 +101,9 @@ impl BinaryEncodable for LocalizedText {
         }
         Ok(size)
     }
+}
 
+impl BinaryDecodable for LocalizedText {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let encoding_mask = u8::decode(stream, decoding_options)?;
         let locale = if encoding_mask & 0x1 != 0 {

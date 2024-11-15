@@ -25,15 +25,10 @@ macro_rules! response_enum {
                 }
             }
 
-            fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+            fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
                 match self {
                     $( Self::$name(value) => value.encode(stream), )*
                 }
-            }
-
-            fn decode<S: Read>(_: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
-                // THIS WILL NOT DO ANYTHING
-                panic!("Cannot decode a stream to a response message");
             }
         }
 

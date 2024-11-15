@@ -36,7 +36,7 @@ impl opcua::types::BinaryEncodable for SignedSoftwareCertificate {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -45,17 +45,19 @@ impl opcua::types::BinaryEncodable for SignedSoftwareCertificate {
         size += self.signature.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for SignedSoftwareCertificate {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            certificate_data: opcua::types::BinaryEncodable::decode(
+            certificate_data: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            signature: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            signature: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

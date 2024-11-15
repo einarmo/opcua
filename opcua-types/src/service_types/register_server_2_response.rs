@@ -38,7 +38,7 @@ impl opcua::types::BinaryEncodable for RegisterServer2Response {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -48,24 +48,26 @@ impl opcua::types::BinaryEncodable for RegisterServer2Response {
         size += self.diagnostic_infos.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for RegisterServer2Response {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryEncodable::decode(
+        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryDecodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
         Ok(Self {
             response_header,
-            configuration_results: opcua::types::BinaryEncodable::decode(
+            configuration_results: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            diagnostic_infos: opcua::types::BinaryEncodable::decode(
+            diagnostic_infos: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )

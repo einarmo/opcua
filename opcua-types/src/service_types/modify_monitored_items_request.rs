@@ -41,7 +41,7 @@ impl opcua::types::BinaryEncodable for ModifyMonitoredItemsRequest {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -52,29 +52,31 @@ impl opcua::types::BinaryEncodable for ModifyMonitoredItemsRequest {
         size += self.items_to_modify.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ModifyMonitoredItemsRequest {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryEncodable::decode(
+        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryDecodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
         Ok(Self {
             request_header,
-            subscription_id: opcua::types::BinaryEncodable::decode(
+            subscription_id: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            timestamps_to_return: opcua::types::BinaryEncodable::decode(
+            timestamps_to_return: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            items_to_modify: opcua::types::BinaryEncodable::decode(
+            items_to_modify: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )

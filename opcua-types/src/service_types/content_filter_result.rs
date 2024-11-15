@@ -40,7 +40,7 @@ impl opcua::types::BinaryEncodable for ContentFilterResult {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -49,17 +49,19 @@ impl opcua::types::BinaryEncodable for ContentFilterResult {
         size += self.element_diagnostic_infos.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ContentFilterResult {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            element_results: opcua::types::BinaryEncodable::decode(
+            element_results: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            element_diagnostic_infos: opcua::types::BinaryEncodable::decode(
+            element_diagnostic_infos: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

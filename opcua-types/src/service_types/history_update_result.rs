@@ -38,7 +38,7 @@ impl opcua::types::BinaryEncodable for HistoryUpdateResult {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -48,21 +48,23 @@ impl opcua::types::BinaryEncodable for HistoryUpdateResult {
         size += self.diagnostic_infos.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for HistoryUpdateResult {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            status_code: opcua::types::BinaryEncodable::decode(
+            status_code: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            operation_results: opcua::types::BinaryEncodable::decode(
+            operation_results: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            diagnostic_infos: opcua::types::BinaryEncodable::decode(
+            diagnostic_infos: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

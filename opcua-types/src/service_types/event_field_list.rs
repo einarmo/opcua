@@ -36,7 +36,7 @@ impl opcua::types::BinaryEncodable for EventFieldList {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -45,17 +45,19 @@ impl opcua::types::BinaryEncodable for EventFieldList {
         size += self.event_fields.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for EventFieldList {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            client_handle: opcua::types::BinaryEncodable::decode(
+            client_handle: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            event_fields: opcua::types::BinaryEncodable::decode(
+            event_fields: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

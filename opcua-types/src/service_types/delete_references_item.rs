@@ -42,7 +42,7 @@ impl opcua::types::BinaryEncodable for DeleteReferencesItem {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -54,26 +54,28 @@ impl opcua::types::BinaryEncodable for DeleteReferencesItem {
         size += self.delete_bidirectional.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for DeleteReferencesItem {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            source_node_id: opcua::types::BinaryEncodable::decode(
+            source_node_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            reference_type_id: opcua::types::BinaryEncodable::decode(
+            reference_type_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            is_forward: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            target_node_id: opcua::types::BinaryEncodable::decode(
+            is_forward: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            target_node_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            delete_bidirectional: opcua::types::BinaryEncodable::decode(
+            delete_bidirectional: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

@@ -43,7 +43,7 @@ impl opcua::types::BinaryEncodable for ServerStatusDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -56,24 +56,26 @@ impl opcua::types::BinaryEncodable for ServerStatusDataType {
         size += self.shutdown_reason.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ServerStatusDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            start_time: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            current_time: opcua::types::BinaryEncodable::decode(
+            start_time: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            current_time: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            state: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            build_info: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            seconds_till_shutdown: opcua::types::BinaryEncodable::decode(
+            state: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            build_info: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            seconds_till_shutdown: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            shutdown_reason: opcua::types::BinaryEncodable::decode(
+            shutdown_reason: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

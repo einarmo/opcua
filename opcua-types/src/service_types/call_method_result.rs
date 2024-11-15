@@ -42,7 +42,7 @@ impl opcua::types::BinaryEncodable for CallMethodResult {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -53,25 +53,27 @@ impl opcua::types::BinaryEncodable for CallMethodResult {
         size += self.output_arguments.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for CallMethodResult {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            status_code: opcua::types::BinaryEncodable::decode(
+            status_code: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            input_argument_results: opcua::types::BinaryEncodable::decode(
+            input_argument_results: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            input_argument_diagnostic_infos: opcua::types::BinaryEncodable::decode(
+            input_argument_diagnostic_infos: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            output_arguments: opcua::types::BinaryEncodable::decode(
+            output_arguments: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

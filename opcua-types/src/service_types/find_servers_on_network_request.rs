@@ -40,7 +40,7 @@ impl opcua::types::BinaryEncodable for FindServersOnNetworkRequest {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -51,29 +51,31 @@ impl opcua::types::BinaryEncodable for FindServersOnNetworkRequest {
         size += self.server_capability_filter.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for FindServersOnNetworkRequest {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryEncodable::decode(
+        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryDecodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
         Ok(Self {
             request_header,
-            starting_record_id: opcua::types::BinaryEncodable::decode(
+            starting_record_id: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            max_records_to_return: opcua::types::BinaryEncodable::decode(
+            max_records_to_return: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            server_capability_filter: opcua::types::BinaryEncodable::decode(
+            server_capability_filter: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )

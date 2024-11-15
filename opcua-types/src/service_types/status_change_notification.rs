@@ -36,7 +36,7 @@ impl opcua::types::BinaryEncodable for StatusChangeNotification {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -45,14 +45,16 @@ impl opcua::types::BinaryEncodable for StatusChangeNotification {
         size += self.diagnostic_info.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for StatusChangeNotification {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            status: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            diagnostic_info: opcua::types::BinaryEncodable::decode(
+            status: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            diagnostic_info: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

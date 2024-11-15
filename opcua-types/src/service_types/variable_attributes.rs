@@ -58,7 +58,7 @@ impl opcua::types::BinaryEncodable for VariableAttributes {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -78,49 +78,51 @@ impl opcua::types::BinaryEncodable for VariableAttributes {
         size += self.historizing.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for VariableAttributes {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            specified_attributes: opcua::types::BinaryEncodable::decode(
+            specified_attributes: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            display_name: opcua::types::BinaryEncodable::decode(
+            display_name: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            description: opcua::types::BinaryEncodable::decode(
+            description: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            write_mask: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            user_write_mask: opcua::types::BinaryEncodable::decode(
+            write_mask: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            user_write_mask: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            value: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            data_type: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            value_rank: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            array_dimensions: opcua::types::BinaryEncodable::decode(
+            value: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            data_type: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            value_rank: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            array_dimensions: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            access_level: opcua::types::BinaryEncodable::decode(
+            access_level: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            user_access_level: opcua::types::BinaryEncodable::decode(
+            user_access_level: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            minimum_sampling_interval: opcua::types::BinaryEncodable::decode(
+            minimum_sampling_interval: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            historizing: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            historizing: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

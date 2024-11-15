@@ -40,7 +40,7 @@ impl opcua::types::BinaryEncodable for RelativePathElement {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -51,22 +51,24 @@ impl opcua::types::BinaryEncodable for RelativePathElement {
         size += self.target_name.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for RelativePathElement {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            reference_type_id: opcua::types::BinaryEncodable::decode(
+            reference_type_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            is_inverse: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            include_subtypes: opcua::types::BinaryEncodable::decode(
+            is_inverse: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            include_subtypes: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            target_name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            target_name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

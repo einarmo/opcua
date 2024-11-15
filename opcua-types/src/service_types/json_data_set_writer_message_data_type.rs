@@ -34,7 +34,7 @@ impl opcua::types::BinaryEncodable for JsonDataSetWriterMessageDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -42,13 +42,15 @@ impl opcua::types::BinaryEncodable for JsonDataSetWriterMessageDataType {
         size += self.data_set_message_content_mask.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for JsonDataSetWriterMessageDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            data_set_message_content_mask: opcua::types::BinaryEncodable::decode(
+            data_set_message_content_mask: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

@@ -40,7 +40,7 @@ impl opcua::types::BinaryEncodable for UserNameIdentityToken {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -51,16 +51,18 @@ impl opcua::types::BinaryEncodable for UserNameIdentityToken {
         size += self.encryption_algorithm.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for UserNameIdentityToken {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            policy_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            user_name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            password: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            encryption_algorithm: opcua::types::BinaryEncodable::decode(
+            policy_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            user_name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            password: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            encryption_algorithm: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

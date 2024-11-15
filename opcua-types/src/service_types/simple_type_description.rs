@@ -40,7 +40,7 @@ impl opcua::types::BinaryEncodable for SimpleTypeDescription {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -51,22 +51,24 @@ impl opcua::types::BinaryEncodable for SimpleTypeDescription {
         size += self.built_in_type.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for SimpleTypeDescription {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            data_type_id: opcua::types::BinaryEncodable::decode(
+            data_type_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            base_data_type: opcua::types::BinaryEncodable::decode(
+            name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            base_data_type: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            built_in_type: opcua::types::BinaryEncodable::decode(
+            built_in_type: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

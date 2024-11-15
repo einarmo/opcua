@@ -15,7 +15,7 @@ use crate::{argument::Argument, status_code::StatusCode, *};
 
 pub fn serialize_test_and_return<T>(value: T) -> T
 where
-    T: BinaryEncodable + Debug + PartialEq + Clone,
+    T: BinaryEncodable + BinaryDecodable + Debug + PartialEq + Clone,
 {
     serialize_test_and_return_expected(value.clone(), value)
 }
@@ -48,7 +48,7 @@ where
 
 pub fn serialize_test_and_return_expected<T>(value: T, expected_value: T) -> T
 where
-    T: BinaryEncodable + Debug + PartialEq,
+    T: BinaryEncodable + BinaryDecodable + Debug + PartialEq,
 {
     let mut stream = serialize_as_stream(value);
 
@@ -61,14 +61,14 @@ where
 
 pub fn serialize_test<T>(value: T)
 where
-    T: BinaryEncodable + Debug + PartialEq + Clone,
+    T: BinaryEncodable + BinaryDecodable + Debug + PartialEq + Clone,
 {
     let _ = serialize_test_and_return(value);
 }
 
 pub fn serialize_test_expected<T>(value: T, expected_value: T)
 where
-    T: BinaryEncodable + Debug + PartialEq,
+    T: BinaryEncodable + BinaryDecodable + Debug + PartialEq,
 {
     let _ = serialize_test_and_return_expected(value, expected_value);
 }

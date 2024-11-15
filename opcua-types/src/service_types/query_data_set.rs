@@ -38,7 +38,7 @@ impl opcua::types::BinaryEncodable for QueryDataSet {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -48,18 +48,20 @@ impl opcua::types::BinaryEncodable for QueryDataSet {
         size += self.values.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for QueryDataSet {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            node_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            type_definition_node: opcua::types::BinaryEncodable::decode(
+            node_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            type_definition_node: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            values: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            values: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

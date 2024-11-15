@@ -267,10 +267,14 @@ impl CodeGenerator {
                     #size
                 }
 
-                fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+                fn encode<S: std::io::Write + ?Sized>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
                     opcua::types::#write_method(stream, self.bits())
                 }
+            }
+        });
 
+        impls.push(parse_quote! {
+            impl opcua::types::BinaryDecodable for #enum_ident {
                 fn decode<S: std::io::Read>(stream: &mut S, decoding_options: &opcua::types::DecodingOptions) -> opcua::types::EncodingResult<Self> {
                     Ok(Self::from_bits_truncate(#ty::decode(stream, decoding_options)?))
                 }
@@ -574,10 +578,14 @@ impl CodeGenerator {
                     #size
                 }
 
-                fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+                fn encode<S: std::io::Write + ?Sized>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
                     opcua::types::#write_method(stream, *self as #ty)
                 }
+            }
+        });
 
+        impls.push(parse_quote! {
+            impl opcua::types::BinaryDecodable for #enum_ident {
                 fn decode<S: std::io::Read>(stream: &mut S, _: &opcua::types::DecodingOptions) -> opcua::types::EncodingResult<Self> {
                     let value = opcua::types::#read_method(stream)?;
                     Ok(Self::try_from(value)?)
@@ -776,7 +784,7 @@ impl CodeGenerator {
                 });
                 if field.name == "request_header" {
                     decode_impl.extend(quote! {
-                        let request_header: #ty = opcua::types::BinaryEncodable::decode(stream, decoding_options)?;
+                        let request_header: #ty = opcua::types::BinaryDecodable::decode(stream, decoding_options)?;
                         let __request_handle = request_header.request_handle;
                     });
                     decode_build.extend(quote! {
@@ -785,7 +793,7 @@ impl CodeGenerator {
                     has_context = true;
                 } else if field.name == "response_header" {
                     decode_impl.extend(quote! {
-                        let response_header: #ty = opcua::types::BinaryEncodable::decode(stream, decoding_options)?;
+                        let response_header: #ty = opcua::types::BinaryDecodable::decode(stream, decoding_options)?;
                         let __request_handle = response_header.request_handle;
                     });
                     decode_build.extend(quote! {
@@ -794,12 +802,12 @@ impl CodeGenerator {
                     has_context = true;
                 } else if has_context {
                     decode_build.extend(quote! {
-                        #ident: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+                        #ident: opcua::types::BinaryDecodable::decode(stream, decoding_options)
                             .map_err(|e| e.with_request_handle(__request_handle))?,
                     });
                 } else {
                     decode_build.extend(quote! {
-                        #ident: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+                        #ident: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
                     });
                 }
             }
@@ -823,10 +831,14 @@ impl CodeGenerator {
                 }
 
                 #[allow(unused_variables)]
-                fn encode<S: std::io::Write>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+                fn encode<S: std::io::Write + ?Sized>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
                     #encode_impl
                 }
+            }
+        });
 
+        impls.push(parse_quote! {
+            impl opcua::types::BinaryDecodable for #struct_ident {
                 #[allow(unused_variables)]
                 fn decode<S: std::io::Read>(stream: &mut S, decoding_options: &opcua::types::DecodingOptions) -> opcua::types::EncodingResult<Self> {
                     #decode_impl

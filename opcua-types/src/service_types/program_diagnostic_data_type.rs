@@ -52,7 +52,7 @@ impl opcua::types::BinaryEncodable for ProgramDiagnosticDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -69,49 +69,51 @@ impl opcua::types::BinaryEncodable for ProgramDiagnosticDataType {
         size += self.last_method_return_status.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ProgramDiagnosticDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            create_session_id: opcua::types::BinaryEncodable::decode(
+            create_session_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            create_client_name: opcua::types::BinaryEncodable::decode(
+            create_client_name: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            invocation_creation_time: opcua::types::BinaryEncodable::decode(
+            invocation_creation_time: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            last_transition_time: opcua::types::BinaryEncodable::decode(
+            last_transition_time: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            last_method_call: opcua::types::BinaryEncodable::decode(
+            last_method_call: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            last_method_session_id: opcua::types::BinaryEncodable::decode(
+            last_method_session_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            last_method_input_arguments: opcua::types::BinaryEncodable::decode(
+            last_method_input_arguments: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            last_method_output_arguments: opcua::types::BinaryEncodable::decode(
+            last_method_output_arguments: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            last_method_call_time: opcua::types::BinaryEncodable::decode(
+            last_method_call_time: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            last_method_return_status: opcua::types::BinaryEncodable::decode(
+            last_method_return_status: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

@@ -38,7 +38,7 @@ impl opcua::types::BinaryEncodable for NotificationMessage {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -48,21 +48,23 @@ impl opcua::types::BinaryEncodable for NotificationMessage {
         size += self.notification_data.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for NotificationMessage {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            sequence_number: opcua::types::BinaryEncodable::decode(
+            sequence_number: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            publish_time: opcua::types::BinaryEncodable::decode(
+            publish_time: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            notification_data: opcua::types::BinaryEncodable::decode(
+            notification_data: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

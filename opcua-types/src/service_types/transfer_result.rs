@@ -36,7 +36,7 @@ impl opcua::types::BinaryEncodable for TransferResult {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -45,17 +45,19 @@ impl opcua::types::BinaryEncodable for TransferResult {
         size += self.available_sequence_numbers.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for TransferResult {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            status_code: opcua::types::BinaryEncodable::decode(
+            status_code: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            available_sequence_numbers: opcua::types::BinaryEncodable::decode(
+            available_sequence_numbers: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

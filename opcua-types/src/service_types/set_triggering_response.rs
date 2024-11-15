@@ -44,7 +44,7 @@ impl opcua::types::BinaryEncodable for SetTriggeringResponse {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -56,31 +56,33 @@ impl opcua::types::BinaryEncodable for SetTriggeringResponse {
         size += self.remove_diagnostic_infos.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for SetTriggeringResponse {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryEncodable::decode(
+        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryDecodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
         Ok(Self {
             response_header,
-            add_results: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+            add_results: opcua::types::BinaryDecodable::decode(stream, decoding_options)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            add_diagnostic_infos: opcua::types::BinaryEncodable::decode(
+            add_diagnostic_infos: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            remove_results: opcua::types::BinaryEncodable::decode(
+            remove_results: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            remove_diagnostic_infos: opcua::types::BinaryEncodable::decode(
+            remove_diagnostic_infos: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )

@@ -43,7 +43,7 @@ impl opcua::types::BinaryEncodable for AddReferencesItem {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -56,30 +56,32 @@ impl opcua::types::BinaryEncodable for AddReferencesItem {
         size += self.target_node_class.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for AddReferencesItem {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            source_node_id: opcua::types::BinaryEncodable::decode(
+            source_node_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            reference_type_id: opcua::types::BinaryEncodable::decode(
+            reference_type_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            is_forward: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            target_server_uri: opcua::types::BinaryEncodable::decode(
+            is_forward: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            target_server_uri: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            target_node_id: opcua::types::BinaryEncodable::decode(
+            target_node_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            target_node_class: opcua::types::BinaryEncodable::decode(
+            target_node_class: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

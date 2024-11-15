@@ -38,7 +38,7 @@ impl opcua::types::BinaryEncodable for EnumValueType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -48,18 +48,20 @@ impl opcua::types::BinaryEncodable for EnumValueType {
         size += self.description.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for EnumValueType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            value: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            display_name: opcua::types::BinaryEncodable::decode(
+            value: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            display_name: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            description: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            description: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

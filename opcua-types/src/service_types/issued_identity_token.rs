@@ -38,7 +38,7 @@ impl opcua::types::BinaryEncodable for IssuedIdentityToken {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -48,15 +48,17 @@ impl opcua::types::BinaryEncodable for IssuedIdentityToken {
         size += self.encryption_algorithm.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for IssuedIdentityToken {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            policy_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            token_data: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            encryption_algorithm: opcua::types::BinaryEncodable::decode(
+            policy_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            token_data: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            encryption_algorithm: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

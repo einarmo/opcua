@@ -36,7 +36,7 @@ impl opcua::types::BinaryEncodable for MonitoredItemModifyRequest {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -45,17 +45,19 @@ impl opcua::types::BinaryEncodable for MonitoredItemModifyRequest {
         size += self.requested_parameters.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for MonitoredItemModifyRequest {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            monitored_item_id: opcua::types::BinaryEncodable::decode(
+            monitored_item_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            requested_parameters: opcua::types::BinaryEncodable::decode(
+            requested_parameters: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

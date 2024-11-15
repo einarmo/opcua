@@ -17,7 +17,7 @@ use crate::{
         DecodingOptions, EncodingResult,
     },
     status_code::StatusCode,
-    OutOfRange,
+    BinaryDecodable, OutOfRange,
 };
 
 /// To avoid naming conflict hell, the OPC UA String type is typed `UAString` so it does not collide
@@ -110,7 +110,7 @@ impl BinaryEncodable for UAString {
         }
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         // Strings are encoded as UTF8 chars preceded by an Int32 length. A -1 indicates a null string
         if self.value.is_none() {
             write_i32(stream, -1)
@@ -124,7 +124,9 @@ impl BinaryEncodable for UAString {
             Ok(size)
         }
     }
+}
 
+impl BinaryDecodable for UAString {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let len = i32::decode(stream, decoding_options)?;
         // Null string?

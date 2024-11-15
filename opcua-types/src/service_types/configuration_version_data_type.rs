@@ -36,7 +36,7 @@ impl opcua::types::BinaryEncodable for ConfigurationVersionDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -45,17 +45,19 @@ impl opcua::types::BinaryEncodable for ConfigurationVersionDataType {
         size += self.minor_version.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ConfigurationVersionDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            major_version: opcua::types::BinaryEncodable::decode(
+            major_version: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            minor_version: opcua::types::BinaryEncodable::decode(
+            minor_version: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

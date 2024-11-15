@@ -56,7 +56,7 @@ impl opcua::types::BinaryEncodable for ServerDiagnosticsSummaryDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -75,57 +75,59 @@ impl opcua::types::BinaryEncodable for ServerDiagnosticsSummaryDataType {
         size += self.rejected_requests_count.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ServerDiagnosticsSummaryDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            server_view_count: opcua::types::BinaryEncodable::decode(
+            server_view_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            current_session_count: opcua::types::BinaryEncodable::decode(
+            current_session_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            cumulated_session_count: opcua::types::BinaryEncodable::decode(
+            cumulated_session_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            security_rejected_session_count: opcua::types::BinaryEncodable::decode(
+            security_rejected_session_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            rejected_session_count: opcua::types::BinaryEncodable::decode(
+            rejected_session_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            session_timeout_count: opcua::types::BinaryEncodable::decode(
+            session_timeout_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            session_abort_count: opcua::types::BinaryEncodable::decode(
+            session_abort_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            current_subscription_count: opcua::types::BinaryEncodable::decode(
+            current_subscription_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            cumulated_subscription_count: opcua::types::BinaryEncodable::decode(
+            cumulated_subscription_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            publishing_interval_count: opcua::types::BinaryEncodable::decode(
+            publishing_interval_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            security_rejected_requests_count: opcua::types::BinaryEncodable::decode(
+            security_rejected_requests_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            rejected_requests_count: opcua::types::BinaryEncodable::decode(
+            rejected_requests_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

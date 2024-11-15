@@ -36,7 +36,7 @@ impl opcua::types::BinaryEncodable for ServiceCounterDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -45,17 +45,19 @@ impl opcua::types::BinaryEncodable for ServiceCounterDataType {
         size += self.error_count.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ServiceCounterDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            total_count: opcua::types::BinaryEncodable::decode(
+            total_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            error_count: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            error_count: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

@@ -42,7 +42,7 @@ impl opcua::types::BinaryEncodable for MonitoredItemCreateResult {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -54,29 +54,31 @@ impl opcua::types::BinaryEncodable for MonitoredItemCreateResult {
         size += self.filter_result.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for MonitoredItemCreateResult {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            status_code: opcua::types::BinaryEncodable::decode(
+            status_code: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            monitored_item_id: opcua::types::BinaryEncodable::decode(
+            monitored_item_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            revised_sampling_interval: opcua::types::BinaryEncodable::decode(
+            revised_sampling_interval: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            revised_queue_size: opcua::types::BinaryEncodable::decode(
+            revised_queue_size: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            filter_result: opcua::types::BinaryEncodable::decode(
+            filter_result: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

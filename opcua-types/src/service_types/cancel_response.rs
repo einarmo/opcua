@@ -36,7 +36,7 @@ impl opcua::types::BinaryEncodable for CancelResponse {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -45,19 +45,21 @@ impl opcua::types::BinaryEncodable for CancelResponse {
         size += self.cancel_count.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for CancelResponse {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryEncodable::decode(
+        let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryDecodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = response_header.request_handle;
         Ok(Self {
             response_header,
-            cancel_count: opcua::types::BinaryEncodable::decode(stream, decoding_options)
+            cancel_count: opcua::types::BinaryDecodable::decode(stream, decoding_options)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }

@@ -45,7 +45,7 @@ impl opcua::types::BinaryEncodable for ApplicationDescription {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -59,37 +59,39 @@ impl opcua::types::BinaryEncodable for ApplicationDescription {
         size += self.discovery_urls.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ApplicationDescription {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            application_uri: opcua::types::BinaryEncodable::decode(
+            application_uri: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            product_uri: opcua::types::BinaryEncodable::decode(
+            product_uri: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            application_name: opcua::types::BinaryEncodable::decode(
+            application_name: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            application_type: opcua::types::BinaryEncodable::decode(
+            application_type: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            gateway_server_uri: opcua::types::BinaryEncodable::decode(
+            gateway_server_uri: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            discovery_profile_uri: opcua::types::BinaryEncodable::decode(
+            discovery_profile_uri: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            discovery_urls: opcua::types::BinaryEncodable::decode(
+            discovery_urls: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

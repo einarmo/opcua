@@ -4,6 +4,8 @@ use std::{
     io::{Read, Write},
 };
 
+use crate::BinaryDecodable;
+
 use super::encoding::{read_u32, write_u32, BinaryEncodable, DecodingOptions, EncodingResult};
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Default)]
@@ -256,10 +258,12 @@ impl BinaryEncodable for StatusCode {
         4
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_u32(stream, self.bits())
     }
+}
 
+impl BinaryDecodable for StatusCode {
     fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         Ok(StatusCode(read_u32(stream)?))
     }

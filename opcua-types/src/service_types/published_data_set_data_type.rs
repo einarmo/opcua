@@ -42,7 +42,7 @@ impl opcua::types::BinaryEncodable for PublishedDataSetDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -54,26 +54,28 @@ impl opcua::types::BinaryEncodable for PublishedDataSetDataType {
         size += self.data_set_source.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for PublishedDataSetDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            data_set_folder: opcua::types::BinaryEncodable::decode(
+            name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            data_set_folder: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            data_set_meta_data: opcua::types::BinaryEncodable::decode(
+            data_set_meta_data: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            extension_fields: opcua::types::BinaryEncodable::decode(
+            extension_fields: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            data_set_source: opcua::types::BinaryEncodable::decode(
+            data_set_source: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

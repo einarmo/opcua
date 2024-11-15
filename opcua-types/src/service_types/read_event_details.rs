@@ -40,7 +40,7 @@ impl opcua::types::BinaryEncodable for ReadEventDetails {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -51,19 +51,21 @@ impl opcua::types::BinaryEncodable for ReadEventDetails {
         size += self.filter.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ReadEventDetails {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            num_values_per_node: opcua::types::BinaryEncodable::decode(
+            num_values_per_node: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            start_time: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            end_time: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            filter: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            start_time: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            end_time: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            filter: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

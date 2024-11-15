@@ -36,7 +36,7 @@ impl opcua::types::BinaryEncodable for MdnsDiscoveryConfiguration {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -45,17 +45,19 @@ impl opcua::types::BinaryEncodable for MdnsDiscoveryConfiguration {
         size += self.server_capabilities.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for MdnsDiscoveryConfiguration {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            mdns_server_name: opcua::types::BinaryEncodable::decode(
+            mdns_server_name: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            server_capabilities: opcua::types::BinaryEncodable::decode(
+            server_capabilities: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

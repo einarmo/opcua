@@ -45,7 +45,7 @@ impl BinaryEncodable for ResponseHeader {
         size
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size = 0;
         size += self.timestamp.encode(stream)?;
         size += self.request_handle.encode(stream)?;
@@ -56,7 +56,9 @@ impl BinaryEncodable for ResponseHeader {
         assert_eq!(size, self.byte_len());
         Ok(size)
     }
+}
 
+impl BinaryDecodable for ResponseHeader {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let timestamp = UtcTime::decode(stream, decoding_options)?;
         let request_handle = IntegerId::decode(stream, decoding_options)?;

@@ -36,7 +36,7 @@ impl opcua::types::BinaryEncodable for SubscribedDataSetMirrorDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -45,17 +45,19 @@ impl opcua::types::BinaryEncodable for SubscribedDataSetMirrorDataType {
         size += self.role_permissions.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for SubscribedDataSetMirrorDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            parent_node_name: opcua::types::BinaryEncodable::decode(
+            parent_node_name: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            role_permissions: opcua::types::BinaryEncodable::decode(
+            role_permissions: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

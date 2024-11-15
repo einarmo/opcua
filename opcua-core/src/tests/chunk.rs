@@ -2,9 +2,9 @@ use std::io::{Cursor, Write};
 
 use log::trace;
 use opcua_types::{
-    ByteString, DataValue, DateTime, DecodingOptions, DiagnosticBits, ExtensionObject,
-    MessageSecurityMode, NodeId, OpenSecureChannelRequest, ReadResponse, RequestHeader,
-    ResponseHeader, SecurityTokenRequestType, UAString,
+    BinaryDecodable, ByteString, DataValue, DateTime, DecodingOptions, DiagnosticBits,
+    ExtensionObject, MessageSecurityMode, NodeId, OpenSecureChannelRequest, ReadResponse,
+    RequestHeader, ResponseHeader, SecurityTokenRequestType, UAString,
 };
 
 use crate::{

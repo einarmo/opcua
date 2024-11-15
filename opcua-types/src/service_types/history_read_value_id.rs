@@ -40,7 +40,7 @@ impl opcua::types::BinaryEncodable for HistoryReadValueId {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -51,22 +51,24 @@ impl opcua::types::BinaryEncodable for HistoryReadValueId {
         size += self.continuation_point.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for HistoryReadValueId {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            node_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            index_range: opcua::types::BinaryEncodable::decode(
+            node_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            index_range: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            data_encoding: opcua::types::BinaryEncodable::decode(
+            data_encoding: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            continuation_point: opcua::types::BinaryEncodable::decode(
+            continuation_point: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

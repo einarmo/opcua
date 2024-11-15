@@ -50,7 +50,7 @@ impl opcua::types::BinaryEncodable for UABinaryFileDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -64,34 +64,36 @@ impl opcua::types::BinaryEncodable for UABinaryFileDataType {
         size += self.body.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for UABinaryFileDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            namespaces: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            structure_data_types: opcua::types::BinaryEncodable::decode(
+            namespaces: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            structure_data_types: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            enum_data_types: opcua::types::BinaryEncodable::decode(
+            enum_data_types: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            simple_data_types: opcua::types::BinaryEncodable::decode(
+            simple_data_types: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            schema_location: opcua::types::BinaryEncodable::decode(
+            schema_location: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            file_header: opcua::types::BinaryEncodable::decode(
+            file_header: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            body: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            body: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

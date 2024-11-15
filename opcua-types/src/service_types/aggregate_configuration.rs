@@ -42,7 +42,7 @@ impl opcua::types::BinaryEncodable for AggregateConfiguration {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -54,29 +54,31 @@ impl opcua::types::BinaryEncodable for AggregateConfiguration {
         size += self.use_sloped_extrapolation.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for AggregateConfiguration {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            use_server_capabilities_defaults: opcua::types::BinaryEncodable::decode(
+            use_server_capabilities_defaults: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            treat_uncertain_as_bad: opcua::types::BinaryEncodable::decode(
+            treat_uncertain_as_bad: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            percent_data_bad: opcua::types::BinaryEncodable::decode(
+            percent_data_bad: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            percent_data_good: opcua::types::BinaryEncodable::decode(
+            percent_data_good: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            use_sloped_extrapolation: opcua::types::BinaryEncodable::decode(
+            use_sloped_extrapolation: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

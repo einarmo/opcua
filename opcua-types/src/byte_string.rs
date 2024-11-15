@@ -18,7 +18,7 @@ use crate::{
         DecodingOptions, EncodingResult,
     },
     status_code::StatusCode,
-    Guid, OutOfRange,
+    BinaryDecodable, Guid, OutOfRange,
 };
 
 /// A sequence of octets.
@@ -80,7 +80,7 @@ impl BinaryEncodable for ByteString {
         }
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         // Strings are uncoded as UTF8 chars preceded by an Int32 length. A -1 indicates a null string
         if self.value.is_none() {
             write_i32(stream, -1)
@@ -93,7 +93,9 @@ impl BinaryEncodable for ByteString {
             Ok(size)
         }
     }
+}
 
+impl BinaryDecodable for ByteString {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let len = i32::decode(stream, decoding_options)?;
         // Null string?

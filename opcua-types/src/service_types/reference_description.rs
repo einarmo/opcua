@@ -45,7 +45,7 @@ impl opcua::types::BinaryEncodable for ReferenceDescription {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -59,28 +59,30 @@ impl opcua::types::BinaryEncodable for ReferenceDescription {
         size += self.type_definition.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ReferenceDescription {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            reference_type_id: opcua::types::BinaryEncodable::decode(
+            reference_type_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            is_forward: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            node_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            browse_name: opcua::types::BinaryEncodable::decode(
+            is_forward: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            node_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            browse_name: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            display_name: opcua::types::BinaryEncodable::decode(
+            display_name: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            node_class: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            type_definition: opcua::types::BinaryEncodable::decode(
+            node_class: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            type_definition: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

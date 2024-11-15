@@ -45,7 +45,7 @@ impl opcua::types::BinaryEncodable for AddNodesItem {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -59,34 +59,36 @@ impl opcua::types::BinaryEncodable for AddNodesItem {
         size += self.type_definition.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for AddNodesItem {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            parent_node_id: opcua::types::BinaryEncodable::decode(
+            parent_node_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            reference_type_id: opcua::types::BinaryEncodable::decode(
+            reference_type_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            requested_new_node_id: opcua::types::BinaryEncodable::decode(
+            requested_new_node_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            browse_name: opcua::types::BinaryEncodable::decode(
+            browse_name: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            node_class: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            node_attributes: opcua::types::BinaryEncodable::decode(
+            node_class: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            node_attributes: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            type_definition: opcua::types::BinaryEncodable::decode(
+            type_definition: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

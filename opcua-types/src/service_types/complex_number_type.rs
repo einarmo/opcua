@@ -36,7 +36,7 @@ impl opcua::types::BinaryEncodable for ComplexNumberType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -45,14 +45,16 @@ impl opcua::types::BinaryEncodable for ComplexNumberType {
         size += self.imaginary.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ComplexNumberType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            real: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            imaginary: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            real: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            imaginary: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

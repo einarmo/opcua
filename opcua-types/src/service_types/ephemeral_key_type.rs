@@ -36,7 +36,7 @@ impl opcua::types::BinaryEncodable for EphemeralKeyType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -45,14 +45,16 @@ impl opcua::types::BinaryEncodable for EphemeralKeyType {
         size += self.signature.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for EphemeralKeyType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            public_key: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            signature: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            public_key: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            signature: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

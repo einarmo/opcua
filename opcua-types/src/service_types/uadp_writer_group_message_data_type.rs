@@ -41,7 +41,7 @@ impl opcua::types::BinaryEncodable for UadpWriterGroupMessageDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -53,29 +53,31 @@ impl opcua::types::BinaryEncodable for UadpWriterGroupMessageDataType {
         size += self.publishing_offset.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for UadpWriterGroupMessageDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            group_version: opcua::types::BinaryEncodable::decode(
+            group_version: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            data_set_ordering: opcua::types::BinaryEncodable::decode(
+            data_set_ordering: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            network_message_content_mask: opcua::types::BinaryEncodable::decode(
+            network_message_content_mask: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            sampling_offset: opcua::types::BinaryEncodable::decode(
+            sampling_offset: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            publishing_offset: opcua::types::BinaryEncodable::decode(
+            publishing_offset: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

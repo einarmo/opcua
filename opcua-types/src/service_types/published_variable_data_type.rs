@@ -48,7 +48,7 @@ impl opcua::types::BinaryEncodable for PublishedVariableDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -63,41 +63,43 @@ impl opcua::types::BinaryEncodable for PublishedVariableDataType {
         size += self.meta_data_properties.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for PublishedVariableDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            published_variable: opcua::types::BinaryEncodable::decode(
+            published_variable: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            attribute_id: opcua::types::BinaryEncodable::decode(
+            attribute_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            sampling_interval_hint: opcua::types::BinaryEncodable::decode(
+            sampling_interval_hint: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            deadband_type: opcua::types::BinaryEncodable::decode(
+            deadband_type: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            deadband_value: opcua::types::BinaryEncodable::decode(
+            deadband_value: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            index_range: opcua::types::BinaryEncodable::decode(
+            index_range: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            substitute_value: opcua::types::BinaryEncodable::decode(
+            substitute_value: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            meta_data_properties: opcua::types::BinaryEncodable::decode(
+            meta_data_properties: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

@@ -67,7 +67,7 @@ impl opcua::types::BinaryEncodable for DataSetReaderDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -91,71 +91,73 @@ impl opcua::types::BinaryEncodable for DataSetReaderDataType {
         size += self.subscribed_data_set.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for DataSetReaderDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            enabled: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            publisher_id: opcua::types::BinaryEncodable::decode(
+            name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            enabled: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            publisher_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            writer_group_id: opcua::types::BinaryEncodable::decode(
+            writer_group_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            data_set_writer_id: opcua::types::BinaryEncodable::decode(
+            data_set_writer_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            data_set_meta_data: opcua::types::BinaryEncodable::decode(
+            data_set_meta_data: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            data_set_field_content_mask: opcua::types::BinaryEncodable::decode(
+            data_set_field_content_mask: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            message_receive_timeout: opcua::types::BinaryEncodable::decode(
+            message_receive_timeout: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            key_frame_count: opcua::types::BinaryEncodable::decode(
+            key_frame_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            header_layout_uri: opcua::types::BinaryEncodable::decode(
+            header_layout_uri: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            security_mode: opcua::types::BinaryEncodable::decode(
+            security_mode: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            security_group_id: opcua::types::BinaryEncodable::decode(
+            security_group_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            security_key_services: opcua::types::BinaryEncodable::decode(
+            security_key_services: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            data_set_reader_properties: opcua::types::BinaryEncodable::decode(
+            data_set_reader_properties: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            transport_settings: opcua::types::BinaryEncodable::decode(
+            transport_settings: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            message_settings: opcua::types::BinaryEncodable::decode(
+            message_settings: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            subscribed_data_set: opcua::types::BinaryEncodable::decode(
+            subscribed_data_set: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

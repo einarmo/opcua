@@ -54,7 +54,7 @@ impl opcua::types::BinaryEncodable for DataSetMetaDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -70,36 +70,38 @@ impl opcua::types::BinaryEncodable for DataSetMetaDataType {
         size += self.configuration_version.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for DataSetMetaDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            namespaces: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            structure_data_types: opcua::types::BinaryEncodable::decode(
+            namespaces: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            structure_data_types: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            enum_data_types: opcua::types::BinaryEncodable::decode(
+            enum_data_types: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            simple_data_types: opcua::types::BinaryEncodable::decode(
+            simple_data_types: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            description: opcua::types::BinaryEncodable::decode(
+            name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            description: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            fields: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            data_set_class_id: opcua::types::BinaryEncodable::decode(
+            fields: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            data_set_class_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            configuration_version: opcua::types::BinaryEncodable::decode(
+            configuration_version: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

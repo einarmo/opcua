@@ -44,7 +44,7 @@ impl opcua::types::BinaryEncodable for BuildInfo {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -57,33 +57,35 @@ impl opcua::types::BinaryEncodable for BuildInfo {
         size += self.build_date.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for BuildInfo {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            product_uri: opcua::types::BinaryEncodable::decode(
+            product_uri: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            manufacturer_name: opcua::types::BinaryEncodable::decode(
+            manufacturer_name: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            product_name: opcua::types::BinaryEncodable::decode(
+            product_name: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            software_version: opcua::types::BinaryEncodable::decode(
+            software_version: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            build_number: opcua::types::BinaryEncodable::decode(
+            build_number: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            build_date: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            build_date: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

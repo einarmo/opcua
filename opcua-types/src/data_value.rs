@@ -84,7 +84,7 @@ impl BinaryEncodable for DataValue {
         size
     }
 
-    fn encode<S: Write>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         let mut size = 0;
 
         let encoding_mask = self.encoding_mask();
@@ -110,7 +110,9 @@ impl BinaryEncodable for DataValue {
         }
         Ok(size)
     }
+}
 
+impl BinaryDecodable for DataValue {
     fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
         let encoding_mask =
             DataValueFlags::from_bits_truncate(u8::decode(stream, decoding_options)?);

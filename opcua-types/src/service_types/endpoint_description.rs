@@ -47,7 +47,7 @@ impl opcua::types::BinaryEncodable for EndpointDescription {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -62,38 +62,40 @@ impl opcua::types::BinaryEncodable for EndpointDescription {
         size += self.security_level.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for EndpointDescription {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            endpoint_url: opcua::types::BinaryEncodable::decode(
+            endpoint_url: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            server: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            server_certificate: opcua::types::BinaryEncodable::decode(
+            server: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            server_certificate: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            security_mode: opcua::types::BinaryEncodable::decode(
+            security_mode: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            security_policy_uri: opcua::types::BinaryEncodable::decode(
+            security_policy_uri: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            user_identity_tokens: opcua::types::BinaryEncodable::decode(
+            user_identity_tokens: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            transport_profile_uri: opcua::types::BinaryEncodable::decode(
+            transport_profile_uri: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            security_level: opcua::types::BinaryEncodable::decode(
+            security_level: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

@@ -46,7 +46,7 @@ impl opcua::types::BinaryEncodable for StructureField {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -60,28 +60,30 @@ impl opcua::types::BinaryEncodable for StructureField {
         size += self.is_optional.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for StructureField {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            description: opcua::types::BinaryEncodable::decode(
+            name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            description: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            data_type: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            value_rank: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            array_dimensions: opcua::types::BinaryEncodable::decode(
+            data_type: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            value_rank: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            array_dimensions: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            max_string_length: opcua::types::BinaryEncodable::decode(
+            max_string_length: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            is_optional: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            is_optional: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

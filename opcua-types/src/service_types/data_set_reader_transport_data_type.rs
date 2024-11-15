@@ -30,12 +30,14 @@ impl opcua::types::BinaryEncodable for DataSetReaderTransportDataType {
         0usize
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
         Ok(0)
     }
+}
+impl opcua::types::BinaryDecodable for DataSetReaderTransportDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,

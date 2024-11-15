@@ -94,7 +94,7 @@ impl opcua::types::BinaryEncodable for SubscriptionDiagnosticsDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -132,127 +132,129 @@ impl opcua::types::BinaryEncodable for SubscriptionDiagnosticsDataType {
         size += self.event_queue_over_flow_count.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for SubscriptionDiagnosticsDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            session_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            subscription_id: opcua::types::BinaryEncodable::decode(
+            session_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            subscription_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            priority: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            publishing_interval: opcua::types::BinaryEncodable::decode(
+            priority: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            publishing_interval: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            max_keep_alive_count: opcua::types::BinaryEncodable::decode(
+            max_keep_alive_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            max_lifetime_count: opcua::types::BinaryEncodable::decode(
+            max_lifetime_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            max_notifications_per_publish: opcua::types::BinaryEncodable::decode(
+            max_notifications_per_publish: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            publishing_enabled: opcua::types::BinaryEncodable::decode(
+            publishing_enabled: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            modify_count: opcua::types::BinaryEncodable::decode(
+            modify_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            enable_count: opcua::types::BinaryEncodable::decode(
+            enable_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            disable_count: opcua::types::BinaryEncodable::decode(
+            disable_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            republish_request_count: opcua::types::BinaryEncodable::decode(
+            republish_request_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            republish_message_request_count: opcua::types::BinaryEncodable::decode(
+            republish_message_request_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            republish_message_count: opcua::types::BinaryEncodable::decode(
+            republish_message_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            transfer_request_count: opcua::types::BinaryEncodable::decode(
+            transfer_request_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            transferred_to_alt_client_count: opcua::types::BinaryEncodable::decode(
+            transferred_to_alt_client_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            transferred_to_same_client_count: opcua::types::BinaryEncodable::decode(
+            transferred_to_same_client_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            publish_request_count: opcua::types::BinaryEncodable::decode(
+            publish_request_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            data_change_notifications_count: opcua::types::BinaryEncodable::decode(
+            data_change_notifications_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            event_notifications_count: opcua::types::BinaryEncodable::decode(
+            event_notifications_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            notifications_count: opcua::types::BinaryEncodable::decode(
+            notifications_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            late_publish_request_count: opcua::types::BinaryEncodable::decode(
+            late_publish_request_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            current_keep_alive_count: opcua::types::BinaryEncodable::decode(
+            current_keep_alive_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            current_lifetime_count: opcua::types::BinaryEncodable::decode(
+            current_lifetime_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            unacknowledged_message_count: opcua::types::BinaryEncodable::decode(
+            unacknowledged_message_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            discarded_message_count: opcua::types::BinaryEncodable::decode(
+            discarded_message_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            monitored_item_count: opcua::types::BinaryEncodable::decode(
+            monitored_item_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            disabled_monitored_item_count: opcua::types::BinaryEncodable::decode(
+            disabled_monitored_item_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            monitoring_queue_overflow_count: opcua::types::BinaryEncodable::decode(
+            monitoring_queue_overflow_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            next_sequence_number: opcua::types::BinaryEncodable::decode(
+            next_sequence_number: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            event_queue_over_flow_count: opcua::types::BinaryEncodable::decode(
+            event_queue_over_flow_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

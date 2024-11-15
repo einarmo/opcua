@@ -41,7 +41,7 @@ impl opcua::types::BinaryEncodable for AxisInformation {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -53,23 +53,25 @@ impl opcua::types::BinaryEncodable for AxisInformation {
         size += self.axis_steps.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for AxisInformation {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            engineering_units: opcua::types::BinaryEncodable::decode(
+            engineering_units: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            eu_range: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            title: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            axis_scale_type: opcua::types::BinaryEncodable::decode(
+            eu_range: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            title: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            axis_scale_type: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            axis_steps: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
+            axis_steps: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
         })
     }
 }

@@ -40,7 +40,7 @@ impl opcua::types::BinaryEncodable for ServerOnNetwork {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -51,22 +51,24 @@ impl opcua::types::BinaryEncodable for ServerOnNetwork {
         size += self.server_capabilities.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ServerOnNetwork {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            record_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            server_name: opcua::types::BinaryEncodable::decode(
+            record_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            server_name: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            discovery_url: opcua::types::BinaryEncodable::decode(
+            discovery_url: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            server_capabilities: opcua::types::BinaryEncodable::decode(
+            server_capabilities: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

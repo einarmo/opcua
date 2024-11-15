@@ -55,7 +55,7 @@ impl opcua::types::BinaryEncodable for ReaderGroupDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -72,43 +72,45 @@ impl opcua::types::BinaryEncodable for ReaderGroupDataType {
         size += self.data_set_readers.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for ReaderGroupDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            enabled: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            security_mode: opcua::types::BinaryEncodable::decode(
+            name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            enabled: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            security_mode: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            security_group_id: opcua::types::BinaryEncodable::decode(
+            security_group_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            security_key_services: opcua::types::BinaryEncodable::decode(
+            security_key_services: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            max_network_message_size: opcua::types::BinaryEncodable::decode(
+            max_network_message_size: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            group_properties: opcua::types::BinaryEncodable::decode(
+            group_properties: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            transport_settings: opcua::types::BinaryEncodable::decode(
+            transport_settings: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            message_settings: opcua::types::BinaryEncodable::decode(
+            message_settings: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            data_set_readers: opcua::types::BinaryEncodable::decode(
+            data_set_readers: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

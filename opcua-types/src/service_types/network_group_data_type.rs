@@ -38,7 +38,7 @@ impl opcua::types::BinaryEncodable for NetworkGroupDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -47,14 +47,16 @@ impl opcua::types::BinaryEncodable for NetworkGroupDataType {
         size += self.network_paths.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for NetworkGroupDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            server_uri: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            network_paths: opcua::types::BinaryEncodable::decode(
+            server_uri: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            network_paths: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

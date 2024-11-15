@@ -50,7 +50,7 @@ impl opcua::types::BinaryEncodable for DataSetWriterDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -66,39 +66,41 @@ impl opcua::types::BinaryEncodable for DataSetWriterDataType {
         size += self.message_settings.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for DataSetWriterDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            name: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            enabled: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            data_set_writer_id: opcua::types::BinaryEncodable::decode(
+            name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            enabled: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            data_set_writer_id: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            data_set_field_content_mask: opcua::types::BinaryEncodable::decode(
+            data_set_field_content_mask: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            key_frame_count: opcua::types::BinaryEncodable::decode(
+            key_frame_count: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            data_set_name: opcua::types::BinaryEncodable::decode(
+            data_set_name: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            data_set_writer_properties: opcua::types::BinaryEncodable::decode(
+            data_set_writer_properties: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            transport_settings: opcua::types::BinaryEncodable::decode(
+            transport_settings: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            message_settings: opcua::types::BinaryEncodable::decode(
+            message_settings: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

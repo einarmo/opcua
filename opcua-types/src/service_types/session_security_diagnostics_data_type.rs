@@ -49,7 +49,7 @@ impl opcua::types::BinaryEncodable for SessionSecurityDiagnosticsDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -65,39 +65,41 @@ impl opcua::types::BinaryEncodable for SessionSecurityDiagnosticsDataType {
         size += self.client_certificate.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for SessionSecurityDiagnosticsDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            session_id: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            client_user_id_of_session: opcua::types::BinaryEncodable::decode(
+            session_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            client_user_id_of_session: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            client_user_id_history: opcua::types::BinaryEncodable::decode(
+            client_user_id_history: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            authentication_mechanism: opcua::types::BinaryEncodable::decode(
+            authentication_mechanism: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            encoding: opcua::types::BinaryEncodable::decode(stream, decoding_options)?,
-            transport_protocol: opcua::types::BinaryEncodable::decode(
+            encoding: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            transport_protocol: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            security_mode: opcua::types::BinaryEncodable::decode(
+            security_mode: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            security_policy_uri: opcua::types::BinaryEncodable::decode(
+            security_policy_uri: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            client_certificate: opcua::types::BinaryEncodable::decode(
+            client_certificate: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

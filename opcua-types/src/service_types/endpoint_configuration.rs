@@ -50,7 +50,7 @@ impl opcua::types::BinaryEncodable for EndpointConfiguration {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -66,45 +66,47 @@ impl opcua::types::BinaryEncodable for EndpointConfiguration {
         size += self.security_token_lifetime.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for EndpointConfiguration {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            operation_timeout: opcua::types::BinaryEncodable::decode(
+            operation_timeout: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            use_binary_encoding: opcua::types::BinaryEncodable::decode(
+            use_binary_encoding: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            max_string_length: opcua::types::BinaryEncodable::decode(
+            max_string_length: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            max_byte_string_length: opcua::types::BinaryEncodable::decode(
+            max_byte_string_length: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            max_array_length: opcua::types::BinaryEncodable::decode(
+            max_array_length: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            max_message_size: opcua::types::BinaryEncodable::decode(
+            max_message_size: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            max_buffer_size: opcua::types::BinaryEncodable::decode(
+            max_buffer_size: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            channel_lifetime: opcua::types::BinaryEncodable::decode(
+            channel_lifetime: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            security_token_lifetime: opcua::types::BinaryEncodable::decode(
+            security_token_lifetime: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,

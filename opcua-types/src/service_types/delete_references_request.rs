@@ -38,7 +38,7 @@ impl opcua::types::BinaryEncodable for DeleteReferencesRequest {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -47,19 +47,21 @@ impl opcua::types::BinaryEncodable for DeleteReferencesRequest {
         size += self.references_to_delete.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for DeleteReferencesRequest {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
-        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryEncodable::decode(
+        let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryDecodable::decode(
             stream,
             decoding_options,
         )?;
         let __request_handle = request_header.request_handle;
         Ok(Self {
             request_header,
-            references_to_delete: opcua::types::BinaryEncodable::decode(
+            references_to_delete: opcua::types::BinaryDecodable::decode(
                     stream,
                     decoding_options,
                 )

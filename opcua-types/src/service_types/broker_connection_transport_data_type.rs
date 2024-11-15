@@ -36,7 +36,7 @@ impl opcua::types::BinaryEncodable for BrokerConnectionTransportDataType {
         size
     }
     #[allow(unused_variables)]
-    fn encode<S: std::io::Write>(
+    fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
     ) -> opcua::types::EncodingResult<usize> {
@@ -45,17 +45,19 @@ impl opcua::types::BinaryEncodable for BrokerConnectionTransportDataType {
         size += self.authentication_profile_uri.encode(stream)?;
         Ok(size)
     }
+}
+impl opcua::types::BinaryDecodable for BrokerConnectionTransportDataType {
     #[allow(unused_variables)]
     fn decode<S: std::io::Read>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            resource_uri: opcua::types::BinaryEncodable::decode(
+            resource_uri: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
-            authentication_profile_uri: opcua::types::BinaryEncodable::decode(
+            authentication_profile_uri: opcua::types::BinaryDecodable::decode(
                 stream,
                 decoding_options,
             )?,
