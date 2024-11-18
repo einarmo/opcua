@@ -283,6 +283,10 @@ mod json {
                         warn!("Invalid NodeId, empty identifier");
                         return Err(StatusCode::BadDecodingError.into());
                     };
+                    if s.is_empty() {
+                        warn!("Invalid NodeId, empty identifier");
+                        return Err(StatusCode::BadDecodingError.into());
+                    }
                     let s = Guid::from_str(&s).map_err(|_| {
                         warn!("Unable to decode GUID identifier");
                         StatusCode::BadDecodingError
@@ -294,6 +298,10 @@ mod json {
                         warn!("Invalid NodeId, empty identifier");
                         return Err(StatusCode::BadDecodingError.into());
                     };
+                    if s.is_empty() {
+                        warn!("Invalid NodeId, empty identifier");
+                        return Err(StatusCode::BadDecodingError.into());
+                    }
                     let s: ByteString = ByteString::from_base64(&s).ok_or_else(|| {
                         warn!("Unable to decode bytestring identifier");
                         StatusCode::BadDecodingError
@@ -318,150 +326,6 @@ mod json {
                 namespace: namespace.unwrap_or_default(),
                 identifier,
             })
-        }
-    }
-}
-
-#[cfg(feature = "json")]
-mod json_old {
-    use crate::{ByteString, Guid, UAString};
-
-    use super::{Identifier, NodeId};
-    use serde::{
-        de::{self, IgnoredAny, Visitor},
-        ser::SerializeStruct,
-        Deserialize, Serialize,
-    };
-
-    impl Serialize for NodeId {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: serde::Serializer,
-        {
-            let mut len = 1;
-            if self.namespace != 0 {
-                len += 1;
-            }
-            if !matches!(self.identifier, Identifier::Numeric(_)) {
-                len += 1;
-            }
-
-            let mut struct_ser = serializer.serialize_struct("NodeId", len)?;
-            match &self.identifier {
-                Identifier::Numeric(n) => {
-                    struct_ser.serialize_field("Id", n)?;
-                }
-                Identifier::String(uastring) => {
-                    struct_ser.serialize_field("IdType", &1)?;
-                    struct_ser.serialize_field("Id", uastring)?;
-                }
-                Identifier::Guid(guid) => {
-                    struct_ser.serialize_field("IdType", &2)?;
-                    struct_ser.serialize_field("Id", guid)?;
-                }
-                Identifier::ByteString(byte_string) => {
-                    struct_ser.serialize_field("IdType", &3)?;
-                    struct_ser.serialize_field("Id", byte_string)?;
-                }
-            }
-
-            if self.namespace != 0 {
-                struct_ser.serialize_field("Namespace", &self.namespace)?;
-            }
-
-            struct_ser.end()
-        }
-    }
-
-    impl<'de> Deserialize<'de> for NodeId {
-        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: serde::Deserializer<'de>,
-        {
-            struct NodeIdVisitor;
-
-            impl<'de> Visitor<'de> for NodeIdVisitor {
-                type Value = NodeId;
-
-                fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-                    write!(formatter, "an object containing a NodeId")
-                }
-
-                fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
-                where
-                    A: serde::de::MapAccess<'de>,
-                {
-                    let mut id_type: Option<u16> = None;
-                    let mut namespace: Option<u16> = None;
-                    let mut value: Option<serde_json::Value> = None;
-                    while let Some(key) = map.next_key::<String>()? {
-                        match key.as_str() {
-                            "Id" => {
-                                value = Some(map.next_value()?);
-                            }
-                            "Namespace" => {
-                                namespace = Some(map.next_value()?);
-                            }
-                            "IdType" => id_type = Some(map.next_value()?),
-                            _ => {
-                                map.next_value::<IgnoredAny>()?;
-                            }
-                        }
-                    }
-
-                    // The standard implies that this field is required.
-                    let Some(value) = value else {
-                        return Err(de::Error::custom(
-                            "Failed to deserialize NodeId, missing Id field",
-                        ));
-                    };
-
-                    if value.is_null() {
-                        return Err(de::Error::custom(
-                            "Failed to deserialize NodeId, null Id field",
-                        ));
-                    }
-
-                    let identifier = match id_type {
-                        Some(1) => {
-                            let s: UAString =
-                                serde_json::from_value(value).map_err(de::Error::custom)?;
-                            if s.is_null() || s.is_empty() {
-                                return Err(de::Error::custom("Invalid NodeId, empty identifier"));
-                            }
-                            Identifier::String(s)
-                        }
-                        Some(2) => {
-                            let s: Guid =
-                                serde_json::from_value(value).map_err(de::Error::custom)?;
-                            Identifier::Guid(s)
-                        }
-                        Some(3) => {
-                            let s: ByteString =
-                                serde_json::from_value(value).map_err(de::Error::custom)?;
-                            if s.is_null() || s.is_empty() {
-                                return Err(de::Error::custom("Invalid NodeId, empty identifier"));
-                            }
-                            Identifier::ByteString(s)
-                        }
-                        None | Some(0) => Identifier::Numeric(
-                            serde_json::from_value(value).map_err(de::Error::custom)?,
-                        ),
-                        Some(r) => {
-                            return Err(de::Error::custom(format!(
-                                "Failed to deserialize NodeId, got unexpected IdType {r}"
-                            )))
-                        }
-                    };
-
-                    Ok(NodeId {
-                        namespace: namespace.unwrap_or_default(),
-                        identifier,
-                    })
-                }
-            }
-
-            deserializer.deserialize_map(NodeIdVisitor)
         }
     }
 }

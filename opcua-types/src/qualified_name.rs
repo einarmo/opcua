@@ -7,9 +7,9 @@ use std::io::{Read, Write};
 
 use crate::{encoding::*, string::*};
 
-#[cfg(feature = "json")]
-fn is_zero(id: &u16) -> bool {
-    *id == 0
+#[allow(unused)]
+mod opcua {
+    pub use crate as types;
 }
 
 /// An identifier for a error or condition that is associated with a value or an operation.
@@ -28,21 +28,15 @@ fn is_zero(id: &u16) -> bool {
 ///        JSON string unless the NamespaceIndexis 1 or if NamespaceUriis unknown. In these cases,
 ///        the NamespaceIndexis encoded as a JSON number.
 #[derive(PartialEq, Debug, Clone, Eq, Hash)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua_macros::JsonEncodable, opcua_macros::JsonDecodable)
+)]
 pub struct QualifiedName {
     /// The namespace index
-    #[cfg_attr(
-        feature = "json",
-        serde(rename = "Uri", default, skip_serializing_if = "is_zero")
-    )]
+    #[cfg_attr(feature = "json", opcua(rename = "Uri"))]
     pub namespace_index: u16,
     /// The name.
-    #[cfg_attr(
-        feature = "json",
-        serde(skip_serializing_if = "UAString::is_null", default)
-    )]
     pub name: UAString,
 }
 

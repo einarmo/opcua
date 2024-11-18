@@ -2,6 +2,34 @@ use std::{io::Read, sync::Arc};
 
 use crate::{DecodingOptions, NamespaceMap, NodeId};
 
+pub struct ContextOwned {
+    namespaces: NamespaceMap,
+    loaders: Vec<Arc<dyn TypeLoader>>,
+    options: DecodingOptions,
+}
+
+impl ContextOwned {
+    pub fn new(
+        namespaces: NamespaceMap,
+        loaders: Vec<Arc<dyn TypeLoader>>,
+        options: DecodingOptions,
+    ) -> Self {
+        Self {
+            namespaces,
+            loaders,
+            options,
+        }
+    }
+
+    pub fn context(&self) -> Context<'_> {
+        Context {
+            namespaces: &self.namespaces,
+            loaders: &self.loaders,
+            options: self.options.clone(),
+        }
+    }
+}
+
 #[derive(Clone)]
 pub struct Context<'a> {
     namespaces: &'a NamespaceMap,

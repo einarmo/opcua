@@ -88,6 +88,14 @@ impl EncodingError {
         self
     }
 
+    /// Utility for setting request handle when it is _maybe_ initialized.
+    pub fn maybe_with_request_handle(mut self, handle: Option<u32>) -> Self {
+        if let Some(handle) = handle {
+            self.request_handle = Some(handle);
+        }
+        self
+    }
+
     pub fn status(&self) -> StatusCode {
         self.status
     }

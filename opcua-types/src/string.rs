@@ -89,65 +89,6 @@ mod json {
     }
 }
 
-#[cfg(feature = "json")]
-mod json_old {
-    use super::UAString;
-    use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
-    use std::fmt;
-
-    impl Serialize for UAString {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: Serializer,
-        {
-            if let Some(s) = self.value.as_ref() {
-                serializer.serialize_str(s)
-            } else {
-                serializer.serialize_none()
-            }
-        }
-    }
-
-    struct UAStringVisitor;
-
-    impl<'de> serde::de::Visitor<'de> for UAStringVisitor {
-        type Value = UAString;
-        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-            write!(formatter, "a string value or null")
-        }
-
-        fn visit_none<E>(self) -> Result<Self::Value, E>
-        where
-            E: de::Error,
-        {
-            Ok(Self::Value::null())
-        }
-
-        fn visit_some<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
-        where
-            D: Deserializer<'de>,
-        {
-            deserializer.deserialize_str(self)
-        }
-
-        fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
-        where
-            E: de::Error,
-        {
-            Ok(Self::Value::from(v))
-        }
-    }
-
-    impl<'de> Deserialize<'de> for UAString {
-        fn deserialize<D>(deserializer: D) -> Result<UAString, D::Error>
-        where
-            D: Deserializer<'de>,
-        {
-            deserializer.deserialize_option(UAStringVisitor)
-        }
-    }
-}
-
 impl BinaryEncodable for UAString {
     fn byte_len(&self) -> usize {
         // Length plus the actual string length in bytes for a non-null string.

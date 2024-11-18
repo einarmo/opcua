@@ -1,5 +1,5 @@
 use std::{
-    io::{Read, Write},
+    io::{Cursor, Read, Write},
     num::{ParseFloatError, ParseIntError},
 };
 
@@ -7,6 +7,7 @@ pub use crate::Context;
 use log::warn;
 use struson::writer::JsonNumberError;
 pub use struson::{
+    json_path,
     reader::{JsonReader, JsonStreamReader, ValueType},
     writer::{JsonStreamWriter, JsonWriter},
 };
@@ -58,6 +59,13 @@ impl From<JsonNumberError> for EncodingError {
     fn from(value: JsonNumberError) -> Self {
         warn!("Invalid JSON number: {value}");
         Self::from(StatusCode::BadEncodingError)
+    }
+}
+
+impl From<struson::reader::TransferError> for EncodingError {
+    fn from(value: struson::reader::TransferError) -> Self {
+        warn!("Failed to read raw value {}", value);
+        Self::from(StatusCode::BadDecodingError)
     }
 }
 
@@ -149,6 +157,39 @@ where
     }
 }
 
+impl<T> JsonEncodable for Box<T>
+where
+    T: JsonEncodable,
+{
+    fn encode(
+        &self,
+        stream: &mut JsonStreamWriter<&mut dyn Write>,
+        ctx: &crate::Context<'_>,
+    ) -> EncodingResult<()> {
+        T::encode(&self, stream, ctx)
+    }
+
+    fn is_null_json(&self) -> bool {
+        T::is_null_json(&self)
+    }
+}
+
+impl<T> JsonDecodable for Box<T>
+where
+    T: JsonDecodable,
+{
+    fn decode(
+        stream: &mut JsonStreamReader<&mut dyn Read>,
+        ctx: &Context<'_>,
+    ) -> EncodingResult<Self> {
+        Ok(Box::new(T::decode(stream, ctx)?))
+    }
+}
+
+const VALUE_INFINITY: &str = "Infinity";
+const VALUE_NEG_INFINITY: &str = "-Infinity";
+const VALUE_NAN: &str = "NaN";
+
 macro_rules! json_enc_float {
     ($t:ty) => {
         impl JsonEncodable for $t {
@@ -159,17 +200,21 @@ macro_rules! json_enc_float {
             ) -> EncodingResult<()> {
                 if self.is_infinite() {
                     if self.is_sign_positive() {
-                        stream.string_value("Infinity")?;
+                        stream.string_value(VALUE_INFINITY)?;
                     } else {
-                        stream.string_value("-Infinity")?;
+                        stream.string_value(VALUE_NEG_INFINITY)?;
                     }
                 } else if self.is_nan() {
-                    stream.string_value("NaN")?;
+                    stream.string_value(VALUE_NAN)?;
                 } else {
                     stream.fp_number_value(*self)?;
                 }
 
                 Ok(())
+            }
+
+            fn is_null_json(&self) -> bool {
+                *self == 0.0
             }
         }
 
@@ -181,9 +226,9 @@ macro_rules! json_enc_float {
                 if stream.peek()? == ValueType::String {
                     let v = stream.next_str()?;
                     match v {
-                        "Infinity" => Ok(Self::INFINITY),
-                        "-Infinity" => Ok(Self::NEG_INFINITY),
-                        "NaN" => Ok(Self::NAN),
+                        VALUE_INFINITY => Ok(Self::INFINITY),
+                        VALUE_NEG_INFINITY => Ok(Self::NEG_INFINITY),
+                        VALUE_NAN => Ok(Self::NAN),
                         // Not technically spec, but to optimize interoperability, try to
                         // parse the number as a float
                         r => Ok(r.parse()?),
@@ -206,6 +251,10 @@ macro_rules! json_enc_number {
             ) -> EncodingResult<()> {
                 stream.number_value(*self)?;
                 Ok(())
+            }
+
+            fn is_null_json(&self) -> bool {
+                *self == 0
             }
         }
 
@@ -249,4 +298,39 @@ impl JsonDecodable for String {
     ) -> EncodingResult<Self> {
         Ok(stream.next_string()?)
     }
+}
+
+impl JsonEncodable for bool {
+    fn encode(
+        &self,
+        stream: &mut JsonStreamWriter<&mut dyn Write>,
+        _ctx: &crate::Context<'_>,
+    ) -> EncodingResult<()> {
+        stream.bool_value(*self)?;
+        Ok(())
+    }
+
+    fn is_null_json(&self) -> bool {
+        !self
+    }
+}
+
+impl JsonDecodable for bool {
+    fn decode(
+        stream: &mut JsonStreamReader<&mut dyn Read>,
+        _ctx: &Context<'_>,
+    ) -> EncodingResult<Self> {
+        Ok(stream.next_bool()?)
+    }
+}
+
+pub(crate) fn consume_raw_value(
+    r: &mut JsonStreamReader<&mut dyn std::io::Read>,
+) -> EncodingResult<Vec<u8>> {
+    let mut res = Vec::new();
+    let cursor = Cursor::new(&mut res);
+    let mut writer = JsonStreamWriter::new(cursor);
+    r.transfer_to(&mut writer)?;
+    writer.finish_document()?;
+    Ok(res)
 }

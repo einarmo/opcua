@@ -66,33 +66,6 @@ mod json {
     }
 }
 
-#[cfg(feature = "json")]
-mod json_old {
-    use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
-
-    use super::DateTime;
-    impl Serialize for DateTime {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: Serializer,
-        {
-            serializer.serialize_str(&self.to_rfc3339())
-        }
-    }
-
-    impl<'de> Deserialize<'de> for DateTime {
-        fn deserialize<D>(deserializer: D) -> Result<DateTime, D::Error>
-        where
-            D: Deserializer<'de>,
-        {
-            let v = String::deserialize(deserializer)?;
-            let dt = DateTime::parse_from_rfc3339(&v)
-                .map_err(|e| D::Error::custom(format!("Cannot parse date time: {e}")))?;
-            Ok(dt)
-        }
-    }
-}
-
 /// DateTime encoded as 64-bit signed int
 impl BinaryEncodable for DateTime {
     fn byte_len(&self) -> usize {

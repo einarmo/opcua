@@ -124,7 +124,9 @@ impl CodeGenerator {
                 }
                 true
             }
-            LoadedType::Enum(e) => e.option || e.default_value.is_some(),
+            LoadedType::Enum(e) => {
+                e.option || e.default_value.is_some() || e.values.iter().any(|v| v.value == 0)
+            }
         }
     }
 
@@ -205,6 +207,7 @@ impl CodeGenerator {
             });
         }
         let mut variants = quote! {};
+
         for field in &item.values {
             let (name, _) = safe_ident(&field.name);
             let value = field.value;
@@ -319,43 +322,30 @@ impl CodeGenerator {
             }
         });
 
-        let ser_method = Ident::new(&format!("serialize_{}", item.typ), Span::call_site());
-        let deser_method = Ident::new(&format!("deserialize_{}", item.typ), Span::call_site());
-        let typ_str = format!("an {}", item.typ);
-
         impls.push(parse_quote! {
             #[cfg(feature = "json")]
-            impl<'de> serde::de::Deserialize<'de> for #enum_ident {
-                fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-                where
-                    D: serde::de::Deserializer<'de>,
-                {
-                    struct BitFieldVisitor;
-
-                    impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
-                        type Value = #ty;
-
-                        fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
-                            write!(formatter, #typ_str)
-                        }
-                    }
-
-                    deserializer
-                        .#deser_method(BitFieldVisitor)
-                        .map(#enum_ident::from_bits_truncate)
+            impl opcua::types::json::JsonDecodable for #enum_ident {
+                fn decode(
+                    stream: &mut opcua::types::json::JsonStreamReader<&mut dyn std::io::Read>,
+                    _ctx: &opcua::types::Context<'_>,
+                ) -> opcua::types::EncodingResult<Self> {
+                    use opcua::types::json::JsonReader;
+                    Ok(Self::from_bits_truncate(stream.next_number()??))
                 }
             }
         });
 
         impls.push(parse_quote! {
             #[cfg(feature = "json")]
-            impl serde::ser::Serialize for #enum_ident {
-                fn serialize<S>(&self, serializer: S) -> Result<
-                    <S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
-                where
-                    S: serde::ser::Serializer
-                {
-                    serializer.#ser_method(self.bits())
+            impl opcua::types::json::JsonEncodable for #enum_ident {
+                fn encode(
+                    &self,
+                    stream: &mut opcua::types::json::JsonStreamWriter<&mut dyn std::io::Write>,
+                    _ctx: &opcua::types::Context<'_>,
+                ) -> opcua::types::EncodingResult<()> {
+                    use opcua::types::json::JsonWriter;
+                    stream.number_value(self.bits())?;
+                    Ok(())
                 }
             }
         });
@@ -397,10 +387,14 @@ impl CodeGenerator {
         });
 
         let mut try_from_arms = quote! {};
+        let mut default_ident = None;
 
         for field in &item.values {
             let (name, _) = safe_ident(&field.name);
             let value = field.value;
+            if value == 0 {
+                default_ident = Some(name.clone());
+            }
             let value_token = match item.typ {
                 EnumReprType::u8 => {
                     let value: u8 = value.try_into().map_err(|_| {
@@ -470,6 +464,25 @@ impl CodeGenerator {
         let mut impls = Vec::new();
         let (enum_ident, _) = safe_ident(&item.name);
 
+        if let Some(default_name) = item.default_value {
+            let (default_ident, _) = safe_ident(&default_name);
+            impls.push(parse_quote! {
+                impl Default for #enum_ident {
+                    fn default() -> Self {
+                        Self::#default_ident
+                    }
+                }
+            });
+        } else if let Some(default_ident) = default_ident {
+            impls.push(parse_quote! {
+                impl Default for #enum_ident {
+                    fn default() -> Self {
+                        Self::#default_ident
+                    }
+                }
+            });
+        }
+
         // TryFrom impl
         impls.push(parse_quote! {
             impl TryFrom<#ty> for #enum_ident {
@@ -520,47 +533,36 @@ impl CodeGenerator {
             }
         });
 
-        let ser_method = Ident::new(&format!("serialize_{}", item.typ), Span::call_site());
-        let deser_method = Ident::new(&format!("deserialize_{}", item.typ), Span::call_site());
-        let typ_str = format!("{}", item.typ);
         let typ_name_str = item.typ.to_string();
-
         let failure_str = format!("Failed to deserialize {}: {{:?}}", typ_name_str);
         impls.push(parse_quote! {
             #[cfg(feature = "json")]
-            impl<'de> serde::de::Deserialize<'de> for #enum_ident {
-                fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-                where
-                    D: serde::de::Deserializer<'de>,
-                {
-                    struct EnumVisitor;
-                    use serde::de::Error;
-
-                    impl<'de> serde::de::Visitor<'de> for EnumVisitor {
-                        type Value = #ty;
-
-                        fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
-                            write!(formatter, #typ_str)
-                        }
-                    }
-
-                    let value = deserializer.#deser_method(EnumVisitor)?;
-                    Self::try_from(value).map_err(|e| D::Error::custom(
-                        format!(#failure_str, e)
-                    ))
+            impl opcua::types::json::JsonDecodable for #enum_ident {
+                fn decode(
+                    stream: &mut opcua::types::json::JsonStreamReader<&mut dyn std::io::Read>,
+                    _ctx: &opcua::types::Context<'_>,
+                ) -> opcua::types::EncodingResult<Self> {
+                    use opcua::types::json::JsonReader;
+                    let value: #ty = stream.next_number()??;
+                    Ok(Self::try_from(value).map_err(|e| {
+                        log::warn!(#failure_str, e);
+                        opcua::types::StatusCode::BadDecodingError
+                    })?)
                 }
             }
         });
 
         impls.push(parse_quote! {
             #[cfg(feature = "json")]
-            impl serde::ser::Serialize for #enum_ident {
-                fn serialize<S>(&self, serializer: S) -> Result<
-                    <S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
-                where
-                    S: serde::ser::Serializer
-                {
-                    serializer.#ser_method(*self as #ty)
+            impl opcua::types::json::JsonEncodable for #enum_ident {
+                fn encode(
+                    &self,
+                    stream: &mut opcua::types::json::JsonStreamWriter<&mut dyn std::io::Write>,
+                    _ctx: &opcua::types::Context<'_>,
+                ) -> opcua::types::EncodingResult<()> {
+                    use opcua::types::json::JsonWriter;
+                    stream.number_value(*self as #ty)?;
+                    Ok(())
                 }
             }
         });
@@ -649,13 +651,7 @@ impl CodeGenerator {
             #[derive(Debug, Clone, PartialEq)]
         });
         attrs.push(parse_quote! {
-            #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-        });
-        attrs.push(parse_quote! {
-            #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-        });
-        attrs.push(parse_quote! {
-            #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+            #[cfg_attr(feature = "json", derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable))]
         });
         attrs.push(parse_quote! {
             #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
@@ -683,8 +679,7 @@ impl CodeGenerator {
             if changed {
                 let orig = &field.original_name;
                 attrs = quote! {
-                    #[cfg_attr(feature = "xml", opcua(rename = #orig))]
-                    #[cfg_attr(feature = "json", serde(rename = #orig))]
+                    #[cfg_attr(any(feature = "json", feature = "xml"), opcua(rename = #orig))]
                 };
             }
             fields.push(parse_quote! {

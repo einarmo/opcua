@@ -57,34 +57,6 @@ mod json {
     }
 }
 
-#[cfg(feature = "json")]
-mod json_old {
-    use std::str::FromStr;
-
-    use super::Guid;
-    use serde::{de::Error, Deserialize, Serialize};
-
-    impl Serialize for Guid {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: serde::Serializer,
-        {
-            self.uuid.to_string().serialize(serializer)
-        }
-    }
-
-    impl<'de> Deserialize<'de> for Guid {
-        fn deserialize<D>(deserializer: D) -> Result<Guid, D::Error>
-        where
-            D: serde::Deserializer<'de>,
-        {
-            let s = String::deserialize(deserializer)?;
-            let guid = Guid::from_str(&s).map_err(|_| D::Error::custom("Cannot parse uuid"))?;
-            Ok(guid)
-        }
-    }
-}
-
 impl fmt::Display for Guid {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.uuid)

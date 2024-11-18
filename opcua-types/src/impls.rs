@@ -13,19 +13,18 @@ use crate::{
     qualified_name::QualifiedName,
     response_header::{AsRequestHandle, ResponseHeader},
     service_types::{
-        AnonymousIdentityToken, ApplicationDescription, ApplicationType, Argument,
-        CallMethodRequest, EndpointDescription, MessageSecurityMode, MonitoredItemCreateRequest,
-        MonitoringMode, MonitoringParameters, ReadValueId, ServiceCounterDataType, ServiceFault,
-        SignatureData, UserNameIdentityToken, UserTokenPolicy, UserTokenType,
+        AnonymousIdentityToken, ApplicationDescription, Argument, CallMethodRequest,
+        EndpointDescription, MessageSecurityMode, MonitoredItemCreateRequest, MonitoringMode,
+        MonitoringParameters, ReadValueId, ServiceCounterDataType, ServiceFault, SignatureData,
+        UserNameIdentityToken, UserTokenPolicy, UserTokenType,
     },
     status_code::StatusCode,
     string::UAString,
     variant::Variant,
-    AddNodesItem, AddReferencesItem, ExpandedNodeId, NamespaceMap, NumericRange, PubSubState,
-    ServerState,
+    ExpandedNodeId, HistoryUpdateType, IdentityCriteriaType, NamespaceMap, NumericRange,
 };
 
-use super::{PerformUpdateType, SecurityTokenRequestType};
+use super::PerformUpdateType;
 
 /// Implemented by messages
 pub trait MessageInfo {
@@ -250,20 +249,6 @@ impl MonitoredItemCreateRequest {
     }
 }
 
-impl Default for ApplicationDescription {
-    fn default() -> Self {
-        Self {
-            application_uri: UAString::null(),
-            product_uri: UAString::null(),
-            application_name: LocalizedText::null(),
-            application_type: ApplicationType::Server,
-            gateway_server_uri: UAString::null(),
-            discovery_profile_uri: UAString::null(),
-            discovery_urls: None,
-        }
-    }
-}
-
 impl From<(NodeId, NodeId, Option<Vec<Variant>>)> for CallMethodRequest {
     fn from(value: (NodeId, NodeId, Option<Vec<Variant>>)) -> Self {
         Self {
@@ -397,35 +382,9 @@ impl ServiceCounterDataType {
     }
 }
 
-impl Default for MessageSecurityMode {
-    fn default() -> Self {
-        Self::None
-    }
-}
-
-impl Default for SecurityTokenRequestType {
-    fn default() -> Self {
-        Self::Issue
-    }
-}
-
 impl Default for PerformUpdateType {
     fn default() -> Self {
         Self::Insert
-    }
-}
-
-impl Default for AddNodesItem {
-    fn default() -> Self {
-        Self {
-            parent_node_id: Default::default(),
-            reference_type_id: Default::default(),
-            requested_new_node_id: Default::default(),
-            browse_name: Default::default(),
-            node_class: crate::NodeClass::Object,
-            node_attributes: Default::default(),
-            type_definition: Default::default(),
-        }
     }
 }
 
@@ -435,27 +394,20 @@ impl Default for NumericRange {
     }
 }
 
-impl Default for ServerState {
+/* impl Default for ServerState {
     fn default() -> Self {
         Self::Shutdown
     }
-}
+} */
 
-impl Default for AddReferencesItem {
+impl Default for HistoryUpdateType {
     fn default() -> Self {
-        Self {
-            source_node_id: Default::default(),
-            reference_type_id: Default::default(),
-            is_forward: Default::default(),
-            target_server_uri: Default::default(),
-            target_node_id: Default::default(),
-            target_node_class: crate::NodeClass::Object,
-        }
+        Self::Insert
     }
 }
 
-impl Default for PubSubState {
+impl Default for IdentityCriteriaType {
     fn default() -> Self {
-        Self::Disabled
+        Self::Anonymous
     }
 }

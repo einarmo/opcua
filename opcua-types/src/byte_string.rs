@@ -82,39 +82,6 @@ mod json {
     }
 }
 
-#[cfg(feature = "json")]
-mod json_old {
-    use super::ByteString;
-    use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
-
-    impl Serialize for ByteString {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: Serializer,
-        {
-            if self.value.is_some() {
-                serializer.serialize_str(&self.as_base64())
-            } else {
-                serializer.serialize_none()
-            }
-        }
-    }
-
-    impl<'de> Deserialize<'de> for ByteString {
-        fn deserialize<D>(deserializer: D) -> Result<ByteString, D::Error>
-        where
-            D: Deserializer<'de>,
-        {
-            let r = Option::<String>::deserialize(deserializer)?;
-            match r {
-                Some(r) => Self::from_base64(&r)
-                    .ok_or_else(|| de::Error::custom("Cannot decode base64 bytestring")),
-                None => Ok(Self::null()),
-            }
-        }
-    }
-}
-
 impl BinaryEncodable for ByteString {
     fn byte_len(&self) -> usize {
         // Length plus the actual length of bytes (if not null)

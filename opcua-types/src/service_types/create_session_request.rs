@@ -8,10 +8,12 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+#[derive(Default)]
 pub struct CreateSessionRequest {
     pub request_header: opcua::types::request_header::RequestHeader,
     pub client_description: super::application_description::ApplicationDescription,

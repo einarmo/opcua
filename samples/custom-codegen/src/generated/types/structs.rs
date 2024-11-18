@@ -8,17 +8,18 @@
 #![allow(non_camel_case_types)]
 #![allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+#[derive(Default)]
 pub struct PnDeviceDiagnosisDataType {
     pub api: u32,
     pub slot: u16,
     pub subslot: u16,
     pub channel_number: u16,
-    #[cfg_attr(feature = "xml", opcua(rename = "Type"))]
-    #[cfg_attr(feature = "json", serde(rename = "Type"))]
+    #[cfg_attr(any(feature = "json", feature = "xml"), opcua(rename = "Type"))]
     pub __type: super::enums::PnChannelTypeEnumeration,
     pub accumulative: super::enums::PnChannelAccumulativeEnumeration,
     pub maintenance: super::enums::PnChannelMaintenanceEnumeration,
@@ -135,9 +136,10 @@ impl opcua::types::BinaryDecodable for PnDeviceDiagnosisDataType {
     }
 }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct PnDeviceRoleOptionSet {
@@ -193,9 +195,10 @@ impl opcua::types::BinaryDecodable for PnDeviceRoleOptionSet {
 }
 ///Contains the fields of the APDU element I&M5 | I&M5Data
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct PnIM5DataType {

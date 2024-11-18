@@ -13,8 +13,8 @@ documentation = "https://docs.rs/opcua/"
 edition = "2021"
 
 [features]
-json = ["serde", "serde_json", "serde_with", "struson"]
-xml = ["opcua-xml", "opcua-macros"]
+json = ["serde", "serde_json", "serde_with", "struson", "opcua-macros", "opcua-macros/json"]
+xml = ["opcua-xml", "opcua-macros", "opcua-macros/xml"]
 
 [lib]
 name = "opcua_types"

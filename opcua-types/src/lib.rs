@@ -237,6 +237,11 @@ pub mod xml;
 #[cfg(feature = "xml")]
 pub use opcua_macros::FromXml;
 
+#[cfg(feature = "json")]
+pub use opcua_macros::JsonDecodable;
+#[cfg(feature = "json")]
+pub use opcua_macros::JsonEncodable;
+
 pub use self::{
     add_node_attributes::AddNodeAttributes, array::*, attribute::*, byte_string::*, data_change::*,
     data_type_definition::*, data_types::*, data_value::*, date_time::*, diagnostic_info::*,

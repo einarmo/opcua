@@ -10,7 +10,7 @@ use crate::{encoding::*, status_code::StatusCode, string::UAString};
 use bitflags::bitflags;
 
 bitflags! {
-    #[derive(Copy, Clone, Debug, PartialEq)]
+    #[derive(Copy, Clone, Debug, PartialEq, Default)]
     pub struct DiagnosticInfoMask: u8 {
         const HAS_SYMBOLIC_ID = 0x01;
         const HAS_NAMESPACE = 0x02;
@@ -23,7 +23,7 @@ bitflags! {
 }
 
 bitflags! {
-    #[derive(Copy, Clone, Debug, PartialEq)]
+    #[derive(Copy, Clone, Debug, PartialEq, Default)]
     pub struct DiagnosticBits: u32 {
         /// ServiceLevel / SymbolicId
         const SERVICE_LEVEL_SYMBOLIC_ID = 0x0000_0001;
@@ -60,6 +60,33 @@ impl crate::xml::FromXml for DiagnosticBits {
 }
 
 #[cfg(feature = "json")]
+mod json {
+    use crate::json::*;
+
+    use super::DiagnosticBits;
+
+    impl JsonEncodable for DiagnosticBits {
+        fn encode(
+            &self,
+            stream: &mut JsonStreamWriter<&mut dyn std::io::Write>,
+            _ctx: &crate::Context<'_>,
+        ) -> super::EncodingResult<()> {
+            stream.number_value(self.bits())?;
+            Ok(())
+        }
+    }
+
+    impl JsonDecodable for DiagnosticBits {
+        fn decode(
+            stream: &mut JsonStreamReader<&mut dyn std::io::Read>,
+            _ctx: &Context<'_>,
+        ) -> super::EncodingResult<Self> {
+            Ok(Self::from_bits_truncate(stream.next_number()??))
+        }
+    }
+}
+
+#[cfg(feature = "json")]
 impl<'de> serde::de::Deserialize<'de> for DiagnosticBits {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -90,16 +117,17 @@ impl serde::ser::Serialize for DiagnosticBits {
     }
 }
 
-#[cfg(feature = "xml")]
+#[allow(unused)]
 mod opcua {
     pub use crate as types;
 }
 
 /// Diagnostic information.
 #[derive(PartialEq, Debug, Clone)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua_macros::JsonEncodable, opcua_macros::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(crate::FromXml))]
 pub struct DiagnosticInfo {
     /// A symbolic name for the status code.

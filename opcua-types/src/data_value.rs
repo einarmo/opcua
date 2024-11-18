@@ -30,12 +30,18 @@ bitflags! {
     }
 }
 
+#[allow(unused)]
+mod opcua {
+    pub use crate as types;
+}
+
 /// A data value is a value of a variable in the OPC UA server and contains information about its
 /// value, status and change timestamps.
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua_macros::JsonEncodable, opcua_macros::JsonDecodable)
+)]
 pub struct DataValue {
     /// The value. BaseDataType
     /// Not present if the Value bit in the EncodingMask is False.
