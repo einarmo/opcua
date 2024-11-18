@@ -39,6 +39,51 @@ impl AsRef<[u8]> for ByteString {
 
 #[cfg(feature = "json")]
 mod json {
+    use log::warn;
+    use std::io::{Read, Write};
+
+    use crate::{json::*, StatusCode};
+
+    use super::ByteString;
+
+    impl JsonEncodable for ByteString {
+        fn encode(
+            &self,
+            stream: &mut JsonStreamWriter<&mut dyn Write>,
+            _ctx: &crate::json::Context<'_>,
+        ) -> crate::EncodingResult<()> {
+            if self.value.is_some() {
+                stream.string_value(&self.as_base64())?;
+            } else {
+                stream.null_value()?;
+            }
+            Ok(())
+        }
+    }
+
+    impl JsonDecodable for ByteString {
+        fn decode(
+            stream: &mut JsonStreamReader<&mut dyn Read>,
+            _ctx: &Context<'_>,
+        ) -> crate::EncodingResult<Self> {
+            match stream.peek()? {
+                ValueType::String => {
+                    Ok(Self::from_base64(stream.next_str()?).ok_or_else(|| {
+                        warn!("Cannot decode base64 bytestring");
+                        StatusCode::BadDecodingError
+                    })?)
+                }
+                _ => {
+                    stream.next_null()?;
+                    Ok(Self::null())
+                }
+            }
+        }
+    }
+}
+
+#[cfg(feature = "json")]
+mod json_old {
     use super::ByteString;
     use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 

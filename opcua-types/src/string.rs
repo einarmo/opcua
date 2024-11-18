@@ -43,6 +43,54 @@ impl fmt::Display for UAString {
 
 #[cfg(feature = "json")]
 mod json {
+    use std::io::{Read, Write};
+    use struson::{
+        reader::{JsonReader, JsonStreamReader, ValueType},
+        writer::{JsonStreamWriter, JsonWriter},
+    };
+
+    use crate::json::{Context, JsonDecodable, JsonEncodable};
+
+    use super::{EncodingResult, UAString};
+
+    impl JsonEncodable for UAString {
+        fn encode(
+            &self,
+            stream: &mut JsonStreamWriter<&mut dyn Write>,
+            _ctx: &Context<'_>,
+        ) -> EncodingResult<()> {
+            if let Some(s) = self.value() {
+                stream.string_value(s)?;
+            } else {
+                stream.null_value()?;
+            }
+
+            Ok(())
+        }
+
+        fn is_null_json(&self) -> bool {
+            self.is_null()
+        }
+    }
+
+    impl JsonDecodable for UAString {
+        fn decode(
+            stream: &mut JsonStreamReader<&mut dyn Read>,
+            _ctx: &Context<'_>,
+        ) -> EncodingResult<Self> {
+            match stream.peek()? {
+                ValueType::String => Ok(stream.next_string()?.into()),
+                _ => {
+                    stream.next_null()?;
+                    Ok(UAString::null())
+                }
+            }
+        }
+    }
+}
+
+#[cfg(feature = "json")]
+mod json_old {
     use super::UAString;
     use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
     use std::fmt;

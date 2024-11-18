@@ -34,6 +34,196 @@ pub struct ExpandedNodeId {
 
 #[cfg(feature = "json")]
 mod json {
+    use std::io::{Read, Write};
+    use std::str::FromStr;
+
+    use log::warn;
+
+    use crate::{json::*, ByteString, Guid, StatusCode};
+
+    use super::{ExpandedNodeId, Identifier, NodeId, UAString};
+    enum RawIdentifier {
+        String(String),
+        Integer(u32),
+    }
+
+    impl JsonEncodable for ExpandedNodeId {
+        fn encode(
+            &self,
+            stream: &mut JsonStreamWriter<&mut dyn Write>,
+            ctx: &crate::json::Context<'_>,
+        ) -> super::EncodingResult<()> {
+            stream.begin_object()?;
+            match &self.node_id.identifier {
+                super::Identifier::Numeric(n) => {
+                    stream.name("Id")?;
+                    stream.number_value(*n)?;
+                }
+                super::Identifier::String(uastring) => {
+                    stream.name("IdType")?;
+                    stream.number_value(1)?;
+                    stream.name("Id")?;
+                    JsonEncodable::encode(uastring, stream, ctx)?;
+                }
+                super::Identifier::Guid(guid) => {
+                    stream.name("IdType")?;
+                    stream.number_value(2)?;
+                    stream.name("Id")?;
+                    JsonEncodable::encode(guid, stream, ctx)?;
+                }
+                super::Identifier::ByteString(byte_string) => {
+                    stream.name("IdType")?;
+                    stream.number_value(3)?;
+                    stream.name("Id")?;
+                    JsonEncodable::encode(byte_string, stream, ctx)?;
+                }
+            }
+            if !self.namespace_uri.is_null() {
+                stream.name("Namespace")?;
+                stream.string_value(self.namespace_uri.as_ref())?;
+            } else if self.node_id.namespace != 0 {
+                stream.name("Namespace")?;
+                stream.number_value(self.node_id.namespace)?;
+            }
+            if self.server_index != 0 {
+                stream.name("ServerUri")?;
+                stream.number_value(self.server_index)?;
+            }
+            stream.end_object()?;
+            Ok(())
+        }
+
+        fn is_null_json(&self) -> bool {
+            self.is_null()
+        }
+    }
+
+    impl JsonDecodable for ExpandedNodeId {
+        fn decode(
+            stream: &mut JsonStreamReader<&mut dyn Read>,
+            _ctx: &Context<'_>,
+        ) -> super::EncodingResult<Self> {
+            match stream.peek()? {
+                ValueType::Null => {
+                    stream.next_null()?;
+                    return Ok(Self::null());
+                }
+                _ => stream.begin_object()?,
+            }
+
+            let mut id_type: Option<u16> = None;
+            let mut namespace: Option<RawIdentifier> = None;
+            let mut value: Option<RawIdentifier> = None;
+            let mut server_uri: Option<u32> = None;
+
+            while stream.has_next()? {
+                match stream.next_name()? {
+                    "IdType" => {
+                        id_type = Some(stream.next_number()??);
+                    }
+                    "Namespace" => match stream.peek()? {
+                        ValueType::Null => {
+                            stream.next_null()?;
+                            namespace = Some(RawIdentifier::Integer(0));
+                        }
+                        ValueType::Number => {
+                            namespace = Some(RawIdentifier::Integer(stream.next_number()??));
+                        }
+                        _ => {
+                            namespace = Some(RawIdentifier::String(stream.next_string()?));
+                        }
+                    },
+                    "ServerUri" => {
+                        server_uri = Some(stream.next_number()??);
+                    }
+                    "Id" => match stream.peek()? {
+                        ValueType::Null => {
+                            stream.next_null()?;
+                            value = Some(RawIdentifier::Integer(0));
+                        }
+                        ValueType::Number => {
+                            value = Some(RawIdentifier::Integer(stream.next_number()??));
+                        }
+                        _ => {
+                            value = Some(RawIdentifier::String(stream.next_string()?));
+                        }
+                    },
+                    _ => stream.skip_value()?,
+                }
+            }
+
+            let identifier = match id_type {
+                Some(1) => {
+                    let Some(RawIdentifier::String(s)) = value else {
+                        warn!("Invalid NodeId, empty identifier");
+                        return Err(StatusCode::BadDecodingError.into());
+                    };
+                    let s = UAString::from(s);
+                    if s.is_null() || s.is_empty() {
+                        warn!("Invalid NodeId, empty identifier");
+                        return Err(StatusCode::BadDecodingError.into());
+                    }
+                    Identifier::String(s)
+                }
+                Some(2) => {
+                    let Some(RawIdentifier::String(s)) = value else {
+                        warn!("Invalid NodeId, empty identifier");
+                        return Err(StatusCode::BadDecodingError.into());
+                    };
+                    let s = Guid::from_str(&s).map_err(|_| {
+                        warn!("Unable to decode GUID identifier");
+                        StatusCode::BadDecodingError
+                    })?;
+                    Identifier::Guid(s)
+                }
+                Some(3) => {
+                    let Some(RawIdentifier::String(s)) = value else {
+                        warn!("Invalid NodeId, empty identifier");
+                        return Err(StatusCode::BadDecodingError.into());
+                    };
+                    let s: ByteString = ByteString::from_base64(&s).ok_or_else(|| {
+                        warn!("Unable to decode bytestring identifier");
+                        StatusCode::BadDecodingError
+                    })?;
+                    Identifier::ByteString(s)
+                }
+                None | Some(0) => {
+                    let Some(RawIdentifier::Integer(s)) = value else {
+                        warn!("Invalid NodeId, empty identifier");
+                        return Err(StatusCode::BadDecodingError.into());
+                    };
+                    Identifier::Numeric(s)
+                }
+                Some(r) => {
+                    warn!("Failed to deserialize NodeId, got unexpected IdType {r}");
+                    return Err(StatusCode::BadDecodingError.into());
+                }
+            };
+
+            let (namespace_uri, namespace) = match namespace {
+                Some(RawIdentifier::String(s)) => (Some(s), 0u16),
+                Some(RawIdentifier::Integer(s)) => (
+                    None,
+                    s.try_into().map_err(|_| StatusCode::BadDecodingError)?,
+                ),
+                None => (None, 0),
+            };
+
+            stream.end_object()?;
+            Ok(ExpandedNodeId {
+                node_id: NodeId {
+                    namespace,
+                    identifier,
+                },
+                namespace_uri: namespace_uri.into(),
+                server_index: server_uri.unwrap_or_default(),
+            })
+        }
+    }
+}
+
+#[cfg(feature = "json")]
+mod json_old {
     use serde::{
         de::{self, IgnoredAny, Visitor},
         ser::SerializeStruct,

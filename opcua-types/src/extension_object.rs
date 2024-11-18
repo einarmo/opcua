@@ -13,7 +13,7 @@ use std::{
 
 use log::error;
 
-use crate::{ExpandedMessageInfo, NamespaceMap};
+use crate::{ExpandedMessageInfo, ExpandedNodeId, NamespaceMap};
 
 use super::{
     byte_string::ByteString, encoding::*, node_id::NodeId, node_ids::ObjectId,
@@ -33,11 +33,13 @@ pub trait DynEncodable: Any + std::fmt::Debug {
     fn encode_dyn(&self, stream: &mut dyn std::io::Write) -> EncodingResult<usize>;
 
     fn byte_len_dyn(&self) -> usize;
+
+    fn binary_type_id(&self) -> ExpandedNodeId;
 }
 
 impl<T> DynEncodable for T
 where
-    T: BinaryEncodable + Any + std::fmt::Debug,
+    T: BinaryEncodable + ExpandedMessageInfo + Any + std::fmt::Debug,
 {
     fn encode_dyn(&self, stream: &mut dyn std::io::Write) -> EncodingResult<usize> {
         BinaryEncodable::encode(self, stream)
@@ -45,6 +47,10 @@ where
 
     fn byte_len_dyn(&self) -> usize {
         BinaryEncodable::byte_len(self)
+    }
+
+    fn binary_type_id(&self) -> ExpandedNodeId {
+        self.full_type_id()
     }
 }
 

@@ -35,6 +35,39 @@ pub struct DateTime {
 
 #[cfg(feature = "json")]
 mod json {
+    use log::warn;
+
+    use crate::{json::*, StatusCode};
+
+    use super::DateTime;
+
+    impl JsonEncodable for DateTime {
+        fn encode(
+            &self,
+            stream: &mut JsonStreamWriter<&mut dyn std::io::Write>,
+            _ctx: &crate::Context<'_>,
+        ) -> super::EncodingResult<()> {
+            Ok(stream.string_value(&self.to_rfc3339())?)
+        }
+    }
+
+    impl JsonDecodable for DateTime {
+        fn decode(
+            stream: &mut JsonStreamReader<&mut dyn std::io::Read>,
+            _ctx: &Context<'_>,
+        ) -> super::EncodingResult<Self> {
+            let v = stream.next_str()?;
+            let dt = DateTime::parse_from_rfc3339(&v).map_err(|e| {
+                warn!("Cannot parse date time: {e}");
+                StatusCode::BadDecodingError
+            })?;
+            Ok(dt)
+        }
+    }
+}
+
+#[cfg(feature = "json")]
+mod json_old {
     use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 
     use super::DateTime;

@@ -15,6 +15,33 @@ use super::encoding::{read_u32, write_u32, BinaryEncodable, DecodingOptions, Enc
 #[cfg_attr(feature = "json", serde(transparent))]
 pub struct StatusCode(u32);
 
+#[cfg(feature = "json")]
+mod json {
+    use crate::json::*;
+    use std::io::{Read, Write};
+
+    use super::StatusCode;
+
+    impl JsonEncodable for StatusCode {
+        fn encode(
+            &self,
+            stream: &mut JsonStreamWriter<&mut dyn Write>,
+            _ctx: &crate::json::Context<'_>,
+        ) -> crate::EncodingResult<()> {
+            Ok(stream.number_value(self.0)?)
+        }
+    }
+
+    impl JsonDecodable for StatusCode {
+        fn decode(
+            stream: &mut JsonStreamReader<&mut dyn Read>,
+            _ctx: &Context<'_>,
+        ) -> crate::EncodingResult<Self> {
+            Ok(Self::from(stream.next_number::<u32>()??))
+        }
+    }
+}
+
 const SUBCODE_MASK: u32 = 0xffff_0000;
 const INFO_BITS_MASK: u32 = 0b0011_1111_1111;
 

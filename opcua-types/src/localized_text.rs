@@ -34,6 +34,67 @@ pub struct LocalizedText {
     pub text: UAString,
 }
 
+#[cfg(feature = "json")]
+mod json {
+    use std::io::{Read, Write};
+
+    use struson::{
+        reader::{JsonReader, JsonStreamReader},
+        writer::{JsonStreamWriter, JsonWriter},
+    };
+
+    use crate::json::{Context, JsonDecodable, JsonEncodable};
+
+    use super::{EncodingResult, LocalizedText, UAString};
+
+    impl JsonEncodable for LocalizedText {
+        fn encode(
+            &self,
+            stream: &mut JsonStreamWriter<&mut dyn Write>,
+            ctx: &Context<'_>,
+        ) -> EncodingResult<()> {
+            stream.begin_object()?;
+            if !self.locale.is_null_json() {
+                stream.name("Locale")?;
+                self.locale.encode(stream, ctx)?;
+            }
+            if !self.text.is_null_json() {
+                stream.name("Text")?;
+                self.text.encode(stream, ctx)?;
+            }
+            stream.end_object()?;
+            Ok(())
+        }
+
+        fn is_null_json(&self) -> bool {
+            self.text.is_null()
+        }
+    }
+
+    impl JsonDecodable for LocalizedText {
+        fn decode(
+            stream: &mut JsonStreamReader<&mut dyn Read>,
+            ctx: &Context<'_>,
+        ) -> EncodingResult<Self> {
+            stream.begin_object()?;
+            let mut locale: Option<UAString> = None;
+            let mut text: Option<UAString> = None;
+            while stream.has_next()? {
+                match stream.next_name()? {
+                    "Locale" => locale = Some(JsonDecodable::decode(stream, ctx)?),
+                    "Text" => text = Some(JsonDecodable::decode(stream, ctx)?),
+                    _ => stream.skip_value()?,
+                }
+            }
+            stream.end_object()?;
+            Ok(Self {
+                locale: locale.unwrap_or_default(),
+                text: text.unwrap_or_default(),
+            })
+        }
+    }
+}
+
 impl<'a> From<&'a str> for LocalizedText {
     fn from(value: &'a str) -> Self {
         Self {

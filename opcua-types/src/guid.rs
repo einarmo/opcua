@@ -23,6 +23,42 @@ pub struct Guid {
 
 #[cfg(feature = "json")]
 mod json {
+    use std::io::{Read, Write};
+    use std::str::FromStr;
+
+    use log::warn;
+
+    use crate::{json::*, StatusCode};
+
+    use super::Guid;
+
+    impl JsonEncodable for Guid {
+        fn encode(
+            &self,
+            stream: &mut JsonStreamWriter<&mut dyn Write>,
+            _ctx: &crate::json::Context<'_>,
+        ) -> super::EncodingResult<()> {
+            Ok(stream.string_value(&self.uuid.to_string())?)
+        }
+    }
+
+    impl JsonDecodable for Guid {
+        fn decode(
+            stream: &mut JsonStreamReader<&mut dyn Read>,
+            _ctx: &Context<'_>,
+        ) -> super::EncodingResult<Self> {
+            let s = stream.next_str()?;
+            let guid = Guid::from_str(s).map_err(|_| {
+                warn!("Cannot parse uuid");
+                StatusCode::BadDecodingError
+            })?;
+            Ok(guid)
+        }
+    }
+}
+
+#[cfg(feature = "json")]
+mod json_old {
     use std::str::FromStr;
 
     use super::Guid;
