@@ -3,7 +3,10 @@ use std::{borrow::Cow, io::Read, sync::Arc};
 use chrono::TimeDelta;
 use hashbrown::HashMap;
 
-use crate::{BinaryDecodable, DecodingOptions, DynEncodable, EncodingResult, NamespaceMap, NodeId};
+use crate::{
+    BinaryDecodable, DecodingOptions, DynEncodable, EncodingResult, GeneratedTypeLoader,
+    NamespaceMap, NodeId,
+};
 
 pub struct TypeLoaderInstance {
     binary_types:
@@ -152,6 +155,10 @@ impl ContextOwned {
         }
     }
 
+    pub fn new_default(namespaces: NamespaceMap, options: DecodingOptions) -> Self {
+        Self::new(namespaces, vec![Arc::new(GeneratedTypeLoader)], options)
+    }
+
     pub fn context(&self) -> Context<'_> {
         Context {
             namespaces: &self.namespaces,
@@ -166,6 +173,12 @@ impl ContextOwned {
 
     pub fn options(&self) -> &DecodingOptions {
         &self.options
+    }
+}
+
+impl Default for ContextOwned {
+    fn default() -> Self {
+        Self::new_default(Default::default(), Default::default())
     }
 }
 

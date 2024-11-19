@@ -26,10 +26,10 @@ use crate::{
     Argument, Array, DataTypeId, ObjectId, VariantScalarTypeId,
 };
 
-use super::{ContextOwned, DecodingOptions, EncodingResult, ExtensionObject, NamespaceMap};
+use super::{ContextOwned, EncodingResult, ExtensionObject};
 
 fn ctx() -> ContextOwned {
-    ContextOwned::new(NamespaceMap::new(), Vec::new(), DecodingOptions::test())
+    ContextOwned::default()
 }
 
 fn from_value<T: JsonDecodable>(v: Value) -> EncodingResult<T> {
@@ -233,7 +233,7 @@ fn serialize_status_code() {
     assert_eq!(json, json!(0x8007_0000i64))
 }
 
-/* #[test]
+#[test]
 fn serialize_extension_object() {
     let v = ExtensionObject::null();
     let json = to_value(&v).unwrap();
@@ -248,7 +248,7 @@ fn serialize_extension_object() {
         description: "An argument".into(),
     };
 
-    let v = ExtensionObject::from_json(&argument).unwrap();
+    let v = ExtensionObject::from_message(argument);
     let json = to_value(&v).unwrap();
     assert_eq!(
         json,
@@ -269,7 +269,7 @@ fn serialize_extension_object() {
             }
         })
     );
-} */
+}
 
 #[test]
 fn serialize_localized_text() {
@@ -557,7 +557,7 @@ fn serialize_variant_localized_text() {
     );
 }
 
-/* #[test]
+#[test]
 fn serialize_variant_extension_object() {
     // ExtensionObject (22)
     test_ser_de_variant(
@@ -578,7 +578,7 @@ fn serialize_variant_extension_object() {
     // Neither of these are easy to do, and will probably require a custom
     // serialize/deserialize macro.
     test_ser_de_variant(
-        Variant::ExtensionObject(Box::new(ExtensionObject::from_json(&argument).unwrap())),
+        Variant::ExtensionObject(Box::new(ExtensionObject::from_message(argument))),
         json!({
             "Type": 22,
             "Body": {
@@ -599,7 +599,7 @@ fn serialize_variant_extension_object() {
             }
         }),
     );
-} */
+}
 
 #[test]
 fn serialize_variant_data_value() {

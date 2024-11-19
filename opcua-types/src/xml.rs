@@ -6,7 +6,7 @@ use thiserror::Error;
 
 use crate::{
     Array, ByteString, DataValue, DateTime, ExpandedNodeId, ExtensionObject, Guid, LocalizedText,
-    NamespaceMap, NodeId, NodeSetNamespaceMapper, QualifiedName, StatusCode, UAString,
+    NamespaceMap, NodeId, NodeSetNamespaceMapper, QualifiedName, StatusCode, TypeLoader, UAString,
     UninitializedIndex, Variant, VariantScalarTypeId,
 };
 
@@ -62,7 +62,7 @@ impl From<String> for FromXmlError {
 pub struct XmlContext<'a> {
     pub aliases: HashMap<String, String>,
     pub namespaces: &'a NodeSetNamespaceMapper<'a>,
-    pub loaders: Vec<Arc<dyn XmlLoader>>,
+    pub loaders: Vec<Arc<dyn TypeLoader>>,
 }
 
 impl<'a> XmlContext<'a> {
@@ -72,8 +72,8 @@ impl<'a> XmlContext<'a> {
         node_id: &NodeId,
     ) -> Result<ExtensionObject, FromXmlError> {
         for loader in &self.loaders {
-            if let Some(r) = loader.load_extension_object(body, node_id, self) {
-                return r;
+            if let Some(r) = loader.load_from_xml(node_id, body, self) {
+                return Ok(ExtensionObject { body: Some(r?) });
             }
         }
         Err(FromXmlError::Other(format!(

@@ -22,7 +22,7 @@ fn context<'a>(mapper: &'a NodeSetNamespaceMapper<'a>) -> XmlContext<'a> {
     XmlContext {
         aliases: HashMap::new(),
         namespaces: &mapper,
-        loaders: vec![Arc::new(service_types::TypesXmlLoader)],
+        loaders: vec![Arc::new(service_types::GeneratedTypeLoader)],
     }
 }
 
@@ -185,7 +185,7 @@ fn from_xml_status_code() {
 #[test]
 fn from_xml_extension_object() {
     assert_eq!(
-        ExtensionObject::from_message(&Argument {
+        ExtensionObject::from_message(Argument {
             name: "Some name".into(),
             data_type: DataTypeId::Double.into(),
             value_rank: 1,

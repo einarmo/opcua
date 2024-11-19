@@ -55,6 +55,7 @@ impl Display for EncodingError {
 
 impl From<StatusCode> for EncodingError {
     fn from(value: StatusCode) -> Self {
+        println!("{}", std::backtrace::Backtrace::capture());
         Self {
             status: value,
             request_handle: None,
