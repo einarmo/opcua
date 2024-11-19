@@ -57,6 +57,8 @@ pub trait DynEncodable: Any + Send + Sync + std::fmt::Debug {
     fn dyn_eq(&self, other: &dyn DynEncodable) -> bool;
 
     fn as_ref_any(&self) -> &dyn Any;
+
+    fn type_name(&self) -> &'static str;
 }
 
 macro_rules! blanket_dyn_encodable {
@@ -109,6 +111,10 @@ macro_rules! blanket_dyn_encodable {
                 } else {
                     false
                 }
+            }
+
+            fn type_name(&self) -> &'static str {
+                std::any::type_name::<Self>()
             }
         }
     };
@@ -418,7 +424,7 @@ impl ExtensionObject {
     }
 
     pub fn type_id(&self) -> Option<TypeId> {
-        self.body.as_ref().map(|b| b.type_id())
+        self.body.as_ref().map(|b| (**b).type_id())
     }
 
     pub fn inner_is<T: 'static>(&self) -> bool {

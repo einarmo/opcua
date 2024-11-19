@@ -361,27 +361,21 @@ fn make_variable_75(
                 opcua::types::DataValue::new_now(
                     opcua::types::Variant::from(
                         vec![
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The BrowseName must appear in all instances of the type."),
                             display_name : opcua::types::LocalizedText::new("",
-                            "Mandatory"), value : 1i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "Mandatory"), value : 1i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The BrowseName may appear in an instance of the type."),
                             display_name : opcua::types::LocalizedText::new("",
-                            "Optional"), value : 2i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "Optional"), value : 2i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The modelling rule defines a constraint and the BrowseName is not used in an instance of the type."),
                             display_name : opcua::types::LocalizedText::new("",
-                            "Constraint"), value : 3i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
+                            "Constraint"), value : 3i64, }),
                         ],
                     ),
                 ),
@@ -3570,28 +3564,20 @@ fn make_variable_838(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::Argument {
-                        array_dimensions: None,
-                        data_type: opcua::types::NodeId::new(0u16, 12u32),
-                        description: Default::default(),
-                        name: "RoleName".into(),
-                        value_rank: -1i32,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::Argument {
-                        array_dimensions: None,
-                        data_type: opcua::types::NodeId::new(0u16, 12u32),
-                        description: Default::default(),
-                        name: "NamespaceUri".into(),
-                        value_rank: -1i32,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message(opcua::types::Argument {
+                    array_dimensions: None,
+                    data_type: opcua::types::NodeId::new(0u16, 12u32),
+                    description: Default::default(),
+                    name: "RoleName".into(),
+                    value_rank: -1i32,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::Argument {
+                    array_dimensions: None,
+                    data_type: opcua::types::NodeId::new(0u16, 12u32),
+                    description: Default::default(),
+                    name: "NamespaceUri".into(),
+                    value_rank: -1i32,
+                }),
             ])),
             1u8,
             1u8,
@@ -3632,17 +3618,13 @@ fn make_variable_839(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::Argument {
-                        array_dimensions: None,
-                        data_type: opcua::types::NodeId::new(0u16, 17u32),
-                        description: Default::default(),
-                        name: "RoleNodeId".into(),
-                        value_rank: -1i32,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message(opcua::types::Argument {
+                    array_dimensions: None,
+                    data_type: opcua::types::NodeId::new(0u16, 17u32),
+                    description: Default::default(),
+                    name: "RoleNodeId".into(),
+                    value_rank: -1i32,
+                }),
             ])),
             1u8,
             1u8,
@@ -3683,17 +3665,13 @@ fn make_variable_841(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::Argument {
-                        array_dimensions: None,
-                        data_type: opcua::types::NodeId::new(0u16, 17u32),
-                        description: Default::default(),
-                        name: "RoleNodeId".into(),
-                        value_rank: -1i32,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message(opcua::types::Argument {
+                    array_dimensions: None,
+                    data_type: opcua::types::NodeId::new(0u16, 17u32),
+                    description: Default::default(),
+                    name: "RoleNodeId".into(),
+                    value_rank: -1i32,
+                }),
             ])),
             1u8,
             1u8,

@@ -97,20 +97,6 @@ pub trait FromXml: Sized {
     }
 }
 
-/// Trait for a type that can create an extension object given a node ID.
-/// If the loader does not recognize the given node ID, it should return [`None`]
-pub trait XmlLoader {
-    /// Try to create an extension object from `body`. If `node_id` is not known,
-    /// this should return [`None`], else it should return the result of calling [`FromXml::from_xml`]
-    /// for the specified type.
-    fn load_extension_object(
-        &self,
-        body: &XmlElement,
-        node_id: &NodeId,
-        ctx: &XmlContext<'_>,
-    ) -> Option<Result<ExtensionObject, FromXmlError>>;
-}
-
 impl FromXml for UAString {
     fn from_xml(element: &XmlElement, _ctx: &XmlContext<'_>) -> Result<Self, FromXmlError> {
         Ok(element.text.clone().into())
