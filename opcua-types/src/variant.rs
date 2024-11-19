@@ -31,7 +31,7 @@ use crate::{
     status_code::StatusCode,
     string::{UAString, XmlElement},
     variant_type_id::*,
-    DataValue, DiagnosticInfo, EncodingContext, ExpandedMessageInfo, MessageInfo,
+    DataValue, DiagnosticInfo, DynEncodable, EncodingContext, MessageInfo,
 };
 
 use super::DateTimeUtc;
@@ -127,13 +127,10 @@ pub trait AsVariantRef {
 
 impl<T> AsVariantRef for T
 where
-    T: BinaryEncodable + ExpandedMessageInfo,
+    T: DynEncodable + Clone,
 {
-    fn as_variant(&self, ctx: &EncodingContext) -> Variant {
-        ExtensionObject::from_message_full(self, ctx.namespaces())
-            .map(|e| e.into())
-            .inspect_err(|e| error!("Unable to encode extension object: {e}"))
-            .unwrap_or(Variant::Empty)
+    fn as_variant(&self, _ctx: &EncodingContext) -> Variant {
+        ExtensionObject::from_message(self.clone()).into()
     }
 }
 
@@ -521,11 +518,11 @@ where
     }
 }
 
-impl<T> From<&T> for Variant
+impl<T> From<T> for Variant
 where
-    T: BinaryEncodable + MessageInfo,
+    T: DynEncodable + MessageInfo,
 {
-    fn from(value: &T) -> Self {
+    fn from(value: T) -> Self {
         ExtensionObject::from_message(value).into()
     }
 }

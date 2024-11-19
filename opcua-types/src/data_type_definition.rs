@@ -1,7 +1,6 @@
-use super::{
-    DecodingOptions, EnumDefinition, ExtensionObject, ObjectId, StatusCode, StructureDefinition,
-    Variant,
-};
+use crate::MessageInfo;
+
+use super::{EnumDefinition, ExtensionObject, ObjectId, StatusCode, StructureDefinition, Variant};
 
 #[derive(Debug, Clone)]
 pub enum DataTypeDefinition {
@@ -21,31 +20,50 @@ impl From<EnumDefinition> for DataTypeDefinition {
     }
 }
 
+// TODO: Figure out why we don't auto generate these.
+impl MessageInfo for StructureDefinition {
+    fn type_id(&self) -> ObjectId {
+        ObjectId::StructureDefinition_Encoding_DefaultBinary
+    }
+
+    fn json_type_id(&self) -> ObjectId {
+        ObjectId::StructureDefinition_Encoding_DefaultJson
+    }
+
+    fn xml_type_id(&self) -> ObjectId {
+        ObjectId::StructureDefinition_Encoding_DefaultXml
+    }
+}
+
+impl MessageInfo for EnumDefinition {
+    fn type_id(&self) -> ObjectId {
+        ObjectId::EnumDefinition_Encoding_DefaultBinary
+    }
+
+    fn json_type_id(&self) -> ObjectId {
+        ObjectId::EnumDefinition_Encoding_DefaultJson
+    }
+
+    fn xml_type_id(&self) -> ObjectId {
+        ObjectId::EnumDefinition_Encoding_DefaultXml
+    }
+}
+
 impl DataTypeDefinition {
-    pub fn from_extension_object(
-        obj: ExtensionObject,
-        options: &DecodingOptions,
-    ) -> Result<Self, StatusCode> {
-        match obj.node_id.as_object_id() {
-            Ok(ObjectId::StructureDefinition_Encoding_DefaultBinary) => {
-                Ok(Self::Structure(obj.decode_inner(options)?))
-            }
-            Ok(ObjectId::EnumDefinition_Encoding_DefaultBinary) => {
-                Ok(Self::Enum(obj.decode_inner(options)?))
-            }
-            _ => Err(StatusCode::BadDataTypeIdUnknown),
+    pub fn from_extension_object(obj: ExtensionObject) -> Result<Self, StatusCode> {
+        if let Some(v) = obj.inner_as() {
+            Ok(Self::Structure(*v))
+        } else if let Some(v) = obj.inner_as() {
+            Ok(Self::Enum(*v))
+        } else {
+            Err(StatusCode::BadDataTypeIdUnknown)
         }
     }
 
     pub fn as_extension_object(&self) -> ExtensionObject {
-        match self {
-            DataTypeDefinition::Structure(s) => ExtensionObject::from_encodable(
-                ObjectId::StructureDefinition_Encoding_DefaultBinary,
-                s,
-            ),
-            DataTypeDefinition::Enum(s) => {
-                ExtensionObject::from_encodable(ObjectId::EnumDefinition_Encoding_DefaultBinary, s)
-            }
+        match self.clone() {
+            DataTypeDefinition::Structure(s) => ExtensionObject::from_message(s),
+            DataTypeDefinition::Enum(s) => ExtensionObject::from_message(s),
         }
     }
 }

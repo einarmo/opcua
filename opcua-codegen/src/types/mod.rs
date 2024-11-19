@@ -72,7 +72,7 @@ pub fn generate_xml_loader_impl(ids: HashMap<String, String>, namespace: &str) -
         let typ_ident = Ident::new(&typ, Span::call_site());
         fields.extend(quote! {
             crate::ObjectId::#field_ident => #typ_ident::from_xml(body, ctx)
-                .map(|v| opcua::types::ExtensionObject::from_message_full(&v, ctx.ns_map())),
+                .map(|v| opcua::types::ExtensionObject::from_message_full(v, ctx.ns_map())),
         });
     }
 
