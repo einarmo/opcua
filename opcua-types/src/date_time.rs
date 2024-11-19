@@ -15,7 +15,7 @@ use std::{
 use chrono::{Duration, SecondsFormat, TimeDelta, TimeZone, Timelike, Utc};
 use log::error;
 
-use crate::encoding::*;
+use crate::{encoding::*, Context};
 
 const NANOS_PER_SECOND: i64 = 1_000_000_000;
 const NANOS_PER_TICK: i64 = 100;
@@ -68,23 +68,27 @@ mod json {
 
 /// DateTime encoded as 64-bit signed int
 impl BinaryEncodable for DateTime {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, _ctx: &Context<'_>) -> usize {
         8
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        _ctx: &Context<'_>,
+    ) -> EncodingResult<usize> {
         let ticks = self.checked_ticks();
         write_i64(stream, ticks)
     }
 }
 
 impl BinaryDecodable for DateTime {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &Context<'_>) -> EncodingResult<Self> {
         let ticks = read_i64(stream)?;
         let date_time = DateTime::from(ticks);
         // Client offset is a value that can be overridden to account for time discrepancies between client & server -
         // note perhaps it is not a good idea to do it right here but it is the lowest point to intercept DateTime values.
-        Ok(date_time - decoding_options.client_offset)
+        Ok(date_time - ctx.options().client_offset)
     }
 }
 

@@ -52,7 +52,7 @@ impl opcua::types::ExpandedMessageInfo for PnDeviceDiagnosisDataType {
     }
 }
 impl opcua::types::BinaryEncodable for PnDeviceDiagnosisDataType {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
         size += self.api.byte_len();
         size += self.slot.byte_len();
@@ -101,7 +101,7 @@ impl opcua::types::BinaryEncodable for PnDeviceDiagnosisDataType {
 }
 impl opcua::types::BinaryDecodable for PnDeviceDiagnosisDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -164,7 +164,7 @@ impl opcua::types::ExpandedMessageInfo for PnDeviceRoleOptionSet {
     }
 }
 impl opcua::types::BinaryEncodable for PnDeviceRoleOptionSet {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
         size += self.value.byte_len();
         size += self.valid_bits.byte_len();
@@ -183,7 +183,7 @@ impl opcua::types::BinaryEncodable for PnDeviceRoleOptionSet {
 }
 impl opcua::types::BinaryDecodable for PnDeviceRoleOptionSet {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -224,7 +224,7 @@ impl opcua::types::ExpandedMessageInfo for PnIM5DataType {
     }
 }
 impl opcua::types::BinaryEncodable for PnIM5DataType {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
         size += self.annotation.byte_len();
         size += self.order_id.byte_len();
@@ -251,7 +251,7 @@ impl opcua::types::BinaryEncodable for PnIM5DataType {
 }
 impl opcua::types::BinaryDecodable for PnIM5DataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         decoding_options: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {

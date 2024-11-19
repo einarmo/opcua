@@ -67,18 +67,22 @@ impl fmt::Display for LocalizedText {
 }
 
 impl BinaryEncodable for LocalizedText {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 1;
         if !self.locale.is_empty() {
-            size += self.locale.byte_len();
+            size += self.locale.byte_len(ctx);
         }
         if !self.text.is_empty() {
-            size += self.text.byte_len();
+            size += self.text.byte_len(ctx);
         }
         size
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize> {
         let mut size = 0;
         // A bit mask that indicates which fields are present in the stream.
         // The mask has the following bits:
@@ -91,27 +95,27 @@ impl BinaryEncodable for LocalizedText {
         if !self.text.is_empty() {
             encoding_mask |= 0x2;
         }
-        size += encoding_mask.encode(stream)?;
+        size += encoding_mask.encode(stream, ctx)?;
         if !self.locale.is_empty() {
-            size += self.locale.encode(stream)?;
+            size += self.locale.encode(stream, ctx)?;
         }
         if !self.text.is_empty() {
-            size += self.text.encode(stream)?;
+            size += self.text.encode(stream, ctx)?;
         }
         Ok(size)
     }
 }
 
 impl BinaryDecodable for LocalizedText {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
-        let encoding_mask = u8::decode(stream, decoding_options)?;
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &crate::Context<'_>) -> EncodingResult<Self> {
+        let encoding_mask = u8::decode(stream, ctx)?;
         let locale = if encoding_mask & 0x1 != 0 {
-            UAString::decode(stream, decoding_options)?
+            UAString::decode(stream, ctx)?
         } else {
             UAString::null()
         };
         let text = if encoding_mask & 0x2 != 0 {
-            UAString::decode(stream, decoding_options)?
+            UAString::decode(stream, ctx)?
         } else {
             UAString::null()
         };

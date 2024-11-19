@@ -29,35 +29,34 @@ impl opcua::types::MessageInfo for IdentityMappingRuleType {
     }
 }
 impl opcua::types::BinaryEncodable for IdentityMappingRuleType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.criteria_type.byte_len();
-        size += self.criteria.byte_len();
+        size += self.criteria_type.byte_len(ctx);
+        size += self.criteria.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.criteria_type.encode(stream)?;
-        size += self.criteria.encode(stream)?;
+        size += self.criteria_type.encode(stream, ctx)?;
+        size += self.criteria.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for IdentityMappingRuleType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            criteria_type: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            criteria: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            criteria_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            criteria: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

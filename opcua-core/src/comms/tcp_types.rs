@@ -47,7 +47,7 @@ pub struct MessageHeader {
 }
 
 impl BinaryEncodable for MessageHeader {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         MESSAGE_HEADER_LEN
     }
 
@@ -72,7 +72,7 @@ impl BinaryEncodable for MessageHeader {
 }
 
 impl BinaryDecodable for MessageHeader {
-    fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
+    fn decode<S: Read + ?Sized>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         let mut message_type = [0u8; 4];
         process_decode_io_result(stream.read_exact(&mut message_type))?;
         let message_size = read_u32(stream)?;
@@ -186,7 +186,7 @@ pub struct HelloMessage {
 }
 
 impl BinaryEncodable for HelloMessage {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         // 5 * u32 = 20
         self.message_header.byte_len() + 20 + self.endpoint_url.byte_len()
     }
@@ -205,7 +205,10 @@ impl BinaryEncodable for HelloMessage {
 }
 
 impl BinaryDecodable for HelloMessage {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
+    fn decode<S: Read + ?Sized>(
+        stream: &mut S,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self> {
         let message_header = MessageHeader::decode(stream, decoding_options)?;
         let protocol_version = u32::decode(stream, decoding_options)?;
         let receive_buffer_size = u32::decode(stream, decoding_options)?;
@@ -296,7 +299,7 @@ pub struct AcknowledgeMessage {
 }
 
 impl BinaryEncodable for AcknowledgeMessage {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         self.message_header.byte_len() + 20
     }
 
@@ -313,7 +316,10 @@ impl BinaryEncodable for AcknowledgeMessage {
 }
 
 impl BinaryDecodable for AcknowledgeMessage {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
+    fn decode<S: Read + ?Sized>(
+        stream: &mut S,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self> {
         let message_header = MessageHeader::decode(stream, decoding_options)?;
         let protocol_version = u32::decode(stream, decoding_options)?;
         let receive_buffer_size = u32::decode(stream, decoding_options)?;
@@ -361,7 +367,7 @@ pub struct ErrorMessage {
 }
 
 impl BinaryEncodable for ErrorMessage {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         self.message_header.byte_len() + self.error.byte_len() + self.reason.byte_len()
     }
 
@@ -375,7 +381,10 @@ impl BinaryEncodable for ErrorMessage {
 }
 
 impl BinaryDecodable for ErrorMessage {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
+    fn decode<S: Read + ?Sized>(
+        stream: &mut S,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self> {
         let message_header = MessageHeader::decode(stream, decoding_options)?;
         let error = u32::decode(stream, decoding_options)?;
         let reason = UAString::decode(stream, decoding_options)?;

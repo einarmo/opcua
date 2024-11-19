@@ -30,41 +30,37 @@ impl opcua::types::MessageInfo for UpdateStructureDataDetails {
     }
 }
 impl opcua::types::BinaryEncodable for UpdateStructureDataDetails {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.node_id.byte_len();
-        size += self.perform_insert_replace.byte_len();
-        size += self.update_values.byte_len();
+        size += self.node_id.byte_len(ctx);
+        size += self.perform_insert_replace.byte_len(ctx);
+        size += self.update_values.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.node_id.encode(stream)?;
-        size += self.perform_insert_replace.encode(stream)?;
-        size += self.update_values.encode(stream)?;
+        size += self.node_id.encode(stream, ctx)?;
+        size += self.perform_insert_replace.encode(stream, ctx)?;
+        size += self.update_values.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for UpdateStructureDataDetails {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            node_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            perform_insert_replace: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            update_values: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            node_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            perform_insert_replace: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            update_values: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

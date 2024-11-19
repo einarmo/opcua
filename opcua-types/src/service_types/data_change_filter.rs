@@ -31,41 +31,37 @@ impl opcua::types::MessageInfo for DataChangeFilter {
     }
 }
 impl opcua::types::BinaryEncodable for DataChangeFilter {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.trigger.byte_len();
-        size += self.deadband_type.byte_len();
-        size += self.deadband_value.byte_len();
+        size += self.trigger.byte_len(ctx);
+        size += self.deadband_type.byte_len(ctx);
+        size += self.deadband_value.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.trigger.encode(stream)?;
-        size += self.deadband_type.encode(stream)?;
-        size += self.deadband_value.encode(stream)?;
+        size += self.trigger.encode(stream, ctx)?;
+        size += self.deadband_type.encode(stream, ctx)?;
+        size += self.deadband_value.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for DataChangeFilter {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            trigger: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            deadband_type: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            deadband_value: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            trigger: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            deadband_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            deadband_value: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

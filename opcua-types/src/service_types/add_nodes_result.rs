@@ -30,38 +30,34 @@ impl opcua::types::MessageInfo for AddNodesResult {
     }
 }
 impl opcua::types::BinaryEncodable for AddNodesResult {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.status_code.byte_len();
-        size += self.added_node_id.byte_len();
+        size += self.status_code.byte_len(ctx);
+        size += self.added_node_id.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.status_code.encode(stream)?;
-        size += self.added_node_id.encode(stream)?;
+        size += self.status_code.encode(stream, ctx)?;
+        size += self.added_node_id.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for AddNodesResult {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            status_code: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            added_node_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            status_code: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            added_node_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

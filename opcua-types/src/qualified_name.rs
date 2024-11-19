@@ -74,25 +74,28 @@ impl From<String> for QualifiedName {
 }
 
 impl BinaryEncodable for QualifiedName {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size: usize = 0;
-        size += self.namespace_index.byte_len();
-        size += self.name.byte_len();
+        size += self.namespace_index.byte_len(ctx);
+        size += self.name.byte_len(ctx);
         size
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize> {
         let mut size: usize = 0;
-        size += self.namespace_index.encode(stream)?;
-        size += self.name.encode(stream)?;
-        assert_eq!(size, self.byte_len());
+        size += self.namespace_index.encode(stream, ctx)?;
+        size += self.name.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl BinaryDecodable for QualifiedName {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
-        let namespace_index = u16::decode(stream, decoding_options)?;
-        let name = UAString::decode(stream, decoding_options)?;
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &crate::Context<'_>) -> EncodingResult<Self> {
+        let namespace_index = u16::decode(stream, ctx)?;
+        let name = UAString::decode(stream, ctx)?;
         Ok(QualifiedName {
             namespace_index,
             name,

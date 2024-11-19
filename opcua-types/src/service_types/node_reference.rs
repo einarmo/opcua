@@ -32,44 +32,40 @@ impl opcua::types::MessageInfo for NodeReference {
     }
 }
 impl opcua::types::BinaryEncodable for NodeReference {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.node_id.byte_len();
-        size += self.reference_type_id.byte_len();
-        size += self.is_forward.byte_len();
-        size += self.referenced_node_ids.byte_len();
+        size += self.node_id.byte_len(ctx);
+        size += self.reference_type_id.byte_len(ctx);
+        size += self.is_forward.byte_len(ctx);
+        size += self.referenced_node_ids.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.node_id.encode(stream)?;
-        size += self.reference_type_id.encode(stream)?;
-        size += self.is_forward.encode(stream)?;
-        size += self.referenced_node_ids.encode(stream)?;
+        size += self.node_id.encode(stream, ctx)?;
+        size += self.reference_type_id.encode(stream, ctx)?;
+        size += self.is_forward.encode(stream, ctx)?;
+        size += self.referenced_node_ids.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for NodeReference {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            node_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            reference_type_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            is_forward: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            referenced_node_ids: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            node_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            reference_type_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            is_forward: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            referenced_node_ids: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

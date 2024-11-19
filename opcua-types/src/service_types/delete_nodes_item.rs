@@ -30,35 +30,34 @@ impl opcua::types::MessageInfo for DeleteNodesItem {
     }
 }
 impl opcua::types::BinaryEncodable for DeleteNodesItem {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.node_id.byte_len();
-        size += self.delete_target_references.byte_len();
+        size += self.node_id.byte_len(ctx);
+        size += self.delete_target_references.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.node_id.encode(stream)?;
-        size += self.delete_target_references.encode(stream)?;
+        size += self.node_id.encode(stream, ctx)?;
+        size += self.delete_target_references.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for DeleteNodesItem {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            node_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            delete_target_references: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            node_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            delete_target_references: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

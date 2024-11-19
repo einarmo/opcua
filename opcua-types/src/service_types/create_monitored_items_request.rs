@@ -34,54 +34,47 @@ impl opcua::types::MessageInfo for CreateMonitoredItemsRequest {
     }
 }
 impl opcua::types::BinaryEncodable for CreateMonitoredItemsRequest {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.request_header.byte_len();
-        size += self.subscription_id.byte_len();
-        size += self.timestamps_to_return.byte_len();
-        size += self.items_to_create.byte_len();
+        size += self.request_header.byte_len(ctx);
+        size += self.subscription_id.byte_len(ctx);
+        size += self.timestamps_to_return.byte_len(ctx);
+        size += self.items_to_create.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.request_header.encode(stream)?;
-        size += self.subscription_id.encode(stream)?;
-        size += self.timestamps_to_return.encode(stream)?;
-        size += self.items_to_create.encode(stream)?;
+        size += self.request_header.encode(stream, ctx)?;
+        size += self.subscription_id.encode(stream, ctx)?;
+        size += self.timestamps_to_return.encode(stream, ctx)?;
+        size += self.items_to_create.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for CreateMonitoredItemsRequest {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryDecodable::decode(
             stream,
-            decoding_options,
+            ctx,
         )?;
         let __request_handle = request_header.request_handle;
         Ok(Self {
             request_header,
-            subscription_id: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            subscription_id: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            timestamps_to_return: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            timestamps_to_return: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            items_to_create: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            items_to_create: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }

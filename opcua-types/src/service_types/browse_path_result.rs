@@ -30,35 +30,34 @@ impl opcua::types::MessageInfo for BrowsePathResult {
     }
 }
 impl opcua::types::BinaryEncodable for BrowsePathResult {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.status_code.byte_len();
-        size += self.targets.byte_len();
+        size += self.status_code.byte_len(ctx);
+        size += self.targets.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.status_code.encode(stream)?;
-        size += self.targets.encode(stream)?;
+        size += self.status_code.encode(stream, ctx)?;
+        size += self.targets.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for BrowsePathResult {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            status_code: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            targets: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            status_code: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            targets: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

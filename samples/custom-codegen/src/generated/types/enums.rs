@@ -93,7 +93,7 @@ impl opcua::types::json::JsonEncodable for IMTagSelectorEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for IMTagSelectorEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -104,7 +104,7 @@ impl opcua::types::BinaryEncodable for IMTagSelectorEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for IMTagSelectorEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -195,7 +195,7 @@ impl opcua::types::json::JsonEncodable for PnARStateEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for PnARStateEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -206,7 +206,7 @@ impl opcua::types::BinaryEncodable for PnARStateEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for PnARStateEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -295,7 +295,7 @@ impl opcua::types::json::JsonEncodable for PnARTypeEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for PnARTypeEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -306,7 +306,7 @@ impl opcua::types::BinaryEncodable for PnARTypeEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for PnARTypeEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -400,7 +400,7 @@ impl opcua::types::json::JsonEncodable for PnAssetChangeEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for PnAssetChangeEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -411,7 +411,7 @@ impl opcua::types::BinaryEncodable for PnAssetChangeEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for PnAssetChangeEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -507,7 +507,7 @@ impl opcua::types::json::JsonEncodable for PnAssetTypeEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for PnAssetTypeEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -518,7 +518,7 @@ impl opcua::types::BinaryEncodable for PnAssetTypeEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for PnAssetTypeEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -610,7 +610,7 @@ impl opcua::types::json::JsonEncodable for PnChannelAccumulativeEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for PnChannelAccumulativeEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -621,7 +621,7 @@ impl opcua::types::BinaryEncodable for PnChannelAccumulativeEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for PnChannelAccumulativeEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -717,7 +717,7 @@ impl opcua::types::json::JsonEncodable for PnChannelDirectionEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for PnChannelDirectionEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -728,7 +728,7 @@ impl opcua::types::BinaryEncodable for PnChannelDirectionEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for PnChannelDirectionEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -824,7 +824,7 @@ impl opcua::types::json::JsonEncodable for PnChannelMaintenanceEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for PnChannelMaintenanceEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -835,7 +835,7 @@ impl opcua::types::BinaryEncodable for PnChannelMaintenanceEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for PnChannelMaintenanceEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -931,7 +931,7 @@ impl opcua::types::json::JsonEncodable for PnChannelSpecifierEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for PnChannelSpecifierEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -942,7 +942,7 @@ impl opcua::types::BinaryEncodable for PnChannelSpecifierEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for PnChannelSpecifierEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -1046,7 +1046,7 @@ impl opcua::types::json::JsonEncodable for PnChannelTypeEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for PnChannelTypeEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -1057,7 +1057,7 @@ impl opcua::types::BinaryEncodable for PnChannelTypeEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for PnChannelTypeEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -1153,7 +1153,7 @@ impl opcua::types::json::JsonEncodable for PnDeviceStateEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for PnDeviceStateEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -1164,7 +1164,7 @@ impl opcua::types::BinaryEncodable for PnDeviceStateEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for PnDeviceStateEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -1261,7 +1261,7 @@ impl opcua::types::json::JsonEncodable for PnLinkStateEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for PnLinkStateEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -1272,7 +1272,7 @@ impl opcua::types::BinaryEncodable for PnLinkStateEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for PnLinkStateEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -1370,7 +1370,7 @@ impl opcua::types::json::JsonEncodable for PnModuleStateEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for PnModuleStateEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -1381,7 +1381,7 @@ impl opcua::types::BinaryEncodable for PnModuleStateEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for PnModuleStateEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -1483,7 +1483,7 @@ impl opcua::types::json::JsonEncodable for PnPortStateEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for PnPortStateEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -1494,7 +1494,7 @@ impl opcua::types::BinaryEncodable for PnPortStateEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for PnPortStateEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -1586,7 +1586,7 @@ impl opcua::types::json::JsonEncodable for PnSubmoduleAddInfoEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for PnSubmoduleAddInfoEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -1597,7 +1597,7 @@ impl opcua::types::BinaryEncodable for PnSubmoduleAddInfoEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for PnSubmoduleAddInfoEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -1695,7 +1695,7 @@ impl opcua::types::json::JsonEncodable for PnSubmoduleARInfoEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for PnSubmoduleARInfoEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -1706,7 +1706,7 @@ impl opcua::types::BinaryEncodable for PnSubmoduleARInfoEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for PnSubmoduleARInfoEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {
@@ -1802,7 +1802,7 @@ impl opcua::types::json::JsonEncodable for PnSubmoduleIdentInfoEnumeration {
     }
 }
 impl opcua::types::BinaryEncodable for PnSubmoduleIdentInfoEnumeration {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         4usize
     }
     fn encode<S: std::io::Write + ?Sized>(
@@ -1813,7 +1813,7 @@ impl opcua::types::BinaryEncodable for PnSubmoduleIdentInfoEnumeration {
     }
 }
 impl opcua::types::BinaryDecodable for PnSubmoduleIdentInfoEnumeration {
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
         _: &opcua::types::DecodingOptions,
     ) -> opcua::types::EncodingResult<Self> {

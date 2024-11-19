@@ -33,44 +33,43 @@ impl opcua::types::MessageInfo for Argument {
     }
 }
 impl opcua::types::BinaryEncodable for Argument {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.name.byte_len();
-        size += self.data_type.byte_len();
-        size += self.value_rank.byte_len();
-        size += self.array_dimensions.byte_len();
-        size += self.description.byte_len();
+        size += self.name.byte_len(ctx);
+        size += self.data_type.byte_len(ctx);
+        size += self.value_rank.byte_len(ctx);
+        size += self.array_dimensions.byte_len(ctx);
+        size += self.description.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.name.encode(stream)?;
-        size += self.data_type.encode(stream)?;
-        size += self.value_rank.encode(stream)?;
-        size += self.array_dimensions.encode(stream)?;
-        size += self.description.encode(stream)?;
+        size += self.name.encode(stream, ctx)?;
+        size += self.data_type.encode(stream, ctx)?;
+        size += self.value_rank.encode(stream, ctx)?;
+        size += self.array_dimensions.encode(stream, ctx)?;
+        size += self.description.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for Argument {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            data_type: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            value_rank: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            array_dimensions: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            description: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            data_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            value_rank: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            array_dimensions: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            description: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

@@ -31,44 +31,37 @@ impl opcua::types::MessageInfo for HistoryUpdateResult {
     }
 }
 impl opcua::types::BinaryEncodable for HistoryUpdateResult {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.status_code.byte_len();
-        size += self.operation_results.byte_len();
-        size += self.diagnostic_infos.byte_len();
+        size += self.status_code.byte_len(ctx);
+        size += self.operation_results.byte_len(ctx);
+        size += self.diagnostic_infos.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.status_code.encode(stream)?;
-        size += self.operation_results.encode(stream)?;
-        size += self.diagnostic_infos.encode(stream)?;
+        size += self.status_code.encode(stream, ctx)?;
+        size += self.operation_results.encode(stream, ctx)?;
+        size += self.diagnostic_infos.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for HistoryUpdateResult {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            status_code: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            operation_results: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            diagnostic_infos: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            status_code: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            operation_results: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            diagnostic_infos: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

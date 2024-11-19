@@ -30,32 +30,34 @@ impl opcua::types::MessageInfo for RolePermissionType {
     }
 }
 impl opcua::types::BinaryEncodable for RolePermissionType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.role_id.byte_len();
-        size += self.permissions.byte_len();
+        size += self.role_id.byte_len(ctx);
+        size += self.permissions.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.role_id.encode(stream)?;
-        size += self.permissions.encode(stream)?;
+        size += self.role_id.encode(stream, ctx)?;
+        size += self.permissions.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for RolePermissionType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            role_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            permissions: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            role_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            permissions: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

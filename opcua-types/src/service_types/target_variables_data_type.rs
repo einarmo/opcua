@@ -31,32 +31,31 @@ impl opcua::types::MessageInfo for TargetVariablesDataType {
     }
 }
 impl opcua::types::BinaryEncodable for TargetVariablesDataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.target_variables.byte_len();
+        size += self.target_variables.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.target_variables.encode(stream)?;
+        size += self.target_variables.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for TargetVariablesDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            target_variables: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            target_variables: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

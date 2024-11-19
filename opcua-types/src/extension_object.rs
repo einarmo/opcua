@@ -11,7 +11,7 @@ use std::{
     io::{Read, Write},
 };
 
-use log::error;
+use log::{error, warn};
 
 use crate::{ExpandedMessageInfo, ExpandedNodeId};
 
@@ -30,7 +30,11 @@ impl fmt::Display for ExtensionObjectError {
 }
 
 pub trait DynEncodable: Any + Send + Sync + std::fmt::Debug {
-    fn encode_binary(&self, stream: &mut dyn std::io::Write) -> EncodingResult<usize>;
+    fn encode_binary(
+        &self,
+        stream: &mut dyn std::io::Write,
+        ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize>;
 
     #[cfg(feature = "json")]
     fn encode_json(
@@ -39,7 +43,7 @@ pub trait DynEncodable: Any + Send + Sync + std::fmt::Debug {
         ctx: &crate::Context<'_>,
     ) -> EncodingResult<()>;
 
-    fn byte_len_dyn(&self) -> usize;
+    fn byte_len_dyn(&self, ctx: &crate::Context<'_>) -> usize;
 
     fn binary_type_id(&self) -> ExpandedNodeId;
 
@@ -49,16 +53,20 @@ pub trait DynEncodable: Any + Send + Sync + std::fmt::Debug {
     fn as_dyn_any(self: Box<Self>) -> Box<dyn Any + Send + Sync + 'static>;
 
     fn clone_box(&self) -> Box<dyn DynEncodable>;
+
+    fn dyn_eq(&self, other: &dyn DynEncodable) -> bool;
+
+    fn as_ref_any(&self) -> &dyn Any;
 }
 
 macro_rules! blanket_dyn_encodable {
     ($bound:tt $(+ $others:tt)*) => {
         impl<T> DynEncodable for T
         where
-            T: $bound  $(+ $others)* + ExpandedMessageInfo + Any + std::fmt::Debug + Send + Sync + Clone,
+            T: $bound  $(+ $others)* + ExpandedMessageInfo + Any + std::fmt::Debug + Send + Sync + Clone + PartialEq,
         {
-            fn encode_binary(&self, stream: &mut dyn std::io::Write) -> EncodingResult<usize> {
-                BinaryEncodable::encode(self, stream)
+            fn encode_binary(&self, stream: &mut dyn std::io::Write, ctx: &crate::Context<'_>) -> EncodingResult<usize> {
+                BinaryEncodable::encode(self, stream, ctx)
             }
 
             #[cfg(feature = "json")]
@@ -70,8 +78,8 @@ macro_rules! blanket_dyn_encodable {
                 JsonEncodable::encode(self, stream, ctx)
             }
 
-            fn byte_len_dyn(&self) -> usize {
-                BinaryEncodable::byte_len(self)
+            fn byte_len_dyn(&self, ctx: &crate::Context<'_>,) -> usize {
+                BinaryEncodable::byte_len(self, ctx)
             }
 
             fn binary_type_id(&self) -> ExpandedNodeId {
@@ -87,8 +95,20 @@ macro_rules! blanket_dyn_encodable {
                 self
             }
 
+            fn as_ref_any(&self) -> &dyn Any {
+                self
+            }
+
             fn clone_box(&self) -> Box<dyn DynEncodable> {
                 Box::new(self.clone())
+            }
+
+            fn dyn_eq(&self, other: &dyn DynEncodable) -> bool {
+                if let Some(o) = other.as_ref_any().downcast_ref::<Self>() {
+                    o == self
+                } else {
+                    false
+                }
             }
         }
     };
@@ -100,27 +120,12 @@ use crate::json::JsonEncodable;
 #[cfg(feature = "json")]
 blanket_dyn_encodable!(BinaryEncodable + JsonEncodable);
 
+#[cfg(not(feature = "json"))]
+blanket_dyn_encodable!(BinaryEncodable);
+
 impl PartialEq for dyn DynEncodable {
     fn eq(&self, other: &dyn DynEncodable) -> bool {
-        if self.byte_len_dyn() != other.byte_len_dyn() {
-            return false;
-        }
-        if self.type_id() != other.type_id() {
-            return false;
-        }
-        // For equality, just serialize both sides.
-        let mut cursor = Vec::<u8>::with_capacity(self.byte_len_dyn());
-        let mut cursor2 = Vec::<u8>::with_capacity(self.byte_len_dyn());
-
-        if self.encode_binary(&mut cursor).is_err() {
-            return false;
-        }
-
-        if other.encode_binary(&mut cursor2).is_err() {
-            return false;
-        }
-
-        cursor == cursor2
+        self.dyn_eq(other)
     }
 }
 
@@ -292,53 +297,69 @@ impl Default for ExtensionObject {
 }
 
 impl BinaryEncodable for ExtensionObject {
-    fn byte_len(&self) -> usize {
-        let mut size = self.node_id.byte_len();
+    fn byte_len(&self, ctx: &crate::Context<'_>) -> usize {
+        let type_id = self.binary_type_id();
+        let id = type_id.try_resolve(ctx.namespaces());
+
+        // Just default to null here, we'll fail later.
+        let mut size = id.map(|n| n.byte_len(ctx)).unwrap_or(2usize);
         size += match &self.body {
-            Some(b) => b.byte_len_dyn(),
+            Some(b) => b.byte_len_dyn(ctx),
             None => 1,
         };
 
         size
     }
 
-    fn encode<S: Write + ?Sized>(&self, mut stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        mut stream: &mut S,
+        ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize> {
         let mut size = 0;
-        size += BinaryEncodable::encode(&self.node_id, stream)?;
+        let type_id = self.binary_type_id();
+        let id = type_id.try_resolve(ctx.namespaces());
+        let Some(id) = id else {
+            warn!("Unknown encoding ID: {type_id}");
+            return Err(StatusCode::BadEncodingError.into());
+        };
+
+        size += BinaryEncodable::encode(id.as_ref(), stream, ctx)?;
 
         match &self.body {
             Some(b) => {
                 size += write_u8(stream, 0x1)?;
-                size += b.encode_binary(&mut stream as &mut dyn Write)?;
+                size += b.encode_binary(&mut stream as &mut dyn Write, ctx)?;
             }
             None => {
                 size += write_u8(stream, 0x0)?;
             }
         }
-        assert_eq!(size, self.byte_len());
         Ok(size)
     }
 }
 impl BinaryDecodable for ExtensionObject {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
+    fn decode<S: Read + ?Sized>(
+        mut stream: &mut S,
+        ctx: &crate::Context<'_>,
+    ) -> EncodingResult<Self> {
         // Extension object is depth checked to prevent deep recursion
-        let _depth_lock = decoding_options.depth_lock()?;
-        let node_id = NodeId::decode(stream, decoding_options)?;
-        let encoding_type = u8::decode(stream, decoding_options)?;
+        let _depth_lock = ctx.options().depth_lock()?;
+        let node_id = NodeId::decode(stream, ctx)?;
+        let encoding_type = u8::decode(stream, ctx)?;
         let body = match encoding_type {
-            0x0 => ExtensionObjectEncoding::None,
-            0x1 => {
-                ExtensionObjectEncoding::ByteString(ByteString::decode(stream, decoding_options)?)
-            }
+            0x0 => None,
+            0x1 => Some(ctx.load_from_binary(&node_id, &mut stream, ctx)?),
             0x2 => {
-                ExtensionObjectEncoding::XmlElement(XmlElement::decode(stream, decoding_options)?)
+                warn!("Unsupported extension object encoding: XMLElement");
+                None
             }
             _ => {
                 error!("Invalid encoding type {} in stream", encoding_type);
                 return Err(StatusCode::BadDecodingError.into());
             }
         };
-        Ok(ExtensionObject { node_id, body })
+        Ok(body.unwrap_or_else(|| ExtensionObject::null()))
     }
 }
 

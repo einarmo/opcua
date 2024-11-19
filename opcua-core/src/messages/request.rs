@@ -19,7 +19,7 @@ macro_rules! request_enum {
             }
         )*
         impl BinaryEncodable for RequestMessage {
-            fn byte_len(&self) -> usize {
+            fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
                 match self {
                     $( Self::$name(value) => value.byte_len(), )*
                 }

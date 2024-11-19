@@ -31,44 +31,37 @@ impl opcua::types::MessageInfo for NodeTypeDescription {
     }
 }
 impl opcua::types::BinaryEncodable for NodeTypeDescription {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.type_definition_node.byte_len();
-        size += self.include_sub_types.byte_len();
-        size += self.data_to_return.byte_len();
+        size += self.type_definition_node.byte_len(ctx);
+        size += self.include_sub_types.byte_len(ctx);
+        size += self.data_to_return.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.type_definition_node.encode(stream)?;
-        size += self.include_sub_types.encode(stream)?;
-        size += self.data_to_return.encode(stream)?;
+        size += self.type_definition_node.encode(stream, ctx)?;
+        size += self.include_sub_types.encode(stream, ctx)?;
+        size += self.data_to_return.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for NodeTypeDescription {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            type_definition_node: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            include_sub_types: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            data_to_return: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            type_definition_node: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            include_sub_types: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            data_to_return: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

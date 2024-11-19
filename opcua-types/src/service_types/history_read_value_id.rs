@@ -32,47 +32,40 @@ impl opcua::types::MessageInfo for HistoryReadValueId {
     }
 }
 impl opcua::types::BinaryEncodable for HistoryReadValueId {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.node_id.byte_len();
-        size += self.index_range.byte_len();
-        size += self.data_encoding.byte_len();
-        size += self.continuation_point.byte_len();
+        size += self.node_id.byte_len(ctx);
+        size += self.index_range.byte_len(ctx);
+        size += self.data_encoding.byte_len(ctx);
+        size += self.continuation_point.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.node_id.encode(stream)?;
-        size += self.index_range.encode(stream)?;
-        size += self.data_encoding.encode(stream)?;
-        size += self.continuation_point.encode(stream)?;
+        size += self.node_id.encode(stream, ctx)?;
+        size += self.index_range.encode(stream, ctx)?;
+        size += self.data_encoding.encode(stream, ctx)?;
+        size += self.continuation_point.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for HistoryReadValueId {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            node_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            index_range: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            data_encoding: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            continuation_point: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            node_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            index_range: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            data_encoding: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            continuation_point: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

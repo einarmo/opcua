@@ -32,44 +32,40 @@ impl opcua::types::MessageInfo for EUInformation {
     }
 }
 impl opcua::types::BinaryEncodable for EUInformation {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.namespace_uri.byte_len();
-        size += self.unit_id.byte_len();
-        size += self.display_name.byte_len();
-        size += self.description.byte_len();
+        size += self.namespace_uri.byte_len(ctx);
+        size += self.unit_id.byte_len(ctx);
+        size += self.display_name.byte_len(ctx);
+        size += self.description.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.namespace_uri.encode(stream)?;
-        size += self.unit_id.encode(stream)?;
-        size += self.display_name.encode(stream)?;
-        size += self.description.encode(stream)?;
+        size += self.namespace_uri.encode(stream, ctx)?;
+        size += self.unit_id.encode(stream, ctx)?;
+        size += self.display_name.encode(stream, ctx)?;
+        size += self.description.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for EUInformation {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            namespace_uri: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            unit_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            display_name: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            description: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            namespace_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            unit_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            display_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            description: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

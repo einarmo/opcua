@@ -15,7 +15,7 @@ use byteorder::{ByteOrder, LittleEndian, WriteBytesExt};
 use chrono::Duration;
 use log::{error, trace, warn};
 
-use crate::{constants, status_code::StatusCode, QualifiedName};
+use crate::{constants, status_code::StatusCode, Context, QualifiedName};
 
 #[derive(Debug, Clone, Default)]
 pub enum DataEncoding {
@@ -268,15 +268,17 @@ impl DecodingOptions {
 pub trait BinaryEncodable {
     /// Returns the exact byte length of the structure as it would be if `encode` were called.
     /// This may be called prior to writing to ensure the correct amount of space is available.
-    fn byte_len(&self) -> usize;
+    #[allow(unused)]
+    fn byte_len(&self, ctx: &crate::Context<'_>) -> usize;
     /// Encodes the instance to the write stream.
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize>;
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S, ctx: &Context<'_>)
+        -> EncodingResult<usize>;
 
     // Convenience method for encoding a message straight into an array of bytes. It is preferable to reuse buffers than
     // to call this so it should be reserved for tests and trivial code.
-    fn encode_to_vec(&self) -> Vec<u8> {
-        let mut buffer = Cursor::new(Vec::with_capacity(self.byte_len()));
-        let _ = self.encode(&mut buffer);
+    fn encode_to_vec(&self, ctx: &Context<'_>) -> Vec<u8> {
+        let mut buffer = Cursor::new(Vec::with_capacity(self.byte_len(ctx)));
+        let _ = self.encode(&mut buffer, ctx);
         buffer.into_inner()
     }
 }
@@ -285,7 +287,7 @@ pub trait BinaryDecodable: Sized {
     /// Decodes an instance from the read stream. The decoding options contains restrictions set by
     /// the server / client on the length of strings, arrays etc. If these limits are exceeded the
     /// implementation should return with a `BadDecodingError` as soon as possible.
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self>;
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &Context<'_>) -> EncodingResult<Self>;
 }
 
 /// Converts an IO encoding error (and logs when in error) into an EncodingResult
@@ -311,20 +313,24 @@ impl<T> BinaryEncodable for Option<Vec<T>>
 where
     T: BinaryEncodable,
 {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &crate::Context<'_>) -> usize {
         let mut size = 4;
         if let Some(ref values) = self {
-            size += values.iter().map(|v| v.byte_len()).sum::<usize>();
+            size += values.iter().map(|v| v.byte_len(ctx)).sum::<usize>();
         }
         size
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        ctx: &Context<'_>,
+    ) -> EncodingResult<usize> {
         let mut size = 0;
         if let Some(ref values) = self {
             size += write_i32(stream, values.len() as i32)?;
             for value in values.iter() {
-                size += value.encode(stream)?;
+                size += value.encode(stream, ctx)?;
             }
         } else {
             size += write_i32(stream, -1)?;
@@ -337,9 +343,9 @@ impl<T> BinaryDecodable for Option<Vec<T>>
 where
     T: BinaryDecodable,
 {
-    fn decode<S: Read>(
+    fn decode<S: Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &DecodingOptions,
+        ctx: &Context<'_>,
     ) -> EncodingResult<Option<Vec<T>>> {
         let len = read_i32(stream)?;
         if len == -1 {
@@ -347,16 +353,17 @@ where
         } else if len < -1 {
             error!("Array length is negative value and invalid");
             Err(StatusCode::BadDecodingError.into())
-        } else if len as usize > decoding_options.max_array_length {
+        } else if len as usize > ctx.options().max_array_length {
             error!(
                 "Array length {} exceeds decoding limit {}",
-                len, decoding_options.max_array_length
+                len,
+                ctx.options().max_array_length
             );
             Err(StatusCode::BadDecodingError.into())
         } else {
             let mut values: Vec<T> = Vec::with_capacity(len as usize);
             for _ in 0..len {
-                values.push(T::decode(stream, decoding_options)?);
+                values.push(T::decode(stream, ctx)?);
             }
             Ok(Some(values))
         }
@@ -364,55 +371,12 @@ where
 }
 
 /// Calculates the length in bytes of an array of encoded type
-pub fn byte_len_array<T: BinaryEncodable>(values: &Option<Vec<T>>) -> usize {
+pub fn byte_len_array<T: BinaryEncodable>(values: &Option<Vec<T>>, ctx: &Context<'_>) -> usize {
     let mut size = 4;
     if let Some(ref values) = values {
-        size += values.iter().map(|v| v.byte_len()).sum::<usize>();
+        size += values.iter().map(|v| v.byte_len(ctx)).sum::<usize>();
     }
     size
-}
-
-/// Write an array of the encoded type to stream, preserving distinction between null array and empty array
-pub fn write_array<S: Write + ?Sized, T: BinaryEncodable>(
-    stream: &mut S,
-    values: &Option<Vec<T>>,
-) -> EncodingResult<usize> {
-    let mut size = 0;
-    if let Some(ref values) = values {
-        size += write_i32(stream, values.len() as i32)?;
-        for value in values.iter() {
-            size += value.encode(stream)?;
-        }
-    } else {
-        size += write_i32(stream, -1)?;
-    }
-    Ok(size)
-}
-
-/// Reads an array of the encoded type from a stream, preserving distinction between null array and empty array
-pub fn read_array<S: Read, T: BinaryDecodable>(
-    stream: &mut S,
-    decoding_options: &DecodingOptions,
-) -> EncodingResult<Option<Vec<T>>> {
-    let len = read_i32(stream)?;
-    if len == -1 {
-        Ok(None)
-    } else if len < -1 {
-        error!("Array length is negative value and invalid");
-        Err(StatusCode::BadDecodingError.into())
-    } else if len as usize > decoding_options.max_array_length {
-        error!(
-            "Array length {} exceeds decoding limit {}",
-            len, decoding_options.max_array_length
-        );
-        Err(StatusCode::BadDecodingError.into())
-    } else {
-        let mut values: Vec<T> = Vec::with_capacity(len as usize);
-        for _ in 0..len {
-            values.push(T::decode(stream, decoding_options)?);
-        }
-        Ok(Some(values))
-    }
 }
 
 /// Writes a series of identical bytes to the stream
@@ -519,14 +483,14 @@ where
 }
 
 /// Reads an array of bytes from the stream
-pub fn read_bytes(stream: &mut dyn Read, buf: &mut [u8]) -> EncodingResult<usize> {
+pub fn read_bytes<R: Read + ?Sized>(stream: &mut R, buf: &mut [u8]) -> EncodingResult<usize> {
     let result = stream.read_exact(buf);
     process_decode_io_result(result)?;
     Ok(buf.len())
 }
 
 /// Read an unsigned byte from the stream
-pub fn read_u8(stream: &mut dyn Read) -> EncodingResult<u8> {
+pub fn read_u8<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<u8> {
     let mut buf = [0u8];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -534,7 +498,7 @@ pub fn read_u8(stream: &mut dyn Read) -> EncodingResult<u8> {
 }
 
 /// Read an signed 16-bit value from the stream
-pub fn read_i16(stream: &mut dyn Read) -> EncodingResult<i16> {
+pub fn read_i16<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<i16> {
     let mut buf = [0u8; 2];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -542,7 +506,7 @@ pub fn read_i16(stream: &mut dyn Read) -> EncodingResult<i16> {
 }
 
 /// Read an unsigned 16-bit value from the stream
-pub fn read_u16(stream: &mut dyn Read) -> EncodingResult<u16> {
+pub fn read_u16<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<u16> {
     let mut buf = [0u8; 2];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -550,7 +514,7 @@ pub fn read_u16(stream: &mut dyn Read) -> EncodingResult<u16> {
 }
 
 /// Read a signed 32-bit value from the stream
-pub fn read_i32(stream: &mut dyn Read) -> EncodingResult<i32> {
+pub fn read_i32<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<i32> {
     let mut buf = [0u8; 4];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -558,7 +522,7 @@ pub fn read_i32(stream: &mut dyn Read) -> EncodingResult<i32> {
 }
 
 /// Read an unsigned 32-bit value from the stream
-pub fn read_u32(stream: &mut dyn Read) -> EncodingResult<u32> {
+pub fn read_u32<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<u32> {
     let mut buf = [0u8; 4];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -566,7 +530,7 @@ pub fn read_u32(stream: &mut dyn Read) -> EncodingResult<u32> {
 }
 
 /// Read a signed 64-bit value from the stream
-pub fn read_i64(stream: &mut dyn Read) -> EncodingResult<i64> {
+pub fn read_i64<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<i64> {
     let mut buf = [0u8; 8];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -574,7 +538,7 @@ pub fn read_i64(stream: &mut dyn Read) -> EncodingResult<i64> {
 }
 
 /// Read an unsigned 64-bit value from the stream
-pub fn read_u64(stream: &mut dyn Read) -> EncodingResult<u64> {
+pub fn read_u64<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<u64> {
     let mut buf = [0u8; 8];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -582,7 +546,7 @@ pub fn read_u64(stream: &mut dyn Read) -> EncodingResult<u64> {
 }
 
 /// Read a 32-bit precision value from the stream
-pub fn read_f32(stream: &mut dyn Read) -> EncodingResult<f32> {
+pub fn read_f32<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<f32> {
     let mut buf = [0u8; 4];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -590,7 +554,7 @@ pub fn read_f32(stream: &mut dyn Read) -> EncodingResult<f32> {
 }
 
 /// Read a 64-bit precision from the stream
-pub fn read_f64(stream: &mut dyn Read) -> EncodingResult<f64> {
+pub fn read_f64<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<f64> {
     let mut buf = [0u8; 8];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;

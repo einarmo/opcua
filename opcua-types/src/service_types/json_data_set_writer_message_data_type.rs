@@ -29,31 +29,33 @@ impl opcua::types::MessageInfo for JsonDataSetWriterMessageDataType {
     }
 }
 impl opcua::types::BinaryEncodable for JsonDataSetWriterMessageDataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.data_set_message_content_mask.byte_len();
+        size += self.data_set_message_content_mask.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.data_set_message_content_mask.encode(stream)?;
+        size += self.data_set_message_content_mask.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for JsonDataSetWriterMessageDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
             data_set_message_content_mask: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
         })
     }

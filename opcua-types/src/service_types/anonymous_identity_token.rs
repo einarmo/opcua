@@ -28,29 +28,31 @@ impl opcua::types::MessageInfo for AnonymousIdentityToken {
     }
 }
 impl opcua::types::BinaryEncodable for AnonymousIdentityToken {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.policy_id.byte_len();
+        size += self.policy_id.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.policy_id.encode(stream)?;
+        size += self.policy_id.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for AnonymousIdentityToken {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            policy_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            policy_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

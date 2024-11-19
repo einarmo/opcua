@@ -30,32 +30,34 @@ impl opcua::types::MessageInfo for DecimalDataType {
     }
 }
 impl opcua::types::BinaryEncodable for DecimalDataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.scale.byte_len();
-        size += self.value.byte_len();
+        size += self.scale.byte_len(ctx);
+        size += self.value.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.scale.encode(stream)?;
-        size += self.value.encode(stream)?;
+        size += self.scale.encode(stream, ctx)?;
+        size += self.value.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for DecimalDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            scale: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            value: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            scale: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            value: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

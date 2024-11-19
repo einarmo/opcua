@@ -111,42 +111,45 @@ impl Default for RequestHeader {
 }
 
 impl BinaryEncodable for RequestHeader {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size: usize = 0;
-        size += self.authentication_token.byte_len();
-        size += self.timestamp.byte_len();
-        size += self.request_handle.byte_len();
-        size += self.return_diagnostics.bits().byte_len();
-        size += self.audit_entry_id.byte_len();
-        size += self.timeout_hint.byte_len();
-        size += self.additional_header.byte_len();
+        size += self.authentication_token.byte_len(ctx);
+        size += self.timestamp.byte_len(ctx);
+        size += self.request_handle.byte_len(ctx);
+        size += self.return_diagnostics.bits().byte_len(ctx);
+        size += self.audit_entry_id.byte_len(ctx);
+        size += self.timeout_hint.byte_len(ctx);
+        size += self.additional_header.byte_len(ctx);
         size
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize> {
         let mut size: usize = 0;
-        size += self.authentication_token.encode(stream)?;
-        size += self.timestamp.encode(stream)?;
-        size += self.request_handle.encode(stream)?;
-        size += self.return_diagnostics.bits().encode(stream)?;
-        size += self.audit_entry_id.encode(stream)?;
-        size += self.timeout_hint.encode(stream)?;
-        size += self.additional_header.encode(stream)?;
+        size += self.authentication_token.encode(stream, ctx)?;
+        size += self.timestamp.encode(stream, ctx)?;
+        size += self.request_handle.encode(stream, ctx)?;
+        size += self.return_diagnostics.bits().encode(stream, ctx)?;
+        size += self.audit_entry_id.encode(stream, ctx)?;
+        size += self.timeout_hint.encode(stream, ctx)?;
+        size += self.additional_header.encode(stream, ctx)?;
         Ok(size)
     }
 }
 
 impl BinaryDecodable for RequestHeader {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
-        let authentication_token = NodeId::decode(stream, decoding_options)?;
-        let timestamp = UtcTime::decode(stream, decoding_options)?;
-        let request_handle = IntegerId::decode(stream, decoding_options)?;
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &crate::Context<'_>) -> EncodingResult<Self> {
+        let authentication_token = NodeId::decode(stream, ctx)?;
+        let timestamp = UtcTime::decode(stream, ctx)?;
+        let request_handle = IntegerId::decode(stream, ctx)?;
         let (return_diagnostics, audit_entry_id, timeout_hint, additional_header) = (|| {
-            let return_diagnostics =
-                DiagnosticBits::from_bits_truncate(u32::decode(stream, decoding_options)?);
-            let audit_entry_id = UAString::decode(stream, decoding_options)?;
-            let timeout_hint = u32::decode(stream, decoding_options)?;
-            let additional_header = ExtensionObject::decode(stream, decoding_options)?;
+            let return_diagnostics = DiagnosticBits::from_bits_truncate(u32::decode(stream, ctx)?);
+            let audit_entry_id = UAString::decode(stream, ctx)?;
+            let timeout_hint = u32::decode(stream, ctx)?;
+            let additional_header = ExtensionObject::decode(stream, ctx)?;
             Ok((
                 return_diagnostics,
                 audit_entry_id,

@@ -100,8 +100,7 @@ impl Node for DataType {
                     self.set_data_type_definition(None);
                     Ok(())
                 } else if let Variant::ExtensionObject(v) = value {
-                    let def =
-                        DataTypeDefinition::from_extension_object(*v, &DecodingOptions::default())?;
+                    let def = DataTypeDefinition::from_extension_object(*v)?;
                     self.set_data_type_definition(Some(def));
                     Ok(())
                 } else {

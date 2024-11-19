@@ -30,40 +30,39 @@ impl opcua::types::MessageInfo for RegisterNodesResponse {
     }
 }
 impl opcua::types::BinaryEncodable for RegisterNodesResponse {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.response_header.byte_len();
-        size += self.registered_node_ids.byte_len();
+        size += self.response_header.byte_len(ctx);
+        size += self.registered_node_ids.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.response_header.encode(stream)?;
-        size += self.registered_node_ids.encode(stream)?;
+        size += self.response_header.encode(stream, ctx)?;
+        size += self.registered_node_ids.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for RegisterNodesResponse {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryDecodable::decode(
             stream,
-            decoding_options,
+            ctx,
         )?;
         let __request_handle = response_header.request_handle;
         Ok(Self {
             response_header,
-            registered_node_ids: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            registered_node_ids: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }

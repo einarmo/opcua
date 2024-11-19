@@ -29,32 +29,31 @@ impl opcua::types::MessageInfo for EndpointUrlListDataType {
     }
 }
 impl opcua::types::BinaryEncodable for EndpointUrlListDataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.endpoint_url_list.byte_len();
+        size += self.endpoint_url_list.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.endpoint_url_list.encode(stream)?;
+        size += self.endpoint_url_list.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for EndpointUrlListDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            endpoint_url_list: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            endpoint_url_list: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

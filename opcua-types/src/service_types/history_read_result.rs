@@ -31,44 +31,37 @@ impl opcua::types::MessageInfo for HistoryReadResult {
     }
 }
 impl opcua::types::BinaryEncodable for HistoryReadResult {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.status_code.byte_len();
-        size += self.continuation_point.byte_len();
-        size += self.history_data.byte_len();
+        size += self.status_code.byte_len(ctx);
+        size += self.continuation_point.byte_len(ctx);
+        size += self.history_data.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.status_code.encode(stream)?;
-        size += self.continuation_point.encode(stream)?;
-        size += self.history_data.encode(stream)?;
+        size += self.status_code.encode(stream, ctx)?;
+        size += self.continuation_point.encode(stream, ctx)?;
+        size += self.history_data.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for HistoryReadResult {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            status_code: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            continuation_point: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            history_data: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            status_code: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            continuation_point: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            history_data: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

@@ -14,7 +14,7 @@ use log::{error, trace};
 use crate::{
     encoding::{
         process_decode_io_result, process_encode_io_result, write_i32, BinaryEncodable,
-        DecodingOptions, EncodingResult,
+        EncodingResult,
     },
     status_code::StatusCode,
     BinaryDecodable, OutOfRange,
@@ -90,44 +90,47 @@ mod json {
 }
 
 impl BinaryEncodable for UAString {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, _ctx: &crate::Context<'_>) -> usize {
         // Length plus the actual string length in bytes for a non-null string.
-        4 + if self.value.is_none() {
-            0
-        } else {
-            self.value.as_ref().unwrap().len()
+        4 + match &self.value {
+            Some(s) => s.len(),
+            None => 0,
         }
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        _ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize> {
         // Strings are encoded as UTF8 chars preceded by an Int32 length. A -1 indicates a null string
-        if self.value.is_none() {
-            write_i32(stream, -1)
-        } else {
-            let value = self.value.as_ref().unwrap();
-            let mut size: usize = 0;
-            size += write_i32(stream, value.len() as i32)?;
-            let buf = value.as_bytes();
-            size += process_encode_io_result(stream.write(buf))?;
-            assert_eq!(size, self.byte_len());
-            Ok(size)
+        match &self.value {
+            Some(s) => {
+                let mut size: usize = 0;
+                size += write_i32(stream, s.len() as i32)?;
+                let buf = s.as_bytes();
+                size += process_encode_io_result(stream.write(buf))?;
+                Ok(size)
+            }
+            None => write_i32(stream, -1),
         }
     }
 }
 
 impl BinaryDecodable for UAString {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
-        let len = i32::decode(stream, decoding_options)?;
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &crate::Context<'_>) -> EncodingResult<Self> {
+        let len = i32::decode(stream, ctx)?;
         // Null string?
         if len == -1 {
             Ok(UAString::null())
         } else if len < -1 {
             error!("String buf length is a negative number {}", len);
             Err(StatusCode::BadDecodingError.into())
-        } else if len as usize > decoding_options.max_string_length {
+        } else if len as usize > ctx.options().max_string_length {
             error!(
                 "String buf length {} exceeds decoding limit {}",
-                len, decoding_options.max_string_length
+                len,
+                ctx.options().max_string_length
             );
             Err(StatusCode::BadDecodingError.into())
         } else {

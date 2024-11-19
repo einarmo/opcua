@@ -6,7 +6,7 @@ use std::{
 
 use crate::BinaryDecodable;
 
-use super::encoding::{read_u32, write_u32, BinaryEncodable, DecodingOptions, EncodingResult};
+use super::encoding::{read_u32, write_u32, BinaryEncodable, EncodingResult};
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Default)]
 /// Wrapper around an OPC-UA status code, with utilities for displaying,
@@ -281,17 +281,21 @@ impl std::fmt::Debug for StatusCode {
 }
 
 impl BinaryEncodable for StatusCode {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, _ctx: &crate::Context<'_>) -> usize {
         4
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        _ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize> {
         write_u32(stream, self.bits())
     }
 }
 
 impl BinaryDecodable for StatusCode {
-    fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
+    fn decode<S: Read + ?Sized>(stream: &mut S, _ctx: &crate::Context<'_>) -> EncodingResult<Self> {
         Ok(StatusCode(read_u32(stream)?))
     }
 }

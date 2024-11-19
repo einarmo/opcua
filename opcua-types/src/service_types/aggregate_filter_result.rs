@@ -31,43 +31,42 @@ impl opcua::types::MessageInfo for AggregateFilterResult {
     }
 }
 impl opcua::types::BinaryEncodable for AggregateFilterResult {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.revised_start_time.byte_len();
-        size += self.revised_processing_interval.byte_len();
-        size += self.revised_aggregate_configuration.byte_len();
+        size += self.revised_start_time.byte_len(ctx);
+        size += self.revised_processing_interval.byte_len(ctx);
+        size += self.revised_aggregate_configuration.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.revised_start_time.encode(stream)?;
-        size += self.revised_processing_interval.encode(stream)?;
-        size += self.revised_aggregate_configuration.encode(stream)?;
+        size += self.revised_start_time.encode(stream, ctx)?;
+        size += self.revised_processing_interval.encode(stream, ctx)?;
+        size += self.revised_aggregate_configuration.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for AggregateFilterResult {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            revised_start_time: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            revised_start_time: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             revised_processing_interval: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             revised_aggregate_configuration: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
         })
     }

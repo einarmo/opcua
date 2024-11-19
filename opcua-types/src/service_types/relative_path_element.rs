@@ -32,44 +32,40 @@ impl opcua::types::MessageInfo for RelativePathElement {
     }
 }
 impl opcua::types::BinaryEncodable for RelativePathElement {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.reference_type_id.byte_len();
-        size += self.is_inverse.byte_len();
-        size += self.include_subtypes.byte_len();
-        size += self.target_name.byte_len();
+        size += self.reference_type_id.byte_len(ctx);
+        size += self.is_inverse.byte_len(ctx);
+        size += self.include_subtypes.byte_len(ctx);
+        size += self.target_name.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.reference_type_id.encode(stream)?;
-        size += self.is_inverse.encode(stream)?;
-        size += self.include_subtypes.encode(stream)?;
-        size += self.target_name.encode(stream)?;
+        size += self.reference_type_id.encode(stream, ctx)?;
+        size += self.is_inverse.encode(stream, ctx)?;
+        size += self.include_subtypes.encode(stream, ctx)?;
+        size += self.target_name.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for RelativePathElement {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            reference_type_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            is_inverse: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            include_subtypes: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            target_name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            reference_type_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            is_inverse: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            include_subtypes: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            target_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

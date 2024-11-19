@@ -21,47 +21,40 @@ pub struct StructureDefinition {
     pub fields: Option<Vec<super::structure_field::StructureField>>,
 }
 impl opcua::types::BinaryEncodable for StructureDefinition {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.default_encoding_id.byte_len();
-        size += self.base_data_type.byte_len();
-        size += self.structure_type.byte_len();
-        size += self.fields.byte_len();
+        size += self.default_encoding_id.byte_len(ctx);
+        size += self.base_data_type.byte_len(ctx);
+        size += self.structure_type.byte_len(ctx);
+        size += self.fields.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.default_encoding_id.encode(stream)?;
-        size += self.base_data_type.encode(stream)?;
-        size += self.structure_type.encode(stream)?;
-        size += self.fields.encode(stream)?;
+        size += self.default_encoding_id.encode(stream, ctx)?;
+        size += self.base_data_type.encode(stream, ctx)?;
+        size += self.structure_type.encode(stream, ctx)?;
+        size += self.fields.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for StructureDefinition {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            default_encoding_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            base_data_type: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            structure_type: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            fields: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            default_encoding_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            base_data_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            structure_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            fields: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

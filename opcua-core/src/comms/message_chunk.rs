@@ -64,7 +64,7 @@ pub struct MessageChunkHeader {
 }
 
 impl BinaryEncodable for MessageChunkHeader {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         MESSAGE_CHUNK_HEADER_SIZE
     }
 
@@ -92,7 +92,7 @@ impl BinaryEncodable for MessageChunkHeader {
 }
 
 impl BinaryDecodable for MessageChunkHeader {
-    fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
+    fn decode<S: Read + ?Sized>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         let mut message_type_code = [0u8; 3];
         process_decode_io_result(stream.read_exact(&mut message_type_code))?;
         let message_type = if message_type_code == CHUNK_MESSAGE {
@@ -141,7 +141,7 @@ pub struct MessageChunk {
 }
 
 impl BinaryEncodable for MessageChunk {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         self.data.len()
     }
 
@@ -154,7 +154,7 @@ impl BinaryEncodable for MessageChunk {
 }
 
 impl BinaryDecodable for MessageChunk {
-    fn decode<S: Read>(
+    fn decode<S: Read + ?Sized>(
         in_stream: &mut S,
         decoding_options: &DecodingOptions,
     ) -> EncodingResult<Self> {

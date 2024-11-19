@@ -6,7 +6,7 @@
 
 use std::io::{Read, Write};
 
-use crate::{encoding::*, status_code::StatusCode, string::UAString};
+use crate::{encoding::*, status_code::StatusCode, string::UAString, Context};
 use bitflags::bitflags;
 
 bitflags! {
@@ -147,41 +147,45 @@ pub struct DiagnosticInfo {
 }
 
 impl BinaryEncodable for DiagnosticInfo {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size: usize = 0;
         size += 1; // self.encoding_mask())
         if let Some(ref symbolic_id) = self.symbolic_id {
             // Write symbolic id
-            size += symbolic_id.byte_len();
+            size += symbolic_id.byte_len(ctx);
         }
         if let Some(ref namespace_uri) = self.namespace_uri {
             // Write namespace
-            size += namespace_uri.byte_len()
+            size += namespace_uri.byte_len(ctx)
         }
         if let Some(ref locale) = self.locale {
             // Write locale
-            size += locale.byte_len()
+            size += locale.byte_len(ctx)
         }
         if let Some(ref localized_text) = self.localized_text {
             // Write localized text
-            size += localized_text.byte_len()
+            size += localized_text.byte_len(ctx)
         }
         if let Some(ref additional_info) = self.additional_info {
             // Write Additional info
-            size += additional_info.byte_len()
+            size += additional_info.byte_len(ctx)
         }
         if let Some(ref inner_status_code) = self.inner_status_code {
             // Write inner status code
-            size += inner_status_code.byte_len()
+            size += inner_status_code.byte_len(ctx)
         }
         if let Some(ref inner_diagnostic_info) = self.inner_diagnostic_info {
             // Write inner diagnostic info
-            size += inner_diagnostic_info.byte_len()
+            size += inner_diagnostic_info.byte_len(ctx)
         }
         size
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        ctx: &Context<'_>,
+    ) -> EncodingResult<usize> {
         let mut size: usize = 0;
         size += write_u8(stream, self.encoding_mask().bits())?;
         if let Some(ref symbolic_id) = self.symbolic_id {
@@ -190,66 +194,65 @@ impl BinaryEncodable for DiagnosticInfo {
         }
         if let Some(ref namespace_uri) = self.namespace_uri {
             // Write namespace
-            size += namespace_uri.encode(stream)?;
+            size += namespace_uri.encode(stream, ctx)?;
         }
         if let Some(ref locale) = self.locale {
             // Write locale
-            size += locale.encode(stream)?;
+            size += locale.encode(stream, ctx)?;
         }
         if let Some(ref localized_text) = self.localized_text {
             // Write localized text
-            size += localized_text.encode(stream)?;
+            size += localized_text.encode(stream, ctx)?;
         }
         if let Some(ref additional_info) = self.additional_info {
             // Write Additional info
-            size += additional_info.encode(stream)?;
+            size += additional_info.encode(stream, ctx)?;
         }
         if let Some(ref inner_status_code) = self.inner_status_code {
             // Write inner status code
-            size += inner_status_code.encode(stream)?;
+            size += inner_status_code.encode(stream, ctx)?;
         }
         if let Some(ref inner_diagnostic_info) = self.inner_diagnostic_info {
             // Write inner diagnostic info
-            size += inner_diagnostic_info.clone().encode(stream)?;
+            size += inner_diagnostic_info.clone().encode(stream, ctx)?;
         }
         Ok(size)
     }
 }
 
 impl BinaryDecodable for DiagnosticInfo {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
-        let encoding_mask =
-            DiagnosticInfoMask::from_bits_truncate(u8::decode(stream, decoding_options)?);
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &Context<'_>) -> EncodingResult<Self> {
+        let encoding_mask = DiagnosticInfoMask::from_bits_truncate(u8::decode(stream, ctx)?);
         let mut diagnostic_info = DiagnosticInfo::default();
 
         if encoding_mask.contains(DiagnosticInfoMask::HAS_SYMBOLIC_ID) {
             // Read symbolic id
-            diagnostic_info.symbolic_id = Some(i32::decode(stream, decoding_options)?);
+            diagnostic_info.symbolic_id = Some(i32::decode(stream, ctx)?);
         }
         if encoding_mask.contains(DiagnosticInfoMask::HAS_NAMESPACE) {
             // Read namespace
-            diagnostic_info.namespace_uri = Some(i32::decode(stream, decoding_options)?);
+            diagnostic_info.namespace_uri = Some(i32::decode(stream, ctx)?);
         }
         if encoding_mask.contains(DiagnosticInfoMask::HAS_LOCALE) {
             // Read locale
-            diagnostic_info.locale = Some(i32::decode(stream, decoding_options)?);
+            diagnostic_info.locale = Some(i32::decode(stream, ctx)?);
         }
         if encoding_mask.contains(DiagnosticInfoMask::HAS_LOCALIZED_TEXT) {
             // Read localized text
-            diagnostic_info.localized_text = Some(i32::decode(stream, decoding_options)?);
+            diagnostic_info.localized_text = Some(i32::decode(stream, ctx)?);
         }
         if encoding_mask.contains(DiagnosticInfoMask::HAS_ADDITIONAL_INFO) {
             // Read Additional info
-            diagnostic_info.additional_info = Some(UAString::decode(stream, decoding_options)?);
+            diagnostic_info.additional_info = Some(UAString::decode(stream, ctx)?);
         }
         if encoding_mask.contains(DiagnosticInfoMask::HAS_INNER_STATUS_CODE) {
             // Read inner status code
-            diagnostic_info.inner_status_code = Some(StatusCode::decode(stream, decoding_options)?);
+            diagnostic_info.inner_status_code = Some(StatusCode::decode(stream, ctx)?);
         }
         if encoding_mask.contains(DiagnosticInfoMask::HAS_INNER_DIAGNOSTIC_INFO) {
             // Read inner diagnostic info
             diagnostic_info.inner_diagnostic_info =
-                Some(Box::new(DiagnosticInfo::decode(stream, decoding_options)?));
+                Some(Box::new(DiagnosticInfo::decode(stream, ctx)?));
         }
         Ok(diagnostic_info)
     }

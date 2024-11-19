@@ -15,10 +15,10 @@ use log::error;
 use crate::{
     encoding::{
         process_decode_io_result, process_encode_io_result, write_i32, BinaryEncodable,
-        DecodingOptions, EncodingResult,
+        EncodingResult,
     },
     status_code::StatusCode,
-    BinaryDecodable, Guid, OutOfRange,
+    BinaryDecodable, Context, Guid, OutOfRange,
 };
 
 /// A sequence of octets.
@@ -83,16 +83,19 @@ mod json {
 }
 
 impl BinaryEncodable for ByteString {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, _ctx: &Context<'_>) -> usize {
         // Length plus the actual length of bytes (if not null)
-        4 + if self.value.is_none() {
-            0
-        } else {
-            self.value.as_ref().unwrap().len()
+        4 + match &self.value {
+            Some(v) => v.len(),
+            None => 0,
         }
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        _ctx: &Context<'_>,
+    ) -> EncodingResult<usize> {
         // Strings are uncoded as UTF8 chars preceded by an Int32 length. A -1 indicates a null string
         if self.value.is_none() {
             write_i32(stream, -1)
@@ -101,25 +104,25 @@ impl BinaryEncodable for ByteString {
             let value = self.value.as_ref().unwrap();
             size += write_i32(stream, value.len() as i32)?;
             size += process_encode_io_result(stream.write(value))?;
-            assert_eq!(size, self.byte_len());
             Ok(size)
         }
     }
 }
 
 impl BinaryDecodable for ByteString {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
-        let len = i32::decode(stream, decoding_options)?;
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &Context<'_>) -> EncodingResult<Self> {
+        let len = i32::decode(stream, ctx)?;
         // Null string?
         if len == -1 {
             Ok(ByteString::null())
         } else if len < -1 {
             error!("ByteString buf length is a negative number {}", len);
             Err(StatusCode::BadDecodingError.into())
-        } else if len as usize > decoding_options.max_byte_string_length {
+        } else if len as usize > ctx.options().max_byte_string_length {
             error!(
                 "ByteString length {} exceeds decoding limit {}",
-                len, decoding_options.max_string_length
+                len,
+                ctx.options().max_string_length
             );
             Err(StatusCode::BadDecodingError.into())
         } else {

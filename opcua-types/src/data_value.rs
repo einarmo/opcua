@@ -9,7 +9,7 @@ use std::io::{Read, Write};
 use crate::{
     byte_string::ByteString, date_time::*, encoding::*, guid::Guid, localized_text::LocalizedText,
     node_id::NodeId, qualified_name::QualifiedName, service_types::TimestampsToReturn,
-    status_code::StatusCode, string::UAString, variant::Variant,
+    status_code::StatusCode, string::UAString, variant::Variant, Context,
 };
 use bitflags::bitflags;
 
@@ -66,52 +66,72 @@ pub struct DataValue {
 }
 
 impl BinaryEncodable for DataValue {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 1;
         let encoding_mask = self.encoding_mask();
         if encoding_mask.contains(DataValueFlags::HAS_VALUE) {
-            size += self.value.as_ref().unwrap().byte_len();
+            size += self.value.as_ref().unwrap().byte_len(ctx);
         }
         if encoding_mask.contains(DataValueFlags::HAS_STATUS) {
-            size += self.status.as_ref().unwrap().byte_len();
+            size += self.status.as_ref().unwrap().byte_len(ctx);
         }
         if encoding_mask.contains(DataValueFlags::HAS_SOURCE_TIMESTAMP) {
-            size += self.source_timestamp.as_ref().unwrap().byte_len();
+            size += self.source_timestamp.as_ref().unwrap().byte_len(ctx);
             if encoding_mask.contains(DataValueFlags::HAS_SOURCE_PICOSECONDS) {
-                size += self.source_picoseconds.as_ref().unwrap().byte_len();
+                size += self.source_picoseconds.as_ref().unwrap().byte_len(ctx);
             }
         }
         if encoding_mask.contains(DataValueFlags::HAS_SERVER_TIMESTAMP) {
-            size += self.server_timestamp.as_ref().unwrap().byte_len();
+            size += self.server_timestamp.as_ref().unwrap().byte_len(ctx);
             if encoding_mask.contains(DataValueFlags::HAS_SERVER_PICOSECONDS) {
-                size += self.server_picoseconds.as_ref().unwrap().byte_len();
+                size += self.server_picoseconds.as_ref().unwrap().byte_len(ctx);
             }
         }
         size
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        ctx: &Context<'_>,
+    ) -> EncodingResult<usize> {
         let mut size = 0;
 
         let encoding_mask = self.encoding_mask();
-        size += encoding_mask.bits().encode(stream)?;
+        size += encoding_mask.bits().encode(stream, ctx)?;
 
         if encoding_mask.contains(DataValueFlags::HAS_VALUE) {
-            size += self.value.as_ref().unwrap().encode(stream)?;
+            size += self.value.as_ref().unwrap().encode(stream, ctx)?;
         }
         if encoding_mask.contains(DataValueFlags::HAS_STATUS) {
-            size += self.status.as_ref().unwrap().bits().encode(stream)?;
+            size += self.status.as_ref().unwrap().bits().encode(stream, ctx)?;
         }
         if encoding_mask.contains(DataValueFlags::HAS_SOURCE_TIMESTAMP) {
-            size += self.source_timestamp.as_ref().unwrap().encode(stream)?;
+            size += self
+                .source_timestamp
+                .as_ref()
+                .unwrap()
+                .encode(stream, ctx)?;
             if encoding_mask.contains(DataValueFlags::HAS_SOURCE_PICOSECONDS) {
-                size += self.source_picoseconds.as_ref().unwrap().encode(stream)?;
+                size += self
+                    .source_picoseconds
+                    .as_ref()
+                    .unwrap()
+                    .encode(stream, ctx)?;
             }
         }
         if encoding_mask.contains(DataValueFlags::HAS_SERVER_TIMESTAMP) {
-            size += self.server_timestamp.as_ref().unwrap().encode(stream)?;
+            size += self
+                .server_timestamp
+                .as_ref()
+                .unwrap()
+                .encode(stream, ctx)?;
             if encoding_mask.contains(DataValueFlags::HAS_SERVER_PICOSECONDS) {
-                size += self.server_picoseconds.as_ref().unwrap().encode(stream)?;
+                size += self
+                    .server_picoseconds
+                    .as_ref()
+                    .unwrap()
+                    .encode(stream, ctx)?;
             }
         }
         Ok(size)
@@ -119,19 +139,18 @@ impl BinaryEncodable for DataValue {
 }
 
 impl BinaryDecodable for DataValue {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
-        let encoding_mask =
-            DataValueFlags::from_bits_truncate(u8::decode(stream, decoding_options)?);
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &Context<'_>) -> EncodingResult<Self> {
+        let encoding_mask = DataValueFlags::from_bits_truncate(u8::decode(stream, ctx)?);
 
         // Value
         let value = if encoding_mask.contains(DataValueFlags::HAS_VALUE) {
-            Some(Variant::decode(stream, decoding_options)?)
+            Some(Variant::decode(stream, ctx)?)
         } else {
             None
         };
         // Status
         let status = if encoding_mask.contains(DataValueFlags::HAS_STATUS) {
-            let status = StatusCode::from(u32::decode(stream, decoding_options)?);
+            let status = StatusCode::from(u32::decode(stream, ctx)?);
             Some(status)
         } else {
             None
@@ -139,27 +158,25 @@ impl BinaryDecodable for DataValue {
         // Source timestamp
         let source_timestamp = if encoding_mask.contains(DataValueFlags::HAS_SOURCE_TIMESTAMP) {
             // The source timestamp should never be adjusted, not even when ignoring clock skew
-            let decoding_options = DecodingOptions {
-                client_offset: chrono::Duration::zero(),
-                ..decoding_options.clone()
-            };
-            Some(DateTime::decode(stream, &decoding_options)?)
+
+            let ctx = ctx.with_zero_offset();
+            Some(DateTime::decode(stream, &ctx)?)
         } else {
             None
         };
         let source_picoseconds = if encoding_mask.contains(DataValueFlags::HAS_SOURCE_PICOSECONDS) {
-            Some(u16::decode(stream, decoding_options)?)
+            Some(u16::decode(stream, ctx)?)
         } else {
             None
         };
         // Server timestamp
         let server_timestamp = if encoding_mask.contains(DataValueFlags::HAS_SERVER_TIMESTAMP) {
-            Some(DateTime::decode(stream, decoding_options)?)
+            Some(DateTime::decode(stream, ctx)?)
         } else {
             None
         };
         let server_picoseconds = if encoding_mask.contains(DataValueFlags::HAS_SERVER_PICOSECONDS) {
-            Some(u16::decode(stream, decoding_options)?)
+            Some(u16::decode(stream, ctx)?)
         } else {
             None
         };

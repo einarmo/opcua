@@ -29,32 +29,31 @@ impl opcua::types::MessageInfo for HistoryEventFieldList {
     }
 }
 impl opcua::types::BinaryEncodable for HistoryEventFieldList {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.event_fields.byte_len();
+        size += self.event_fields.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.event_fields.encode(stream)?;
+        size += self.event_fields.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for HistoryEventFieldList {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            event_fields: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            event_fields: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

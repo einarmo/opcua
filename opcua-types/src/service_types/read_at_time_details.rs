@@ -30,35 +30,34 @@ impl opcua::types::MessageInfo for ReadAtTimeDetails {
     }
 }
 impl opcua::types::BinaryEncodable for ReadAtTimeDetails {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.req_times.byte_len();
-        size += self.use_simple_bounds.byte_len();
+        size += self.req_times.byte_len(ctx);
+        size += self.use_simple_bounds.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.req_times.encode(stream)?;
-        size += self.use_simple_bounds.encode(stream)?;
+        size += self.req_times.encode(stream, ctx)?;
+        size += self.use_simple_bounds.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for ReadAtTimeDetails {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            req_times: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            use_simple_bounds: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            req_times: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            use_simple_bounds: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

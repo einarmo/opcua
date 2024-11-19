@@ -30,38 +30,34 @@ impl opcua::types::MessageInfo for SubscriptionAcknowledgement {
     }
 }
 impl opcua::types::BinaryEncodable for SubscriptionAcknowledgement {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.subscription_id.byte_len();
-        size += self.sequence_number.byte_len();
+        size += self.subscription_id.byte_len(ctx);
+        size += self.sequence_number.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.subscription_id.encode(stream)?;
-        size += self.sequence_number.encode(stream)?;
+        size += self.subscription_id.encode(stream, ctx)?;
+        size += self.sequence_number.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for SubscriptionAcknowledgement {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            subscription_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            sequence_number: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            subscription_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            sequence_number: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

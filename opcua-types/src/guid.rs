@@ -70,11 +70,15 @@ impl fmt::Debug for Guid {
 }
 
 impl BinaryEncodable for Guid {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, _ctx: &crate::Context<'_>) -> usize {
         16
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        _ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize> {
         let mut size: usize = 0;
         size += process_encode_io_result(stream.write(self.uuid.as_bytes()))?;
         Ok(size)
@@ -82,7 +86,7 @@ impl BinaryEncodable for Guid {
 }
 
 impl BinaryDecodable for Guid {
-    fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
+    fn decode<S: Read + ?Sized>(stream: &mut S, _ctx: &crate::Context<'_>) -> EncodingResult<Self> {
         let mut bytes = [0u8; 16];
         process_decode_io_result(stream.read_exact(&mut bytes))?;
         Ok(Guid {

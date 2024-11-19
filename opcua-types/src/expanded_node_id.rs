@@ -21,7 +21,7 @@ use crate::{
     node_id::{Identifier, NodeId},
     status_code::StatusCode,
     string::*,
-    NamespaceMap,
+    Context, NamespaceMap,
 };
 
 /// A NodeId that allows the namespace URI to be specified instead of an index.
@@ -248,18 +248,22 @@ mod json {
 }
 
 impl BinaryEncodable for ExpandedNodeId {
-    fn byte_len(&self) -> usize {
-        let mut size = self.node_id.byte_len();
+    fn byte_len(&self, ctx: &crate::Context<'_>) -> usize {
+        let mut size = self.node_id.byte_len(ctx);
         if !self.namespace_uri.is_null() {
-            size += self.namespace_uri.byte_len();
+            size += self.namespace_uri.byte_len(ctx);
         }
         if self.server_index != 0 {
-            size += self.server_index.byte_len();
+            size += self.server_index.byte_len(ctx);
         }
         size
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        ctx: &Context<'_>,
+    ) -> EncodingResult<usize> {
         let mut size: usize = 0;
 
         let mut data_encoding = 0;
@@ -292,32 +296,31 @@ impl BinaryEncodable for ExpandedNodeId {
             Identifier::String(value) => {
                 size += write_u8(stream, data_encoding | 0x3)?;
                 size += write_u16(stream, self.node_id.namespace)?;
-                size += value.encode(stream)?;
+                size += value.encode(stream, ctx)?;
             }
             Identifier::Guid(value) => {
                 size += write_u8(stream, data_encoding | 0x4)?;
                 size += write_u16(stream, self.node_id.namespace)?;
-                size += value.encode(stream)?;
+                size += value.encode(stream, ctx)?;
             }
             Identifier::ByteString(ref value) => {
                 size += write_u8(stream, data_encoding | 0x5)?;
                 size += write_u16(stream, self.node_id.namespace)?;
-                size += value.encode(stream)?;
+                size += value.encode(stream, ctx)?;
             }
         }
         if !self.namespace_uri.is_null() {
-            size += self.namespace_uri.encode(stream)?;
+            size += self.namespace_uri.encode(stream, ctx)?;
         }
         if self.server_index != 0 {
-            size += self.server_index.encode(stream)?;
+            size += self.server_index.encode(stream, ctx)?;
         }
-        assert_eq!(size, self.byte_len());
         Ok(size)
     }
 }
 
 impl BinaryDecodable for ExpandedNodeId {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &Context<'_>) -> EncodingResult<Self> {
         let data_encoding = read_u8(stream)?;
         let identifier = data_encoding & 0x0f;
         let node_id = match identifier {
@@ -337,17 +340,17 @@ impl BinaryDecodable for ExpandedNodeId {
             }
             0x3 => {
                 let namespace = read_u16(stream)?;
-                let value = UAString::decode(stream, decoding_options)?;
+                let value = UAString::decode(stream, ctx)?;
                 NodeId::new(namespace, value)
             }
             0x4 => {
                 let namespace = read_u16(stream)?;
-                let value = Guid::decode(stream, decoding_options)?;
+                let value = Guid::decode(stream, ctx)?;
                 NodeId::new(namespace, value)
             }
             0x5 => {
                 let namespace = read_u16(stream)?;
-                let value = ByteString::decode(stream, decoding_options)?;
+                let value = ByteString::decode(stream, ctx)?;
                 NodeId::new(namespace, value)
             }
             _ => {
@@ -358,12 +361,12 @@ impl BinaryDecodable for ExpandedNodeId {
 
         // Optional stuff
         let namespace_uri = if data_encoding & 0x80 != 0 {
-            UAString::decode(stream, decoding_options)?
+            UAString::decode(stream, ctx)?
         } else {
             UAString::null()
         };
         let server_index = if data_encoding & 0x40 != 0 {
-            u32::decode(stream, decoding_options)?
+            u32::decode(stream, ctx)?
         } else {
             0
         };

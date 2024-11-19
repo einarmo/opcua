@@ -331,7 +331,7 @@ mod json {
 }
 
 impl BinaryEncodable for NodeId {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &crate::Context<'_>) -> usize {
         // Type determines the byte code
         let size: usize = match self.identifier {
             Identifier::Numeric(value) => {
@@ -343,14 +343,18 @@ impl BinaryEncodable for NodeId {
                     7
                 }
             }
-            Identifier::String(ref value) => 3 + value.byte_len(),
-            Identifier::Guid(ref value) => 3 + value.byte_len(),
-            Identifier::ByteString(ref value) => 3 + value.byte_len(),
+            Identifier::String(ref value) => 3 + value.byte_len(ctx),
+            Identifier::Guid(ref value) => 3 + value.byte_len(ctx),
+            Identifier::ByteString(ref value) => 3 + value.byte_len(ctx),
         };
         size
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize> {
         let mut size: usize = 0;
         // Type determines the byte code
         match &self.identifier {
@@ -374,26 +378,26 @@ impl BinaryEncodable for NodeId {
             Identifier::String(value) => {
                 size += write_u8(stream, 0x3)?;
                 size += write_u16(stream, self.namespace)?;
-                size += value.encode(stream)?;
+                size += value.encode(stream, ctx)?;
             }
             Identifier::Guid(value) => {
                 size += write_u8(stream, 0x4)?;
                 size += write_u16(stream, self.namespace)?;
-                size += value.encode(stream)?;
+                size += value.encode(stream, ctx)?;
             }
             Identifier::ByteString(value) => {
                 size += write_u8(stream, 0x5)?;
                 size += write_u16(stream, self.namespace)?;
-                size += value.encode(stream)?;
+                size += value.encode(stream, ctx)?;
             }
         }
-        assert_eq!(size, self.byte_len());
+        assert_eq!(size, self.byte_len(ctx));
         Ok(size)
     }
 }
 
 impl BinaryDecodable for NodeId {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &crate::Context<'_>) -> EncodingResult<Self> {
         let identifier = read_u8(stream)?;
         let node_id = match identifier {
             0x0 => {
@@ -413,17 +417,17 @@ impl BinaryDecodable for NodeId {
             }
             0x3 => {
                 let namespace = read_u16(stream)?;
-                let value = UAString::decode(stream, decoding_options)?;
+                let value = UAString::decode(stream, ctx)?;
                 NodeId::new(namespace, value)
             }
             0x4 => {
                 let namespace = read_u16(stream)?;
-                let value = Guid::decode(stream, decoding_options)?;
+                let value = Guid::decode(stream, ctx)?;
                 NodeId::new(namespace, value)
             }
             0x5 => {
                 let namespace = read_u16(stream)?;
-                let value = ByteString::decode(stream, decoding_options)?;
+                let value = ByteString::decode(stream, ctx)?;
                 NodeId::new(namespace, value)
             }
             _ => {
