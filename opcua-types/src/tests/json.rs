@@ -26,7 +26,7 @@ use crate::{
     Argument, Array, DataTypeId, ObjectId, VariantScalarTypeId,
 };
 
-use super::{ContextOwned, EncodingResult, ExtensionObject};
+use crate::{ContextOwned, EncodingResult, ExtensionObject};
 
 fn ctx() -> ContextOwned {
     ContextOwned::default()

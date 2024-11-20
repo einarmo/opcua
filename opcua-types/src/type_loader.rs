@@ -142,6 +142,15 @@ pub struct ContextOwned {
     options: DecodingOptions,
 }
 
+impl std::fmt::Debug for ContextOwned {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("ContextOwned")
+            .field("namespaces", &self.namespaces)
+            .field("options", &self.options)
+            .finish()
+    }
+}
+
 impl ContextOwned {
     pub fn new(
         namespaces: NamespaceMap,
@@ -171,8 +180,16 @@ impl ContextOwned {
         &self.namespaces
     }
 
+    pub fn namespaces_mut(&mut self) -> &mut NamespaceMap {
+        &mut self.namespaces
+    }
+
     pub fn options(&self) -> &DecodingOptions {
         &self.options
+    }
+
+    pub fn options_mut(&mut self) -> &mut DecodingOptions {
+        &mut self.options
     }
 }
 

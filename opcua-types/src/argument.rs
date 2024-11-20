@@ -7,8 +7,12 @@ use std::io::{Read, Write};
 use log::error;
 
 use crate::{
-    encoding::*, localized_text::LocalizedText, node_id::NodeId, status_code::StatusCode,
-    string::UAString, Context,
+    encoding::{BinaryDecodable, BinaryEncodable, EncodingResult},
+    localized_text::LocalizedText,
+    node_id::NodeId,
+    status_code::StatusCode,
+    string::UAString,
+    write_u32, Context,
 };
 
 // From OPC UA Part 3 - Address Space Model 1.03 Specification

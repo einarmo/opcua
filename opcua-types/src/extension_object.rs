@@ -13,11 +13,15 @@ use std::{
 
 use log::{error, warn};
 
-use crate::{ExpandedMessageInfo, ExpandedNodeId};
+use crate::{write_u8, ExpandedMessageInfo, ExpandedNodeId};
 
 use super::{
-    byte_string::ByteString, encoding::*, node_id::NodeId, node_ids::ObjectId,
-    status_code::StatusCode, string::XmlElement,
+    byte_string::ByteString,
+    encoding::{BinaryDecodable, BinaryEncodable, EncodingResult},
+    node_id::NodeId,
+    node_ids::ObjectId,
+    status_code::StatusCode,
+    string::XmlElement,
 };
 
 #[derive(Debug)]

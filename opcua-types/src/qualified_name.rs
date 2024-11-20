@@ -5,7 +5,10 @@
 //! Contains the definition of `QualifiedName`.
 use std::io::{Read, Write};
 
-use crate::{encoding::*, string::*};
+use crate::{
+    encoding::{BinaryDecodable, BinaryEncodable, EncodingResult},
+    string::*,
+};
 
 #[allow(unused)]
 mod opcua {

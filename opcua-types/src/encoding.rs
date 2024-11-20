@@ -291,6 +291,46 @@ pub trait BinaryDecodable: Sized {
     fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &Context<'_>) -> EncodingResult<Self>;
 }
 
+pub trait SimpleBinaryEncodable {
+    #[allow(unused)]
+    fn byte_len(&self) -> usize;
+    /// Encodes the instance to the write stream.
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize>;
+}
+
+impl<T> BinaryEncodable for T
+where
+    T: SimpleBinaryEncodable,
+{
+    fn byte_len(&self, _ctx: &crate::Context<'_>) -> usize {
+        SimpleBinaryEncodable::byte_len(self)
+    }
+
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        _ctx: &Context<'_>,
+    ) -> EncodingResult<usize> {
+        SimpleBinaryEncodable::encode(self, stream)
+    }
+}
+
+pub trait SimpleBinaryDecodable: Sized {
+    fn decode<S: Read + ?Sized>(
+        stream: &mut S,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self>;
+}
+
+impl<T> BinaryDecodable for T
+where
+    T: SimpleBinaryDecodable,
+{
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &Context<'_>) -> EncodingResult<Self> {
+        SimpleBinaryDecodable::decode(stream, ctx.options())
+    }
+}
+
 /// Converts an IO encoding error (and logs when in error) into an EncodingResult
 pub fn process_encode_io_result(result: Result<usize>) -> EncodingResult<usize> {
     result.map_err(|err| {

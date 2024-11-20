@@ -19,7 +19,7 @@ use crate::{
     array::*,
     byte_string::ByteString,
     date_time::DateTime,
-    encoding::*,
+    encoding::{BinaryDecodable, BinaryEncodable, EncodingResult},
     expanded_node_id::ExpandedNodeId,
     extension_object::ExtensionObject,
     guid::Guid,
@@ -31,7 +31,7 @@ use crate::{
     status_code::StatusCode,
     string::{UAString, XmlElement},
     variant_type_id::*,
-    DataValue, DiagnosticInfo, DynEncodable, EncodingContext, MessageInfo,
+    write_i32, write_u8, DataValue, DiagnosticInfo, DynEncodable, EncodingContext, MessageInfo,
 };
 
 use super::DateTimeUtc;

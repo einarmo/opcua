@@ -192,7 +192,9 @@ impl Chunker {
 
         // Client / server stacks should validate the length of a message before sending it and
         // here makes as good a place as any to do that.
-        let mut message_size = supported_message.byte_len();
+        let ctx_r = secure_channel.context();
+        let ctx = ctx_r.context();
+        let mut message_size = supported_message.byte_len(&ctx);
         if max_message_size > 0 && message_size > max_message_size {
             error!(
                 "Max message size is {} and message {} exceeds that",
@@ -206,15 +208,15 @@ impl Chunker {
             })
         } else {
             let node_id = supported_message.type_id();
-            message_size += node_id.byte_len();
+            message_size += node_id.byte_len(&ctx);
 
             let message_type = supported_message.message_type();
             let mut stream = Cursor::new(vec![0u8; message_size]);
 
             trace!("Encoding node id {:?}", node_id);
-            let _ = node_id.encode(&mut stream);
+            let _ = node_id.encode(&mut stream, &ctx);
             let _ = supported_message
-                .encode(&mut stream)
+                .encode(&mut stream, &ctx)
                 .map_err(|e| e.with_context(ctx_id, ctx_handle))?;
             let data = stream.into_inner();
 
@@ -303,14 +305,15 @@ impl Chunker {
         // elaborate on. Probably because people enjoy debugging why the stream pos is out by 1 byte
         // for hours.
 
-        let decoding_options = secure_channel.decoding_options();
+        let ctx_r = secure_channel.context();
+        let ctx = ctx_r.context();
 
         // Read node id from stream
-        let node_id = NodeId::decode(&mut stream, &decoding_options)?;
+        let node_id = NodeId::decode(&mut stream, &ctx)?;
         let object_id = Self::object_id_from_node_id(node_id, expected_node_id)?;
 
         // Now decode the payload using the node id.
-        match T::decode_by_object_id(&mut stream, object_id, &decoding_options) {
+        match T::decode_by_object_id(&mut stream, object_id, &ctx) {
             Ok(decoded_message) => {
                 // debug!("Returning decoded msg {:?}", decoded_message);
                 Ok(decoded_message)

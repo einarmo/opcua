@@ -11,7 +11,7 @@ use crate::{
     Message,
 };
 
-use opcua_types::{BinaryEncodable, EncodingError, StatusCode};
+use opcua_types::{EncodingError, SimpleBinaryEncodable, StatusCode};
 
 use super::tcp_types::{AcknowledgeMessage, ErrorMessage};
 
@@ -216,8 +216,7 @@ mod tests {
     use opcua_crypto::CertificateStore;
     use opcua_types::StatusCode;
     use opcua_types::{
-        DateTime, DecodingOptions, NodeId, ReadRequest, ReadValueId, RequestHeader,
-        TimestampsToReturn,
+        DateTime, NodeId, ReadRequest, ReadValueId, RequestHeader, TimestampsToReturn,
     };
 
     fn get_buffer_and_channel() -> (SendBuffer, SecureChannel) {
@@ -227,7 +226,7 @@ mod tests {
                 "./pki",
             )))),
             Role::Client,
-            DecodingOptions::test(),
+            Default::default(),
         );
 
         (buffer, channel)

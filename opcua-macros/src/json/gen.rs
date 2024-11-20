@@ -1,6 +1,6 @@
 use convert_case::{Case, Casing};
 use proc_macro2::{Span, TokenStream};
-use syn::{parse::Parse, parse_quote, DeriveInput, Ident, LitStr, Path, Token};
+use syn::{parse::Parse, DeriveInput, Ident, LitStr, Token};
 
 use crate::utils::{EmptyAttribute, ItemAttr, StructItem};
 

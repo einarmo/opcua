@@ -5,7 +5,7 @@
 use std::io::{Cursor, Write};
 
 use log::{error, trace};
-use opcua_types::{status_code::StatusCode, BinaryEncodable, EncodingResult};
+use opcua_types::{status_code::StatusCode, EncodingResult, SimpleBinaryEncodable};
 
 use super::{chunker::Chunker, secure_channel::SecureChannel, tcp_types::AcknowledgeMessage};
 

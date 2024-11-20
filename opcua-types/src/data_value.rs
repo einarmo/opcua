@@ -7,9 +7,10 @@
 use std::io::{Read, Write};
 
 use crate::{
-    byte_string::ByteString, date_time::*, encoding::*, guid::Guid, localized_text::LocalizedText,
+    byte_string::ByteString, date_time::*, guid::Guid, localized_text::LocalizedText,
     node_id::NodeId, qualified_name::QualifiedName, service_types::TimestampsToReturn,
-    status_code::StatusCode, string::UAString, variant::Variant, Context,
+    status_code::StatusCode, string::UAString, variant::Variant, BinaryDecodable, BinaryEncodable,
+    Context, EncodingResult,
 };
 use bitflags::bitflags;
 

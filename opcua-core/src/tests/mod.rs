@@ -9,9 +9,9 @@ use opcua_crypto::{
 };
 use opcua_types::{
     status_code::StatusCode, BinaryDecodable, BinaryEncodable, ByteString, ChannelSecurityToken,
-    DateTime, DecodingOptions, DiagnosticBits, DiagnosticInfo, ExtensionObject,
-    GetEndpointsRequest, MessageSecurityMode, NodeId, OpenSecureChannelResponse, RequestHeader,
-    ResponseHeader, UAString,
+    ContextOwned, DateTime, DiagnosticBits, DiagnosticInfo, ExtensionObject, GetEndpointsRequest,
+    MessageSecurityMode, NodeId, OpenSecureChannelResponse, RequestHeader, ResponseHeader,
+    UAString,
 };
 
 use crate::{comms::secure_channel::SecureChannel, RequestMessage};
@@ -21,12 +21,14 @@ where
     T: BinaryEncodable + BinaryDecodable + Debug + PartialEq,
 {
     // Ask the struct for its byte length
-    let byte_len = value.byte_len();
+    let ctx_r = ContextOwned::default();
+    let ctx = ctx_r.context();
+    let byte_len = value.byte_len(&ctx);
     let mut stream = Cursor::new(vec![0u8; byte_len]);
 
     // Encode to stream
     let start_pos = stream.position();
-    let result = value.encode(&mut stream);
+    let result = value.encode(&mut stream, &ctx);
     let end_pos = stream.position();
     assert!(result.is_ok());
 
@@ -41,8 +43,7 @@ where
     println!("encoded bytes = {:?}", actual);
     let mut stream = Cursor::new(actual);
 
-    let decoding_options = DecodingOptions::test();
-    let new_value: T = T::decode(&mut stream, &decoding_options).unwrap();
+    let new_value: T = T::decode(&mut stream, &ctx).unwrap();
     println!("new value = {:?}", new_value);
     assert_eq!(value, new_value);
     new_value

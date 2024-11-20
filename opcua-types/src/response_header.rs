@@ -8,9 +8,15 @@ use std::{
 };
 
 use crate::{
-    data_types::*, date_time::DateTime, diagnostic_info::DiagnosticInfo, encoding::*,
-    extension_object::ExtensionObject, request_header::RequestHeader, status_code::StatusCode,
+    data_types::*,
+    date_time::DateTime,
+    diagnostic_info::DiagnosticInfo,
+    encoding::{BinaryDecodable, BinaryEncodable, EncodingResult},
+    extension_object::ExtensionObject,
+    request_header::RequestHeader,
+    status_code::StatusCode,
     string::UAString,
+    EncodingError,
 };
 
 #[allow(unused)]

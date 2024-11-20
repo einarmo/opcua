@@ -1,6 +1,13 @@
 use std::{io::Cursor, str::FromStr};
 
-use crate::{encoding::DecodingOptions, string::UAString, tests::*};
+use crate::{
+    encoding::{BinaryDecodable, DecodingOptions},
+    string::UAString,
+    tests::*,
+    Array, ByteString, ContextOwned, DataValue, DateTime, DepthGauge, DiagnosticInfo, EncodingMask,
+    ExpandedNodeId, ExtensionObject, Guid, LocalizedText, NamespaceMap, NodeId, ObjectId,
+    QualifiedName, Variant, VariantScalarTypeId, XmlElement,
+};
 
 #[test]
 fn encoding_bool() {
@@ -104,7 +111,7 @@ fn decode_string_malformed_utf8() {
     let mut stream = Cursor::new(bytes);
     let ctx = ContextOwned::default();
     assert_eq!(
-        UAString::decode(&mut stream, &ctx.context())
+        <UAString as BinaryDecodable>::decode(&mut stream, &ctx.context())
             .unwrap_err()
             .status(),
         StatusCode::BadDecodingError

@@ -10,7 +10,8 @@ use std::io::{Cursor, Read, Write};
 use log::{error, trace};
 use opcua_types::{
     process_decode_io_result, process_encode_io_result, read_u32, read_u8, status_code::StatusCode,
-    write_u32, write_u8, BinaryDecodable, BinaryEncodable, DecodingOptions, EncodingResult,
+    write_u32, write_u8, DecodingOptions, EncodingResult, SimpleBinaryDecodable,
+    SimpleBinaryEncodable,
 };
 
 use super::{
@@ -63,8 +64,8 @@ pub struct MessageChunkHeader {
     pub secure_channel_id: u32,
 }
 
-impl BinaryEncodable for MessageChunkHeader {
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
+impl SimpleBinaryEncodable for MessageChunkHeader {
+    fn byte_len(&self) -> usize {
         MESSAGE_CHUNK_HEADER_SIZE
     }
 
@@ -91,7 +92,7 @@ impl BinaryEncodable for MessageChunkHeader {
     }
 }
 
-impl BinaryDecodable for MessageChunkHeader {
+impl SimpleBinaryDecodable for MessageChunkHeader {
     fn decode<S: Read + ?Sized>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         let mut message_type_code = [0u8; 3];
         process_decode_io_result(stream.read_exact(&mut message_type_code))?;
@@ -140,8 +141,8 @@ pub struct MessageChunk {
     pub data: Vec<u8>,
 }
 
-impl BinaryEncodable for MessageChunk {
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
+impl SimpleBinaryEncodable for MessageChunk {
+    fn byte_len(&self) -> usize {
         self.data.len()
     }
 
@@ -153,7 +154,7 @@ impl BinaryEncodable for MessageChunk {
     }
 }
 
-impl BinaryDecodable for MessageChunk {
+impl SimpleBinaryDecodable for MessageChunk {
     fn decode<S: Read + ?Sized>(
         in_stream: &mut S,
         decoding_options: &DecodingOptions,

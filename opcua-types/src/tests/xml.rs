@@ -8,7 +8,7 @@ use crate::{
     LocalizedText, NodeId, QualifiedName, StatusCode, UAString, Variant,
 };
 
-use super::{service_types, NamespaceMap, NodeSetNamespaceMapper};
+use crate::{service_types, NamespaceMap, NodeSetNamespaceMapper};
 
 fn namespaces() -> NamespaceMap {
     NamespaceMap::new()

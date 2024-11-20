@@ -5,9 +5,12 @@
 use std::io::{Read, Write};
 
 use log::error;
-use opcua_types::BinaryEncodable;
+use opcua_types::{
+    ByteString, DecodingOptions, EncodingResult, SimpleBinaryDecodable, SimpleBinaryEncodable,
+    UAString,
+};
 
-use opcua_types::{constants, status_code::StatusCode, *};
+use opcua_types::{constants, status_code::StatusCode};
 
 use opcua_crypto::{SecurityPolicy, Thumbprint, X509};
 
@@ -19,8 +22,8 @@ pub enum SecurityHeader {
     Symmetric(SymmetricSecurityHeader),
 }
 
-impl BinaryEncodable for SecurityHeader {
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
+impl SimpleBinaryEncodable for SecurityHeader {
+    fn byte_len(&self) -> usize {
         match self {
             SecurityHeader::Asymmetric(value) => value.byte_len(),
             SecurityHeader::Symmetric(value) => value.byte_len(),
@@ -40,8 +43,8 @@ pub struct SymmetricSecurityHeader {
     pub token_id: u32,
 }
 
-impl BinaryEncodable for SymmetricSecurityHeader {
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
+impl SimpleBinaryEncodable for SymmetricSecurityHeader {
+    fn byte_len(&self) -> usize {
         4
     }
 
@@ -50,7 +53,7 @@ impl BinaryEncodable for SymmetricSecurityHeader {
     }
 }
 
-impl BinaryDecodable for SymmetricSecurityHeader {
+impl SimpleBinaryDecodable for SymmetricSecurityHeader {
     fn decode<S: Read + ?Sized>(
         stream: &mut S,
         decoding_options: &DecodingOptions,
@@ -67,8 +70,8 @@ pub struct AsymmetricSecurityHeader {
     pub receiver_certificate_thumbprint: ByteString,
 }
 
-impl BinaryEncodable for AsymmetricSecurityHeader {
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
+impl SimpleBinaryEncodable for AsymmetricSecurityHeader {
+    fn byte_len(&self) -> usize {
         let mut size = 0;
         size += self.security_policy_uri.byte_len();
         size += self.sender_certificate.byte_len();
@@ -86,7 +89,7 @@ impl BinaryEncodable for AsymmetricSecurityHeader {
     }
 }
 
-impl BinaryDecodable for AsymmetricSecurityHeader {
+impl SimpleBinaryDecodable for AsymmetricSecurityHeader {
     fn decode<S: Read + ?Sized>(
         stream: &mut S,
         decoding_options: &DecodingOptions,
@@ -161,8 +164,8 @@ pub struct SequenceHeader {
     pub request_id: u32,
 }
 
-impl BinaryEncodable for SequenceHeader {
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
+impl SimpleBinaryEncodable for SequenceHeader {
+    fn byte_len(&self) -> usize {
         8
     }
 
@@ -174,7 +177,7 @@ impl BinaryEncodable for SequenceHeader {
     }
 }
 
-impl BinaryDecodable for SequenceHeader {
+impl SimpleBinaryDecodable for SequenceHeader {
     fn decode<S: Read + ?Sized>(
         stream: &mut S,
         decoding_options: &DecodingOptions,

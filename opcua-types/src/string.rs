@@ -12,12 +12,10 @@ use std::{
 use log::{error, trace};
 
 use crate::{
-    encoding::{
-        process_decode_io_result, process_encode_io_result, write_i32, BinaryEncodable,
-        EncodingResult,
-    },
+    encoding::{process_decode_io_result, process_encode_io_result, write_i32, EncodingResult},
+    read_i32,
     status_code::StatusCode,
-    BinaryDecodable, OutOfRange,
+    DecodingOptions, OutOfRange, SimpleBinaryDecodable, SimpleBinaryEncodable,
 };
 
 /// To avoid naming conflict hell, the OPC UA String type is typed `UAString` so it does not collide
@@ -89,8 +87,8 @@ mod json {
     }
 }
 
-impl BinaryEncodable for UAString {
-    fn byte_len(&self, _ctx: &crate::Context<'_>) -> usize {
+impl SimpleBinaryEncodable for UAString {
+    fn byte_len(&self) -> usize {
         // Length plus the actual string length in bytes for a non-null string.
         4 + match &self.value {
             Some(s) => s.len(),
@@ -98,11 +96,7 @@ impl BinaryEncodable for UAString {
         }
     }
 
-    fn encode<S: Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        _ctx: &crate::Context<'_>,
-    ) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         // Strings are encoded as UTF8 chars preceded by an Int32 length. A -1 indicates a null string
         match &self.value {
             Some(s) => {
@@ -117,20 +111,22 @@ impl BinaryEncodable for UAString {
     }
 }
 
-impl BinaryDecodable for UAString {
-    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &crate::Context<'_>) -> EncodingResult<Self> {
-        let len = i32::decode(stream, ctx)?;
+impl SimpleBinaryDecodable for UAString {
+    fn decode<S: Read + ?Sized>(
+        stream: &mut S,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self> {
+        let len = read_i32(stream)?;
         // Null string?
         if len == -1 {
             Ok(UAString::null())
         } else if len < -1 {
             error!("String buf length is a negative number {}", len);
             Err(StatusCode::BadDecodingError.into())
-        } else if len as usize > ctx.options().max_string_length {
+        } else if len as usize > decoding_options.max_string_length {
             error!(
                 "String buf length {} exceeds decoding limit {}",
-                len,
-                ctx.options().max_string_length
+                len, decoding_options.max_string_length
             );
             Err(StatusCode::BadDecodingError.into())
         } else {

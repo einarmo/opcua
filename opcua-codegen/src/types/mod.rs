@@ -4,8 +4,6 @@ mod gen;
 mod loader;
 mod structure;
 
-use std::collections::HashMap;
-
 pub use base_constants::*;
 pub use enum_type::{EnumType, EnumValue};
 use gen::EncodingIds;
@@ -15,7 +13,7 @@ use opcua_xml::load_bsd_file;
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 pub use structure::{StructureField, StructureFieldType, StructuredType};
-use syn::{parse_quote, Ident, Item, ItemStatic};
+use syn::{parse_quote, Ident, Item};
 
 use crate::{CodeGenError, TypeCodeGenTarget, BASE_NAMESPACE};
 

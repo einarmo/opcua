@@ -4,7 +4,7 @@
 
 use std::{
     io::{Cursor, Write},
-    ops::Range,
+    ops::{Deref, Range},
     sync::Arc,
     time::{Duration, Instant},
 };
@@ -19,7 +19,8 @@ use opcua_crypto::{
 };
 use opcua_types::{
     service_types::ChannelSecurityToken, status_code::StatusCode, write_bytes, write_u8,
-    BinaryDecodable, BinaryEncodable, ByteString, DecodingOptions, MessageSecurityMode,
+    ByteString, ContextOwned, DecodingOptions, MessageSecurityMode, SimpleBinaryDecodable,
+    SimpleBinaryEncodable,
 };
 use parking_lot::RwLock;
 
@@ -67,7 +68,7 @@ pub struct SecureChannel {
     /// Server (i.e. our end's set of keys) Symmetric Signing Key, Decrypt Key, IV
     local_keys: Option<(Vec<u8>, AesKey, Vec<u8>)>,
     /// Decoding options
-    decoding_options: DecodingOptions,
+    encoding_context: Arc<RwLock<ContextOwned>>,
 }
 
 impl SecureChannel {
@@ -89,14 +90,14 @@ impl SecureChannel {
             remote_cert: None,
             local_keys: None,
             remote_keys: None,
-            decoding_options: DecodingOptions::default(),
+            encoding_context: Default::default(),
         }
     }
 
     pub fn new(
         certificate_store: Arc<RwLock<CertificateStore>>,
         role: Role,
-        decoding_options: DecodingOptions,
+        encoding_context: Arc<RwLock<ContextOwned>>,
     ) -> SecureChannel {
         let (cert, private_key) = {
             let certificate_store = certificate_store.read();
@@ -131,7 +132,7 @@ impl SecureChannel {
             remote_cert: None,
             local_keys: None,
             remote_keys: None,
-            decoding_options,
+            encoding_context,
         }
     }
 
@@ -214,18 +215,24 @@ impl SecureChannel {
     }
 
     pub fn set_client_offset(&mut self, client_offset: chrono::Duration) {
-        self.decoding_options.client_offset = client_offset;
+        self.encoding_context.write().options_mut().client_offset = client_offset;
     }
 
     pub fn set_decoding_options(&mut self, decoding_options: DecodingOptions) {
-        self.decoding_options = DecodingOptions {
-            client_offset: self.decoding_options.client_offset,
+        let mut context = self.encoding_context.write();
+        let offset = context.options().client_offset;
+        (*context.options_mut()) = DecodingOptions {
+            client_offset: offset,
             ..decoding_options
-        }
+        };
+    }
+
+    pub fn context(&self) -> impl Deref<Target = ContextOwned> + '_ {
+        self.encoding_context.read()
     }
 
     pub fn decoding_options(&self) -> DecodingOptions {
-        self.decoding_options.clone()
+        self.context().options().clone()
     }
 
     /// Test if the secure channel token needs to be renewed. The algorithm determines it needs
@@ -526,7 +533,7 @@ impl SecureChannel {
         Self::update_message_size_and_truncate(
             stream.into_inner(),
             message_size,
-            &self.decoding_options,
+            &self.decoding_options(),
         )
     }
 
@@ -593,7 +600,7 @@ impl SecureChannel {
             let encrypted_range = chunk_info.sequence_header_offset..data.len();
 
             // Encrypt and sign - open secure channel
-            let encrypted_size = if message_chunk.is_open_secure_channel(&self.decoding_options) {
+            let encrypted_size = if message_chunk.is_open_secure_channel(&self.decoding_options()) {
                 self.asymmetric_sign_and_encrypt(self.security_policy, &data, encrypted_range, dst)?
             } else {
                 // Symmetric encrypt and sign
@@ -632,18 +639,19 @@ impl SecureChannel {
         their_key: Option<PrivateKey>,
     ) -> Result<MessageChunk, StatusCode> {
         // Get message & security header from data
+        let decoding_options = self.decoding_options();
         let (message_header, security_header, encrypted_data_offset) = {
             let mut stream = Cursor::new(&src);
-            let message_header = MessageChunkHeader::decode(&mut stream, &self.decoding_options)?;
+            let message_header = MessageChunkHeader::decode(&mut stream, &decoding_options)?;
             let security_header = if message_header.message_type.is_open_secure_channel() {
                 SecurityHeader::Asymmetric(AsymmetricSecurityHeader::decode(
                     &mut stream,
-                    &self.decoding_options,
+                    &decoding_options,
                 )?)
             } else {
                 SecurityHeader::Symmetric(SymmetricSecurityHeader::decode(
                     &mut stream,
-                    &self.decoding_options,
+                    &decoding_options,
                 )?)
             };
             let encrypted_data_offset = stream.position() as usize;
@@ -740,7 +748,7 @@ impl SecureChannel {
             Self::update_message_size_and_truncate(
                 decrypted_data,
                 decrypted_size,
-                &self.decoding_options,
+                &decoding_options,
             )?
         } else if self.security_policy != SecurityPolicy::None
             && (self.security_mode == MessageSecurityMode::Sign
@@ -768,7 +776,7 @@ impl SecureChannel {
             Self::update_message_size_and_truncate(
                 decrypted_data,
                 decrypted_size,
-                &self.decoding_options,
+                &decoding_options,
             )?
         } else {
             src.to_vec()
@@ -818,7 +826,7 @@ impl SecureChannel {
         Self::update_message_size(
             &mut tmp[..],
             header_size + cipher_text_size,
-            &self.decoding_options,
+            &self.decoding_options(),
         )?;
 
         // Sign the message header, security header, sequence header, body, padding
