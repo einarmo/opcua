@@ -6,6 +6,7 @@ use std::convert::TryFrom;
 
 use crate::{
     attribute::AttributeId,
+    match_extension_object_owned,
     service_types::{
         AttributeOperand, ContentFilter, ContentFilterElement, ElementOperand, FilterOperator,
         LiteralOperand, SimpleAttributeOperand,
@@ -102,21 +103,17 @@ impl From<Variant> for LiteralOperand {
     }
 }
 
-impl TryFrom<&ExtensionObject> for Operand {
+impl TryFrom<ExtensionObject> for Operand {
     type Error = StatusCode;
 
-    fn try_from(v: &ExtensionObject) -> Result<Self, Self::Error> {
-        let operand = if let Some(v) = v.inner_as() {
-            Self::ElementOperand(*v)
-        } else if let Some(v) = v.inner_as() {
-            Self::LiteralOperand(*v)
-        } else if let Some(v) = v.inner_as() {
-            Self::AttributeOperand(*v)
-        } else if let Some(v) = v.inner_as() {
-            Self::SimpleAttributeOperand(*v)
-        } else {
-            return Err(StatusCode::BadFilterOperandInvalid);
-        };
+    fn try_from(v: ExtensionObject) -> Result<Self, Self::Error> {
+        let operand = match_extension_object_owned!(v,
+            v: ElementOperand => Self::ElementOperand(v),
+            v: LiteralOperand => Self::LiteralOperand(v),
+            v: AttributeOperand => Self::AttributeOperand(v),
+            v: SimpleAttributeOperand => Self::SimpleAttributeOperand(v),
+            _ => return Err(StatusCode::BadFilterOperandInvalid)
+        );
 
         Ok(operand)
     }

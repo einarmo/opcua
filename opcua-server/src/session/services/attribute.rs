@@ -133,13 +133,11 @@ pub async fn history_read(
     if items.is_empty() {
         return service_fault!(request, StatusCode::BadNothingToDo);
     }
-    let details = match HistoryReadDetails::from_extension_object(
-        request.request.history_read_details,
-        &request.info.decoding_options(),
-    ) {
-        Ok(r) => r,
-        Err(e) => return service_fault!(request, e),
-    };
+    let details =
+        match HistoryReadDetails::from_extension_object(request.request.history_read_details) {
+            Ok(r) => r,
+            Err(e) => return service_fault!(request, e),
+        };
 
     let is_events = matches!(details, HistoryReadDetails::Events(_));
 
@@ -315,13 +313,11 @@ pub async fn history_update(
         request.request.history_update_details,
         request.info.operational_limits.max_nodes_per_history_update
     );
-    let decoding_options = request.info.decoding_options();
 
     let mut nodes: Vec<_> = items
         .into_iter()
         .map(|obj| {
-            let details = match HistoryUpdateDetails::from_extension_object(obj, &decoding_options)
-            {
+            let details = match HistoryUpdateDetails::from_extension_object(obj) {
                 Ok(h) => h,
                 Err(e) => {
                     // need some empty history update node here, it won't be passed to node managers.

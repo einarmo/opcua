@@ -9,7 +9,7 @@ use std::{
     io::{Read, Write},
 };
 
-use log::{error, trace};
+use log::error;
 
 use crate::{
     encoding::{process_decode_io_result, process_encode_io_result, write_i32, EncodingResult},
@@ -134,7 +134,7 @@ impl SimpleBinaryDecodable for UAString {
             let mut buf = vec![0u8; len as usize];
             process_decode_io_result(stream.read_exact(&mut buf))?;
             let value = String::from_utf8(buf).map_err(|err| {
-                trace!("Decoded string was not valid UTF-8 - {}", err.to_string());
+                error!("Decoded string was not valid UTF-8 - {}", err.to_string());
                 StatusCode::BadDecodingError
             })?;
             Ok(UAString::from(value))

@@ -1934,30 +1934,22 @@ fn make_variable_11(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new(
-                            "",
-                            "Single channel \nDiagnosis only for the reported channel",
-                        ),
-                        display_name: opcua::types::LocalizedText::new("", "SINGLE"),
-                        value: 0i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new(
-                            "",
-                            "Multiple channel \nAccumulative diagnosis from more than one channel",
-                        ),
-                        display_name: opcua::types::LocalizedText::new("", "ACCUMULATIVE"),
-                        value: 256i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new(
+                        "",
+                        "Single channel \nDiagnosis only for the reported channel",
+                    ),
+                    display_name: opcua::types::LocalizedText::new("", "SINGLE"),
+                    value: 0i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new(
+                        "",
+                        "Multiple channel \nAccumulative diagnosis from more than one channel",
+                    ),
+                    display_name: opcua::types::LocalizedText::new("", "ACCUMULATIVE"),
+                    value: 256i64,
+                }),
             ])),
             1u8,
             1u8,
@@ -2313,13 +2305,12 @@ fn make_variable_120(
                 opcua::types::DataValue::new_now(
                     opcua::types::Variant::from(
                         vec![
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::Argument { array_dimensions : None, data_type :
+                            opcua::types::ExtensionObject::from_message(opcua::types::Argument
+                            { array_dimensions : None, data_type :
                             opcua::types::NodeId::new(0u16, 12u32), description :
                             opcua::types::LocalizedText::new("",
                             "String containing the new NameOfStation to be written remanent to the device. The maximum length shall be limited to 240 characters (See [PN Protocol] for details)."),
-                            name : "NameOfStation".into(), value_rank : - 1i32, }, ns_map
-                            .namespaces()).expect("Invalid encoding ID"),
+                            name : "NameOfStation".into(), value_rank : - 1i32, }),
                         ],
                     ),
                 ),
@@ -2624,42 +2615,26 @@ fn make_variable_13(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Manufacturer specific"),
-                        display_name: opcua::types::LocalizedText::new("", "MANUFACTURER_SPECIFIC"),
-                        value: 0i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Input"),
-                        display_name: opcua::types::LocalizedText::new("", "INPUT_CHANNEL"),
-                        value: 8192i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Output"),
-                        display_name: opcua::types::LocalizedText::new("", "OUTPUT_CHANNEL"),
-                        value: 16384i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Input/Output"),
-                        display_name: opcua::types::LocalizedText::new("", "BIDIRECTIONAL_CHANNEL"),
-                        value: 24576i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Manufacturer specific"),
+                    display_name: opcua::types::LocalizedText::new("", "MANUFACTURER_SPECIFIC"),
+                    value: 0i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Input"),
+                    display_name: opcua::types::LocalizedText::new("", "INPUT_CHANNEL"),
+                    value: 8192i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Output"),
+                    display_name: opcua::types::LocalizedText::new("", "OUTPUT_CHANNEL"),
+                    value: 16384i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Input/Output"),
+                    display_name: opcua::types::LocalizedText::new("", "BIDIRECTIONAL_CHANNEL"),
+                    value: 24576i64,
+                }),
             ])),
             1u8,
             1u8,
@@ -2710,7 +2685,7 @@ fn make_variable_133(
                 opcua::types::DataValue::new_now(
                     opcua::types::Variant::from(
                         vec![
-                            opcua::types::ExtensionObject::from_message_full(& crate
+                            opcua::types::ExtensionObject::from_message(crate
                             ::generated::types::PnDeviceDiagnosisDataType { api : 0u32,
                             accumulative : crate
                             ::generated::types::PnChannelAccumulativeEnumeration::SINGLE,
@@ -2728,8 +2703,7 @@ fn make_variable_133(
                             ::generated::types::PnChannelSpecifierEnumeration::ALL_DISAPPEARS,
                             subslot : 0u16, __type : crate
                             ::generated::types::PnChannelTypeEnumeration::UNSPECIFIC,
-                            user_structure_identifier : 0u16, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
+                            user_structure_identifier : 0u16, }),
                         ],
                     ),
                 ),
@@ -3351,48 +3325,32 @@ fn make_variable_15(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Fault"),
-                        display_name: opcua::types::LocalizedText::new("", "FAULT"),
-                        value: 0i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Maintenance required"),
-                        display_name: opcua::types::LocalizedText::new("", "MAINTENANCE_REQUIRED"),
-                        value: 512i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Maintenance demanded"),
-                        display_name: opcua::types::LocalizedText::new("", "MAINTENANCE_DEMANDED"),
-                        value: 1024i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new(
-                            "",
-                            "Use QualifiedChannelQualifier variable",
-                        ),
-                        display_name: opcua::types::LocalizedText::new(
-                            "",
-                            "USE_QUALIFIED_CHANNEL_QUALIFIER",
-                        ),
-                        value: 1536i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Fault"),
+                    display_name: opcua::types::LocalizedText::new("", "FAULT"),
+                    value: 0i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Maintenance required"),
+                    display_name: opcua::types::LocalizedText::new("", "MAINTENANCE_REQUIRED"),
+                    value: 512i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Maintenance demanded"),
+                    display_name: opcua::types::LocalizedText::new("", "MAINTENANCE_DEMANDED"),
+                    value: 1024i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new(
+                        "",
+                        "Use QualifiedChannelQualifier variable",
+                    ),
+                    display_name: opcua::types::LocalizedText::new(
+                        "",
+                        "USE_QUALIFIED_CHANNEL_QUALIFIER",
+                    ),
+                    value: 1536i64,
+                }),
             ])),
             1u8,
             1u8,
@@ -3443,7 +3401,7 @@ fn make_variable_154(
                 opcua::types::DataValue::new_now(
                     opcua::types::Variant::from(
                         vec![
-                            opcua::types::ExtensionObject::from_message_full(& crate
+                            opcua::types::ExtensionObject::from_message(crate
                             ::generated::types::PnDeviceDiagnosisDataType { api : 0u32,
                             accumulative : crate
                             ::generated::types::PnChannelAccumulativeEnumeration::SINGLE,
@@ -3461,8 +3419,7 @@ fn make_variable_154(
                             ::generated::types::PnChannelSpecifierEnumeration::ALL_DISAPPEARS,
                             subslot : 0u16, __type : crate
                             ::generated::types::PnChannelTypeEnumeration::UNSPECIFIC,
-                            user_structure_identifier : 0u16, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
+                            user_structure_identifier : 0u16, }),
                         ],
                     ),
                 ),
@@ -4042,34 +3999,26 @@ fn make_variable_17(
                 opcua::types::DataValue::new_now(
                     opcua::types::Variant::from(
                         vec![
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The Diagnosis ASE contains no longer any entries (of any severity) for this channel"),
                             display_name : opcua::types::LocalizedText::new("",
-                            "ALL_DISAPPEARS"), value : 0i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "ALL_DISAPPEARS"), value : 0i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "An event appears and/or exists further\nThe Diagnosis ASE contains this and possible other entries for this channel."),
                             display_name : opcua::types::LocalizedText::new("",
-                            "APPEARS"), value : 2048i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "APPEARS"), value : 2048i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "An event disappears and/or exists no longer\nThe Diagnosis ASE contains no longer any entries of the same severity for this channel"),
                             display_name : opcua::types::LocalizedText::new("",
-                            "DISAPPEARS"), value : 4096i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "DISAPPEARS"), value : 4096i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "An event disappears\nThe Diagnosis ASE still contains other entries of the same severity for this channel"),
                             display_name : opcua::types::LocalizedText::new("",
-                            "DISAPPEARS_OTHER_REMAIN"), value : 6144i64, }, ns_map
-                            .namespaces()).expect("Invalid encoding ID"),
+                            "DISAPPEARS_OTHER_REMAIN"), value : 6144i64, }),
                         ],
                     ),
                 ),
@@ -4508,55 +4457,46 @@ fn make_variable_19(
                 opcua::types::DataValue::new_now(
                     opcua::types::Variant::from(
                         vec![
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "Shall be used if the field ChannelNumber contains the value 0x8000 (submodule)\nFurthermore, it shall be used if none of the below defined types are appropriate."),
                             display_name : opcua::types::LocalizedText::new("",
-                            "UNSPECIFIC"), value : 0i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "UNSPECIFIC"), value : 0i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The data length of this channel is 1 Bit."), display_name :
                             opcua::types::LocalizedText::new("", "1BIT"), value : 1i64,
-                            }, ns_map.namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The data length of this channel is 2 Bit."), display_name :
                             opcua::types::LocalizedText::new("", "2BIT"), value : 2i64,
-                            }, ns_map.namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The data length of this channel is 4 Bit."), display_name :
                             opcua::types::LocalizedText::new("", "4BIT"), value : 3i64,
-                            }, ns_map.namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The data length of this channel is 8 Bit."), display_name :
                             opcua::types::LocalizedText::new("", "8BIT"), value : 4i64,
-                            }, ns_map.namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The data length of this channel is 16 Bit."), display_name :
                             opcua::types::LocalizedText::new("", "16BIT"), value : 5i64,
-                            }, ns_map.namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The data length of this channel is 32 Bit."), display_name :
                             opcua::types::LocalizedText::new("", "32BIT"), value : 6i64,
-                            }, ns_map.namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The data length of this channel is 64 Bit."), display_name :
                             opcua::types::LocalizedText::new("", "64BIT"), value : 7i64,
-                            }, ns_map.namespaces()).expect("Invalid encoding ID"),
+                            }),
                         ],
                     ),
                 ),

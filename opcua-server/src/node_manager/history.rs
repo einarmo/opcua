@@ -1,10 +1,10 @@
 use crate::session::{continuation_points::ContinuationPoint, instance::Session};
 use opcua_crypto::random;
 use opcua_types::{
-    BinaryEncodable, ByteString, DecodingOptions, DeleteAtTimeDetails, DeleteEventDetails,
-    DeleteRawModifiedDetails, ExtensionObject, HistoryData, HistoryEvent, HistoryModifiedData,
-    HistoryReadResult, HistoryReadValueId, HistoryUpdateResult, NodeId, NumericRange, ObjectId,
-    QualifiedName, ReadAnnotationDataDetails, ReadAtTimeDetails, ReadEventDetails,
+    match_extension_object_owned, ByteString, DeleteAtTimeDetails, DeleteEventDetails,
+    DeleteRawModifiedDetails, DynEncodable, ExtensionObject, HistoryData, HistoryEvent,
+    HistoryModifiedData, HistoryReadResult, HistoryReadValueId, HistoryUpdateResult, NodeId,
+    NumericRange, QualifiedName, ReadAnnotationDataDetails, ReadAtTimeDetails, ReadEventDetails,
     ReadProcessedDetails, ReadRawModifiedDetails, StatusCode, UpdateDataDetails,
     UpdateEventDetails, UpdateStructureDataDetails,
 };
@@ -29,31 +29,15 @@ pub(crate) enum HistoryReadDetails {
 }
 
 impl HistoryReadDetails {
-    pub fn from_extension_object(
-        obj: ExtensionObject,
-        decoding_options: &DecodingOptions,
-    ) -> Result<Self, StatusCode> {
-        let object_id = obj
-            .object_id()
-            .map_err(|_| StatusCode::BadHistoryOperationInvalid)?;
-        match object_id {
-            ObjectId::ReadRawModifiedDetails_Encoding_DefaultBinary => {
-                Ok(Self::RawModified(obj.decode_inner(decoding_options)?))
-            }
-            ObjectId::ReadAtTimeDetails_Encoding_DefaultBinary => {
-                Ok(Self::AtTime(obj.decode_inner(decoding_options)?))
-            }
-            ObjectId::ReadProcessedDetails_Encoding_DefaultBinary => {
-                Ok(Self::Processed(obj.decode_inner(decoding_options)?))
-            }
-            ObjectId::ReadEventDetails_Encoding_DefaultBinary => {
-                Ok(Self::Events(obj.decode_inner(decoding_options)?))
-            }
-            ObjectId::ReadAnnotationDataDetails_Encoding_DefaultBinary => {
-                Ok(Self::Annotations(obj.decode_inner(decoding_options)?))
-            }
-            _ => Err(StatusCode::BadHistoryOperationInvalid),
-        }
+    pub fn from_extension_object(obj: ExtensionObject) -> Result<Self, StatusCode> {
+        match_extension_object_owned!(obj,
+            v: ReadRawModifiedDetails => Ok(Self::RawModified(v)),
+            v: ReadAtTimeDetails => Ok(Self::AtTime(v)),
+            v: ReadProcessedDetails => Ok(Self::Processed(v)),
+            v: ReadEventDetails => Ok(Self::Events(v)),
+            v: ReadAnnotationDataDetails => Ok(Self::Annotations(v)),
+            _ => Err(StatusCode::BadHistoryOperationInvalid)
+        )
     }
 }
 
@@ -70,34 +54,16 @@ pub enum HistoryUpdateDetails {
 
 impl HistoryUpdateDetails {
     /// Try to create a `HistoryUpdateDetails` object from an extension object.
-    pub fn from_extension_object(
-        obj: ExtensionObject,
-        decoding_options: &DecodingOptions,
-    ) -> Result<Self, StatusCode> {
-        let object_id = obj
-            .object_id()
-            .map_err(|_| StatusCode::BadHistoryOperationInvalid)?;
-        match object_id {
-            ObjectId::UpdateDataDetails_Encoding_DefaultBinary => {
-                Ok(Self::UpdateData(obj.decode_inner(decoding_options)?))
-            }
-            ObjectId::UpdateStructureDataDetails_Encoding_DefaultBinary => Ok(
-                Self::UpdateStructureData(obj.decode_inner(decoding_options)?),
-            ),
-            ObjectId::UpdateEventDetails_Encoding_DefaultBinary => {
-                Ok(Self::UpdateEvent(obj.decode_inner(decoding_options)?))
-            }
-            ObjectId::DeleteRawModifiedDetails_Encoding_DefaultBinary => {
-                Ok(Self::DeleteRawModified(obj.decode_inner(decoding_options)?))
-            }
-            ObjectId::DeleteAtTimeDetails_Encoding_DefaultBinary => {
-                Ok(Self::DeleteAtTime(obj.decode_inner(decoding_options)?))
-            }
-            ObjectId::DeleteEventDetails_Encoding_DefaultBinary => {
-                Ok(Self::DeleteEvent(obj.decode_inner(decoding_options)?))
-            }
-            _ => Err(StatusCode::BadHistoryOperationInvalid),
-        }
+    pub fn from_extension_object(obj: ExtensionObject) -> Result<Self, StatusCode> {
+        match_extension_object_owned!(obj,
+            v: UpdateDataDetails => Ok(Self::UpdateData(v)),
+            v: UpdateStructureDataDetails => Ok(Self::UpdateStructureData(v)),
+            v: UpdateEventDetails => Ok(Self::UpdateEvent(v)),
+            v: DeleteRawModifiedDetails => Ok(Self::DeleteRawModified(v)),
+            v: DeleteAtTimeDetails => Ok(Self::DeleteAtTime(v)),
+            v: DeleteEventDetails => Ok(Self::DeleteEvent(v)),
+            _ => Err(StatusCode::BadHistoryOperationInvalid)
+        )
     }
 
     /// Get the node ID of the details object, independent of type.
@@ -114,25 +80,16 @@ impl HistoryUpdateDetails {
 }
 
 /// Trait for values storable as history data.
-pub trait HistoryResult: BinaryEncodable + Sized {
-    /// The object ID of the object encoding.
-    const OBJECT_ID: ObjectId;
-
+pub trait HistoryResult: DynEncodable + Sized {
     /// Return an extension object containing the encoded data for the current object.
-    fn as_extension_object(&self) -> ExtensionObject {
-        ExtensionObject::from_encodable(Self::OBJECT_ID, self)
+    fn into_extension_object(self) -> ExtensionObject {
+        ExtensionObject::from_message(self)
     }
 }
 
-impl HistoryResult for HistoryData {
-    const OBJECT_ID: ObjectId = ObjectId::HistoryData_Encoding_DefaultBinary;
-}
-impl HistoryResult for HistoryModifiedData {
-    const OBJECT_ID: ObjectId = ObjectId::HistoryModifiedData_Encoding_DefaultBinary;
-}
-impl HistoryResult for HistoryEvent {
-    const OBJECT_ID: ObjectId = ObjectId::HistoryEvent_Encoding_DefaultBinary;
-}
+impl HistoryResult for HistoryData {}
+impl HistoryResult for HistoryModifiedData {}
+impl HistoryResult for HistoryEvent {}
 // impl HistoryResult for HistoryModifiedEvent {}
 
 impl HistoryNode {
@@ -196,8 +153,8 @@ impl HistoryNode {
     }
 
     /// Set the result to some history data object.
-    pub fn set_result<T: HistoryResult>(&mut self, result: &T) {
-        self.result = Some(result.as_extension_object());
+    pub fn set_result<T: HistoryResult>(&mut self, result: T) {
+        self.result = Some(result.into_extension_object());
     }
 
     /// Set the result status.

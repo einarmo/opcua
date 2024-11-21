@@ -8,6 +8,7 @@ use crate::{
     date_time::DateTime,
     diagnostic_info::DiagnosticInfo,
     extension_object::ExtensionObject,
+    match_extension_object_owned,
     service_types::{
         DataChangeNotification, EventFieldList, EventNotificationList, MonitoredItemNotification,
         NotificationMessage, StatusChangeNotification,
@@ -81,32 +82,34 @@ impl NotificationMessage {
     }
 
     fn process_notification(
-        n: &ExtensionObject,
+        n: ExtensionObject,
         data_changes: &mut Vec<DataChangeNotification>,
         events: &mut Vec<EventNotificationList>,
     ) {
-        if let Some(n) = n.inner_as() {
-            data_changes.push(*n);
-        } else if let Some(n) = n.inner_as() {
-            events.push(*n);
-        } else if n.inner_is::<StatusChangeNotification>() {
-            debug!("Ignoring a StatusChangeNotification");
-        } else {
-            debug!("Ignoring a notification of type {:?}", n.binary_type_id());
-        }
+        match_extension_object_owned!(n,
+            n: DataChangeNotification => data_changes.push(n),
+            n: EventNotificationList => events.push(n),
+            _ => {
+                if n.inner_is::<StatusChangeNotification>() {
+                    debug!("Ignoring a StatusChangeNotification");
+                } else {
+                    debug!("Ignoring a notification of type {:?}", n.binary_type_id());
+                }
+            }
+        )
     }
 
     /// Extract notifications from the message. Unrecognized / unparseable notifications will be
     /// ignored. If there are no notifications, the function will return `None`.
-    pub fn notifications(
-        &self,
+    pub fn into_notifications(
+        self,
     ) -> Option<(Vec<DataChangeNotification>, Vec<EventNotificationList>)> {
-        if let Some(ref notification_data) = self.notification_data {
+        if let Some(notification_data) = self.notification_data {
             let mut data_changes = Vec::with_capacity(notification_data.len());
             let mut events = Vec::with_capacity(notification_data.len());
 
             // Build up the notifications
-            notification_data.iter().for_each(|n| {
+            notification_data.into_iter().for_each(|n| {
                 Self::process_notification(n, &mut data_changes, &mut events);
             });
             if data_changes.is_empty() && events.is_empty() {

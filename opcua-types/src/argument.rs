@@ -12,7 +12,7 @@ use crate::{
     node_id::NodeId,
     status_code::StatusCode,
     string::UAString,
-    write_u32, Context,
+    write_u32, Context, MessageInfo, ObjectId,
 };
 
 // From OPC UA Part 3 - Address Space Model 1.03 Specification
@@ -21,13 +21,32 @@ use crate::{
 // example used in the input and output argument Properties for Methods. Its elements are described in
 // Table23
 
-#[derive(Clone, Debug, PartialEq)]
+#[allow(unused)]
+mod opcua {
+    pub use crate as types;
+}
+
+#[derive(Clone, Debug, PartialEq, Default)]
+#[cfg_attr(feature = "json", derive(crate::JsonEncodable, crate::JsonDecodable))]
+#[cfg_attr(feature = "xml", derive(crate::FromXml))]
 pub struct Argument {
     pub name: UAString,
     pub data_type: NodeId,
     pub value_rank: i32,
     pub array_dimensions: Option<Vec<u32>>,
     pub description: LocalizedText,
+}
+
+impl MessageInfo for Argument {
+    fn type_id(&self) -> ObjectId {
+        ObjectId::Argument_Encoding_DefaultBinary
+    }
+    fn json_type_id(&self) -> ObjectId {
+        ObjectId::Argument_Encoding_DefaultJson
+    }
+    fn xml_type_id(&self) -> ObjectId {
+        ObjectId::Argument_Encoding_DefaultXml
+    }
 }
 
 impl BinaryEncodable for Argument {

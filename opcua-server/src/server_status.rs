@@ -83,7 +83,9 @@ impl ServerStatusWrapper {
                 move || {
                     let mut status = status.lock();
                     status.current_time = DateTime::now();
-                    Some(DataValue::new_now(ExtensionObject::from_message(&*status)))
+                    Some(DataValue::new_now(ExtensionObject::from_message(
+                        status.clone(),
+                    )))
                 },
                 mode,
                 handle,
@@ -145,7 +147,7 @@ impl ServerStatusWrapper {
                     None
                 } else {
                     Some(DataValue::new_now(ExtensionObject::from_message(
-                        &*self.status.lock(),
+                        self.status.lock().clone(),
                     )))
                 }
             },
@@ -211,6 +213,6 @@ impl ServerStatusWrapper {
     }
 
     pub fn full_status_obj(&self) -> ExtensionObject {
-        ExtensionObject::from_message(&*self.status.lock())
+        ExtensionObject::from_message(self.status.lock().clone())
     }
 }

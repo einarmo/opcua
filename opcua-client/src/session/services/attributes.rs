@@ -12,7 +12,7 @@ use opcua_core::ResponseMessage;
 use opcua_types::{
     DataValue, DeleteAtTimeDetails, DeleteEventDetails, DeleteRawModifiedDetails, ExtensionObject,
     HistoryReadRequest, HistoryReadResponse, HistoryReadResult, HistoryReadValueId,
-    HistoryUpdateRequest, HistoryUpdateResponse, HistoryUpdateResult, IntegerId, NodeId, ObjectId,
+    HistoryUpdateRequest, HistoryUpdateResponse, HistoryUpdateResult, IntegerId, NodeId,
     ReadAtTimeDetails, ReadEventDetails, ReadProcessedDetails, ReadRawModifiedDetails, ReadRequest,
     ReadResponse, ReadValueId, StatusCode, TimestampsToReturn, UpdateDataDetails,
     UpdateEventDetails, UpdateStructureDataDetails, WriteRequest, WriteResponse, WriteValue,
@@ -27,21 +27,13 @@ pub enum HistoryReadAction {
     ReadAtTimeDetails(ReadAtTimeDetails),
 }
 
-impl From<&HistoryReadAction> for ExtensionObject {
-    fn from(action: &HistoryReadAction) -> Self {
+impl From<HistoryReadAction> for ExtensionObject {
+    fn from(action: HistoryReadAction) -> Self {
         match action {
-            HistoryReadAction::ReadEventDetails(v) => {
-                Self::from_encodable(ObjectId::ReadEventDetails_Encoding_DefaultBinary, v)
-            }
-            HistoryReadAction::ReadRawModifiedDetails(v) => {
-                Self::from_encodable(ObjectId::ReadRawModifiedDetails_Encoding_DefaultBinary, v)
-            }
-            HistoryReadAction::ReadProcessedDetails(v) => {
-                Self::from_encodable(ObjectId::ReadProcessedDetails_Encoding_DefaultBinary, v)
-            }
-            HistoryReadAction::ReadAtTimeDetails(v) => {
-                Self::from_encodable(ObjectId::ReadAtTimeDetails_Encoding_DefaultBinary, v)
-            }
+            HistoryReadAction::ReadEventDetails(v) => Self::from_message(v),
+            HistoryReadAction::ReadRawModifiedDetails(v) => Self::from_message(v),
+            HistoryReadAction::ReadProcessedDetails(v) => Self::from_message(v),
+            HistoryReadAction::ReadAtTimeDetails(v) => Self::from_message(v),
         }
     }
 }
@@ -88,28 +80,15 @@ impl From<DeleteEventDetails> for HistoryUpdateAction {
     }
 }
 
-impl From<&HistoryUpdateAction> for ExtensionObject {
-    fn from(action: &HistoryUpdateAction) -> Self {
+impl From<HistoryUpdateAction> for ExtensionObject {
+    fn from(action: HistoryUpdateAction) -> Self {
         match action {
-            HistoryUpdateAction::UpdateDataDetails(v) => {
-                Self::from_encodable(ObjectId::UpdateDataDetails_Encoding_DefaultBinary, v)
-            }
-            HistoryUpdateAction::UpdateStructureDataDetails(v) => Self::from_encodable(
-                ObjectId::UpdateStructureDataDetails_Encoding_DefaultBinary,
-                v,
-            ),
-            HistoryUpdateAction::UpdateEventDetails(v) => {
-                Self::from_encodable(ObjectId::UpdateEventDetails_Encoding_DefaultBinary, v)
-            }
-            HistoryUpdateAction::DeleteRawModifiedDetails(v) => {
-                Self::from_encodable(ObjectId::DeleteRawModifiedDetails_Encoding_DefaultBinary, v)
-            }
-            HistoryUpdateAction::DeleteAtTimeDetails(v) => {
-                Self::from_encodable(ObjectId::DeleteAtTimeDetails_Encoding_DefaultBinary, v)
-            }
-            HistoryUpdateAction::DeleteEventDetails(v) => {
-                Self::from_encodable(ObjectId::DeleteEventDetails_Encoding_DefaultBinary, v)
-            }
+            HistoryUpdateAction::UpdateDataDetails(v) => Self::from_message(v),
+            HistoryUpdateAction::UpdateStructureDataDetails(v) => Self::from_message(v),
+            HistoryUpdateAction::UpdateEventDetails(v) => Self::from_message(v),
+            HistoryUpdateAction::DeleteRawModifiedDetails(v) => Self::from_message(v),
+            HistoryUpdateAction::DeleteAtTimeDetails(v) => Self::from_message(v),
+            HistoryUpdateAction::DeleteEventDetails(v) => Self::from_message(v),
         }
     }
 }
@@ -209,8 +188,8 @@ impl UARequest for Read {
 }
 
 #[derive(Debug, Clone)]
-pub struct HistoryRead<'a> {
-    details: &'a HistoryReadAction,
+pub struct HistoryRead {
+    details: HistoryReadAction,
     timestamps_to_return: TimestampsToReturn,
     release_continuation_points: bool,
     nodes_to_read: Vec<HistoryReadValueId>,
@@ -218,10 +197,10 @@ pub struct HistoryRead<'a> {
     header: RequestHeaderBuilder,
 }
 
-builder_base!(HistoryRead<'a>);
+builder_base!(HistoryRead);
 
-impl<'a> HistoryRead<'a> {
-    pub fn new(details: &'a HistoryReadAction, session: &Session) -> Self {
+impl HistoryRead {
+    pub fn new(details: HistoryReadAction, session: &Session) -> Self {
         Self {
             details,
             timestamps_to_return: TimestampsToReturn::Neither,
@@ -234,7 +213,7 @@ impl<'a> HistoryRead<'a> {
 
     /// Construct a new call to the `HistoryRead` service, setting header parameters manually.
     pub fn new_manual(
-        details: &'a HistoryReadAction,
+        details: HistoryReadAction,
         session_id: u32,
         timeout: Duration,
         auth_token: NodeId,
@@ -276,7 +255,7 @@ impl<'a> HistoryRead<'a> {
     }
 }
 
-impl<'a> UARequest for HistoryRead<'a> {
+impl UARequest for HistoryRead {
     type Out = HistoryReadResponse;
 
     async fn send<'b>(self, channel: &'b AsyncSecureChannel) -> Result<Self::Out, StatusCode>
@@ -459,7 +438,11 @@ impl UARequest for HistoryUpdate {
             );
             return Err(StatusCode::BadNothingToDo);
         }
-        let details = self.details.iter().map(ExtensionObject::from).collect();
+        let details = self
+            .details
+            .into_iter()
+            .map(ExtensionObject::from)
+            .collect();
         let request = HistoryUpdateRequest {
             request_header: self.header.header,
             history_update_details: Some(details),
@@ -535,7 +518,7 @@ impl Session {
     ///
     pub async fn history_read(
         &self,
-        history_read_details: &HistoryReadAction,
+        history_read_details: HistoryReadAction,
         timestamps_to_return: TimestampsToReturn,
         release_continuation_points: bool,
         nodes_to_read: &[HistoryReadValueId],

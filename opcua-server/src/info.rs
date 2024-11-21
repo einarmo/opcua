@@ -27,8 +27,8 @@ use opcua_types::{
     status_code::StatusCode,
 };
 use opcua_types::{
-    ByteString, DateTime, DecodingOptions, ExtensionObject, LocalizedText, MessageSecurityMode,
-    UAString,
+    ByteString, ContextOwned, DateTime, DecodingOptions, ExtensionObject, LocalizedText,
+    MessageSecurityMode, NamespaceMap, TypeLoader, UAString,
 };
 
 use crate::config::{ServerConfig, ServerEndpoint};
@@ -86,6 +86,8 @@ pub struct ServerInfo {
     pub service_level: Arc<AtomicU8>,
     /// Currently active local port.
     pub port: AtomicU16,
+    /// List of active type loaders
+    pub type_loaders: Vec<Arc<dyn TypeLoader>>,
 }
 
 impl ServerInfo {
@@ -325,7 +327,7 @@ impl ServerInfo {
         endpoint_url: &str,
         security_policy: SecurityPolicy,
         security_mode: MessageSecurityMode,
-        user_identity_token: &ExtensionObject,
+        user_identity_token: ExtensionObject,
         server_nonce: &ByteString,
     ) -> Result<UserToken, StatusCode> {
         // Get security from endpoint url
@@ -336,7 +338,7 @@ impl ServerInfo {
             security_mode,
         ) {
             // Now validate the user identity token
-            match IdentityToken::new(user_identity_token, &self.decoding_options()) {
+            match IdentityToken::new(user_identity_token) {
                 IdentityToken::None => {
                     error!("User identity token type unsupported");
                     Err(StatusCode::BadIdentityTokenInvalid)
@@ -364,7 +366,10 @@ impl ServerInfo {
                     .await
                 }
                 IdentityToken::Invalid(o) => {
-                    error!("User identity token type {:?} is unsupported", o.node_id);
+                    error!(
+                        "User identity token type {} is unsupported",
+                        o.body.map(|b| b.type_name()).unwrap_or("None")
+                    );
                     Err(StatusCode::BadIdentityTokenInvalid)
                 }
             }
@@ -504,6 +509,15 @@ impl ServerInfo {
                 .authenticate_x509_identity_token(endpoint, &signing_thumbprint)
                 .await
         }
+    }
+
+    pub(crate) fn initial_encoding_context(&self) -> ContextOwned {
+        // The namespace map is populated later, once the session is connected.
+        ContextOwned::new(
+            NamespaceMap::new(),
+            self.type_loaders.clone(),
+            self.decoding_options(),
+        )
     }
 
     /* pub(crate) fn raise_and_log<T>(&self, event: T) -> Result<NodeId, ()>

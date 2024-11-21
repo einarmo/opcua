@@ -164,7 +164,7 @@ impl SessionController {
         let channel = SecureChannel::new(
             certificate_store.clone(),
             opcua_core::comms::secure_channel::Role::Server,
-            info.decoding_options(),
+            Arc::new(RwLock::new(info.initial_encoding_context())),
         );
 
         Self {

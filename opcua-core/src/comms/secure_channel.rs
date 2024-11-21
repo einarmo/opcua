@@ -19,8 +19,8 @@ use opcua_crypto::{
 };
 use opcua_types::{
     service_types::ChannelSecurityToken, status_code::StatusCode, write_bytes, write_u8,
-    ByteString, ContextOwned, DecodingOptions, MessageSecurityMode, SimpleBinaryDecodable,
-    SimpleBinaryEncodable,
+    ByteString, ContextOwned, DecodingOptions, MessageSecurityMode, NamespaceMap,
+    SimpleBinaryDecodable, SimpleBinaryEncodable,
 };
 use parking_lot::RwLock;
 
@@ -229,6 +229,10 @@ impl SecureChannel {
 
     pub fn context(&self) -> impl Deref<Target = ContextOwned> + '_ {
         self.encoding_context.read()
+    }
+
+    pub fn set_namespaces(&self, namespaces: NamespaceMap) {
+        *self.encoding_context.write().namespaces_mut() = namespaces;
     }
 
     pub fn decoding_options(&self) -> DecodingOptions {

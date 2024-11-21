@@ -3,7 +3,7 @@
 // Copyright (C) 2017-2024 Adam Lock
 
 use opcua_types::{
-    AnonymousIdentityToken, DecodingOptions, ExtensionObject, ObjectId, UAString,
+    match_extension_object_owned, AnonymousIdentityToken, ExtensionObject, UAString,
     UserNameIdentityToken, X509IdentityToken,
 };
 
@@ -25,41 +25,19 @@ pub enum IdentityToken {
 impl IdentityToken {
     /// Decode an identity token from an extension object received from the client.
     /// Returns `Invalid` if decoding failed.
-    pub fn new(o: &ExtensionObject, decoding_options: &DecodingOptions) -> Self {
-        if o.is_empty() {
+    pub fn new(o: ExtensionObject) -> Self {
+        if o.is_null() {
             // Treat as anonymous
             IdentityToken::Anonymous(AnonymousIdentityToken {
                 policy_id: UAString::from(POLICY_ID_ANONYMOUS),
             })
-        } else if let Ok(object_id) = o.node_id.as_object_id() {
-            // Read the token out from the extension object
-            match object_id {
-                ObjectId::AnonymousIdentityToken_Encoding_DefaultBinary => {
-                    if let Ok(token) = o.decode_inner::<AnonymousIdentityToken>(decoding_options) {
-                        IdentityToken::Anonymous(token)
-                    } else {
-                        IdentityToken::Invalid(o.clone())
-                    }
-                }
-                ObjectId::UserNameIdentityToken_Encoding_DefaultBinary => {
-                    if let Ok(token) = o.decode_inner::<UserNameIdentityToken>(decoding_options) {
-                        IdentityToken::UserName(token)
-                    } else {
-                        IdentityToken::Invalid(o.clone())
-                    }
-                }
-                ObjectId::X509IdentityToken_Encoding_DefaultBinary => {
-                    // X509 certs
-                    if let Ok(token) = o.decode_inner::<X509IdentityToken>(decoding_options) {
-                        IdentityToken::X509(token)
-                    } else {
-                        IdentityToken::Invalid(o.clone())
-                    }
-                }
-                _ => IdentityToken::Invalid(o.clone()),
-            }
         } else {
-            IdentityToken::Invalid(o.clone())
+            match_extension_object_owned!(o,
+                v: AnonymousIdentityToken => Self::Anonymous(v),
+                v: UserNameIdentityToken => Self::UserName(v),
+                v: X509IdentityToken => Self::X509(v),
+                _ => Self::Invalid(o)
+            )
         }
     }
 }

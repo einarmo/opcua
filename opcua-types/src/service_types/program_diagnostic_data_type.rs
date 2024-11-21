@@ -21,8 +21,8 @@ pub struct ProgramDiagnosticDataType {
     pub last_transition_time: opcua::types::date_time::DateTime,
     pub last_method_call: opcua::types::string::UAString,
     pub last_method_session_id: opcua::types::node_id::NodeId,
-    pub last_method_input_arguments: Option<Vec<super::argument::Argument>>,
-    pub last_method_output_arguments: Option<Vec<super::argument::Argument>>,
+    pub last_method_input_arguments: Option<Vec<crate::argument::Argument>>,
+    pub last_method_output_arguments: Option<Vec<crate::argument::Argument>>,
     pub last_method_call_time: opcua::types::date_time::DateTime,
     pub last_method_return_status: super::status_result::StatusResult,
 }

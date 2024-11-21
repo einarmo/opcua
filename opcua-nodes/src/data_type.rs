@@ -67,7 +67,7 @@ impl Node for DataType {
         match attribute_id {
             AttributeId::IsAbstract => Some(self.is_abstract().into()),
             AttributeId::DataTypeDefinition => self.data_type_definition.as_ref().map(|dt| {
-                let v: Variant = dt.into();
+                let v: Variant = dt.clone().into();
                 v.into()
             }),
             _ => self.base.get_attribute_max_age(

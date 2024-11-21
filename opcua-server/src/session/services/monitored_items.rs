@@ -9,8 +9,8 @@ use opcua_core::ResponseMessage;
 use opcua_types::{
     AttributeId, BrowsePath, CreateMonitoredItemsRequest, CreateMonitoredItemsResponse,
     DataChangeFilter, DeadbandType, DeleteMonitoredItemsRequest, DeleteMonitoredItemsResponse,
-    ModifyMonitoredItemsRequest, ModifyMonitoredItemsResponse, NodeId, ObjectId, Range,
-    ReadRequest, ReferenceTypeId, RelativePath, RelativePathElement, RequestHeader, ResponseHeader,
+    ModifyMonitoredItemsRequest, ModifyMonitoredItemsResponse, NodeId, Range, ReadRequest,
+    ReferenceTypeId, RelativePath, RelativePathElement, RequestHeader, ResponseHeader,
     SetMonitoringModeRequest, SetMonitoringModeResponse, StatusCode, TimestampsToReturn,
     TranslateBrowsePathsToNodeIdsRequest, Variant,
 };
@@ -127,10 +127,7 @@ async fn get_eu_range(
         let Some(Variant::ExtensionObject(o)) = dv.value else {
             continue;
         };
-        if o.node_id != ObjectId::Range_Encoding_DefaultBinary {
-            continue;
-        }
-        let Ok(range) = o.decode_inner::<Range>(&context.info.decoding_options()) else {
+        let Some(range) = o.inner_as::<Range>() else {
             continue;
         };
         res.insert(id.clone(), (range.low, range.high));
@@ -169,19 +166,14 @@ pub async fn create_monitored_items(
     // Try to get EURange for each item with a percent deadband filter.
     let mut items_needing_deadband = Vec::new();
     for item in &items_to_create {
-        if item.requested_parameters.filter.node_id
-            != ObjectId::DataChangeFilter_Encoding_DefaultBinary
-        {
-            continue;
-        }
-        // Errors here are dealt with later.
-        let Ok(filter) = item
+        let Some(filter) = item
             .requested_parameters
             .filter
-            .decode_inner::<DataChangeFilter>(&request.info.decoding_options())
+            .inner_as::<DataChangeFilter>()
         else {
             continue;
         };
+
         if filter.deadband_type == DeadbandType::Percent as u32 {
             items_needing_deadband.push(&item.item_to_monitor.node_id);
         }

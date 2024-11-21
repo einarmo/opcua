@@ -43,8 +43,6 @@ pub mod anonymous_identity_token;
 pub use anonymous_identity_token::*;
 pub mod application_description;
 pub use application_description::*;
-pub mod argument;
-pub use argument::*;
 pub mod attribute_operand;
 pub use attribute_operand::*;
 pub mod axis_information;
@@ -659,11 +657,6 @@ static TYPES: std::sync::LazyLock<opcua::types::TypeLoaderInstance> = std::sync:
             crate::DataTypeId::ApplicationDescription as u32,
             crate::ObjectId::ApplicationDescription_Encoding_DefaultBinary as u32,
             opcua::types::binary_decode_to_enc::<ApplicationDescription>,
-        );
-        inst.add_binary_type(
-            crate::DataTypeId::Argument as u32,
-            crate::ObjectId::Argument_Encoding_DefaultBinary as u32,
-            opcua::types::binary_decode_to_enc::<Argument>,
         );
         inst.add_binary_type(
             crate::DataTypeId::AttributeOperand as u32,
@@ -1993,6 +1986,11 @@ static TYPES: std::sync::LazyLock<opcua::types::TypeLoaderInstance> = std::sync:
             crate::ObjectId::XVType_Encoding_DefaultBinary as u32,
             opcua::types::binary_decode_to_enc::<XVType>,
         );
+        inst.add_binary_type(
+            crate::DataTypeId::Argument as u32,
+            crate::ObjectId::Argument_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<crate::argument::Argument>,
+        );
     }
     #[cfg(feature = "xml")]
     {
@@ -2080,11 +2078,6 @@ static TYPES: std::sync::LazyLock<opcua::types::TypeLoaderInstance> = std::sync:
             crate::DataTypeId::ApplicationDescription as u32,
             crate::ObjectId::ApplicationDescription_Encoding_DefaultXml as u32,
             opcua::types::xml_decode_to_enc::<ApplicationDescription>,
-        );
-        inst.add_xml_type(
-            crate::DataTypeId::Argument as u32,
-            crate::ObjectId::Argument_Encoding_DefaultXml as u32,
-            opcua::types::xml_decode_to_enc::<Argument>,
         );
         inst.add_xml_type(
             crate::DataTypeId::AttributeOperand as u32,
@@ -3401,6 +3394,11 @@ static TYPES: std::sync::LazyLock<opcua::types::TypeLoaderInstance> = std::sync:
             crate::ObjectId::XVType_Encoding_DefaultXml as u32,
             opcua::types::xml_decode_to_enc::<XVType>,
         );
+        inst.add_xml_type(
+            crate::DataTypeId::Argument as u32,
+            crate::ObjectId::Argument_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<crate::argument::Argument>,
+        );
     }
     #[cfg(feature = "json")]
     {
@@ -3488,11 +3486,6 @@ static TYPES: std::sync::LazyLock<opcua::types::TypeLoaderInstance> = std::sync:
             crate::DataTypeId::ApplicationDescription as u32,
             crate::ObjectId::ApplicationDescription_Encoding_DefaultJson as u32,
             opcua::types::json_decode_to_enc::<ApplicationDescription>,
-        );
-        inst.add_json_type(
-            crate::DataTypeId::Argument as u32,
-            crate::ObjectId::Argument_Encoding_DefaultJson as u32,
-            opcua::types::json_decode_to_enc::<Argument>,
         );
         inst.add_json_type(
             crate::DataTypeId::AttributeOperand as u32,
@@ -4814,6 +4807,11 @@ static TYPES: std::sync::LazyLock<opcua::types::TypeLoaderInstance> = std::sync:
             crate::ObjectId::XVType_Encoding_DefaultJson as u32,
             opcua::types::json_decode_to_enc::<XVType>,
         );
+        inst.add_json_type(
+            crate::DataTypeId::Argument as u32,
+            crate::ObjectId::Argument_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<crate::argument::Argument>,
+        );
     }
     inst
 });
@@ -4849,7 +4847,7 @@ impl opcua::types::TypeLoader for GeneratedTypeLoader {
         let Some(num_id) = node_id.as_u32() else {
             return Some(
                 Err(
-                    crate::xml::FromXmlError::Other(
+                    opcua::types::xml::FromXmlError::Other(
                         "Unsupported encoding ID, we only support numeric IDs".to_owned(),
                     ),
                 ),

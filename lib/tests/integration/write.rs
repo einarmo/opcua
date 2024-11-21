@@ -756,7 +756,7 @@ async fn history_update_insert() {
 
     let r = session
         .history_read(
-            &HistoryReadAction::ReadRawModifiedDetails(ReadRawModifiedDetails {
+            HistoryReadAction::ReadRawModifiedDetails(ReadRawModifiedDetails {
                 is_read_modified: false,
                 start_time: start,
                 end_time: start + TimeDelta::try_seconds(2000).unwrap(),
@@ -780,9 +780,10 @@ async fn history_update_insert() {
     assert_eq!(v.status_code, StatusCode::Good);
     let data = v
         .history_data
-        .decode_inner::<HistoryData>(session.decoding_options())
+        .inner_as::<HistoryData>()
         .unwrap()
         .data_values
+        .as_ref()
         .unwrap();
 
     assert_eq!(data.len(), 1000);

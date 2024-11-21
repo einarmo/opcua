@@ -13,7 +13,7 @@ use std::{
 
 use log::{error, warn};
 
-use crate::{write_u8, ExpandedMessageInfo, ExpandedNodeId};
+use crate::{write_i32, write_u8, ExpandedMessageInfo, ExpandedNodeId};
 
 use super::{
     byte_string::ByteString,
@@ -55,6 +55,8 @@ pub trait DynEncodable: Any + Send + Sync + std::fmt::Debug {
     fn json_type_id(&self) -> ExpandedNodeId;
 
     fn as_dyn_any(self: Box<Self>) -> Box<dyn Any + Send + Sync + 'static>;
+
+    fn as_dyn_any_ref(&self) -> &(dyn Any + Send + Sync);
 
     fn clone_box(&self) -> Box<dyn DynEncodable>;
 
@@ -98,6 +100,10 @@ macro_rules! blanket_dyn_encodable {
             }
 
             fn as_dyn_any(self: Box<Self>) -> Box<dyn Any + Send + Sync + 'static> {
+                self
+            }
+
+            fn as_dyn_any_ref(&self) -> &(dyn Any + Send + Sync) {
                 self
             }
 
@@ -314,7 +320,7 @@ impl BinaryEncodable for ExtensionObject {
         // Just default to null here, we'll fail later.
         let mut size = id.map(|n| n.byte_len(ctx)).unwrap_or(2usize);
         size += match &self.body {
-            Some(b) => b.byte_len_dyn(ctx),
+            Some(b) => 4 + b.byte_len_dyn(ctx),
             None => 1,
         };
 
@@ -339,6 +345,7 @@ impl BinaryEncodable for ExtensionObject {
         match &self.body {
             Some(b) => {
                 size += write_u8(stream, 0x1)?;
+                size += write_i32(stream, b.byte_len_dyn(ctx) as i32)?;
                 size += b.encode_binary(&mut stream as &mut dyn Write, ctx)?;
             }
             None => {
@@ -359,7 +366,14 @@ impl BinaryDecodable for ExtensionObject {
         let encoding_type = u8::decode(stream, ctx)?;
         let body = match encoding_type {
             0x0 => None,
-            0x1 => Some(ctx.load_from_binary(&node_id, &mut stream, ctx)?),
+            0x1 => {
+                let size = i32::decode(stream, ctx)?;
+                if size <= 0 {
+                    None
+                } else {
+                    Some(ctx.load_from_binary(&node_id, &mut stream, ctx)?)
+                }
+            }
             0x2 => {
                 warn!("Unsupported extension object encoding: XMLElement");
                 None
@@ -382,11 +396,6 @@ impl ExtensionObject {
     /// Tests for null node id.
     pub fn is_null(&self) -> bool {
         self.body.is_none()
-    }
-
-    /// Tests for empty body.
-    pub fn is_empty(&self) -> bool {
-        self.is_null() || matches!(self.body, None)
     }
 
     pub fn binary_type_id(&self) -> ExpandedNodeId {
@@ -417,14 +426,14 @@ impl ExtensionObject {
         }
     }
 
-    pub fn inner_as<T: Send + Sync + 'static>(&self) -> Option<Box<T>> {
-        if !self.inner_is::<T>() {
-            return None;
-        }
+    pub fn into_inner_as<T: Send + Sync + 'static>(self) -> Option<Box<T>> {
+        self.body.and_then(|b| b.as_dyn_any().downcast().ok())
+    }
 
+    pub fn inner_as<T: Send + Sync + 'static>(&self) -> Option<&T> {
         self.body
             .as_ref()
-            .and_then(|b| b.clone_box().as_dyn_any().downcast().ok())
+            .and_then(|b| b.as_dyn_any_ref().downcast_ref())
     }
 
     pub fn type_id(&self) -> Option<TypeId> {
@@ -435,3 +444,86 @@ impl ExtensionObject {
         self.type_id() == Some(TypeId::of::<T>())
     }
 }
+
+#[macro_export]
+macro_rules! match_extension_object_owned {
+    (_final { $($nom:tt)* }) => {
+        $($nom)*
+    };
+    (_inner $obj:ident, { $($nom:tt)* }, _ => $t:expr $(,)?) => {
+        match_extension_object_owned!(_final {
+            $($nom)*
+            else {
+                $t
+            }
+        })
+    };
+    (_inner $obj:ident, { $($nom:tt)* }, $tok:ident: $typ:ty => $t:expr $(,)?) => {
+        match_extension_object_owned!(_final {
+            $($nom)*
+            else if $obj.inner_is::<$typ>() {
+                let $tok: $typ = *$obj.into_inner_as::<$typ>().unwrap();
+                $t
+            }
+        })
+    };
+    (_inner $obj:ident, { $($nom:tt)* }, $tok:ident: $typ:ty => $t:expr, $($r:tt)*) => {
+        match_extension_object_owned!(_inner $obj, {
+            $($nom)*
+            else if $obj.inner_is::<$typ>() {
+                let $tok: $typ = *$obj.into_inner_as::<$typ>().unwrap();
+                $t
+            }
+        }, $($r)*)
+    };
+    ($obj:ident, $tok:ident: $typ:ty => $t:expr, $($r:tt)*) => {
+        match_extension_object_owned!(_inner $obj, {
+            if $obj.inner_is::<$typ>() {
+                let $tok: $typ = *$obj.into_inner_as::<$typ>().unwrap();
+                $t
+            }
+        }, $($r)*)
+    };
+}
+
+pub use match_extension_object_owned;
+
+#[macro_export]
+macro_rules! match_extension_object {
+    (_final { $($nom:tt)* }) => {
+        $($nom)*
+    };
+    (_inner $obj:ident, { $($nom:tt)* }, _ => $t:expr $(,)?) => {
+        match_extension_object!(_final {
+            $($nom)*
+            else {
+                $t
+            }
+        })
+    };
+    (_inner $obj:ident, { $($nom:tt)* }, $tok:ident: $typ:ty => $t:expr $(,)?) => {
+        match_extension_object!(_final {
+            $($nom)*
+            else if let Some($tok) = $obj.inner_as::<$typ>() {
+                $t
+            }
+        })
+    };
+    (_inner $obj:ident, { $($nom:tt)* }, $tok:ident: $typ:ty => $t:expr, $($r:tt)*) => {
+        match_extension_object!(_inner $obj, {
+            $($nom)*
+            else if let Some($tok) = $obj.inner_as::<$typ>() {
+                $t
+            }
+        }, $($r)*)
+    };
+    ($obj:ident, $tok:ident: $typ:ty => $t:expr, $($r:tt)*) => {
+        match_extension_object!(_inner $obj, {
+            if let Some($tok) = $obj.inner_as::<$typ>() {
+                $t
+            }
+        }, $($r)*)
+    };
+}
+
+pub use match_extension_object;

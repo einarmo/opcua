@@ -594,13 +594,12 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
                 continue;
             };
 
-            let options = context.info.decoding_options();
             let num_args = input_arguments_value.values.len();
             let arguments: Vec<_> = input_arguments_value
                 .values
                 .into_iter()
                 .filter_map(|v| match v {
-                    Variant::ExtensionObject(o) => o.decode_inner::<Argument>(&options).ok(),
+                    Variant::ExtensionObject(o) => o.into_inner_as::<Argument>(),
                     _ => None,
                 })
                 .collect();

@@ -629,34 +629,26 @@ fn make_variable_21(
                 opcua::types::DataValue::new_now(
                     opcua::types::Variant::from(
                         vec![
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The device is not online, or no information is available. The device is offline if no ARs other than possible Device Access AR’s exist."),
                             display_name : opcua::types::LocalizedText::new("",
-                            "OFFLINE"), value : 0i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "OFFLINE"), value : 0i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The device is a docking device and currently not online."),
                             display_name : opcua::types::LocalizedText::new("",
-                            "OFFLINE_DOCKING"), value : 1i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "OFFLINE_DOCKING"), value : 1i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The device is online. This is the case if at least one AR other than possible Device Access AR’s exists."),
                             display_name : opcua::types::LocalizedText::new("",
-                            "ONLINE"), value : 2i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "ONLINE"), value : 2i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The device is a docking device and currently online."),
                             display_name : opcua::types::LocalizedText::new("",
-                            "ONLINE_DOCKING"), value : 3i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
+                            "ONLINE_DOCKING"), value : 3i64, }),
                         ],
                     ),
                 ),
@@ -1375,78 +1367,47 @@ fn make_variable_23(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Ready to pass packets"),
-                        display_name: opcua::types::LocalizedText::new("", "UP"),
-                        value: 1i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "No packets are passed"),
-                        display_name: opcua::types::LocalizedText::new("", "DOWN"),
-                        value: 2i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "In some test mode"),
-                        display_name: opcua::types::LocalizedText::new("", "TESTING"),
-                        value: 3i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new(
-                            "",
-                            "Status cannot be determined",
-                        ),
-                        display_name: opcua::types::LocalizedText::new("", "UNKNOWN"),
-                        value: 4i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new(
-                            "",
-                            "In pending state waiting  for some external event",
-                        ),
-                        display_name: opcua::types::LocalizedText::new("", "DORMANT"),
-                        value: 5i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Port not present"),
-                        display_name: opcua::types::LocalizedText::new("", "NOT_PRESENT"),
-                        value: 6i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new(
-                            "",
-                            "Down due to lower layer",
-                        ),
-                        display_name: opcua::types::LocalizedText::new("", "LOWER_LAYER_DOWN"),
-                        value: 7i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Ready to pass packets"),
+                    display_name: opcua::types::LocalizedText::new("", "UP"),
+                    value: 1i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "No packets are passed"),
+                    display_name: opcua::types::LocalizedText::new("", "DOWN"),
+                    value: 2i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "In some test mode"),
+                    display_name: opcua::types::LocalizedText::new("", "TESTING"),
+                    value: 3i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new(
+                        "",
+                        "Status cannot be determined",
+                    ),
+                    display_name: opcua::types::LocalizedText::new("", "UNKNOWN"),
+                    value: 4i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new(
+                        "",
+                        "In pending state waiting  for some external event",
+                    ),
+                    display_name: opcua::types::LocalizedText::new("", "DORMANT"),
+                    value: 5i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Port not present"),
+                    display_name: opcua::types::LocalizedText::new("", "NOT_PRESENT"),
+                    value: 6i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Down due to lower layer"),
+                    display_name: opcua::types::LocalizedText::new("", "LOWER_LAYER_DOWN"),
+                    value: 7i64,
+                }),
             ])),
             1u8,
             1u8,
@@ -2022,38 +1983,30 @@ fn make_variable_25(
                 opcua::types::DataValue::new_now(
                     opcua::types::Variant::from(
                         vec![
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "For example module not plugged"), display_name :
                             opcua::types::LocalizedText::new("", "NO_MODULE"), value :
-                            0i64, }, ns_map.namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            0i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "For example ModuleIdentNumber wrong"), display_name :
                             opcua::types::LocalizedText::new("", "WRONG_MODULE"), value :
-                            1i64, }, ns_map.namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            1i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "Module is okay but at least one submodule is locked, wrong or missing"),
                             display_name : opcua::types::LocalizedText::new("",
-                            "PROPER_MODULE"), value : 2i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "PROPER_MODULE"), value : 2i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "Module is not the same as requested – but the IO device was able to adapt by its own knowledge"),
                             display_name : opcua::types::LocalizedText::new("",
-                            "SUBSTITUTE"), value : 3i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("", "Default state"),
-                            display_name : opcua::types::LocalizedText::new("", "OK"),
-                            value : 4i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
+                            "SUBSTITUTE"), value : 3i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
+                            "Default state"), display_name :
+                            opcua::types::LocalizedText::new("", "OK"), value : 4i64, }),
                         ],
                     ),
                 ),
@@ -2587,20 +2540,16 @@ fn make_variable_264(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::Argument {
-                        array_dimensions: None,
-                        data_type: opcua::types::NodeId::new(0u16, 13u32),
-                        description: opcua::types::LocalizedText::new(
-                            "",
-                            "New I&M2 | IM_Date to be written remanent to the device.",
-                        ),
-                        name: "Date".into(),
-                        value_rank: -1i32,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message(opcua::types::Argument {
+                    array_dimensions: None,
+                    data_type: opcua::types::NodeId::new(0u16, 13u32),
+                    description: opcua::types::LocalizedText::new(
+                        "",
+                        "New I&M2 | IM_Date to be written remanent to the device.",
+                    ),
+                    name: "Date".into(),
+                    value_rank: -1i32,
+                }),
             ])),
             1u8,
             1u8,
@@ -2646,20 +2595,16 @@ fn make_variable_266(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::Argument {
-                        array_dimensions: None,
-                        data_type: opcua::types::NodeId::new(0u16, 12u32),
-                        description: opcua::types::LocalizedText::new(
-                            "",
-                            "New I&M3 | IM_Descriptor to be written remanent to the device.",
-                        ),
-                        name: "Descriptor".into(),
-                        value_rank: -1i32,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message(opcua::types::Argument {
+                    array_dimensions: None,
+                    data_type: opcua::types::NodeId::new(0u16, 12u32),
+                    description: opcua::types::LocalizedText::new(
+                        "",
+                        "New I&M3 | IM_Descriptor to be written remanent to the device.",
+                    ),
+                    name: "Descriptor".into(),
+                    value_rank: -1i32,
+                }),
             ])),
             1u8,
             1u8,
@@ -2707,27 +2652,24 @@ fn make_variable_268(
                 opcua::types::DataValue::new_now(
                     opcua::types::Variant::from(
                         vec![
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::Argument { array_dimensions : None, data_type :
+                            opcua::types::ExtensionObject::from_message(opcua::types::Argument
+                            { array_dimensions : None, data_type :
                             opcua::types::NodeId::new(ns_map.get_index(1u16).unwrap(),
                             3021u32), description : opcua::types::LocalizedText::new("",
                             "If 1, Tag_Function shall be written, If 2, Tag_Location shall be written, if 3 both."),
-                            name : "Tag_Selector".into(), value_rank : - 1i32, }, ns_map
-                            .namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::Argument { array_dimensions : None, data_type :
+                            name : "Tag_Selector".into(), value_rank : - 1i32, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::Argument
+                            { array_dimensions : None, data_type :
                             opcua::types::NodeId::new(0u16, 12u32), description :
                             opcua::types::LocalizedText::new("",
                             "String containing the new I&M1 | IM_Tag_Function to be written remanent to the device."),
-                            name : "Tag_Function".into(), value_rank : - 1i32, }, ns_map
-                            .namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::Argument { array_dimensions : None, data_type :
+                            name : "Tag_Function".into(), value_rank : - 1i32, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::Argument
+                            { array_dimensions : None, data_type :
                             opcua::types::NodeId::new(0u16, 12u32), description :
                             opcua::types::LocalizedText::new("",
                             "String containing the new I&M1 | IM_Tag_Location to be written remanent to the device."),
-                            name : "Tag_Location".into(), value_rank : - 1i32, }, ns_map
-                            .namespaces()).expect("Invalid encoding ID"),
+                            name : "Tag_Location".into(), value_rank : - 1i32, }),
                         ],
                     ),
                 ),
@@ -2799,80 +2741,89 @@ fn make_variable_27(
 ) -> opcua::nodes::ImportedItem {
     opcua::nodes::ImportedItem {
         node: opcua::nodes::Variable::new_full(
-                opcua::nodes::Base::new_full(
-                    opcua::types::NodeId::new(ns_map.get_index(1u16).unwrap(), 6023u32),
-                    opcua::types::NodeClass::Variable,
-                    opcua::types::QualifiedName::new(0u16, "EnumValues"),
-                    opcua::types::LocalizedText::new("", "EnumValues"),
-                    None,
-                    Some(0u32),
-                    Some(0u32),
-                ),
-                opcua::types::NodeId::new(0u16, 7594u32),
-                false,
-                1i32,
-                opcua::types::DataValue::new_now(
-                    opcua::types::Variant::from(
-                        vec![
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
-                            "Status cannot be determined"), display_name :
-                            opcua::types::LocalizedText::new("", "UNKNOWN"), value :
-                            0i64, }, ns_map.namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
-                            "The port is administratively disabled and discarding frames"),
-                            display_name : opcua::types::LocalizedText::new("",
-                            "DISABLED_DISCARDING"), value : 1i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
-                            "The port blocks incoming frames"), display_name :
-                            opcua::types::LocalizedText::new("", "BLOCKING"), value :
-                            2i64, }, ns_map.namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
-                            "The port is listening to and sending BPDUs (Bridge Protocol Data Units)."),
-                            display_name : opcua::types::LocalizedText::new("",
-                            "LISTENING"), value : 3i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("", ""), display_name :
-                            opcua::types::LocalizedText::new("", "LEARNING"), value :
-                            4i64, }, ns_map.namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("", ""), display_name :
-                            opcua::types::LocalizedText::new("", "FORWARDING"), value :
-                            5i64, }, ns_map.namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("", ""), display_name :
-                            opcua::types::LocalizedText::new("", "BROKEN"), value : 6i64,
-                            }, ns_map.namespaces()).expect("Invalid encoding ID"),
-                        ],
+            opcua::nodes::Base::new_full(
+                opcua::types::NodeId::new(ns_map.get_index(1u16).unwrap(), 6023u32),
+                opcua::types::NodeClass::Variable,
+                opcua::types::QualifiedName::new(0u16, "EnumValues"),
+                opcua::types::LocalizedText::new("", "EnumValues"),
+                None,
+                Some(0u32),
+                Some(0u32),
+            ),
+            opcua::types::NodeId::new(0u16, 7594u32),
+            false,
+            1i32,
+            opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new(
+                        "",
+                        "Status cannot be determined",
                     ),
-                ),
-                1u8,
-                1u8,
-                Some(vec![7u32]),
-                Some(0f64),
-            )
-            .into(),
+                    display_name: opcua::types::LocalizedText::new("", "UNKNOWN"),
+                    value: 0i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new(
+                        "",
+                        "The port is administratively disabled and discarding frames",
+                    ),
+                    display_name: opcua::types::LocalizedText::new("", "DISABLED_DISCARDING"),
+                    value: 1i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new(
+                        "",
+                        "The port blocks incoming frames",
+                    ),
+                    display_name: opcua::types::LocalizedText::new("", "BLOCKING"),
+                    value: 2i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new(
+                        "",
+                        "The port is listening to and sending BPDUs (Bridge Protocol Data Units).",
+                    ),
+                    display_name: opcua::types::LocalizedText::new("", "LISTENING"),
+                    value: 3i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", ""),
+                    display_name: opcua::types::LocalizedText::new("", "LEARNING"),
+                    value: 4i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", ""),
+                    display_name: opcua::types::LocalizedText::new("", "FORWARDING"),
+                    value: 5i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", ""),
+                    display_name: opcua::types::LocalizedText::new("", "BROKEN"),
+                    value: 6i64,
+                }),
+            ])),
+            1u8,
+            1u8,
+            Some(vec![7u32]),
+            Some(0f64),
+        )
+        .into(),
         references: vec![
-            opcua::nodes::ImportedReference { target_id :
-            opcua::types::NodeId::new(ns_map.get_index(1u16).unwrap(), 3018u32), type_id
-            : opcua::types::NodeId::new(0u16, 46u32), is_forward : false, },
-            opcua::nodes::ImportedReference { target_id : opcua::types::NodeId::new(0u16,
-            78u32), type_id : opcua::types::NodeId::new(0u16, 37u32), is_forward : true,
-            }, opcua::nodes::ImportedReference { target_id :
-            opcua::types::NodeId::new(0u16, 68u32), type_id :
-            opcua::types::NodeId::new(0u16, 40u32), is_forward : true, }
+            opcua::nodes::ImportedReference {
+                target_id: opcua::types::NodeId::new(ns_map.get_index(1u16).unwrap(), 3018u32),
+                type_id: opcua::types::NodeId::new(0u16, 46u32),
+                is_forward: false,
+            },
+            opcua::nodes::ImportedReference {
+                target_id: opcua::types::NodeId::new(0u16, 78u32),
+                type_id: opcua::types::NodeId::new(0u16, 37u32),
+                is_forward: true,
+            },
+            opcua::nodes::ImportedReference {
+                target_id: opcua::types::NodeId::new(0u16, 68u32),
+                type_id: opcua::types::NodeId::new(0u16, 40u32),
+                is_forward: true,
+            },
         ],
     }
 }
@@ -3472,13 +3423,12 @@ fn make_variable_288(
                 opcua::types::DataValue::new_now(
                     opcua::types::Variant::from(
                         vec![
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::Argument { array_dimensions : None, data_type :
+                            opcua::types::ExtensionObject::from_message(opcua::types::Argument
+                            { array_dimensions : None, data_type :
                             opcua::types::NodeId::new(0u16, 12u32), description :
                             opcua::types::LocalizedText::new("",
                             "String containing the new NameOfStation to be written remanent to the device. The maximum length shall be limited to 240 characters (See [PN Protocol] for details)."),
-                            name : "NameOfStation".into(), value_rank : - 1i32, }, ns_map
-                            .namespaces()).expect("Invalid encoding ID"),
+                            name : "NameOfStation".into(), value_rank : - 1i32, }),
                         ],
                     ),
                 ),
@@ -3519,27 +3469,19 @@ fn make_variable_29(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", ""),
-                        display_name: opcua::types::LocalizedText::new("", "NO_ADD_INFO"),
-                        value: 0i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new(
-                            "",
-                            "This Submodule is not available for takeover by IOSAR.",
-                        ),
-                        display_name: opcua::types::LocalizedText::new("", "TAKEOVER_NOT_ALLOWED"),
-                        value: 1i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", ""),
+                    display_name: opcua::types::LocalizedText::new("", "NO_ADD_INFO"),
+                    value: 0i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new(
+                        "",
+                        "This Submodule is not available for takeover by IOSAR.",
+                    ),
+                    display_name: opcua::types::LocalizedText::new("", "TAKEOVER_NOT_ALLOWED"),
+                    value: 1i64,
+                }),
             ])),
             1u8,
             1u8,
@@ -3895,41 +3837,31 @@ fn make_variable_3(
                 opcua::types::DataValue::new_now(
                     opcua::types::Variant::from(
                         vec![
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The AR connection to the device is established"),
                             display_name : opcua::types::LocalizedText::new("",
-                            "CONNECTED"), value : 0i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "CONNECTED"), value : 0i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The AR connection to the device is not established"),
                             display_name : opcua::types::LocalizedText::new("",
-                            "UNCONNECTED"), value : 1i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "UNCONNECTED"), value : 1i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The AR connection to the device is not established because the device is not available in the network"),
                             display_name : opcua::types::LocalizedText::new("",
-                            "UNCONNECTED_ERR_DEVICE_NOT_FOUND"), value : 2i64, }, ns_map
-                            .namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "UNCONNECTED_ERR_DEVICE_NOT_FOUND"), value : 2i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The AR connection to the device is not established because the IP address of the device exists multiple times"),
                             display_name : opcua::types::LocalizedText::new("",
-                            "UNCONNECTED_ERR_DUPLICATE_IP"), value : 3i64, }, ns_map
-                            .namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "UNCONNECTED_ERR_DUPLICATE_IP"), value : 3i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The AR connection to the device is not established because the Name of Station of the device exists multiple times"),
                             display_name : opcua::types::LocalizedText::new("",
-                            "UNCONNECTED_ERR_DUPLICATE_NOS"), value : 4i64, }, ns_map
-                            .namespaces()).expect("Invalid encoding ID"),
+                            "UNCONNECTED_ERR_DUPLICATE_NOS"), value : 4i64, }),
                         ],
                     ),
                 ),
@@ -4236,40 +4168,31 @@ fn make_variable_31(
                 opcua::types::DataValue::new_now(
                     opcua::types::Variant::from(
                         vec![
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "This AR is owner of the submodule"), display_name :
-                            opcua::types::LocalizedText::new("", "OWN"), value : 0i64, },
-                            ns_map.namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            opcua::types::LocalizedText::new("", "OWN"), value : 0i64,
+                            }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "This AR is owner of the submodule but it is blocked. For example parameter checking pending"),
                             display_name : opcua::types::LocalizedText::new("",
-                            "APPLICATION_READY_PENDING"), value : 128i64, }, ns_map
-                            .namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "APPLICATION_READY_PENDING"), value : 128i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "This AR is not owner of the submodule. It is blocked by superordinated means"),
                             display_name : opcua::types::LocalizedText::new("",
-                            "SUPERORDINATED_LOCKED"), value : 256i64, }, ns_map
-                            .namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "SUPERORDINATED_LOCKED"), value : 256i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "This AR is not owner of the submodule. It is owned by another IOAR"),
                             display_name : opcua::types::LocalizedText::new("",
-                            "LOCKED_BY_IO_CONTROLLER"), value : 384i64, }, ns_map
-                            .namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "LOCKED_BY_IO_CONTROLLER"), value : 384i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "This AR is not owner of the submodule. It is owned by another IOSAR"),
                             display_name : opcua::types::LocalizedText::new("",
-                            "LOCKED_BY_IO_SUPERVISOR"), value : 512i64, }, ns_map
-                            .namespaces()).expect("Invalid encoding ID"),
+                            "LOCKED_BY_IO_SUPERVISOR"), value : 512i64, }),
                         ],
                     ),
                 ),

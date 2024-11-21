@@ -13,7 +13,7 @@ use crate::{
     Session, UARequest,
 };
 use log::{debug, log_enabled};
-use opcua_core::{handle::AtomicHandle, sync::Mutex, trace_lock, trace_read_lock, ResponseMessage};
+use opcua_core::{handle::AtomicHandle, sync::Mutex, trace_lock, ResponseMessage};
 use opcua_types::{
     AttributeId, CreateMonitoredItemsRequest, CreateMonitoredItemsResponse,
     CreateSubscriptionRequest, CreateSubscriptionResponse, DeleteMonitoredItemsRequest,
@@ -1920,18 +1920,10 @@ impl Session {
             Ok(ResponseMessage::Publish(r)) => {
                 session_debug!(self, "PublishResponse");
 
-                let decoding_options = {
-                    let secure_channel = trace_read_lock!(self.channel.secure_channel);
-                    secure_channel.decoding_options()
-                };
-
                 {
                     let mut subscription_state = trace_lock!(self.subscription_state);
-                    subscription_state.handle_notification(
-                        r.subscription_id,
-                        r.notification_message,
-                        &decoding_options,
-                    );
+                    subscription_state
+                        .handle_notification(r.subscription_id, r.notification_message);
                 }
 
                 return Ok(r.more_notifications);

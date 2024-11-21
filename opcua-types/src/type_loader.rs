@@ -206,7 +206,7 @@ pub struct Context<'a> {
     options: DecodingOptions,
 }
 
-pub trait TypeLoader {
+pub trait TypeLoader: Send + Sync {
     #[cfg(feature = "xml")]
     fn load_from_xml(
         &self,

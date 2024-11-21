@@ -243,12 +243,12 @@ pub use opcua_macros::JsonDecodable;
 pub use opcua_macros::JsonEncodable;
 
 pub use self::{
-    add_node_attributes::AddNodeAttributes, array::*, attribute::*, byte_string::*, data_change::*,
-    data_type_definition::*, data_types::*, data_value::*, date_time::*, diagnostic_info::*,
-    encoding::*, event_field::*, expanded_node_id::*, extension_object::*, guid::*, impls::*,
-    localized_text::*, namespaces::*, node_id::*, node_ids::*, numeric_range::*, operand::*,
-    qualified_name::*, request_header::*, response_header::*, service_types::*, status_code::*,
-    string::*, type_loader::*, variant::*, variant_type_id::*,
+    add_node_attributes::AddNodeAttributes, argument::*, array::*, attribute::*, byte_string::*,
+    data_change::*, data_type_definition::*, data_types::*, data_value::*, date_time::*,
+    diagnostic_info::*, encoding::*, event_field::*, expanded_node_id::*, extension_object::*,
+    guid::*, impls::*, localized_text::*, namespaces::*, node_id::*, node_ids::*, numeric_range::*,
+    operand::*, qualified_name::*, request_header::*, response_header::*, service_types::*,
+    status_code::*, string::*, type_loader::*, variant::*, variant_type_id::*,
 };
 
 // Various aliases

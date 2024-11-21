@@ -3,6 +3,7 @@ use std::{self, fmt};
 use log::error;
 
 use crate::{
+    argument::Argument,
     attribute::AttributeId,
     byte_string::ByteString,
     constants,
@@ -13,10 +14,10 @@ use crate::{
     qualified_name::QualifiedName,
     response_header::{AsRequestHandle, ResponseHeader},
     service_types::{
-        AnonymousIdentityToken, ApplicationDescription, Argument, CallMethodRequest,
-        EndpointDescription, MessageSecurityMode, MonitoredItemCreateRequest, MonitoringMode,
-        MonitoringParameters, ReadValueId, ServiceCounterDataType, ServiceFault, SignatureData,
-        UserNameIdentityToken, UserTokenPolicy, UserTokenType,
+        AnonymousIdentityToken, ApplicationDescription, CallMethodRequest, EndpointDescription,
+        MessageSecurityMode, MonitoredItemCreateRequest, MonitoringMode, MonitoringParameters,
+        ReadValueId, ServiceCounterDataType, ServiceFault, SignatureData, UserNameIdentityToken,
+        UserTokenPolicy, UserTokenType,
     },
     status_code::StatusCode,
     string::UAString,
@@ -366,7 +367,7 @@ impl From<(&str, DataTypeId)> for Argument {
             data_type: v.1.into(),
             value_rank: -1,
             array_dimensions: None,
-            description: LocalizedText::new("", ""),
+            description: LocalizedText::null(),
         }
     }
 }

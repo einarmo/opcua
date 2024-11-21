@@ -23,16 +23,9 @@ pub async fn add_nodes(node_managers: NodeManagers, request: Request<AddNodesReq
             .max_nodes_per_node_management
     );
 
-    let decoding_options = request.info.decoding_options();
     let mut to_add: Vec<_> = nodes_to_add
         .into_iter()
-        .map(|it| {
-            AddNodeItem::new(
-                it,
-                &decoding_options,
-                request.request.request_header.return_diagnostics,
-            )
-        })
+        .map(|it| AddNodeItem::new(it, request.request.request_header.return_diagnostics))
         .collect();
 
     for (idx, node_manager) in node_managers.iter().enumerate() {

@@ -6,9 +6,9 @@ use opcua_nodes::{Event, ParsedEventFilter, TypeTree};
 use super::MonitoredItemHandle;
 use crate::{info::ServerInfo, node_manager::ParsedReadValueId};
 use opcua_types::{
-    DataChangeFilter, DataValue, DateTime, DecodingOptions, EncodingContext, EventFieldList,
-    EventFilter, EventFilterResult, ExtensionObject, MonitoredItemCreateRequest,
-    MonitoredItemModifyRequest, MonitoredItemNotification, MonitoringMode, NumericRange, ObjectId,
+    match_extension_object_owned, DataChangeFilter, DataValue, DateTime, EncodingContext,
+    EventFieldList, EventFilter, EventFilterResult, ExtensionObject, MonitoredItemCreateRequest,
+    MonitoredItemModifyRequest, MonitoredItemNotification, MonitoringMode, NumericRange,
     ParsedDataChangeFilter, StatusCode, TimestampsToReturn, Variant,
 };
 
@@ -43,51 +43,36 @@ impl FilterType {
     /// Try to create a filter from an extension object, returning
     /// an `EventFilterResult` if the filter is for events.
     pub fn from_filter(
-        filter: &ExtensionObject,
-        decoding_options: &DecodingOptions,
+        filter: ExtensionObject,
         eu_range: Option<(f64, f64)>,
         type_tree: &dyn TypeTree,
     ) -> (Option<EventFilterResult>, Result<FilterType, StatusCode>) {
         // Check if the filter is a supported filter type
-        let filter_type_id = &filter.node_id;
-        if filter_type_id.is_null() {
-            // No data filter was passed, so just a dumb value comparison
-            (None, Ok(FilterType::None))
-        } else if let Ok(filter_type_id) = filter_type_id.as_object_id() {
-            match filter_type_id {
-                ObjectId::DataChangeFilter_Encoding_DefaultBinary => {
-                    let r = filter.decode_inner::<DataChangeFilter>(decoding_options);
-                    let raw_filter = match r {
-                        Ok(filter) => filter,
-                        Err(e) => return (None, Err(e.into())),
-                    };
-                    let res = ParsedDataChangeFilter::parse(raw_filter, eu_range);
-                    (None, res.map(FilterType::DataChangeFilter))
-                }
-                ObjectId::EventFilter_Encoding_DefaultBinary => {
-                    let r = filter.decode_inner::<EventFilter>(decoding_options);
-                    let raw_filter = match r {
-                        Ok(filter) => filter,
-                        Err(e) => return (None, Err(e.into())),
-                    };
-                    let (res, filter_res) = ParsedEventFilter::new(raw_filter, type_tree);
-                    (Some(res), filter_res.map(FilterType::EventFilter))
-                }
-                _ => {
-                    error!(
-                        "Requested data filter type is not supported, {:?}",
-                        filter_type_id
-                    );
-                    (None, Err(StatusCode::BadFilterNotAllowed))
-                }
-            }
-        } else {
-            error!(
-                "Requested data filter type is not an object id, {:?}",
-                filter_type_id
-            );
-            (None, Err(StatusCode::BadFilterNotAllowed))
+        if filter.is_null() {
+            return (None, Ok(FilterType::None));
         }
+
+        match_extension_object_owned!(filter,
+            v: DataChangeFilter => {
+                let res = ParsedDataChangeFilter::parse(v, eu_range);
+                (None, res.map(FilterType::DataChangeFilter))
+            },
+            v: EventFilter => {
+                let (res, filter_res) = ParsedEventFilter::new(v, type_tree);
+                (Some(res), filter_res.map(FilterType::EventFilter))
+            },
+            _ => {
+                error!(
+                    "Requested data filter type is not supported: {}",
+                    filter
+                        .body
+                        .as_ref()
+                        .map(|b| b.type_name())
+                        .unwrap_or("Unknown")
+                );
+                (None, Err(StatusCode::BadFilterNotAllowed))
+            }
+        )
     }
 }
 
@@ -161,12 +146,8 @@ impl CreateMonitoredItem {
         type_tree: &dyn TypeTree,
         eu_range: Option<(f64, f64)>,
     ) -> Self {
-        let (filter_res, filter) = FilterType::from_filter(
-            &req.requested_parameters.filter,
-            &info.decoding_options(),
-            eu_range,
-            type_tree,
-        );
+        let (filter_res, filter) =
+            FilterType::from_filter(req.requested_parameters.filter, eu_range, type_tree);
         let sampling_interval =
             sanitize_sampling_interval(info, req.requested_parameters.sampling_interval);
         let queue_size = sanitize_queue_size(info, req.requested_parameters.queue_size as usize);
@@ -351,8 +332,7 @@ impl MonitoredItem {
     ) -> (Option<EventFilterResult>, StatusCode) {
         self.timestamps_to_return = timestamps_to_return;
         let (filter_res, filter) = FilterType::from_filter(
-            &request.requested_parameters.filter,
-            &info.decoding_options(),
+            request.requested_parameters.filter.clone(),
             self.eu_range,
             type_tree,
         );

@@ -296,6 +296,12 @@ pub trait SimpleBinaryEncodable {
     fn byte_len(&self) -> usize;
     /// Encodes the instance to the write stream.
     fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize>;
+
+    fn encode_to_vec(&self) -> Vec<u8> {
+        let mut buffer = Cursor::new(Vec::with_capacity(self.byte_len()));
+        let _ = self.encode(&mut buffer);
+        buffer.into_inner()
+    }
 }
 
 impl<T> BinaryEncodable for T

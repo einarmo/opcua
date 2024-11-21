@@ -83,8 +83,15 @@ pub struct CodeGenItemConfig {
     pub structs_single_file: bool,
 }
 
+pub struct ImportType {
+    path: String,
+    has_default: Option<bool>,
+    base_type: Option<String>,
+    is_defined: bool,
+}
+
 pub struct CodeGenerator {
-    import_map: HashMap<String, ExternalType>,
+    import_map: HashMap<String, ImportType>,
     input: HashMap<String, LoadedType>,
     default_excluded: HashSet<String>,
     config: CodeGenItemConfig,
@@ -100,7 +107,20 @@ impl CodeGenerator {
         target_namespace: String,
     ) -> Self {
         Self {
-            import_map: external_import_map,
+            import_map: external_import_map
+                .into_iter()
+                .map(|(k, v)| {
+                    (
+                        k,
+                        ImportType {
+                            path: v.path,
+                            has_default: v.has_default,
+                            base_type: v.base_type,
+                            is_defined: true,
+                        },
+                    )
+                })
+                .collect(),
             input: input
                 .into_iter()
                 .map(|v| (v.name().to_owned(), v))
@@ -156,6 +176,9 @@ impl CodeGenerator {
         let mut generated = Vec::new();
 
         for item in self.input.values() {
+            if self.import_map.contains_key(item.name()) {
+                continue;
+            }
             let name = match item {
                 LoadedType::Struct(s) => {
                     if self.config.structs_single_file {
@@ -175,7 +198,7 @@ impl CodeGenerator {
 
             self.import_map.insert(
                 item.name().to_owned(),
-                ExternalType {
+                ImportType {
                     path: format!("super::{}", name),
                     // Determined later
                     has_default: None,
@@ -183,6 +206,7 @@ impl CodeGenerator {
                         LoadedType::Struct(v) => v.base_type.clone(),
                         LoadedType::Enum(_) => None,
                     },
+                    is_defined: false,
                 },
             );
         }
@@ -196,6 +220,14 @@ impl CodeGenerator {
         let input = std::mem::take(&mut self.input);
 
         for item in input.into_values() {
+            if self
+                .import_map
+                .get(item.name())
+                .is_some_and(|v| v.is_defined)
+            {
+                continue;
+            }
+
             match item {
                 LoadedType::Struct(v) => generated.push(self.generate_struct(v)?),
                 LoadedType::Enum(v) => generated.push(self.generate_enum(v)?),

@@ -1,4 +1,4 @@
-use crate::MessageInfo;
+use crate::{match_extension_object_owned, MessageInfo};
 
 use super::{EnumDefinition, ExtensionObject, ObjectId, StatusCode, StructureDefinition, Variant};
 
@@ -51,25 +51,23 @@ impl MessageInfo for EnumDefinition {
 
 impl DataTypeDefinition {
     pub fn from_extension_object(obj: ExtensionObject) -> Result<Self, StatusCode> {
-        if let Some(v) = obj.inner_as() {
-            Ok(Self::Structure(*v))
-        } else if let Some(v) = obj.inner_as() {
-            Ok(Self::Enum(*v))
-        } else {
-            Err(StatusCode::BadDataTypeIdUnknown)
-        }
+        match_extension_object_owned!(obj,
+            v: StructureDefinition => Ok(Self::Structure(v)),
+            v: EnumDefinition => Ok(Self::Enum(v)),
+            _ => Err(StatusCode::BadDataTypeIdUnknown)
+        )
     }
 
-    pub fn as_extension_object(&self) -> ExtensionObject {
-        match self.clone() {
+    pub fn into_extension_object(self) -> ExtensionObject {
+        match self {
             DataTypeDefinition::Structure(s) => ExtensionObject::from_message(s),
             DataTypeDefinition::Enum(s) => ExtensionObject::from_message(s),
         }
     }
 }
 
-impl From<&DataTypeDefinition> for Variant {
-    fn from(value: &DataTypeDefinition) -> Self {
-        value.as_extension_object().into()
+impl From<DataTypeDefinition> for Variant {
+    fn from(value: DataTypeDefinition) -> Self {
+        value.into_extension_object().into()
     }
 }

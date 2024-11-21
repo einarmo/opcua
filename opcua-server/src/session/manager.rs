@@ -331,7 +331,7 @@ pub(crate) async fn activate_session(
             &endpoint_url,
             security_policy,
             security_mode,
-            &request.user_identity_token,
+            request.user_identity_token.clone(),
             &session_nonce,
         )
         .await?;
@@ -355,7 +355,7 @@ pub(crate) async fn activate_session(
         session.activate(
             secure_channel_id,
             server_nonce,
-            IdentityToken::new(&request.user_identity_token, &info.decoding_options()),
+            IdentityToken::new(request.user_identity_token.clone()),
             request.locale_ids.clone(),
             user_token.clone(),
         );
@@ -368,7 +368,10 @@ pub(crate) async fn activate_session(
     let namespaces = handler.get_namespaces_for_user(session_lck.clone(), session_id, user_token);
     {
         let mut session = trace_write_lock!(session_lck);
-        session.set_context(EncodingContext::new(namespaces));
+        session.set_context(EncodingContext::new(namespaces.clone()));
+    }
+    {
+        channel.set_namespaces(namespaces);
     }
 
     // TODO: Audit

@@ -328,7 +328,7 @@ impl ActivateSession {
                 let identity_token = AnonymousIdentityToken {
                     policy_id: policy.policy_id.clone(),
                 };
-                let identity_token = ExtensionObject::from_message(&identity_token);
+                let identity_token = ExtensionObject::from_message(identity_token);
                 Ok((identity_token, SignatureData::null()))
             }
             IdentityToken::UserName(user, pass) => {
@@ -344,7 +344,7 @@ impl ActivateSession {
                     pass,
                 )?;
                 Ok((
-                    ExtensionObject::from_message(&identity_token),
+                    ExtensionObject::from_message(identity_token),
                     SignatureData::null(),
                 ))
             }
@@ -385,7 +385,7 @@ impl ActivateSession {
                 };
 
                 Ok((
-                    ExtensionObject::from_message(&identity_token),
+                    ExtensionObject::from_message(identity_token),
                     user_token_signature,
                 ))
             }

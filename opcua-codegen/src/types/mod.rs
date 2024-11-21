@@ -6,14 +6,13 @@ mod structure;
 
 pub use base_constants::*;
 pub use enum_type::{EnumType, EnumValue};
-use gen::EncodingIds;
-pub use gen::{CodeGenItemConfig, CodeGenerator, GeneratedItem, ItemDefinition};
+pub use gen::{CodeGenItemConfig, CodeGenerator, EncodingIds, GeneratedItem, ItemDefinition};
 pub use loader::{BsdTypeLoader, LoadedType, LoadedTypes};
 use opcua_xml::load_bsd_file;
-use proc_macro2::{Span, TokenStream};
+use proc_macro2::TokenStream;
 use quote::quote;
 pub use structure::{StructureField, StructureFieldType, StructuredType};
-use syn::{parse_quote, Ident, Item};
+use syn::{parse_quote, parse_str, Item, Path};
 
 use crate::{CodeGenError, TypeCodeGenTarget, BASE_NAMESPACE};
 
@@ -115,19 +114,19 @@ fn binary_loader_impl(
     for (ids, typ) in ids {
         let dt_ident = &ids.data_type;
         let enc_ident = &ids.binary;
-        let typ_ident = Ident::new(&typ, Span::call_site());
+        let typ_path: Path = parse_str(typ).unwrap();
         fields.extend(quote! {
             inst.add_binary_type(
                 crate::DataTypeId::#dt_ident as u32,
                 crate::ObjectId::#enc_ident as u32,
-                opcua::types::binary_decode_to_enc::<#typ_ident>
+                opcua::types::binary_decode_to_enc::<#typ_path>
             );
         });
     }
 
     let index_check = if namespace != BASE_NAMESPACE {
         quote! {
-            let idx = ctx.namespaces.namespaces().get_index(#namespace)?;
+            let idx = ctx.namespaces().get_index(#namespace)?;
             if idx != node_id.namespace {
                 return None;
             }
@@ -166,19 +165,19 @@ fn json_loader_impl(ids: &[&(EncodingIds, String)], namespace: &str) -> (TokenSt
     for (ids, typ) in ids {
         let dt_ident = &ids.data_type;
         let enc_ident = &ids.json;
-        let typ_ident = Ident::new(&typ, Span::call_site());
+        let typ_path: Path = parse_str(typ).unwrap();
         fields.extend(quote! {
             inst.add_json_type(
                 crate::DataTypeId::#dt_ident as u32,
                 crate::ObjectId::#enc_ident as u32,
-                opcua::types::json_decode_to_enc::<#typ_ident>
+                opcua::types::json_decode_to_enc::<#typ_path>
             );
         });
     }
 
     let index_check = if namespace != BASE_NAMESPACE {
         quote! {
-            let idx = ctx.namespaces.namespaces().get_index(#namespace)?;
+            let idx = ctx.namespaces().get_index(#namespace)?;
             if idx != node_id.namespace {
                 return None;
             }
@@ -218,12 +217,12 @@ fn xml_loader_impl(ids: &[&(EncodingIds, String)], namespace: &str) -> (TokenStr
     for (ids, typ) in ids {
         let dt_ident = &ids.data_type;
         let enc_ident = &ids.xml;
-        let typ_ident = Ident::new(&typ, Span::call_site());
+        let typ_path: Path = parse_str(typ).unwrap();
         fields.extend(quote! {
             inst.add_xml_type(
                 crate::DataTypeId::#dt_ident as u32,
                 crate::ObjectId::#enc_ident as u32,
-                opcua::types::xml_decode_to_enc::<#typ_ident>
+                opcua::types::xml_decode_to_enc::<#typ_path>
             );
         });
     }
@@ -256,7 +255,7 @@ fn xml_loader_impl(ids: &[&(EncodingIds, String)], namespace: &str) -> (TokenStr
                 #index_check
 
                 let Some(num_id) = node_id.as_u32() else {
-                    return Some(Err(crate::xml::FromXmlError::Other(
+                    return Some(Err(opcua::types::xml::FromXmlError::Other(
                         "Unsupported encoding ID, we only support numeric IDs".to_owned(),
                     )));
                 };

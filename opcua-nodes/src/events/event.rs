@@ -361,7 +361,7 @@ mod tests {
             Variant::from(StatusCode::BadMaxAgeInvalid)
         );
         let kvp: KeyValuePair = match get(&id, &evt, "Kvp") {
-            Variant::ExtensionObject(o) => *o.inner_as().unwrap(),
+            Variant::ExtensionObject(o) => *o.into_inner_as().unwrap(),
             _ => panic!("Wrong variant type"),
         };
         assert_eq!(kvp.key, "Key".into());
@@ -375,7 +375,7 @@ mod tests {
             Variant::from(vec![3i32, 2i32, 1i32])
         );
         let euinfo: EUInformation = match get(&id, &evt, "Euinfo") {
-            Variant::ExtensionObject(o) => *o.inner_as().unwrap(),
+            Variant::ExtensionObject(o) => *o.into_inner_as().unwrap(),
             _ => panic!("Wrong variant type"),
         };
         assert_eq!(euinfo.namespace_uri.as_ref(), "uri:my:namespace");
