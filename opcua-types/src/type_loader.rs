@@ -8,27 +8,28 @@ use crate::{
     NamespaceMap, NodeId,
 };
 
+type BinaryLoadFun = fn(&mut dyn Read, &Context<'_>) -> EncodingResult<Box<dyn DynEncodable>>;
+
+#[cfg(feature = "xml")]
+type XmlLoadFun = fn(
+    &opcua_xml::XmlElement,
+    &crate::xml::XmlContext<'_>,
+) -> Result<Box<dyn DynEncodable>, crate::xml::FromXmlError>;
+
+type JsonLoadFun = fn(
+    &mut crate::json::JsonStreamReader<&mut dyn std::io::Read>,
+    &Context<'_>,
+) -> EncodingResult<Box<dyn DynEncodable>>;
+
+#[derive(Default)]
 pub struct TypeLoaderInstance {
-    binary_types:
-        HashMap<u32, fn(&mut dyn Read, &Context<'_>) -> EncodingResult<Box<dyn DynEncodable>>>,
+    binary_types: HashMap<u32, BinaryLoadFun>,
 
     #[cfg(feature = "xml")]
-    xml_types: HashMap<
-        u32,
-        fn(
-            &opcua_xml::XmlElement,
-            &crate::xml::XmlContext<'_>,
-        ) -> Result<Box<dyn DynEncodable>, crate::xml::FromXmlError>,
-    >,
+    xml_types: HashMap<u32, XmlLoadFun>,
 
     #[cfg(feature = "json")]
-    json_types: HashMap<
-        u32,
-        fn(
-            &mut crate::json::JsonStreamReader<&mut dyn std::io::Read>,
-            &Context<'_>,
-        ) -> EncodingResult<Box<dyn DynEncodable>>,
-    >,
+    json_types: HashMap<u32, JsonLoadFun>,
 }
 
 pub fn binary_decode_to_enc<T: DynEncodable + BinaryDecodable>(
@@ -56,49 +57,22 @@ pub fn xml_decode_to_enc<T: DynEncodable + crate::xml::FromXml>(
 
 impl TypeLoaderInstance {
     pub fn new() -> Self {
-        Self {
-            binary_types: HashMap::new(),
-            #[cfg(feature = "xml")]
-            xml_types: HashMap::new(),
-            #[cfg(feature = "json")]
-            json_types: HashMap::new(),
-        }
+        Self::default()
     }
 
-    pub fn add_binary_type(
-        &mut self,
-        data_type: u32,
-        encoding_type: u32,
-        fun: fn(&mut dyn Read, &Context<'_>) -> EncodingResult<Box<dyn DynEncodable>>,
-    ) {
+    pub fn add_binary_type(&mut self, data_type: u32, encoding_type: u32, fun: BinaryLoadFun) {
         self.binary_types.insert(data_type, fun);
         self.binary_types.insert(encoding_type, fun);
     }
 
     #[cfg(feature = "xml")]
-    pub fn add_xml_type(
-        &mut self,
-        data_type: u32,
-        encoding_type: u32,
-        fun: fn(
-            &opcua_xml::XmlElement,
-            &crate::xml::XmlContext<'_>,
-        ) -> Result<Box<dyn DynEncodable>, crate::xml::FromXmlError>,
-    ) {
+    pub fn add_xml_type(&mut self, data_type: u32, encoding_type: u32, fun: XmlLoadFun) {
         self.xml_types.insert(data_type, fun);
         self.xml_types.insert(encoding_type, fun);
     }
 
     #[cfg(feature = "json")]
-    pub fn add_json_type(
-        &mut self,
-        data_type: u32,
-        encoding_type: u32,
-        fun: fn(
-            &mut crate::json::JsonStreamReader<&mut dyn std::io::Read>,
-            &Context<'_>,
-        ) -> EncodingResult<Box<dyn DynEncodable>>,
-    ) {
+    pub fn add_json_type(&mut self, data_type: u32, encoding_type: u32, fun: JsonLoadFun) {
         self.json_types.insert(data_type, fun);
         self.json_types.insert(encoding_type, fun);
     }

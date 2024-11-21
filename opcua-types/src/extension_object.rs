@@ -375,7 +375,7 @@ impl BinaryDecodable for ExtensionObject {
                 )));
             }
         };
-        Ok(body.unwrap_or_else(|| ExtensionObject::null()))
+        Ok(body.unwrap_or_else(ExtensionObject::null))
     }
 }
 
@@ -394,7 +394,7 @@ impl ExtensionObject {
         self.body
             .as_ref()
             .map(|b| b.binary_type_id())
-            .unwrap_or_else(|| ExpandedNodeId::null())
+            .unwrap_or_else(ExpandedNodeId::null)
     }
 
     /// Returns the object id of the thing this extension object contains, assuming the

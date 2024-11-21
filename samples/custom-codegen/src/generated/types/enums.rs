@@ -73,9 +73,9 @@ impl opcua::types::json::JsonDecodable for IMTagSelectorEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -108,7 +108,7 @@ impl opcua::types::BinaryDecodable for IMTagSelectorEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -177,9 +177,9 @@ impl opcua::types::json::JsonDecodable for PnARStateEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -212,7 +212,7 @@ impl opcua::types::BinaryDecodable for PnARStateEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -279,9 +279,9 @@ impl opcua::types::json::JsonDecodable for PnARTypeEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -314,7 +314,7 @@ impl opcua::types::BinaryDecodable for PnARTypeEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -383,9 +383,9 @@ impl opcua::types::json::JsonDecodable for PnAssetChangeEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -418,7 +418,7 @@ impl opcua::types::BinaryDecodable for PnAssetChangeEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -489,9 +489,9 @@ impl opcua::types::json::JsonDecodable for PnAssetTypeEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -524,7 +524,7 @@ impl opcua::types::BinaryDecodable for PnAssetTypeEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -591,9 +591,9 @@ impl opcua::types::json::JsonDecodable for PnChannelAccumulativeEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -626,7 +626,7 @@ impl opcua::types::BinaryDecodable for PnChannelAccumulativeEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -697,9 +697,9 @@ impl opcua::types::json::JsonDecodable for PnChannelDirectionEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -732,7 +732,7 @@ impl opcua::types::BinaryDecodable for PnChannelDirectionEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -803,9 +803,9 @@ impl opcua::types::json::JsonDecodable for PnChannelMaintenanceEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -838,7 +838,7 @@ impl opcua::types::BinaryDecodable for PnChannelMaintenanceEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -909,9 +909,9 @@ impl opcua::types::json::JsonDecodable for PnChannelSpecifierEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -944,7 +944,7 @@ impl opcua::types::BinaryDecodable for PnChannelSpecifierEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -1023,9 +1023,9 @@ impl opcua::types::json::JsonDecodable for PnChannelTypeEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -1058,7 +1058,7 @@ impl opcua::types::BinaryDecodable for PnChannelTypeEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -1129,9 +1129,9 @@ impl opcua::types::json::JsonDecodable for PnDeviceStateEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -1164,7 +1164,7 @@ impl opcua::types::BinaryDecodable for PnDeviceStateEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -1236,9 +1236,9 @@ impl opcua::types::json::JsonDecodable for PnLinkStateEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -1271,7 +1271,7 @@ impl opcua::types::BinaryDecodable for PnLinkStateEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -1344,9 +1344,9 @@ impl opcua::types::json::JsonDecodable for PnModuleStateEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -1379,7 +1379,7 @@ impl opcua::types::BinaryDecodable for PnModuleStateEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -1456,9 +1456,9 @@ impl opcua::types::json::JsonDecodable for PnPortStateEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -1491,7 +1491,7 @@ impl opcua::types::BinaryDecodable for PnPortStateEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -1558,9 +1558,9 @@ impl opcua::types::json::JsonDecodable for PnSubmoduleAddInfoEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -1593,7 +1593,7 @@ impl opcua::types::BinaryDecodable for PnSubmoduleAddInfoEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -1666,9 +1666,9 @@ impl opcua::types::json::JsonDecodable for PnSubmoduleARInfoEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -1701,7 +1701,7 @@ impl opcua::types::BinaryDecodable for PnSubmoduleARInfoEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -1772,9 +1772,9 @@ impl opcua::types::json::JsonDecodable for PnSubmoduleIdentInfoEnumeration {
     ) -> opcua::types::EncodingResult<Self> {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
-        Ok(Self::try_from(value).map_err(|e| {
+        Self::try_from(value).map_err(|e| {
             opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
-        })?)
+        })
     }
 }
 #[cfg(feature = "json")]
@@ -1807,6 +1807,6 @@ impl opcua::types::BinaryDecodable for PnSubmoduleIdentInfoEnumeration {
         _ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let value = opcua::types::read_i32(stream)?;
-        Ok(Self::try_from(value)?)
+        Self::try_from(value)
     }
 }

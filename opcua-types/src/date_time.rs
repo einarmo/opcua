@@ -55,7 +55,7 @@ mod json {
             _ctx: &Context<'_>,
         ) -> super::EncodingResult<Self> {
             let v = stream.next_str()?;
-            let dt = DateTime::parse_from_rfc3339(&v)
+            let dt = DateTime::parse_from_rfc3339(v)
                 .map_err(|e| Error::decoding(format!("Cannot parse date time: {e}")))?;
             Ok(dt)
         }

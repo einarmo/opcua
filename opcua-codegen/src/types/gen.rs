@@ -597,9 +597,9 @@ impl CodeGenerator {
                 ) -> opcua::types::EncodingResult<Self> {
                     use opcua::types::json::JsonReader;
                     let value: #ty = stream.next_number()??;
-                    Ok(Self::try_from(value).map_err(|e| {
+                    Self::try_from(value).map_err(|e| {
                         opcua::types::Error::decoding(format!(#failure_str, e))
-                    })?)
+                    })
                 }
             }
         });
@@ -642,7 +642,7 @@ impl CodeGenerator {
             impl opcua::types::BinaryDecodable for #enum_ident {
                 fn decode<S: std::io::Read + ?Sized>(stream: &mut S, _ctx: &opcua::types::Context<'_>) -> opcua::types::EncodingResult<Self> {
                     let value = opcua::types::#read_method(stream)?;
-                    Ok(Self::try_from(value)?)
+                    Self::try_from(value)
                 }
             }
         });

@@ -239,14 +239,17 @@ impl MessageChunk {
         };
 
         let mut stream = Cursor::new(vec![0u8; message_size]);
+        let mut size = 0;
         // write chunk header
-        chunk_header.encode(&mut stream)?;
+        size += chunk_header.encode(&mut stream)?;
         // write security header
-        security_header.encode(&mut stream)?;
+        size += security_header.encode(&mut stream)?;
         // write sequence header
-        sequence_header.encode(&mut stream)?;
+        size += sequence_header.encode(&mut stream)?;
         // write message
-        stream.write(data)?;
+        size += stream.write(data)?;
+
+        debug_assert_eq!(size, message_size);
 
         Ok(MessageChunk {
             data: stream.into_inner(),

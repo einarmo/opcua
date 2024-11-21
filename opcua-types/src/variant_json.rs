@@ -249,7 +249,7 @@ impl JsonDecodable for Variant {
                 VariantScalarTypeId::LocalizedText => Variant::from(LocalizedText::default()),
                 VariantScalarTypeId::ExtensionObject => Variant::from(ExtensionObject::default()),
                 VariantScalarTypeId::DataValue => Variant::from(DataValue::default()),
-                VariantScalarTypeId::Variant => Variant::Variant(Box::new(Variant::default())),
+                VariantScalarTypeId::Variant => Variant::Variant(Box::default()),
                 VariantScalarTypeId::DiagnosticInfo => Variant::from(DiagnosticInfo::default()),
             })
         });

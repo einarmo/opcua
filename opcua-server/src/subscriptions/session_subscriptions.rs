@@ -305,7 +305,7 @@ impl SessionSubscriptions {
                 let (filter_result, status) =
                     item.modify(info, timestamps_to_return, &request, type_tree);
                 let filter_result = filter_result
-                    .map(|f| ExtensionObject::from_message(f))
+                    .map(ExtensionObject::from_message)
                     .unwrap_or_else(ExtensionObject::null);
 
                 results.push(MonitoredItemUpdateRef::new(

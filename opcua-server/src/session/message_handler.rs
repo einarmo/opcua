@@ -236,7 +236,7 @@ impl MessageHandler {
                 async_service_call!(services::delete_monitored_items, self, request, data)
             }
 
-            RequestMessage::SetTriggering(request) => self.set_triggering(request, data),
+            RequestMessage::SetTriggering(request) => self.set_triggering(*request, data),
 
             RequestMessage::Publish(request) => self.publish(request, data),
 
@@ -409,7 +409,7 @@ impl MessageHandler {
 
     fn set_triggering(
         &self,
-        request: Box<SetTriggeringRequest>,
+        request: SetTriggeringRequest,
         data: RequestData,
     ) -> HandleMessageResult {
         let result = self

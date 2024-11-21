@@ -972,10 +972,10 @@ impl SecureChannel {
         let our_cert = self.cert.as_ref().unwrap();
         let our_thumbprint = our_cert.thumbprint();
         if our_thumbprint.value() != receiver_thumbprint.as_ref() {
-            return Err(Error::new(
+            Err(Error::new(
                 StatusCode::BadNoValidCertificates,
                 "Supplied thumbprint does not match application certificate's thumbprint",
-            ));
+            ))
         } else {
             // Copy message, security header
             dst[..encrypted_range.start].copy_from_slice(&src[..encrypted_range.start]);

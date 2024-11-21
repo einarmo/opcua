@@ -62,7 +62,7 @@ pub fn generate_types(
 }
 
 pub fn type_loader_impl(ids: &[(EncodingIds, String)], namespace: &str) -> Vec<Item> {
-    let mut ids: Vec<_> = ids.into_iter().collect();
+    let mut ids: Vec<_> = ids.iter().collect();
     ids.sort_by(|a, b| a.1.cmp(&b.1));
     let mut res = Vec::new();
 

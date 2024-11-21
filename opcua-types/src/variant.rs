@@ -720,9 +720,9 @@ impl BinaryDecodable for Variant {
                             "Unrecognized encoding mask: {element_encoding_mask}"
                         ))
                     })?;
-                return Ok(Array::new_multi(value_type_id, Vec::new(), Vec::new())
+                return Array::new_multi(value_type_id, Vec::new(), Vec::new())
                     .map(Variant::from)
-                    .map_err(Error::decoding)?);
+                    .map_err(Error::decoding);
             }
             array_length
         } else {

@@ -159,11 +159,11 @@ where
         stream: &mut JsonStreamWriter<&mut dyn Write>,
         ctx: &crate::Context<'_>,
     ) -> EncodingResult<()> {
-        T::encode(&self, stream, ctx)
+        T::encode(self, stream, ctx)
     }
 
     fn is_null_json(&self) -> bool {
-        T::is_null_json(&self)
+        T::is_null_json(self)
     }
 }
 

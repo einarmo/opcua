@@ -351,7 +351,7 @@ where
 
 /// Converts an IO encoding error (and logs when in error) into an EncodingResult
 pub fn process_encode_io_result(result: Result<usize>) -> EncodingResult<usize> {
-    result.map_err(|err| Error::encoding(err))
+    result.map_err(Error::encoding)
 }
 
 /// Converts an IO encoding error (and logs when in error) into an EncodingResult
@@ -359,7 +359,7 @@ pub fn process_decode_io_result<T>(result: Result<T>) -> EncodingResult<T>
 where
     T: Debug,
 {
-    result.map_err(|err| Error::decoding(err))
+    result.map_err(Error::decoding)
 }
 
 impl<T> BinaryEncodable for Option<Vec<T>>
