@@ -10,7 +10,6 @@ use std::{
     str::FromStr,
 };
 
-use log::error;
 use uuid::Uuid;
 
 use crate::encoding::*;
@@ -26,9 +25,7 @@ mod json {
     use std::io::{Read, Write};
     use std::str::FromStr;
 
-    use log::warn;
-
-    use crate::{json::*, StatusCode};
+    use crate::{json::*, Error};
 
     use super::Guid;
 
@@ -48,10 +45,7 @@ mod json {
             _ctx: &Context<'_>,
         ) -> super::EncodingResult<Self> {
             let s = stream.next_str()?;
-            let guid = Guid::from_str(s).map_err(|_| {
-                warn!("Cannot parse uuid");
-                StatusCode::BadDecodingError
-            })?;
+            let guid = Guid::from_str(s).map_err(Error::decoding)?;
             Ok(guid)
         }
     }
@@ -96,12 +90,10 @@ impl BinaryDecodable for Guid {
 }
 
 impl FromStr for Guid {
-    type Err = ();
+    type Err = <Uuid as FromStr>::Err;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Uuid::from_str(s).map(|uuid| Guid { uuid }).map_err(|err| {
-            error!("Guid cannot be parsed from string, err = {:?}", err);
-        })
+        Uuid::from_str(s).map(|uuid| Guid { uuid })
     }
 }
 

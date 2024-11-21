@@ -11,6 +11,7 @@ use std::io::{Cursor, Write};
 use std::str::FromStr;
 
 use log::{error, warn};
+use opcua_types::Error;
 use opcua_types::{
     encoding::{read_u32, write_u32},
     service_types::{SignatureData, UserNameIdentityToken, UserTokenPolicy, X509IdentityToken},
@@ -93,7 +94,7 @@ pub fn decrypt_user_identity_token_password(
     user_identity_token: &UserNameIdentityToken,
     server_nonce: &[u8],
     server_key: &PrivateKey,
-) -> Result<String, StatusCode> {
+) -> Result<String, Error> {
     if user_identity_token.encryption_algorithm.is_empty() {
         // Assumed to be UTF-8 plain text
         user_identity_token.plaintext_password()
@@ -104,9 +105,12 @@ pub fn decrypt_user_identity_token_password(
             super::algorithms::ENC_RSA_15 => RsaPadding::Pkcs1,
             super::algorithms::ENC_RSA_OAEP => RsaPadding::OaepSha1,
             super::algorithms::ENC_RSA_OAEP_SHA256 => RsaPadding::OaepSha256,
-            _ => {
+            r => {
                 error!("decrypt_user_identity_token_password has rejected unsupported user identity encryption algorithm \"{}\"", encryption_algorithm);
-                return Err(StatusCode::BadIdentityTokenInvalid);
+                return Err(Error::new(
+                    StatusCode::BadIdentityTokenInvalid,
+                    format!("Identity token rejected, unsupported encryption algorithm {r}"),
+                ));
             }
         };
         legacy_password_decrypt(
@@ -125,17 +129,15 @@ pub fn legacy_password_encrypt(
     server_nonce: &[u8],
     server_cert: &X509,
     padding: RsaPadding,
-) -> Result<ByteString, StatusCode> {
+) -> Result<ByteString, Error> {
     // Message format is size, password, nonce
     let plaintext_size = 4 + password.len() + server_nonce.len();
     let mut src = Cursor::new(vec![0u8; plaintext_size]);
 
     // Write the length of the data to be encrypted excluding the length itself)
     write_u32(&mut src, (plaintext_size - 4) as u32)?;
-    src.write(password.as_bytes())
-        .map_err(|_| StatusCode::BadEncodingError)?;
-    src.write(server_nonce)
-        .map_err(|_| StatusCode::BadEncodingError)?;
+    src.write(password.as_bytes()).map_err(Error::decoding)?;
+    src.write(server_nonce).map_err(Error::decoding)?;
 
     // Encrypt the data with the public key from the server's certificate
     let public_key = server_cert.public_key()?;
@@ -144,7 +146,7 @@ pub fn legacy_password_encrypt(
     let mut dst = vec![0u8; cipher_size];
     let actual_size = public_key
         .public_encrypt(&src.into_inner(), &mut dst, padding)
-        .map_err(|_| StatusCode::BadEncodingError)?;
+        .map_err(Error::decoding)?;
 
     assert_eq!(actual_size, cipher_size);
 
@@ -158,32 +160,31 @@ pub fn legacy_password_decrypt(
     server_nonce: &[u8],
     server_key: &PrivateKey,
     padding: RsaPadding,
-) -> Result<String, StatusCode> {
+) -> Result<String, Error> {
     if secret.is_null() {
-        Err(StatusCode::BadDecodingError)
+        Err(Error::decoding("Missing server secret"))
     } else {
         // Decrypt the message
         let src = secret.value.as_ref().unwrap();
         let mut dst = vec![0u8; src.len()];
         let actual_size = server_key
             .private_decrypt(src, &mut dst, padding)
-            .map_err(|_| StatusCode::BadEncodingError)?;
+            .map_err(Error::decoding)?;
 
         let mut dst = Cursor::new(dst);
         let plaintext_size = read_u32(&mut dst)? as usize;
         if plaintext_size + 4 != actual_size {
-            Err(StatusCode::BadDecodingError)
+            Err(Error::decoding("Invalid plaintext size"))
         } else {
             let dst = dst.into_inner();
             let nonce_len = server_nonce.len();
             let nonce_begin = actual_size - nonce_len;
             let nonce = &dst[nonce_begin..(nonce_begin + nonce_len)];
             if nonce != server_nonce {
-                Err(StatusCode::BadDecodingError)
+                Err(Error::decoding("Invalid nonce"))
             } else {
                 let password = &dst[4..nonce_begin];
-                let password = String::from_utf8(password.to_vec())
-                    .map_err(|_| StatusCode::BadEncodingError)?;
+                let password = String::from_utf8(password.to_vec()).map_err(Error::decoding)?;
                 Ok(password)
             }
         }
@@ -197,7 +198,7 @@ pub fn verify_x509_identity_token(
     security_policy: SecurityPolicy,
     server_cert: &X509,
     server_nonce: &[u8],
-) -> Result<(), StatusCode> {
+) -> Result<(), Error> {
     // Since it is not obvious at all from the spec what the user token signature is supposed to be, I looked
     // at the internet for clues:
     //
@@ -211,16 +212,11 @@ pub fn verify_x509_identity_token(
     // if the spec actually said this.
 
     let signing_cert = super::x509::X509::from_byte_string(&token.certificate_data)?;
-    let result = super::verify_signature_data(
+    super::verify_signature_data(
         user_token_signature,
         security_policy,
         &signing_cert,
         server_cert,
         server_nonce,
-    );
-    if result.is_good() {
-        Ok(())
-    } else {
-        Err(result)
-    }
+    )
 }

@@ -3,7 +3,7 @@ use std::{
     io::{BufRead, Cursor},
 };
 
-use log::{error, trace};
+use log::trace;
 use tokio::io::AsyncWriteExt;
 
 use crate::{
@@ -11,7 +11,7 @@ use crate::{
     Message,
 };
 
-use opcua_types::{EncodingError, SimpleBinaryEncodable, StatusCode};
+use opcua_types::{Error, SimpleBinaryEncodable, StatusCode};
 
 use super::tcp_types::{AcknowledgeMessage, ErrorMessage};
 
@@ -102,7 +102,7 @@ impl SendBuffer {
         request_id: u32,
         message: impl Message,
         secure_channel: &SecureChannel,
-    ) -> Result<u32, EncodingError> {
+    ) -> Result<u32, Error> {
         trace!("Writing request to buffer");
 
         // Turn message to chunk(s)
@@ -117,16 +117,15 @@ impl SendBuffer {
         .map_err(|e| e.with_context(Some(request_id), Some(message.request_handle())))?;
 
         if self.max_chunk_count > 0 && chunks.len() > self.max_chunk_count {
-            error!(
-                "Cannot write message since {} chunks exceeds {} chunk limit",
-                chunks.len(),
-                self.max_chunk_count
-            );
-            Err(EncodingError::new(
+            Err(Error::new(
                 StatusCode::BadCommunicationError,
-                Some(request_id),
-                Some(message.request_handle()),
-            ))
+                format!(
+                    "Cannot write message since {} chunks exceeds {} chunk limit",
+                    chunks.len(),
+                    self.max_chunk_count
+                ),
+            )
+            .with_context(Some(request_id), Some(message.request_handle())))
         } else {
             // Sequence number monotonically increases per chunk
             self.last_sent_sequence_number += chunks.len() as u32;

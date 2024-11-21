@@ -4,15 +4,12 @@
 
 use std::io::{Read, Write};
 
-use log::error;
-
 use crate::{
     encoding::{BinaryDecodable, BinaryEncodable, EncodingResult},
     localized_text::LocalizedText,
     node_id::NodeId,
-    status_code::StatusCode,
     string::UAString,
-    write_u32, Context, MessageInfo, ObjectId,
+    write_u32, Context, Error, MessageInfo, ObjectId,
 };
 
 // From OPC UA Part 3 - Address Space Model 1.03 Specification
@@ -73,13 +70,12 @@ impl BinaryEncodable for Argument {
         if self.value_rank > 0 {
             if let Some(ref array_dimensions) = self.array_dimensions {
                 if self.value_rank as usize != array_dimensions.len() {
-                    error!("The array dimensions {} of the Argument should match value rank {} and they don't", array_dimensions.len(), self.value_rank);
-                    return Err(StatusCode::BadDataEncodingInvalid.into());
+                    return Err(Error::encoding(
+                        format!("The array dimensions {} of the Argument should match value rank {} and they don't", array_dimensions.len(), self.value_rank)));
                 }
                 size += self.array_dimensions.encode(stream, ctx)?;
             } else {
-                error!("The array dimensions are expected in the Argument matching value rank {} and they aren't", self.value_rank);
-                return Err(StatusCode::BadDataEncodingInvalid.into());
+                return Err(Error::encoding(format!("The array dimensions are expected in the Argument matching value rank {} and they aren't", self.value_rank)));
             }
         } else {
             size += write_u32(stream, 0u32)?;
@@ -99,8 +95,7 @@ impl BinaryDecodable for Argument {
         let array_dimensions: Option<Vec<u32>> = BinaryDecodable::decode(stream, ctx)?;
         if let Some(ref array_dimensions) = array_dimensions {
             if value_rank > 0 && value_rank as usize != array_dimensions.len() {
-                error!("The array dimensions {} of the Argument should match value rank {} and they don't", array_dimensions.len(), value_rank);
-                return Err(StatusCode::BadDataEncodingInvalid.into());
+                return Err(Error::decoding(format!("The array dimensions {} of the Argument should match value rank {} and they don't", array_dimensions.len(), value_rank)));
             }
         }
         let description = LocalizedText::decode(stream, ctx)?;

@@ -4,7 +4,6 @@ use std::{
 };
 
 pub use crate::Context;
-use log::warn;
 use struson::writer::JsonNumberError;
 pub use struson::{
     json_path,
@@ -12,7 +11,7 @@ pub use struson::{
     writer::{JsonStreamWriter, JsonWriter},
 };
 
-use crate::{EncodingError, EncodingResult, StatusCode};
+use crate::{EncodingResult, Error};
 
 pub trait JsonEncodable {
     #[allow(unused)]
@@ -27,45 +26,39 @@ pub trait JsonEncodable {
     }
 }
 
-impl From<struson::reader::ReaderError> for EncodingError {
+impl From<struson::reader::ReaderError> for Error {
     fn from(value: struson::reader::ReaderError) -> Self {
-        warn!("Json decoding error {}", value);
-        Self::from(StatusCode::BadDecodingError)
+        Self::decoding(value)
     }
 }
 
-impl From<std::io::Error> for EncodingError {
+impl From<std::io::Error> for Error {
     fn from(value: std::io::Error) -> Self {
-        warn!("IO error during encoding/decoding: {value}");
-        Self::from(StatusCode::BadEncodingError)
+        Self::decoding(value)
     }
 }
 
-impl From<ParseIntError> for EncodingError {
+impl From<ParseIntError> for Error {
     fn from(value: ParseIntError) -> Self {
-        warn!("Number out of range: {value}");
-        Self::from(StatusCode::BadDecodingError)
+        Self::decoding(value)
     }
 }
 
-impl From<ParseFloatError> for EncodingError {
+impl From<ParseFloatError> for Error {
     fn from(value: ParseFloatError) -> Self {
-        warn!("Invalid floating point number: {value}");
-        Self::from(StatusCode::BadDecodingError)
+        Self::decoding(value)
     }
 }
 
-impl From<JsonNumberError> for EncodingError {
+impl From<JsonNumberError> for Error {
     fn from(value: JsonNumberError) -> Self {
-        warn!("Invalid JSON number: {value}");
-        Self::from(StatusCode::BadEncodingError)
+        Self::encoding(value)
     }
 }
 
-impl From<struson::reader::TransferError> for EncodingError {
+impl From<struson::reader::TransferError> for Error {
     fn from(value: struson::reader::TransferError) -> Self {
-        warn!("Failed to read raw value {}", value);
-        Self::from(StatusCode::BadDecodingError)
+        Self::decoding(value)
     }
 }
 

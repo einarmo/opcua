@@ -4,7 +4,7 @@ use chrono::TimeDelta;
 use hashbrown::HashMap;
 
 use crate::{
-    BinaryDecodable, DecodingOptions, DynEncodable, EncodingResult, GeneratedTypeLoader,
+    BinaryDecodable, DecodingOptions, DynEncodable, EncodingResult, Error, GeneratedTypeLoader,
     NamespaceMap, NodeId,
 };
 
@@ -244,8 +244,9 @@ impl<'a> Context<'a> {
                 return Ok(crate::ExtensionObject { body: Some(r?) });
             }
         }
-        log::warn!("No type loader defined for {node_id}");
-        Err(crate::StatusCode::BadDecodingError.into())
+        Err(Error::decoding(format!(
+            "No type loader defined for {node_id}"
+        )))
     }
 
     pub fn load_from_binary(
@@ -259,8 +260,9 @@ impl<'a> Context<'a> {
                 return Ok(crate::ExtensionObject { body: Some(r?) });
             }
         }
-        log::warn!("No type loader defined for {node_id}");
-        Err(crate::StatusCode::BadDecodingError.into())
+        Err(Error::decoding(format!(
+            "No type loader defined for {node_id}"
+        )))
     }
 
     pub fn options(&self) -> &DecodingOptions {

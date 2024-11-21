@@ -19,7 +19,7 @@ use opcua_crypto::{
 };
 use opcua_types::{
     service_types::ChannelSecurityToken, status_code::StatusCode, write_bytes, write_u8,
-    ByteString, ContextOwned, DecodingOptions, MessageSecurityMode, NamespaceMap,
+    ByteString, ContextOwned, DecodingOptions, Error, MessageSecurityMode, NamespaceMap,
     SimpleBinaryDecodable, SimpleBinaryEncodable,
 };
 use parking_lot::RwLock;
@@ -484,7 +484,7 @@ impl SecureChannel {
     fn add_space_for_padding_and_signature(
         &self,
         message_chunk: &MessageChunk,
-    ) -> Result<Vec<u8>, StatusCode> {
+    ) -> Result<Vec<u8>, Error> {
         let chunk_info = message_chunk.chunk_info(self)?;
         let data = &message_chunk.data[..];
 
@@ -545,7 +545,7 @@ impl SecureChannel {
         data: &mut [u8],
         message_size: usize,
         decoding_options: &DecodingOptions,
-    ) -> Result<(), StatusCode> {
+    ) -> Result<(), Error> {
         // Read and rewrite the message_size in the header
         let mut stream = Cursor::new(data);
         let mut message_header = MessageChunkHeader::decode(&mut stream, decoding_options)?;
@@ -566,7 +566,7 @@ impl SecureChannel {
         mut data: Vec<u8>,
         message_size: usize,
         decoding_options: &DecodingOptions,
-    ) -> Result<Vec<u8>, StatusCode> {
+    ) -> Result<Vec<u8>, Error> {
         Self::update_message_size(&mut data[..], message_size, decoding_options)?;
         // Truncate vector to the size
         data.truncate(message_size);
@@ -629,7 +629,7 @@ impl SecureChannel {
     }
 
     /// Decrypts and verifies the body data if the mode / policy requires it
-    pub fn verify_and_remove_security(&mut self, src: &[u8]) -> Result<MessageChunk, StatusCode> {
+    pub fn verify_and_remove_security(&mut self, src: &[u8]) -> Result<MessageChunk, Error> {
         self.verify_and_remove_security_forensic(src, None)
     }
 
@@ -641,7 +641,7 @@ impl SecureChannel {
         &mut self,
         src: &[u8],
         their_key: Option<PrivateKey>,
-    ) -> Result<MessageChunk, StatusCode> {
+    ) -> Result<MessageChunk, Error> {
         // Get message & security header from data
         let decoding_options = self.decoding_options();
         let (message_header, security_header, encrypted_data_offset) = {
@@ -664,12 +664,14 @@ impl SecureChannel {
 
         let message_size = message_header.message_size as usize;
         if message_size != src.len() {
-            error!(
-                "The message size {} is not the same as the supplied buffer {}",
-                message_size,
-                src.len()
-            );
-            return Err(StatusCode::BadUnexpectedError);
+            return Err(Error::new(
+                StatusCode::BadUnexpectedError,
+                format!(
+                    "The message size {} is not the same as the supplied buffer {}",
+                    message_size,
+                    src.len()
+                ),
+            ));
         }
 
         // S - Message Header
@@ -697,8 +699,9 @@ impl SecureChannel {
             let security_policy = SecurityPolicy::from_uri(security_policy_uri);
             match security_policy {
                 SecurityPolicy::Unknown => {
-                    error!("Security policy \"{}\" provided by client is unknown so it is has been rejected", security_policy_uri);
-                    return Err(StatusCode::BadSecurityPolicyRejected);
+                    return Err(Error::new(StatusCode::BadSecurityPolicyRejected, format!(
+                        "Security policy \"{}\" provided by client is unknown so it is has been rejected", security_policy_uri
+                    )));
                 }
                 SecurityPolicy::None => {
                     // Nothing to do
@@ -718,8 +721,10 @@ impl SecureChannel {
 
             // This code doesn't *care* if the cert is trusted, merely that it was used to sign the message
             if security_header.sender_certificate.is_null() {
-                error!("Sender certificate is null!");
-                return Err(StatusCode::BadCertificateInvalid);
+                return Err(Error::new(
+                    StatusCode::BadCertificateInvalid,
+                    "Sender certificate is null",
+                ));
             }
 
             let sender_certificate_len = security_header
@@ -871,16 +876,18 @@ impl SecureChannel {
         padding_bytes: &[u8],
         expected_padding_byte: u8,
         padding_range_start: usize,
-    ) -> Result<(), StatusCode> {
+    ) -> Result<(), Error> {
         for (i, b) in padding_bytes.iter().enumerate() {
             if *b != expected_padding_byte {
-                error!(
-                    "Expected padding byte {}, got {} at index {}",
-                    expected_padding_byte,
-                    *b,
-                    padding_range_start + i
-                );
-                return Err(StatusCode::BadSecurityChecksFailed);
+                return Err(Error::new(
+                    StatusCode::BadSecurityChecksFailed,
+                    format!(
+                        "Expected padding byte {}, got {} at index {}",
+                        expected_padding_byte,
+                        *b,
+                        padding_range_start + i
+                    ),
+                ));
             }
         }
         Ok(())
@@ -894,7 +901,7 @@ impl SecureChannel {
         src: &[u8],
         key_size: usize,
         padding_end: usize,
-    ) -> Result<Range<usize>, StatusCode> {
+    ) -> Result<Range<usize>, Error> {
         let padding_range = if key_size > 256 {
             let padding_byte = src[padding_end - 2];
             let extra_padding_byte = src[padding_end - 1];
@@ -910,11 +917,13 @@ impl SecureChannel {
                 padding_range.start,
             )?;
             if src[padding_range.end - 1] != extra_padding_byte {
-                error!(
-                    "Expected extra padding byte {}, at index {}",
-                    extra_padding_byte, padding_range.start
-                );
-                return Err(StatusCode::BadSecurityChecksFailed);
+                return Err(Error::new(
+                    StatusCode::BadSecurityChecksFailed,
+                    format!(
+                        "Expected extra padding byte {}, at index {}",
+                        extra_padding_byte, padding_range.start
+                    ),
+                ));
             }
             padding_range
         } else {
@@ -943,11 +952,12 @@ impl SecureChannel {
         encrypted_range: Range<usize>,
         their_key: Option<PrivateKey>,
         dst: &mut [u8],
-    ) -> Result<usize, StatusCode> {
+    ) -> Result<usize, Error> {
         // Asymmetric encrypt requires the caller supply the security policy
         if !security_policy.is_supported() {
-            error!("Security policy {} is not supported by asymmetric_decrypt_and_verify and has been rejected", security_policy);
-            return Err(StatusCode::BadSecurityPolicyRejected);
+            return Err(Error::new(StatusCode::BadSecurityPolicyRejected, format!(
+                "Security policy {} is not supported by asymmetric_decrypt_and_verify and has been rejected", security_policy
+            )));
         }
 
         // Unlike the symmetric_decrypt_and_verify, this code will ALWAYS decrypt and verify regardless
@@ -962,8 +972,10 @@ impl SecureChannel {
         let our_cert = self.cert.as_ref().unwrap();
         let our_thumbprint = our_cert.thumbprint();
         if our_thumbprint.value() != receiver_thumbprint.as_ref() {
-            error!("Supplied thumbprint does not match application certificate's thumbprint");
-            Err(StatusCode::BadNoValidCertificates)
+            return Err(Error::new(
+                StatusCode::BadNoValidCertificates,
+                "Supplied thumbprint does not match application certificate's thumbprint",
+            ));
         } else {
             // Copy message, security header
             dst[..encrypted_range.start].copy_from_slice(&src[..encrypted_range.start]);
@@ -1078,10 +1090,8 @@ impl SecureChannel {
         self.local_keys.as_ref().unwrap()
     }
 
-    fn remote_keys(&self) -> Result<&(Vec<u8>, AesKey, Vec<u8>), StatusCode> {
-        self.remote_keys
-            .as_ref()
-            .ok_or(StatusCode::BadSecureChannelClosed)
+    fn remote_keys(&self) -> Option<&(Vec<u8>, AesKey, Vec<u8>)> {
+        self.remote_keys.as_ref()
     }
 
     fn encryption_keys(&self) -> (&AesKey, &[u8]) {
@@ -1093,13 +1103,13 @@ impl SecureChannel {
         &(self.local_keys()).0
     }
 
-    fn decryption_keys(&self) -> Result<(&AesKey, &[u8]), StatusCode> {
+    fn decryption_keys(&self) -> Option<(&AesKey, &[u8])> {
         let keys = self.remote_keys()?;
-        Ok((&keys.1, &keys.2))
+        Some((&keys.1, &keys.2))
     }
 
-    fn verification_key(&self) -> Result<&[u8], StatusCode> {
-        Ok(&(self.remote_keys()?).0)
+    fn verification_key(&self) -> Option<&[u8]> {
+        Some(&(self.remote_keys()?).0)
     }
 
     /// Encode data using security. Destination buffer is expected to be same size as src and expected
@@ -1211,7 +1221,7 @@ impl SecureChannel {
         signed_range: Range<usize>,
         encrypted_range: Range<usize>,
         dst: &mut [u8],
-    ) -> Result<usize, StatusCode> {
+    ) -> Result<usize, Error> {
         match self.security_mode {
             MessageSecurityMode::None => {
                 // Just copy everything from src to dst
@@ -1230,7 +1240,12 @@ impl SecureChannel {
                     signed_range,
                     signed_range.end
                 );
-                let verification_key = self.verification_key()?;
+                let verification_key = self.verification_key().ok_or_else(|| {
+                    Error::new(
+                        StatusCode::BadSecureChannelClosed,
+                        "Missing verification key",
+                    )
+                })?;
                 self.security_policy.symmetric_verify_signature(
                     verification_key,
                     &dst[signed_range.clone()],
@@ -1254,7 +1269,12 @@ impl SecureChannel {
 
                 // Decrypt encrypted portion
                 let mut decrypted_tmp = vec![0u8; ciphertext_size + 16]; // tmp includes +16 for blocksize
-                let (key, iv) = self.decryption_keys()?;
+                let (key, iv) = self.decryption_keys().ok_or_else(|| {
+                    Error::new(
+                        StatusCode::BadSecureChannelClosed,
+                        "Missing decryption keys",
+                    )
+                })?;
 
                 trace!(
                     "Secure decrypt called with encrypted range {:?}",
@@ -1282,7 +1302,12 @@ impl SecureChannel {
                     signed_range,
                     signature_range
                 );
-                let verification_key = self.verification_key()?;
+                let verification_key = self.verification_key().ok_or_else(|| {
+                    Error::new(
+                        StatusCode::BadSecureChannelClosed,
+                        "Missing verification key",
+                    )
+                })?;
                 let signature_start = signature_range.start;
                 self.security_policy.symmetric_verify_signature(
                     verification_key,

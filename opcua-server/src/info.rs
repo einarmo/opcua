@@ -27,7 +27,7 @@ use opcua_types::{
     status_code::StatusCode,
 };
 use opcua_types::{
-    ByteString, ContextOwned, DateTime, DecodingOptions, ExtensionObject, LocalizedText,
+    ByteString, ContextOwned, DateTime, DecodingOptions, Error, ExtensionObject, LocalizedText,
     MessageSecurityMode, NamespaceMap, TypeLoader, UAString,
 };
 
@@ -329,7 +329,7 @@ impl ServerInfo {
         security_mode: MessageSecurityMode,
         user_identity_token: ExtensionObject,
         server_nonce: &ByteString,
-    ) -> Result<UserToken, StatusCode> {
+    ) -> Result<UserToken, Error> {
         // Get security from endpoint url
         if let Some(endpoint) = self.config.find_endpoint(
             endpoint_url,
@@ -341,7 +341,10 @@ impl ServerInfo {
             match IdentityToken::new(user_identity_token) {
                 IdentityToken::None => {
                     error!("User identity token type unsupported");
-                    Err(StatusCode::BadIdentityTokenInvalid)
+                    Err(Error::new(
+                        StatusCode::BadIdentityTokenInvalid,
+                        "User identity token type unsupported",
+                    ))
                 }
                 IdentityToken::Anonymous(token) => {
                     self.authenticate_anonymous_token(endpoint, &token).await
@@ -365,17 +368,18 @@ impl ServerInfo {
                     )
                     .await
                 }
-                IdentityToken::Invalid(o) => {
-                    error!(
+                IdentityToken::Invalid(o) => Err(Error::new(
+                    StatusCode::BadIdentityTokenInvalid,
+                    format!(
                         "User identity token type {} is unsupported",
                         o.body.map(|b| b.type_name()).unwrap_or("None")
-                    );
-                    Err(StatusCode::BadIdentityTokenInvalid)
-                }
+                    ),
+                )),
             }
         } else {
-            error!("Cannot find endpoint that matches path \"{}\", security policy {:?}, and security mode {:?}", endpoint_url, security_policy, security_mode);
-            Err(StatusCode::BadTcpEndpointUrlInvalid)
+            Err(Error::new(StatusCode::BadIdentityTokenRejected, format!(
+                "Cannot find endpoint that matches path \"{}\", security policy {:?}, and security mode {:?}", endpoint_url, security_policy, security_mode
+            )))
         }
     }
 
@@ -389,14 +393,16 @@ impl ServerInfo {
         &self,
         endpoint: &ServerEndpoint,
         token: &AnonymousIdentityToken,
-    ) -> Result<UserToken, StatusCode> {
+    ) -> Result<UserToken, Error> {
         if token.policy_id.as_ref() != POLICY_ID_ANONYMOUS {
-            error!(
-                "Token doesn't possess the correct policy id. Got {}, expected {}",
-                token.policy_id.as_ref(),
-                POLICY_ID_ANONYMOUS
-            );
-            return Err(StatusCode::BadIdentityTokenInvalid);
+            return Err(Error::new(
+                StatusCode::BadIdentityTokenInvalid,
+                format!(
+                    "Token doesn't possess the correct policy id. Got {}, expected {}",
+                    token.policy_id.as_ref(),
+                    POLICY_ID_ANONYMOUS
+                ),
+            ));
         }
         self.authenticator
             .authenticate_anonymous_token(endpoint)
@@ -413,16 +419,22 @@ impl ServerInfo {
         token: &UserNameIdentityToken,
         server_key: &Option<PrivateKey>,
         server_nonce: &ByteString,
-    ) -> Result<UserToken, StatusCode> {
+    ) -> Result<UserToken, Error> {
         if !self.authenticator.supports_user_pass(endpoint) {
-            error!("Endpoint doesn't support username password tokens");
-            Err(StatusCode::BadIdentityTokenRejected)
+            Err(Error::new(
+                StatusCode::BadIdentityTokenRejected,
+                "Endpoint doesn't support username password tokens",
+            ))
         } else if token.policy_id != user_pass_security_policy_id(endpoint) {
-            error!("Token doesn't possess the correct policy id");
-            Err(StatusCode::BadIdentityTokenInvalid)
+            Err(Error::new(
+                StatusCode::BadIdentityTokenRejected,
+                "Token doesn't possess the correct policy id",
+            ))
         } else if token.user_name.is_null() {
-            error!("User identify token supplies no user name");
-            Err(StatusCode::BadIdentityTokenInvalid)
+            Err(Error::new(
+                StatusCode::BadIdentityTokenRejected,
+                "User identify token supplied no username",
+            ))
         } else {
             debug!(
                 "policy id = {}, encryption algorithm = {}",
@@ -438,7 +450,10 @@ impl ServerInfo {
                     )?
                 } else {
                     error!("Identity token password is encrypted but no server private key was supplied");
-                    return Err(StatusCode::BadIdentityTokenInvalid);
+                    return Err(Error::new(
+                        StatusCode::BadIdentityTokenInvalid,
+                        "Failed to decrypt identity token password",
+                    ));
                 }
             } else {
                 token.plaintext_password()?
@@ -463,13 +478,19 @@ impl ServerInfo {
         user_token_signature: &SignatureData,
         server_certificate: &Option<X509>,
         server_nonce: &ByteString,
-    ) -> Result<UserToken, StatusCode> {
+    ) -> Result<UserToken, Error> {
         if !self.authenticator.supports_x509(endpoint) {
             error!("Endpoint doesn't support x509 tokens");
-            Err(StatusCode::BadIdentityTokenRejected)
+            Err(Error::new(
+                StatusCode::BadIdentityTokenRejected,
+                "Endpoint doesn't support x509 tokens",
+            ))
         } else if token.policy_id.as_ref() != POLICY_ID_X509 {
             error!("Token doesn't possess the correct policy id");
-            Err(StatusCode::BadIdentityTokenRejected)
+            Err(Error::new(
+                StatusCode::BadIdentityTokenRejected,
+                "Token doesn't possess the correct policy id",
+            ))
         } else {
             match server_certificate {
                 Some(ref server_certificate) => {
@@ -483,9 +504,10 @@ impl ServerInfo {
 
                     // The security policy has to be something that can encrypt
                     match security_policy {
-                        SecurityPolicy::Unknown | SecurityPolicy::None => {
-                            Err(StatusCode::BadIdentityTokenInvalid)
-                        }
+                        SecurityPolicy::Unknown | SecurityPolicy::None => Err(Error::new(
+                            StatusCode::BadIdentityTokenInvalid,
+                            "Bad security policy",
+                        )),
                         security_policy => {
                             // Verify token
                             user_identity::verify_x509_identity_token(
@@ -498,7 +520,10 @@ impl ServerInfo {
                         }
                     }
                 }
-                None => Err(StatusCode::BadIdentityTokenInvalid),
+                None => Err(Error::new(
+                    StatusCode::BadIdentityTokenInvalid,
+                    "Server certificate missing, cannot validate X509 tokens",
+                )),
             }?;
 
             // Check the endpoint to see if this token is supported

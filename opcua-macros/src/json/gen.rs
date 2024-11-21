@@ -162,7 +162,7 @@ pub fn generate_json_decode_impl(strct: JsonStruct) -> syn::Result<TokenStream> 
             build.extend(quote! {
                 #ident: #ident.unwrap_or_else(|| {
                     log::warn!(#err);
-                    opcua::types::EncodingError::new(
+                    opcua::types::Error::new(
                         opcua::types::StatusCode::BadDecodingError,
                         None,
                         __request_handle,

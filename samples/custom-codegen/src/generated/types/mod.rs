@@ -85,7 +85,9 @@ impl opcua::types::TypeLoader for GeneratedTypeLoader {
             return None;
         }
         let Some(num_id) = node_id.as_u32() else {
-            return Some(Err(opcua::types::StatusCode::BadDecodingError.into()));
+            return Some(Err(opcua::types::Error::decoding(
+                "Unsupported encoding ID. Only numeric encoding IDs are currently supported",
+            )));
         };
         TYPES.decode_binary(num_id, stream, ctx)
     }
@@ -124,7 +126,9 @@ impl opcua::types::TypeLoader for GeneratedTypeLoader {
             return None;
         }
         let Some(num_id) = node_id.as_u32() else {
-            return Some(Err(opcua::types::StatusCode::BadDecodingError.into()));
+            return Some(Err(opcua::types::Error::decoding(
+                "Unsupported encoding ID. Only numeric encoding IDs are currently supported",
+            )));
         };
         TYPES.decode_json(num_id, stream, ctx)
     }

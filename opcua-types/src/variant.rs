@@ -12,7 +12,7 @@ use std::{
     str::FromStr,
 };
 
-use log::{error, warn};
+use log::error;
 use uuid::Uuid;
 
 use crate::{
@@ -31,7 +31,8 @@ use crate::{
     status_code::StatusCode,
     string::{UAString, XmlElement},
     variant_type_id::*,
-    write_i32, write_u8, DataValue, DiagnosticInfo, DynEncodable, EncodingContext, MessageInfo,
+    write_i32, write_u8, DataValue, DiagnosticInfo, DynEncodable, EncodingContext, Error,
+    MessageInfo,
 };
 
 use super::DateTimeUtc;
@@ -705,16 +706,23 @@ impl BinaryDecodable for Variant {
         let array_length = if encoding_mask & EncodingMask::ARRAY_VALUES_BIT != 0 {
             let array_length = i32::decode(stream, ctx)?;
             if array_length < -1 {
-                error!("Invalid array_length {}", array_length);
-                return Err(StatusCode::BadDecodingError.into());
+                return Err(Error::decoding(format!(
+                    "Invalid array_length {}",
+                    array_length
+                )));
             }
 
             // null array of type for length 0 and -1 so it doesn't fail for length 0
             if array_length <= 0 {
-                let value_type_id = VariantScalarTypeId::from_encoding_mask(element_encoding_mask)?;
-                return Ok(
-                    Array::new_multi(value_type_id, Vec::new(), Vec::new()).map(Variant::from)?
-                );
+                let value_type_id = VariantScalarTypeId::from_encoding_mask(element_encoding_mask)
+                    .ok_or_else(|| {
+                        Error::decoding(format!(
+                            "Unrecognized encoding mask: {element_encoding_mask}"
+                        ))
+                    })?;
+                return Ok(Array::new_multi(value_type_id, Vec::new(), Vec::new())
+                    .map(Variant::from)
+                    .map_err(Error::decoding)?);
             }
             array_length
         } else {
@@ -726,7 +734,9 @@ impl BinaryDecodable for Variant {
             // Array length in total cannot exceed max array length
             let array_length = array_length as usize;
             if array_length > ctx.options().max_array_length {
-                return Err(StatusCode::BadEncodingLimitsExceeded.into());
+                return Err(Error::new(StatusCode::BadEncodingLimitsExceeded, format!(
+                    "Variant array has length {} which exceeds configured array length limit {}", array_length, ctx.options().max_array_length
+                )));
             }
 
             let mut values: Vec<Variant> = Vec::with_capacity(array_length);
@@ -737,12 +747,18 @@ impl BinaryDecodable for Variant {
                     ctx,
                 )?);
             }
-            let value_type_id = VariantScalarTypeId::from_encoding_mask(element_encoding_mask)?;
+            let value_type_id = VariantScalarTypeId::from_encoding_mask(element_encoding_mask)
+                .ok_or_else(|| {
+                    Error::decoding(format!(
+                        "Unrecognized encoding mask: {element_encoding_mask}"
+                    ))
+                })?;
             if encoding_mask & EncodingMask::ARRAY_DIMENSIONS_BIT != 0 {
                 if let Some(dimensions) = <Option<Vec<_>>>::decode(stream, ctx)? {
                     if dimensions.iter().any(|d| *d == 0) {
-                        error!("Invalid array dimensions");
-                        Err(StatusCode::BadDecodingError.into())
+                        Err(Error::decoding(
+                            "Invalid variant array dimensions, one or more dimensions are 0",
+                        ))
                     } else {
                         // This looks clunky but it's to prevent a panic from malicious data
                         // causing an overflow panic
@@ -751,33 +767,36 @@ impl BinaryDecodable for Variant {
                             if let Some(v) = array_dimensions_length.checked_mul(*d) {
                                 array_dimensions_length = v;
                             } else {
-                                error!("Array dimension overflow!");
-                                return Err(StatusCode::BadDecodingError.into());
+                                return Err(Error::decoding("Array dimension overflow"));
                             }
                         }
                         if array_dimensions_length != array_length as u32 {
-                            error!(
+                            Err(Error::decoding(format!(
                                 "Array dimensions does not match array length {}",
                                 array_length
-                            );
-                            Err(StatusCode::BadDecodingError.into())
+                            )))
                         } else {
                             // Note Array::new_multi can fail
                             Ok(Array::new_multi(value_type_id, values, dimensions)
-                                .map(Variant::from)?)
+                                .map(Variant::from)
+                                .map_err(Error::decoding)?)
                         }
                     }
                 } else {
-                    error!("No array dimensions despite the bit flag being set");
-                    Err(StatusCode::BadDecodingError.into())
+                    Err(Error::decoding(
+                        "No array dimensions despite the bit flag being set",
+                    ))
                 }
             } else {
                 // Note Array::new_single can fail
-                Ok(Array::new(value_type_id, values).map(Variant::from)?)
+                Ok(Array::new(value_type_id, values)
+                    .map(Variant::from)
+                    .map_err(Error::decoding)?)
             }
         } else if encoding_mask & EncodingMask::ARRAY_DIMENSIONS_BIT != 0 {
-            error!("Array dimensions bit specified without any values");
-            Err(StatusCode::BadDecodingError.into())
+            Err(Error::decoding(
+                "Array dimensions bit specified without any values",
+            ))
         } else {
             // Read a single variant
             Variant::decode_variant_value(stream, element_encoding_mask, ctx)
@@ -887,10 +906,9 @@ impl Variant {
             Variant::Variant(value) => value.encode(stream, ctx),
             Variant::DataValue(value) => value.encode(stream, ctx),
             Variant::DiagnosticInfo(value) => value.encode(stream, ctx),
-            _ => {
-                warn!("Cannot encode this variant value type (probably nested array)");
-                Err(StatusCode::BadEncodingError.into())
-            }
+            _ => Err(Error::encoding(
+                "Cannot encode this variant value type (probably nested array)",
+            )),
         }
     }
 
@@ -1738,7 +1756,7 @@ impl Variant {
 
     /// This function is for a special edge case of converting a byte string to a
     /// single array of bytes
-    pub fn to_byte_array(&self) -> Result<Self, StatusCode> {
+    pub fn to_byte_array(&self) -> Result<Self, ArrayError> {
         let array = match self {
             Variant::ByteString(values) => match &values.value {
                 None => Array::new(VariantScalarTypeId::Byte, vec![])?,
@@ -1929,7 +1947,9 @@ impl Variant {
                     }
                 };
 
-                Ok(Self::Array(Box::new(Array::new(type_id, res)?)))
+                Ok(Self::Array(Box::new(
+                    Array::new(type_id, res).map_err(|_| StatusCode::BadInvalidArgument)?,
+                )))
             }
         }
     }

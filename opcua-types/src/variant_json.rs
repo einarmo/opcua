@@ -1,9 +1,9 @@
 use std::io::{Cursor, Read};
 
 use crate::{
-    json::*, ByteString, DataValue, DateTime, DiagnosticInfo, EncodingResult, ExpandedNodeId,
-    ExtensionObject, Guid, LocalizedText, NodeId, QualifiedName, StatusCode, UAString, Variant,
-    VariantScalarTypeId, XmlElement,
+    json::*, ByteString, DataValue, DateTime, DiagnosticInfo, EncodingResult, Error,
+    ExpandedNodeId, ExtensionObject, Guid, LocalizedText, NodeId, QualifiedName, StatusCode,
+    UAString, Variant, VariantScalarTypeId, XmlElement,
 };
 
 impl Variant {
@@ -193,8 +193,7 @@ impl JsonDecodable for Variant {
                     let ty: u32 = stream.next_number()??;
                     if ty != 0 {
                         type_id = Some(VariantScalarTypeId::try_from(ty).map_err(|_| {
-                            log::warn!("Unexpected variant type: {}", ty);
-                            StatusCode::BadDecodingError
+                            Error::decoding(format!("Unexpected variant type: {}", ty))
                         })?);
                     }
                 }
@@ -258,8 +257,9 @@ impl JsonDecodable for Variant {
         let variant = match (value, dimensions) {
             (VariantOrArray::Single(variant), None) => variant,
             (VariantOrArray::Single(_), Some(_)) => {
-                log::warn!("Unexpected dimensions for scalar variant value during json decoding");
-                return Err(StatusCode::BadDecodingError.into());
+                return Err(Error::decoding(
+                    "Unexpected dimensions for scalar variant value during json decoding",
+                ));
             }
             (VariantOrArray::Array(vec), d) => Variant::Array(Box::new(crate::Array {
                 value_type: type_id,

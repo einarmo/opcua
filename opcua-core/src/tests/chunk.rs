@@ -244,7 +244,9 @@ fn validate_chunks_secure_channel_id() {
     let old_secure_channel_id = secure_channel.secure_channel_id();
     secure_channel.set_secure_channel_id(old_secure_channel_id + 1);
     assert_eq!(
-        Chunker::validate_chunks(sequence_number, &secure_channel, &chunks).unwrap_err(),
+        Chunker::validate_chunks(sequence_number, &secure_channel, &chunks)
+            .unwrap_err()
+            .status(),
         StatusCode::BadSecureChannelIdInvalid
     );
 }
@@ -273,7 +275,9 @@ fn validate_chunks_sequence_number() {
 
     // Test sequence number cannot be < starting sequence number
     assert_eq!(
-        Chunker::validate_chunks(sequence_number + 5000, &secure_channel, &chunks).unwrap_err(),
+        Chunker::validate_chunks(sequence_number + 5000, &secure_channel, &chunks)
+            .unwrap_err()
+            .status(),
         StatusCode::BadSequenceNumberInvalid
     );
 
@@ -284,16 +288,20 @@ fn validate_chunks_sequence_number() {
     // Hack one of the chunks to alter its seq id
     let old_sequence_nr = set_chunk_sequence_number(&mut chunks[0], &secure_channel, 1001);
     assert_eq!(
-        Chunker::validate_chunks(sequence_number, &secure_channel, &chunks).unwrap_err(),
-        StatusCode::BadSecurityChecksFailed
+        Chunker::validate_chunks(sequence_number, &secure_channel, &chunks)
+            .unwrap_err()
+            .status(),
+        StatusCode::BadSequenceNumberInvalid
     );
 
     // Hack the nth
     set_chunk_sequence_number(&mut chunks[0], &secure_channel, old_sequence_nr);
     let _ = set_chunk_sequence_number(&mut chunks[5], &secure_channel, 1008);
     assert_eq!(
-        Chunker::validate_chunks(sequence_number, &secure_channel, &chunks).unwrap_err(),
-        StatusCode::BadSecurityChecksFailed
+        Chunker::validate_chunks(sequence_number, &secure_channel, &chunks)
+            .unwrap_err()
+            .status(),
+        StatusCode::BadSequenceNumberInvalid
     );
 }
 
@@ -325,8 +333,10 @@ fn validate_chunks_request_id() {
     // Hack the request id so first chunk request id says 101 while the rest say 100
     let _ = set_chunk_request_id(&mut chunks[0], &secure_channel, 101);
     assert_eq!(
-        Chunker::validate_chunks(sequence_number, &secure_channel, &chunks).unwrap_err(),
-        StatusCode::BadSecurityChecksFailed
+        Chunker::validate_chunks(sequence_number, &secure_channel, &chunks)
+            .unwrap_err()
+            .status(),
+        StatusCode::BadSequenceNumberInvalid
     );
 }
 

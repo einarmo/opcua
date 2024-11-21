@@ -6,21 +6,19 @@
 
 use std::{
     any::{Any, TypeId},
-    error::Error,
     fmt,
     io::{Read, Write},
 };
 
-use log::{error, warn};
+use log::warn;
 
-use crate::{write_i32, write_u8, ExpandedMessageInfo, ExpandedNodeId};
+use crate::{write_i32, write_u8, Error, ExpandedMessageInfo, ExpandedNodeId};
 
 use super::{
     byte_string::ByteString,
     encoding::{BinaryDecodable, BinaryEncodable, EncodingResult},
     node_id::NodeId,
     node_ids::ObjectId,
-    status_code::StatusCode,
     string::XmlElement,
 };
 
@@ -145,7 +143,7 @@ impl PartialEq for dyn DynEncodable {
     }
 }
 
-impl Error for ExtensionObjectError {}
+impl std::error::Error for ExtensionObjectError {}
 
 /// Enumeration that holds the kinds of encoding that an ExtensionObject data may be encoded with.
 #[derive(PartialEq, Debug, Clone)]
@@ -165,7 +163,7 @@ pub enum ExtensionObjectEncoding {
 mod json {
     use std::io::{Cursor, Read};
 
-    use crate::{json::*, ByteString, NodeId, StatusCode};
+    use crate::{json::*, ByteString, Error, NodeId};
 
     use super::ExtensionObject;
 
@@ -183,8 +181,7 @@ mod json {
             let type_id = body.json_type_id();
 
             let id = type_id.try_resolve(ctx.namespaces()).ok_or_else(|| {
-                log::warn!("Missing namespace for encoding ID: {}", type_id);
-                StatusCode::BadDecodingError
+                Error::encoding(format!("Missing namespace for encoding ID: {}", type_id))
             })?;
 
             stream.begin_object()?;
@@ -226,11 +223,10 @@ mod json {
                     "Body" => match stream.peek()? {
                         ValueType::Object => {
                             if encoding.is_some_and(|e| e != 0) {
-                                log::warn!(
+                                return Err(Error::decoding(format!(
                                     "Invalid encoding, expected 0 or null, got {:?}",
                                     encoding
-                                );
-                                return Err(StatusCode::BadDecodingError.into());
+                                )));
                             }
                             if let Some(type_id) = &type_id {
                                 body = Some(ctx.load_from_json(type_id, stream, ctx)?);
@@ -241,8 +237,7 @@ mod json {
                         _ => {
                             if let Some(enc) = encoding {
                                 if enc != 1 {
-                                    log::warn!("Unsupported extension object encoding, expected 1 for string, got {enc}");
-                                    return Err(StatusCode::BadDecodingError.into());
+                                    return Err(Error::decoding(format!("Unsupported extension object encoding, expected 1 for string, got {enc}")));
                                 }
                             }
                             raw_binary_body = Some(JsonDecodable::decode(stream, ctx)?);
@@ -255,8 +250,7 @@ mod json {
             stream.end_object()?;
 
             let Some(type_id) = type_id else {
-                log::warn!("Missing type ID in extension object");
-                return Err(StatusCode::BadDecodingError.into());
+                return Err(Error::decoding("Missing type ID in extension object"));
             };
 
             let encoding = encoding.unwrap_or_default();
@@ -265,28 +259,25 @@ mod json {
                 Ok(body)
             } else if let Some(raw_body) = raw_body {
                 if encoding != 0 {
-                    log::warn!("Invalid encoding, expected 0 or null, got {}", encoding);
-                    return Err(StatusCode::BadDecodingError.into());
+                    return Err(Error::decoding(format!(
+                        "Invalid encoding, expected 0 or null, got {}",
+                        encoding
+                    )));
                 }
                 let mut cursor = Cursor::new(raw_body);
                 let mut inner_stream = JsonStreamReader::new(&mut cursor as &mut dyn Read);
                 Ok(ctx.load_from_json(&type_id, &mut inner_stream, ctx)?)
             } else if let Some(binary_body) = raw_binary_body {
                 if encoding != 1 {
-                    log::warn!(
-                        "Unsupported extension object encoding, expected 1 for string, got {encoding}"
-                    );
-                    return Err(StatusCode::BadDecodingError.into());
+                    return Err(Error::decoding(format!("Unsupported extension object encoding, expected 1 for string, got {encoding}")));
                 }
                 let Some(raw) = binary_body.value else {
-                    log::warn!("Missing extension object body");
-                    return Err(StatusCode::BadDecodingError.into());
+                    return Err(Error::decoding("Missing extension object body"));
                 };
                 let mut cursor = Cursor::new(raw);
                 Ok(ctx.load_from_binary(&type_id, &mut cursor as &mut dyn Read, ctx)?)
             } else {
-                log::warn!("Missing extension object body");
-                Err(StatusCode::BadDecodingError.into())
+                Err(Error::decoding("Missing extension object body"))
             }
         }
     }
@@ -336,8 +327,7 @@ impl BinaryEncodable for ExtensionObject {
         let type_id = self.binary_type_id();
         let id = type_id.try_resolve(ctx.namespaces());
         let Some(id) = id else {
-            warn!("Unknown encoding ID: {type_id}");
-            return Err(StatusCode::BadEncodingError.into());
+            return Err(Error::encoding(format!("Unknown encoding ID: {type_id}")));
         };
 
         size += BinaryEncodable::encode(id.as_ref(), stream, ctx)?;
@@ -379,8 +369,10 @@ impl BinaryDecodable for ExtensionObject {
                 None
             }
             _ => {
-                error!("Invalid encoding type {} in stream", encoding_type);
-                return Err(StatusCode::BadDecodingError.into());
+                return Err(Error::decoding(format!(
+                    "Invalid encoding type {} in stream",
+                    encoding_type
+                )));
             }
         };
         Ok(body.unwrap_or_else(|| ExtensionObject::null()))

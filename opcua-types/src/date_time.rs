@@ -35,9 +35,7 @@ pub struct DateTime {
 
 #[cfg(feature = "json")]
 mod json {
-    use log::warn;
-
-    use crate::{json::*, StatusCode};
+    use crate::{json::*, Error};
 
     use super::DateTime;
 
@@ -57,10 +55,8 @@ mod json {
             _ctx: &Context<'_>,
         ) -> super::EncodingResult<Self> {
             let v = stream.next_str()?;
-            let dt = DateTime::parse_from_rfc3339(&v).map_err(|e| {
-                warn!("Cannot parse date time: {e}");
-                StatusCode::BadDecodingError
-            })?;
+            let dt = DateTime::parse_from_rfc3339(&v)
+                .map_err(|e| Error::decoding(format!("Cannot parse date time: {e}")))?;
             Ok(dt)
         }
     }

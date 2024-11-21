@@ -13,7 +13,7 @@ use opcua_core::comms::{
     chunker::Chunker, message_chunk::MessageChunk, message_chunk_info::ChunkInfo,
     secure_channel::SecureChannel, tcp_codec::Message,
 };
-use opcua_types::{EncodingError, StatusCode};
+use opcua_types::{Error, StatusCode};
 
 #[derive(Debug)]
 struct MessageChunkWithChunkInfo {
@@ -245,7 +245,7 @@ impl TransportState {
     fn turn_received_chunks_into_message(
         &mut self,
         chunks: &[MessageChunk],
-    ) -> Result<ResponseMessage, EncodingError> {
+    ) -> Result<ResponseMessage, Error> {
         // Validate that all chunks have incrementing sequence numbers and valid chunk types
         let secure_channel = trace_read_lock!(self.secure_channel);
         self.last_received_sequence_number = Chunker::validate_chunks(

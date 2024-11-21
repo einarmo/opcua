@@ -20,18 +20,17 @@ impl Default for IMTagSelectorEnumeration {
     }
 }
 impl TryFrom<i32> for IMTagSelectorEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             0i32 => Self::FUNCTION,
             1i32 => Self::LOCATION,
             2i32 => Self::BOTH,
             r => {
-                log::error!(
+                return Err(opcua::types::Error::decoding(format!(
                     "Got unexpected value for enum IMTagSelectorEnumeration: {}",
                     r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                )));
             }
         })
     }
@@ -75,8 +74,7 @@ impl opcua::types::json::JsonDecodable for IMTagSelectorEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }
@@ -128,7 +126,7 @@ impl Default for PnARStateEnumeration {
     }
 }
 impl TryFrom<i32> for PnARStateEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             0i32 => Self::CONNECTED,
@@ -137,8 +135,10 @@ impl TryFrom<i32> for PnARStateEnumeration {
             3i32 => Self::UNCONNECTED_ERR_DUPLICATE_IP,
             4i32 => Self::UNCONNECTED_ERR_DUPLICATE_NOS,
             r => {
-                log::error!("Got unexpected value for enum PnARStateEnumeration: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                return Err(opcua::types::Error::decoding(format!(
+                    "Got unexpected value for enum PnARStateEnumeration: {}",
+                    r
+                )));
             }
         })
     }
@@ -178,8 +178,7 @@ impl opcua::types::json::JsonDecodable for PnARStateEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }
@@ -230,7 +229,7 @@ impl Default for PnARTypeEnumeration {
     }
 }
 impl TryFrom<i32> for PnARTypeEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             0i32 => Self::IOCARSingle,
@@ -238,8 +237,10 @@ impl TryFrom<i32> for PnARTypeEnumeration {
             16i32 => Self::IOCARSingleUsingRT_CLASS_3,
             32i32 => Self::IOCARSR,
             r => {
-                log::error!("Got unexpected value for enum PnARTypeEnumeration: {}", r);
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                return Err(opcua::types::Error::decoding(format!(
+                    "Got unexpected value for enum PnARTypeEnumeration: {}",
+                    r
+                )));
             }
         })
     }
@@ -279,8 +280,7 @@ impl opcua::types::json::JsonDecodable for PnARTypeEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }
@@ -330,18 +330,17 @@ impl Default for PnAssetChangeEnumeration {
     }
 }
 impl TryFrom<i32> for PnAssetChangeEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             0i32 => Self::INSERTED,
             1i32 => Self::REMOVED,
             2i32 => Self::CHANGED,
             r => {
-                log::error!(
+                return Err(opcua::types::Error::decoding(format!(
                     "Got unexpected value for enum PnAssetChangeEnumeration: {}",
                     r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                )));
             }
         })
     }
@@ -385,8 +384,7 @@ impl opcua::types::json::JsonDecodable for PnAssetChangeEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }
@@ -437,7 +435,7 @@ impl Default for PnAssetTypeEnumeration {
     }
 }
 impl TryFrom<i32> for PnAssetTypeEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             0i32 => Self::DEVICE,
@@ -445,11 +443,10 @@ impl TryFrom<i32> for PnAssetTypeEnumeration {
             2i32 => Self::SUBMODULE,
             3i32 => Self::ASSET,
             r => {
-                log::error!(
+                return Err(opcua::types::Error::decoding(format!(
                     "Got unexpected value for enum PnAssetTypeEnumeration: {}",
                     r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                )));
             }
         })
     }
@@ -493,8 +490,7 @@ impl opcua::types::json::JsonDecodable for PnAssetTypeEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }
@@ -543,17 +539,16 @@ impl Default for PnChannelAccumulativeEnumeration {
     }
 }
 impl TryFrom<i32> for PnChannelAccumulativeEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             0i32 => Self::SINGLE,
             256i32 => Self::ACCUMULATIVE,
             r => {
-                log::error!(
+                return Err(opcua::types::Error::decoding(format!(
                     "Got unexpected value for enum PnChannelAccumulativeEnumeration: {}",
                     r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                )));
             }
         })
     }
@@ -597,8 +592,7 @@ impl opcua::types::json::JsonDecodable for PnChannelAccumulativeEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }
@@ -649,7 +643,7 @@ impl Default for PnChannelDirectionEnumeration {
     }
 }
 impl TryFrom<i32> for PnChannelDirectionEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             0i32 => Self::MANUFACTURER_SPECIFIC,
@@ -657,11 +651,10 @@ impl TryFrom<i32> for PnChannelDirectionEnumeration {
             16384i32 => Self::OUTPUT_CHANNEL,
             24576i32 => Self::BIDIRECTIONAL_CHANNEL,
             r => {
-                log::error!(
+                return Err(opcua::types::Error::decoding(format!(
                     "Got unexpected value for enum PnChannelDirectionEnumeration: {}",
                     r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                )));
             }
         })
     }
@@ -705,8 +698,7 @@ impl opcua::types::json::JsonDecodable for PnChannelDirectionEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }
@@ -757,7 +749,7 @@ impl Default for PnChannelMaintenanceEnumeration {
     }
 }
 impl TryFrom<i32> for PnChannelMaintenanceEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             0i32 => Self::FAULT,
@@ -765,11 +757,10 @@ impl TryFrom<i32> for PnChannelMaintenanceEnumeration {
             1024i32 => Self::MAINTENANCE_DEMANDED,
             1536i32 => Self::USE_QUALIFIED_CHANNEL_QUALIFIER,
             r => {
-                log::error!(
+                return Err(opcua::types::Error::decoding(format!(
                     "Got unexpected value for enum PnChannelMaintenanceEnumeration: {}",
                     r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                )));
             }
         })
     }
@@ -813,8 +804,7 @@ impl opcua::types::json::JsonDecodable for PnChannelMaintenanceEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }
@@ -865,7 +855,7 @@ impl Default for PnChannelSpecifierEnumeration {
     }
 }
 impl TryFrom<i32> for PnChannelSpecifierEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             0i32 => Self::ALL_DISAPPEARS,
@@ -873,11 +863,10 @@ impl TryFrom<i32> for PnChannelSpecifierEnumeration {
             4096i32 => Self::DISAPPEARS,
             6144i32 => Self::DISAPPEARS_OTHER_REMAIN,
             r => {
-                log::error!(
+                return Err(opcua::types::Error::decoding(format!(
                     "Got unexpected value for enum PnChannelSpecifierEnumeration: {}",
                     r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                )));
             }
         })
     }
@@ -921,8 +910,7 @@ impl opcua::types::json::JsonDecodable for PnChannelSpecifierEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }
@@ -977,7 +965,7 @@ impl Default for PnChannelTypeEnumeration {
     }
 }
 impl TryFrom<i32> for PnChannelTypeEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             0i32 => Self::UNSPECIFIC,
@@ -989,11 +977,10 @@ impl TryFrom<i32> for PnChannelTypeEnumeration {
             6i32 => Self::__32BIT,
             7i32 => Self::__64BIT,
             r => {
-                log::error!(
+                return Err(opcua::types::Error::decoding(format!(
                     "Got unexpected value for enum PnChannelTypeEnumeration: {}",
                     r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                )));
             }
         })
     }
@@ -1037,8 +1024,7 @@ impl opcua::types::json::JsonDecodable for PnChannelTypeEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }
@@ -1089,7 +1075,7 @@ impl Default for PnDeviceStateEnumeration {
     }
 }
 impl TryFrom<i32> for PnDeviceStateEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             0i32 => Self::OFFLINE,
@@ -1097,11 +1083,10 @@ impl TryFrom<i32> for PnDeviceStateEnumeration {
             2i32 => Self::ONLINE,
             3i32 => Self::ONLINE_DOCKING,
             r => {
-                log::error!(
+                return Err(opcua::types::Error::decoding(format!(
                     "Got unexpected value for enum PnDeviceStateEnumeration: {}",
                     r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                )));
             }
         })
     }
@@ -1145,8 +1130,7 @@ impl opcua::types::json::JsonDecodable for PnDeviceStateEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }
@@ -1195,7 +1179,7 @@ pub enum PnLinkStateEnumeration {
     LOWER_LAYER_DOWN = 7i32,
 }
 impl TryFrom<i32> for PnLinkStateEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             1i32 => Self::UP,
@@ -1206,11 +1190,10 @@ impl TryFrom<i32> for PnLinkStateEnumeration {
             6i32 => Self::NOT_PRESENT,
             7i32 => Self::LOWER_LAYER_DOWN,
             r => {
-                log::error!(
+                return Err(opcua::types::Error::decoding(format!(
                     "Got unexpected value for enum PnLinkStateEnumeration: {}",
                     r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                )));
             }
         })
     }
@@ -1254,8 +1237,7 @@ impl opcua::types::json::JsonDecodable for PnLinkStateEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }
@@ -1307,7 +1289,7 @@ impl Default for PnModuleStateEnumeration {
     }
 }
 impl TryFrom<i32> for PnModuleStateEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             0i32 => Self::NO_MODULE,
@@ -1316,11 +1298,10 @@ impl TryFrom<i32> for PnModuleStateEnumeration {
             3i32 => Self::SUBSTITUTE,
             4i32 => Self::OK,
             r => {
-                log::error!(
+                return Err(opcua::types::Error::decoding(format!(
                     "Got unexpected value for enum PnModuleStateEnumeration: {}",
                     r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                )));
             }
         })
     }
@@ -1364,8 +1345,7 @@ impl opcua::types::json::JsonDecodable for PnModuleStateEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }
@@ -1419,7 +1399,7 @@ impl Default for PnPortStateEnumeration {
     }
 }
 impl TryFrom<i32> for PnPortStateEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             0i32 => Self::UNKNOWN,
@@ -1430,11 +1410,10 @@ impl TryFrom<i32> for PnPortStateEnumeration {
             5i32 => Self::FORWARDING,
             6i32 => Self::BROKEN,
             r => {
-                log::error!(
+                return Err(opcua::types::Error::decoding(format!(
                     "Got unexpected value for enum PnPortStateEnumeration: {}",
                     r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                )));
             }
         })
     }
@@ -1478,8 +1457,7 @@ impl opcua::types::json::JsonDecodable for PnPortStateEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }
@@ -1528,17 +1506,16 @@ impl Default for PnSubmoduleAddInfoEnumeration {
     }
 }
 impl TryFrom<i32> for PnSubmoduleAddInfoEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             0i32 => Self::NO_ADD_INFO,
             1i32 => Self::TAKEOVER_NOT_ALLOWED,
             r => {
-                log::error!(
+                return Err(opcua::types::Error::decoding(format!(
                     "Got unexpected value for enum PnSubmoduleAddInfoEnumeration: {}",
                     r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                )));
             }
         })
     }
@@ -1582,8 +1559,7 @@ impl opcua::types::json::JsonDecodable for PnSubmoduleAddInfoEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }
@@ -1635,7 +1611,7 @@ impl Default for PnSubmoduleARInfoEnumeration {
     }
 }
 impl TryFrom<i32> for PnSubmoduleARInfoEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             0i32 => Self::OWN,
@@ -1644,11 +1620,10 @@ impl TryFrom<i32> for PnSubmoduleARInfoEnumeration {
             384i32 => Self::LOCKED_BY_IO_CONTROLLER,
             512i32 => Self::LOCKED_BY_IO_SUPERVISOR,
             r => {
-                log::error!(
+                return Err(opcua::types::Error::decoding(format!(
                     "Got unexpected value for enum PnSubmoduleARInfoEnumeration: {}",
                     r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                )));
             }
         })
     }
@@ -1692,8 +1667,7 @@ impl opcua::types::json::JsonDecodable for PnSubmoduleARInfoEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }
@@ -1744,7 +1718,7 @@ impl Default for PnSubmoduleIdentInfoEnumeration {
     }
 }
 impl TryFrom<i32> for PnSubmoduleIdentInfoEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(match value {
             0i32 => Self::OK,
@@ -1752,11 +1726,10 @@ impl TryFrom<i32> for PnSubmoduleIdentInfoEnumeration {
             4096i32 => Self::WRONG,
             6144i32 => Self::NO_SUBMODULE,
             r => {
-                log::error!(
+                return Err(opcua::types::Error::decoding(format!(
                     "Got unexpected value for enum PnSubmoduleIdentInfoEnumeration: {}",
                     r
-                );
-                return Err(opcua::types::StatusCode::BadUnexpectedError);
+                )));
             }
         })
     }
@@ -1800,8 +1773,7 @@ impl opcua::types::json::JsonDecodable for PnSubmoduleIdentInfoEnumeration {
         use opcua::types::json::JsonReader;
         let value: i32 = stream.next_number()??;
         Ok(Self::try_from(value).map_err(|e| {
-            log::warn!("Failed to deserialize i32: {:?}", e);
-            opcua::types::StatusCode::BadDecodingError
+            opcua::types::Error::decoding(format!("Failed to deserialize i32: {:?}", e))
         })?)
     }
 }

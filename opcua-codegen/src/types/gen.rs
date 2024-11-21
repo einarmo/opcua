@@ -509,8 +509,7 @@ impl CodeGenerator {
             try_from_arms = quote! {
                 #try_from_arms
                 r => {
-                    log::error!(#invalid_msg, r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError)
+                    return Err(opcua::types::Error::decoding(format!(#invalid_msg, r)))
                 }
             };
         }
@@ -540,7 +539,7 @@ impl CodeGenerator {
         // TryFrom impl
         impls.push(parse_quote! {
             impl TryFrom<#ty> for #enum_ident {
-                type Error = opcua::types::StatusCode;
+                type Error = opcua::types::Error;
 
                 fn try_from(value: #ty) -> Result<Self, <Self as TryFrom<#ty>>::Error> {
                     Ok(match value {
@@ -599,8 +598,7 @@ impl CodeGenerator {
                     use opcua::types::json::JsonReader;
                     let value: #ty = stream.next_number()??;
                     Ok(Self::try_from(value).map_err(|e| {
-                        log::warn!(#failure_str, e);
-                        opcua::types::StatusCode::BadDecodingError
+                        opcua::types::Error::decoding(format!(#failure_str, e))
                     })?)
                 }
             }

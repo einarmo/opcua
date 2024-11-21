@@ -22,7 +22,7 @@ use crate::{
     status_code::StatusCode,
     string::UAString,
     variant::Variant,
-    ExpandedNodeId, HistoryUpdateType, IdentityCriteriaType, NamespaceMap, NumericRange,
+    Error, ExpandedNodeId, HistoryUpdateType, IdentityCriteriaType, NamespaceMap, NumericRange,
 };
 
 use super::PerformUpdateType;
@@ -134,12 +134,12 @@ impl UserNameIdentityToken {
     }
 
     // Get the plaintext password as a string, if possible.
-    pub fn plaintext_password(&self) -> Result<String, StatusCode> {
+    pub fn plaintext_password(&self) -> Result<String, Error> {
         if !self.encryption_algorithm.is_empty() {
             // Should not be calling this function at all encryption is applied
             panic!();
         }
-        String::from_utf8(self.password.as_ref().to_vec()).map_err(|_| StatusCode::BadDecodingError)
+        String::from_utf8(self.password.as_ref().to_vec()).map_err(Error::decoding)
     }
 
     /// Authenticates the token against the supplied username and password.
@@ -337,12 +337,7 @@ impl fmt::Display for MessageSecurityMode {
 
 impl From<MessageSecurityMode> for String {
     fn from(security_mode: MessageSecurityMode) -> Self {
-        String::from(match security_mode {
-            MessageSecurityMode::None => MESSAGE_SECURITY_MODE_NONE,
-            MessageSecurityMode::Sign => MESSAGE_SECURITY_MODE_SIGN,
-            MessageSecurityMode::SignAndEncrypt => MESSAGE_SECURITY_MODE_SIGN_AND_ENCRYPT,
-            _ => "",
-        })
+        security_mode.to_string()
     }
 }
 

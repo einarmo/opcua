@@ -16,7 +16,7 @@ use crate::{
     request_header::RequestHeader,
     status_code::StatusCode,
     string::UAString,
-    EncodingError,
+    Error,
 };
 
 #[allow(unused)]
@@ -85,7 +85,7 @@ impl BinaryDecodable for ResponseHeader {
                 additional_header,
             ))
         })()
-        .map_err(|e: EncodingError| e.with_request_handle(request_handle))?;
+        .map_err(|e: Error| e.with_request_handle(request_handle))?;
         Ok(ResponseHeader {
             timestamp,
             request_handle,

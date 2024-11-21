@@ -22,7 +22,7 @@ use sha2;
 use x509_cert;
 use x509_cert::spki::SubjectPublicKeyInfoOwned;
 
-use opcua_types::status_code::StatusCode;
+use opcua_types::{status_code::StatusCode, Error};
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum RsaPadding {
@@ -193,11 +193,11 @@ impl PrivateKey {
     }
 
     /// Signs the data using RSA-SHA1
-    pub fn sign_sha1(&self, data: &[u8], signature: &mut [u8]) -> Result<usize, StatusCode> {
+    pub fn sign_sha1(&self, data: &[u8], signature: &mut [u8]) -> Result<usize, Error> {
         let mut rng = rand::thread_rng();
         let signing_key = pkcs1v15::SigningKey::<sha1::Sha1>::new(self.value.clone());
         match signing_key.try_sign_with_rng(&mut rng, data) {
-            Err(_) => Err(StatusCode::BadUnexpectedError),
+            Err(e) => Err(Error::new(StatusCode::BadUnexpectedError, e)),
             Ok(signed) => {
                 let val = signed.to_vec();
                 signature.copy_from_slice(&val);
@@ -207,11 +207,11 @@ impl PrivateKey {
     }
 
     /// Signs the data using RSA-SHA256
-    pub fn sign_sha256(&self, data: &[u8], signature: &mut [u8]) -> Result<usize, StatusCode> {
+    pub fn sign_sha256(&self, data: &[u8], signature: &mut [u8]) -> Result<usize, Error> {
         let mut rng = rand::thread_rng();
         let signing_key = pkcs1v15::SigningKey::<sha2::Sha256>::new(self.value.clone());
         match signing_key.try_sign_with_rng(&mut rng, data) {
-            Err(_) => Err(StatusCode::BadUnexpectedError),
+            Err(e) => Err(Error::new(StatusCode::BadUnexpectedError, e)),
             Ok(signed) => {
                 let val = signed.to_vec();
                 signature.copy_from_slice(&val);
@@ -221,11 +221,11 @@ impl PrivateKey {
     }
 
     /// Signs the data using RSA-SHA256-PSS
-    pub fn sign_sha256_pss(&self, data: &[u8], signature: &mut [u8]) -> Result<usize, StatusCode> {
+    pub fn sign_sha256_pss(&self, data: &[u8], signature: &mut [u8]) -> Result<usize, Error> {
         let mut rng = rand::thread_rng();
         let signing_key = pss::BlindedSigningKey::<sha2::Sha256>::new(self.value.clone());
         match signing_key.try_sign_with_rng(&mut rng, data) {
-            Err(_) => Err(StatusCode::BadUnexpectedError),
+            Err(e) => Err(Error::new(StatusCode::BadUnexpectedError, e)),
             Ok(signed) => {
                 let val = signed.to_vec();
                 signature.copy_from_slice(&val);
@@ -301,11 +301,11 @@ impl KeySize for PublicKey {
 
 impl PublicKey {
     /// Verifies the data using RSA-SHA1
-    pub fn verify_sha1(&self, data: &[u8], signature: &[u8]) -> Result<bool, StatusCode> {
+    pub fn verify_sha1(&self, data: &[u8], signature: &[u8]) -> Result<bool, Error> {
         let verifying_key = pkcs1v15::VerifyingKey::<sha1::Sha1>::new(self.value.clone());
         let r = pkcs1v15::Signature::try_from(signature);
         match r {
-            Err(_) => Err(StatusCode::BadUnexpectedError),
+            Err(e) => Err(Error::new(StatusCode::BadUnexpectedError, e)),
             Ok(val) => match verifying_key.verify(data, &val) {
                 Err(_) => Ok(false),
                 _ => Ok(true),
@@ -314,11 +314,11 @@ impl PublicKey {
     }
 
     /// Verifies the data using RSA-SHA256
-    pub fn verify_sha256(&self, data: &[u8], signature: &[u8]) -> Result<bool, StatusCode> {
+    pub fn verify_sha256(&self, data: &[u8], signature: &[u8]) -> Result<bool, Error> {
         let verifying_key = pkcs1v15::VerifyingKey::<sha2::Sha256>::new(self.value.clone());
         let r = pkcs1v15::Signature::try_from(signature);
         match r {
-            Err(_) => Err(StatusCode::BadUnexpectedError),
+            Err(e) => Err(Error::new(StatusCode::BadUnexpectedError, e)),
             Ok(val) => match verifying_key.verify(data, &val) {
                 Err(_) => Ok(false),
                 _ => Ok(true),
@@ -327,11 +327,11 @@ impl PublicKey {
     }
 
     /// Verifies the data using RSA-SHA256-PSS
-    pub fn verify_sha256_pss(&self, data: &[u8], signature: &[u8]) -> Result<bool, StatusCode> {
+    pub fn verify_sha256_pss(&self, data: &[u8], signature: &[u8]) -> Result<bool, Error> {
         let verifying_key = pss::VerifyingKey::<sha2::Sha256>::new(self.value.clone());
         let r = pss::Signature::try_from(signature);
         match r {
-            Err(_) => Err(StatusCode::BadUnexpectedError),
+            Err(e) => Err(Error::new(StatusCode::BadUnexpectedError, e)),
             Ok(val) => match verifying_key.verify(data, &val) {
                 Err(_) => Ok(false),
                 _ => Ok(true),

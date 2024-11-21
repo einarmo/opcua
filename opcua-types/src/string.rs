@@ -9,13 +9,9 @@ use std::{
     io::{Read, Write},
 };
 
-use log::error;
-
 use crate::{
     encoding::{process_decode_io_result, process_encode_io_result, write_i32, EncodingResult},
-    read_i32,
-    status_code::StatusCode,
-    DecodingOptions, OutOfRange, SimpleBinaryDecodable, SimpleBinaryEncodable,
+    read_i32, DecodingOptions, Error, OutOfRange, SimpleBinaryDecodable, SimpleBinaryEncodable,
 };
 
 /// To avoid naming conflict hell, the OPC UA String type is typed `UAString` so it does not collide
@@ -121,21 +117,21 @@ impl SimpleBinaryDecodable for UAString {
         if len == -1 {
             Ok(UAString::null())
         } else if len < -1 {
-            error!("String buf length is a negative number {}", len);
-            Err(StatusCode::BadDecodingError.into())
+            Err(Error::decoding(format!(
+                "String buf length is a negative number {}",
+                len
+            )))
         } else if len as usize > decoding_options.max_string_length {
-            error!(
+            Err(Error::decoding(format!(
                 "String buf length {} exceeds decoding limit {}",
                 len, decoding_options.max_string_length
-            );
-            Err(StatusCode::BadDecodingError.into())
+            )))
         } else {
             // Create a buffer filled with zeroes and read the string over the top
             let mut buf = vec![0u8; len as usize];
             process_decode_io_result(stream.read_exact(&mut buf))?;
             let value = String::from_utf8(buf).map_err(|err| {
-                error!("Decoded string was not valid UTF-8 - {}", err.to_string());
-                StatusCode::BadDecodingError
+                Error::decoding(format!("Decoded string was not valid UTF-8 - {}", err))
             })?;
             Ok(UAString::from(value))
         }

@@ -6,6 +6,7 @@
 //! other primitives.
 
 use std::{
+    error::Error as StdError,
     fmt::{Debug, Display},
     io::{Cursor, Read, Result, Write},
     sync::atomic::{AtomicU64, Ordering},
@@ -13,7 +14,7 @@ use std::{
 
 use byteorder::{ByteOrder, LittleEndian, WriteBytesExt};
 use chrono::Duration;
-use log::{error, trace, warn};
+use log::error;
 
 use crate::{constants, status_code::StatusCode, Context, QualifiedName};
 
@@ -38,38 +39,47 @@ impl DataEncoding {
     }
 }
 
-pub type EncodingResult<T> = std::result::Result<T, EncodingError>;
+pub type EncodingResult<T> = std::result::Result<T, Error>;
 
-#[derive(Debug, Clone, Copy)]
-pub struct EncodingError {
+#[derive(Debug)]
+pub struct Error {
     status: StatusCode,
     request_id: Option<u32>,
     request_handle: Option<u32>,
+    context: Box<dyn StdError>,
 }
 
-impl Display for EncodingError {
+impl Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.status())
+        write!(f, "{}: {}", self.status(), self.context)
     }
 }
 
-impl From<StatusCode> for EncodingError {
-    fn from(value: StatusCode) -> Self {
-        println!("{}", std::backtrace::Backtrace::capture());
-        Self {
-            status: value,
-            request_handle: None,
-            request_id: None,
-        }
-    }
-}
-
-impl EncodingError {
-    pub fn new(status: StatusCode, request_id: Option<u32>, request_handle: Option<u32>) -> Self {
+impl Error {
+    pub fn new(status: StatusCode, context: impl Into<Box<dyn StdError>>) -> Self {
         Self {
             status,
-            request_handle,
-            request_id,
+            request_handle: None,
+            request_id: None,
+            context: context.into(),
+        }
+    }
+
+    pub fn decoding(context: impl Into<Box<dyn StdError>>) -> Self {
+        Self {
+            status: StatusCode::BadDecodingError,
+            request_handle: None,
+            request_id: None,
+            context: context.into(),
+        }
+    }
+
+    pub fn encoding(context: impl Into<Box<dyn StdError>>) -> Self {
+        Self {
+            status: StatusCode::BadEncodingError,
+            request_handle: None,
+            request_id: None,
+            context: context.into(),
         }
     }
 
@@ -110,14 +120,15 @@ impl EncodingError {
     }
 }
 
-impl From<EncodingError> for StatusCode {
-    fn from(value: EncodingError) -> Self {
+impl From<Error> for StatusCode {
+    fn from(value: Error) -> Self {
+        error!("{}", value);
         value.status()
     }
 }
 
-impl From<EncodingError> for std::io::Error {
-    fn from(value: EncodingError) -> Self {
+impl From<Error> for std::io::Error {
+    fn from(value: Error) -> Self {
         value.status().into()
     }
 }
@@ -148,13 +159,14 @@ impl<'a> DepthLock<'a> {
 
     /// The depth lock tests if the depth can increment and then obtains a lock on it.
     /// The lock will decrement the depth when it drops to ensure proper behaviour during unwinding.
-    pub fn obtain(depth_gauge: &'a DepthGauge) -> core::result::Result<DepthLock<'a>, StatusCode> {
+    pub fn obtain(depth_gauge: &'a DepthGauge) -> core::result::Result<DepthLock<'a>, Error> {
         let max_depth = depth_gauge.max_depth;
         let (gauge, val) = Self::new(depth_gauge);
 
         if val >= max_depth {
-            warn!("Decoding in stream aborted due maximum recursion depth being reached");
-            Err(StatusCode::BadDecodingError)
+            Err(Error::decoding(
+                "Decoding in stream aborted due maximum recursion depth being reached",
+            ))
         } else {
             Ok(gauge)
         }
@@ -258,7 +270,7 @@ impl DecodingOptions {
         Self::default()
     }
 
-    pub fn depth_lock(&self) -> core::result::Result<DepthLock<'_>, StatusCode> {
+    pub fn depth_lock(&self) -> core::result::Result<DepthLock<'_>, Error> {
         DepthLock::obtain(&self.decoding_depth_gauge)
     }
 }
@@ -339,10 +351,7 @@ where
 
 /// Converts an IO encoding error (and logs when in error) into an EncodingResult
 pub fn process_encode_io_result(result: Result<usize>) -> EncodingResult<usize> {
-    result.map_err(|err| {
-        trace!("Encoding error - {:?}", err);
-        StatusCode::BadEncodingError.into()
-    })
+    result.map_err(|err| Error::encoding(err))
 }
 
 /// Converts an IO encoding error (and logs when in error) into an EncodingResult
@@ -350,10 +359,7 @@ pub fn process_decode_io_result<T>(result: Result<T>) -> EncodingResult<T>
 where
     T: Debug,
 {
-    result.map_err(|err| {
-        trace!("Decoding error - {:?}", err);
-        StatusCode::BadDecodingError.into()
-    })
+    result.map_err(|err| Error::decoding(err))
 }
 
 impl<T> BinaryEncodable for Option<Vec<T>>
@@ -398,15 +404,15 @@ where
         if len == -1 {
             Ok(None)
         } else if len < -1 {
-            error!("Array length is negative value and invalid");
-            Err(StatusCode::BadDecodingError.into())
+            Err(Error::decoding(
+                "Array length is negative value and invalid",
+            ))
         } else if len as usize > ctx.options().max_array_length {
-            error!(
+            Err(Error::decoding(format!(
                 "Array length {} exceeds decoding limit {}",
                 len,
                 ctx.options().max_array_length
-            );
-            Err(StatusCode::BadDecodingError.into())
+            )))
         } else {
             let mut values: Vec<T> = Vec::with_capacity(len as usize);
             for _ in 0..len {
@@ -433,9 +439,7 @@ pub fn write_bytes<W: Write + ?Sized>(
     count: usize,
 ) -> EncodingResult<usize> {
     for _ in 0..count {
-        stream
-            .write_u8(value)
-            .map_err(|_| StatusCode::BadEncodingError)?;
+        stream.write_u8(value).map_err(Error::encoding)?;
     }
     Ok(count)
 }
@@ -639,7 +643,7 @@ mod tests {
 
             // Next obtain should fail
             assert_eq!(
-                DepthLock::obtain(&dg).unwrap_err(),
+                DepthLock::obtain(&dg).unwrap_err().status,
                 StatusCode::BadDecodingError
             );
 

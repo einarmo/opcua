@@ -10,13 +10,11 @@ use std::{
 };
 
 use base64::{engine::general_purpose::STANDARD, Engine};
-use log::error;
 
 use crate::{
     encoding::{process_decode_io_result, process_encode_io_result, write_i32, EncodingResult},
-    read_i32,
-    status_code::StatusCode,
-    DecodingOptions, Guid, OutOfRange, SimpleBinaryDecodable, SimpleBinaryEncodable,
+    read_i32, DecodingOptions, Error, Guid, OutOfRange, SimpleBinaryDecodable,
+    SimpleBinaryEncodable,
 };
 
 /// A sequence of octets.
@@ -37,10 +35,9 @@ impl AsRef<[u8]> for ByteString {
 
 #[cfg(feature = "json")]
 mod json {
-    use log::warn;
     use std::io::{Read, Write};
 
-    use crate::{json::*, StatusCode};
+    use crate::{json::*, Error};
 
     use super::ByteString;
 
@@ -65,12 +62,8 @@ mod json {
             _ctx: &Context<'_>,
         ) -> crate::EncodingResult<Self> {
             match stream.peek()? {
-                ValueType::String => {
-                    Ok(Self::from_base64(stream.next_str()?).ok_or_else(|| {
-                        warn!("Cannot decode base64 bytestring");
-                        StatusCode::BadDecodingError
-                    })?)
-                }
+                ValueType::String => Ok(Self::from_base64(stream.next_str()?)
+                    .ok_or_else(|| Error::decoding("Cannot decode base64 bytestring"))?),
                 _ => {
                     stream.next_null()?;
                     Ok(Self::null())
@@ -113,14 +106,15 @@ impl SimpleBinaryDecodable for ByteString {
         if len == -1 {
             Ok(ByteString::null())
         } else if len < -1 {
-            error!("ByteString buf length is a negative number {}", len);
-            Err(StatusCode::BadDecodingError.into())
+            Err(Error::decoding(format!(
+                "ByteString buf length is a negative number {}",
+                len
+            )))
         } else if len as usize > decoding_options.max_byte_string_length {
-            error!(
+            Err(Error::decoding(format!(
                 "ByteString length {} exceeds decoding limit {}",
                 len, decoding_options.max_string_length
-            );
-            Err(StatusCode::BadDecodingError.into())
+            )))
         } else {
             // Create a buffer filled with zeroes and read the byte string over the top
             let mut buf: Vec<u8> = vec![0u8; len as usize];

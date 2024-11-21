@@ -18,7 +18,7 @@ use opcua_core::{
 };
 
 use crate::info::ServerInfo;
-use opcua_types::{DecodingOptions, EncodingError, ResponseHeader, ServiceFault, StatusCode};
+use opcua_types::{DecodingOptions, Error, ResponseHeader, ServiceFault, StatusCode};
 
 use futures::StreamExt;
 use tokio::{
@@ -363,7 +363,7 @@ impl TcpTransport {
         &mut self,
         message: Message,
         channel: &mut SecureChannel,
-    ) -> Result<Option<Request>, EncodingError> {
+    ) -> Result<Option<Request>, Error> {
         match message {
             Message::Chunk(chunk) => {
                 let header = chunk.message_header(&channel.decoding_options())?;
@@ -375,7 +375,10 @@ impl TcpTransport {
                     let chunk = channel.verify_and_remove_security(&chunk.data)?;
 
                     if self.pending_chunks.len() == self.send_buffer.max_chunk_count {
-                        return Err(StatusCode::BadEncodingLimitsExceeded.into());
+                        return Err(Error::decoding(format!(
+                            "Message has more than {} chunks, exceeding negotiated limits",
+                            self.send_buffer.max_chunk_count
+                        )));
                     }
                     self.pending_chunks.push(chunk);
 
@@ -400,10 +403,10 @@ impl TcpTransport {
                     }))
                 }
             }
-            unexpected => {
-                error!("Received unexpected message: {:?}", unexpected);
-                Err(StatusCode::BadUnexpectedError.into())
-            }
+            unexpected => Err(Error::new(
+                StatusCode::BadUnexpectedError,
+                format!("Received unexpected message: {:?}", unexpected),
+            )),
         }
     }
 }

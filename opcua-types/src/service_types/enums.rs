@@ -241,7 +241,7 @@ impl Default for ApplicationType {
     }
 }
 impl TryFrom<i32> for ApplicationType {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -250,8 +250,13 @@ impl TryFrom<i32> for ApplicationType {
                 2i32 => Self::ClientAndServer,
                 3i32 => Self::DiscoveryServer,
                 r => {
-                    log::error!("Got unexpected value for enum ApplicationType: {}", r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum ApplicationType: {}", r
+                            ),
+                        ),
+                    );
                 }
             },
         )
@@ -298,8 +303,9 @@ impl opcua::types::json::JsonDecodable for ApplicationType {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -430,7 +436,7 @@ impl Default for AxisScaleEnumeration {
     }
 }
 impl TryFrom<i32> for AxisScaleEnumeration {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -438,10 +444,13 @@ impl TryFrom<i32> for AxisScaleEnumeration {
                 1i32 => Self::Log,
                 2i32 => Self::Ln,
                 r => {
-                    log::error!(
-                        "Got unexpected value for enum AxisScaleEnumeration: {}", r
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum AxisScaleEnumeration: {}", r
+                            ),
+                        ),
                     );
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
                 }
             },
         )
@@ -488,8 +497,9 @@ impl opcua::types::json::JsonDecodable for AxisScaleEnumeration {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -542,7 +552,7 @@ impl Default for BrokerTransportQualityOfService {
     }
 }
 impl TryFrom<i32> for BrokerTransportQualityOfService {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -552,11 +562,14 @@ impl TryFrom<i32> for BrokerTransportQualityOfService {
                 3i32 => Self::AtMostOnce,
                 4i32 => Self::ExactlyOnce,
                 r => {
-                    log::error!(
-                        "Got unexpected value for enum BrokerTransportQualityOfService: {}",
-                        r
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum BrokerTransportQualityOfService: {}",
+                                r
+                            ),
+                        ),
                     );
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
                 }
             },
         )
@@ -606,8 +619,9 @@ impl opcua::types::json::JsonDecodable for BrokerTransportQualityOfService {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -659,7 +673,7 @@ impl Default for BrowseDirection {
     }
 }
 impl TryFrom<i32> for BrowseDirection {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -719,8 +733,9 @@ impl opcua::types::json::JsonDecodable for BrowseDirection {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -778,7 +793,7 @@ impl Default for BrowseResultMask {
     }
 }
 impl TryFrom<i32> for BrowseResultMask {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -793,8 +808,13 @@ impl TryFrom<i32> for BrowseResultMask {
                 3i32 => Self::ReferenceTypeInfo,
                 60i32 => Self::TargetInfo,
                 r => {
-                    log::error!("Got unexpected value for enum BrowseResultMask: {}", r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum BrowseResultMask: {}", r
+                            ),
+                        ),
+                    );
                 }
             },
         )
@@ -841,8 +861,9 @@ impl opcua::types::json::JsonDecodable for BrowseResultMask {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -893,7 +914,7 @@ impl Default for DataChangeTrigger {
     }
 }
 impl TryFrom<i32> for DataChangeTrigger {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -901,10 +922,13 @@ impl TryFrom<i32> for DataChangeTrigger {
                 1i32 => Self::StatusValue,
                 2i32 => Self::StatusValueTimestamp,
                 r => {
-                    log::error!(
-                        "Got unexpected value for enum DataChangeTrigger: {}", r
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum DataChangeTrigger: {}", r
+                            ),
+                        ),
                     );
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
                 }
             },
         )
@@ -951,8 +975,9 @@ impl opcua::types::json::JsonDecodable for DataChangeTrigger {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -1147,7 +1172,7 @@ impl Default for DataSetOrderingType {
     }
 }
 impl TryFrom<i32> for DataSetOrderingType {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -1155,10 +1180,13 @@ impl TryFrom<i32> for DataSetOrderingType {
                 1i32 => Self::AscendingWriterId,
                 2i32 => Self::AscendingWriterIdSingle,
                 r => {
-                    log::error!(
-                        "Got unexpected value for enum DataSetOrderingType: {}", r
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum DataSetOrderingType: {}", r
+                            ),
+                        ),
                     );
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
                 }
             },
         )
@@ -1205,8 +1233,9 @@ impl opcua::types::json::JsonDecodable for DataSetOrderingType {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -1257,7 +1286,7 @@ impl Default for DeadbandType {
     }
 }
 impl TryFrom<i32> for DeadbandType {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -1265,8 +1294,11 @@ impl TryFrom<i32> for DeadbandType {
                 1i32 => Self::Absolute,
                 2i32 => Self::Percent,
                 r => {
-                    log::error!("Got unexpected value for enum DeadbandType: {}", r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!("Got unexpected value for enum DeadbandType: {}", r),
+                        ),
+                    );
                 }
             },
         )
@@ -1313,8 +1345,9 @@ impl opcua::types::json::JsonDecodable for DeadbandType {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -1367,7 +1400,7 @@ impl Default for DiagnosticsLevel {
     }
 }
 impl TryFrom<i32> for DiagnosticsLevel {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -1377,8 +1410,13 @@ impl TryFrom<i32> for DiagnosticsLevel {
                 3i32 => Self::Log,
                 4i32 => Self::Debug,
                 r => {
-                    log::error!("Got unexpected value for enum DiagnosticsLevel: {}", r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum DiagnosticsLevel: {}", r
+                            ),
+                        ),
+                    );
                 }
             },
         )
@@ -1425,8 +1463,9 @@ impl opcua::types::json::JsonDecodable for DiagnosticsLevel {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -1551,7 +1590,7 @@ impl Default for ExceptionDeviationFormat {
     }
 }
 impl TryFrom<i32> for ExceptionDeviationFormat {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -1561,10 +1600,14 @@ impl TryFrom<i32> for ExceptionDeviationFormat {
                 3i32 => Self::PercentOfEURange,
                 4i32 => Self::Unknown,
                 r => {
-                    log::error!(
-                        "Got unexpected value for enum ExceptionDeviationFormat: {}", r
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum ExceptionDeviationFormat: {}",
+                                r
+                            ),
+                        ),
                     );
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
                 }
             },
         )
@@ -1613,8 +1656,9 @@ impl opcua::types::json::JsonDecodable for ExceptionDeviationFormat {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -1680,7 +1724,7 @@ impl Default for FilterOperator {
     }
 }
 impl TryFrom<i32> for FilterOperator {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -1703,8 +1747,13 @@ impl TryFrom<i32> for FilterOperator {
                 16i32 => Self::BitwiseAnd,
                 17i32 => Self::BitwiseOr,
                 r => {
-                    log::error!("Got unexpected value for enum FilterOperator: {}", r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum FilterOperator: {}", r
+                            ),
+                        ),
+                    );
                 }
             },
         )
@@ -1751,8 +1800,9 @@ impl opcua::types::json::JsonDecodable for FilterOperator {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -1799,7 +1849,7 @@ pub enum HistoryUpdateType {
     Delete = 4i32,
 }
 impl TryFrom<i32> for HistoryUpdateType {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -1808,10 +1858,13 @@ impl TryFrom<i32> for HistoryUpdateType {
                 3i32 => Self::Update,
                 4i32 => Self::Delete,
                 r => {
-                    log::error!(
-                        "Got unexpected value for enum HistoryUpdateType: {}", r
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum HistoryUpdateType: {}", r
+                            ),
+                        ),
                     );
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
                 }
             },
         )
@@ -1858,8 +1911,9 @@ impl opcua::types::json::JsonDecodable for HistoryUpdateType {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -1908,7 +1962,7 @@ pub enum IdentityCriteriaType {
     AuthenticatedUser = 6i32,
 }
 impl TryFrom<i32> for IdentityCriteriaType {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -1919,10 +1973,13 @@ impl TryFrom<i32> for IdentityCriteriaType {
                 5i32 => Self::Anonymous,
                 6i32 => Self::AuthenticatedUser,
                 r => {
-                    log::error!(
-                        "Got unexpected value for enum IdentityCriteriaType: {}", r
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum IdentityCriteriaType: {}", r
+                            ),
+                        ),
                     );
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
                 }
             },
         )
@@ -1969,8 +2026,9 @@ impl opcua::types::json::JsonDecodable for IdentityCriteriaType {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -2022,7 +2080,7 @@ impl Default for IdType {
     }
 }
 impl TryFrom<i32> for IdType {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -2031,8 +2089,11 @@ impl TryFrom<i32> for IdType {
                 2i32 => Self::Guid,
                 3i32 => Self::Opaque,
                 r => {
-                    log::error!("Got unexpected value for enum IdType: {}", r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!("Got unexpected value for enum IdType: {}", r),
+                        ),
+                    );
                 }
             },
         )
@@ -2077,8 +2138,9 @@ impl opcua::types::json::JsonDecodable for IdType {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -2275,7 +2337,7 @@ impl Default for MessageSecurityMode {
     }
 }
 impl TryFrom<i32> for MessageSecurityMode {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -2335,8 +2397,9 @@ impl opcua::types::json::JsonDecodable for MessageSecurityMode {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -2384,7 +2447,7 @@ pub enum ModelChangeStructureVerbMask {
     DataTypeChanged = 16i32,
 }
 impl TryFrom<i32> for ModelChangeStructureVerbMask {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -2394,11 +2457,14 @@ impl TryFrom<i32> for ModelChangeStructureVerbMask {
                 8i32 => Self::ReferenceDeleted,
                 16i32 => Self::DataTypeChanged,
                 r => {
-                    log::error!(
-                        "Got unexpected value for enum ModelChangeStructureVerbMask: {}",
-                        r
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum ModelChangeStructureVerbMask: {}",
+                                r
+                            ),
+                        ),
                     );
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
                 }
             },
         )
@@ -2448,8 +2514,9 @@ impl opcua::types::json::JsonDecodable for ModelChangeStructureVerbMask {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -2500,7 +2567,7 @@ impl Default for MonitoringMode {
     }
 }
 impl TryFrom<i32> for MonitoringMode {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -2508,8 +2575,13 @@ impl TryFrom<i32> for MonitoringMode {
                 1i32 => Self::Sampling,
                 2i32 => Self::Reporting,
                 r => {
-                    log::error!("Got unexpected value for enum MonitoringMode: {}", r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum MonitoringMode: {}", r
+                            ),
+                        ),
+                    );
                 }
             },
         )
@@ -2556,8 +2628,9 @@ impl opcua::types::json::JsonDecodable for MonitoringMode {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -2603,7 +2676,7 @@ pub enum NamingRuleType {
     Constraint = 3i32,
 }
 impl TryFrom<i32> for NamingRuleType {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -2611,8 +2684,13 @@ impl TryFrom<i32> for NamingRuleType {
                 2i32 => Self::Optional,
                 3i32 => Self::Constraint,
                 r => {
-                    log::error!("Got unexpected value for enum NamingRuleType: {}", r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum NamingRuleType: {}", r
+                            ),
+                        ),
+                    );
                 }
             },
         )
@@ -2659,8 +2737,9 @@ impl opcua::types::json::JsonDecodable for NamingRuleType {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -2743,7 +2822,7 @@ impl Default for NodeAttributesMask {
     }
 }
 impl TryFrom<i32> for NodeAttributesMask {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -2783,10 +2862,13 @@ impl TryFrom<i32> for NodeAttributesMask {
                 26537060i32 => Self::ReferenceType,
                 26501356i32 => Self::View,
                 r => {
-                    log::error!(
-                        "Got unexpected value for enum NodeAttributesMask: {}", r
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum NodeAttributesMask: {}", r
+                            ),
+                        ),
                     );
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
                 }
             },
         )
@@ -2833,8 +2915,9 @@ impl opcua::types::json::JsonDecodable for NodeAttributesMask {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -2891,7 +2974,7 @@ impl Default for NodeClass {
     }
 }
 impl TryFrom<i32> for NodeClass {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -2905,8 +2988,11 @@ impl TryFrom<i32> for NodeClass {
                 64i32 => Self::DataType,
                 128i32 => Self::View,
                 r => {
-                    log::error!("Got unexpected value for enum NodeClass: {}", r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!("Got unexpected value for enum NodeClass: {}", r),
+                        ),
+                    );
                 }
             },
         )
@@ -2951,8 +3037,9 @@ impl opcua::types::json::JsonDecodable for NodeClass {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -3007,7 +3094,7 @@ impl Default for NodeIdType {
     }
 }
 impl TryFrom<u8> for NodeIdType {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: u8) -> Result<Self, <Self as TryFrom<u8>>::Error> {
         Ok(
             match value {
@@ -3018,8 +3105,11 @@ impl TryFrom<u8> for NodeIdType {
                 4u8 => Self::Guid,
                 5u8 => Self::ByteString,
                 r => {
-                    log::error!("Got unexpected value for enum NodeIdType: {}", r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!("Got unexpected value for enum NodeIdType: {}", r),
+                        ),
+                    );
                 }
             },
         )
@@ -3064,8 +3154,9 @@ impl opcua::types::json::JsonDecodable for NodeIdType {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize u8: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize u8: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -3112,7 +3203,7 @@ pub enum OpenFileMode {
     Append = 8i32,
 }
 impl TryFrom<i32> for OpenFileMode {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -3121,8 +3212,11 @@ impl TryFrom<i32> for OpenFileMode {
                 4i32 => Self::EraseExisting,
                 8i32 => Self::Append,
                 r => {
-                    log::error!("Got unexpected value for enum OpenFileMode: {}", r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!("Got unexpected value for enum OpenFileMode: {}", r),
+                        ),
+                    );
                 }
             },
         )
@@ -3169,8 +3263,9 @@ impl opcua::types::json::JsonDecodable for OpenFileMode {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -3221,7 +3316,7 @@ impl Default for OverrideValueHandling {
     }
 }
 impl TryFrom<i32> for OverrideValueHandling {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -3229,10 +3324,13 @@ impl TryFrom<i32> for OverrideValueHandling {
                 1i32 => Self::LastUsableValue,
                 2i32 => Self::OverrideValue,
                 r => {
-                    log::error!(
-                        "Got unexpected value for enum OverrideValueHandling: {}", r
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum OverrideValueHandling: {}", r
+                            ),
+                        ),
                     );
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
                 }
             },
         )
@@ -3279,8 +3377,9 @@ impl opcua::types::json::JsonDecodable for OverrideValueHandling {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -3327,7 +3426,7 @@ pub enum PerformUpdateType {
     Remove = 4i32,
 }
 impl TryFrom<i32> for PerformUpdateType {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -3336,10 +3435,13 @@ impl TryFrom<i32> for PerformUpdateType {
                 3i32 => Self::Update,
                 4i32 => Self::Remove,
                 r => {
-                    log::error!(
-                        "Got unexpected value for enum PerformUpdateType: {}", r
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum PerformUpdateType: {}", r
+                            ),
+                        ),
                     );
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
                 }
             },
         )
@@ -3386,8 +3488,9 @@ impl opcua::types::json::JsonDecodable for PerformUpdateType {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -3513,18 +3616,21 @@ impl Default for PubSubDiagnosticsCounterClassification {
     }
 }
 impl TryFrom<i32> for PubSubDiagnosticsCounterClassification {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
                 0i32 => Self::Information,
                 1i32 => Self::Error,
                 r => {
-                    log::error!(
-                        "Got unexpected value for enum PubSubDiagnosticsCounterClassification: {}",
-                        r
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum PubSubDiagnosticsCounterClassification: {}",
+                                r
+                            ),
+                        ),
                     );
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
                 }
             },
         )
@@ -3574,8 +3680,9 @@ impl opcua::types::json::JsonDecodable for PubSubDiagnosticsCounterClassificatio
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -3627,7 +3734,7 @@ impl Default for PubSubState {
     }
 }
 impl TryFrom<i32> for PubSubState {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -3636,8 +3743,11 @@ impl TryFrom<i32> for PubSubState {
                 2i32 => Self::Operational,
                 3i32 => Self::Error,
                 r => {
-                    log::error!("Got unexpected value for enum PubSubState: {}", r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!("Got unexpected value for enum PubSubState: {}", r),
+                        ),
+                    );
                 }
             },
         )
@@ -3684,8 +3794,9 @@ impl opcua::types::json::JsonDecodable for PubSubState {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -3739,7 +3850,7 @@ impl Default for RedundancySupport {
     }
 }
 impl TryFrom<i32> for RedundancySupport {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -3750,10 +3861,13 @@ impl TryFrom<i32> for RedundancySupport {
                 4i32 => Self::Transparent,
                 5i32 => Self::HotAndMirrored,
                 r => {
-                    log::error!(
-                        "Got unexpected value for enum RedundancySupport: {}", r
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum RedundancySupport: {}", r
+                            ),
+                        ),
                     );
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
                 }
             },
         )
@@ -3800,8 +3914,9 @@ impl opcua::types::json::JsonDecodable for RedundancySupport {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -3851,17 +3966,21 @@ impl Default for SecurityTokenRequestType {
     }
 }
 impl TryFrom<i32> for SecurityTokenRequestType {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
                 0i32 => Self::Issue,
                 1i32 => Self::Renew,
                 r => {
-                    log::error!(
-                        "Got unexpected value for enum SecurityTokenRequestType: {}", r
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum SecurityTokenRequestType: {}",
+                                r
+                            ),
+                        ),
                     );
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
                 }
             },
         )
@@ -3910,8 +4029,9 @@ impl opcua::types::json::JsonDecodable for SecurityTokenRequestType {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -3967,7 +4087,7 @@ impl Default for ServerState {
     }
 }
 impl TryFrom<i32> for ServerState {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -3980,8 +4100,11 @@ impl TryFrom<i32> for ServerState {
                 6i32 => Self::CommunicationFault,
                 7i32 => Self::Unknown,
                 r => {
-                    log::error!("Got unexpected value for enum ServerState: {}", r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!("Got unexpected value for enum ServerState: {}", r),
+                        ),
+                    );
                 }
             },
         )
@@ -4028,8 +4151,9 @@ impl opcua::types::json::JsonDecodable for ServerState {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -4080,7 +4204,7 @@ impl Default for StructureType {
     }
 }
 impl TryFrom<i32> for StructureType {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -4088,8 +4212,11 @@ impl TryFrom<i32> for StructureType {
                 1i32 => Self::StructureWithOptionalFields,
                 2i32 => Self::Union,
                 r => {
-                    log::error!("Got unexpected value for enum StructureType: {}", r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!("Got unexpected value for enum StructureType: {}", r),
+                        ),
+                    );
                 }
             },
         )
@@ -4136,8 +4263,9 @@ impl opcua::types::json::JsonDecodable for StructureType {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -4190,7 +4318,7 @@ impl Default for TimestampsToReturn {
     }
 }
 impl TryFrom<i32> for TimestampsToReturn {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -4251,8 +4379,9 @@ impl opcua::types::json::JsonDecodable for TimestampsToReturn {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -4306,7 +4435,7 @@ impl Default for TrustListMasks {
     }
 }
 impl TryFrom<i32> for TrustListMasks {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -4317,8 +4446,13 @@ impl TryFrom<i32> for TrustListMasks {
                 8i32 => Self::IssuerCrls,
                 15i32 => Self::All,
                 r => {
-                    log::error!("Got unexpected value for enum TrustListMasks: {}", r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!(
+                                "Got unexpected value for enum TrustListMasks: {}", r
+                            ),
+                        ),
+                    );
                 }
             },
         )
@@ -4365,8 +4499,9 @@ impl opcua::types::json::JsonDecodable for TrustListMasks {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }
@@ -4566,7 +4701,7 @@ impl Default for UserTokenType {
     }
 }
 impl TryFrom<i32> for UserTokenType {
-    type Error = opcua::types::StatusCode;
+    type Error = opcua::types::Error;
     fn try_from(value: i32) -> Result<Self, <Self as TryFrom<i32>>::Error> {
         Ok(
             match value {
@@ -4575,8 +4710,11 @@ impl TryFrom<i32> for UserTokenType {
                 2i32 => Self::Certificate,
                 3i32 => Self::IssuedToken,
                 r => {
-                    log::error!("Got unexpected value for enum UserTokenType: {}", r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError);
+                    return Err(
+                        opcua::types::Error::decoding(
+                            format!("Got unexpected value for enum UserTokenType: {}", r),
+                        ),
+                    );
                 }
             },
         )
@@ -4623,8 +4761,9 @@ impl opcua::types::json::JsonDecodable for UserTokenType {
         Ok(
             Self::try_from(value)
                 .map_err(|e| {
-                    log::warn!("Failed to deserialize i32: {:?}", e);
-                    opcua::types::StatusCode::BadDecodingError
+                    opcua::types::Error::decoding(
+                        format!("Failed to deserialize i32: {:?}", e),
+                    )
                 })?,
         )
     }

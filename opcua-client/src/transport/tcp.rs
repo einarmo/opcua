@@ -116,7 +116,7 @@ impl TcpConnector {
             .write_all(&opcua_types::SimpleBinaryEncodable::encode_to_vec(&hello))
             .await
             .map_err(|err| {
-                error!("Cannot send hello to server, err = {:?}", err);
+                error!("Cannot send hello to server, err = {}", err);
                 StatusCode::BadCommunicationError
             })?;
         let ack = match framed_read.next().await {
@@ -202,7 +202,7 @@ impl TcpTransport {
                 }
             }
             Err(err) => {
-                error!("Error reading from stream {:?}", err);
+                error!("Error reading from stream {}", err);
                 TransportPollResult::Closed(StatusCode::BadConnectionClosed)
             }
         }

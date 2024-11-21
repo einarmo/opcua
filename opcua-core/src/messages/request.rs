@@ -1,7 +1,6 @@
 use crate::comms::message_chunk::MessageChunkType;
 
 use super::{Message, MessageType};
-use log::debug;
 use opcua_types::*;
 use std::io::{Read, Write};
 
@@ -55,8 +54,7 @@ macro_rules! request_enum {
                         Ok($value::decode(stream, ctx)?.into())
                     }, )*
                     _ => {
-                        debug!("decoding unsupported for object id {:?}", object_id);
-                        Err(EncodingError::from(StatusCode::BadDecodingError))
+                        Err(Error::decoding(format!("decoding unsupported for object id {:?}", object_id)))
                     }
                 }
             }

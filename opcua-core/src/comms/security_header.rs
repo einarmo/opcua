@@ -4,10 +4,9 @@
 
 use std::io::{Read, Write};
 
-use log::error;
 use opcua_types::{
-    ByteString, DecodingOptions, EncodingResult, SimpleBinaryDecodable, SimpleBinaryEncodable,
-    UAString,
+    ByteString, DecodingOptions, EncodingResult, Error, SimpleBinaryDecodable,
+    SimpleBinaryEncodable, UAString,
 };
 
 use opcua_types::{constants, status_code::StatusCode};
@@ -99,11 +98,23 @@ impl SimpleBinaryDecodable for AsymmetricSecurityHeader {
         let receiver_certificate_thumbprint = ByteString::decode(stream, decoding_options)?;
 
         // validate sender_certificate_length < MaxCertificateSize
-        if sender_certificate.value.is_some()
-            && sender_certificate.value.as_ref().unwrap().len() >= constants::MAX_CERTIFICATE_LENGTH
+        if sender_certificate
+            .value
+            .as_ref()
+            .is_some_and(|v| v.len() >= constants::MAX_CERTIFICATE_LENGTH)
         {
-            error!("Sender certificate exceeds max certificate size");
-            Err(StatusCode::BadDecodingError.into())
+            Err(Error::new(
+                StatusCode::BadEncodingLimitsExceeded,
+                format!(
+                    "Sender certificate has length {}, which exceeds max certificate size {}",
+                    sender_certificate
+                        .value
+                        .as_ref()
+                        .map(|v| v.len())
+                        .unwrap_or_default(),
+                    constants::MAX_CERTIFICATE_LENGTH
+                ),
+            ))
         } else {
             // validate receiver_certificate_thumbprint_length == 20
             let thumbprint_len = if receiver_certificate_thumbprint.value.is_some() {
@@ -116,15 +127,14 @@ impl SimpleBinaryDecodable for AsymmetricSecurityHeader {
                 0
             };
             if thumbprint_len > 0 && thumbprint_len != Thumbprint::THUMBPRINT_SIZE {
-                error!(
+                Err(Error::decoding(format!(
                     "Receiver certificate thumbprint is not 20 bytes long, {} bytes",
                     receiver_certificate_thumbprint
                         .value
                         .as_ref()
                         .unwrap()
-                        .len()
-                );
-                Err(StatusCode::BadDecodingError.into())
+                        .len(),
+                )))
             } else {
                 Ok(AsymmetricSecurityHeader {
                     security_policy_uri,

@@ -15,7 +15,7 @@ use crate::{
     extension_object::ExtensionObject,
     node_id::NodeId,
     string::UAString,
-    EncodingError,
+    Error,
 };
 
 #[allow(unused)]
@@ -163,7 +163,7 @@ impl BinaryDecodable for RequestHeader {
                 additional_header,
             ))
         })()
-        .map_err(|e: EncodingError| e.with_request_handle(request_handle))?;
+        .map_err(|e: Error| e.with_request_handle(request_handle))?;
 
         Ok(RequestHeader {
             authentication_token,

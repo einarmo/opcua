@@ -1,6 +1,7 @@
 use log::error;
+use thiserror::Error;
 
-use crate::{variant::*, variant_type_id::*, StatusCode};
+use crate::{variant::*, variant_type_id::*};
 
 /// An array is a vector of values with an optional number of dimensions.
 /// It is expected that the multi-dimensional array is valid, or it might not be encoded or decoded
@@ -20,22 +21,27 @@ pub struct Array {
     pub dimensions: Option<Vec<u32>>,
 }
 
+#[derive(Debug, Error)]
+pub enum ArrayError {
+    #[error("Variant array do not match outer type")]
+    ContentMismatch,
+    #[error("Variant array dimensions multiplied together do not equal the actual array length")]
+    InvalidDimensions,
+}
+
 impl Array {
     /// Constructs a single dimension array from the supplied values
-    pub fn new<V>(value_type: VariantScalarTypeId, values: V) -> Result<Array, StatusCode>
+    pub fn new<V>(value_type: VariantScalarTypeId, values: V) -> Result<Array, ArrayError>
     where
         V: Into<Vec<Variant>>,
     {
         let values = values.into();
-        if Self::validate_array_type_to_values(value_type, &values) {
-            Ok(Array {
-                value_type,
-                values,
-                dimensions: None,
-            })
-        } else {
-            Err(StatusCode::BadDecodingError)
-        }
+        Self::validate_array_type_to_values(value_type, &values)?;
+        Ok(Array {
+            value_type,
+            values,
+            dimensions: None,
+        })
     }
 
     /// Constructs a multi-dimensional array from the supplied values. The values are still provided
@@ -45,7 +51,7 @@ impl Array {
         value_type: VariantScalarTypeId,
         values: V,
         dimensions: D,
-    ) -> Result<Array, StatusCode>
+    ) -> Result<Array, ArrayError>
     where
         V: Into<Vec<Variant>>,
         D: Into<Vec<u32>>,
@@ -54,28 +60,27 @@ impl Array {
         let dimensions: Vec<_> = dimensions.into();
 
         if !Self::validate_dimensions(values.len(), &dimensions) {
-            return Err(StatusCode::BadDecodingError);
+            return Err(ArrayError::InvalidDimensions);
         }
 
-        if Self::validate_array_type_to_values(value_type, &values) {
-            Ok(Array {
-                value_type,
-                values,
-                dimensions: Some(dimensions),
-            })
-        } else {
-            Err(StatusCode::BadDecodingError)
-        }
+        Self::validate_array_type_to_values(value_type, &values)?;
+        Ok(Array {
+            value_type,
+            values,
+            dimensions: Some(dimensions),
+        })
     }
 
     /// This is a runtime check to ensure the type of the array also matches the types of the variants in the array.
-    fn validate_array_type_to_values(value_type: VariantScalarTypeId, values: &[Variant]) -> bool {
+    fn validate_array_type_to_values(
+        value_type: VariantScalarTypeId,
+        values: &[Variant],
+    ) -> Result<(), ArrayError> {
         if !values_are_of_type(values, value_type) {
             // If the values exist, then validate them to the type
-            error!("Value type of array does not match contents");
-            false
+            Err(ArrayError::ContentMismatch)
         } else {
-            true
+            Ok(())
         }
     }
 

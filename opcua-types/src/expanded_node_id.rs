@@ -12,8 +12,6 @@ use std::{
     str::FromStr,
 };
 
-use log::error;
-
 use crate::{
     byte_string::ByteString,
     encoding::{BinaryDecodable, BinaryEncodable, EncodingResult},
@@ -22,7 +20,7 @@ use crate::{
     read_u16, read_u32, read_u8,
     status_code::StatusCode,
     string::*,
-    write_u16, write_u32, write_u8, Context, NamespaceMap,
+    write_u16, write_u32, write_u8, Context, Error, NamespaceMap,
 };
 
 /// A NodeId that allows the namespace URI to be specified instead of an index.
@@ -63,9 +61,7 @@ mod json {
     use std::io::{Read, Write};
     use std::str::FromStr;
 
-    use log::warn;
-
-    use crate::{json::*, ByteString, Guid, StatusCode};
+    use crate::{json::*, ByteString, Error, Guid};
 
     use super::{ExpandedNodeId, Identifier, NodeId, UAString};
     enum RawIdentifier {
@@ -181,57 +177,46 @@ mod json {
             let identifier = match id_type {
                 Some(1) => {
                     let Some(RawIdentifier::String(s)) = value else {
-                        warn!("Invalid NodeId, empty identifier");
-                        return Err(StatusCode::BadDecodingError.into());
+                        return Err(Error::decoding("Invalid NodeId, empty identifier"));
                     };
                     let s = UAString::from(s);
                     if s.is_null() || s.is_empty() {
-                        warn!("Invalid NodeId, empty identifier");
-                        return Err(StatusCode::BadDecodingError.into());
+                        return Err(Error::decoding("Invalid NodeId, empty identifier"));
                     }
                     Identifier::String(s)
                 }
                 Some(2) => {
                     let Some(RawIdentifier::String(s)) = value else {
-                        warn!("Invalid NodeId, empty identifier");
-                        return Err(StatusCode::BadDecodingError.into());
+                        return Err(Error::decoding("Invalid NodeId, empty identifier"));
                     };
-                    let s = Guid::from_str(&s).map_err(|_| {
-                        warn!("Unable to decode GUID identifier");
-                        StatusCode::BadDecodingError
-                    })?;
+                    let s = Guid::from_str(&s)
+                        .map_err(|_| Error::decoding("Unable to decode GUID identifier"))?;
                     Identifier::Guid(s)
                 }
                 Some(3) => {
                     let Some(RawIdentifier::String(s)) = value else {
-                        warn!("Invalid NodeId, empty identifier");
-                        return Err(StatusCode::BadDecodingError.into());
+                        return Err(Error::decoding("Invalid NodeId, empty identifier"));
                     };
-                    let s: ByteString = ByteString::from_base64(&s).ok_or_else(|| {
-                        warn!("Unable to decode bytestring identifier");
-                        StatusCode::BadDecodingError
-                    })?;
+                    let s: ByteString = ByteString::from_base64(&s)
+                        .ok_or_else(|| Error::decoding("Unable to decode bytestring identifier"))?;
                     Identifier::ByteString(s)
                 }
                 None | Some(0) => {
                     let Some(RawIdentifier::Integer(s)) = value else {
-                        warn!("Invalid NodeId, empty identifier");
-                        return Err(StatusCode::BadDecodingError.into());
+                        return Err(Error::decoding("Invalid NodeId, empty identifier"));
                     };
                     Identifier::Numeric(s)
                 }
                 Some(r) => {
-                    warn!("Failed to deserialize NodeId, got unexpected IdType {r}");
-                    return Err(StatusCode::BadDecodingError.into());
+                    return Err(Error::decoding(format!(
+                        "Failed to deserialize NodeId, got unexpected IdType {r}"
+                    )));
                 }
             };
 
             let (namespace_uri, namespace) = match namespace {
                 Some(RawIdentifier::String(s)) => (Some(s), 0u16),
-                Some(RawIdentifier::Integer(s)) => (
-                    None,
-                    s.try_into().map_err(|_| StatusCode::BadDecodingError)?,
-                ),
+                Some(RawIdentifier::Integer(s)) => (None, s.try_into().map_err(Error::decoding)?),
                 None => (None, 0),
             };
 
@@ -355,8 +340,10 @@ impl BinaryDecodable for ExpandedNodeId {
                 NodeId::new(namespace, value)
             }
             _ => {
-                error!("Unrecognized expanded node id type {}", identifier);
-                return Err(StatusCode::BadDecodingError.into());
+                return Err(Error::encoding(format!(
+                    "Unrecognized expanded node id type {}",
+                    identifier
+                )));
             }
         };
 

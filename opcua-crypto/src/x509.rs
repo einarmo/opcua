@@ -29,7 +29,9 @@ use const_oid;
 use x509::builder::Error as BuilderError;
 use x509::ext::pkix::name as xname;
 
-use opcua_types::{service_types::ApplicationDescription, status_code::StatusCode, ByteString};
+use opcua_types::{
+    service_types::ApplicationDescription, status_code::StatusCode, ByteString, Error,
+};
 
 use super::{
     hostname,
@@ -590,14 +592,16 @@ impl X509 {
         Ok(X509 { value: built })
     }
 
-    pub fn from_byte_string(data: &ByteString) -> Result<X509, StatusCode> {
+    pub fn from_byte_string(data: &ByteString) -> Result<X509, Error> {
         if data.is_null() {
-            error!("Cannot make certificate from null bytestring");
-            Err(StatusCode::BadCertificateInvalid)
+            Err(Error::new(
+                StatusCode::BadCertificateInvalid,
+                "Cannot make certificate from null bytestring",
+            ))
         } else {
             let r = Self::from_der(data.value.as_ref().unwrap());
             match r {
-                Err(_) => Err(StatusCode::BadCertificateInvalid),
+                Err(e) => Err(Error::new(StatusCode::BadCertificateInvalid, e)),
                 Ok(cert) => Ok(cert),
             }
         }
@@ -609,7 +613,7 @@ impl X509 {
         ByteString::from(&der)
     }
 
-    pub fn public_key(&self) -> Result<PublicKey, StatusCode> {
+    pub fn public_key(&self) -> Result<PublicKey, Error> {
         use x509_cert::der::referenced::OwnedToRef;
 
         let r = RsaPublicKey::try_from(
@@ -619,7 +623,7 @@ impl X509 {
                 .owned_to_ref(),
         );
         match r {
-            Err(_) => Err(StatusCode::BadCertificateInvalid),
+            Err(e) => Err(Error::new(StatusCode::BadCertificateInvalid, e)),
             Ok(v) => Ok(PublicKey { value: v }),
         }
     }

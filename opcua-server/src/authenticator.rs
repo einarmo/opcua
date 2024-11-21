@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use log::{debug, error};
 use opcua_crypto::{SecurityPolicy, Thumbprint};
 use opcua_types::{
-    MessageSecurityMode, NodeId, StatusCode, UAString, UserTokenPolicy, UserTokenType,
+    Error, MessageSecurityMode, NodeId, StatusCode, UAString, UserTokenPolicy, UserTokenType,
 };
 
 use crate::identity_token::{
@@ -78,11 +78,11 @@ impl UserToken {
 pub trait AuthManager: Send + Sync + 'static {
     /// Validate whether an anonymous user is allowed to access the given endpoint.
     /// This does not return a user token, all anonymous users share the same special token.
-    async fn authenticate_anonymous_token(
-        &self,
-        endpoint: &ServerEndpoint,
-    ) -> Result<(), StatusCode> {
-        Err(StatusCode::BadIdentityTokenRejected)
+    async fn authenticate_anonymous_token(&self, endpoint: &ServerEndpoint) -> Result<(), Error> {
+        Err(Error::new(
+            StatusCode::BadIdentityTokenRejected,
+            "Anonymous identity token unsupported",
+        ))
     }
 
     /// Validate the given username and password for `endpoint`.
@@ -92,8 +92,11 @@ pub trait AuthManager: Send + Sync + 'static {
         endpoint: &ServerEndpoint,
         username: &str,
         password: &Password,
-    ) -> Result<UserToken, StatusCode> {
-        Err(StatusCode::BadIdentityTokenRejected)
+    ) -> Result<UserToken, Error> {
+        Err(Error::new(
+            StatusCode::BadIdentityTokenRejected,
+            "Username identity token unsupported",
+        ))
     }
 
     /// Validate the signing thumbprint for `endpoint`.
@@ -102,8 +105,11 @@ pub trait AuthManager: Send + Sync + 'static {
         &self,
         endpoint: &ServerEndpoint,
         signing_thumbprint: &Thumbprint,
-    ) -> Result<UserToken, StatusCode> {
-        Err(StatusCode::BadIdentityTokenRejected)
+    ) -> Result<UserToken, Error> {
+        Err(Error::new(
+            StatusCode::BadIdentityTokenRejected,
+            "X509 identity token unsupported",
+        ))
     }
 
     /// Return the effective user access level for the given node ID
@@ -163,16 +169,15 @@ impl DefaultAuthenticator {
 
 #[async_trait]
 impl AuthManager for DefaultAuthenticator {
-    async fn authenticate_anonymous_token(
-        &self,
-        endpoint: &ServerEndpoint,
-    ) -> Result<(), StatusCode> {
+    async fn authenticate_anonymous_token(&self, endpoint: &ServerEndpoint) -> Result<(), Error> {
         if !endpoint.user_token_ids.contains(ANONYMOUS_USER_TOKEN_ID) {
-            error!(
-                "Endpoint \"{}\" does not support anonymous authentication",
-                endpoint.path
-            );
-            return Err(StatusCode::BadIdentityTokenRejected);
+            return Err(Error::new(
+                StatusCode::BadIdentityTokenRejected,
+                format!(
+                    "Endpoint \"{}\" does not support anonymous authentication",
+                    endpoint.path
+                ),
+            ));
         }
         Ok(())
     }
@@ -182,7 +187,7 @@ impl AuthManager for DefaultAuthenticator {
         endpoint: &ServerEndpoint,
         username: &str,
         password: &Password,
-    ) -> Result<UserToken, StatusCode> {
+    ) -> Result<UserToken, Error> {
         let token_password = password.get();
         for user_token_id in &endpoint.user_token_ids {
             if let Some(server_user_token) = self.users.get(user_token_id) {
@@ -199,7 +204,10 @@ impl AuthManager for DefaultAuthenticator {
                             "Cannot authenticate \"{}\", password is invalid",
                             server_user_token.user
                         );
-                        return Err(StatusCode::BadUserAccessDenied);
+                        return Err(Error::new(
+                            StatusCode::BadIdentityTokenRejected,
+                            format!("Cannot authenticate user \"{username}\""),
+                        ));
                     } else {
                         return Ok(UserToken(user_token_id.clone()));
                     }
@@ -210,14 +218,17 @@ impl AuthManager for DefaultAuthenticator {
             "Cannot authenticate \"{}\", user not found for endpoint",
             username
         );
-        Err(StatusCode::BadUserAccessDenied)
+        Err(Error::new(
+            StatusCode::BadIdentityTokenRejected,
+            format!("Cannot authenticate \"{}\"", username),
+        ))
     }
 
     async fn authenticate_x509_identity_token(
         &self,
         endpoint: &ServerEndpoint,
         signing_thumbprint: &Thumbprint,
-    ) -> Result<UserToken, StatusCode> {
+    ) -> Result<UserToken, Error> {
         // Check the endpoint to see if this token is supported
         for user_token_id in &endpoint.user_token_ids {
             if let Some(server_user_token) = self.users.get(user_token_id) {
@@ -229,7 +240,10 @@ impl AuthManager for DefaultAuthenticator {
                 }
             }
         }
-        Err(StatusCode::BadIdentityTokenInvalid)
+        Err(Error::new(
+            StatusCode::BadIdentityTokenRejected,
+            "Authentication failed",
+        ))
     }
 
     fn user_token_policies(&self, endpoint: &ServerEndpoint) -> Vec<UserTokenPolicy> {
