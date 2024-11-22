@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -32,46 +32,5 @@ impl opcua::types::MessageInfo for MonitoredItemCreateResult {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::MonitoredItemCreateResult_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for MonitoredItemCreateResult {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.status_code.byte_len(ctx);
-        size += self.monitored_item_id.byte_len(ctx);
-        size += self.revised_sampling_interval.byte_len(ctx);
-        size += self.revised_queue_size.byte_len(ctx);
-        size += self.filter_result.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.status_code.encode(stream, ctx)?;
-        size += self.monitored_item_id.encode(stream, ctx)?;
-        size += self.revised_sampling_interval.encode(stream, ctx)?;
-        size += self.revised_queue_size.encode(stream, ctx)?;
-        size += self.filter_result.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for MonitoredItemCreateResult {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            status_code: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            monitored_item_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            revised_sampling_interval: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            revised_queue_size: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            filter_result: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

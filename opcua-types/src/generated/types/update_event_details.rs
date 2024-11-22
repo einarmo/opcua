@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -30,43 +30,5 @@ impl opcua::types::MessageInfo for UpdateEventDetails {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::UpdateEventDetails_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for UpdateEventDetails {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.node_id.byte_len(ctx);
-        size += self.perform_insert_replace.byte_len(ctx);
-        size += self.filter.byte_len(ctx);
-        size += self.event_data.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.node_id.encode(stream, ctx)?;
-        size += self.perform_insert_replace.encode(stream, ctx)?;
-        size += self.filter.encode(stream, ctx)?;
-        size += self.event_data.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for UpdateEventDetails {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            node_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            perform_insert_replace: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            filter: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            event_data: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -33,49 +33,5 @@ impl opcua::types::MessageInfo for BrowseDescription {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::BrowseDescription_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for BrowseDescription {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.node_id.byte_len(ctx);
-        size += self.browse_direction.byte_len(ctx);
-        size += self.reference_type_id.byte_len(ctx);
-        size += self.include_subtypes.byte_len(ctx);
-        size += self.node_class_mask.byte_len(ctx);
-        size += self.result_mask.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.node_id.encode(stream, ctx)?;
-        size += self.browse_direction.encode(stream, ctx)?;
-        size += self.reference_type_id.encode(stream, ctx)?;
-        size += self.include_subtypes.encode(stream, ctx)?;
-        size += self.node_class_mask.encode(stream, ctx)?;
-        size += self.result_mask.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for BrowseDescription {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            node_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            browse_direction: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            reference_type_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            include_subtypes: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            node_class_mask: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            result_mask: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

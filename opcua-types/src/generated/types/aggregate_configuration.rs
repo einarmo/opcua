@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -32,46 +32,5 @@ impl opcua::types::MessageInfo for AggregateConfiguration {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::AggregateConfiguration_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for AggregateConfiguration {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.use_server_capabilities_defaults.byte_len(ctx);
-        size += self.treat_uncertain_as_bad.byte_len(ctx);
-        size += self.percent_data_bad.byte_len(ctx);
-        size += self.percent_data_good.byte_len(ctx);
-        size += self.use_sloped_extrapolation.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.use_server_capabilities_defaults.encode(stream, ctx)?;
-        size += self.treat_uncertain_as_bad.encode(stream, ctx)?;
-        size += self.percent_data_bad.encode(stream, ctx)?;
-        size += self.percent_data_good.encode(stream, ctx)?;
-        size += self.use_sloped_extrapolation.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for AggregateConfiguration {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            use_server_capabilities_defaults: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            treat_uncertain_as_bad: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            percent_data_bad: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            percent_data_good: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            use_sloped_extrapolation: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

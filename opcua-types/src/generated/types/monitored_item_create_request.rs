@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -30,40 +30,5 @@ impl opcua::types::MessageInfo for MonitoredItemCreateRequest {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::MonitoredItemCreateRequest_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for MonitoredItemCreateRequest {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.item_to_monitor.byte_len(ctx);
-        size += self.monitoring_mode.byte_len(ctx);
-        size += self.requested_parameters.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.item_to_monitor.encode(stream, ctx)?;
-        size += self.monitoring_mode.encode(stream, ctx)?;
-        size += self.requested_parameters.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for MonitoredItemCreateRequest {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            item_to_monitor: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            monitoring_mode: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            requested_parameters: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

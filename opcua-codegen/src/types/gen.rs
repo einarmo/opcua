@@ -700,7 +700,7 @@ impl CodeGenerator {
             });
         }
         attrs.push(parse_quote! {
-            #[derive(Debug, Clone, PartialEq)]
+            #[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
         });
         attrs.push(parse_quote! {
             #[cfg_attr(feature = "json", derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable))]
@@ -791,109 +791,6 @@ impl CodeGenerator {
 
             encoding_ids = Some(EncodingIds::new(&item.name));
         }
-
-        let mut len_impl;
-        let mut encode_impl;
-        let mut decode_impl = quote! {};
-        let mut decode_build = quote! {};
-
-        let mut has_context = false;
-        // Special case an empty struct
-        if item.fields.is_empty() {
-            len_impl = quote! { 0usize };
-            encode_impl = quote! { Ok(0) };
-            decode_build = quote! { Ok(Self {}) };
-        } else {
-            len_impl = quote! {
-                let mut size = 0usize;
-            };
-            encode_impl = quote! {
-                let mut size = 0usize;
-            };
-            for field in item.visible_fields() {
-                let (ident, _) = safe_ident(&field.name);
-
-                let ty: Type = match &field.typ {
-                    crate::StructureFieldType::Field(f) => syn::parse_str(&self.get_type_path(f))?,
-                    crate::StructureFieldType::Array(f) => {
-                        let path: Path = syn::parse_str(&self.get_type_path(f))?;
-                        parse_quote! {
-                            Option<Vec<#path>>
-                        }
-                    }
-                };
-
-                len_impl.extend(quote! {
-                    size += self.#ident.byte_len(ctx);
-                });
-                encode_impl.extend(quote! {
-                    size += self.#ident.encode(stream, ctx)?;
-                });
-                if field.name == "request_header" {
-                    decode_impl.extend(quote! {
-                        let request_header: #ty = opcua::types::BinaryDecodable::decode(stream, ctx)?;
-                        let __request_handle = request_header.request_handle;
-                    });
-                    decode_build.extend(quote! {
-                        request_header,
-                    });
-                    has_context = true;
-                } else if field.name == "response_header" {
-                    decode_impl.extend(quote! {
-                        let response_header: #ty = opcua::types::BinaryDecodable::decode(stream, ctx)?;
-                        let __request_handle = response_header.request_handle;
-                    });
-                    decode_build.extend(quote! {
-                        response_header,
-                    });
-                    has_context = true;
-                } else if has_context {
-                    decode_build.extend(quote! {
-                        #ident: opcua::types::BinaryDecodable::decode(stream, ctx)
-                            .map_err(|e| e.with_request_handle(__request_handle))?,
-                    });
-                } else {
-                    decode_build.extend(quote! {
-                        #ident: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-                    });
-                }
-            }
-            len_impl.extend(quote! {
-                size
-            });
-            encode_impl.extend(quote! {
-                Ok(size)
-            });
-            decode_build = quote! {
-                Ok(Self {
-                    #decode_build
-                })
-            };
-        }
-
-        impls.push(parse_quote! {
-            impl opcua::types::BinaryEncodable for #struct_ident {
-                #[allow(unused_variables)]
-                fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-                    #len_impl
-                }
-
-                #[allow(unused_variables)]
-                fn encode<S: std::io::Write + ?Sized>(&self, stream: &mut S, ctx: &opcua::types::Context<'_>) -> opcua::types::EncodingResult<usize> {
-                    #encode_impl
-                }
-            }
-        });
-
-        impls.push(parse_quote! {
-            impl opcua::types::BinaryDecodable for #struct_ident {
-                #[allow(unused_variables)]
-                fn decode<S: std::io::Read + ?Sized>(stream: &mut S, ctx: &opcua::types::Context<'_>) -> opcua::types::EncodingResult<Self> {
-                    #decode_impl
-                    #decode_build
-                }
-            }
-        });
 
         let res = ItemStruct {
             attrs,

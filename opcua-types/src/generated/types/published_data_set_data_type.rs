@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -32,46 +32,5 @@ impl opcua::types::MessageInfo for PublishedDataSetDataType {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::PublishedDataSetDataType_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for PublishedDataSetDataType {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.name.byte_len(ctx);
-        size += self.data_set_folder.byte_len(ctx);
-        size += self.data_set_meta_data.byte_len(ctx);
-        size += self.extension_fields.byte_len(ctx);
-        size += self.data_set_source.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.name.encode(stream, ctx)?;
-        size += self.data_set_folder.encode(stream, ctx)?;
-        size += self.data_set_meta_data.encode(stream, ctx)?;
-        size += self.extension_fields.encode(stream, ctx)?;
-        size += self.data_set_source.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for PublishedDataSetDataType {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            data_set_folder: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            data_set_meta_data: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            extension_fields: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            data_set_source: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

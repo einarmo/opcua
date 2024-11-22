@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -32,46 +32,5 @@ impl opcua::types::MessageInfo for SessionlessInvokeRequestType {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::SessionlessInvokeRequestType_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for SessionlessInvokeRequestType {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.uris_version.byte_len(ctx);
-        size += self.namespace_uris.byte_len(ctx);
-        size += self.server_uris.byte_len(ctx);
-        size += self.locale_ids.byte_len(ctx);
-        size += self.service_id.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.uris_version.encode(stream, ctx)?;
-        size += self.namespace_uris.encode(stream, ctx)?;
-        size += self.server_uris.encode(stream, ctx)?;
-        size += self.locale_ids.encode(stream, ctx)?;
-        size += self.service_id.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for SessionlessInvokeRequestType {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            uris_version: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            namespace_uris: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            server_uris: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            locale_ids: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            service_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

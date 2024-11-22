@@ -1,3 +1,4 @@
+mod binary;
 mod events;
 #[cfg(feature = "json")]
 mod json;
@@ -5,6 +6,7 @@ mod utils;
 #[cfg(feature = "xml")]
 mod xml;
 
+use binary::{derive_binary_decode_inner, derive_binary_encode_inner};
 use events::{derive_event_field_inner, derive_event_inner};
 use proc_macro::TokenStream;
 use syn::parse_macro_input;
@@ -53,6 +55,22 @@ pub fn derive_json_decodable(item: TokenStream) -> TokenStream {
     use json::derive_json_decode_inner;
 
     match derive_json_decode_inner(parse_macro_input!(item)) {
+        Ok(r) => r.into(),
+        Err(e) => e.to_compile_error().into(),
+    }
+}
+
+#[proc_macro_derive(BinaryEncodable, attributes(opcua))]
+pub fn derive_binary_encodable(item: TokenStream) -> TokenStream {
+    match derive_binary_encode_inner(parse_macro_input!(item)) {
+        Ok(r) => r.into(),
+        Err(e) => e.to_compile_error().into(),
+    }
+}
+
+#[proc_macro_derive(BinaryDecodable, attributes(opcua))]
+pub fn derive_binary_decodable(item: TokenStream) -> TokenStream {
+    match derive_binary_decode_inner(parse_macro_input!(item)) {
         Ok(r) => r.into(),
         Err(e) => e.to_compile_error().into(),
     }

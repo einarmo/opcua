@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -43,79 +43,5 @@ impl opcua::types::MessageInfo for WriterGroupDataType {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::WriterGroupDataType_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for WriterGroupDataType {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.name.byte_len(ctx);
-        size += self.enabled.byte_len(ctx);
-        size += self.security_mode.byte_len(ctx);
-        size += self.security_group_id.byte_len(ctx);
-        size += self.security_key_services.byte_len(ctx);
-        size += self.max_network_message_size.byte_len(ctx);
-        size += self.group_properties.byte_len(ctx);
-        size += self.writer_group_id.byte_len(ctx);
-        size += self.publishing_interval.byte_len(ctx);
-        size += self.keep_alive_time.byte_len(ctx);
-        size += self.priority.byte_len(ctx);
-        size += self.locale_ids.byte_len(ctx);
-        size += self.header_layout_uri.byte_len(ctx);
-        size += self.transport_settings.byte_len(ctx);
-        size += self.message_settings.byte_len(ctx);
-        size += self.data_set_writers.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.name.encode(stream, ctx)?;
-        size += self.enabled.encode(stream, ctx)?;
-        size += self.security_mode.encode(stream, ctx)?;
-        size += self.security_group_id.encode(stream, ctx)?;
-        size += self.security_key_services.encode(stream, ctx)?;
-        size += self.max_network_message_size.encode(stream, ctx)?;
-        size += self.group_properties.encode(stream, ctx)?;
-        size += self.writer_group_id.encode(stream, ctx)?;
-        size += self.publishing_interval.encode(stream, ctx)?;
-        size += self.keep_alive_time.encode(stream, ctx)?;
-        size += self.priority.encode(stream, ctx)?;
-        size += self.locale_ids.encode(stream, ctx)?;
-        size += self.header_layout_uri.encode(stream, ctx)?;
-        size += self.transport_settings.encode(stream, ctx)?;
-        size += self.message_settings.encode(stream, ctx)?;
-        size += self.data_set_writers.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for WriterGroupDataType {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            enabled: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            security_mode: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            security_group_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            security_key_services: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            max_network_message_size: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            group_properties: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            writer_group_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            publishing_interval: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            keep_alive_time: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            priority: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            locale_ids: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            header_layout_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            transport_settings: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            message_settings: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            data_set_writers: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

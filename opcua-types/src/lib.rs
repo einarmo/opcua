@@ -239,6 +239,9 @@ pub use opcua_macros::JsonDecodable;
 #[cfg(feature = "json")]
 pub use opcua_macros::JsonEncodable;
 
+pub use opcua_macros::BinaryDecodable;
+pub use opcua_macros::BinaryEncodable;
+
 pub use self::{
     add_node_attributes::AddNodeAttributes,
     argument::*,

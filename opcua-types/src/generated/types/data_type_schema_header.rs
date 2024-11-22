@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -31,43 +31,5 @@ impl opcua::types::MessageInfo for DataTypeSchemaHeader {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::DataTypeSchemaHeader_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for DataTypeSchemaHeader {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.namespaces.byte_len(ctx);
-        size += self.structure_data_types.byte_len(ctx);
-        size += self.enum_data_types.byte_len(ctx);
-        size += self.simple_data_types.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.namespaces.encode(stream, ctx)?;
-        size += self.structure_data_types.encode(stream, ctx)?;
-        size += self.enum_data_types.encode(stream, ctx)?;
-        size += self.simple_data_types.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for DataTypeSchemaHeader {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            namespaces: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            structure_data_types: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            enum_data_types: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            simple_data_types: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

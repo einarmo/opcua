@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -31,43 +31,5 @@ impl opcua::types::MessageInfo for HistoryReadValueId {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::HistoryReadValueId_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for HistoryReadValueId {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.node_id.byte_len(ctx);
-        size += self.index_range.byte_len(ctx);
-        size += self.data_encoding.byte_len(ctx);
-        size += self.continuation_point.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.node_id.encode(stream, ctx)?;
-        size += self.index_range.encode(stream, ctx)?;
-        size += self.data_encoding.encode(stream, ctx)?;
-        size += self.continuation_point.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for HistoryReadValueId {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            node_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            index_range: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            data_encoding: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            continuation_point: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

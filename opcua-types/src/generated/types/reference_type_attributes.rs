@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -35,55 +35,5 @@ impl opcua::types::MessageInfo for ReferenceTypeAttributes {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ReferenceTypeAttributes_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for ReferenceTypeAttributes {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.specified_attributes.byte_len(ctx);
-        size += self.display_name.byte_len(ctx);
-        size += self.description.byte_len(ctx);
-        size += self.write_mask.byte_len(ctx);
-        size += self.user_write_mask.byte_len(ctx);
-        size += self.is_abstract.byte_len(ctx);
-        size += self.symmetric.byte_len(ctx);
-        size += self.inverse_name.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.specified_attributes.encode(stream, ctx)?;
-        size += self.display_name.encode(stream, ctx)?;
-        size += self.description.encode(stream, ctx)?;
-        size += self.write_mask.encode(stream, ctx)?;
-        size += self.user_write_mask.encode(stream, ctx)?;
-        size += self.is_abstract.encode(stream, ctx)?;
-        size += self.symmetric.encode(stream, ctx)?;
-        size += self.inverse_name.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for ReferenceTypeAttributes {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            specified_attributes: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            display_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            description: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            write_mask: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            user_write_mask: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            is_abstract: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            symmetric: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            inverse_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

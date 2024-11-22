@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -32,46 +32,5 @@ impl opcua::types::MessageInfo for UadpWriterGroupMessageDataType {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::UadpWriterGroupMessageDataType_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for UadpWriterGroupMessageDataType {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.group_version.byte_len(ctx);
-        size += self.data_set_ordering.byte_len(ctx);
-        size += self.network_message_content_mask.byte_len(ctx);
-        size += self.sampling_offset.byte_len(ctx);
-        size += self.publishing_offset.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.group_version.encode(stream, ctx)?;
-        size += self.data_set_ordering.encode(stream, ctx)?;
-        size += self.network_message_content_mask.encode(stream, ctx)?;
-        size += self.sampling_offset.encode(stream, ctx)?;
-        size += self.publishing_offset.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for UadpWriterGroupMessageDataType {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            group_version: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            data_set_ordering: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            network_message_content_mask: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            sampling_offset: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            publishing_offset: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

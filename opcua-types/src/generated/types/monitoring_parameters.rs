@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -32,46 +32,5 @@ impl opcua::types::MessageInfo for MonitoringParameters {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::MonitoringParameters_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for MonitoringParameters {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.client_handle.byte_len(ctx);
-        size += self.sampling_interval.byte_len(ctx);
-        size += self.filter.byte_len(ctx);
-        size += self.queue_size.byte_len(ctx);
-        size += self.discard_oldest.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.client_handle.encode(stream, ctx)?;
-        size += self.sampling_interval.encode(stream, ctx)?;
-        size += self.filter.encode(stream, ctx)?;
-        size += self.queue_size.encode(stream, ctx)?;
-        size += self.discard_oldest.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for MonitoringParameters {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            client_handle: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            sampling_interval: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            filter: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            queue_size: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            discard_oldest: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

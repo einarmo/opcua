@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -34,52 +34,5 @@ impl opcua::types::MessageInfo for FieldTargetDataType {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::FieldTargetDataType_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for FieldTargetDataType {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.data_set_field_id.byte_len(ctx);
-        size += self.receiver_index_range.byte_len(ctx);
-        size += self.target_node_id.byte_len(ctx);
-        size += self.attribute_id.byte_len(ctx);
-        size += self.write_index_range.byte_len(ctx);
-        size += self.override_value_handling.byte_len(ctx);
-        size += self.override_value.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.data_set_field_id.encode(stream, ctx)?;
-        size += self.receiver_index_range.encode(stream, ctx)?;
-        size += self.target_node_id.encode(stream, ctx)?;
-        size += self.attribute_id.encode(stream, ctx)?;
-        size += self.write_index_range.encode(stream, ctx)?;
-        size += self.override_value_handling.encode(stream, ctx)?;
-        size += self.override_value.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for FieldTargetDataType {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            data_set_field_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            receiver_index_range: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            target_node_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            attribute_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            write_index_range: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            override_value_handling: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            override_value: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

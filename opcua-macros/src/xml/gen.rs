@@ -1,46 +1,11 @@
 use convert_case::{Case, Casing};
 use proc_macro2::TokenStream;
-use syn::{parse::Parse, DeriveInput, Ident, LitStr, Token};
+use syn::DeriveInput;
 
-use crate::utils::{EmptyAttribute, ItemAttr, StructItem};
+use crate::utils::{EmptyAttribute, EncodingFieldAttribute, StructItem};
 use quote::quote;
 
-#[derive(Debug, Default)]
-pub(super) struct XmlFieldAttribute {
-    pub rename: Option<String>,
-}
-
-impl Parse for XmlFieldAttribute {
-    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        let mut slf = Self::default();
-
-        loop {
-            let ident: Ident = input.parse()?;
-            match ident.to_string().as_str() {
-                "rename" => {
-                    input.parse::<Token![=]>()?;
-                    let val: LitStr = input.parse()?;
-                    slf.rename = Some(val.value());
-                }
-                "ignore" | "required" => (),
-                _ => return Err(syn::Error::new_spanned(ident, "Unknown attribute value")),
-            }
-            if !input.peek(Token![,]) {
-                break;
-            }
-            input.parse::<Token![,]>()?;
-        }
-        Ok(slf)
-    }
-}
-
-impl ItemAttr for XmlFieldAttribute {
-    fn combine(&mut self, other: Self) {
-        self.rename = other.rename;
-    }
-}
-
-pub type XmlStruct = StructItem<XmlFieldAttribute, EmptyAttribute>;
+pub type XmlStruct = StructItem<EncodingFieldAttribute, EmptyAttribute>;
 
 pub fn parse_xml_struct(input: DeriveInput) -> syn::Result<XmlStruct> {
     XmlStruct::from_input(input)

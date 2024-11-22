@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -34,52 +34,5 @@ impl opcua::types::MessageInfo for UABinaryFileDataType {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::UABinaryFileDataType_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for UABinaryFileDataType {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.namespaces.byte_len(ctx);
-        size += self.structure_data_types.byte_len(ctx);
-        size += self.enum_data_types.byte_len(ctx);
-        size += self.simple_data_types.byte_len(ctx);
-        size += self.schema_location.byte_len(ctx);
-        size += self.file_header.byte_len(ctx);
-        size += self.body.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.namespaces.encode(stream, ctx)?;
-        size += self.structure_data_types.encode(stream, ctx)?;
-        size += self.enum_data_types.encode(stream, ctx)?;
-        size += self.simple_data_types.encode(stream, ctx)?;
-        size += self.schema_location.encode(stream, ctx)?;
-        size += self.file_header.encode(stream, ctx)?;
-        size += self.body.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for UABinaryFileDataType {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            namespaces: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            structure_data_types: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            enum_data_types: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            simple_data_types: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            schema_location: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            file_header: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            body: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

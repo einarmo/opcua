@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -31,43 +31,5 @@ impl opcua::types::MessageInfo for DeleteRawModifiedDetails {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::DeleteRawModifiedDetails_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for DeleteRawModifiedDetails {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.node_id.byte_len(ctx);
-        size += self.is_delete_modified.byte_len(ctx);
-        size += self.start_time.byte_len(ctx);
-        size += self.end_time.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.node_id.encode(stream, ctx)?;
-        size += self.is_delete_modified.encode(stream, ctx)?;
-        size += self.start_time.encode(stream, ctx)?;
-        size += self.end_time.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for DeleteRawModifiedDetails {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            node_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            is_delete_modified: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            start_time: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            end_time: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

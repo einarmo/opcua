@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -36,58 +36,5 @@ impl opcua::types::MessageInfo for UadpDataSetReaderMessageDataType {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::UadpDataSetReaderMessageDataType_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for UadpDataSetReaderMessageDataType {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.group_version.byte_len(ctx);
-        size += self.network_message_number.byte_len(ctx);
-        size += self.data_set_offset.byte_len(ctx);
-        size += self.data_set_class_id.byte_len(ctx);
-        size += self.network_message_content_mask.byte_len(ctx);
-        size += self.data_set_message_content_mask.byte_len(ctx);
-        size += self.publishing_interval.byte_len(ctx);
-        size += self.receive_offset.byte_len(ctx);
-        size += self.processing_offset.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.group_version.encode(stream, ctx)?;
-        size += self.network_message_number.encode(stream, ctx)?;
-        size += self.data_set_offset.encode(stream, ctx)?;
-        size += self.data_set_class_id.encode(stream, ctx)?;
-        size += self.network_message_content_mask.encode(stream, ctx)?;
-        size += self.data_set_message_content_mask.encode(stream, ctx)?;
-        size += self.publishing_interval.encode(stream, ctx)?;
-        size += self.receive_offset.encode(stream, ctx)?;
-        size += self.processing_offset.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for UadpDataSetReaderMessageDataType {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            group_version: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            network_message_number: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            data_set_offset: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            data_set_class_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            network_message_content_mask: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            data_set_message_content_mask: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            publishing_interval: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            receive_offset: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            processing_offset: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -33,57 +33,5 @@ impl opcua::types::MessageInfo for QueryFirstResponse {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::QueryFirstResponse_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for QueryFirstResponse {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.response_header.byte_len(ctx);
-        size += self.query_data_sets.byte_len(ctx);
-        size += self.continuation_point.byte_len(ctx);
-        size += self.parsing_results.byte_len(ctx);
-        size += self.diagnostic_infos.byte_len(ctx);
-        size += self.filter_result.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.response_header.encode(stream, ctx)?;
-        size += self.query_data_sets.encode(stream, ctx)?;
-        size += self.continuation_point.encode(stream, ctx)?;
-        size += self.parsing_results.encode(stream, ctx)?;
-        size += self.diagnostic_infos.encode(stream, ctx)?;
-        size += self.filter_result.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for QueryFirstResponse {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        let response_header: opcua::types::response_header::ResponseHeader =
-            opcua::types::BinaryDecodable::decode(stream, ctx)?;
-        let __request_handle = response_header.request_handle;
-        Ok(Self {
-            response_header,
-            query_data_sets: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-            continuation_point: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-            parsing_results: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-            diagnostic_infos: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-            filter_result: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-        })
     }
 }

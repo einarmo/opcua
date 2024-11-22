@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -30,40 +30,5 @@ impl opcua::types::MessageInfo for ModelChangeStructureDataType {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ModelChangeStructureDataType_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for ModelChangeStructureDataType {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.affected.byte_len(ctx);
-        size += self.affected_type.byte_len(ctx);
-        size += self.verb.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.affected.encode(stream, ctx)?;
-        size += self.affected_type.encode(stream, ctx)?;
-        size += self.verb.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for ModelChangeStructureDataType {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            affected: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            affected_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            verb: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }
