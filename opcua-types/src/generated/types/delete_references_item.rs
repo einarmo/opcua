@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -32,46 +32,5 @@ impl opcua::types::MessageInfo for DeleteReferencesItem {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::DeleteReferencesItem_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for DeleteReferencesItem {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.source_node_id.byte_len(ctx);
-        size += self.reference_type_id.byte_len(ctx);
-        size += self.is_forward.byte_len(ctx);
-        size += self.target_node_id.byte_len(ctx);
-        size += self.delete_bidirectional.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.source_node_id.encode(stream, ctx)?;
-        size += self.reference_type_id.encode(stream, ctx)?;
-        size += self.is_forward.encode(stream, ctx)?;
-        size += self.target_node_id.encode(stream, ctx)?;
-        size += self.delete_bidirectional.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for DeleteReferencesItem {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            source_node_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            reference_type_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            is_forward: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            target_node_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            delete_bidirectional: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

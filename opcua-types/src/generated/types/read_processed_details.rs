@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -32,46 +32,5 @@ impl opcua::types::MessageInfo for ReadProcessedDetails {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ReadProcessedDetails_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for ReadProcessedDetails {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.start_time.byte_len(ctx);
-        size += self.end_time.byte_len(ctx);
-        size += self.processing_interval.byte_len(ctx);
-        size += self.aggregate_type.byte_len(ctx);
-        size += self.aggregate_configuration.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.start_time.encode(stream, ctx)?;
-        size += self.end_time.encode(stream, ctx)?;
-        size += self.processing_interval.encode(stream, ctx)?;
-        size += self.aggregate_type.encode(stream, ctx)?;
-        size += self.aggregate_configuration.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for ReadProcessedDetails {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            start_time: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            end_time: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            processing_interval: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            aggregate_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            aggregate_configuration: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

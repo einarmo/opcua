@@ -13,8 +13,8 @@ documentation = "https://docs.rs/opcua/"
 edition = "2021"
 
 [features]
-json = ["struson", "opcua-macros", "opcua-macros/json"]
-xml = ["opcua-xml", "opcua-macros", "opcua-macros/xml"]
+json = ["struson", "opcua-macros/json"]
+xml = ["opcua-xml", "opcua-macros/xml"]
 
 [lib]
 name = "opcua_types"
@@ -30,11 +30,11 @@ chrono = { workspace = true }
 byteorder = { workspace = true }
 base64 = { workspace = true }
 thiserror = { workspace = true }
+opcua-macros = { path = "../opcua-macros" }
 
 struson = { workspace = true, optional = true }
 
 opcua-xml = { path = "../opcua-xml", optional = true }
-opcua-macros = { path = "../opcua-macros", optional = true }
 
 
 [dev-dependencies]

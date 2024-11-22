@@ -16,6 +16,7 @@ type XmlLoadFun = fn(
     &crate::xml::XmlContext<'_>,
 ) -> Result<Box<dyn DynEncodable>, crate::xml::FromXmlError>;
 
+#[cfg(feature = "json")]
 type JsonLoadFun = fn(
     &mut crate::json::JsonStreamReader<&mut dyn std::io::Read>,
     &Context<'_>,

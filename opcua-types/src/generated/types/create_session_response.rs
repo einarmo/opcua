@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -38,73 +38,5 @@ impl opcua::types::MessageInfo for CreateSessionResponse {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::CreateSessionResponse_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for CreateSessionResponse {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.response_header.byte_len(ctx);
-        size += self.session_id.byte_len(ctx);
-        size += self.authentication_token.byte_len(ctx);
-        size += self.revised_session_timeout.byte_len(ctx);
-        size += self.server_nonce.byte_len(ctx);
-        size += self.server_certificate.byte_len(ctx);
-        size += self.server_endpoints.byte_len(ctx);
-        size += self.server_software_certificates.byte_len(ctx);
-        size += self.server_signature.byte_len(ctx);
-        size += self.max_request_message_size.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.response_header.encode(stream, ctx)?;
-        size += self.session_id.encode(stream, ctx)?;
-        size += self.authentication_token.encode(stream, ctx)?;
-        size += self.revised_session_timeout.encode(stream, ctx)?;
-        size += self.server_nonce.encode(stream, ctx)?;
-        size += self.server_certificate.encode(stream, ctx)?;
-        size += self.server_endpoints.encode(stream, ctx)?;
-        size += self.server_software_certificates.encode(stream, ctx)?;
-        size += self.server_signature.encode(stream, ctx)?;
-        size += self.max_request_message_size.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for CreateSessionResponse {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        let response_header: opcua::types::response_header::ResponseHeader =
-            opcua::types::BinaryDecodable::decode(stream, ctx)?;
-        let __request_handle = response_header.request_handle;
-        Ok(Self {
-            response_header,
-            session_id: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-            authentication_token: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-            revised_session_timeout: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-            server_nonce: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-            server_certificate: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-            server_endpoints: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-            server_software_certificates: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-            server_signature: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-            max_request_message_size: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-        })
     }
 }

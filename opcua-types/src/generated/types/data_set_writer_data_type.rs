@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -36,58 +36,5 @@ impl opcua::types::MessageInfo for DataSetWriterDataType {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::DataSetWriterDataType_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for DataSetWriterDataType {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.name.byte_len(ctx);
-        size += self.enabled.byte_len(ctx);
-        size += self.data_set_writer_id.byte_len(ctx);
-        size += self.data_set_field_content_mask.byte_len(ctx);
-        size += self.key_frame_count.byte_len(ctx);
-        size += self.data_set_name.byte_len(ctx);
-        size += self.data_set_writer_properties.byte_len(ctx);
-        size += self.transport_settings.byte_len(ctx);
-        size += self.message_settings.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.name.encode(stream, ctx)?;
-        size += self.enabled.encode(stream, ctx)?;
-        size += self.data_set_writer_id.encode(stream, ctx)?;
-        size += self.data_set_field_content_mask.encode(stream, ctx)?;
-        size += self.key_frame_count.encode(stream, ctx)?;
-        size += self.data_set_name.encode(stream, ctx)?;
-        size += self.data_set_writer_properties.encode(stream, ctx)?;
-        size += self.transport_settings.encode(stream, ctx)?;
-        size += self.message_settings.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for DataSetWriterDataType {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            enabled: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            data_set_writer_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            data_set_field_content_mask: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            key_frame_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            data_set_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            data_set_writer_properties: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            transport_settings: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            message_settings: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -40,70 +40,5 @@ impl opcua::types::MessageInfo for VariableAttributes {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::VariableAttributes_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for VariableAttributes {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.specified_attributes.byte_len(ctx);
-        size += self.display_name.byte_len(ctx);
-        size += self.description.byte_len(ctx);
-        size += self.write_mask.byte_len(ctx);
-        size += self.user_write_mask.byte_len(ctx);
-        size += self.value.byte_len(ctx);
-        size += self.data_type.byte_len(ctx);
-        size += self.value_rank.byte_len(ctx);
-        size += self.array_dimensions.byte_len(ctx);
-        size += self.access_level.byte_len(ctx);
-        size += self.user_access_level.byte_len(ctx);
-        size += self.minimum_sampling_interval.byte_len(ctx);
-        size += self.historizing.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.specified_attributes.encode(stream, ctx)?;
-        size += self.display_name.encode(stream, ctx)?;
-        size += self.description.encode(stream, ctx)?;
-        size += self.write_mask.encode(stream, ctx)?;
-        size += self.user_write_mask.encode(stream, ctx)?;
-        size += self.value.encode(stream, ctx)?;
-        size += self.data_type.encode(stream, ctx)?;
-        size += self.value_rank.encode(stream, ctx)?;
-        size += self.array_dimensions.encode(stream, ctx)?;
-        size += self.access_level.encode(stream, ctx)?;
-        size += self.user_access_level.encode(stream, ctx)?;
-        size += self.minimum_sampling_interval.encode(stream, ctx)?;
-        size += self.historizing.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for VariableAttributes {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            specified_attributes: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            display_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            description: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            write_mask: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            user_write_mask: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            value: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            data_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            value_rank: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            array_dimensions: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            access_level: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            user_access_level: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            minimum_sampling_interval: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            historizing: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

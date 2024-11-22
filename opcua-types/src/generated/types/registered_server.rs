@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -35,55 +35,5 @@ impl opcua::types::MessageInfo for RegisteredServer {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::RegisteredServer_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for RegisteredServer {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.server_uri.byte_len(ctx);
-        size += self.product_uri.byte_len(ctx);
-        size += self.server_names.byte_len(ctx);
-        size += self.server_type.byte_len(ctx);
-        size += self.gateway_server_uri.byte_len(ctx);
-        size += self.discovery_urls.byte_len(ctx);
-        size += self.semaphore_file_path.byte_len(ctx);
-        size += self.is_online.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.server_uri.encode(stream, ctx)?;
-        size += self.product_uri.encode(stream, ctx)?;
-        size += self.server_names.encode(stream, ctx)?;
-        size += self.server_type.encode(stream, ctx)?;
-        size += self.gateway_server_uri.encode(stream, ctx)?;
-        size += self.discovery_urls.encode(stream, ctx)?;
-        size += self.semaphore_file_path.encode(stream, ctx)?;
-        size += self.is_online.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for RegisteredServer {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            server_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            product_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            server_names: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            server_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            gateway_server_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            discovery_urls: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            semaphore_file_path: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            is_online: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

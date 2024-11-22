@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -30,40 +30,5 @@ impl opcua::types::MessageInfo for NodeTypeDescription {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::NodeTypeDescription_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for NodeTypeDescription {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.type_definition_node.byte_len(ctx);
-        size += self.include_sub_types.byte_len(ctx);
-        size += self.data_to_return.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.type_definition_node.encode(stream, ctx)?;
-        size += self.include_sub_types.encode(stream, ctx)?;
-        size += self.data_to_return.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for NodeTypeDescription {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            type_definition_node: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            include_sub_types: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            data_to_return: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

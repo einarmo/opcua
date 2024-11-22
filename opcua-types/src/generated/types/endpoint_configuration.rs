@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -36,58 +36,5 @@ impl opcua::types::MessageInfo for EndpointConfiguration {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::EndpointConfiguration_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for EndpointConfiguration {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.operation_timeout.byte_len(ctx);
-        size += self.use_binary_encoding.byte_len(ctx);
-        size += self.max_string_length.byte_len(ctx);
-        size += self.max_byte_string_length.byte_len(ctx);
-        size += self.max_array_length.byte_len(ctx);
-        size += self.max_message_size.byte_len(ctx);
-        size += self.max_buffer_size.byte_len(ctx);
-        size += self.channel_lifetime.byte_len(ctx);
-        size += self.security_token_lifetime.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.operation_timeout.encode(stream, ctx)?;
-        size += self.use_binary_encoding.encode(stream, ctx)?;
-        size += self.max_string_length.encode(stream, ctx)?;
-        size += self.max_byte_string_length.encode(stream, ctx)?;
-        size += self.max_array_length.encode(stream, ctx)?;
-        size += self.max_message_size.encode(stream, ctx)?;
-        size += self.max_buffer_size.encode(stream, ctx)?;
-        size += self.channel_lifetime.encode(stream, ctx)?;
-        size += self.security_token_lifetime.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for EndpointConfiguration {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            operation_timeout: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            use_binary_encoding: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            max_string_length: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            max_byte_string_length: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            max_array_length: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            max_message_size: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            max_buffer_size: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            channel_lifetime: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            security_token_lifetime: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

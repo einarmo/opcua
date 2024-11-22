@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -32,46 +32,5 @@ impl opcua::types::MessageInfo for UserTokenPolicy {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::UserTokenPolicy_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for UserTokenPolicy {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.policy_id.byte_len(ctx);
-        size += self.token_type.byte_len(ctx);
-        size += self.issued_token_type.byte_len(ctx);
-        size += self.issuer_endpoint_url.byte_len(ctx);
-        size += self.security_policy_uri.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.policy_id.encode(stream, ctx)?;
-        size += self.token_type.encode(stream, ctx)?;
-        size += self.issued_token_type.encode(stream, ctx)?;
-        size += self.issuer_endpoint_url.encode(stream, ctx)?;
-        size += self.security_policy_uri.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for UserTokenPolicy {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            policy_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            token_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            issued_token_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            issuer_endpoint_url: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            security_policy_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

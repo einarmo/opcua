@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -36,58 +36,5 @@ impl opcua::types::MessageInfo for PubSubConnectionDataType {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::PubSubConnectionDataType_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for PubSubConnectionDataType {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.name.byte_len(ctx);
-        size += self.enabled.byte_len(ctx);
-        size += self.publisher_id.byte_len(ctx);
-        size += self.transport_profile_uri.byte_len(ctx);
-        size += self.address.byte_len(ctx);
-        size += self.connection_properties.byte_len(ctx);
-        size += self.transport_settings.byte_len(ctx);
-        size += self.writer_groups.byte_len(ctx);
-        size += self.reader_groups.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.name.encode(stream, ctx)?;
-        size += self.enabled.encode(stream, ctx)?;
-        size += self.publisher_id.encode(stream, ctx)?;
-        size += self.transport_profile_uri.encode(stream, ctx)?;
-        size += self.address.encode(stream, ctx)?;
-        size += self.connection_properties.encode(stream, ctx)?;
-        size += self.transport_settings.encode(stream, ctx)?;
-        size += self.writer_groups.encode(stream, ctx)?;
-        size += self.reader_groups.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for PubSubConnectionDataType {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            enabled: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            publisher_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            transport_profile_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            address: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            connection_properties: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            transport_settings: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            writer_groups: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            reader_groups: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -35,55 +35,5 @@ impl opcua::types::MessageInfo for PublishedVariableDataType {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::PublishedVariableDataType_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for PublishedVariableDataType {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.published_variable.byte_len(ctx);
-        size += self.attribute_id.byte_len(ctx);
-        size += self.sampling_interval_hint.byte_len(ctx);
-        size += self.deadband_type.byte_len(ctx);
-        size += self.deadband_value.byte_len(ctx);
-        size += self.index_range.byte_len(ctx);
-        size += self.substitute_value.byte_len(ctx);
-        size += self.meta_data_properties.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.published_variable.encode(stream, ctx)?;
-        size += self.attribute_id.encode(stream, ctx)?;
-        size += self.sampling_interval_hint.encode(stream, ctx)?;
-        size += self.deadband_type.encode(stream, ctx)?;
-        size += self.deadband_value.encode(stream, ctx)?;
-        size += self.index_range.encode(stream, ctx)?;
-        size += self.substitute_value.encode(stream, ctx)?;
-        size += self.meta_data_properties.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for PublishedVariableDataType {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            published_variable: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            attribute_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            sampling_interval_hint: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            deadband_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            deadband_value: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            index_range: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            substitute_value: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            meta_data_properties: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

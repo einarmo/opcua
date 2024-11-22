@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -30,40 +30,5 @@ impl opcua::types::MessageInfo for Annotation {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::Annotation_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for Annotation {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.message.byte_len(ctx);
-        size += self.user_name.byte_len(ctx);
-        size += self.annotation_time.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.message.encode(stream, ctx)?;
-        size += self.user_name.encode(stream, ctx)?;
-        size += self.annotation_time.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for Annotation {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            message: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            user_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            annotation_time: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }

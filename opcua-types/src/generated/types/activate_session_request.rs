@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -34,57 +34,5 @@ impl opcua::types::MessageInfo for ActivateSessionRequest {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ActivateSessionRequest_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for ActivateSessionRequest {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.request_header.byte_len(ctx);
-        size += self.client_signature.byte_len(ctx);
-        size += self.client_software_certificates.byte_len(ctx);
-        size += self.locale_ids.byte_len(ctx);
-        size += self.user_identity_token.byte_len(ctx);
-        size += self.user_token_signature.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.request_header.encode(stream, ctx)?;
-        size += self.client_signature.encode(stream, ctx)?;
-        size += self.client_software_certificates.encode(stream, ctx)?;
-        size += self.locale_ids.encode(stream, ctx)?;
-        size += self.user_identity_token.encode(stream, ctx)?;
-        size += self.user_token_signature.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for ActivateSessionRequest {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        let request_header: opcua::types::request_header::RequestHeader =
-            opcua::types::BinaryDecodable::decode(stream, ctx)?;
-        let __request_handle = request_header.request_handle;
-        Ok(Self {
-            request_header,
-            client_signature: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-            client_software_certificates: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-            locale_ids: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-            user_identity_token: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-            user_token_signature: opcua::types::BinaryDecodable::decode(stream, ctx)
-                .map_err(|e| e.with_request_handle(__request_handle))?,
-        })
     }
 }

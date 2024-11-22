@@ -1,56 +1,12 @@
 use convert_case::{Case, Casing};
 use proc_macro2::{Span, TokenStream};
-use syn::{parse::Parse, DeriveInput, Ident, LitStr, Token};
+use syn::{DeriveInput, Ident};
 
-use crate::utils::{EmptyAttribute, ItemAttr, StructItem};
+use crate::utils::{EmptyAttribute, EncodingFieldAttribute, StructItem};
 
 use quote::quote;
 
-#[derive(Debug, Default)]
-pub(super) struct JsonFieldAttribute {
-    pub rename: Option<String>,
-    pub ignore: bool,
-    pub required: bool,
-}
-
-impl Parse for JsonFieldAttribute {
-    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        let mut slf = Self::default();
-
-        loop {
-            let ident: Ident = input.parse()?;
-            match ident.to_string().as_str() {
-                "rename" => {
-                    input.parse::<Token![=]>()?;
-                    let val: LitStr = input.parse()?;
-                    slf.rename = Some(val.value());
-                }
-                "ignore" => {
-                    slf.ignore = true;
-                }
-                "required" => {
-                    slf.required = true;
-                }
-                _ => return Err(syn::Error::new_spanned(ident, "Unknown attribute value")),
-            }
-            if !input.peek(Token![,]) {
-                break;
-            }
-            input.parse::<Token![,]>()?;
-        }
-        Ok(slf)
-    }
-}
-
-impl ItemAttr for JsonFieldAttribute {
-    fn combine(&mut self, other: Self) {
-        self.rename = other.rename;
-        self.ignore |= other.ignore;
-        self.required |= other.required;
-    }
-}
-
-pub type JsonStruct = StructItem<JsonFieldAttribute, EmptyAttribute>;
+pub type JsonStruct = StructItem<EncodingFieldAttribute, EmptyAttribute>;
 
 pub fn parse_json_struct(input: DeriveInput) -> syn::Result<JsonStruct> {
     JsonStruct::from_input(input)

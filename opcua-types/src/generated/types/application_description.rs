@@ -9,7 +9,7 @@
 mod opcua {
     pub use crate as types;
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
     feature = "json",
     derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
@@ -34,52 +34,5 @@ impl opcua::types::MessageInfo for ApplicationDescription {
     }
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ApplicationDescription_Encoding_DefaultXml
-    }
-}
-impl opcua::types::BinaryEncodable for ApplicationDescription {
-    #[allow(unused_variables)]
-    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
-        let mut size = 0usize;
-        size += self.application_uri.byte_len(ctx);
-        size += self.product_uri.byte_len(ctx);
-        size += self.application_name.byte_len(ctx);
-        size += self.application_type.byte_len(ctx);
-        size += self.gateway_server_uri.byte_len(ctx);
-        size += self.discovery_profile_uri.byte_len(ctx);
-        size += self.discovery_urls.byte_len(ctx);
-        size
-    }
-    #[allow(unused_variables)]
-    fn encode<S: std::io::Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
-        let mut size = 0usize;
-        size += self.application_uri.encode(stream, ctx)?;
-        size += self.product_uri.encode(stream, ctx)?;
-        size += self.application_name.encode(stream, ctx)?;
-        size += self.application_type.encode(stream, ctx)?;
-        size += self.gateway_server_uri.encode(stream, ctx)?;
-        size += self.discovery_profile_uri.encode(stream, ctx)?;
-        size += self.discovery_urls.encode(stream, ctx)?;
-        Ok(size)
-    }
-}
-impl opcua::types::BinaryDecodable for ApplicationDescription {
-    #[allow(unused_variables)]
-    fn decode<S: std::io::Read + ?Sized>(
-        stream: &mut S,
-        ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<Self> {
-        Ok(Self {
-            application_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            product_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            application_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            application_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            gateway_server_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            discovery_profile_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-            discovery_urls: opcua::types::BinaryDecodable::decode(stream, ctx)?,
-        })
     }
 }
