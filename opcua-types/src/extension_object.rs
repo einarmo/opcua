@@ -15,11 +15,9 @@ use log::warn;
 use crate::{write_i32, write_u8, Error, ExpandedMessageInfo, ExpandedNodeId};
 
 use super::{
-    byte_string::ByteString,
     encoding::{BinaryDecodable, BinaryEncodable, EncodingResult},
     node_id::NodeId,
     node_ids::ObjectId,
-    string::XmlElement,
 };
 
 #[derive(Debug)]
@@ -159,20 +157,6 @@ impl PartialEq for dyn DynEncodable {
 }
 
 impl std::error::Error for ExtensionObjectError {}
-
-/// Enumeration that holds the kinds of encoding that an ExtensionObject data may be encoded with.
-#[derive(PartialEq, Debug, Clone)]
-pub enum ExtensionObjectEncoding {
-    /// For an extension object with nothing encoded with it
-    None,
-    /// For an extension object with data encoded in a ByteString
-    ByteString(ByteString),
-    /// For an extension object with data encoded in an XML string
-    XmlElement(XmlElement),
-    /// For an extension object with data encoded in a json string
-    #[cfg(feature = "json")]
-    Json(serde_json::Value),
-}
 
 #[cfg(feature = "json")]
 mod json {

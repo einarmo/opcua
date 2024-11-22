@@ -11,8 +11,6 @@ use super::encoding::{read_u32, write_u32, BinaryEncodable, EncodingResult};
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Default)]
 /// Wrapper around an OPC-UA status code, with utilities for displaying,
 /// parsing, and reading.
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(transparent))]
 pub struct StatusCode(u32);
 
 #[cfg(feature = "json")]

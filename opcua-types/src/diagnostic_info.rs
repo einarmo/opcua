@@ -91,37 +91,6 @@ mod json {
     }
 }
 
-#[cfg(feature = "json")]
-impl<'de> serde::de::Deserialize<'de> for DiagnosticBits {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::de::Deserializer<'de>,
-    {
-        struct BitFieldVisitor;
-        impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
-            type Value = u32;
-            fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
-                write!(formatter, "an u32")
-            }
-        }
-        deserializer
-            .deserialize_u32(BitFieldVisitor)
-            .map(DiagnosticBits::from_bits_truncate)
-    }
-}
-#[cfg(feature = "json")]
-impl serde::ser::Serialize for DiagnosticBits {
-    fn serialize<S>(
-        &self,
-        serializer: S,
-    ) -> Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
-    where
-        S: serde::ser::Serializer,
-    {
-        serializer.serialize_u32(self.bits())
-    }
-}
-
 #[allow(unused)]
 mod opcua {
     pub use crate as types;
