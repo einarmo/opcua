@@ -4882,4 +4882,7 @@ impl opcua::types::TypeLoader for GeneratedTypeLoader {
         };
         TYPES.decode_json(num_id, stream, ctx)
     }
+    fn priority(&self) -> opcua::types::TypeLoaderPriority {
+        opcua::types::TypeLoaderPriority::Core
+    }
 }

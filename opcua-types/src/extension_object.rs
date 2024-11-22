@@ -31,7 +31,17 @@ impl fmt::Display for ExtensionObjectError {
     }
 }
 
+/// Trait for an OPC-UA struct that can be dynamically encoded back to binary (or JSON).
+/// ExtensionObject wraps a dynamic object for this trait.
+/// Note that this trait is automatically implemented for anything that implements
+/// [BinaryEncodable], [JsonEncodable] (with the `json` feature), [Send], [Sync], [Clone],
+/// [ExpandedMessageInfo], [std::fmt::Debug] and [PartialEq].
+///
+/// All of these are automatically derived during codegen, if you
+/// want to manually implement a type that can be stored as an extension object,
+/// you need to implement or derive all of these traits.
 pub trait DynEncodable: Any + Send + Sync + std::fmt::Debug {
+    /// Encode the struct using OPC-UA binary encoding.
     fn encode_binary(
         &self,
         stream: &mut dyn std::io::Write,
@@ -39,29 +49,38 @@ pub trait DynEncodable: Any + Send + Sync + std::fmt::Debug {
     ) -> EncodingResult<usize>;
 
     #[cfg(feature = "json")]
+    /// Encode the struct using reversible OPC-UA JSON encoding.
     fn encode_json(
         &self,
         stream: &mut crate::json::JsonStreamWriter<&mut dyn std::io::Write>,
         ctx: &crate::Context<'_>,
     ) -> EncodingResult<()>;
 
+    /// Get the binary byte length of this struct.
     fn byte_len_dyn(&self, ctx: &crate::Context<'_>) -> usize;
 
+    /// Get the binary encoding ID of this struct.
     fn binary_type_id(&self) -> ExpandedNodeId;
 
     #[cfg(feature = "json")]
+    /// Get the JSON encoding ID of this struct.
     fn json_type_id(&self) -> ExpandedNodeId;
 
+    /// Method to cast this to a dyn Any box, required for downcasting.
     fn as_dyn_any(self: Box<Self>) -> Box<dyn Any + Send + Sync + 'static>;
 
+    /// Method to cast this to a dyn Any trait object, required for downcasting by reference.
     fn as_dyn_any_ref(&self) -> &(dyn Any + Send + Sync);
 
+    /// Clone this to a dyn box. Required in order to implement Clone for ExtensionObject.
     fn clone_box(&self) -> Box<dyn DynEncodable>;
 
+    /// Compare this with dynamic object. Invokes the PartialEq implementation of self and other,
+    /// if other has type `Self`.
     fn dyn_eq(&self, other: &dyn DynEncodable) -> bool;
 
-    fn as_ref_any(&self) -> &dyn Any;
-
+    /// Get the type name of the type, by calling `std::any::type_name` on `Self`.
+    /// Very useful for debugging.
     fn type_name(&self) -> &'static str;
 }
 
@@ -105,16 +124,12 @@ macro_rules! blanket_dyn_encodable {
                 self
             }
 
-            fn as_ref_any(&self) -> &dyn Any {
-                self
-            }
-
             fn clone_box(&self) -> Box<dyn DynEncodable> {
                 Box::new(self.clone())
             }
 
             fn dyn_eq(&self, other: &dyn DynEncodable) -> bool {
-                if let Some(o) = other.as_ref_any().downcast_ref::<Self>() {
+                if let Some(o) = other.as_dyn_any_ref().downcast_ref::<Self>() {
                     o == self
                 } else {
                     false
@@ -283,7 +298,13 @@ mod json {
     }
 }
 
-/// An extension object holds a serialized object identified by its node id.
+/// An extension object holds an OPC-UA structure deserialize to a [DynEncodable].
+/// This makes it possible to deserialize an extension object, the serialize it back in a different
+/// format, without reflecting over or inspecting the inner type.
+///
+/// Note that in order for a type to be deserialized into an ExtensionObject, the
+/// [crate::Context] given during deserialization needs to contain a [crate::TypeLoader]
+/// that can handle the type.
 #[derive(PartialEq, Debug)]
 pub struct ExtensionObject {
     pub body: Option<Box<dyn DynEncodable>>,
@@ -385,11 +406,12 @@ impl ExtensionObject {
         ExtensionObject { body: None }
     }
 
-    /// Tests for null node id.
+    /// Tests for an empty extension object.
     pub fn is_null(&self) -> bool {
         self.body.is_none()
     }
 
+    /// Get the binary type ID of the inner type.
     pub fn binary_type_id(&self) -> ExpandedNodeId {
         self.body
             .as_ref()
@@ -409,6 +431,7 @@ impl ExtensionObject {
             .map_err(|_| ExtensionObjectError)
     }
 
+    /// Create an extension object from a structure.
     pub fn from_message<T>(encodable: T) -> ExtensionObject
     where
         T: DynEncodable,
@@ -418,25 +441,57 @@ impl ExtensionObject {
         }
     }
 
+    /// Consume the extension object and return the inner value downcast to `T`,
+    /// if the inner type is present and is an instance of `T`.
+    ///
+    /// You can use [match_extension_object_owned] for conveniently casting to one or more expected types.
     pub fn into_inner_as<T: Send + Sync + 'static>(self) -> Option<Box<T>> {
         self.body.and_then(|b| b.as_dyn_any().downcast().ok())
     }
 
+    /// Return the inner value by reference downcast to `T`,
+    /// if the inner type is present and is an instance of `T`.
+    ///
+    /// You can use [match_extension_object] for conveniently casting to one or more expected types.
     pub fn inner_as<T: Send + Sync + 'static>(&self) -> Option<&T> {
         self.body
             .as_ref()
             .and_then(|b| b.as_dyn_any_ref().downcast_ref())
     }
 
+    /// Get the rust [std::any::TypeId] of the inner type, if the extension object is not null.
     pub fn type_id(&self) -> Option<TypeId> {
         self.body.as_ref().map(|b| (**b).type_id())
     }
 
+    /// Return `true` if the inner value is an instance of `T`
     pub fn inner_is<T: 'static>(&self) -> bool {
         self.type_id() == Some(TypeId::of::<T>())
     }
+
+    pub fn type_name(&self) -> Option<&'static str> {
+        self.body.as_ref().map(|b| b.type_name())
+    }
 }
 
+/// Macro for consuming an extension object and taking different actions depending on the
+/// inner type, like a match over types.
+///
+/// # Example
+///
+/// ```
+/// # mod opcua { pub(super) use opcua_types as types; }
+/// use opcua::types::{EUInformation, ExtensionObject, match_extension_object_owned};
+/// let obj = opcua::types::ExtensionObject::from_message(EUInformation {
+///     namespace_uri: "Degrees C".into(),
+///     ..Default::default()
+/// });
+/// match_extension_object_owned!(obj,
+///     _v: opcua::types::Argument => println!("Object is argument"),
+///     _v: EUInformation => println!("Object is EUInformation"),
+///     _ => println!("Body is something else: {:?}", obj.type_name()),
+/// )
+/// ```
 #[macro_export]
 macro_rules! match_extension_object_owned {
     (_final { $($nom:tt)* }) => {
@@ -480,6 +535,24 @@ macro_rules! match_extension_object_owned {
 
 pub use match_extension_object_owned;
 
+/// Macro for inspecting an extension object by reference and taking different actions depending on the
+/// inner type, like a match over types.
+///
+/// # Example
+///
+/// ```
+/// # mod opcua { pub(super) use opcua_types as types; }
+/// use opcua::types::{EUInformation, ExtensionObject, match_extension_object};
+/// let obj = opcua::types::ExtensionObject::from_message(EUInformation {
+///     namespace_uri: "Degrees C".into(),
+///     ..Default::default()
+/// });
+/// match_extension_object!(obj,
+///     _v: opcua::types::Argument => println!("Object is argument"),
+///     _v: EUInformation => println!("Object is EUInformation"),
+///     _ => println!("Body is something else: {:?}", obj.type_name()),
+/// )
+/// ```
 #[macro_export]
 macro_rules! match_extension_object {
     (_final { $($nom:tt)* }) => {

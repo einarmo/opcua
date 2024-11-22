@@ -22,6 +22,7 @@ type JsonLoadFun = fn(
 ) -> EncodingResult<Box<dyn DynEncodable>>;
 
 #[derive(Default)]
+/// Type used by generated type loaders to store deserialization functions.
 pub struct TypeLoaderInstance {
     binary_types: HashMap<u32, BinaryLoadFun>,
 
@@ -32,6 +33,7 @@ pub struct TypeLoaderInstance {
     json_types: HashMap<u32, JsonLoadFun>,
 }
 
+/// Convenience method to decode a type into a DynEncodable.
 pub fn binary_decode_to_enc<T: DynEncodable + BinaryDecodable>(
     stream: &mut dyn Read,
     ctx: &Context<'_>,
@@ -40,6 +42,7 @@ pub fn binary_decode_to_enc<T: DynEncodable + BinaryDecodable>(
 }
 
 #[cfg(feature = "json")]
+/// Convenience method to decode a type into a DynEncodable.
 pub fn json_decode_to_enc<T: DynEncodable + crate::json::JsonDecodable>(
     stream: &mut crate::json::JsonStreamReader<&mut dyn std::io::Read>,
     ctx: &Context<'_>,
@@ -48,6 +51,7 @@ pub fn json_decode_to_enc<T: DynEncodable + crate::json::JsonDecodable>(
 }
 
 #[cfg(feature = "xml")]
+/// Convenience method to decode a type into a DynEncodable.
 pub fn xml_decode_to_enc<T: DynEncodable + crate::xml::FromXml>(
     body: &opcua_xml::XmlElement,
     ctx: &crate::xml::XmlContext<'_>,
@@ -110,9 +114,12 @@ impl TypeLoaderInstance {
     }
 }
 
+/// Owned variant of [Context], this is stored by clients and servers, which
+/// call the [ContextOwned::context] method to produce a [Context]
+/// for decoding/encoding.
 pub struct ContextOwned {
     namespaces: NamespaceMap,
-    loaders: Vec<Arc<dyn TypeLoader>>,
+    loaders: TypeLoaderCollection,
     options: DecodingOptions,
 }
 
@@ -126,9 +133,10 @@ impl std::fmt::Debug for ContextOwned {
 }
 
 impl ContextOwned {
+    /// Create a new context.
     pub fn new(
         namespaces: NamespaceMap,
-        loaders: Vec<Arc<dyn TypeLoader>>,
+        loaders: TypeLoaderCollection,
         options: DecodingOptions,
     ) -> Self {
         Self {
@@ -138,10 +146,12 @@ impl ContextOwned {
         }
     }
 
+    /// Create a new context, including the core type loader.
     pub fn new_default(namespaces: NamespaceMap, options: DecodingOptions) -> Self {
-        Self::new(namespaces, vec![Arc::new(GeneratedTypeLoader)], options)
+        Self::new(namespaces, TypeLoaderCollection::new(), options)
     }
 
+    /// Return a context for decoding.
     pub fn context(&self) -> Context<'_> {
         Context {
             namespaces: &self.namespaces,
@@ -150,20 +160,28 @@ impl ContextOwned {
         }
     }
 
+    /// Get the namespace map.
     pub fn namespaces(&self) -> &NamespaceMap {
         &self.namespaces
     }
 
+    /// Get the namespace map mutably.
     pub fn namespaces_mut(&mut self) -> &mut NamespaceMap {
         &mut self.namespaces
     }
 
+    /// Get the decoding options.
     pub fn options(&self) -> &DecodingOptions {
         &self.options
     }
 
+    /// Get the decoding options mutably.
     pub fn options_mut(&mut self) -> &mut DecodingOptions {
         &mut self.options
+    }
+
+    pub fn loaders_mut(&mut self) -> &mut TypeLoaderCollection {
+        &mut self.loaders
     }
 }
 
@@ -174,12 +192,106 @@ impl Default for ContextOwned {
 }
 
 #[derive(Clone)]
+pub struct TypeLoaderCollection {
+    loaders: Vec<Arc<dyn TypeLoader>>,
+}
+
+impl Default for TypeLoaderCollection {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl TypeLoaderCollection {
+    pub fn new() -> Self {
+        Self {
+            loaders: vec![Arc::new(GeneratedTypeLoader)],
+        }
+    }
+
+    pub fn add_type_loader(&mut self, loader: impl TypeLoader + 'static) {
+        self.add(Arc::new(loader));
+    }
+
+    pub fn add(&mut self, loader: Arc<dyn TypeLoader>) {
+        let priority = loader.priority();
+        for i in 0..self.loaders.len() {
+            if self.loaders[i].priority() > priority {
+                self.loaders.insert(i, loader);
+                return;
+            }
+        }
+        self.loaders.push(loader);
+    }
+
+    pub fn iter(&self) -> <&Self as IntoIterator>::IntoIter {
+        self.into_iter()
+    }
+}
+
+impl<'a> IntoIterator for &'a TypeLoaderCollection {
+    type Item = &'a Arc<dyn TypeLoader>;
+
+    type IntoIter = <&'a [Arc<dyn TypeLoader>] as IntoIterator>::IntoIter;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.loaders.iter()
+    }
+}
+
+#[derive(Clone)]
+/// Decoding/encoding context. Lifetime is typically tied to an instance of [ContextOwned].
 pub struct Context<'a> {
     namespaces: &'a NamespaceMap,
-    loaders: &'a [Arc<dyn TypeLoader>],
+    loaders: &'a TypeLoaderCollection,
     options: DecodingOptions,
 }
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+/// Priority of the given type loader.
+/// Type loaders should be sorted by this value, to ensure that
+/// correct implementations are selected if multiple type loaders
+/// handle the same type.
+pub enum TypeLoaderPriority {
+    /// Reserved for the core namespace.
+    Core,
+    /// Any generated type loader.
+    Generated,
+    /// Some form of dynamic type loader, can specify a custom
+    /// priority greater than 1.
+    Dynamic(u32),
+    /// Fallback, will always be sorted last.
+    Fallback,
+}
+
+impl TypeLoaderPriority {
+    pub fn priority(&self) -> u32 {
+        match self {
+            Self::Core => 0,
+            Self::Generated => 1,
+            Self::Dynamic(v) => *v,
+            Self::Fallback => u32::MAX,
+        }
+    }
+}
+
+impl PartialOrd for TypeLoaderPriority {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for TypeLoaderPriority {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.priority().cmp(&other.priority())
+    }
+}
+
+/// Trait for a collection of types.
+/// Each method in this trait should try to decode the passed stream/body
+/// into a [DynEncodable], and return `None` if the `node_id` does not match
+/// any variant. It should only return an error if the `node_id` is a match,
+/// but decoding failed.
 pub trait TypeLoader: Send + Sync {
     #[cfg(feature = "xml")]
     fn load_from_xml(
@@ -203,10 +315,16 @@ pub trait TypeLoader: Send + Sync {
         stream: &mut dyn Read,
         ctx: &Context<'_>,
     ) -> Option<crate::EncodingResult<Box<dyn crate::DynEncodable>>>;
+
+    fn priority(&self) -> TypeLoaderPriority {
+        TypeLoaderPriority::Generated
+    }
 }
 
 impl<'a> Context<'a> {
     #[cfg(feature = "json")]
+    /// Try to load a type dynamically from JSON, returning an error if no
+    /// matching type loader was found.
     pub fn load_from_json(
         &self,
         node_id: &NodeId,
@@ -223,6 +341,8 @@ impl<'a> Context<'a> {
         )))
     }
 
+    /// Try to load a type dynamically from OPC-UA binary, returning an error if no
+    /// matching type loader was found.
     pub fn load_from_binary(
         &self,
         node_id: &NodeId,
@@ -239,14 +359,18 @@ impl<'a> Context<'a> {
         )))
     }
 
+    /// Get the decoding options.
     pub fn options(&self) -> &DecodingOptions {
         &self.options
     }
 
+    /// Get the namespace map.
     pub fn namespaces(&self) -> &'a NamespaceMap {
         self.namespaces
     }
 
+    /// Produce a copy of self with zero client_offset, or a borrow if
+    /// the offset is already zero.
     pub fn with_zero_offset(&self) -> Cow<'_, Self> {
         if self.options.client_offset.is_zero() {
             Cow::Borrowed(self)

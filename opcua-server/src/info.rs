@@ -28,7 +28,7 @@ use opcua_types::{
 };
 use opcua_types::{
     ByteString, ContextOwned, DateTime, DecodingOptions, Error, ExtensionObject, LocalizedText,
-    MessageSecurityMode, NamespaceMap, TypeLoader, UAString,
+    MessageSecurityMode, NamespaceMap, TypeLoaderCollection, UAString,
 };
 
 use crate::config::{ServerConfig, ServerEndpoint};
@@ -87,7 +87,7 @@ pub struct ServerInfo {
     /// Currently active local port.
     pub port: AtomicU16,
     /// List of active type loaders
-    pub type_loaders: Vec<Arc<dyn TypeLoader>>,
+    pub type_loaders: TypeLoaderCollection,
 }
 
 impl ServerInfo {

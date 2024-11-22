@@ -88,6 +88,20 @@ pub fn type_loader_impl(ids: &[(EncodingIds, String)], namespace: &str) -> Vec<I
         });
     });
 
+    let priority_impl = if namespace == BASE_NAMESPACE {
+        quote! {
+            fn priority(&self) -> opcua::types::TypeLoaderPriority {
+                opcua::types::TypeLoaderPriority::Core
+            }
+        }
+    } else {
+        quote! {
+            fn priority(&self) -> opcua::types::TypeLoaderPriority {
+                opcua::types::TypeLoaderPriority::Generated
+            }
+        }
+    };
+
     res.push(parse_quote! {
         #[derive(Debug, Clone, Copy)]
         pub struct GeneratedTypeLoader;
@@ -100,6 +114,8 @@ pub fn type_loader_impl(ids: &[(EncodingIds, String)], namespace: &str) -> Vec<I
             #xml_body
 
             #json_body
+
+            #priority_impl
         }
     });
 

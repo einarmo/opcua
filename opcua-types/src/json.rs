@@ -13,14 +13,18 @@ pub use struson::{
 
 use crate::{EncodingResult, Error};
 
+/// Trait for OPC-UA json encoding.
 pub trait JsonEncodable {
     #[allow(unused)]
+    /// Write the type to the provided JSON writer.
     fn encode(
         &self,
         stream: &mut JsonStreamWriter<&mut dyn Write>,
         ctx: &crate::Context<'_>,
     ) -> EncodingResult<()>;
 
+    /// This method should return `true` if the value is default
+    /// and should not be serialized.
     fn is_null_json(&self) -> bool {
         false
     }

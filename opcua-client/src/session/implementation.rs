@@ -19,7 +19,8 @@ use opcua_core::{
 };
 use opcua_crypto::CertificateStore;
 use opcua_types::{
-    ApplicationDescription, DecodingOptions, IntegerId, NodeId, RequestHeader, StatusCode, UAString,
+    ApplicationDescription, ContextOwned, DecodingOptions, IntegerId, NamespaceMap, NodeId,
+    RequestHeader, StatusCode, TypeLoader, UAString,
 };
 
 use super::{
@@ -65,6 +66,7 @@ pub struct Session {
     decoding_options: DecodingOptions,
     pub(super) should_reconnect: AtomicBool,
     pub(super) auto_recreate_subscriptions: bool,
+    pub(super) encoding_context: Arc<RwLock<ContextOwned>>,
 }
 
 impl Session {
@@ -79,18 +81,27 @@ impl Session {
         config: &ClientConfig,
         session_id: Option<NodeId>,
         connector: Box<dyn Connector>,
+        extra_type_loaders: Vec<Arc<dyn TypeLoader>>,
     ) -> (Arc<Self>, SessionEventLoop) {
         let auth_token: Arc<ArcSwap<NodeId>> = Default::default();
         let (state_watch_tx, state_watch_rx) =
             tokio::sync::watch::channel(SessionState::Disconnected);
         let (trigger_publish_tx, trigger_publish_rx) = tokio::sync::watch::channel(Instant::now());
 
+        let mut encoding_context =
+            ContextOwned::new_default(NamespaceMap::new(), decoding_options.clone());
+
+        for loader in extra_type_loaders {
+            encoding_context.loaders_mut().add(loader);
+        }
+
+        let encoding_context = Arc::new(RwLock::new(encoding_context));
+
         let session = Arc::new(Session {
             channel: AsyncSecureChannel::new(
                 certificate_store.clone(),
                 session_info.clone(),
                 session_retry_policy.clone(),
-                decoding_options.clone(),
                 config.performance.ignore_clock_skew,
                 auth_token.clone(),
                 TransportConfiguration {
@@ -103,6 +114,7 @@ impl Session {
                 },
                 connector,
                 config.channel_lifetime,
+                encoding_context.clone(),
             ),
             internal_session_id: AtomicU32::new(NEXT_SESSION_ID.fetch_add(1, Ordering::Relaxed)),
             state_watch_rx,
@@ -124,6 +136,7 @@ impl Session {
             decoding_options,
             should_reconnect: AtomicBool::new(true),
             auto_recreate_subscriptions: config.auto_recreate_subscriptions,
+            encoding_context,
         });
 
         (
@@ -250,5 +263,20 @@ impl Session {
 
     pub fn request_handle(&self) -> IntegerId {
         self.channel.request_handle()
+    }
+
+    /// Set the namespace array on the session.
+    /// Make sure that this namespace array contains the base namespace,
+    /// or the session may behave unexpectedly.
+    pub fn set_namespaces(&mut self, namespaces: NamespaceMap) {
+        *self.encoding_context.write().namespaces_mut() = namespaces;
+    }
+
+    /// Add a type loader to the encoding context.
+    /// Note that there is no mechanism to ensure uniqueness,
+    /// you should avoid adding the same type loader more than once, it will
+    /// work, but there will be a small performance overhead.
+    pub fn add_type_loader(&mut self, type_loader: Arc<dyn TypeLoader>) {
+        self.encoding_context.write().loaders_mut().add(type_loader);
     }
 }

@@ -1,5 +1,5 @@
 use std::{
-    io::{Cursor, Read, Write},
+    io::{Cursor, Read, Seek, Write},
     str::FromStr,
 };
 
@@ -23,7 +23,7 @@ use crate::{
     status_code::StatusCode,
     string::UAString,
     variant::Variant,
-    Argument, Array, DataTypeId, ObjectId, VariantScalarTypeId,
+    Argument, Array, BinaryEncodable, DataTypeId, EUInformation, ObjectId, VariantScalarTypeId,
 };
 
 use crate::{ContextOwned, EncodingResult, ExtensionObject};
@@ -699,4 +699,62 @@ fn serialize_variant_multi_dimension_array() {
             "Dimensions": [2, 3]
         }),
     );
+}
+
+#[test]
+fn extension_object_round_trip() {
+    let v = EUInformation {
+        namespace_uri: "some.namespace.uri".into(),
+        unit_id: 15,
+        display_name: "Degrees C".into(),
+        description: "Temperature in degrees Celsius".into(),
+    };
+    let obj = ExtensionObject::from_message(v.clone());
+    // This is the reason why we want to store the extension object as a dynamic object,
+    // note that the rest of the code does not concretely reference EUInformation. We can
+    // work with structures from OPC-UA without actually knowing what they are, concretely.
+    // This is especially useful for clients that are server agnostic.
+
+    // Serialize to binary
+    let ctx_r = ContextOwned::default();
+    let ctx = ctx_r.context();
+    let mut buf = Vec::with_capacity(obj.byte_len(&ctx));
+    let mut cursor = Cursor::new(&mut buf);
+    crate::BinaryEncodable::encode(&obj, &mut cursor, &ctx).unwrap();
+    // Deserialize from binary
+    cursor.seek(std::io::SeekFrom::Start(0)).unwrap();
+    let obj_2: ExtensionObject = crate::BinaryDecodable::decode(&mut cursor, &ctx).unwrap();
+    // Write it to JSON
+    let mut buf2 = Vec::new();
+    let mut cursor2 = Cursor::new(&mut buf2);
+    let mut serializer = JsonStreamWriter::new(&mut cursor2 as &mut dyn Write);
+    JsonEncodable::encode(&obj_2, &mut serializer, &ctx).unwrap();
+    serializer.finish_document().unwrap();
+    let value: Value = serde_json::from_slice(&buf2).unwrap();
+
+    assert_eq!(
+        value,
+        json!({
+            "Body": {
+                "NamespaceUri": "some.namespace.uri",
+                "UnitId": 15,
+                "DisplayName": {
+                    "Text": "Degrees C"
+                },
+                "Description": {
+                    "Text": "Temperature in degrees Celsius"
+                }
+            },
+            "TypeId": {
+                "Id": ObjectId::EUInformation_Encoding_DefaultJson as u32
+            }
+        })
+    );
+
+    // Deserialize it back from JSON.
+    let mut cursor3 = Cursor::new(&buf2);
+    let mut reader = JsonStreamReader::new(&mut cursor3 as &mut dyn Read);
+    let obj_3: ExtensionObject = JsonDecodable::decode(&mut reader, &ctx).unwrap();
+    // Verify that we've completed a round-trip and ended up with something identical to the original object.
+    assert_eq!(obj_3, obj);
 }

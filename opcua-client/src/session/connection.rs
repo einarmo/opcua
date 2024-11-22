@@ -3,7 +3,9 @@ use std::{str::FromStr, sync::Arc};
 use log::error;
 use opcua_core::{comms::url::is_opc_ua_binary_url, config::Config, sync::RwLock};
 use opcua_crypto::{CertificateStore, SecurityPolicy};
-use opcua_types::{EndpointDescription, MessageSecurityMode, NodeId, StatusCode, UserTokenType};
+use opcua_types::{
+    EndpointDescription, MessageSecurityMode, NodeId, StatusCode, TypeLoader, UserTokenType,
+};
 
 use crate::{
     transport::{tcp::TcpConnector, Connector},
@@ -16,6 +18,7 @@ struct SessionBuilderInner {
     session_id: Option<NodeId>,
     user_identity_token: IdentityToken,
     connector: Box<dyn Connector>,
+    type_loaders: Vec<Arc<dyn TypeLoader>>,
 }
 
 /// Type-state builder for a session and session event loop.
@@ -40,6 +43,7 @@ impl<'a> SessionBuilder<'a, (), ()> {
                 session_id: None,
                 user_identity_token: IdentityToken::Anonymous,
                 connector: Box::new(TcpConnector),
+                type_loaders: Vec::new(),
             },
         }
     }
@@ -74,6 +78,14 @@ impl<'a, T, R> SessionBuilder<'a, T, R> {
     /// between program executions, to avoid having to recreate subscriptions.
     pub fn session_id(mut self, session_id: NodeId) -> Self {
         self.inner.session_id = Some(session_id);
+        self
+    }
+
+    /// Add an initial type loader to the session. You can add more of these later.
+    /// Note that custom type loaders will likely not work until namespaces
+    /// are fetched from the server.
+    pub fn type_loader(mut self, type_loader: Arc<dyn TypeLoader>) -> Self {
+        self.inner.type_loaders.push(type_loader);
         self
     }
 
@@ -271,6 +283,7 @@ impl<'a, R> SessionBuilder<'a, EndpointDescription, R> {
             self.config,
             self.inner.session_id,
             self.inner.connector,
+            self.inner.type_loaders,
         )
     }
 }

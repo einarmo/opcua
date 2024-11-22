@@ -59,21 +59,21 @@ impl AtomicHandle {
     }
 
     pub fn next(&self) -> u32 {
-        let mut val = self.next.fetch_add(1, Ordering::Acquire);
+        let mut val = self.next.fetch_add(1, Ordering::Relaxed);
 
         while val < self.first {
             // On overflow, try to reset the next value to first + 1
             match self.next.compare_exchange(
                 val + 1,
                 self.first + 1,
-                Ordering::Release,
-                Ordering::SeqCst,
+                Ordering::Relaxed,
+                Ordering::Relaxed,
             ) {
                 // If it succeeds, just use first directly.
                 Ok(_) => val = self.first,
                 Err(v) => {
                     if v >= self.first {
-                        val = self.next.fetch_add(1, Ordering::Acquire);
+                        val = self.next.fetch_add(1, Ordering::Relaxed);
                     } else {
                         val = v;
                     }

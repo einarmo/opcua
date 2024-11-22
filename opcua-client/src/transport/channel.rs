@@ -10,8 +10,8 @@ use opcua_core::{
 };
 use opcua_crypto::{CertificateStore, SecurityPolicy};
 use opcua_types::{
-    ByteString, CloseSecureChannelRequest, ContextOwned, DecodingOptions, IntegerId, NamespaceMap,
-    NodeId, RequestHeader, SecurityTokenRequestType, StatusCode,
+    ByteString, CloseSecureChannelRequest, ContextOwned, IntegerId, NodeId, RequestHeader,
+    SecurityTokenRequestType, StatusCode,
 };
 
 use super::{
@@ -87,22 +87,17 @@ impl AsyncSecureChannel {
         certificate_store: Arc<RwLock<CertificateStore>>,
         session_info: SessionInfo,
         session_retry_policy: SessionRetryPolicy,
-        decoding_options: DecodingOptions,
         ignore_clock_skew: bool,
         auth_token: Arc<ArcSwap<NodeId>>,
         transport_config: TransportConfiguration,
         connector: Box<dyn Connector>,
         channel_lifetime: u32,
+        encoding_context: Arc<RwLock<ContextOwned>>,
     ) -> Self {
         let secure_channel = Arc::new(RwLock::new(SecureChannel::new(
             certificate_store.clone(),
             Role::Client,
-            // TODO: Store this more centrally (so we don't lose it on reconnect), and make it
-            // possible to change.
-            Arc::new(RwLock::new(ContextOwned::new_default(
-                NamespaceMap::new(),
-                decoding_options,
-            ))),
+            encoding_context,
         )));
 
         Self {
