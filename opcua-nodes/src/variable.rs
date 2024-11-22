@@ -7,10 +7,9 @@
 use std::convert::{Into, TryFrom};
 
 use log::error;
-use opcua_types::service_types::VariableAttributes;
 use opcua_types::{
     AttributeId, AttributesMask, DataEncoding, DataTypeId, DataValue, DateTime, NumericRange,
-    StatusCode, TimestampsToReturn, Variant,
+    StatusCode, TimestampsToReturn, VariableAttributes, Variant,
 };
 
 use crate::FromAttributesError;

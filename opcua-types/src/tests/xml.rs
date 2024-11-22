@@ -8,7 +8,7 @@ use crate::{
     LocalizedText, NodeId, QualifiedName, StatusCode, UAString, Variant,
 };
 
-use crate::{service_types, NamespaceMap, NodeSetNamespaceMapper};
+use crate::{generated::types::GeneratedTypeLoader, NamespaceMap, NodeSetNamespaceMapper};
 
 fn namespaces() -> NamespaceMap {
     NamespaceMap::new()
@@ -22,7 +22,7 @@ fn context<'a>(mapper: &'a NodeSetNamespaceMapper<'a>) -> XmlContext<'a> {
     XmlContext {
         aliases: HashMap::new(),
         namespaces: &mapper,
-        loaders: vec![Arc::new(service_types::GeneratedTypeLoader)],
+        loaders: vec![Arc::new(GeneratedTypeLoader)],
     }
 }
 

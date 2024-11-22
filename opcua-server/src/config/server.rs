@@ -16,8 +16,8 @@ use crate::constants;
 use opcua_core::{comms::url::url_matches_except_host, config::Config};
 use opcua_crypto::{CertificateStore, SecurityPolicy, Thumbprint};
 use opcua_types::{
-    service_types::ApplicationType, ApplicationDescription, DecodingOptions, LocalizedText,
-    MessageSecurityMode, UAString,
+    ApplicationDescription, ApplicationType, DecodingOptions, LocalizedText, MessageSecurityMode,
+    UAString,
 };
 
 use super::{endpoint::ServerEndpoint, limits::Limits};

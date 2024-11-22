@@ -5,14 +5,10 @@
 use std::convert::TryFrom;
 
 use crate::{
-    attribute::AttributeId,
-    match_extension_object_owned,
-    service_types::{
-        AttributeOperand, ContentFilter, ContentFilterElement, ElementOperand, FilterOperator,
-        LiteralOperand, SimpleAttributeOperand,
-    },
-    status_code::StatusCode,
-    ExtensionObject, NodeId, QualifiedName, UAString, Variant,
+    attribute::AttributeId, match_extension_object_owned, status_code::StatusCode,
+    AttributeOperand, ContentFilter, ContentFilterElement, ElementOperand, ExtensionObject,
+    FilterOperator, LiteralOperand, NodeId, QualifiedName, SimpleAttributeOperand, UAString,
+    Variant,
 };
 
 #[derive(PartialEq)]

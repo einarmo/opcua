@@ -5,8 +5,8 @@
 //! Contains the implementation of `View` and `ViewBuilder`.
 use log::error;
 use opcua_types::{
-    service_types::ViewAttributes, AttributeId, AttributesMask, DataEncoding, DataValue,
-    NumericRange, StatusCode, TimestampsToReturn, Variant,
+    AttributeId, AttributesMask, DataEncoding, DataValue, NumericRange, StatusCode,
+    TimestampsToReturn, Variant, ViewAttributes,
 };
 
 use crate::FromAttributesError;

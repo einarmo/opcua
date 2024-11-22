@@ -113,7 +113,7 @@ impl NodeSet2Import {
     ) -> Self {
         Self {
             preferred_locale: preferred_locale.to_owned(),
-            type_loaders: vec![Arc::new(opcua_types::service_types::GeneratedTypeLoader)],
+            type_loaders: vec![Arc::new(opcua_types::GeneratedTypeLoader)],
             file: nodeset,
             dependent_namespaces,
         }

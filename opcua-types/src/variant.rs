@@ -25,14 +25,13 @@ use crate::{
     guid::Guid,
     localized_text::LocalizedText,
     node_id::NodeId,
-    node_ids::DataTypeId,
     numeric_range::NumericRange,
     qualified_name::QualifiedName,
     status_code::StatusCode,
     string::{UAString, XmlElement},
     variant_type_id::*,
-    write_i32, write_u8, DataValue, DiagnosticInfo, DynEncodable, EncodingContext, Error,
-    MessageInfo,
+    write_i32, write_u8, DataTypeId, DataValue, DiagnosticInfo, DynEncodable, EncodingContext,
+    Error, MessageInfo,
 };
 
 use super::DateTimeUtc;

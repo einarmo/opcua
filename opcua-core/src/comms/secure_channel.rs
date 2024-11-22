@@ -18,9 +18,9 @@ use opcua_crypto::{
     CertificateStore, SecurityPolicy,
 };
 use opcua_types::{
-    service_types::ChannelSecurityToken, status_code::StatusCode, write_bytes, write_u8,
-    ByteString, ContextOwned, DecodingOptions, Error, MessageSecurityMode, NamespaceMap,
-    SimpleBinaryDecodable, SimpleBinaryEncodable,
+    status_code::StatusCode, write_bytes, write_u8, ByteString, ChannelSecurityToken, ContextOwned,
+    DecodingOptions, Error, MessageSecurityMode, NamespaceMap, SimpleBinaryDecodable,
+    SimpleBinaryEncodable,
 };
 use parking_lot::RwLock;
 

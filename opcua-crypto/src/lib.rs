@@ -10,8 +10,7 @@ use std::fmt;
 
 use log::{error, trace};
 use opcua_types::{
-    service_types::SignatureData, status_code::StatusCode, ByteString, EncodingResult, Error,
-    UAString,
+    status_code::StatusCode, ByteString, EncodingResult, Error, SignatureData, UAString,
 };
 pub use {
     aeskey::*, certificate_store::*, hash::*, pkey::*, security_policy::*, thumbprint::*,

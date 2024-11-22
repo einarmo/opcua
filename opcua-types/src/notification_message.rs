@@ -5,15 +5,10 @@
 use log::{debug, trace};
 
 use crate::{
-    date_time::DateTime,
-    diagnostic_info::DiagnosticInfo,
-    extension_object::ExtensionObject,
-    match_extension_object_owned,
-    service_types::{
-        DataChangeNotification, EventFieldList, EventNotificationList, MonitoredItemNotification,
-        NotificationMessage, StatusChangeNotification,
-    },
-    status_code::StatusCode,
+    date_time::DateTime, diagnostic_info::DiagnosticInfo, extension_object::ExtensionObject,
+    match_extension_object_owned, status_code::StatusCode, DataChangeNotification, EventFieldList,
+    EventNotificationList, MonitoredItemNotification, NotificationMessage,
+    StatusChangeNotification,
 };
 
 impl NotificationMessage {

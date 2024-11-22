@@ -17,7 +17,7 @@ use crate::{write_i32, write_u8, Error, ExpandedMessageInfo, ExpandedNodeId};
 use super::{
     encoding::{BinaryDecodable, BinaryEncodable, EncodingResult},
     node_id::NodeId,
-    node_ids::ObjectId,
+    ObjectId,
 };
 
 #[derive(Debug)]

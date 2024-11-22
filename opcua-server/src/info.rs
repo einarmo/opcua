@@ -18,13 +18,10 @@ use opcua_core::handle::AtomicHandle;
 use opcua_core::sync::RwLock;
 use opcua_crypto::{user_identity, PrivateKey, SecurityPolicy, X509};
 use opcua_types::{
-    profiles,
-    service_types::{
-        ActivateSessionRequest, AnonymousIdentityToken, ApplicationDescription, ApplicationType,
-        EndpointDescription, RegisteredServer, ServerState as ServerStateType, SignatureData,
-        UserNameIdentityToken, UserTokenType, X509IdentityToken,
-    },
-    status_code::StatusCode,
+    profiles, status_code::StatusCode, ActivateSessionRequest, AnonymousIdentityToken,
+    ApplicationDescription, ApplicationType, EndpointDescription, RegisteredServer,
+    ServerState as ServerStateType, SignatureData, UserNameIdentityToken, UserTokenType,
+    X509IdentityToken,
 };
 use opcua_types::{
     ByteString, ContextOwned, DateTime, DecodingOptions, Error, ExtensionObject, LocalizedText,

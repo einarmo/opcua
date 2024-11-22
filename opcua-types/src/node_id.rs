@@ -17,14 +17,12 @@ use crate::{
     byte_string::ByteString,
     encoding::{BinaryDecodable, BinaryEncodable, EncodingResult},
     guid::Guid,
-    node_ids::{ObjectId, ReferenceTypeId},
     read_u16, read_u32, read_u8,
     status_code::StatusCode,
     string::*,
-    write_u16, write_u32, write_u8, Error, MethodId,
+    write_u16, write_u32, write_u8, DataTypeId, Error, MethodId, ObjectId, ObjectTypeId,
+    ReferenceTypeId, VariableId, VariableTypeId,
 };
-
-use super::{node_ids::VariableId, DataTypeId, ObjectTypeId, VariableTypeId};
 
 /// The kind of identifier, numeric, string, guid or byte
 #[derive(Eq, PartialEq, Clone, Debug, Hash)]
