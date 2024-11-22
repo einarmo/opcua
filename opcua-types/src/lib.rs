@@ -212,6 +212,8 @@ pub mod expanded_node_id;
 pub mod extension_object;
 pub mod guid;
 mod impls;
+#[cfg(feature = "json")]
+pub mod json;
 pub mod localized_text;
 pub mod namespaces;
 pub mod node_id;
@@ -224,6 +226,7 @@ pub mod request_header;
 pub mod response_header;
 pub mod status_code;
 pub mod string;
+pub mod type_loader;
 pub mod variant;
 #[cfg(feature = "json")]
 pub mod variant_json;
@@ -234,13 +237,18 @@ pub mod xml;
 #[cfg(feature = "xml")]
 pub use opcua_macros::FromXml;
 
+#[cfg(feature = "json")]
+pub use opcua_macros::JsonDecodable;
+#[cfg(feature = "json")]
+pub use opcua_macros::JsonEncodable;
+
 pub use self::{
-    add_node_attributes::AddNodeAttributes, array::*, attribute::*, byte_string::*, data_change::*,
-    data_type_definition::*, data_types::*, data_value::*, date_time::*, diagnostic_info::*,
-    encoding::*, event_field::*, expanded_node_id::*, extension_object::*, guid::*, impls::*,
-    localized_text::*, namespaces::*, node_id::*, node_ids::*, numeric_range::*, operand::*,
-    qualified_name::*, request_header::*, response_header::*, service_types::*, status_code::*,
-    string::*, variant::*, variant_type_id::*,
+    add_node_attributes::AddNodeAttributes, argument::*, array::*, attribute::*, byte_string::*,
+    data_change::*, data_type_definition::*, data_types::*, data_value::*, date_time::*,
+    diagnostic_info::*, encoding::*, event_field::*, expanded_node_id::*, extension_object::*,
+    guid::*, impls::*, localized_text::*, namespaces::*, node_id::*, node_ids::*, numeric_range::*,
+    operand::*, qualified_name::*, request_header::*, response_header::*, service_types::*,
+    status_code::*, string::*, type_loader::*, variant::*, variant_type_id::*,
 };
 
 // Various aliases

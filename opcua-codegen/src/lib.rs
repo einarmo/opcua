@@ -21,7 +21,7 @@ pub use types::{
     CodeGenItemConfig, GeneratedItem, ItemDefinition, LoadedType, LoadedTypes, StructureField,
     StructureFieldType, StructuredType,
 };
-use types::{generate_types, generate_xml_loader_impl, ExternalType};
+use types::{generate_types, type_loader_impl, EncodingIds, ExternalType};
 pub use utils::{create_module_file, GeneratedOutput};
 
 pub fn write_to_directory<T: GeneratedOutput>(
@@ -121,19 +121,22 @@ pub fn run_codegen(config: &CodeGenConfig, root_path: &str) -> Result<(), CodeGe
 
                 let header = make_header(&t.file_path, &[&config.extra_header, &t.extra_header]);
 
-                let object_ids = types
+                let mut object_ids: Vec<_> = types
                     .iter()
-                    .filter_map(|v| {
-                        v.object_id
-                            .as_ref()
-                            .map(|i| (i.to_string(), v.name.clone()))
-                    })
+                    .filter_map(|v| v.encoding_ids.as_ref().map(|i| (i.clone(), v.name.clone())))
                     .collect();
+                for (name, typ) in t.types_import_map.iter() {
+                    if typ.add_to_type_loader {
+                        object_ids
+                            .push((EncodingIds::new(name), format!("{}::{}", typ.path, name)));
+                    }
+                }
+
                 let modules = write_to_directory(&t.output_dir, root_path, &header, types)?;
                 let mut module_file = create_module_file(modules);
                 module_file
                     .items
-                    .extend(generate_xml_loader_impl(object_ids, &target_namespace).into_iter());
+                    .extend(type_loader_impl(&object_ids, &target_namespace).into_iter());
 
                 write_module_file(&t.output_dir, root_path, &header, module_file)?;
             }

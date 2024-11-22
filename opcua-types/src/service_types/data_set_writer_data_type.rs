@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct DataSetWriterDataType {
@@ -36,74 +37,61 @@ impl opcua::types::MessageInfo for DataSetWriterDataType {
     }
 }
 impl opcua::types::BinaryEncodable for DataSetWriterDataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.name.byte_len();
-        size += self.enabled.byte_len();
-        size += self.data_set_writer_id.byte_len();
-        size += self.data_set_field_content_mask.byte_len();
-        size += self.key_frame_count.byte_len();
-        size += self.data_set_name.byte_len();
-        size += self.data_set_writer_properties.byte_len();
-        size += self.transport_settings.byte_len();
-        size += self.message_settings.byte_len();
+        size += self.name.byte_len(ctx);
+        size += self.enabled.byte_len(ctx);
+        size += self.data_set_writer_id.byte_len(ctx);
+        size += self.data_set_field_content_mask.byte_len(ctx);
+        size += self.key_frame_count.byte_len(ctx);
+        size += self.data_set_name.byte_len(ctx);
+        size += self.data_set_writer_properties.byte_len(ctx);
+        size += self.transport_settings.byte_len(ctx);
+        size += self.message_settings.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.name.encode(stream)?;
-        size += self.enabled.encode(stream)?;
-        size += self.data_set_writer_id.encode(stream)?;
-        size += self.data_set_field_content_mask.encode(stream)?;
-        size += self.key_frame_count.encode(stream)?;
-        size += self.data_set_name.encode(stream)?;
-        size += self.data_set_writer_properties.encode(stream)?;
-        size += self.transport_settings.encode(stream)?;
-        size += self.message_settings.encode(stream)?;
+        size += self.name.encode(stream, ctx)?;
+        size += self.enabled.encode(stream, ctx)?;
+        size += self.data_set_writer_id.encode(stream, ctx)?;
+        size += self.data_set_field_content_mask.encode(stream, ctx)?;
+        size += self.key_frame_count.encode(stream, ctx)?;
+        size += self.data_set_name.encode(stream, ctx)?;
+        size += self.data_set_writer_properties.encode(stream, ctx)?;
+        size += self.transport_settings.encode(stream, ctx)?;
+        size += self.message_settings.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for DataSetWriterDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            enabled: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            data_set_writer_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            enabled: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            data_set_writer_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             data_set_field_content_mask: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            key_frame_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            data_set_name: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            key_frame_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            data_set_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             data_set_writer_properties: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            transport_settings: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            message_settings: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            transport_settings: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            message_settings: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

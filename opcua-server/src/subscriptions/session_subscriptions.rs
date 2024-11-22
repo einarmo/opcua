@@ -23,10 +23,9 @@ use opcua_types::{
     AttributeId, CreateSubscriptionRequest, CreateSubscriptionResponse, DataValue, DateTime,
     DateTimeUtc, EncodingContext, ExtensionObject, ModifySubscriptionRequest,
     ModifySubscriptionResponse, MonitoredItemCreateResult, MonitoredItemModifyRequest,
-    MonitoredItemModifyResult, MonitoringMode, NodeId, NotificationMessage, ObjectId,
-    PublishRequest, PublishResponse, RepublishRequest, RepublishResponse, ResponseHeader,
-    ServiceFault, SetPublishingModeRequest, SetPublishingModeResponse, StatusCode,
-    TimestampsToReturn,
+    MonitoredItemModifyResult, MonitoringMode, NodeId, NotificationMessage, PublishRequest,
+    PublishResponse, RepublishRequest, RepublishResponse, ResponseHeader, ServiceFault,
+    SetPublishingModeRequest, SetPublishingModeResponse, StatusCode, TimestampsToReturn,
 };
 
 /// Subscriptions belonging to a single session. Note that they are technically _owned_ by
@@ -263,12 +262,7 @@ impl SessionSubscriptions {
         for item in requests {
             let filter_result = item
                 .filter_res()
-                .map(|r| {
-                    ExtensionObject::from_encodable(
-                        ObjectId::EventFilterResult_Encoding_DefaultBinary,
-                        r,
-                    )
-                })
+                .map(|r| ExtensionObject::from_message(r.clone()))
                 .unwrap_or_else(ExtensionObject::null);
             if item.status_code().is_good() {
                 let new_item = MonitoredItem::new(item);
@@ -311,12 +305,7 @@ impl SessionSubscriptions {
                 let (filter_result, status) =
                     item.modify(info, timestamps_to_return, &request, type_tree);
                 let filter_result = filter_result
-                    .map(|f| {
-                        ExtensionObject::from_encodable(
-                            ObjectId::EventFilterResult_Encoding_DefaultBinary,
-                            &f,
-                        )
-                    })
+                    .map(ExtensionObject::from_message)
                     .unwrap_or_else(ExtensionObject::null);
 
                 results.push(MonitoredItemUpdateRef::new(

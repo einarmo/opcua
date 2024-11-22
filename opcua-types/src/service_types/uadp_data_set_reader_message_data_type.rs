@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct UadpDataSetReaderMessageDataType {
@@ -36,80 +37,61 @@ impl opcua::types::MessageInfo for UadpDataSetReaderMessageDataType {
     }
 }
 impl opcua::types::BinaryEncodable for UadpDataSetReaderMessageDataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.group_version.byte_len();
-        size += self.network_message_number.byte_len();
-        size += self.data_set_offset.byte_len();
-        size += self.data_set_class_id.byte_len();
-        size += self.network_message_content_mask.byte_len();
-        size += self.data_set_message_content_mask.byte_len();
-        size += self.publishing_interval.byte_len();
-        size += self.receive_offset.byte_len();
-        size += self.processing_offset.byte_len();
+        size += self.group_version.byte_len(ctx);
+        size += self.network_message_number.byte_len(ctx);
+        size += self.data_set_offset.byte_len(ctx);
+        size += self.data_set_class_id.byte_len(ctx);
+        size += self.network_message_content_mask.byte_len(ctx);
+        size += self.data_set_message_content_mask.byte_len(ctx);
+        size += self.publishing_interval.byte_len(ctx);
+        size += self.receive_offset.byte_len(ctx);
+        size += self.processing_offset.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.group_version.encode(stream)?;
-        size += self.network_message_number.encode(stream)?;
-        size += self.data_set_offset.encode(stream)?;
-        size += self.data_set_class_id.encode(stream)?;
-        size += self.network_message_content_mask.encode(stream)?;
-        size += self.data_set_message_content_mask.encode(stream)?;
-        size += self.publishing_interval.encode(stream)?;
-        size += self.receive_offset.encode(stream)?;
-        size += self.processing_offset.encode(stream)?;
+        size += self.group_version.encode(stream, ctx)?;
+        size += self.network_message_number.encode(stream, ctx)?;
+        size += self.data_set_offset.encode(stream, ctx)?;
+        size += self.data_set_class_id.encode(stream, ctx)?;
+        size += self.network_message_content_mask.encode(stream, ctx)?;
+        size += self.data_set_message_content_mask.encode(stream, ctx)?;
+        size += self.publishing_interval.encode(stream, ctx)?;
+        size += self.receive_offset.encode(stream, ctx)?;
+        size += self.processing_offset.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for UadpDataSetReaderMessageDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            group_version: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            network_message_number: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            data_set_offset: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            data_set_class_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            group_version: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            network_message_number: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            data_set_offset: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            data_set_class_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             network_message_content_mask: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             data_set_message_content_mask: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            publishing_interval: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            receive_offset: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            processing_offset: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            publishing_interval: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            receive_offset: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            processing_offset: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

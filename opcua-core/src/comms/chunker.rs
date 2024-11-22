@@ -18,7 +18,7 @@ use log::{debug, error, trace};
 use opcua_crypto::SecurityPolicy;
 use opcua_types::{
     encoding::BinaryEncodable, node_id::NodeId, node_ids::ObjectId, status_code::StatusCode,
-    BinaryDecodable, EncodingError,
+    BinaryDecodable, Error,
 };
 
 /// Read implementation for a sequence of message chunks.
@@ -35,14 +35,12 @@ struct ReceiveStream<'a, T> {
     index: usize,
 }
 impl<'a, T: Iterator<Item = &'a MessageChunk>> ReceiveStream<'a, T> {
-    pub fn new(
-        channel: &'a SecureChannel,
-        mut items: T,
-        num_items: usize,
-    ) -> Result<Self, StatusCode> {
+    pub fn new(channel: &'a SecureChannel, mut items: T, num_items: usize) -> Result<Self, Error> {
         let Some(chunk) = items.next() else {
-            error!("Stream contained no chunks");
-            return Err(StatusCode::BadUnexpectedError);
+            return Err(Error::new(
+                StatusCode::BadUnexpectedError,
+                "Stream contained no chunks",
+            ));
         };
 
         let chunk_info = chunk.chunk_info(channel)?;
@@ -52,7 +50,10 @@ impl<'a, T: Iterator<Item = &'a MessageChunk>> ReceiveStream<'a, T> {
             MessageIsFinalType::Intermediate
         };
         if chunk_info.message_header.is_final != expected_is_final {
-            return Err(StatusCode::BadDecodingError);
+            return Err(Error::new(
+                StatusCode::BadDecodingError,
+                "Last chunk not marked as final",
+            ));
         }
 
         let body_start = chunk_info.body_offset;
@@ -111,7 +112,7 @@ impl Chunker {
         starting_sequence_number: u32,
         secure_channel: &SecureChannel,
         chunks: &[MessageChunk],
-    ) -> Result<u32, StatusCode> {
+    ) -> Result<u32, Error> {
         let first_sequence_number = {
             let chunk_info = chunks[0].chunk_info(secure_channel)?;
             chunk_info.sequence_header.sequence_number
@@ -121,11 +122,13 @@ impl Chunker {
             first_sequence_number
         );
         if first_sequence_number < starting_sequence_number {
-            error!(
-                "First sequence number of {} is less than last value {}",
-                first_sequence_number, starting_sequence_number
-            );
-            Err(StatusCode::BadSequenceNumberInvalid)
+            Err(Error::new(
+                StatusCode::BadSequenceNumberInvalid,
+                format!(
+                    "First sequence number of {} is less than last value {}",
+                    first_sequence_number, starting_sequence_number
+                ),
+            ))
         } else {
             let secure_channel_id = secure_channel.secure_channel_id();
 
@@ -138,30 +141,36 @@ impl Chunker {
                 if secure_channel_id != 0
                     && chunk_info.message_header.secure_channel_id != secure_channel_id
                 {
-                    error!(
-                        "Secure channel id {} does not match expected id {}",
-                        chunk_info.message_header.secure_channel_id, secure_channel_id
-                    );
-                    return Err(StatusCode::BadSecureChannelIdInvalid);
+                    return Err(Error::new(
+                        StatusCode::BadSecureChannelIdInvalid,
+                        format!(
+                            "Secure channel id {} does not match expected id {}",
+                            chunk_info.message_header.secure_channel_id, secure_channel_id
+                        ),
+                    ));
                 }
 
                 // Check the sequence id - should be larger than the last one decoded
                 let sequence_number = chunk_info.sequence_header.sequence_number;
                 let expected_sequence_number = first_sequence_number + i as u32;
                 if sequence_number != expected_sequence_number {
-                    error!(
-                        "Chunk sequence number of {} is not the expected value of {}, idx {}",
-                        sequence_number, expected_sequence_number, i
-                    );
-                    return Err(StatusCode::BadSecurityChecksFailed);
+                    return Err(Error::new(
+                        StatusCode::BadSequenceNumberInvalid,
+                        format!(
+                            "Chunk sequence number of {} is not the expected value of {}, idx {}",
+                            sequence_number, expected_sequence_number, i
+                        ),
+                    ));
                 }
 
                 // Check the request id against the first chunk's request id
                 if i == 0 {
                     expected_request_id = chunk_info.sequence_header.request_id;
                 } else if chunk_info.sequence_header.request_id != expected_request_id {
-                    error!("Chunk sequence number of {} has a request id {} which is not the expected value of {}, idx {}", sequence_number, chunk_info.sequence_header.request_id, expected_request_id, i);
-                    return Err(StatusCode::BadSecurityChecksFailed);
+                    return Err(Error::new(StatusCode::BadSequenceNumberInvalid, format!(
+                        "Chunk sequence number of {} has a request id {} which is not the expected value of {}, idx {}",
+                        sequence_number, chunk_info.sequence_header.request_id, expected_request_id, i
+                    )));
                 }
             }
             Ok(first_sequence_number + chunks.len() as u32 - 1)
@@ -180,7 +189,7 @@ impl Chunker {
         max_chunk_size: usize,
         secure_channel: &SecureChannel,
         supported_message: &impl Message,
-    ) -> std::result::Result<Vec<MessageChunk>, EncodingError> {
+    ) -> std::result::Result<Vec<MessageChunk>, Error> {
         let security_policy = secure_channel.security_policy();
         if security_policy == SecurityPolicy::Unknown {
             panic!("Security policy cannot be unknown");
@@ -192,29 +201,38 @@ impl Chunker {
 
         // Client / server stacks should validate the length of a message before sending it and
         // here makes as good a place as any to do that.
-        let mut message_size = supported_message.byte_len();
+        let ctx_r = secure_channel.context();
+        let ctx = ctx_r.context();
+        let mut message_size = supported_message.byte_len(&ctx);
         if max_message_size > 0 && message_size > max_message_size {
             error!(
                 "Max message size is {} and message {} exceeds that",
                 max_message_size, message_size
             );
             // Client stack should report a BadRequestTooLarge, server BadResponseTooLarge
-            Err(if secure_channel.is_client_role() {
-                EncodingError::new(StatusCode::BadRequestTooLarge, ctx_id, ctx_handle)
-            } else {
-                EncodingError::new(StatusCode::BadResponseTooLarge, ctx_id, ctx_handle)
-            })
+            Err(Error::new(
+                if secure_channel.is_client_role() {
+                    StatusCode::BadRequestTooLarge
+                } else {
+                    StatusCode::BadResponseTooLarge
+                },
+                format!(
+                    "Max message size is {} and message {} exceeds that",
+                    max_message_size, message_size
+                ),
+            )
+            .with_context(ctx_id, ctx_handle))
         } else {
             let node_id = supported_message.type_id();
-            message_size += node_id.byte_len();
+            message_size += node_id.byte_len(&ctx);
 
             let message_type = supported_message.message_type();
             let mut stream = Cursor::new(vec![0u8; message_size]);
 
             trace!("Encoding node id {:?}", node_id);
-            let _ = node_id.encode(&mut stream);
+            let _ = node_id.encode(&mut stream, &ctx);
             let _ = supported_message
-                .encode(&mut stream)
+                .encode(&mut stream, &ctx)
                 .map_err(|e| e.with_context(ctx_id, ctx_handle))?;
             let data = stream.into_inner();
 
@@ -225,11 +243,14 @@ impl Chunker {
                     max_chunk_size,
                 )
                 .map_err(|_| {
-                    error!(
-                        "body_size_from_message_size error for max_chunk_size = {}",
-                        max_chunk_size
-                    );
-                    EncodingError::new(StatusCode::BadTcpInternalError, ctx_id, ctx_handle)
+                    Error::new(
+                        StatusCode::BadTcpInternalError,
+                        format!(
+                            "body_size_from_message_size error for max_chunk_size = {}",
+                            max_chunk_size
+                        ),
+                    )
+                    .with_context(ctx_id, ctx_handle)
                 })?;
 
                 // Multiple chunks means breaking the data up into sections. Fortunately
@@ -255,8 +276,7 @@ impl Chunker {
                         is_final,
                         secure_channel,
                         data_chunk,
-                    )
-                    .map_err(|e| EncodingError::new(e, ctx_id, ctx_handle))?;
+                    )?;
                     chunks.push(chunk);
                 }
                 chunks
@@ -268,8 +288,7 @@ impl Chunker {
                     MessageIsFinalType::Final,
                     secure_channel,
                     &data,
-                )
-                .map_err(|e| EncodingError::new(e, ctx_id, ctx_handle))?;
+                )?;
                 vec![chunk]
             };
             Ok(result)
@@ -282,7 +301,7 @@ impl Chunker {
         chunks: &[MessageChunk],
         secure_channel: &SecureChannel,
         expected_node_id: Option<NodeId>,
-    ) -> std::result::Result<T, EncodingError> {
+    ) -> std::result::Result<T, Error> {
         // Calculate the size of data held in all chunks
         for (i, chunk) in chunks.iter().enumerate() {
             let chunk_info = chunk.chunk_info(secure_channel)?;
@@ -293,7 +312,9 @@ impl Chunker {
                 MessageIsFinalType::Intermediate
             };
             if chunk_info.message_header.is_final != expected_is_final {
-                return Err(StatusCode::BadDecodingError.into());
+                return Err(Error::decoding(
+                    "Last message in sequence is not marked as final",
+                ));
             }
         }
 
@@ -303,14 +324,15 @@ impl Chunker {
         // elaborate on. Probably because people enjoy debugging why the stream pos is out by 1 byte
         // for hours.
 
-        let decoding_options = secure_channel.decoding_options();
+        let ctx_r = secure_channel.context();
+        let ctx = ctx_r.context();
 
         // Read node id from stream
-        let node_id = NodeId::decode(&mut stream, &decoding_options)?;
+        let node_id = NodeId::decode(&mut stream, &ctx)?;
         let object_id = Self::object_id_from_node_id(node_id, expected_node_id)?;
 
         // Now decode the payload using the node id.
-        match T::decode_by_object_id(&mut stream, object_id, &decoding_options) {
+        match T::decode_by_object_id(&mut stream, object_id, &ctx) {
             Ok(decoded_message) => {
                 // debug!("Returning decoded msg {:?}", decoded_message);
                 Ok(decoded_message)
@@ -325,21 +347,16 @@ impl Chunker {
     fn object_id_from_node_id(
         node_id: NodeId,
         expected_node_id: Option<NodeId>,
-    ) -> Result<ObjectId, StatusCode> {
+    ) -> Result<ObjectId, Error> {
         if let Some(id) = expected_node_id {
             if node_id != id {
-                error!("The node ID {node_id} is not the expected value {id}");
-                return Err(StatusCode::BadUnexpectedError);
+                return Err(Error::decoding(format!(
+                    "The message ID {node_id} is not the expected value {id}"
+                )));
             }
         }
         node_id
             .as_object_id()
-            .map_err(|_| {
-                error!("The node {:?} was not an object id", node_id);
-                StatusCode::BadUnexpectedError
-            })
-            .inspect(|object_id| {
-                trace!("Decoded node id / object id of {:?}", object_id);
-            })
+            .map_err(|_| Error::decoding(format!("The message id {node_id} is not an object id")))
     }
 }

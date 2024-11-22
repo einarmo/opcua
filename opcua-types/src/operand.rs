@@ -6,13 +6,13 @@ use std::convert::TryFrom;
 
 use crate::{
     attribute::AttributeId,
-    node_ids::ObjectId,
+    match_extension_object_owned,
     service_types::{
         AttributeOperand, ContentFilter, ContentFilterElement, ElementOperand, FilterOperator,
         LiteralOperand, SimpleAttributeOperand,
     },
     status_code::StatusCode,
-    DecodingOptions, ExtensionObject, NodeId, QualifiedName, UAString, Variant,
+    ExtensionObject, NodeId, QualifiedName, UAString, Variant,
 };
 
 #[derive(PartialEq)]
@@ -103,61 +103,36 @@ impl From<Variant> for LiteralOperand {
     }
 }
 
-impl TryFrom<&ExtensionObject> for Operand {
+impl TryFrom<ExtensionObject> for Operand {
     type Error = StatusCode;
 
-    fn try_from(v: &ExtensionObject) -> Result<Self, Self::Error> {
-        let object_id = v
-            .object_id()
-            .map_err(|_| StatusCode::BadFilterOperandInvalid)?;
-        let decoding_options = DecodingOptions::minimal();
-        let operand = match object_id {
-            ObjectId::ElementOperand_Encoding_DefaultBinary => {
-                Operand::ElementOperand(v.decode_inner::<ElementOperand>(&decoding_options)?)
-            }
-            ObjectId::LiteralOperand_Encoding_DefaultBinary => {
-                Operand::LiteralOperand(v.decode_inner::<LiteralOperand>(&decoding_options)?)
-            }
-            ObjectId::AttributeOperand_Encoding_DefaultBinary => {
-                Operand::AttributeOperand(v.decode_inner::<AttributeOperand>(&decoding_options)?)
-            }
-            ObjectId::SimpleAttributeOperand_Encoding_DefaultBinary => {
-                Operand::SimpleAttributeOperand(
-                    v.decode_inner::<SimpleAttributeOperand>(&decoding_options)?,
-                )
-            }
-            _ => {
-                return Err(StatusCode::BadFilterOperandInvalid);
-            }
-        };
-        Ok(operand)
-    }
-}
+    fn try_from(v: ExtensionObject) -> Result<Self, Self::Error> {
+        let operand = match_extension_object_owned!(v,
+            v: ElementOperand => Self::ElementOperand(v),
+            v: LiteralOperand => Self::LiteralOperand(v),
+            v: AttributeOperand => Self::AttributeOperand(v),
+            v: SimpleAttributeOperand => Self::SimpleAttributeOperand(v),
+            _ => return Err(StatusCode::BadFilterOperandInvalid)
+        );
 
-impl From<&Operand> for ExtensionObject {
-    fn from(v: &Operand) -> Self {
-        match v {
-            Operand::ElementOperand(ref op) => {
-                ExtensionObject::from_encodable(ObjectId::ElementOperand_Encoding_DefaultBinary, op)
-            }
-            Operand::LiteralOperand(ref op) => {
-                ExtensionObject::from_encodable(ObjectId::LiteralOperand_Encoding_DefaultBinary, op)
-            }
-            Operand::AttributeOperand(ref op) => ExtensionObject::from_encodable(
-                ObjectId::AttributeOperand_Encoding_DefaultBinary,
-                op,
-            ),
-            Operand::SimpleAttributeOperand(ref op) => ExtensionObject::from_encodable(
-                ObjectId::SimpleAttributeOperand_Encoding_DefaultBinary,
-                op,
-            ),
-        }
+        Ok(operand)
     }
 }
 
 impl From<Operand> for ExtensionObject {
     fn from(v: Operand) -> Self {
-        Self::from(&v)
+        match v {
+            Operand::ElementOperand(op) => ExtensionObject::from_message(op),
+            Operand::LiteralOperand(op) => ExtensionObject::from_message(op),
+            Operand::AttributeOperand(op) => ExtensionObject::from_message(op),
+            Operand::SimpleAttributeOperand(op) => ExtensionObject::from_message(op),
+        }
+    }
+}
+
+impl From<&Operand> for ExtensionObject {
+    fn from(v: &Operand) -> Self {
+        Self::from(v.clone())
     }
 }
 

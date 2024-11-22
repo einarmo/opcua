@@ -1,7 +1,8 @@
 pub mod generated;
-mod impls;
 
-pub use generated::node_ids::ObjectId;
+use std::sync::Arc;
+
+pub use generated::node_ids::{DataTypeId, ObjectId};
 use log::warn;
 use opcua::server::{node_manager::memory::simple_node_manager_imports, ServerBuilder};
 
@@ -17,6 +18,7 @@ async fn main() {
             "ProfiNet",
         ))
         .trust_client_certs(true)
+        .with_type_loader(Arc::new(crate::generated::types::GeneratedTypeLoader))
         .build()
         .unwrap();
 

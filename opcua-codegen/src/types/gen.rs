@@ -20,12 +20,34 @@ pub enum ItemDefinition {
     BitField(ItemMacro),
 }
 
+#[derive(Clone)]
+pub struct EncodingIds {
+    pub data_type: Ident,
+    pub xml: Ident,
+    pub json: Ident,
+    pub binary: Ident,
+}
+
+impl EncodingIds {
+    pub fn new(root: &str) -> Self {
+        Self {
+            data_type: Ident::new(root, Span::call_site()),
+            xml: Ident::new(&format!("{}_Encoding_DefaultXml", root), Span::call_site()),
+            json: Ident::new(&format!("{}_Encoding_DefaultJson", root), Span::call_site()),
+            binary: Ident::new(
+                &format!("{}_Encoding_DefaultBinary", root),
+                Span::call_site(),
+            ),
+        }
+    }
+}
+
 pub struct GeneratedItem {
     pub item: ItemDefinition,
     pub impls: Vec<ItemImpl>,
     pub module: String,
     pub name: String,
-    pub object_id: Option<Ident>,
+    pub encoding_ids: Option<EncodingIds>,
 }
 
 impl GeneratedOutput for GeneratedItem {
@@ -61,8 +83,15 @@ pub struct CodeGenItemConfig {
     pub structs_single_file: bool,
 }
 
+pub struct ImportType {
+    path: String,
+    has_default: Option<bool>,
+    base_type: Option<String>,
+    is_defined: bool,
+}
+
 pub struct CodeGenerator {
-    import_map: HashMap<String, ExternalType>,
+    import_map: HashMap<String, ImportType>,
     input: HashMap<String, LoadedType>,
     default_excluded: HashSet<String>,
     config: CodeGenItemConfig,
@@ -78,7 +107,20 @@ impl CodeGenerator {
         target_namespace: String,
     ) -> Self {
         Self {
-            import_map: external_import_map,
+            import_map: external_import_map
+                .into_iter()
+                .map(|(k, v)| {
+                    (
+                        k,
+                        ImportType {
+                            path: v.path,
+                            has_default: v.has_default,
+                            base_type: v.base_type,
+                            is_defined: true,
+                        },
+                    )
+                })
+                .collect(),
             input: input
                 .into_iter()
                 .map(|v| (v.name().to_owned(), v))
@@ -124,7 +166,9 @@ impl CodeGenerator {
                 }
                 true
             }
-            LoadedType::Enum(e) => e.option || e.default_value.is_some(),
+            LoadedType::Enum(e) => {
+                e.option || e.default_value.is_some() || e.values.iter().any(|v| v.value == 0)
+            }
         }
     }
 
@@ -132,6 +176,9 @@ impl CodeGenerator {
         let mut generated = Vec::new();
 
         for item in self.input.values() {
+            if self.import_map.contains_key(item.name()) {
+                continue;
+            }
             let name = match item {
                 LoadedType::Struct(s) => {
                     if self.config.structs_single_file {
@@ -151,7 +198,7 @@ impl CodeGenerator {
 
             self.import_map.insert(
                 item.name().to_owned(),
-                ExternalType {
+                ImportType {
                     path: format!("super::{}", name),
                     // Determined later
                     has_default: None,
@@ -159,6 +206,7 @@ impl CodeGenerator {
                         LoadedType::Struct(v) => v.base_type.clone(),
                         LoadedType::Enum(_) => None,
                     },
+                    is_defined: false,
                 },
             );
         }
@@ -172,6 +220,14 @@ impl CodeGenerator {
         let input = std::mem::take(&mut self.input);
 
         for item in input.into_values() {
+            if self
+                .import_map
+                .get(item.name())
+                .is_some_and(|v| v.is_defined)
+            {
+                continue;
+            }
+
             match item {
                 LoadedType::Struct(v) => generated.push(self.generate_struct(v)?),
                 LoadedType::Enum(v) => generated.push(self.generate_enum(v)?),
@@ -205,6 +261,7 @@ impl CodeGenerator {
             });
         }
         let mut variants = quote! {};
+
         for field in &item.values {
             let (name, _) = safe_ident(&field.name);
             let value = field.value;
@@ -263,11 +320,11 @@ impl CodeGenerator {
 
         impls.push(parse_quote! {
             impl opcua::types::BinaryEncodable for #enum_ident {
-                fn byte_len(&self) -> usize {
+                fn byte_len(&self, _ctx: &opcua::types::Context<'_>) -> usize {
                     #size
                 }
 
-                fn encode<S: std::io::Write + ?Sized>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+                fn encode<S: std::io::Write + ?Sized>(&self, stream: &mut S, _ctx: &opcua::types::Context<'_>) -> opcua::types::EncodingResult<usize> {
                     opcua::types::#write_method(stream, self.bits())
                 }
             }
@@ -275,8 +332,8 @@ impl CodeGenerator {
 
         impls.push(parse_quote! {
             impl opcua::types::BinaryDecodable for #enum_ident {
-                fn decode<S: std::io::Read>(stream: &mut S, decoding_options: &opcua::types::DecodingOptions) -> opcua::types::EncodingResult<Self> {
-                    Ok(Self::from_bits_truncate(#ty::decode(stream, decoding_options)?))
+                fn decode<S: std::io::Read + ?Sized>(stream: &mut S, ctx: &opcua::types::Context<'_>) -> opcua::types::EncodingResult<Self> {
+                    Ok(Self::from_bits_truncate(#ty::decode(stream, ctx)?))
                 }
             }
         });
@@ -319,43 +376,30 @@ impl CodeGenerator {
             }
         });
 
-        let ser_method = Ident::new(&format!("serialize_{}", item.typ), Span::call_site());
-        let deser_method = Ident::new(&format!("deserialize_{}", item.typ), Span::call_site());
-        let typ_str = format!("an {}", item.typ);
-
         impls.push(parse_quote! {
             #[cfg(feature = "json")]
-            impl<'de> serde::de::Deserialize<'de> for #enum_ident {
-                fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-                where
-                    D: serde::de::Deserializer<'de>,
-                {
-                    struct BitFieldVisitor;
-
-                    impl<'de> serde::de::Visitor<'de> for BitFieldVisitor {
-                        type Value = #ty;
-
-                        fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
-                            write!(formatter, #typ_str)
-                        }
-                    }
-
-                    deserializer
-                        .#deser_method(BitFieldVisitor)
-                        .map(#enum_ident::from_bits_truncate)
+            impl opcua::types::json::JsonDecodable for #enum_ident {
+                fn decode(
+                    stream: &mut opcua::types::json::JsonStreamReader<&mut dyn std::io::Read>,
+                    _ctx: &opcua::types::Context<'_>,
+                ) -> opcua::types::EncodingResult<Self> {
+                    use opcua::types::json::JsonReader;
+                    Ok(Self::from_bits_truncate(stream.next_number()??))
                 }
             }
         });
 
         impls.push(parse_quote! {
             #[cfg(feature = "json")]
-            impl serde::ser::Serialize for #enum_ident {
-                fn serialize<S>(&self, serializer: S) -> Result<
-                    <S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
-                where
-                    S: serde::ser::Serializer
-                {
-                    serializer.#ser_method(self.bits())
+            impl opcua::types::json::JsonEncodable for #enum_ident {
+                fn encode(
+                    &self,
+                    stream: &mut opcua::types::json::JsonStreamWriter<&mut dyn std::io::Write>,
+                    _ctx: &opcua::types::Context<'_>,
+                ) -> opcua::types::EncodingResult<()> {
+                    use opcua::types::json::JsonWriter;
+                    stream.number_value(self.bits())?;
+                    Ok(())
                 }
             }
         });
@@ -371,7 +415,7 @@ impl CodeGenerator {
                 item.name.to_case(Case::Snake)
             },
             name: item.name.clone(),
-            object_id: None,
+            encoding_ids: None,
         })
     }
 
@@ -397,10 +441,14 @@ impl CodeGenerator {
         });
 
         let mut try_from_arms = quote! {};
+        let mut default_ident = None;
 
         for field in &item.values {
             let (name, _) = safe_ident(&field.name);
             let value = field.value;
+            if value == 0 {
+                default_ident = Some(name.clone());
+            }
             let value_token = match item.typ {
                 EnumReprType::u8 => {
                     let value: u8 = value.try_into().map_err(|_| {
@@ -461,8 +509,7 @@ impl CodeGenerator {
             try_from_arms = quote! {
                 #try_from_arms
                 r => {
-                    log::error!(#invalid_msg, r);
-                    return Err(opcua::types::StatusCode::BadUnexpectedError)
+                    return Err(opcua::types::Error::decoding(format!(#invalid_msg, r)))
                 }
             };
         }
@@ -470,10 +517,29 @@ impl CodeGenerator {
         let mut impls = Vec::new();
         let (enum_ident, _) = safe_ident(&item.name);
 
+        if let Some(default_name) = item.default_value {
+            let (default_ident, _) = safe_ident(&default_name);
+            impls.push(parse_quote! {
+                impl Default for #enum_ident {
+                    fn default() -> Self {
+                        Self::#default_ident
+                    }
+                }
+            });
+        } else if let Some(default_ident) = default_ident {
+            impls.push(parse_quote! {
+                impl Default for #enum_ident {
+                    fn default() -> Self {
+                        Self::#default_ident
+                    }
+                }
+            });
+        }
+
         // TryFrom impl
         impls.push(parse_quote! {
             impl TryFrom<#ty> for #enum_ident {
-                type Error = opcua::types::StatusCode;
+                type Error = opcua::types::Error;
 
                 fn try_from(value: #ty) -> Result<Self, <Self as TryFrom<#ty>>::Error> {
                     Ok(match value {
@@ -520,47 +586,35 @@ impl CodeGenerator {
             }
         });
 
-        let ser_method = Ident::new(&format!("serialize_{}", item.typ), Span::call_site());
-        let deser_method = Ident::new(&format!("deserialize_{}", item.typ), Span::call_site());
-        let typ_str = format!("{}", item.typ);
         let typ_name_str = item.typ.to_string();
-
         let failure_str = format!("Failed to deserialize {}: {{:?}}", typ_name_str);
         impls.push(parse_quote! {
             #[cfg(feature = "json")]
-            impl<'de> serde::de::Deserialize<'de> for #enum_ident {
-                fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-                where
-                    D: serde::de::Deserializer<'de>,
-                {
-                    struct EnumVisitor;
-                    use serde::de::Error;
-
-                    impl<'de> serde::de::Visitor<'de> for EnumVisitor {
-                        type Value = #ty;
-
-                        fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
-                            write!(formatter, #typ_str)
-                        }
-                    }
-
-                    let value = deserializer.#deser_method(EnumVisitor)?;
-                    Self::try_from(value).map_err(|e| D::Error::custom(
-                        format!(#failure_str, e)
-                    ))
+            impl opcua::types::json::JsonDecodable for #enum_ident {
+                fn decode(
+                    stream: &mut opcua::types::json::JsonStreamReader<&mut dyn std::io::Read>,
+                    _ctx: &opcua::types::Context<'_>,
+                ) -> opcua::types::EncodingResult<Self> {
+                    use opcua::types::json::JsonReader;
+                    let value: #ty = stream.next_number()??;
+                    Self::try_from(value).map_err(|e| {
+                        opcua::types::Error::decoding(format!(#failure_str, e))
+                    })
                 }
             }
         });
 
         impls.push(parse_quote! {
             #[cfg(feature = "json")]
-            impl serde::ser::Serialize for #enum_ident {
-                fn serialize<S>(&self, serializer: S) -> Result<
-                    <S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error>
-                where
-                    S: serde::ser::Serializer
-                {
-                    serializer.#ser_method(*self as #ty)
+            impl opcua::types::json::JsonEncodable for #enum_ident {
+                fn encode(
+                    &self,
+                    stream: &mut opcua::types::json::JsonStreamWriter<&mut dyn std::io::Write>,
+                    _ctx: &opcua::types::Context<'_>,
+                ) -> opcua::types::EncodingResult<()> {
+                    use opcua::types::json::JsonWriter;
+                    stream.number_value(*self as #ty)?;
+                    Ok(())
                 }
             }
         });
@@ -574,11 +628,11 @@ impl CodeGenerator {
 
         impls.push(parse_quote! {
             impl opcua::types::BinaryEncodable for #enum_ident {
-                fn byte_len(&self) -> usize {
+                fn byte_len(&self, _ctx: &opcua::types::Context<'_>) -> usize {
                     #size
                 }
 
-                fn encode<S: std::io::Write + ?Sized>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+                fn encode<S: std::io::Write + ?Sized>(&self, stream: &mut S, _ctx: &opcua::types::Context<'_>) -> opcua::types::EncodingResult<usize> {
                     opcua::types::#write_method(stream, *self as #ty)
                 }
             }
@@ -586,9 +640,9 @@ impl CodeGenerator {
 
         impls.push(parse_quote! {
             impl opcua::types::BinaryDecodable for #enum_ident {
-                fn decode<S: std::io::Read>(stream: &mut S, _: &opcua::types::DecodingOptions) -> opcua::types::EncodingResult<Self> {
+                fn decode<S: std::io::Read + ?Sized>(stream: &mut S, _ctx: &opcua::types::Context<'_>) -> opcua::types::EncodingResult<Self> {
                     let value = opcua::types::#read_method(stream)?;
-                    Ok(Self::try_from(value)?)
+                    Self::try_from(value)
                 }
             }
         });
@@ -612,7 +666,7 @@ impl CodeGenerator {
                 item.name.to_case(Case::Snake)
             },
             name: item.name.clone(),
-            object_id: None,
+            encoding_ids: None,
         })
     }
 
@@ -649,13 +703,7 @@ impl CodeGenerator {
             #[derive(Debug, Clone, PartialEq)]
         });
         attrs.push(parse_quote! {
-            #[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-        });
-        attrs.push(parse_quote! {
-            #[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-        });
-        attrs.push(parse_quote! {
-            #[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+            #[cfg_attr(feature = "json", derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable))]
         });
         attrs.push(parse_quote! {
             #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
@@ -683,8 +731,7 @@ impl CodeGenerator {
             if changed {
                 let orig = &field.original_name;
                 attrs = quote! {
-                    #[cfg_attr(feature = "xml", opcua(rename = #orig))]
-                    #[cfg_attr(feature = "json", serde(rename = #orig))]
+                    #[cfg_attr(any(feature = "json", feature = "xml"), opcua(rename = #orig))]
                 };
             }
             fields.push(parse_quote! {
@@ -693,7 +740,7 @@ impl CodeGenerator {
             });
         }
 
-        let mut object_id = None;
+        let mut encoding_ids = None;
         // Generate impls
         // Has message info
         // TODO: This won't work for custom types. It may be possible
@@ -742,7 +789,7 @@ impl CodeGenerator {
                 });
             }
 
-            object_id = Some(xml_encoding_ident);
+            encoding_ids = Some(EncodingIds::new(&item.name));
         }
 
         let mut len_impl;
@@ -777,14 +824,14 @@ impl CodeGenerator {
                 };
 
                 len_impl.extend(quote! {
-                    size += self.#ident.byte_len();
+                    size += self.#ident.byte_len(ctx);
                 });
                 encode_impl.extend(quote! {
-                    size += self.#ident.encode(stream)?;
+                    size += self.#ident.encode(stream, ctx)?;
                 });
                 if field.name == "request_header" {
                     decode_impl.extend(quote! {
-                        let request_header: #ty = opcua::types::BinaryDecodable::decode(stream, decoding_options)?;
+                        let request_header: #ty = opcua::types::BinaryDecodable::decode(stream, ctx)?;
                         let __request_handle = request_header.request_handle;
                     });
                     decode_build.extend(quote! {
@@ -793,7 +840,7 @@ impl CodeGenerator {
                     has_context = true;
                 } else if field.name == "response_header" {
                     decode_impl.extend(quote! {
-                        let response_header: #ty = opcua::types::BinaryDecodable::decode(stream, decoding_options)?;
+                        let response_header: #ty = opcua::types::BinaryDecodable::decode(stream, ctx)?;
                         let __request_handle = response_header.request_handle;
                     });
                     decode_build.extend(quote! {
@@ -802,12 +849,12 @@ impl CodeGenerator {
                     has_context = true;
                 } else if has_context {
                     decode_build.extend(quote! {
-                        #ident: opcua::types::BinaryDecodable::decode(stream, decoding_options)
+                        #ident: opcua::types::BinaryDecodable::decode(stream, ctx)
                             .map_err(|e| e.with_request_handle(__request_handle))?,
                     });
                 } else {
                     decode_build.extend(quote! {
-                        #ident: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+                        #ident: opcua::types::BinaryDecodable::decode(stream, ctx)?,
                     });
                 }
             }
@@ -826,12 +873,13 @@ impl CodeGenerator {
 
         impls.push(parse_quote! {
             impl opcua::types::BinaryEncodable for #struct_ident {
-                fn byte_len(&self) -> usize {
+                #[allow(unused_variables)]
+                fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
                     #len_impl
                 }
 
                 #[allow(unused_variables)]
-                fn encode<S: std::io::Write + ?Sized>(&self, stream: &mut S) -> opcua::types::EncodingResult<usize> {
+                fn encode<S: std::io::Write + ?Sized>(&self, stream: &mut S, ctx: &opcua::types::Context<'_>) -> opcua::types::EncodingResult<usize> {
                     #encode_impl
                 }
             }
@@ -840,7 +888,7 @@ impl CodeGenerator {
         impls.push(parse_quote! {
             impl opcua::types::BinaryDecodable for #struct_ident {
                 #[allow(unused_variables)]
-                fn decode<S: std::io::Read>(stream: &mut S, decoding_options: &opcua::types::DecodingOptions) -> opcua::types::EncodingResult<Self> {
+                fn decode<S: std::io::Read + ?Sized>(stream: &mut S, ctx: &opcua::types::Context<'_>) -> opcua::types::EncodingResult<Self> {
                     #decode_impl
                     #decode_build
                 }
@@ -869,7 +917,7 @@ impl CodeGenerator {
                 item.name.to_case(Case::Snake)
             },
             name: item.name.clone(),
-            object_id,
+            encoding_ids,
         })
     }
 }

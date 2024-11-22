@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct CurrencyUnitType {
@@ -31,44 +32,40 @@ impl opcua::types::MessageInfo for CurrencyUnitType {
     }
 }
 impl opcua::types::BinaryEncodable for CurrencyUnitType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.numeric_code.byte_len();
-        size += self.exponent.byte_len();
-        size += self.alphabetic_code.byte_len();
-        size += self.currency.byte_len();
+        size += self.numeric_code.byte_len(ctx);
+        size += self.exponent.byte_len(ctx);
+        size += self.alphabetic_code.byte_len(ctx);
+        size += self.currency.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.numeric_code.encode(stream)?;
-        size += self.exponent.encode(stream)?;
-        size += self.alphabetic_code.encode(stream)?;
-        size += self.currency.encode(stream)?;
+        size += self.numeric_code.encode(stream, ctx)?;
+        size += self.exponent.encode(stream, ctx)?;
+        size += self.alphabetic_code.encode(stream, ctx)?;
+        size += self.currency.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for CurrencyUnitType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            numeric_code: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            exponent: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            alphabetic_code: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            currency: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            numeric_code: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            exponent: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            alphabetic_code: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            currency: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

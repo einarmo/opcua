@@ -9,15 +9,9 @@ use std::{
     io::{Read, Write},
 };
 
-use log::{error, trace};
-
 use crate::{
-    encoding::{
-        process_decode_io_result, process_encode_io_result, write_i32, BinaryEncodable,
-        DecodingOptions, EncodingResult,
-    },
-    status_code::StatusCode,
-    BinaryDecodable, OutOfRange,
+    encoding::{process_decode_io_result, process_encode_io_result, write_i32, EncodingResult},
+    read_i32, DecodingOptions, Error, OutOfRange, SimpleBinaryDecodable, SimpleBinaryEncodable,
 };
 
 /// To avoid naming conflict hell, the OPC UA String type is typed `UAString` so it does not collide
@@ -43,111 +37,101 @@ impl fmt::Display for UAString {
 
 #[cfg(feature = "json")]
 mod json {
-    use super::UAString;
-    use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
-    use std::fmt;
+    use std::io::{Read, Write};
+    use struson::{
+        reader::{JsonReader, JsonStreamReader, ValueType},
+        writer::{JsonStreamWriter, JsonWriter},
+    };
 
-    impl Serialize for UAString {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: Serializer,
-        {
-            if let Some(s) = self.value.as_ref() {
-                serializer.serialize_str(s)
+    use crate::json::{Context, JsonDecodable, JsonEncodable};
+
+    use super::{EncodingResult, UAString};
+
+    impl JsonEncodable for UAString {
+        fn encode(
+            &self,
+            stream: &mut JsonStreamWriter<&mut dyn Write>,
+            _ctx: &Context<'_>,
+        ) -> EncodingResult<()> {
+            if let Some(s) = self.value() {
+                stream.string_value(s)?;
             } else {
-                serializer.serialize_none()
+                stream.null_value()?;
             }
+
+            Ok(())
+        }
+
+        fn is_null_json(&self) -> bool {
+            self.is_null()
         }
     }
 
-    struct UAStringVisitor;
-
-    impl<'de> serde::de::Visitor<'de> for UAStringVisitor {
-        type Value = UAString;
-        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-            write!(formatter, "a string value or null")
-        }
-
-        fn visit_none<E>(self) -> Result<Self::Value, E>
-        where
-            E: de::Error,
-        {
-            Ok(Self::Value::null())
-        }
-
-        fn visit_some<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
-        where
-            D: Deserializer<'de>,
-        {
-            deserializer.deserialize_str(self)
-        }
-
-        fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
-        where
-            E: de::Error,
-        {
-            Ok(Self::Value::from(v))
-        }
-    }
-
-    impl<'de> Deserialize<'de> for UAString {
-        fn deserialize<D>(deserializer: D) -> Result<UAString, D::Error>
-        where
-            D: Deserializer<'de>,
-        {
-            deserializer.deserialize_option(UAStringVisitor)
+    impl JsonDecodable for UAString {
+        fn decode(
+            stream: &mut JsonStreamReader<&mut dyn Read>,
+            _ctx: &Context<'_>,
+        ) -> EncodingResult<Self> {
+            match stream.peek()? {
+                ValueType::String => Ok(stream.next_string()?.into()),
+                _ => {
+                    stream.next_null()?;
+                    Ok(UAString::null())
+                }
+            }
         }
     }
 }
 
-impl BinaryEncodable for UAString {
+impl SimpleBinaryEncodable for UAString {
     fn byte_len(&self) -> usize {
         // Length plus the actual string length in bytes for a non-null string.
-        4 + if self.value.is_none() {
-            0
-        } else {
-            self.value.as_ref().unwrap().len()
+        4 + match &self.value {
+            Some(s) => s.len(),
+            None => 0,
         }
     }
 
     fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         // Strings are encoded as UTF8 chars preceded by an Int32 length. A -1 indicates a null string
-        if self.value.is_none() {
-            write_i32(stream, -1)
-        } else {
-            let value = self.value.as_ref().unwrap();
-            let mut size: usize = 0;
-            size += write_i32(stream, value.len() as i32)?;
-            let buf = value.as_bytes();
-            size += process_encode_io_result(stream.write(buf))?;
-            assert_eq!(size, self.byte_len());
-            Ok(size)
+        match &self.value {
+            Some(s) => {
+                let mut size: usize = 0;
+                size += write_i32(stream, s.len() as i32)?;
+                let buf = s.as_bytes();
+                size += process_encode_io_result(stream.write(buf))?;
+                Ok(size)
+            }
+            None => write_i32(stream, -1),
         }
     }
 }
 
-impl BinaryDecodable for UAString {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
-        let len = i32::decode(stream, decoding_options)?;
+impl SimpleBinaryDecodable for UAString {
+    fn decode<S: Read + ?Sized>(
+        stream: &mut S,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self> {
+        let len = read_i32(stream)?;
         // Null string?
         if len == -1 {
             Ok(UAString::null())
         } else if len < -1 {
-            error!("String buf length is a negative number {}", len);
-            Err(StatusCode::BadDecodingError.into())
+            Err(Error::decoding(format!(
+                "String buf length is a negative number {}",
+                len
+            )))
         } else if len as usize > decoding_options.max_string_length {
-            error!(
+            Err(Error::decoding(format!(
                 "String buf length {} exceeds decoding limit {}",
                 len, decoding_options.max_string_length
-            );
-            Err(StatusCode::BadDecodingError.into())
+            )))
         } else {
             // Create a buffer filled with zeroes and read the string over the top
             let mut buf = vec![0u8; len as usize];
             process_decode_io_result(stream.read_exact(&mut buf))?;
             let value = String::from_utf8(buf).map_err(|err| {
-                trace!("Decoded string was not valid UTF-8 - {}", err.to_string());
-                StatusCode::BadDecodingError
+                Error::decoding(format!("Decoded string was not valid UTF-8 - {}", err))
             })?;
             Ok(UAString::from(value))
         }

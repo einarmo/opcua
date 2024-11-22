@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct IssuedIdentityToken {
@@ -30,38 +31,37 @@ impl opcua::types::MessageInfo for IssuedIdentityToken {
     }
 }
 impl opcua::types::BinaryEncodable for IssuedIdentityToken {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.policy_id.byte_len();
-        size += self.token_data.byte_len();
-        size += self.encryption_algorithm.byte_len();
+        size += self.policy_id.byte_len(ctx);
+        size += self.token_data.byte_len(ctx);
+        size += self.encryption_algorithm.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.policy_id.encode(stream)?;
-        size += self.token_data.encode(stream)?;
-        size += self.encryption_algorithm.encode(stream)?;
+        size += self.policy_id.encode(stream, ctx)?;
+        size += self.token_data.encode(stream, ctx)?;
+        size += self.encryption_algorithm.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for IssuedIdentityToken {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            policy_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            token_data: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            encryption_algorithm: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            policy_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            token_data: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            encryption_algorithm: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

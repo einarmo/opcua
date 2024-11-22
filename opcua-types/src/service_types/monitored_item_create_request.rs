@@ -8,10 +8,12 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+#[derive(Default)]
 pub struct MonitoredItemCreateRequest {
     pub item_to_monitor: super::read_value_id::ReadValueId,
     pub monitoring_mode: super::enums::MonitoringMode,
@@ -29,44 +31,37 @@ impl opcua::types::MessageInfo for MonitoredItemCreateRequest {
     }
 }
 impl opcua::types::BinaryEncodable for MonitoredItemCreateRequest {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.item_to_monitor.byte_len();
-        size += self.monitoring_mode.byte_len();
-        size += self.requested_parameters.byte_len();
+        size += self.item_to_monitor.byte_len(ctx);
+        size += self.monitoring_mode.byte_len(ctx);
+        size += self.requested_parameters.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.item_to_monitor.encode(stream)?;
-        size += self.monitoring_mode.encode(stream)?;
-        size += self.requested_parameters.encode(stream)?;
+        size += self.item_to_monitor.encode(stream, ctx)?;
+        size += self.monitoring_mode.encode(stream, ctx)?;
+        size += self.requested_parameters.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for MonitoredItemCreateRequest {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            item_to_monitor: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            monitoring_mode: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            requested_parameters: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            item_to_monitor: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            monitoring_mode: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            requested_parameters: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

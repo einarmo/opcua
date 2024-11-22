@@ -7,8 +7,7 @@
 use log::error;
 use opcua_types::{
     service_types::DataTypeAttributes, AttributeId, AttributesMask, DataEncoding,
-    DataTypeDefinition, DataValue, DecodingOptions, NumericRange, StatusCode, TimestampsToReturn,
-    Variant,
+    DataTypeDefinition, DataValue, NumericRange, StatusCode, TimestampsToReturn, Variant,
 };
 
 use crate::FromAttributesError;
@@ -68,7 +67,7 @@ impl Node for DataType {
         match attribute_id {
             AttributeId::IsAbstract => Some(self.is_abstract().into()),
             AttributeId::DataTypeDefinition => self.data_type_definition.as_ref().map(|dt| {
-                let v: Variant = dt.into();
+                let v: Variant = dt.clone().into();
                 v.into()
             }),
             _ => self.base.get_attribute_max_age(
@@ -100,8 +99,7 @@ impl Node for DataType {
                     self.set_data_type_definition(None);
                     Ok(())
                 } else if let Variant::ExtensionObject(v) = value {
-                    let def =
-                        DataTypeDefinition::from_extension_object(*v, &DecodingOptions::default())?;
+                    let def = DataTypeDefinition::from_extension_object(*v)?;
                     self.set_data_type_definition(Some(def));
                     Ok(())
                 } else {

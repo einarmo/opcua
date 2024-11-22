@@ -6,6 +6,7 @@
 //! other primitives.
 
 use std::{
+    error::Error as StdError,
     fmt::{Debug, Display},
     io::{Cursor, Read, Result, Write},
     sync::atomic::{AtomicU64, Ordering},
@@ -13,9 +14,9 @@ use std::{
 
 use byteorder::{ByteOrder, LittleEndian, WriteBytesExt};
 use chrono::Duration;
-use log::{error, trace, warn};
+use log::error;
 
-use crate::{constants, status_code::StatusCode, QualifiedName};
+use crate::{constants, status_code::StatusCode, Context, QualifiedName};
 
 #[derive(Debug, Clone, Default)]
 pub enum DataEncoding {
@@ -38,37 +39,47 @@ impl DataEncoding {
     }
 }
 
-pub type EncodingResult<T> = std::result::Result<T, EncodingError>;
+pub type EncodingResult<T> = std::result::Result<T, Error>;
 
-#[derive(Debug, Clone, Copy)]
-pub struct EncodingError {
+#[derive(Debug)]
+pub struct Error {
     status: StatusCode,
     request_id: Option<u32>,
     request_handle: Option<u32>,
+    context: Box<dyn StdError>,
 }
 
-impl Display for EncodingError {
+impl Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.status())
+        write!(f, "{}: {}", self.status(), self.context)
     }
 }
 
-impl From<StatusCode> for EncodingError {
-    fn from(value: StatusCode) -> Self {
-        Self {
-            status: value,
-            request_handle: None,
-            request_id: None,
-        }
-    }
-}
-
-impl EncodingError {
-    pub fn new(status: StatusCode, request_id: Option<u32>, request_handle: Option<u32>) -> Self {
+impl Error {
+    pub fn new(status: StatusCode, context: impl Into<Box<dyn StdError>>) -> Self {
         Self {
             status,
-            request_handle,
-            request_id,
+            request_handle: None,
+            request_id: None,
+            context: context.into(),
+        }
+    }
+
+    pub fn decoding(context: impl Into<Box<dyn StdError>>) -> Self {
+        Self {
+            status: StatusCode::BadDecodingError,
+            request_handle: None,
+            request_id: None,
+            context: context.into(),
+        }
+    }
+
+    pub fn encoding(context: impl Into<Box<dyn StdError>>) -> Self {
+        Self {
+            status: StatusCode::BadEncodingError,
+            request_handle: None,
+            request_id: None,
+            context: context.into(),
         }
     }
 
@@ -88,6 +99,14 @@ impl EncodingError {
         self
     }
 
+    /// Utility for setting request handle when it is _maybe_ initialized.
+    pub fn maybe_with_request_handle(mut self, handle: Option<u32>) -> Self {
+        if let Some(handle) = handle {
+            self.request_handle = Some(handle);
+        }
+        self
+    }
+
     pub fn status(&self) -> StatusCode {
         self.status
     }
@@ -101,14 +120,15 @@ impl EncodingError {
     }
 }
 
-impl From<EncodingError> for StatusCode {
-    fn from(value: EncodingError) -> Self {
+impl From<Error> for StatusCode {
+    fn from(value: Error) -> Self {
+        error!("{}", value);
         value.status()
     }
 }
 
-impl From<EncodingError> for std::io::Error {
-    fn from(value: EncodingError) -> Self {
+impl From<Error> for std::io::Error {
+    fn from(value: Error) -> Self {
         value.status().into()
     }
 }
@@ -139,13 +159,14 @@ impl<'a> DepthLock<'a> {
 
     /// The depth lock tests if the depth can increment and then obtains a lock on it.
     /// The lock will decrement the depth when it drops to ensure proper behaviour during unwinding.
-    pub fn obtain(depth_gauge: &'a DepthGauge) -> core::result::Result<DepthLock<'a>, StatusCode> {
+    pub fn obtain(depth_gauge: &'a DepthGauge) -> core::result::Result<DepthLock<'a>, Error> {
         let max_depth = depth_gauge.max_depth;
         let (gauge, val) = Self::new(depth_gauge);
 
         if val >= max_depth {
-            warn!("Decoding in stream aborted due maximum recursion depth being reached");
-            Err(StatusCode::BadDecodingError)
+            Err(Error::decoding(
+                "Decoding in stream aborted due maximum recursion depth being reached",
+            ))
         } else {
             Ok(gauge)
         }
@@ -249,7 +270,7 @@ impl DecodingOptions {
         Self::default()
     }
 
-    pub fn depth_lock(&self) -> core::result::Result<DepthLock<'_>, StatusCode> {
+    pub fn depth_lock(&self) -> core::result::Result<DepthLock<'_>, Error> {
         DepthLock::obtain(&self.decoding_depth_gauge)
     }
 }
@@ -260,15 +281,17 @@ impl DecodingOptions {
 pub trait BinaryEncodable {
     /// Returns the exact byte length of the structure as it would be if `encode` were called.
     /// This may be called prior to writing to ensure the correct amount of space is available.
-    fn byte_len(&self) -> usize;
+    #[allow(unused)]
+    fn byte_len(&self, ctx: &crate::Context<'_>) -> usize;
     /// Encodes the instance to the write stream.
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize>;
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S, ctx: &Context<'_>)
+        -> EncodingResult<usize>;
 
     // Convenience method for encoding a message straight into an array of bytes. It is preferable to reuse buffers than
     // to call this so it should be reserved for tests and trivial code.
-    fn encode_to_vec(&self) -> Vec<u8> {
-        let mut buffer = Cursor::new(Vec::with_capacity(self.byte_len()));
-        let _ = self.encode(&mut buffer);
+    fn encode_to_vec(&self, ctx: &Context<'_>) -> Vec<u8> {
+        let mut buffer = Cursor::new(Vec::with_capacity(self.byte_len(ctx)));
+        let _ = self.encode(&mut buffer, ctx);
         buffer.into_inner()
     }
 }
@@ -277,15 +300,58 @@ pub trait BinaryDecodable: Sized {
     /// Decodes an instance from the read stream. The decoding options contains restrictions set by
     /// the server / client on the length of strings, arrays etc. If these limits are exceeded the
     /// implementation should return with a `BadDecodingError` as soon as possible.
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self>;
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &Context<'_>) -> EncodingResult<Self>;
+}
+
+pub trait SimpleBinaryEncodable {
+    #[allow(unused)]
+    fn byte_len(&self) -> usize;
+    /// Encodes the instance to the write stream.
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize>;
+
+    fn encode_to_vec(&self) -> Vec<u8> {
+        let mut buffer = Cursor::new(Vec::with_capacity(self.byte_len()));
+        let _ = self.encode(&mut buffer);
+        buffer.into_inner()
+    }
+}
+
+impl<T> BinaryEncodable for T
+where
+    T: SimpleBinaryEncodable,
+{
+    fn byte_len(&self, _ctx: &crate::Context<'_>) -> usize {
+        SimpleBinaryEncodable::byte_len(self)
+    }
+
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        _ctx: &Context<'_>,
+    ) -> EncodingResult<usize> {
+        SimpleBinaryEncodable::encode(self, stream)
+    }
+}
+
+pub trait SimpleBinaryDecodable: Sized {
+    fn decode<S: Read + ?Sized>(
+        stream: &mut S,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self>;
+}
+
+impl<T> BinaryDecodable for T
+where
+    T: SimpleBinaryDecodable,
+{
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &Context<'_>) -> EncodingResult<Self> {
+        SimpleBinaryDecodable::decode(stream, ctx.options())
+    }
 }
 
 /// Converts an IO encoding error (and logs when in error) into an EncodingResult
 pub fn process_encode_io_result(result: Result<usize>) -> EncodingResult<usize> {
-    result.map_err(|err| {
-        trace!("Encoding error - {:?}", err);
-        StatusCode::BadEncodingError.into()
-    })
+    result.map_err(Error::encoding)
 }
 
 /// Converts an IO encoding error (and logs when in error) into an EncodingResult
@@ -293,30 +359,31 @@ pub fn process_decode_io_result<T>(result: Result<T>) -> EncodingResult<T>
 where
     T: Debug,
 {
-    result.map_err(|err| {
-        trace!("Decoding error - {:?}", err);
-        StatusCode::BadDecodingError.into()
-    })
+    result.map_err(Error::decoding)
 }
 
 impl<T> BinaryEncodable for Option<Vec<T>>
 where
     T: BinaryEncodable,
 {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &crate::Context<'_>) -> usize {
         let mut size = 4;
         if let Some(ref values) = self {
-            size += values.iter().map(|v| v.byte_len()).sum::<usize>();
+            size += values.iter().map(|v| v.byte_len(ctx)).sum::<usize>();
         }
         size
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        ctx: &Context<'_>,
+    ) -> EncodingResult<usize> {
         let mut size = 0;
         if let Some(ref values) = self {
             size += write_i32(stream, values.len() as i32)?;
             for value in values.iter() {
-                size += value.encode(stream)?;
+                size += value.encode(stream, ctx)?;
             }
         } else {
             size += write_i32(stream, -1)?;
@@ -329,26 +396,27 @@ impl<T> BinaryDecodable for Option<Vec<T>>
 where
     T: BinaryDecodable,
 {
-    fn decode<S: Read>(
+    fn decode<S: Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &DecodingOptions,
+        ctx: &Context<'_>,
     ) -> EncodingResult<Option<Vec<T>>> {
         let len = read_i32(stream)?;
         if len == -1 {
             Ok(None)
         } else if len < -1 {
-            error!("Array length is negative value and invalid");
-            Err(StatusCode::BadDecodingError.into())
-        } else if len as usize > decoding_options.max_array_length {
-            error!(
+            Err(Error::decoding(
+                "Array length is negative value and invalid",
+            ))
+        } else if len as usize > ctx.options().max_array_length {
+            Err(Error::decoding(format!(
                 "Array length {} exceeds decoding limit {}",
-                len, decoding_options.max_array_length
-            );
-            Err(StatusCode::BadDecodingError.into())
+                len,
+                ctx.options().max_array_length
+            )))
         } else {
             let mut values: Vec<T> = Vec::with_capacity(len as usize);
             for _ in 0..len {
-                values.push(T::decode(stream, decoding_options)?);
+                values.push(T::decode(stream, ctx)?);
             }
             Ok(Some(values))
         }
@@ -356,55 +424,12 @@ where
 }
 
 /// Calculates the length in bytes of an array of encoded type
-pub fn byte_len_array<T: BinaryEncodable>(values: &Option<Vec<T>>) -> usize {
+pub fn byte_len_array<T: BinaryEncodable>(values: &Option<Vec<T>>, ctx: &Context<'_>) -> usize {
     let mut size = 4;
     if let Some(ref values) = values {
-        size += values.iter().map(|v| v.byte_len()).sum::<usize>();
+        size += values.iter().map(|v| v.byte_len(ctx)).sum::<usize>();
     }
     size
-}
-
-/// Write an array of the encoded type to stream, preserving distinction between null array and empty array
-pub fn write_array<S: Write + ?Sized, T: BinaryEncodable>(
-    stream: &mut S,
-    values: &Option<Vec<T>>,
-) -> EncodingResult<usize> {
-    let mut size = 0;
-    if let Some(ref values) = values {
-        size += write_i32(stream, values.len() as i32)?;
-        for value in values.iter() {
-            size += value.encode(stream)?;
-        }
-    } else {
-        size += write_i32(stream, -1)?;
-    }
-    Ok(size)
-}
-
-/// Reads an array of the encoded type from a stream, preserving distinction between null array and empty array
-pub fn read_array<S: Read, T: BinaryDecodable>(
-    stream: &mut S,
-    decoding_options: &DecodingOptions,
-) -> EncodingResult<Option<Vec<T>>> {
-    let len = read_i32(stream)?;
-    if len == -1 {
-        Ok(None)
-    } else if len < -1 {
-        error!("Array length is negative value and invalid");
-        Err(StatusCode::BadDecodingError.into())
-    } else if len as usize > decoding_options.max_array_length {
-        error!(
-            "Array length {} exceeds decoding limit {}",
-            len, decoding_options.max_array_length
-        );
-        Err(StatusCode::BadDecodingError.into())
-    } else {
-        let mut values: Vec<T> = Vec::with_capacity(len as usize);
-        for _ in 0..len {
-            values.push(T::decode(stream, decoding_options)?);
-        }
-        Ok(Some(values))
-    }
 }
 
 /// Writes a series of identical bytes to the stream
@@ -414,9 +439,7 @@ pub fn write_bytes<W: Write + ?Sized>(
     count: usize,
 ) -> EncodingResult<usize> {
     for _ in 0..count {
-        stream
-            .write_u8(value)
-            .map_err(|_| StatusCode::BadEncodingError)?;
+        stream.write_u8(value).map_err(Error::encoding)?;
     }
     Ok(count)
 }
@@ -511,14 +534,14 @@ where
 }
 
 /// Reads an array of bytes from the stream
-pub fn read_bytes(stream: &mut dyn Read, buf: &mut [u8]) -> EncodingResult<usize> {
+pub fn read_bytes<R: Read + ?Sized>(stream: &mut R, buf: &mut [u8]) -> EncodingResult<usize> {
     let result = stream.read_exact(buf);
     process_decode_io_result(result)?;
     Ok(buf.len())
 }
 
 /// Read an unsigned byte from the stream
-pub fn read_u8(stream: &mut dyn Read) -> EncodingResult<u8> {
+pub fn read_u8<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<u8> {
     let mut buf = [0u8];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -526,7 +549,7 @@ pub fn read_u8(stream: &mut dyn Read) -> EncodingResult<u8> {
 }
 
 /// Read an signed 16-bit value from the stream
-pub fn read_i16(stream: &mut dyn Read) -> EncodingResult<i16> {
+pub fn read_i16<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<i16> {
     let mut buf = [0u8; 2];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -534,7 +557,7 @@ pub fn read_i16(stream: &mut dyn Read) -> EncodingResult<i16> {
 }
 
 /// Read an unsigned 16-bit value from the stream
-pub fn read_u16(stream: &mut dyn Read) -> EncodingResult<u16> {
+pub fn read_u16<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<u16> {
     let mut buf = [0u8; 2];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -542,7 +565,7 @@ pub fn read_u16(stream: &mut dyn Read) -> EncodingResult<u16> {
 }
 
 /// Read a signed 32-bit value from the stream
-pub fn read_i32(stream: &mut dyn Read) -> EncodingResult<i32> {
+pub fn read_i32<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<i32> {
     let mut buf = [0u8; 4];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -550,7 +573,7 @@ pub fn read_i32(stream: &mut dyn Read) -> EncodingResult<i32> {
 }
 
 /// Read an unsigned 32-bit value from the stream
-pub fn read_u32(stream: &mut dyn Read) -> EncodingResult<u32> {
+pub fn read_u32<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<u32> {
     let mut buf = [0u8; 4];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -558,7 +581,7 @@ pub fn read_u32(stream: &mut dyn Read) -> EncodingResult<u32> {
 }
 
 /// Read a signed 64-bit value from the stream
-pub fn read_i64(stream: &mut dyn Read) -> EncodingResult<i64> {
+pub fn read_i64<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<i64> {
     let mut buf = [0u8; 8];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -566,7 +589,7 @@ pub fn read_i64(stream: &mut dyn Read) -> EncodingResult<i64> {
 }
 
 /// Read an unsigned 64-bit value from the stream
-pub fn read_u64(stream: &mut dyn Read) -> EncodingResult<u64> {
+pub fn read_u64<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<u64> {
     let mut buf = [0u8; 8];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -574,7 +597,7 @@ pub fn read_u64(stream: &mut dyn Read) -> EncodingResult<u64> {
 }
 
 /// Read a 32-bit precision value from the stream
-pub fn read_f32(stream: &mut dyn Read) -> EncodingResult<f32> {
+pub fn read_f32<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<f32> {
     let mut buf = [0u8; 4];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -582,7 +605,7 @@ pub fn read_f32(stream: &mut dyn Read) -> EncodingResult<f32> {
 }
 
 /// Read a 64-bit precision from the stream
-pub fn read_f64(stream: &mut dyn Read) -> EncodingResult<f64> {
+pub fn read_f64<R: Read + ?Sized>(stream: &mut R) -> EncodingResult<f64> {
     let mut buf = [0u8; 8];
     let result = stream.read_exact(&mut buf);
     process_decode_io_result(result)?;
@@ -620,7 +643,7 @@ mod tests {
 
             // Next obtain should fail
             assert_eq!(
-                DepthLock::obtain(&dg).unwrap_err(),
+                DepthLock::obtain(&dg).unwrap_err().status,
                 StatusCode::BadDecodingError
             );
 

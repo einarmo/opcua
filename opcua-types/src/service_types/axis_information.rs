@@ -8,10 +8,12 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+#[derive(Default)]
 pub struct AxisInformation {
     pub engineering_units: super::eu_information::EUInformation,
     pub eu_range: super::range::Range,
@@ -31,47 +33,43 @@ impl opcua::types::MessageInfo for AxisInformation {
     }
 }
 impl opcua::types::BinaryEncodable for AxisInformation {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.engineering_units.byte_len();
-        size += self.eu_range.byte_len();
-        size += self.title.byte_len();
-        size += self.axis_scale_type.byte_len();
-        size += self.axis_steps.byte_len();
+        size += self.engineering_units.byte_len(ctx);
+        size += self.eu_range.byte_len(ctx);
+        size += self.title.byte_len(ctx);
+        size += self.axis_scale_type.byte_len(ctx);
+        size += self.axis_steps.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.engineering_units.encode(stream)?;
-        size += self.eu_range.encode(stream)?;
-        size += self.title.encode(stream)?;
-        size += self.axis_scale_type.encode(stream)?;
-        size += self.axis_steps.encode(stream)?;
+        size += self.engineering_units.encode(stream, ctx)?;
+        size += self.eu_range.encode(stream, ctx)?;
+        size += self.title.encode(stream, ctx)?;
+        size += self.axis_scale_type.encode(stream, ctx)?;
+        size += self.axis_steps.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for AxisInformation {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            engineering_units: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            eu_range: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            title: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            axis_scale_type: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            axis_steps: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            engineering_units: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            eu_range: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            title: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            axis_scale_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            axis_steps: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

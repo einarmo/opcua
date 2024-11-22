@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct Annotation {
@@ -30,38 +31,37 @@ impl opcua::types::MessageInfo for Annotation {
     }
 }
 impl opcua::types::BinaryEncodable for Annotation {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.message.byte_len();
-        size += self.user_name.byte_len();
-        size += self.annotation_time.byte_len();
+        size += self.message.byte_len(ctx);
+        size += self.user_name.byte_len(ctx);
+        size += self.annotation_time.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.message.encode(stream)?;
-        size += self.user_name.encode(stream)?;
-        size += self.annotation_time.encode(stream)?;
+        size += self.message.encode(stream, ctx)?;
+        size += self.user_name.encode(stream, ctx)?;
+        size += self.annotation_time.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for Annotation {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            message: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            user_name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            annotation_time: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            message: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            user_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            annotation_time: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

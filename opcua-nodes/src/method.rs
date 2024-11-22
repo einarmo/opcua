@@ -6,10 +6,9 @@
 
 use log::error;
 use opcua_types::{
-    service_types::{Argument, MethodAttributes},
-    AttributeId, AttributesMask, DataEncoding, DataTypeId, DataValue, ExtensionObject,
-    NumericRange, ObjectId, StatusCode, TimestampsToReturn, VariableTypeId, Variant,
-    VariantScalarTypeId,
+    service_types::MethodAttributes, Argument, AttributeId, AttributesMask, DataEncoding,
+    DataTypeId, DataValue, ExtensionObject, NumericRange, StatusCode, TimestampsToReturn,
+    VariableTypeId, Variant, VariantScalarTypeId,
 };
 
 use crate::{FromAttributesError, NodeInsertTarget};
@@ -67,12 +66,7 @@ impl MethodBuilder {
     fn args_to_variant(arguments: &[Argument]) -> Variant {
         let arguments = arguments
             .iter()
-            .map(|arg| {
-                Variant::from(ExtensionObject::from_encodable(
-                    ObjectId::Argument_Encoding_DefaultBinary,
-                    arg,
-                ))
-            })
+            .map(|arg| Variant::from(ExtensionObject::from_message(arg.clone())))
             .collect::<Vec<Variant>>();
         Variant::from((VariantScalarTypeId::ExtensionObject, arguments))
     }

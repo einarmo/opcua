@@ -8,10 +8,12 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+#[derive(Default)]
 pub struct UserTokenPolicy {
     pub policy_id: opcua::types::string::UAString,
     pub token_type: super::enums::UserTokenType,
@@ -31,50 +33,43 @@ impl opcua::types::MessageInfo for UserTokenPolicy {
     }
 }
 impl opcua::types::BinaryEncodable for UserTokenPolicy {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.policy_id.byte_len();
-        size += self.token_type.byte_len();
-        size += self.issued_token_type.byte_len();
-        size += self.issuer_endpoint_url.byte_len();
-        size += self.security_policy_uri.byte_len();
+        size += self.policy_id.byte_len(ctx);
+        size += self.token_type.byte_len(ctx);
+        size += self.issued_token_type.byte_len(ctx);
+        size += self.issuer_endpoint_url.byte_len(ctx);
+        size += self.security_policy_uri.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.policy_id.encode(stream)?;
-        size += self.token_type.encode(stream)?;
-        size += self.issued_token_type.encode(stream)?;
-        size += self.issuer_endpoint_url.encode(stream)?;
-        size += self.security_policy_uri.encode(stream)?;
+        size += self.policy_id.encode(stream, ctx)?;
+        size += self.token_type.encode(stream, ctx)?;
+        size += self.issued_token_type.encode(stream, ctx)?;
+        size += self.issuer_endpoint_url.encode(stream, ctx)?;
+        size += self.security_policy_uri.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for UserTokenPolicy {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            policy_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            token_type: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            issued_token_type: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            issuer_endpoint_url: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            security_policy_uri: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            policy_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            token_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            issued_token_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            issuer_endpoint_url: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            security_policy_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

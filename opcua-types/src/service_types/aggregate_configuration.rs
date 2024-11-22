@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct AggregateConfiguration {
@@ -32,56 +33,46 @@ impl opcua::types::MessageInfo for AggregateConfiguration {
     }
 }
 impl opcua::types::BinaryEncodable for AggregateConfiguration {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.use_server_capabilities_defaults.byte_len();
-        size += self.treat_uncertain_as_bad.byte_len();
-        size += self.percent_data_bad.byte_len();
-        size += self.percent_data_good.byte_len();
-        size += self.use_sloped_extrapolation.byte_len();
+        size += self.use_server_capabilities_defaults.byte_len(ctx);
+        size += self.treat_uncertain_as_bad.byte_len(ctx);
+        size += self.percent_data_bad.byte_len(ctx);
+        size += self.percent_data_good.byte_len(ctx);
+        size += self.use_sloped_extrapolation.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.use_server_capabilities_defaults.encode(stream)?;
-        size += self.treat_uncertain_as_bad.encode(stream)?;
-        size += self.percent_data_bad.encode(stream)?;
-        size += self.percent_data_good.encode(stream)?;
-        size += self.use_sloped_extrapolation.encode(stream)?;
+        size += self.use_server_capabilities_defaults.encode(stream, ctx)?;
+        size += self.treat_uncertain_as_bad.encode(stream, ctx)?;
+        size += self.percent_data_bad.encode(stream, ctx)?;
+        size += self.percent_data_good.encode(stream, ctx)?;
+        size += self.use_sloped_extrapolation.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for AggregateConfiguration {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
             use_server_capabilities_defaults: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            treat_uncertain_as_bad: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            percent_data_bad: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            percent_data_good: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            use_sloped_extrapolation: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            treat_uncertain_as_bad: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            percent_data_bad: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            percent_data_good: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            use_sloped_extrapolation: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

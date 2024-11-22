@@ -9,7 +9,10 @@
 use std::fmt;
 
 use log::{error, trace};
-use opcua_types::{service_types::SignatureData, status_code::StatusCode, ByteString, UAString};
+use opcua_types::{
+    service_types::SignatureData, status_code::StatusCode, ByteString, EncodingResult, Error,
+    UAString,
+};
 pub use {
     aeskey::*, certificate_store::*, hash::*, pkey::*, security_policy::*, thumbprint::*,
     user_identity::*, x509::*,
@@ -129,34 +132,25 @@ pub fn verify_signature_data(
     signing_cert: &X509,
     contained_cert: &X509,
     contained_nonce: &[u8],
-) -> StatusCode {
+) -> EncodingResult<()> {
     if let Ok(verification_key) = signing_cert.public_key() {
         // This is the data that the should have been signed
         let contained_cert = contained_cert.as_byte_string();
         let data = concat_data_and_nonce(contained_cert.as_ref(), contained_nonce);
 
         // Verify the signature
-        let result = security_policy.asymmetric_verify_signature(
+        security_policy.asymmetric_verify_signature(
             &verification_key,
             &data,
             signature.signature.as_ref(),
             None,
-        );
-        match result {
-            Ok(_) => StatusCode::Good,
-            Err(result) => {
-                error!(
-                    "Client signature verification failed, status code = {}",
-                    result
-                );
-                result
-            }
-        }
+        )?;
+        Ok(())
     } else {
-        error!(
-            "Signature verification failed, signing certificate has no public key to verify with"
-        );
-        StatusCode::BadUnexpectedError
+        Err(Error::new(
+            StatusCode::BadUnexpectedError,
+            "Signature verification failed, signing certificate has no public key to verify with",
+        ))
     }
 }
 

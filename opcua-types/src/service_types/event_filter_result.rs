@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct EventFilterResult {
@@ -32,44 +33,40 @@ impl opcua::types::MessageInfo for EventFilterResult {
     }
 }
 impl opcua::types::BinaryEncodable for EventFilterResult {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.select_clause_results.byte_len();
-        size += self.select_clause_diagnostic_infos.byte_len();
-        size += self.where_clause_result.byte_len();
+        size += self.select_clause_results.byte_len(ctx);
+        size += self.select_clause_diagnostic_infos.byte_len(ctx);
+        size += self.where_clause_result.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.select_clause_results.encode(stream)?;
-        size += self.select_clause_diagnostic_infos.encode(stream)?;
-        size += self.where_clause_result.encode(stream)?;
+        size += self.select_clause_results.encode(stream, ctx)?;
+        size += self.select_clause_diagnostic_infos.encode(stream, ctx)?;
+        size += self.where_clause_result.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for EventFilterResult {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            select_clause_results: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            select_clause_results: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             select_clause_diagnostic_infos: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            where_clause_result: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            where_clause_result: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

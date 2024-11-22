@@ -13,8 +13,8 @@ documentation = "https://docs.rs/opcua/"
 edition = "2021"
 
 [features]
-json = ["serde", "serde_json", "serde_with"]
-xml = ["opcua-xml", "opcua-macros"]
+json = ["struson", "opcua-macros", "opcua-macros/json"]
+xml = ["opcua-xml", "opcua-macros", "opcua-macros/xml"]
 
 [lib]
 name = "opcua_types"
@@ -31,9 +31,7 @@ byteorder = { workspace = true }
 base64 = { workspace = true }
 thiserror = { workspace = true }
 
-serde = { workspace = true, optional = true }
-serde_json = { workspace = true, optional = true }
-serde_with = { workspace = true, optional = true }
+struson = { workspace = true, optional = true }
 
 opcua-xml = { path = "../opcua-xml", optional = true }
 opcua-macros = { path = "../opcua-macros", optional = true }
@@ -41,3 +39,4 @@ opcua-macros = { path = "../opcua-macros", optional = true }
 
 [dev-dependencies]
 opcua-types = { path = ".", features = ["xml", "json"] }
+serde_json = { workspace = true }

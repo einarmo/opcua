@@ -797,9 +797,9 @@ mod tests {
         SubscriptionState,
     };
     use opcua_types::{
-        AttributeId, DataChangeNotification, DataValue, DateTime, DateTimeUtc, DecodingOptions,
-        EventNotificationList, MonitoringMode, NodeId, NotificationMessage, ObjectId, ReadValueId,
-        StatusChangeNotification, StatusCode, Variant,
+        match_extension_object_owned, AttributeId, DataChangeNotification, DataValue, DateTime,
+        DateTimeUtc, EventNotificationList, MonitoringMode, NodeId, NotificationMessage,
+        ReadValueId, StatusChangeNotification, StatusCode, Variant,
     };
 
     use super::{Subscription, TickReason};
@@ -807,25 +807,20 @@ mod tests {
     fn get_notifications(message: &NotificationMessage) -> Vec<Notification> {
         let mut res = Vec::new();
         for it in message.notification_data.iter().flatten() {
-            match it.node_id.as_object_id().unwrap() {
-                ObjectId::DataChangeNotification_Encoding_DefaultBinary => {
-                    let notif = it
-                        .decode_inner::<DataChangeNotification>(&DecodingOptions::test())
-                        .unwrap();
+            let it = it.clone();
+            match_extension_object_owned!(it,
+                notif: DataChangeNotification => {
                     for n in notif.monitored_items.into_iter().flatten() {
                         res.push(Notification::MonitoredItemNotification(n));
                     }
-                }
-                ObjectId::EventNotificationList_Encoding_DefaultBinary => {
-                    let notif = it
-                        .decode_inner::<EventNotificationList>(&DecodingOptions::test())
-                        .unwrap();
+                },
+                notif: EventNotificationList => {
                     for n in notif.events.into_iter().flatten() {
                         res.push(Notification::Event(n));
                     }
-                }
+                },
                 _ => panic!("Wrong message type"),
-            }
+            )
         }
         res
     }
@@ -962,7 +957,7 @@ mod tests {
         let notif = sub.take_notification().unwrap();
         assert_eq!(1, notif.notification_data.as_ref().unwrap().len());
         let status_change = notif.notification_data.as_ref().unwrap()[0]
-            .decode_inner::<StatusChangeNotification>(&DecodingOptions::test())
+            .inner_as::<StatusChangeNotification>()
             .unwrap();
         assert_eq!(status_change.status, StatusCode::BadTimeout);
     }

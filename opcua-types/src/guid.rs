@@ -10,7 +10,6 @@ use std::{
     str::FromStr,
 };
 
-use log::error;
 use uuid::Uuid;
 
 use crate::encoding::*;
@@ -23,27 +22,30 @@ pub struct Guid {
 
 #[cfg(feature = "json")]
 mod json {
+    use std::io::{Read, Write};
     use std::str::FromStr;
 
-    use super::Guid;
-    use serde::{de::Error, Deserialize, Serialize};
+    use crate::{json::*, Error};
 
-    impl Serialize for Guid {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: serde::Serializer,
-        {
-            self.uuid.to_string().serialize(serializer)
+    use super::Guid;
+
+    impl JsonEncodable for Guid {
+        fn encode(
+            &self,
+            stream: &mut JsonStreamWriter<&mut dyn Write>,
+            _ctx: &crate::json::Context<'_>,
+        ) -> super::EncodingResult<()> {
+            Ok(stream.string_value(&self.uuid.to_string())?)
         }
     }
 
-    impl<'de> Deserialize<'de> for Guid {
-        fn deserialize<D>(deserializer: D) -> Result<Guid, D::Error>
-        where
-            D: serde::Deserializer<'de>,
-        {
-            let s = String::deserialize(deserializer)?;
-            let guid = Guid::from_str(&s).map_err(|_| D::Error::custom("Cannot parse uuid"))?;
+    impl JsonDecodable for Guid {
+        fn decode(
+            stream: &mut JsonStreamReader<&mut dyn Read>,
+            _ctx: &Context<'_>,
+        ) -> super::EncodingResult<Self> {
+            let s = stream.next_str()?;
+            let guid = Guid::from_str(s).map_err(Error::decoding)?;
             Ok(guid)
         }
     }
@@ -62,11 +64,15 @@ impl fmt::Debug for Guid {
 }
 
 impl BinaryEncodable for Guid {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, _ctx: &crate::Context<'_>) -> usize {
         16
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        _ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize> {
         let mut size: usize = 0;
         size += process_encode_io_result(stream.write(self.uuid.as_bytes()))?;
         Ok(size)
@@ -74,7 +80,7 @@ impl BinaryEncodable for Guid {
 }
 
 impl BinaryDecodable for Guid {
-    fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
+    fn decode<S: Read + ?Sized>(stream: &mut S, _ctx: &crate::Context<'_>) -> EncodingResult<Self> {
         let mut bytes = [0u8; 16];
         process_decode_io_result(stream.read_exact(&mut bytes))?;
         Ok(Guid {
@@ -84,12 +90,10 @@ impl BinaryDecodable for Guid {
 }
 
 impl FromStr for Guid {
-    type Err = ();
+    type Err = <Uuid as FromStr>::Err;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Uuid::from_str(s).map(|uuid| Guid { uuid }).map_err(|err| {
-            error!("Guid cannot be parsed from string, err = {:?}", err);
-        })
+        Uuid::from_str(s).map(|uuid| Guid { uuid })
     }
 }
 

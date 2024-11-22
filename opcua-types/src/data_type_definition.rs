@@ -1,11 +1,8 @@
-use super::{
-    DecodingOptions, EnumDefinition, ExtensionObject, ObjectId, StatusCode, StructureDefinition,
-    Variant,
-};
+use crate::{match_extension_object_owned, MessageInfo};
+
+use super::{EnumDefinition, ExtensionObject, ObjectId, StatusCode, StructureDefinition, Variant};
 
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase", untagged))]
 pub enum DataTypeDefinition {
     Structure(StructureDefinition),
     Enum(EnumDefinition),
@@ -23,37 +20,54 @@ impl From<EnumDefinition> for DataTypeDefinition {
     }
 }
 
-impl DataTypeDefinition {
-    pub fn from_extension_object(
-        obj: ExtensionObject,
-        options: &DecodingOptions,
-    ) -> Result<Self, StatusCode> {
-        match obj.node_id.as_object_id() {
-            Ok(ObjectId::StructureDefinition_Encoding_DefaultBinary) => {
-                Ok(Self::Structure(obj.decode_inner(options)?))
-            }
-            Ok(ObjectId::EnumDefinition_Encoding_DefaultBinary) => {
-                Ok(Self::Enum(obj.decode_inner(options)?))
-            }
-            _ => Err(StatusCode::BadDataTypeIdUnknown),
-        }
+// TODO: Figure out why we don't auto generate these.
+impl MessageInfo for StructureDefinition {
+    fn type_id(&self) -> ObjectId {
+        ObjectId::StructureDefinition_Encoding_DefaultBinary
     }
 
-    pub fn as_extension_object(&self) -> ExtensionObject {
+    fn json_type_id(&self) -> ObjectId {
+        ObjectId::StructureDefinition_Encoding_DefaultJson
+    }
+
+    fn xml_type_id(&self) -> ObjectId {
+        ObjectId::StructureDefinition_Encoding_DefaultXml
+    }
+}
+
+impl MessageInfo for EnumDefinition {
+    fn type_id(&self) -> ObjectId {
+        ObjectId::EnumDefinition_Encoding_DefaultBinary
+    }
+
+    fn json_type_id(&self) -> ObjectId {
+        ObjectId::EnumDefinition_Encoding_DefaultJson
+    }
+
+    fn xml_type_id(&self) -> ObjectId {
+        ObjectId::EnumDefinition_Encoding_DefaultXml
+    }
+}
+
+impl DataTypeDefinition {
+    pub fn from_extension_object(obj: ExtensionObject) -> Result<Self, StatusCode> {
+        match_extension_object_owned!(obj,
+            v: StructureDefinition => Ok(Self::Structure(v)),
+            v: EnumDefinition => Ok(Self::Enum(v)),
+            _ => Err(StatusCode::BadDataTypeIdUnknown)
+        )
+    }
+
+    pub fn into_extension_object(self) -> ExtensionObject {
         match self {
-            DataTypeDefinition::Structure(s) => ExtensionObject::from_encodable(
-                ObjectId::StructureDefinition_Encoding_DefaultBinary,
-                s,
-            ),
-            DataTypeDefinition::Enum(s) => {
-                ExtensionObject::from_encodable(ObjectId::EnumDefinition_Encoding_DefaultBinary, s)
-            }
+            DataTypeDefinition::Structure(s) => ExtensionObject::from_message(s),
+            DataTypeDefinition::Enum(s) => ExtensionObject::from_message(s),
         }
     }
 }
 
-impl From<&DataTypeDefinition> for Variant {
-    fn from(value: &DataTypeDefinition) -> Self {
-        value.as_extension_object().into()
+impl From<DataTypeDefinition> for Variant {
+    fn from(value: DataTypeDefinition) -> Self {
+        value.into_extension_object().into()
     }
 }

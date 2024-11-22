@@ -10,15 +10,11 @@ use std::{
 };
 
 use base64::{engine::general_purpose::STANDARD, Engine};
-use log::error;
 
 use crate::{
-    encoding::{
-        process_decode_io_result, process_encode_io_result, write_i32, BinaryEncodable,
-        DecodingOptions, EncodingResult,
-    },
-    status_code::StatusCode,
-    BinaryDecodable, Guid, OutOfRange,
+    encoding::{process_decode_io_result, process_encode_io_result, write_i32, EncodingResult},
+    read_i32, DecodingOptions, Error, Guid, OutOfRange, SimpleBinaryDecodable,
+    SimpleBinaryEncodable,
 };
 
 /// A sequence of octets.
@@ -39,44 +35,50 @@ impl AsRef<[u8]> for ByteString {
 
 #[cfg(feature = "json")]
 mod json {
-    use super::ByteString;
-    use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
+    use std::io::{Read, Write};
 
-    impl Serialize for ByteString {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: Serializer,
-        {
+    use crate::{json::*, Error};
+
+    use super::ByteString;
+
+    impl JsonEncodable for ByteString {
+        fn encode(
+            &self,
+            stream: &mut JsonStreamWriter<&mut dyn Write>,
+            _ctx: &crate::json::Context<'_>,
+        ) -> crate::EncodingResult<()> {
             if self.value.is_some() {
-                serializer.serialize_str(&self.as_base64())
+                stream.string_value(&self.as_base64())?;
             } else {
-                serializer.serialize_none()
+                stream.null_value()?;
             }
+            Ok(())
         }
     }
 
-    impl<'de> Deserialize<'de> for ByteString {
-        fn deserialize<D>(deserializer: D) -> Result<ByteString, D::Error>
-        where
-            D: Deserializer<'de>,
-        {
-            let r = Option::<String>::deserialize(deserializer)?;
-            match r {
-                Some(r) => Self::from_base64(&r)
-                    .ok_or_else(|| de::Error::custom("Cannot decode base64 bytestring")),
-                None => Ok(Self::null()),
+    impl JsonDecodable for ByteString {
+        fn decode(
+            stream: &mut JsonStreamReader<&mut dyn Read>,
+            _ctx: &Context<'_>,
+        ) -> crate::EncodingResult<Self> {
+            match stream.peek()? {
+                ValueType::String => Ok(Self::from_base64(stream.next_str()?)
+                    .ok_or_else(|| Error::decoding("Cannot decode base64 bytestring"))?),
+                _ => {
+                    stream.next_null()?;
+                    Ok(Self::null())
+                }
             }
         }
     }
 }
 
-impl BinaryEncodable for ByteString {
+impl SimpleBinaryEncodable for ByteString {
     fn byte_len(&self) -> usize {
         // Length plus the actual length of bytes (if not null)
-        4 + if self.value.is_none() {
-            0
-        } else {
-            self.value.as_ref().unwrap().len()
+        4 + match &self.value {
+            Some(v) => v.len(),
+            None => 0,
         }
     }
 
@@ -89,27 +91,30 @@ impl BinaryEncodable for ByteString {
             let value = self.value.as_ref().unwrap();
             size += write_i32(stream, value.len() as i32)?;
             size += process_encode_io_result(stream.write(value))?;
-            assert_eq!(size, self.byte_len());
             Ok(size)
         }
     }
 }
 
-impl BinaryDecodable for ByteString {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
-        let len = i32::decode(stream, decoding_options)?;
+impl SimpleBinaryDecodable for ByteString {
+    fn decode<S: Read + ?Sized>(
+        stream: &mut S,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self> {
+        let len = read_i32(stream)?;
         // Null string?
         if len == -1 {
             Ok(ByteString::null())
         } else if len < -1 {
-            error!("ByteString buf length is a negative number {}", len);
-            Err(StatusCode::BadDecodingError.into())
+            Err(Error::decoding(format!(
+                "ByteString buf length is a negative number {}",
+                len
+            )))
         } else if len as usize > decoding_options.max_byte_string_length {
-            error!(
+            Err(Error::decoding(format!(
                 "ByteString length {} exceeds decoding limit {}",
                 len, decoding_options.max_string_length
-            );
-            Err(StatusCode::BadDecodingError.into())
+            )))
         } else {
             // Create a buffer filled with zeroes and read the byte string over the top
             let mut buf: Vec<u8> = vec![0u8; len as usize];

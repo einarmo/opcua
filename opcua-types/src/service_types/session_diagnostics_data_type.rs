@@ -8,10 +8,12 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+#[derive(Default)]
 pub struct SessionDiagnosticsDataType {
     pub session_id: opcua::types::node_id::NodeId,
     pub session_name: opcua::types::string::UAString,
@@ -69,269 +71,205 @@ impl opcua::types::MessageInfo for SessionDiagnosticsDataType {
     }
 }
 impl opcua::types::BinaryEncodable for SessionDiagnosticsDataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.session_id.byte_len();
-        size += self.session_name.byte_len();
-        size += self.client_description.byte_len();
-        size += self.server_uri.byte_len();
-        size += self.endpoint_url.byte_len();
-        size += self.locale_ids.byte_len();
-        size += self.actual_session_timeout.byte_len();
-        size += self.max_response_message_size.byte_len();
-        size += self.client_connection_time.byte_len();
-        size += self.client_last_contact_time.byte_len();
-        size += self.current_subscriptions_count.byte_len();
-        size += self.current_monitored_items_count.byte_len();
-        size += self.current_publish_requests_in_queue.byte_len();
-        size += self.total_request_count.byte_len();
-        size += self.unauthorized_request_count.byte_len();
-        size += self.read_count.byte_len();
-        size += self.history_read_count.byte_len();
-        size += self.write_count.byte_len();
-        size += self.history_update_count.byte_len();
-        size += self.call_count.byte_len();
-        size += self.create_monitored_items_count.byte_len();
-        size += self.modify_monitored_items_count.byte_len();
-        size += self.set_monitoring_mode_count.byte_len();
-        size += self.set_triggering_count.byte_len();
-        size += self.delete_monitored_items_count.byte_len();
-        size += self.create_subscription_count.byte_len();
-        size += self.modify_subscription_count.byte_len();
-        size += self.set_publishing_mode_count.byte_len();
-        size += self.publish_count.byte_len();
-        size += self.republish_count.byte_len();
-        size += self.transfer_subscriptions_count.byte_len();
-        size += self.delete_subscriptions_count.byte_len();
-        size += self.add_nodes_count.byte_len();
-        size += self.add_references_count.byte_len();
-        size += self.delete_nodes_count.byte_len();
-        size += self.delete_references_count.byte_len();
-        size += self.browse_count.byte_len();
-        size += self.browse_next_count.byte_len();
-        size += self.translate_browse_paths_to_node_ids_count.byte_len();
-        size += self.query_first_count.byte_len();
-        size += self.query_next_count.byte_len();
-        size += self.register_nodes_count.byte_len();
-        size += self.unregister_nodes_count.byte_len();
+        size += self.session_id.byte_len(ctx);
+        size += self.session_name.byte_len(ctx);
+        size += self.client_description.byte_len(ctx);
+        size += self.server_uri.byte_len(ctx);
+        size += self.endpoint_url.byte_len(ctx);
+        size += self.locale_ids.byte_len(ctx);
+        size += self.actual_session_timeout.byte_len(ctx);
+        size += self.max_response_message_size.byte_len(ctx);
+        size += self.client_connection_time.byte_len(ctx);
+        size += self.client_last_contact_time.byte_len(ctx);
+        size += self.current_subscriptions_count.byte_len(ctx);
+        size += self.current_monitored_items_count.byte_len(ctx);
+        size += self.current_publish_requests_in_queue.byte_len(ctx);
+        size += self.total_request_count.byte_len(ctx);
+        size += self.unauthorized_request_count.byte_len(ctx);
+        size += self.read_count.byte_len(ctx);
+        size += self.history_read_count.byte_len(ctx);
+        size += self.write_count.byte_len(ctx);
+        size += self.history_update_count.byte_len(ctx);
+        size += self.call_count.byte_len(ctx);
+        size += self.create_monitored_items_count.byte_len(ctx);
+        size += self.modify_monitored_items_count.byte_len(ctx);
+        size += self.set_monitoring_mode_count.byte_len(ctx);
+        size += self.set_triggering_count.byte_len(ctx);
+        size += self.delete_monitored_items_count.byte_len(ctx);
+        size += self.create_subscription_count.byte_len(ctx);
+        size += self.modify_subscription_count.byte_len(ctx);
+        size += self.set_publishing_mode_count.byte_len(ctx);
+        size += self.publish_count.byte_len(ctx);
+        size += self.republish_count.byte_len(ctx);
+        size += self.transfer_subscriptions_count.byte_len(ctx);
+        size += self.delete_subscriptions_count.byte_len(ctx);
+        size += self.add_nodes_count.byte_len(ctx);
+        size += self.add_references_count.byte_len(ctx);
+        size += self.delete_nodes_count.byte_len(ctx);
+        size += self.delete_references_count.byte_len(ctx);
+        size += self.browse_count.byte_len(ctx);
+        size += self.browse_next_count.byte_len(ctx);
+        size += self.translate_browse_paths_to_node_ids_count.byte_len(ctx);
+        size += self.query_first_count.byte_len(ctx);
+        size += self.query_next_count.byte_len(ctx);
+        size += self.register_nodes_count.byte_len(ctx);
+        size += self.unregister_nodes_count.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.session_id.encode(stream)?;
-        size += self.session_name.encode(stream)?;
-        size += self.client_description.encode(stream)?;
-        size += self.server_uri.encode(stream)?;
-        size += self.endpoint_url.encode(stream)?;
-        size += self.locale_ids.encode(stream)?;
-        size += self.actual_session_timeout.encode(stream)?;
-        size += self.max_response_message_size.encode(stream)?;
-        size += self.client_connection_time.encode(stream)?;
-        size += self.client_last_contact_time.encode(stream)?;
-        size += self.current_subscriptions_count.encode(stream)?;
-        size += self.current_monitored_items_count.encode(stream)?;
-        size += self.current_publish_requests_in_queue.encode(stream)?;
-        size += self.total_request_count.encode(stream)?;
-        size += self.unauthorized_request_count.encode(stream)?;
-        size += self.read_count.encode(stream)?;
-        size += self.history_read_count.encode(stream)?;
-        size += self.write_count.encode(stream)?;
-        size += self.history_update_count.encode(stream)?;
-        size += self.call_count.encode(stream)?;
-        size += self.create_monitored_items_count.encode(stream)?;
-        size += self.modify_monitored_items_count.encode(stream)?;
-        size += self.set_monitoring_mode_count.encode(stream)?;
-        size += self.set_triggering_count.encode(stream)?;
-        size += self.delete_monitored_items_count.encode(stream)?;
-        size += self.create_subscription_count.encode(stream)?;
-        size += self.modify_subscription_count.encode(stream)?;
-        size += self.set_publishing_mode_count.encode(stream)?;
-        size += self.publish_count.encode(stream)?;
-        size += self.republish_count.encode(stream)?;
-        size += self.transfer_subscriptions_count.encode(stream)?;
-        size += self.delete_subscriptions_count.encode(stream)?;
-        size += self.add_nodes_count.encode(stream)?;
-        size += self.add_references_count.encode(stream)?;
-        size += self.delete_nodes_count.encode(stream)?;
-        size += self.delete_references_count.encode(stream)?;
-        size += self.browse_count.encode(stream)?;
-        size += self.browse_next_count.encode(stream)?;
-        size += self.translate_browse_paths_to_node_ids_count.encode(stream)?;
-        size += self.query_first_count.encode(stream)?;
-        size += self.query_next_count.encode(stream)?;
-        size += self.register_nodes_count.encode(stream)?;
-        size += self.unregister_nodes_count.encode(stream)?;
+        size += self.session_id.encode(stream, ctx)?;
+        size += self.session_name.encode(stream, ctx)?;
+        size += self.client_description.encode(stream, ctx)?;
+        size += self.server_uri.encode(stream, ctx)?;
+        size += self.endpoint_url.encode(stream, ctx)?;
+        size += self.locale_ids.encode(stream, ctx)?;
+        size += self.actual_session_timeout.encode(stream, ctx)?;
+        size += self.max_response_message_size.encode(stream, ctx)?;
+        size += self.client_connection_time.encode(stream, ctx)?;
+        size += self.client_last_contact_time.encode(stream, ctx)?;
+        size += self.current_subscriptions_count.encode(stream, ctx)?;
+        size += self.current_monitored_items_count.encode(stream, ctx)?;
+        size += self.current_publish_requests_in_queue.encode(stream, ctx)?;
+        size += self.total_request_count.encode(stream, ctx)?;
+        size += self.unauthorized_request_count.encode(stream, ctx)?;
+        size += self.read_count.encode(stream, ctx)?;
+        size += self.history_read_count.encode(stream, ctx)?;
+        size += self.write_count.encode(stream, ctx)?;
+        size += self.history_update_count.encode(stream, ctx)?;
+        size += self.call_count.encode(stream, ctx)?;
+        size += self.create_monitored_items_count.encode(stream, ctx)?;
+        size += self.modify_monitored_items_count.encode(stream, ctx)?;
+        size += self.set_monitoring_mode_count.encode(stream, ctx)?;
+        size += self.set_triggering_count.encode(stream, ctx)?;
+        size += self.delete_monitored_items_count.encode(stream, ctx)?;
+        size += self.create_subscription_count.encode(stream, ctx)?;
+        size += self.modify_subscription_count.encode(stream, ctx)?;
+        size += self.set_publishing_mode_count.encode(stream, ctx)?;
+        size += self.publish_count.encode(stream, ctx)?;
+        size += self.republish_count.encode(stream, ctx)?;
+        size += self.transfer_subscriptions_count.encode(stream, ctx)?;
+        size += self.delete_subscriptions_count.encode(stream, ctx)?;
+        size += self.add_nodes_count.encode(stream, ctx)?;
+        size += self.add_references_count.encode(stream, ctx)?;
+        size += self.delete_nodes_count.encode(stream, ctx)?;
+        size += self.delete_references_count.encode(stream, ctx)?;
+        size += self.browse_count.encode(stream, ctx)?;
+        size += self.browse_next_count.encode(stream, ctx)?;
+        size += self.translate_browse_paths_to_node_ids_count.encode(stream, ctx)?;
+        size += self.query_first_count.encode(stream, ctx)?;
+        size += self.query_next_count.encode(stream, ctx)?;
+        size += self.register_nodes_count.encode(stream, ctx)?;
+        size += self.unregister_nodes_count.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for SessionDiagnosticsDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            session_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            session_name: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            client_description: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            server_uri: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            endpoint_url: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            locale_ids: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            actual_session_timeout: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            session_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            session_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            client_description: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            server_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            endpoint_url: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            locale_ids: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            actual_session_timeout: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             max_response_message_size: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            client_connection_time: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            client_connection_time: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             client_last_contact_time: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             current_subscriptions_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             current_monitored_items_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             current_publish_requests_in_queue: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            total_request_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            total_request_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             unauthorized_request_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            read_count: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            history_read_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            write_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            history_update_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            call_count: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            read_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            history_read_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            write_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            history_update_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            call_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             create_monitored_items_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             modify_monitored_items_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             set_monitoring_mode_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            set_triggering_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            set_triggering_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             delete_monitored_items_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             create_subscription_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             modify_subscription_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             set_publishing_mode_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            publish_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            republish_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            publish_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            republish_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             transfer_subscriptions_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             delete_subscriptions_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            add_nodes_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            add_references_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            delete_nodes_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            delete_references_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            browse_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            browse_next_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            add_nodes_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            add_references_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            delete_nodes_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            delete_references_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            browse_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            browse_next_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             translate_browse_paths_to_node_ids_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            query_first_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            query_next_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            register_nodes_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            unregister_nodes_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            query_first_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            query_next_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            register_nodes_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            unregister_nodes_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

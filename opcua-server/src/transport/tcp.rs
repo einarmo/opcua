@@ -18,9 +18,7 @@ use opcua_core::{
 };
 
 use crate::info::ServerInfo;
-use opcua_types::{
-    BinaryEncodable, DecodingOptions, EncodingError, ResponseHeader, ServiceFault, StatusCode,
-};
+use opcua_types::{DecodingOptions, Error, ResponseHeader, ServiceFault, StatusCode};
 
 use futures::StreamExt;
 use tokio::{
@@ -183,9 +181,9 @@ impl TcpConnector {
             acknowledge.max_chunk_count as usize,
         );
 
-        let mut buf = Vec::with_capacity(acknowledge.byte_len());
-        acknowledge
-            .encode(&mut buf)
+        let mut buf =
+            Vec::with_capacity(opcua_types::SimpleBinaryEncodable::byte_len(&acknowledge));
+        opcua_types::SimpleBinaryEncodable::encode(&acknowledge, &mut buf)
             .map_err(|e| ErrorMessage::new(e.into(), "Failed to encode ack"))?;
 
         self.write.write_all(&buf).await.map_err(|e| {
@@ -222,8 +220,8 @@ impl Connector for TcpConnector {
 
         // We want to send an error if connection failed for whatever reason, but
         // there's a good chance the channel is closed, so just ignore any errors.
-        let mut buf = Vec::with_capacity(err.byte_len());
-        if err.encode(&mut buf).is_ok() {
+        let mut buf = Vec::with_capacity(opcua_types::SimpleBinaryEncodable::byte_len(&err));
+        if opcua_types::SimpleBinaryEncodable::encode(&err, &mut buf).is_ok() {
             let _ = self.write.write_all(&buf).await;
         }
 
@@ -365,7 +363,7 @@ impl TcpTransport {
         &mut self,
         message: Message,
         channel: &mut SecureChannel,
-    ) -> Result<Option<Request>, EncodingError> {
+    ) -> Result<Option<Request>, Error> {
         match message {
             Message::Chunk(chunk) => {
                 let header = chunk.message_header(&channel.decoding_options())?;
@@ -377,7 +375,10 @@ impl TcpTransport {
                     let chunk = channel.verify_and_remove_security(&chunk.data)?;
 
                     if self.pending_chunks.len() == self.send_buffer.max_chunk_count {
-                        return Err(StatusCode::BadEncodingLimitsExceeded.into());
+                        return Err(Error::decoding(format!(
+                            "Message has more than {} chunks, exceeding negotiated limits",
+                            self.send_buffer.max_chunk_count
+                        )));
                     }
                     self.pending_chunks.push(chunk);
 
@@ -402,10 +403,10 @@ impl TcpTransport {
                     }))
                 }
             }
-            unexpected => {
-                error!("Received unexpected message: {:?}", unexpected);
-                Err(StatusCode::BadUnexpectedError.into())
-            }
+            unexpected => Err(Error::new(
+                StatusCode::BadUnexpectedError,
+                format!("Received unexpected message: {:?}", unexpected),
+            )),
         }
     }
 }

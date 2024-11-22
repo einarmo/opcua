@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct FieldMetaData {
@@ -37,74 +38,58 @@ impl opcua::types::MessageInfo for FieldMetaData {
     }
 }
 impl opcua::types::BinaryEncodable for FieldMetaData {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.name.byte_len();
-        size += self.description.byte_len();
-        size += self.field_flags.byte_len();
-        size += self.built_in_type.byte_len();
-        size += self.data_type.byte_len();
-        size += self.value_rank.byte_len();
-        size += self.array_dimensions.byte_len();
-        size += self.max_string_length.byte_len();
-        size += self.data_set_field_id.byte_len();
-        size += self.properties.byte_len();
+        size += self.name.byte_len(ctx);
+        size += self.description.byte_len(ctx);
+        size += self.field_flags.byte_len(ctx);
+        size += self.built_in_type.byte_len(ctx);
+        size += self.data_type.byte_len(ctx);
+        size += self.value_rank.byte_len(ctx);
+        size += self.array_dimensions.byte_len(ctx);
+        size += self.max_string_length.byte_len(ctx);
+        size += self.data_set_field_id.byte_len(ctx);
+        size += self.properties.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.name.encode(stream)?;
-        size += self.description.encode(stream)?;
-        size += self.field_flags.encode(stream)?;
-        size += self.built_in_type.encode(stream)?;
-        size += self.data_type.encode(stream)?;
-        size += self.value_rank.encode(stream)?;
-        size += self.array_dimensions.encode(stream)?;
-        size += self.max_string_length.encode(stream)?;
-        size += self.data_set_field_id.encode(stream)?;
-        size += self.properties.encode(stream)?;
+        size += self.name.encode(stream, ctx)?;
+        size += self.description.encode(stream, ctx)?;
+        size += self.field_flags.encode(stream, ctx)?;
+        size += self.built_in_type.encode(stream, ctx)?;
+        size += self.data_type.encode(stream, ctx)?;
+        size += self.value_rank.encode(stream, ctx)?;
+        size += self.array_dimensions.encode(stream, ctx)?;
+        size += self.max_string_length.encode(stream, ctx)?;
+        size += self.data_set_field_id.encode(stream, ctx)?;
+        size += self.properties.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for FieldMetaData {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            description: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            field_flags: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            built_in_type: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            data_type: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            value_rank: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            array_dimensions: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            max_string_length: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            data_set_field_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            properties: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            description: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            field_flags: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            built_in_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            data_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            value_rank: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            array_dimensions: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            max_string_length: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            data_set_field_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            properties: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

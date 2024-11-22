@@ -8,7 +8,9 @@ use std::io::{Cursor, Error, ErrorKind, Read, Result, Write};
 
 use log::error;
 use opcua_types::{
-    encoding::*, service_types::EndpointDescription, status_code::StatusCode, string::UAString,
+    process_decode_io_result, process_encode_io_result, read_u32,
+    service_types::EndpointDescription, status_code::StatusCode, string::UAString, write_u32,
+    write_u8, DecodingOptions, EncodingResult, SimpleBinaryDecodable, SimpleBinaryEncodable,
 };
 
 use super::url::url_matches_except_host;
@@ -46,7 +48,7 @@ pub struct MessageHeader {
     pub message_size: u32,
 }
 
-impl BinaryEncodable for MessageHeader {
+impl SimpleBinaryEncodable for MessageHeader {
     fn byte_len(&self) -> usize {
         MESSAGE_HEADER_LEN
     }
@@ -71,8 +73,8 @@ impl BinaryEncodable for MessageHeader {
     }
 }
 
-impl BinaryDecodable for MessageHeader {
-    fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
+impl SimpleBinaryDecodable for MessageHeader {
+    fn decode<S: Read + ?Sized>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         let mut message_type = [0u8; 4];
         process_decode_io_result(stream.read_exact(&mut message_type))?;
         let message_size = read_u32(stream)?;
@@ -185,7 +187,7 @@ pub struct HelloMessage {
     pub endpoint_url: UAString,
 }
 
-impl BinaryEncodable for HelloMessage {
+impl SimpleBinaryEncodable for HelloMessage {
     fn byte_len(&self) -> usize {
         // 5 * u32 = 20
         self.message_header.byte_len() + 20 + self.endpoint_url.byte_len()
@@ -204,8 +206,11 @@ impl BinaryEncodable for HelloMessage {
     }
 }
 
-impl BinaryDecodable for HelloMessage {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
+impl SimpleBinaryDecodable for HelloMessage {
+    fn decode<S: Read + ?Sized>(
+        stream: &mut S,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self> {
         let message_header = MessageHeader::decode(stream, decoding_options)?;
         let protocol_version = u32::decode(stream, decoding_options)?;
         let receive_buffer_size = u32::decode(stream, decoding_options)?;
@@ -295,7 +300,7 @@ pub struct AcknowledgeMessage {
     pub max_chunk_count: u32,
 }
 
-impl BinaryEncodable for AcknowledgeMessage {
+impl SimpleBinaryEncodable for AcknowledgeMessage {
     fn byte_len(&self) -> usize {
         self.message_header.byte_len() + 20
     }
@@ -312,8 +317,11 @@ impl BinaryEncodable for AcknowledgeMessage {
     }
 }
 
-impl BinaryDecodable for AcknowledgeMessage {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
+impl SimpleBinaryDecodable for AcknowledgeMessage {
+    fn decode<S: Read + ?Sized>(
+        stream: &mut S,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self> {
         let message_header = MessageHeader::decode(stream, decoding_options)?;
         let protocol_version = u32::decode(stream, decoding_options)?;
         let receive_buffer_size = u32::decode(stream, decoding_options)?;
@@ -360,7 +368,7 @@ pub struct ErrorMessage {
     pub reason: UAString,
 }
 
-impl BinaryEncodable for ErrorMessage {
+impl SimpleBinaryEncodable for ErrorMessage {
     fn byte_len(&self) -> usize {
         self.message_header.byte_len() + self.error.byte_len() + self.reason.byte_len()
     }
@@ -374,8 +382,11 @@ impl BinaryEncodable for ErrorMessage {
     }
 }
 
-impl BinaryDecodable for ErrorMessage {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
+impl SimpleBinaryDecodable for ErrorMessage {
+    fn decode<S: Read + ?Sized>(
+        stream: &mut S,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self> {
         let message_header = MessageHeader::decode(stream, decoding_options)?;
         let error = u32::decode(stream, decoding_options)?;
         let reason = UAString::decode(stream, decoding_options)?;
@@ -407,12 +418,10 @@ impl ErrorMessage {
 mod tests {
     use std::io::Cursor;
 
-    use crate::comms::tcp_types::{
-        AcknowledgeMessage, BinaryDecodable, HelloMessage, MessageHeader, MessageType,
-    };
+    use crate::comms::tcp_types::{AcknowledgeMessage, HelloMessage, MessageHeader, MessageType};
     use opcua_types::{
         ApplicationDescription, ByteString, DecodingOptions, EndpointDescription,
-        MessageSecurityMode, UAString,
+        MessageSecurityMode, SimpleBinaryDecodable, UAString,
     };
 
     fn hello_data() -> Vec<u8> {

@@ -8,10 +8,12 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+#[derive(Default)]
 pub struct DataSetReaderDataType {
     pub name: opcua::types::string::UAString,
     pub enabled: bool,
@@ -45,122 +47,85 @@ impl opcua::types::MessageInfo for DataSetReaderDataType {
     }
 }
 impl opcua::types::BinaryEncodable for DataSetReaderDataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.name.byte_len();
-        size += self.enabled.byte_len();
-        size += self.publisher_id.byte_len();
-        size += self.writer_group_id.byte_len();
-        size += self.data_set_writer_id.byte_len();
-        size += self.data_set_meta_data.byte_len();
-        size += self.data_set_field_content_mask.byte_len();
-        size += self.message_receive_timeout.byte_len();
-        size += self.key_frame_count.byte_len();
-        size += self.header_layout_uri.byte_len();
-        size += self.security_mode.byte_len();
-        size += self.security_group_id.byte_len();
-        size += self.security_key_services.byte_len();
-        size += self.data_set_reader_properties.byte_len();
-        size += self.transport_settings.byte_len();
-        size += self.message_settings.byte_len();
-        size += self.subscribed_data_set.byte_len();
+        size += self.name.byte_len(ctx);
+        size += self.enabled.byte_len(ctx);
+        size += self.publisher_id.byte_len(ctx);
+        size += self.writer_group_id.byte_len(ctx);
+        size += self.data_set_writer_id.byte_len(ctx);
+        size += self.data_set_meta_data.byte_len(ctx);
+        size += self.data_set_field_content_mask.byte_len(ctx);
+        size += self.message_receive_timeout.byte_len(ctx);
+        size += self.key_frame_count.byte_len(ctx);
+        size += self.header_layout_uri.byte_len(ctx);
+        size += self.security_mode.byte_len(ctx);
+        size += self.security_group_id.byte_len(ctx);
+        size += self.security_key_services.byte_len(ctx);
+        size += self.data_set_reader_properties.byte_len(ctx);
+        size += self.transport_settings.byte_len(ctx);
+        size += self.message_settings.byte_len(ctx);
+        size += self.subscribed_data_set.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.name.encode(stream)?;
-        size += self.enabled.encode(stream)?;
-        size += self.publisher_id.encode(stream)?;
-        size += self.writer_group_id.encode(stream)?;
-        size += self.data_set_writer_id.encode(stream)?;
-        size += self.data_set_meta_data.encode(stream)?;
-        size += self.data_set_field_content_mask.encode(stream)?;
-        size += self.message_receive_timeout.encode(stream)?;
-        size += self.key_frame_count.encode(stream)?;
-        size += self.header_layout_uri.encode(stream)?;
-        size += self.security_mode.encode(stream)?;
-        size += self.security_group_id.encode(stream)?;
-        size += self.security_key_services.encode(stream)?;
-        size += self.data_set_reader_properties.encode(stream)?;
-        size += self.transport_settings.encode(stream)?;
-        size += self.message_settings.encode(stream)?;
-        size += self.subscribed_data_set.encode(stream)?;
+        size += self.name.encode(stream, ctx)?;
+        size += self.enabled.encode(stream, ctx)?;
+        size += self.publisher_id.encode(stream, ctx)?;
+        size += self.writer_group_id.encode(stream, ctx)?;
+        size += self.data_set_writer_id.encode(stream, ctx)?;
+        size += self.data_set_meta_data.encode(stream, ctx)?;
+        size += self.data_set_field_content_mask.encode(stream, ctx)?;
+        size += self.message_receive_timeout.encode(stream, ctx)?;
+        size += self.key_frame_count.encode(stream, ctx)?;
+        size += self.header_layout_uri.encode(stream, ctx)?;
+        size += self.security_mode.encode(stream, ctx)?;
+        size += self.security_group_id.encode(stream, ctx)?;
+        size += self.security_key_services.encode(stream, ctx)?;
+        size += self.data_set_reader_properties.encode(stream, ctx)?;
+        size += self.transport_settings.encode(stream, ctx)?;
+        size += self.message_settings.encode(stream, ctx)?;
+        size += self.subscribed_data_set.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for DataSetReaderDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            enabled: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            publisher_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            writer_group_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            data_set_writer_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            data_set_meta_data: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            enabled: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            publisher_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            writer_group_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            data_set_writer_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            data_set_meta_data: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             data_set_field_content_mask: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            message_receive_timeout: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            key_frame_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            header_layout_uri: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            security_mode: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            security_group_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            security_key_services: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            message_receive_timeout: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            key_frame_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            header_layout_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            security_mode: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            security_group_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            security_key_services: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             data_set_reader_properties: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            transport_settings: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            message_settings: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            subscribed_data_set: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            transport_settings: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            message_settings: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            subscribed_data_set: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

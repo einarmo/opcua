@@ -104,42 +104,26 @@ fn make_variable_33(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "OK"),
-                        display_name: opcua::types::LocalizedText::new("", "OK"),
-                        value: 0i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Substitute (SU)"),
-                        display_name: opcua::types::LocalizedText::new("", "SUBSTITUTE"),
-                        value: 2048i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Wrong (WR)"),
-                        display_name: opcua::types::LocalizedText::new("", "WRONG"),
-                        value: 4096i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "NoSubmodule (NO)"),
-                        display_name: opcua::types::LocalizedText::new("", "NO_SUBMODULE"),
-                        value: 6144i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "OK"),
+                    display_name: opcua::types::LocalizedText::new("", "OK"),
+                    value: 0i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Substitute (SU)"),
+                    display_name: opcua::types::LocalizedText::new("", "SUBSTITUTE"),
+                    value: 2048i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Wrong (WR)"),
+                    display_name: opcua::types::LocalizedText::new("", "WRONG"),
+                    value: 4096i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "NoSubmodule (NO)"),
+                    display_name: opcua::types::LocalizedText::new("", "NO_SUBMODULE"),
+                    value: 6144i64,
+                }),
             ])),
             1u8,
             1u8,
@@ -1941,32 +1925,25 @@ fn make_variable_5(
                 opcua::types::DataValue::new_now(
                     opcua::types::Variant::from(
                         vec![
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("", ""), display_name :
-                            opcua::types::LocalizedText::new("", "IOCARSingle"), value :
-                            0i64, }, ns_map.namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("", ""),
+                            display_name : opcua::types::LocalizedText::new("",
+                            "IOCARSingle"), value : 0i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The supervisor AR is a special form of the IOCARSingle allowing takeover of the ownership of a submodule"),
                             display_name : opcua::types::LocalizedText::new("", "IOSAR"),
-                            value : 6i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            value : 6i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "This is a special form of the IOCARSingle indicating RT_CLASS_3 communication"),
                             display_name : opcua::types::LocalizedText::new("",
-                            "IOCARSingleUsingRT_CLASS_3"), value : 16i64, }, ns_map
-                            .namespaces()).expect("Invalid encoding ID"),
-                            opcua::types::ExtensionObject::from_message_full(&
-                            opcua::types::EnumValueType { description :
-                            opcua::types::LocalizedText::new("",
+                            "IOCARSingleUsingRT_CLASS_3"), value : 16i64, }),
+                            opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType
+                            { description : opcua::types::LocalizedText::new("",
                             "The SR AR is a special form of the IOCARSingle indicating system redundancy or dynamic reconfiguration usage"),
                             display_name : opcua::types::LocalizedText::new("",
-                            "IOCARSR"), value : 32i64, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
+                            "IOCARSR"), value : 32i64, }),
                         ],
                     ),
                 ),
@@ -2277,33 +2254,21 @@ fn make_variable_7(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Asset has been added"),
-                        display_name: opcua::types::LocalizedText::new("", "INSERTED"),
-                        value: 0i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Asset has been removed"),
-                        display_name: opcua::types::LocalizedText::new("", "REMOVED"),
-                        value: 1i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Asset has been changed"),
-                        display_name: opcua::types::LocalizedText::new("", "CHANGED"),
-                        value: 2i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Asset has been added"),
+                    display_name: opcua::types::LocalizedText::new("", "INSERTED"),
+                    value: 0i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Asset has been removed"),
+                    display_name: opcua::types::LocalizedText::new("", "REMOVED"),
+                    value: 1i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Asset has been changed"),
+                    display_name: opcua::types::LocalizedText::new("", "CHANGED"),
+                    value: 2i64,
+                }),
             ])),
             1u8,
             1u8,
@@ -2894,7 +2859,7 @@ fn make_variable_89(
                 opcua::types::DataValue::new_now(
                     opcua::types::Variant::from(
                         vec![
-                            opcua::types::ExtensionObject::from_message_full(& crate
+                            opcua::types::ExtensionObject::from_message(crate
                             ::generated::types::PnDeviceDiagnosisDataType { api : 0u32,
                             accumulative : crate
                             ::generated::types::PnChannelAccumulativeEnumeration::SINGLE,
@@ -2912,8 +2877,7 @@ fn make_variable_89(
                             ::generated::types::PnChannelSpecifierEnumeration::ALL_DISAPPEARS,
                             subslot : 0u16, __type : crate
                             ::generated::types::PnChannelTypeEnumeration::UNSPECIFIC,
-                            user_structure_identifier : 0u16, }, ns_map.namespaces())
-                            .expect("Invalid encoding ID"),
+                            user_structure_identifier : 0u16, }),
                         ],
                     ),
                 ),
@@ -2954,42 +2918,26 @@ fn make_variable_9(
             false,
             1i32,
             opcua::types::DataValue::new_now(opcua::types::Variant::from(vec![
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Device"),
-                        display_name: opcua::types::LocalizedText::new("", "DEVICE"),
-                        value: 0i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Real Module"),
-                        display_name: opcua::types::LocalizedText::new("", "MODULE"),
-                        value: 1i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Real Submodule"),
-                        display_name: opcua::types::LocalizedText::new("", "SUBMODULE"),
-                        value: 2i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
-                opcua::types::ExtensionObject::from_message_full(
-                    &opcua::types::EnumValueType {
-                        description: opcua::types::LocalizedText::new("", "Asset"),
-                        display_name: opcua::types::LocalizedText::new("", "ASSET"),
-                        value: 3i64,
-                    },
-                    ns_map.namespaces(),
-                )
-                .expect("Invalid encoding ID"),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Device"),
+                    display_name: opcua::types::LocalizedText::new("", "DEVICE"),
+                    value: 0i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Real Module"),
+                    display_name: opcua::types::LocalizedText::new("", "MODULE"),
+                    value: 1i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Real Submodule"),
+                    display_name: opcua::types::LocalizedText::new("", "SUBMODULE"),
+                    value: 2i64,
+                }),
+                opcua::types::ExtensionObject::from_message(opcua::types::EnumValueType {
+                    description: opcua::types::LocalizedText::new("", "Asset"),
+                    display_name: opcua::types::LocalizedText::new("", "ASSET"),
+                    value: 3i64,
+                }),
             ])),
             1u8,
             1u8,

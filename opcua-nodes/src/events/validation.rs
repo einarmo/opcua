@@ -251,7 +251,7 @@ fn validate_where_clause(
     // it is ignored. Extra operands for any operator shall result in an error. Annex B provides
     // examples using the ContentFilter structure.
 
-    let Some(elements) = &where_clause.elements else {
+    let Some(elements) = where_clause.elements else {
         return (
             ContentFilterResult {
                 element_results: None,
@@ -262,15 +262,15 @@ fn validate_where_clause(
     };
 
     let mut operand_refs: HashMap<usize, Vec<usize>> = HashMap::new();
-
+    let num_elements = elements.len();
     let element_result_pairs: Vec<(
         ContentFilterElementResult,
         Option<ParsedContentFilterElement>,
     )> = elements
-        .iter()
+        .into_iter()
         .enumerate()
         .map(|(element_idx, e)| {
-            let Some(filter_operands) = &e.filter_operands else {
+            let Some(filter_operands) = e.filter_operands else {
                 return (
                     ContentFilterElementResult {
                         status_code: StatusCode::BadFilterOperandCountMismatch,
@@ -280,6 +280,7 @@ fn validate_where_clause(
                     None,
                 );
             };
+            let num_filter_operands = filter_operands.len();
 
             let operand_count_mismatch = match e.filter_operator {
                 FilterOperator::Equals => filter_operands.len() != 2,
@@ -322,15 +323,10 @@ fn validate_where_clause(
             let mut operand_status_codes = Vec::with_capacity(filter_operands.len());
 
             let operand_results: Vec<_> = filter_operands
-                .iter()
+                .into_iter()
                 .map(|e| {
-                    let operand = <Operand>::try_from(e)?;
-                    ParsedOperand::parse(
-                        operand,
-                        elements.len(),
-                        type_tree,
-                        allow_attribute_operand,
-                    )
+                    let operand = <Operand>::try_from(e.clone())?;
+                    ParsedOperand::parse(operand, num_elements, type_tree, allow_attribute_operand)
                 })
                 .collect();
 
@@ -349,7 +345,7 @@ fn validate_where_clause(
                     Err(e) => operand_status_codes.push(e),
                 }
             }
-            let operator_invalid = valid_operands.len() != filter_operands.len();
+            let operator_invalid = valid_operands.len() != num_filter_operands;
 
             // Check what error status to return
             let status_code = if operand_count_mismatch {
@@ -381,8 +377,8 @@ fn validate_where_clause(
         .collect();
 
     let mut is_valid = true;
-    let mut valid_elements = Vec::with_capacity(elements.len());
-    let mut element_results = Vec::with_capacity(elements.len());
+    let mut valid_elements = Vec::with_capacity(num_elements);
+    let mut element_results = Vec::with_capacity(num_elements);
     for (result, element) in element_result_pairs {
         if let Some(element) = element {
             valid_elements.push(element);

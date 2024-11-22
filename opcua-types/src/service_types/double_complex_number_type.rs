@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct DoubleComplexNumberType {
@@ -29,32 +30,34 @@ impl opcua::types::MessageInfo for DoubleComplexNumberType {
     }
 }
 impl opcua::types::BinaryEncodable for DoubleComplexNumberType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.real.byte_len();
-        size += self.imaginary.byte_len();
+        size += self.real.byte_len(ctx);
+        size += self.imaginary.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.real.encode(stream)?;
-        size += self.imaginary.encode(stream)?;
+        size += self.real.encode(stream, ctx)?;
+        size += self.imaginary.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for DoubleComplexNumberType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            real: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            imaginary: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            real: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            imaginary: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

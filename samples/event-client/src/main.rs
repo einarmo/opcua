@@ -15,8 +15,8 @@ use opcua::client::{ClientBuilder, EventCallback, IdentityToken, Session};
 use opcua::crypto::SecurityPolicy;
 use opcua::types::{
     AttributeId, ContentFilter, EventFilter, ExtensionObject, MessageSecurityMode,
-    MonitoredItemCreateRequest, NodeId, ObjectId, ObjectTypeId, QualifiedName,
-    SimpleAttributeOperand, StatusCode, TimestampsToReturn, UAString, UserTokenPolicy,
+    MonitoredItemCreateRequest, NodeId, ObjectTypeId, QualifiedName, SimpleAttributeOperand,
+    StatusCode, TimestampsToReturn, UAString, UserTokenPolicy,
 };
 
 struct Args {
@@ -180,10 +180,7 @@ async fn subscribe_to_events(
     item_to_create.item_to_monitor.attribute_id = AttributeId::EventNotifier as u32;
     item_to_create.requested_parameters.sampling_interval = 100.0;
     item_to_create.requested_parameters.queue_size = 2;
-    item_to_create.requested_parameters.filter = ExtensionObject::from_encodable(
-        ObjectId::EventFilter_Encoding_DefaultBinary,
-        &event_filter,
-    );
+    item_to_create.requested_parameters.filter = ExtensionObject::from_message(event_filter);
     if let Ok(result) = session
         .create_monitored_items(
             subscription_id,

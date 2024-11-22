@@ -8,10 +8,12 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+#[derive(Default)]
 pub struct BrokerWriterGroupTransportDataType {
     pub queue_name: opcua::types::string::UAString,
     pub resource_uri: opcua::types::string::UAString,
@@ -30,46 +32,45 @@ impl opcua::types::MessageInfo for BrokerWriterGroupTransportDataType {
     }
 }
 impl opcua::types::BinaryEncodable for BrokerWriterGroupTransportDataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.queue_name.byte_len();
-        size += self.resource_uri.byte_len();
-        size += self.authentication_profile_uri.byte_len();
-        size += self.requested_delivery_guarantee.byte_len();
+        size += self.queue_name.byte_len(ctx);
+        size += self.resource_uri.byte_len(ctx);
+        size += self.authentication_profile_uri.byte_len(ctx);
+        size += self.requested_delivery_guarantee.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.queue_name.encode(stream)?;
-        size += self.resource_uri.encode(stream)?;
-        size += self.authentication_profile_uri.encode(stream)?;
-        size += self.requested_delivery_guarantee.encode(stream)?;
+        size += self.queue_name.encode(stream, ctx)?;
+        size += self.resource_uri.encode(stream, ctx)?;
+        size += self.authentication_profile_uri.encode(stream, ctx)?;
+        size += self.requested_delivery_guarantee.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for BrokerWriterGroupTransportDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            queue_name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            resource_uri: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            queue_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            resource_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             authentication_profile_uri: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             requested_delivery_guarantee: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
         })
     }

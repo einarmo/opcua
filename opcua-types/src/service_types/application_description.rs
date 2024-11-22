@@ -8,10 +8,12 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+#[derive(Default)]
 pub struct ApplicationDescription {
     pub application_uri: opcua::types::string::UAString,
     pub product_uri: opcua::types::string::UAString,
@@ -33,68 +35,49 @@ impl opcua::types::MessageInfo for ApplicationDescription {
     }
 }
 impl opcua::types::BinaryEncodable for ApplicationDescription {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.application_uri.byte_len();
-        size += self.product_uri.byte_len();
-        size += self.application_name.byte_len();
-        size += self.application_type.byte_len();
-        size += self.gateway_server_uri.byte_len();
-        size += self.discovery_profile_uri.byte_len();
-        size += self.discovery_urls.byte_len();
+        size += self.application_uri.byte_len(ctx);
+        size += self.product_uri.byte_len(ctx);
+        size += self.application_name.byte_len(ctx);
+        size += self.application_type.byte_len(ctx);
+        size += self.gateway_server_uri.byte_len(ctx);
+        size += self.discovery_profile_uri.byte_len(ctx);
+        size += self.discovery_urls.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.application_uri.encode(stream)?;
-        size += self.product_uri.encode(stream)?;
-        size += self.application_name.encode(stream)?;
-        size += self.application_type.encode(stream)?;
-        size += self.gateway_server_uri.encode(stream)?;
-        size += self.discovery_profile_uri.encode(stream)?;
-        size += self.discovery_urls.encode(stream)?;
+        size += self.application_uri.encode(stream, ctx)?;
+        size += self.product_uri.encode(stream, ctx)?;
+        size += self.application_name.encode(stream, ctx)?;
+        size += self.application_type.encode(stream, ctx)?;
+        size += self.gateway_server_uri.encode(stream, ctx)?;
+        size += self.discovery_profile_uri.encode(stream, ctx)?;
+        size += self.discovery_urls.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for ApplicationDescription {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            application_uri: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            product_uri: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            application_name: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            application_type: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            gateway_server_uri: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            discovery_profile_uri: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            discovery_urls: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            application_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            product_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            application_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            application_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            gateway_server_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            discovery_profile_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            discovery_urls: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

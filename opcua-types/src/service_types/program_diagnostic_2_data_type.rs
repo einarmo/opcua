@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct ProgramDiagnostic2DataType {
@@ -20,8 +21,8 @@ pub struct ProgramDiagnostic2DataType {
     pub last_transition_time: opcua::types::date_time::DateTime,
     pub last_method_call: opcua::types::string::UAString,
     pub last_method_session_id: opcua::types::node_id::NodeId,
-    pub last_method_input_arguments: Option<Vec<super::argument::Argument>>,
-    pub last_method_output_arguments: Option<Vec<super::argument::Argument>>,
+    pub last_method_input_arguments: Option<Vec<crate::argument::Argument>>,
+    pub last_method_output_arguments: Option<Vec<crate::argument::Argument>>,
     pub last_method_input_values: Option<Vec<opcua::types::variant::Variant>>,
     pub last_method_output_values: Option<Vec<opcua::types::variant::Variant>>,
     pub last_method_call_time: opcua::types::date_time::DateTime,
@@ -39,97 +40,81 @@ impl opcua::types::MessageInfo for ProgramDiagnostic2DataType {
     }
 }
 impl opcua::types::BinaryEncodable for ProgramDiagnostic2DataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.create_session_id.byte_len();
-        size += self.create_client_name.byte_len();
-        size += self.invocation_creation_time.byte_len();
-        size += self.last_transition_time.byte_len();
-        size += self.last_method_call.byte_len();
-        size += self.last_method_session_id.byte_len();
-        size += self.last_method_input_arguments.byte_len();
-        size += self.last_method_output_arguments.byte_len();
-        size += self.last_method_input_values.byte_len();
-        size += self.last_method_output_values.byte_len();
-        size += self.last_method_call_time.byte_len();
-        size += self.last_method_return_status.byte_len();
+        size += self.create_session_id.byte_len(ctx);
+        size += self.create_client_name.byte_len(ctx);
+        size += self.invocation_creation_time.byte_len(ctx);
+        size += self.last_transition_time.byte_len(ctx);
+        size += self.last_method_call.byte_len(ctx);
+        size += self.last_method_session_id.byte_len(ctx);
+        size += self.last_method_input_arguments.byte_len(ctx);
+        size += self.last_method_output_arguments.byte_len(ctx);
+        size += self.last_method_input_values.byte_len(ctx);
+        size += self.last_method_output_values.byte_len(ctx);
+        size += self.last_method_call_time.byte_len(ctx);
+        size += self.last_method_return_status.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.create_session_id.encode(stream)?;
-        size += self.create_client_name.encode(stream)?;
-        size += self.invocation_creation_time.encode(stream)?;
-        size += self.last_transition_time.encode(stream)?;
-        size += self.last_method_call.encode(stream)?;
-        size += self.last_method_session_id.encode(stream)?;
-        size += self.last_method_input_arguments.encode(stream)?;
-        size += self.last_method_output_arguments.encode(stream)?;
-        size += self.last_method_input_values.encode(stream)?;
-        size += self.last_method_output_values.encode(stream)?;
-        size += self.last_method_call_time.encode(stream)?;
-        size += self.last_method_return_status.encode(stream)?;
+        size += self.create_session_id.encode(stream, ctx)?;
+        size += self.create_client_name.encode(stream, ctx)?;
+        size += self.invocation_creation_time.encode(stream, ctx)?;
+        size += self.last_transition_time.encode(stream, ctx)?;
+        size += self.last_method_call.encode(stream, ctx)?;
+        size += self.last_method_session_id.encode(stream, ctx)?;
+        size += self.last_method_input_arguments.encode(stream, ctx)?;
+        size += self.last_method_output_arguments.encode(stream, ctx)?;
+        size += self.last_method_input_values.encode(stream, ctx)?;
+        size += self.last_method_output_values.encode(stream, ctx)?;
+        size += self.last_method_call_time.encode(stream, ctx)?;
+        size += self.last_method_return_status.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for ProgramDiagnostic2DataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            create_session_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            create_client_name: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            create_session_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            create_client_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             invocation_creation_time: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            last_transition_time: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            last_method_call: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            last_method_session_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            last_transition_time: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            last_method_call: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            last_method_session_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             last_method_input_arguments: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             last_method_output_arguments: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             last_method_input_values: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             last_method_output_values: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            last_method_call_time: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            last_method_call_time: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             last_method_return_status: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
         })
     }

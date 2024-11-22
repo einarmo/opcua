@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct SetTriggeringResponse {
@@ -34,58 +35,51 @@ impl opcua::types::MessageInfo for SetTriggeringResponse {
     }
 }
 impl opcua::types::BinaryEncodable for SetTriggeringResponse {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.response_header.byte_len();
-        size += self.add_results.byte_len();
-        size += self.add_diagnostic_infos.byte_len();
-        size += self.remove_results.byte_len();
-        size += self.remove_diagnostic_infos.byte_len();
+        size += self.response_header.byte_len(ctx);
+        size += self.add_results.byte_len(ctx);
+        size += self.add_diagnostic_infos.byte_len(ctx);
+        size += self.remove_results.byte_len(ctx);
+        size += self.remove_diagnostic_infos.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.response_header.encode(stream)?;
-        size += self.add_results.encode(stream)?;
-        size += self.add_diagnostic_infos.encode(stream)?;
-        size += self.remove_results.encode(stream)?;
-        size += self.remove_diagnostic_infos.encode(stream)?;
+        size += self.response_header.encode(stream, ctx)?;
+        size += self.add_results.encode(stream, ctx)?;
+        size += self.add_diagnostic_infos.encode(stream, ctx)?;
+        size += self.remove_results.encode(stream, ctx)?;
+        size += self.remove_diagnostic_infos.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for SetTriggeringResponse {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryDecodable::decode(
             stream,
-            decoding_options,
+            ctx,
         )?;
         let __request_handle = response_header.request_handle;
         Ok(Self {
             response_header,
-            add_results: opcua::types::BinaryDecodable::decode(stream, decoding_options)
+            add_results: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            add_diagnostic_infos: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            add_diagnostic_infos: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            remove_results: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            remove_results: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            remove_diagnostic_infos: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            remove_diagnostic_infos: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }

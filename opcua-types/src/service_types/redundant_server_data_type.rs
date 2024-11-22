@@ -8,10 +8,12 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+#[derive(Default)]
 pub struct RedundantServerDataType {
     pub server_id: opcua::types::string::UAString,
     pub service_level: u8,
@@ -29,41 +31,37 @@ impl opcua::types::MessageInfo for RedundantServerDataType {
     }
 }
 impl opcua::types::BinaryEncodable for RedundantServerDataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.server_id.byte_len();
-        size += self.service_level.byte_len();
-        size += self.server_state.byte_len();
+        size += self.server_id.byte_len(ctx);
+        size += self.service_level.byte_len(ctx);
+        size += self.server_state.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.server_id.encode(stream)?;
-        size += self.service_level.encode(stream)?;
-        size += self.server_state.encode(stream)?;
+        size += self.server_id.encode(stream, ctx)?;
+        size += self.service_level.encode(stream, ctx)?;
+        size += self.server_state.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for RedundantServerDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            server_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            service_level: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            server_state: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            server_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            service_level: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            server_state: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

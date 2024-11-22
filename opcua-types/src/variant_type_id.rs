@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
-use log::error;
-
 use crate::{DataTypeId, NodeId, NodeIdError, StatusCode};
 
 /// The variant type id is the type of the variant but without its payload.
@@ -165,8 +163,8 @@ impl VariantScalarTypeId {
         }
     }
 
-    pub fn from_encoding_mask(encoding_mask: u8) -> Result<Self, StatusCode> {
-        Ok(match encoding_mask & !EncodingMask::ARRAY_MASK {
+    pub fn from_encoding_mask(encoding_mask: u8) -> Option<Self> {
+        Some(match encoding_mask & !EncodingMask::ARRAY_MASK {
             EncodingMask::BOOLEAN => Self::Boolean,
             EncodingMask::SBYTE => Self::SByte,
             EncodingMask::BYTE => Self::Byte,
@@ -193,8 +191,7 @@ impl VariantScalarTypeId {
             EncodingMask::DATA_VALUE => Self::DataValue,
             EncodingMask::DIAGNOSTIC_INFO => Self::DiagnosticInfo,
             _ => {
-                error!("Unrecognized encoding mask");
-                return Err(StatusCode::BadDecodingError);
+                return None;
             }
         })
     }

@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct ServerDiagnosticsSummaryDataType {
@@ -39,98 +40,79 @@ impl opcua::types::MessageInfo for ServerDiagnosticsSummaryDataType {
     }
 }
 impl opcua::types::BinaryEncodable for ServerDiagnosticsSummaryDataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.server_view_count.byte_len();
-        size += self.current_session_count.byte_len();
-        size += self.cumulated_session_count.byte_len();
-        size += self.security_rejected_session_count.byte_len();
-        size += self.rejected_session_count.byte_len();
-        size += self.session_timeout_count.byte_len();
-        size += self.session_abort_count.byte_len();
-        size += self.current_subscription_count.byte_len();
-        size += self.cumulated_subscription_count.byte_len();
-        size += self.publishing_interval_count.byte_len();
-        size += self.security_rejected_requests_count.byte_len();
-        size += self.rejected_requests_count.byte_len();
+        size += self.server_view_count.byte_len(ctx);
+        size += self.current_session_count.byte_len(ctx);
+        size += self.cumulated_session_count.byte_len(ctx);
+        size += self.security_rejected_session_count.byte_len(ctx);
+        size += self.rejected_session_count.byte_len(ctx);
+        size += self.session_timeout_count.byte_len(ctx);
+        size += self.session_abort_count.byte_len(ctx);
+        size += self.current_subscription_count.byte_len(ctx);
+        size += self.cumulated_subscription_count.byte_len(ctx);
+        size += self.publishing_interval_count.byte_len(ctx);
+        size += self.security_rejected_requests_count.byte_len(ctx);
+        size += self.rejected_requests_count.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.server_view_count.encode(stream)?;
-        size += self.current_session_count.encode(stream)?;
-        size += self.cumulated_session_count.encode(stream)?;
-        size += self.security_rejected_session_count.encode(stream)?;
-        size += self.rejected_session_count.encode(stream)?;
-        size += self.session_timeout_count.encode(stream)?;
-        size += self.session_abort_count.encode(stream)?;
-        size += self.current_subscription_count.encode(stream)?;
-        size += self.cumulated_subscription_count.encode(stream)?;
-        size += self.publishing_interval_count.encode(stream)?;
-        size += self.security_rejected_requests_count.encode(stream)?;
-        size += self.rejected_requests_count.encode(stream)?;
+        size += self.server_view_count.encode(stream, ctx)?;
+        size += self.current_session_count.encode(stream, ctx)?;
+        size += self.cumulated_session_count.encode(stream, ctx)?;
+        size += self.security_rejected_session_count.encode(stream, ctx)?;
+        size += self.rejected_session_count.encode(stream, ctx)?;
+        size += self.session_timeout_count.encode(stream, ctx)?;
+        size += self.session_abort_count.encode(stream, ctx)?;
+        size += self.current_subscription_count.encode(stream, ctx)?;
+        size += self.cumulated_subscription_count.encode(stream, ctx)?;
+        size += self.publishing_interval_count.encode(stream, ctx)?;
+        size += self.security_rejected_requests_count.encode(stream, ctx)?;
+        size += self.rejected_requests_count.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for ServerDiagnosticsSummaryDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            server_view_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            current_session_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            cumulated_session_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            server_view_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            current_session_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            cumulated_session_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             security_rejected_session_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            rejected_session_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            session_timeout_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            session_abort_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            rejected_session_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            session_timeout_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            session_abort_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             current_subscription_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             cumulated_subscription_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             publishing_interval_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             security_rejected_requests_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            rejected_requests_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            rejected_requests_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

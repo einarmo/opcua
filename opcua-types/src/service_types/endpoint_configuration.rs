@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct EndpointConfiguration {
@@ -36,80 +37,55 @@ impl opcua::types::MessageInfo for EndpointConfiguration {
     }
 }
 impl opcua::types::BinaryEncodable for EndpointConfiguration {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.operation_timeout.byte_len();
-        size += self.use_binary_encoding.byte_len();
-        size += self.max_string_length.byte_len();
-        size += self.max_byte_string_length.byte_len();
-        size += self.max_array_length.byte_len();
-        size += self.max_message_size.byte_len();
-        size += self.max_buffer_size.byte_len();
-        size += self.channel_lifetime.byte_len();
-        size += self.security_token_lifetime.byte_len();
+        size += self.operation_timeout.byte_len(ctx);
+        size += self.use_binary_encoding.byte_len(ctx);
+        size += self.max_string_length.byte_len(ctx);
+        size += self.max_byte_string_length.byte_len(ctx);
+        size += self.max_array_length.byte_len(ctx);
+        size += self.max_message_size.byte_len(ctx);
+        size += self.max_buffer_size.byte_len(ctx);
+        size += self.channel_lifetime.byte_len(ctx);
+        size += self.security_token_lifetime.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.operation_timeout.encode(stream)?;
-        size += self.use_binary_encoding.encode(stream)?;
-        size += self.max_string_length.encode(stream)?;
-        size += self.max_byte_string_length.encode(stream)?;
-        size += self.max_array_length.encode(stream)?;
-        size += self.max_message_size.encode(stream)?;
-        size += self.max_buffer_size.encode(stream)?;
-        size += self.channel_lifetime.encode(stream)?;
-        size += self.security_token_lifetime.encode(stream)?;
+        size += self.operation_timeout.encode(stream, ctx)?;
+        size += self.use_binary_encoding.encode(stream, ctx)?;
+        size += self.max_string_length.encode(stream, ctx)?;
+        size += self.max_byte_string_length.encode(stream, ctx)?;
+        size += self.max_array_length.encode(stream, ctx)?;
+        size += self.max_message_size.encode(stream, ctx)?;
+        size += self.max_buffer_size.encode(stream, ctx)?;
+        size += self.channel_lifetime.encode(stream, ctx)?;
+        size += self.security_token_lifetime.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for EndpointConfiguration {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            operation_timeout: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            use_binary_encoding: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            max_string_length: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            max_byte_string_length: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            max_array_length: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            max_message_size: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            max_buffer_size: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            channel_lifetime: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            security_token_lifetime: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            operation_timeout: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            use_binary_encoding: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            max_string_length: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            max_byte_string_length: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            max_array_length: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            max_message_size: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            max_buffer_size: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            channel_lifetime: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            security_token_lifetime: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

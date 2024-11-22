@@ -383,7 +383,7 @@ impl CoreNodeManagerImpl {
             }
             VariableId::Server_LocalTime => {
                 let offset = chrono::Local::now().offset().fix().local_minus_utc() / 60;
-                ExtensionObject::from_message(&TimeZoneDataType {
+                ExtensionObject::from_message(TimeZoneDataType {
                     offset: offset.try_into().ok()?,
                     // TODO: Figure out how to set this. Chrono does not provide a way to
                     // tell whether daylight savings is in effect for the local time zone.
@@ -396,7 +396,7 @@ impl CoreNodeManagerImpl {
                 self.status.full_status_obj().into()
             }
             VariableId::Server_ServerStatus_BuildInfo => {
-                ExtensionObject::from_message(&self.status.build_info()).into()
+                ExtensionObject::from_message(self.status.build_info()).into()
             }
             VariableId::Server_ServerStatus_BuildInfo_BuildDate => {
                 self.status.build_info().build_date.into()

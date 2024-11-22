@@ -13,16 +13,15 @@ use std::{
     sync::atomic::{AtomicUsize, Ordering},
 };
 
-use log::error;
-
 use crate::{
     byte_string::ByteString,
-    encoding::*,
+    encoding::{BinaryDecodable, BinaryEncodable, EncodingResult},
     guid::Guid,
     node_ids::{ObjectId, ReferenceTypeId},
+    read_u16, read_u32, read_u8,
     status_code::StatusCode,
     string::*,
-    MethodId,
+    write_u16, write_u32, write_u8, Error, MethodId,
 };
 
 use super::{node_ids::VariableId, DataTypeId, ObjectTypeId, VariableTypeId};
@@ -167,150 +166,163 @@ impl fmt::Display for NodeId {
 
 #[cfg(feature = "json")]
 mod json {
-    use crate::{ByteString, Guid, UAString};
+    use std::io::{Read, Write};
+    use std::str::FromStr;
 
-    use super::{Identifier, NodeId};
-    use serde::{
-        de::{self, IgnoredAny, Visitor},
-        ser::SerializeStruct,
-        Deserialize, Serialize,
-    };
+    use log::warn;
 
-    impl Serialize for NodeId {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: serde::Serializer,
-        {
-            let mut len = 1;
-            if self.namespace != 0 {
-                len += 1;
-            }
-            if !matches!(self.identifier, Identifier::Numeric(_)) {
-                len += 1;
-            }
+    use crate::{json::*, ByteString, Error, Guid};
 
-            let mut struct_ser = serializer.serialize_struct("NodeId", len)?;
+    use super::{Identifier, NodeId, UAString};
+    enum RawIdentifier {
+        String(String),
+        Integer(u32),
+    }
+
+    impl JsonEncodable for NodeId {
+        fn encode(
+            &self,
+            stream: &mut JsonStreamWriter<&mut dyn Write>,
+            ctx: &crate::json::Context<'_>,
+        ) -> super::EncodingResult<()> {
+            stream.begin_object()?;
             match &self.identifier {
-                Identifier::Numeric(n) => {
-                    struct_ser.serialize_field("Id", n)?;
+                super::Identifier::Numeric(n) => {
+                    stream.name("Id")?;
+                    stream.number_value(*n)?;
                 }
-                Identifier::String(uastring) => {
-                    struct_ser.serialize_field("IdType", &1)?;
-                    struct_ser.serialize_field("Id", uastring)?;
+                super::Identifier::String(uastring) => {
+                    stream.name("IdType")?;
+                    stream.number_value(1)?;
+                    stream.name("Id")?;
+                    JsonEncodable::encode(uastring, stream, ctx)?;
                 }
-                Identifier::Guid(guid) => {
-                    struct_ser.serialize_field("IdType", &2)?;
-                    struct_ser.serialize_field("Id", guid)?;
+                super::Identifier::Guid(guid) => {
+                    stream.name("IdType")?;
+                    stream.number_value(2)?;
+                    stream.name("Id")?;
+                    JsonEncodable::encode(guid, stream, ctx)?;
                 }
-                Identifier::ByteString(byte_string) => {
-                    struct_ser.serialize_field("IdType", &3)?;
-                    struct_ser.serialize_field("Id", byte_string)?;
+                super::Identifier::ByteString(byte_string) => {
+                    stream.name("IdType")?;
+                    stream.number_value(3)?;
+                    stream.name("Id")?;
+                    JsonEncodable::encode(byte_string, stream, ctx)?;
                 }
             }
-
             if self.namespace != 0 {
-                struct_ser.serialize_field("Namespace", &self.namespace)?;
+                stream.name("Namespace")?;
+                stream.number_value(self.namespace)?;
             }
+            stream.end_object()?;
+            Ok(())
+        }
 
-            struct_ser.end()
+        fn is_null_json(&self) -> bool {
+            self.is_null()
         }
     }
 
-    impl<'de> Deserialize<'de> for NodeId {
-        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: serde::Deserializer<'de>,
-        {
-            struct NodeIdVisitor;
-
-            impl<'de> Visitor<'de> for NodeIdVisitor {
-                type Value = NodeId;
-
-                fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-                    write!(formatter, "an object containing a NodeId")
+    impl JsonDecodable for NodeId {
+        fn decode(
+            stream: &mut JsonStreamReader<&mut dyn Read>,
+            _ctx: &Context<'_>,
+        ) -> super::EncodingResult<Self> {
+            match stream.peek()? {
+                ValueType::Null => {
+                    stream.next_null()?;
+                    return Ok(Self::null());
                 }
+                _ => stream.begin_object()?,
+            }
 
-                fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
-                where
-                    A: serde::de::MapAccess<'de>,
-                {
-                    let mut id_type: Option<u16> = None;
-                    let mut namespace: Option<u16> = None;
-                    let mut value: Option<serde_json::Value> = None;
-                    while let Some(key) = map.next_key::<String>()? {
-                        match key.as_str() {
-                            "Id" => {
-                                value = Some(map.next_value()?);
-                            }
-                            "Namespace" => {
-                                namespace = Some(map.next_value()?);
-                            }
-                            "IdType" => id_type = Some(map.next_value()?),
-                            _ => {
-                                map.next_value::<IgnoredAny>()?;
-                            }
-                        }
+            let mut id_type: Option<u16> = None;
+            let mut namespace: Option<u16> = None;
+            let mut value: Option<RawIdentifier> = None;
+
+            while stream.has_next()? {
+                match stream.next_name()? {
+                    "IdType" => {
+                        id_type = Some(stream.next_number()??);
                     }
-
-                    // The standard implies that this field is required.
-                    let Some(value) = value else {
-                        return Err(de::Error::custom(
-                            "Failed to deserialize NodeId, missing Id field",
-                        ));
-                    };
-
-                    if value.is_null() {
-                        return Err(de::Error::custom(
-                            "Failed to deserialize NodeId, null Id field",
-                        ));
+                    "Namespace" => {
+                        namespace = Some(stream.next_number()??);
                     }
-
-                    let identifier = match id_type {
-                        Some(1) => {
-                            let s: UAString =
-                                serde_json::from_value(value).map_err(de::Error::custom)?;
-                            if s.is_null() || s.is_empty() {
-                                return Err(de::Error::custom("Invalid NodeId, empty identifier"));
-                            }
-                            Identifier::String(s)
+                    "Id" => match stream.peek()? {
+                        ValueType::Null => {
+                            stream.next_null()?;
+                            value = Some(RawIdentifier::Integer(0));
                         }
-                        Some(2) => {
-                            let s: Guid =
-                                serde_json::from_value(value).map_err(de::Error::custom)?;
-                            Identifier::Guid(s)
+                        ValueType::Number => {
+                            value = Some(RawIdentifier::Integer(stream.next_number()??));
                         }
-                        Some(3) => {
-                            let s: ByteString =
-                                serde_json::from_value(value).map_err(de::Error::custom)?;
-                            if s.is_null() || s.is_empty() {
-                                return Err(de::Error::custom("Invalid NodeId, empty identifier"));
-                            }
-                            Identifier::ByteString(s)
+                        _ => {
+                            value = Some(RawIdentifier::String(stream.next_string()?));
                         }
-                        None | Some(0) => Identifier::Numeric(
-                            serde_json::from_value(value).map_err(de::Error::custom)?,
-                        ),
-                        Some(r) => {
-                            return Err(de::Error::custom(format!(
-                                "Failed to deserialize NodeId, got unexpected IdType {r}"
-                            )))
-                        }
-                    };
-
-                    Ok(NodeId {
-                        namespace: namespace.unwrap_or_default(),
-                        identifier,
-                    })
+                    },
+                    _ => stream.skip_value()?,
                 }
             }
 
-            deserializer.deserialize_map(NodeIdVisitor)
+            let identifier = match id_type {
+                Some(1) => {
+                    let Some(RawIdentifier::String(s)) = value else {
+                        return Err(Error::decoding("Invalid NodeId, empty identifier"));
+                    };
+                    let s = UAString::from(s);
+                    if s.is_null() || s.is_empty() {
+                        return Err(Error::decoding("Invalid NodeId, empty identifier"));
+                    }
+                    Identifier::String(s)
+                }
+                Some(2) => {
+                    let Some(RawIdentifier::String(s)) = value else {
+                        return Err(Error::decoding("Invalid NodeId, empty identifier"));
+                    };
+                    if s.is_empty() {
+                        return Err(Error::decoding("Invalid NodeId, empty identifier"));
+                    }
+                    let s = Guid::from_str(&s).map_err(|_| {
+                        warn!("Unable to decode GUID identifier");
+                        Error::decoding("Unable to decode GUID identifier")
+                    })?;
+                    Identifier::Guid(s)
+                }
+                Some(3) => {
+                    let Some(RawIdentifier::String(s)) = value else {
+                        return Err(Error::decoding("Invalid NodeId, empty identifier"));
+                    };
+                    if s.is_empty() {
+                        return Err(Error::decoding("Invalid NodeId, empty identifier"));
+                    }
+                    let s: ByteString = ByteString::from_base64(&s)
+                        .ok_or_else(|| Error::decoding("Unable to decode bytestring identifier"))?;
+                    Identifier::ByteString(s)
+                }
+                None | Some(0) => {
+                    let Some(RawIdentifier::Integer(s)) = value else {
+                        return Err(Error::decoding("Invalid NodeId, empty identifier"));
+                    };
+                    Identifier::Numeric(s)
+                }
+                Some(r) => {
+                    return Err(Error::decoding(format!(
+                        "Failed to deserialize NodeId, got unexpected IdType {r}"
+                    )));
+                }
+            };
+
+            stream.end_object()?;
+            Ok(Self {
+                namespace: namespace.unwrap_or_default(),
+                identifier,
+            })
         }
     }
 }
 
 impl BinaryEncodable for NodeId {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &crate::Context<'_>) -> usize {
         // Type determines the byte code
         let size: usize = match self.identifier {
             Identifier::Numeric(value) => {
@@ -322,14 +334,18 @@ impl BinaryEncodable for NodeId {
                     7
                 }
             }
-            Identifier::String(ref value) => 3 + value.byte_len(),
-            Identifier::Guid(ref value) => 3 + value.byte_len(),
-            Identifier::ByteString(ref value) => 3 + value.byte_len(),
+            Identifier::String(ref value) => 3 + value.byte_len(ctx),
+            Identifier::Guid(ref value) => 3 + value.byte_len(ctx),
+            Identifier::ByteString(ref value) => 3 + value.byte_len(ctx),
         };
         size
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize> {
         let mut size: usize = 0;
         // Type determines the byte code
         match &self.identifier {
@@ -353,26 +369,26 @@ impl BinaryEncodable for NodeId {
             Identifier::String(value) => {
                 size += write_u8(stream, 0x3)?;
                 size += write_u16(stream, self.namespace)?;
-                size += value.encode(stream)?;
+                size += value.encode(stream, ctx)?;
             }
             Identifier::Guid(value) => {
                 size += write_u8(stream, 0x4)?;
                 size += write_u16(stream, self.namespace)?;
-                size += value.encode(stream)?;
+                size += value.encode(stream, ctx)?;
             }
             Identifier::ByteString(value) => {
                 size += write_u8(stream, 0x5)?;
                 size += write_u16(stream, self.namespace)?;
-                size += value.encode(stream)?;
+                size += value.encode(stream, ctx)?;
             }
         }
-        assert_eq!(size, self.byte_len());
+        assert_eq!(size, self.byte_len(ctx));
         Ok(size)
     }
 }
 
 impl BinaryDecodable for NodeId {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &crate::Context<'_>) -> EncodingResult<Self> {
         let identifier = read_u8(stream)?;
         let node_id = match identifier {
             0x0 => {
@@ -392,22 +408,24 @@ impl BinaryDecodable for NodeId {
             }
             0x3 => {
                 let namespace = read_u16(stream)?;
-                let value = UAString::decode(stream, decoding_options)?;
+                let value = UAString::decode(stream, ctx)?;
                 NodeId::new(namespace, value)
             }
             0x4 => {
                 let namespace = read_u16(stream)?;
-                let value = Guid::decode(stream, decoding_options)?;
+                let value = Guid::decode(stream, ctx)?;
                 NodeId::new(namespace, value)
             }
             0x5 => {
                 let namespace = read_u16(stream)?;
-                let value = ByteString::decode(stream, decoding_options)?;
+                let value = ByteString::decode(stream, ctx)?;
                 NodeId::new(namespace, value)
             }
             _ => {
-                error!("Unrecognized node id type {}", identifier);
-                return Err(StatusCode::BadDecodingError.into());
+                return Err(Error::decoding(format!(
+                    "Unrecognized node id type {}",
+                    identifier
+                )));
             }
         };
         Ok(node_id)

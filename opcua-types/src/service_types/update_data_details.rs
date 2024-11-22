@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 pub struct UpdateDataDetails {
     pub node_id: opcua::types::node_id::NodeId,
@@ -29,41 +30,37 @@ impl opcua::types::MessageInfo for UpdateDataDetails {
     }
 }
 impl opcua::types::BinaryEncodable for UpdateDataDetails {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.node_id.byte_len();
-        size += self.perform_insert_replace.byte_len();
-        size += self.update_values.byte_len();
+        size += self.node_id.byte_len(ctx);
+        size += self.perform_insert_replace.byte_len(ctx);
+        size += self.update_values.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.node_id.encode(stream)?;
-        size += self.perform_insert_replace.encode(stream)?;
-        size += self.update_values.encode(stream)?;
+        size += self.node_id.encode(stream, ctx)?;
+        size += self.perform_insert_replace.encode(stream, ctx)?;
+        size += self.update_values.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for UpdateDataDetails {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            node_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            perform_insert_replace: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            update_values: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            node_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            perform_insert_replace: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            update_values: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

@@ -4,10 +4,12 @@
 
 use std::io::{Read, Write};
 
-use log::error;
-use opcua_types::BinaryEncodable;
+use opcua_types::{
+    ByteString, DecodingOptions, EncodingResult, Error, SimpleBinaryDecodable,
+    SimpleBinaryEncodable, UAString,
+};
 
-use opcua_types::{constants, status_code::StatusCode, *};
+use opcua_types::{constants, status_code::StatusCode};
 
 use opcua_crypto::{SecurityPolicy, Thumbprint, X509};
 
@@ -19,7 +21,7 @@ pub enum SecurityHeader {
     Symmetric(SymmetricSecurityHeader),
 }
 
-impl BinaryEncodable for SecurityHeader {
+impl SimpleBinaryEncodable for SecurityHeader {
     fn byte_len(&self) -> usize {
         match self {
             SecurityHeader::Asymmetric(value) => value.byte_len(),
@@ -40,7 +42,7 @@ pub struct SymmetricSecurityHeader {
     pub token_id: u32,
 }
 
-impl BinaryEncodable for SymmetricSecurityHeader {
+impl SimpleBinaryEncodable for SymmetricSecurityHeader {
     fn byte_len(&self) -> usize {
         4
     }
@@ -50,8 +52,11 @@ impl BinaryEncodable for SymmetricSecurityHeader {
     }
 }
 
-impl BinaryDecodable for SymmetricSecurityHeader {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
+impl SimpleBinaryDecodable for SymmetricSecurityHeader {
+    fn decode<S: Read + ?Sized>(
+        stream: &mut S,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self> {
         let token_id = u32::decode(stream, decoding_options)?;
         Ok(SymmetricSecurityHeader { token_id })
     }
@@ -64,7 +69,7 @@ pub struct AsymmetricSecurityHeader {
     pub receiver_certificate_thumbprint: ByteString,
 }
 
-impl BinaryEncodable for AsymmetricSecurityHeader {
+impl SimpleBinaryEncodable for AsymmetricSecurityHeader {
     fn byte_len(&self) -> usize {
         let mut size = 0;
         size += self.security_policy_uri.byte_len();
@@ -83,18 +88,33 @@ impl BinaryEncodable for AsymmetricSecurityHeader {
     }
 }
 
-impl BinaryDecodable for AsymmetricSecurityHeader {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
+impl SimpleBinaryDecodable for AsymmetricSecurityHeader {
+    fn decode<S: Read + ?Sized>(
+        stream: &mut S,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self> {
         let security_policy_uri = UAString::decode(stream, decoding_options)?;
         let sender_certificate = ByteString::decode(stream, decoding_options)?;
         let receiver_certificate_thumbprint = ByteString::decode(stream, decoding_options)?;
 
         // validate sender_certificate_length < MaxCertificateSize
-        if sender_certificate.value.is_some()
-            && sender_certificate.value.as_ref().unwrap().len() >= constants::MAX_CERTIFICATE_LENGTH
+        if sender_certificate
+            .value
+            .as_ref()
+            .is_some_and(|v| v.len() >= constants::MAX_CERTIFICATE_LENGTH)
         {
-            error!("Sender certificate exceeds max certificate size");
-            Err(StatusCode::BadDecodingError.into())
+            Err(Error::new(
+                StatusCode::BadEncodingLimitsExceeded,
+                format!(
+                    "Sender certificate has length {}, which exceeds max certificate size {}",
+                    sender_certificate
+                        .value
+                        .as_ref()
+                        .map(|v| v.len())
+                        .unwrap_or_default(),
+                    constants::MAX_CERTIFICATE_LENGTH
+                ),
+            ))
         } else {
             // validate receiver_certificate_thumbprint_length == 20
             let thumbprint_len = if receiver_certificate_thumbprint.value.is_some() {
@@ -107,15 +127,14 @@ impl BinaryDecodable for AsymmetricSecurityHeader {
                 0
             };
             if thumbprint_len > 0 && thumbprint_len != Thumbprint::THUMBPRINT_SIZE {
-                error!(
+                Err(Error::decoding(format!(
                     "Receiver certificate thumbprint is not 20 bytes long, {} bytes",
                     receiver_certificate_thumbprint
                         .value
                         .as_ref()
                         .unwrap()
-                        .len()
-                );
-                Err(StatusCode::BadDecodingError.into())
+                        .len(),
+                )))
             } else {
                 Ok(AsymmetricSecurityHeader {
                     security_policy_uri,
@@ -155,7 +174,7 @@ pub struct SequenceHeader {
     pub request_id: u32,
 }
 
-impl BinaryEncodable for SequenceHeader {
+impl SimpleBinaryEncodable for SequenceHeader {
     fn byte_len(&self) -> usize {
         8
     }
@@ -168,8 +187,11 @@ impl BinaryEncodable for SequenceHeader {
     }
 }
 
-impl BinaryDecodable for SequenceHeader {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
+impl SimpleBinaryDecodable for SequenceHeader {
+    fn decode<S: Read + ?Sized>(
+        stream: &mut S,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self> {
         let sequence_number = u32::decode(stream, decoding_options)?;
         let request_id = u32::decode(stream, decoding_options)?;
         Ok(SequenceHeader {

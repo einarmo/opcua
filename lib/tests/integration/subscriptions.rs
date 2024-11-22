@@ -643,7 +643,7 @@ async fn test_data_change_filters() {
         nm.address_space(),
         tester.handle.type_tree(),
         VariableBuilder::new(&prop_id, "EURange", "EURange")
-            .value(&Range {
+            .value(Range {
                 low: 5.0,
                 high: 15.0,
             })
@@ -682,7 +682,7 @@ async fn test_data_change_filters() {
                         sampling_interval: 0.0,
                         queue_size: 10,
                         discard_oldest: true,
-                        filter: ExtensionObject::from_message(&DataChangeFilter {
+                        filter: ExtensionObject::from_message(DataChangeFilter {
                             trigger: DataChangeTrigger::StatusValue,
                             deadband_type: DeadbandType::Absolute as u32,
                             deadband_value: 2.0,
@@ -701,7 +701,7 @@ async fn test_data_change_filters() {
                         sampling_interval: 0.0,
                         queue_size: 10,
                         discard_oldest: true,
-                        filter: ExtensionObject::from_message(&DataChangeFilter {
+                        filter: ExtensionObject::from_message(DataChangeFilter {
                             trigger: DataChangeTrigger::StatusValue,
                             deadband_type: DeadbandType::Percent as u32,
                             // 20% change is equal to a change of 2, since the range is from 5 to 15

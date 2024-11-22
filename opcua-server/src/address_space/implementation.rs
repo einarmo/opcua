@@ -858,9 +858,9 @@ mod tests {
     };
     use opcua_nodes::{DefaultTypeTree, NamespaceMap, TypeTree};
     use opcua_types::{
-        argument::Argument, Array, BrowseDirection, DataTypeId, DecodingOptions, LocalizedText,
-        NodeClass, NodeId, NumericRange, ObjectId, ObjectTypeId, QualifiedName, ReferenceTypeId,
-        TimestampsToReturn, UAString, Variant, VariantScalarTypeId,
+        argument::Argument, Array, BrowseDirection, DataTypeId, LocalizedText, NodeClass, NodeId,
+        NumericRange, ObjectId, ObjectTypeId, QualifiedName, ReferenceTypeId, TimestampsToReturn,
+        UAString, Variant, VariantScalarTypeId,
     };
 
     use super::AddressSpace;
@@ -1481,8 +1481,7 @@ mod tests {
                 let v = v.first().unwrap().clone();
                 if let Variant::ExtensionObject(v) = v {
                     // deserialize the Argument here
-                    let decoding_options = DecodingOptions::test();
-                    let argument = v.decode_inner::<Argument>(&decoding_options).unwrap();
+                    let argument = v.inner_as::<Argument>().unwrap();
                     assert_eq!(argument.name, UAString::from("Result"));
                     assert_eq!(argument.data_type, DataTypeId::String);
                     assert_eq!(argument.value_rank, -1);

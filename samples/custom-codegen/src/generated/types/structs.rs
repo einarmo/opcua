@@ -8,17 +8,18 @@
 #![allow(non_camel_case_types)]
 #![allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+#[derive(Default)]
 pub struct PnDeviceDiagnosisDataType {
     pub api: u32,
     pub slot: u16,
     pub subslot: u16,
     pub channel_number: u16,
-    #[cfg_attr(feature = "xml", opcua(rename = "Type"))]
-    #[cfg_attr(feature = "json", serde(rename = "Type"))]
+    #[cfg_attr(any(feature = "json", feature = "xml"), opcua(rename = "Type"))]
     pub __type: super::enums::PnChannelTypeEnumeration,
     pub accumulative: super::enums::PnChannelAccumulativeEnumeration,
     pub maintenance: super::enums::PnChannelMaintenanceEnumeration,
@@ -51,93 +52,87 @@ impl opcua::types::ExpandedMessageInfo for PnDeviceDiagnosisDataType {
     }
 }
 impl opcua::types::BinaryEncodable for PnDeviceDiagnosisDataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.api.byte_len();
-        size += self.slot.byte_len();
-        size += self.subslot.byte_len();
-        size += self.channel_number.byte_len();
-        size += self.__type.byte_len();
-        size += self.accumulative.byte_len();
-        size += self.maintenance.byte_len();
-        size += self.specifier.byte_len();
-        size += self.direction.byte_len();
-        size += self.user_structure_identifier.byte_len();
-        size += self.channel_error_type.byte_len();
-        size += self.ext_channel_error_type.byte_len();
-        size += self.ext_channel_add_value.byte_len();
-        size += self.qualified_channel_qualifier.byte_len();
-        size += self.manufacturer_data.byte_len();
-        size += self.message.byte_len();
-        size += self.help_text.byte_len();
+        size += self.api.byte_len(ctx);
+        size += self.slot.byte_len(ctx);
+        size += self.subslot.byte_len(ctx);
+        size += self.channel_number.byte_len(ctx);
+        size += self.__type.byte_len(ctx);
+        size += self.accumulative.byte_len(ctx);
+        size += self.maintenance.byte_len(ctx);
+        size += self.specifier.byte_len(ctx);
+        size += self.direction.byte_len(ctx);
+        size += self.user_structure_identifier.byte_len(ctx);
+        size += self.channel_error_type.byte_len(ctx);
+        size += self.ext_channel_error_type.byte_len(ctx);
+        size += self.ext_channel_add_value.byte_len(ctx);
+        size += self.qualified_channel_qualifier.byte_len(ctx);
+        size += self.manufacturer_data.byte_len(ctx);
+        size += self.message.byte_len(ctx);
+        size += self.help_text.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.api.encode(stream)?;
-        size += self.slot.encode(stream)?;
-        size += self.subslot.encode(stream)?;
-        size += self.channel_number.encode(stream)?;
-        size += self.__type.encode(stream)?;
-        size += self.accumulative.encode(stream)?;
-        size += self.maintenance.encode(stream)?;
-        size += self.specifier.encode(stream)?;
-        size += self.direction.encode(stream)?;
-        size += self.user_structure_identifier.encode(stream)?;
-        size += self.channel_error_type.encode(stream)?;
-        size += self.ext_channel_error_type.encode(stream)?;
-        size += self.ext_channel_add_value.encode(stream)?;
-        size += self.qualified_channel_qualifier.encode(stream)?;
-        size += self.manufacturer_data.encode(stream)?;
-        size += self.message.encode(stream)?;
-        size += self.help_text.encode(stream)?;
+        size += self.api.encode(stream, ctx)?;
+        size += self.slot.encode(stream, ctx)?;
+        size += self.subslot.encode(stream, ctx)?;
+        size += self.channel_number.encode(stream, ctx)?;
+        size += self.__type.encode(stream, ctx)?;
+        size += self.accumulative.encode(stream, ctx)?;
+        size += self.maintenance.encode(stream, ctx)?;
+        size += self.specifier.encode(stream, ctx)?;
+        size += self.direction.encode(stream, ctx)?;
+        size += self.user_structure_identifier.encode(stream, ctx)?;
+        size += self.channel_error_type.encode(stream, ctx)?;
+        size += self.ext_channel_error_type.encode(stream, ctx)?;
+        size += self.ext_channel_add_value.encode(stream, ctx)?;
+        size += self.qualified_channel_qualifier.encode(stream, ctx)?;
+        size += self.manufacturer_data.encode(stream, ctx)?;
+        size += self.message.encode(stream, ctx)?;
+        size += self.help_text.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for PnDeviceDiagnosisDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            api: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            slot: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            subslot: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            channel_number: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            __type: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            accumulative: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            maintenance: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            specifier: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            direction: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            user_structure_identifier: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            channel_error_type: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            ext_channel_error_type: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            ext_channel_add_value: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            qualified_channel_qualifier: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            manufacturer_data: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            message: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            help_text: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            api: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            slot: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            subslot: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            channel_number: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            __type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            accumulative: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            maintenance: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            specifier: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            direction: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            user_structure_identifier: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            channel_error_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            ext_channel_error_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            ext_channel_add_value: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            qualified_channel_qualifier: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            manufacturer_data: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            message: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            help_text: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct PnDeviceRoleOptionSet {
@@ -162,40 +157,43 @@ impl opcua::types::ExpandedMessageInfo for PnDeviceRoleOptionSet {
     }
 }
 impl opcua::types::BinaryEncodable for PnDeviceRoleOptionSet {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.value.byte_len();
-        size += self.valid_bits.byte_len();
+        size += self.value.byte_len(ctx);
+        size += self.valid_bits.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.value.encode(stream)?;
-        size += self.valid_bits.encode(stream)?;
+        size += self.value.encode(stream, ctx)?;
+        size += self.valid_bits.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for PnDeviceRoleOptionSet {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            value: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            valid_bits: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            value: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            valid_bits: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }
 ///Contains the fields of the APDU element I&M5 | I&M5Data
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct PnIM5DataType {
@@ -221,44 +219,46 @@ impl opcua::types::ExpandedMessageInfo for PnIM5DataType {
     }
 }
 impl opcua::types::BinaryEncodable for PnIM5DataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.annotation.byte_len();
-        size += self.order_id.byte_len();
-        size += self.vendor_id.byte_len();
-        size += self.serial_number.byte_len();
-        size += self.hardware_revision.byte_len();
-        size += self.software_revision.byte_len();
+        size += self.annotation.byte_len(ctx);
+        size += self.order_id.byte_len(ctx);
+        size += self.vendor_id.byte_len(ctx);
+        size += self.serial_number.byte_len(ctx);
+        size += self.hardware_revision.byte_len(ctx);
+        size += self.software_revision.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.annotation.encode(stream)?;
-        size += self.order_id.encode(stream)?;
-        size += self.vendor_id.encode(stream)?;
-        size += self.serial_number.encode(stream)?;
-        size += self.hardware_revision.encode(stream)?;
-        size += self.software_revision.encode(stream)?;
+        size += self.annotation.encode(stream, ctx)?;
+        size += self.order_id.encode(stream, ctx)?;
+        size += self.vendor_id.encode(stream, ctx)?;
+        size += self.serial_number.encode(stream, ctx)?;
+        size += self.hardware_revision.encode(stream, ctx)?;
+        size += self.software_revision.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for PnIM5DataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            annotation: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            order_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            vendor_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            serial_number: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            hardware_revision: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            software_revision: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            annotation: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            order_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            vendor_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            serial_number: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            hardware_revision: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            software_revision: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

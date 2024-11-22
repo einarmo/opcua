@@ -420,6 +420,7 @@ impl DiagnosticsNodeManager {
                     .as_ref()
                     .map(|r| {
                         r.iter()
+                            .cloned()
                             .map(ExtensionObject::from_message)
                             .collect::<Vec<_>>()
                     })
@@ -429,6 +430,7 @@ impl DiagnosticsNodeManager {
                     .as_ref()
                     .map(|r| {
                         r.iter()
+                            .cloned()
                             .map(ExtensionObject::from_message)
                             .collect::<Vec<_>>()
                     })

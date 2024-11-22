@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct ThreeDOrientation {
@@ -30,35 +31,37 @@ impl opcua::types::MessageInfo for ThreeDOrientation {
     }
 }
 impl opcua::types::BinaryEncodable for ThreeDOrientation {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.a.byte_len();
-        size += self.b.byte_len();
-        size += self.c.byte_len();
+        size += self.a.byte_len(ctx);
+        size += self.b.byte_len(ctx);
+        size += self.c.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.a.encode(stream)?;
-        size += self.b.encode(stream)?;
-        size += self.c.encode(stream)?;
+        size += self.a.encode(stream, ctx)?;
+        size += self.b.encode(stream, ctx)?;
+        size += self.c.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for ThreeDOrientation {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            a: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            b: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            c: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            a: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            b: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            c: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

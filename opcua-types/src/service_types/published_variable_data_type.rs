@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct PublishedVariableDataType {
@@ -35,74 +36,52 @@ impl opcua::types::MessageInfo for PublishedVariableDataType {
     }
 }
 impl opcua::types::BinaryEncodable for PublishedVariableDataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.published_variable.byte_len();
-        size += self.attribute_id.byte_len();
-        size += self.sampling_interval_hint.byte_len();
-        size += self.deadband_type.byte_len();
-        size += self.deadband_value.byte_len();
-        size += self.index_range.byte_len();
-        size += self.substitute_value.byte_len();
-        size += self.meta_data_properties.byte_len();
+        size += self.published_variable.byte_len(ctx);
+        size += self.attribute_id.byte_len(ctx);
+        size += self.sampling_interval_hint.byte_len(ctx);
+        size += self.deadband_type.byte_len(ctx);
+        size += self.deadband_value.byte_len(ctx);
+        size += self.index_range.byte_len(ctx);
+        size += self.substitute_value.byte_len(ctx);
+        size += self.meta_data_properties.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.published_variable.encode(stream)?;
-        size += self.attribute_id.encode(stream)?;
-        size += self.sampling_interval_hint.encode(stream)?;
-        size += self.deadband_type.encode(stream)?;
-        size += self.deadband_value.encode(stream)?;
-        size += self.index_range.encode(stream)?;
-        size += self.substitute_value.encode(stream)?;
-        size += self.meta_data_properties.encode(stream)?;
+        size += self.published_variable.encode(stream, ctx)?;
+        size += self.attribute_id.encode(stream, ctx)?;
+        size += self.sampling_interval_hint.encode(stream, ctx)?;
+        size += self.deadband_type.encode(stream, ctx)?;
+        size += self.deadband_value.encode(stream, ctx)?;
+        size += self.index_range.encode(stream, ctx)?;
+        size += self.substitute_value.encode(stream, ctx)?;
+        size += self.meta_data_properties.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for PublishedVariableDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            published_variable: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            attribute_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            sampling_interval_hint: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            deadband_type: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            deadband_value: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            index_range: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            substitute_value: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            meta_data_properties: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            published_variable: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            attribute_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            sampling_interval_hint: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            deadband_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            deadband_value: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            index_range: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            substitute_value: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            meta_data_properties: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

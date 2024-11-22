@@ -6,7 +6,7 @@ use thiserror::Error;
 
 use crate::{
     Array, ByteString, DataValue, DateTime, ExpandedNodeId, ExtensionObject, Guid, LocalizedText,
-    NamespaceMap, NodeId, NodeSetNamespaceMapper, QualifiedName, StatusCode, UAString,
+    NamespaceMap, NodeId, NodeSetNamespaceMapper, QualifiedName, StatusCode, TypeLoader, UAString,
     UninitializedIndex, Variant, VariantScalarTypeId,
 };
 
@@ -62,7 +62,7 @@ impl From<String> for FromXmlError {
 pub struct XmlContext<'a> {
     pub aliases: HashMap<String, String>,
     pub namespaces: &'a NodeSetNamespaceMapper<'a>,
-    pub loaders: Vec<Arc<dyn XmlLoader>>,
+    pub loaders: Vec<Arc<dyn TypeLoader>>,
 }
 
 impl<'a> XmlContext<'a> {
@@ -72,8 +72,8 @@ impl<'a> XmlContext<'a> {
         node_id: &NodeId,
     ) -> Result<ExtensionObject, FromXmlError> {
         for loader in &self.loaders {
-            if let Some(r) = loader.load_extension_object(body, node_id, self) {
-                return r;
+            if let Some(r) = loader.load_from_xml(node_id, body, self) {
+                return Ok(ExtensionObject { body: Some(r?) });
             }
         }
         Err(FromXmlError::Other(format!(
@@ -95,20 +95,6 @@ pub trait FromXml: Sized {
     fn default_or_required(name: &'static str) -> Result<Self, FromXmlError> {
         Err(FromXmlError::MissingRequired(name))
     }
-}
-
-/// Trait for a type that can create an extension object given a node ID.
-/// If the loader does not recognize the given node ID, it should return [`None`]
-pub trait XmlLoader {
-    /// Try to create an extension object from `body`. If `node_id` is not known,
-    /// this should return [`None`], else it should return the result of calling [`FromXml::from_xml`]
-    /// for the specified type.
-    fn load_extension_object(
-        &self,
-        body: &XmlElement,
-        node_id: &NodeId,
-        ctx: &XmlContext<'_>,
-    ) -> Option<Result<ExtensionObject, FromXmlError>>;
 }
 
 impl FromXml for UAString {

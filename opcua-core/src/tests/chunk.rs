@@ -27,19 +27,21 @@ fn sample_secure_channel_request_data_security_none() -> MessageChunk {
     let mut stream = Cursor::new(data);
 
     // Write a header and the sample request
+    let ctx_r = ContextOwned::default();
+    let ctx = ctx_r.context();
     let _ = MessageChunkHeader {
         message_type: MessageChunkType::OpenSecureChannel,
         is_final: MessageIsFinalType::Final,
         message_size: 12 + sample_data.len() as u32,
         secure_channel_id: 1,
     }
-    .encode(&mut stream);
+    .encode(&mut stream, &ctx);
     let _ = stream.write(&sample_data);
 
     // Decode chunk from stream
     stream.set_position(0);
     let decoding_options = DecodingOptions::test();
-    let chunk = MessageChunk::decode(&mut stream, &decoding_options).unwrap();
+    let chunk = MessageChunk::decode(&mut stream, &ctx).unwrap();
 
     println!(
         "Sample chunk info = {:?}",
@@ -61,7 +63,9 @@ fn set_chunk_sequence_number(
     // Write the sequence header out again with new value
     let mut stream = Cursor::new(&mut chunk.data[..]);
     stream.set_position(chunk_info.sequence_header_offset as u64);
-    let _ = chunk_info.sequence_header.encode(&mut stream);
+    let ctx_r = ContextOwned::default();
+    let ctx = ctx_r.context();
+    let _ = chunk_info.sequence_header.encode(&mut stream, &ctx);
     old_sequence_number
 }
 
@@ -77,7 +81,9 @@ fn set_chunk_request_id(
     // Write the sequence header out again with new value
     let mut stream = Cursor::new(&mut chunk.data[..]);
     stream.set_position(chunk_info.sequence_header_offset as u64);
-    let _ = chunk_info.sequence_header.encode(&mut stream);
+    let ctx_r = ContextOwned::default();
+    let ctx = ctx_r.context();
+    let _ = chunk_info.sequence_header.encode(&mut stream, &ctx);
     old_request_id
 }
 
@@ -124,7 +130,9 @@ fn chunk_multi_encode_decode() {
     assert!(chunks.len() > 1);
 
     // Verify chunk byte len maxes out at == 8196
-    let chunk_length = chunks[0].byte_len();
+    let ctx_r = ContextOwned::default();
+    let ctx = ctx_r.context();
+    let chunk_length = chunks[0].byte_len(&ctx);
     trace!("MessageChunk length = {}", chunk_length);
     assert_eq!(chunk_length, MIN_CHUNK_SIZE);
 
@@ -177,7 +185,9 @@ fn max_message_size() {
 
     let response = make_large_read_response();
 
-    let max_message_size = response.byte_len();
+    let ctx_r = ContextOwned::default();
+    let ctx = ctx_r.context();
+    let max_message_size = response.byte_len(&ctx);
 
     let sequence_number = 1000;
     let request_id = 100;
@@ -234,7 +244,9 @@ fn validate_chunks_secure_channel_id() {
     let old_secure_channel_id = secure_channel.secure_channel_id();
     secure_channel.set_secure_channel_id(old_secure_channel_id + 1);
     assert_eq!(
-        Chunker::validate_chunks(sequence_number, &secure_channel, &chunks).unwrap_err(),
+        Chunker::validate_chunks(sequence_number, &secure_channel, &chunks)
+            .unwrap_err()
+            .status(),
         StatusCode::BadSecureChannelIdInvalid
     );
 }
@@ -263,7 +275,9 @@ fn validate_chunks_sequence_number() {
 
     // Test sequence number cannot be < starting sequence number
     assert_eq!(
-        Chunker::validate_chunks(sequence_number + 5000, &secure_channel, &chunks).unwrap_err(),
+        Chunker::validate_chunks(sequence_number + 5000, &secure_channel, &chunks)
+            .unwrap_err()
+            .status(),
         StatusCode::BadSequenceNumberInvalid
     );
 
@@ -274,16 +288,20 @@ fn validate_chunks_sequence_number() {
     // Hack one of the chunks to alter its seq id
     let old_sequence_nr = set_chunk_sequence_number(&mut chunks[0], &secure_channel, 1001);
     assert_eq!(
-        Chunker::validate_chunks(sequence_number, &secure_channel, &chunks).unwrap_err(),
-        StatusCode::BadSecurityChecksFailed
+        Chunker::validate_chunks(sequence_number, &secure_channel, &chunks)
+            .unwrap_err()
+            .status(),
+        StatusCode::BadSequenceNumberInvalid
     );
 
     // Hack the nth
     set_chunk_sequence_number(&mut chunks[0], &secure_channel, old_sequence_nr);
     let _ = set_chunk_sequence_number(&mut chunks[5], &secure_channel, 1008);
     assert_eq!(
-        Chunker::validate_chunks(sequence_number, &secure_channel, &chunks).unwrap_err(),
-        StatusCode::BadSecurityChecksFailed
+        Chunker::validate_chunks(sequence_number, &secure_channel, &chunks)
+            .unwrap_err()
+            .status(),
+        StatusCode::BadSequenceNumberInvalid
     );
 }
 
@@ -315,8 +333,10 @@ fn validate_chunks_request_id() {
     // Hack the request id so first chunk request id says 101 while the rest say 100
     let _ = set_chunk_request_id(&mut chunks[0], &secure_channel, 101);
     assert_eq!(
-        Chunker::validate_chunks(sequence_number, &secure_channel, &chunks).unwrap_err(),
-        StatusCode::BadSecurityChecksFailed
+        Chunker::validate_chunks(sequence_number, &secure_channel, &chunks)
+            .unwrap_err()
+            .status(),
+        StatusCode::BadSequenceNumberInvalid
     );
 }
 
@@ -390,10 +410,11 @@ fn open_secure_channel_response() {
     let _ = Test::setup();
 
     let secure_channel = SecureChannel::new_no_certificate_store();
-    let decoding_options = secure_channel.decoding_options();
 
     let mut stream = Cursor::new(chunk);
-    let chunk = MessageChunk::decode(&mut stream, &decoding_options).unwrap();
+    let ctx_r = ContextOwned::default();
+    let ctx = ctx_r.context();
+    let chunk = MessageChunk::decode(&mut stream, &ctx).unwrap();
     let chunks = vec![chunk];
 
     let decoded: Result<ResponseMessage, _> = Chunker::decode(&chunks, &secure_channel, None);

@@ -43,8 +43,6 @@ pub mod anonymous_identity_token;
 pub use anonymous_identity_token::*;
 pub mod application_description;
 pub use application_description::*;
-pub mod argument;
-pub use argument::*;
 pub mod attribute_operand;
 pub use attribute_operand::*;
 pub mod axis_information;
@@ -571,2000 +569,4320 @@ pub mod x_509_identity_token;
 pub use x_509_identity_token::*;
 pub mod xv_type;
 pub use xv_type::*;
-#[cfg(feature = "xml")]
-#[derive(Debug, Default, Copy, Clone)]
-pub struct TypesXmlLoader;
-#[cfg(feature = "xml")]
-impl opcua::types::xml::XmlLoader for TypesXmlLoader {
-    fn load_extension_object(
+static TYPES: std::sync::LazyLock<opcua::types::TypeLoaderInstance> = std::sync::LazyLock::new(||
+{
+    let mut inst = opcua::types::TypeLoaderInstance::new();
+    {
+        inst.add_binary_type(
+            crate::DataTypeId::ActivateSessionRequest as u32,
+            crate::ObjectId::ActivateSessionRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ActivateSessionRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ActivateSessionResponse as u32,
+            crate::ObjectId::ActivateSessionResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ActivateSessionResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::AddNodesItem as u32,
+            crate::ObjectId::AddNodesItem_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<AddNodesItem>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::AddNodesRequest as u32,
+            crate::ObjectId::AddNodesRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<AddNodesRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::AddNodesResponse as u32,
+            crate::ObjectId::AddNodesResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<AddNodesResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::AddNodesResult as u32,
+            crate::ObjectId::AddNodesResult_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<AddNodesResult>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::AddReferencesItem as u32,
+            crate::ObjectId::AddReferencesItem_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<AddReferencesItem>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::AddReferencesRequest as u32,
+            crate::ObjectId::AddReferencesRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<AddReferencesRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::AddReferencesResponse as u32,
+            crate::ObjectId::AddReferencesResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<AddReferencesResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::AdditionalParametersType as u32,
+            crate::ObjectId::AdditionalParametersType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<AdditionalParametersType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::AggregateConfiguration as u32,
+            crate::ObjectId::AggregateConfiguration_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<AggregateConfiguration>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::AggregateFilter as u32,
+            crate::ObjectId::AggregateFilter_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<AggregateFilter>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::AggregateFilterResult as u32,
+            crate::ObjectId::AggregateFilterResult_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<AggregateFilterResult>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::AliasNameDataType as u32,
+            crate::ObjectId::AliasNameDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<AliasNameDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::Annotation as u32,
+            crate::ObjectId::Annotation_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<Annotation>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::AnonymousIdentityToken as u32,
+            crate::ObjectId::AnonymousIdentityToken_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<AnonymousIdentityToken>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ApplicationDescription as u32,
+            crate::ObjectId::ApplicationDescription_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ApplicationDescription>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::AttributeOperand as u32,
+            crate::ObjectId::AttributeOperand_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<AttributeOperand>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::AxisInformation as u32,
+            crate::ObjectId::AxisInformation_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<AxisInformation>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::BrokerConnectionTransportDataType as u32,
+            crate::ObjectId::BrokerConnectionTransportDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<BrokerConnectionTransportDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::BrokerDataSetReaderTransportDataType as u32,
+            crate::ObjectId::BrokerDataSetReaderTransportDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<BrokerDataSetReaderTransportDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::BrokerDataSetWriterTransportDataType as u32,
+            crate::ObjectId::BrokerDataSetWriterTransportDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<BrokerDataSetWriterTransportDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::BrokerWriterGroupTransportDataType as u32,
+            crate::ObjectId::BrokerWriterGroupTransportDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<BrokerWriterGroupTransportDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::BrowseDescription as u32,
+            crate::ObjectId::BrowseDescription_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<BrowseDescription>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::BrowseNextRequest as u32,
+            crate::ObjectId::BrowseNextRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<BrowseNextRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::BrowseNextResponse as u32,
+            crate::ObjectId::BrowseNextResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<BrowseNextResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::BrowsePath as u32,
+            crate::ObjectId::BrowsePath_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<BrowsePath>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::BrowsePathResult as u32,
+            crate::ObjectId::BrowsePathResult_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<BrowsePathResult>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::BrowsePathTarget as u32,
+            crate::ObjectId::BrowsePathTarget_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<BrowsePathTarget>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::BrowseRequest as u32,
+            crate::ObjectId::BrowseRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<BrowseRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::BrowseResponse as u32,
+            crate::ObjectId::BrowseResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<BrowseResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::BrowseResult as u32,
+            crate::ObjectId::BrowseResult_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<BrowseResult>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::BuildInfo as u32,
+            crate::ObjectId::BuildInfo_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<BuildInfo>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CallMethodRequest as u32,
+            crate::ObjectId::CallMethodRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CallMethodRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CallMethodResult as u32,
+            crate::ObjectId::CallMethodResult_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CallMethodResult>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CallRequest as u32,
+            crate::ObjectId::CallRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CallRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CallResponse as u32,
+            crate::ObjectId::CallResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CallResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CancelRequest as u32,
+            crate::ObjectId::CancelRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CancelRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CancelResponse as u32,
+            crate::ObjectId::CancelResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CancelResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CartesianCoordinates as u32,
+            crate::ObjectId::CartesianCoordinates_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CartesianCoordinates>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ChannelSecurityToken as u32,
+            crate::ObjectId::ChannelSecurityToken_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ChannelSecurityToken>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CloseSecureChannelRequest as u32,
+            crate::ObjectId::CloseSecureChannelRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CloseSecureChannelRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CloseSecureChannelResponse as u32,
+            crate::ObjectId::CloseSecureChannelResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CloseSecureChannelResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CloseSessionRequest as u32,
+            crate::ObjectId::CloseSessionRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CloseSessionRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CloseSessionResponse as u32,
+            crate::ObjectId::CloseSessionResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CloseSessionResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ComplexNumberType as u32,
+            crate::ObjectId::ComplexNumberType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ComplexNumberType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ConfigurationVersionDataType as u32,
+            crate::ObjectId::ConfigurationVersionDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ConfigurationVersionDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ConnectionTransportDataType as u32,
+            crate::ObjectId::ConnectionTransportDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ConnectionTransportDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ContentFilter as u32,
+            crate::ObjectId::ContentFilter_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ContentFilter>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ContentFilterElement as u32,
+            crate::ObjectId::ContentFilterElement_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ContentFilterElement>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ContentFilterElementResult as u32,
+            crate::ObjectId::ContentFilterElementResult_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ContentFilterElementResult>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ContentFilterResult as u32,
+            crate::ObjectId::ContentFilterResult_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ContentFilterResult>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CreateMonitoredItemsRequest as u32,
+            crate::ObjectId::CreateMonitoredItemsRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CreateMonitoredItemsRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CreateMonitoredItemsResponse as u32,
+            crate::ObjectId::CreateMonitoredItemsResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CreateMonitoredItemsResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CreateSessionRequest as u32,
+            crate::ObjectId::CreateSessionRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CreateSessionRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CreateSessionResponse as u32,
+            crate::ObjectId::CreateSessionResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CreateSessionResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CreateSubscriptionRequest as u32,
+            crate::ObjectId::CreateSubscriptionRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CreateSubscriptionRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CreateSubscriptionResponse as u32,
+            crate::ObjectId::CreateSubscriptionResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CreateSubscriptionResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::CurrencyUnitType as u32,
+            crate::ObjectId::CurrencyUnitType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<CurrencyUnitType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DataChangeFilter as u32,
+            crate::ObjectId::DataChangeFilter_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DataChangeFilter>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DataChangeNotification as u32,
+            crate::ObjectId::DataChangeNotification_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DataChangeNotification>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DataSetMetaDataType as u32,
+            crate::ObjectId::DataSetMetaDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DataSetMetaDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DataSetReaderDataType as u32,
+            crate::ObjectId::DataSetReaderDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DataSetReaderDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DataSetReaderMessageDataType as u32,
+            crate::ObjectId::DataSetReaderMessageDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DataSetReaderMessageDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DataSetReaderTransportDataType as u32,
+            crate::ObjectId::DataSetReaderTransportDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<DataSetReaderTransportDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DataSetWriterDataType as u32,
+            crate::ObjectId::DataSetWriterDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DataSetWriterDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DataSetWriterMessageDataType as u32,
+            crate::ObjectId::DataSetWriterMessageDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DataSetWriterMessageDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DataSetWriterTransportDataType as u32,
+            crate::ObjectId::DataSetWriterTransportDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<DataSetWriterTransportDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DataTypeAttributes as u32,
+            crate::ObjectId::DataTypeAttributes_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DataTypeAttributes>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DataTypeDescription as u32,
+            crate::ObjectId::DataTypeDescription_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DataTypeDescription>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DataTypeSchemaHeader as u32,
+            crate::ObjectId::DataTypeSchemaHeader_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DataTypeSchemaHeader>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DatagramConnectionTransportDataType as u32,
+            crate::ObjectId::DatagramConnectionTransportDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<DatagramConnectionTransportDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DatagramWriterGroupTransportDataType as u32,
+            crate::ObjectId::DatagramWriterGroupTransportDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<DatagramWriterGroupTransportDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DecimalDataType as u32,
+            crate::ObjectId::DecimalDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DecimalDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DeleteAtTimeDetails as u32,
+            crate::ObjectId::DeleteAtTimeDetails_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DeleteAtTimeDetails>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DeleteEventDetails as u32,
+            crate::ObjectId::DeleteEventDetails_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DeleteEventDetails>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DeleteMonitoredItemsRequest as u32,
+            crate::ObjectId::DeleteMonitoredItemsRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DeleteMonitoredItemsRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DeleteMonitoredItemsResponse as u32,
+            crate::ObjectId::DeleteMonitoredItemsResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DeleteMonitoredItemsResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DeleteNodesItem as u32,
+            crate::ObjectId::DeleteNodesItem_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DeleteNodesItem>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DeleteNodesRequest as u32,
+            crate::ObjectId::DeleteNodesRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DeleteNodesRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DeleteNodesResponse as u32,
+            crate::ObjectId::DeleteNodesResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DeleteNodesResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DeleteRawModifiedDetails as u32,
+            crate::ObjectId::DeleteRawModifiedDetails_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DeleteRawModifiedDetails>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DeleteReferencesItem as u32,
+            crate::ObjectId::DeleteReferencesItem_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DeleteReferencesItem>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DeleteReferencesRequest as u32,
+            crate::ObjectId::DeleteReferencesRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DeleteReferencesRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DeleteReferencesResponse as u32,
+            crate::ObjectId::DeleteReferencesResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DeleteReferencesResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DeleteSubscriptionsRequest as u32,
+            crate::ObjectId::DeleteSubscriptionsRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DeleteSubscriptionsRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DeleteSubscriptionsResponse as u32,
+            crate::ObjectId::DeleteSubscriptionsResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DeleteSubscriptionsResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DiscoveryConfiguration as u32,
+            crate::ObjectId::DiscoveryConfiguration_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DiscoveryConfiguration>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::DoubleComplexNumberType as u32,
+            crate::ObjectId::DoubleComplexNumberType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<DoubleComplexNumberType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::EUInformation as u32,
+            crate::ObjectId::EUInformation_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<EUInformation>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ElementOperand as u32,
+            crate::ObjectId::ElementOperand_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ElementOperand>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::EndpointConfiguration as u32,
+            crate::ObjectId::EndpointConfiguration_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<EndpointConfiguration>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::EndpointDescription as u32,
+            crate::ObjectId::EndpointDescription_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<EndpointDescription>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::EndpointType as u32,
+            crate::ObjectId::EndpointType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<EndpointType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::EndpointUrlListDataType as u32,
+            crate::ObjectId::EndpointUrlListDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<EndpointUrlListDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::EnumDescription as u32,
+            crate::ObjectId::EnumDescription_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<EnumDescription>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::EnumField as u32,
+            crate::ObjectId::EnumField_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<EnumField>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::EnumValueType as u32,
+            crate::ObjectId::EnumValueType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<EnumValueType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::EphemeralKeyType as u32,
+            crate::ObjectId::EphemeralKeyType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<EphemeralKeyType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::EventFieldList as u32,
+            crate::ObjectId::EventFieldList_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<EventFieldList>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::EventFilter as u32,
+            crate::ObjectId::EventFilter_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<EventFilter>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::EventFilterResult as u32,
+            crate::ObjectId::EventFilterResult_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<EventFilterResult>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::EventNotificationList as u32,
+            crate::ObjectId::EventNotificationList_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<EventNotificationList>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::FieldMetaData as u32,
+            crate::ObjectId::FieldMetaData_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<FieldMetaData>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::FieldTargetDataType as u32,
+            crate::ObjectId::FieldTargetDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<FieldTargetDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::FilterOperand as u32,
+            crate::ObjectId::FilterOperand_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<FilterOperand>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::FindServersOnNetworkRequest as u32,
+            crate::ObjectId::FindServersOnNetworkRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<FindServersOnNetworkRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::FindServersOnNetworkResponse as u32,
+            crate::ObjectId::FindServersOnNetworkResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<FindServersOnNetworkResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::FindServersRequest as u32,
+            crate::ObjectId::FindServersRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<FindServersRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::FindServersResponse as u32,
+            crate::ObjectId::FindServersResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<FindServersResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::Frame as u32,
+            crate::ObjectId::Frame_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<Frame>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::GenericAttributeValue as u32,
+            crate::ObjectId::GenericAttributeValue_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<GenericAttributeValue>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::GenericAttributes as u32,
+            crate::ObjectId::GenericAttributes_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<GenericAttributes>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::GetEndpointsRequest as u32,
+            crate::ObjectId::GetEndpointsRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<GetEndpointsRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::GetEndpointsResponse as u32,
+            crate::ObjectId::GetEndpointsResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<GetEndpointsResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::HistoryData as u32,
+            crate::ObjectId::HistoryData_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<HistoryData>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::HistoryEvent as u32,
+            crate::ObjectId::HistoryEvent_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<HistoryEvent>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::HistoryEventFieldList as u32,
+            crate::ObjectId::HistoryEventFieldList_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<HistoryEventFieldList>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::HistoryModifiedData as u32,
+            crate::ObjectId::HistoryModifiedData_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<HistoryModifiedData>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::HistoryReadDetails as u32,
+            crate::ObjectId::HistoryReadDetails_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<HistoryReadDetails>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::HistoryReadRequest as u32,
+            crate::ObjectId::HistoryReadRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<HistoryReadRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::HistoryReadResponse as u32,
+            crate::ObjectId::HistoryReadResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<HistoryReadResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::HistoryReadResult as u32,
+            crate::ObjectId::HistoryReadResult_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<HistoryReadResult>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::HistoryReadValueId as u32,
+            crate::ObjectId::HistoryReadValueId_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<HistoryReadValueId>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::HistoryUpdateDetails as u32,
+            crate::ObjectId::HistoryUpdateDetails_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<HistoryUpdateDetails>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::HistoryUpdateRequest as u32,
+            crate::ObjectId::HistoryUpdateRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<HistoryUpdateRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::HistoryUpdateResponse as u32,
+            crate::ObjectId::HistoryUpdateResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<HistoryUpdateResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::HistoryUpdateResult as u32,
+            crate::ObjectId::HistoryUpdateResult_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<HistoryUpdateResult>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::IdentityMappingRuleType as u32,
+            crate::ObjectId::IdentityMappingRuleType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<IdentityMappingRuleType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::IssuedIdentityToken as u32,
+            crate::ObjectId::IssuedIdentityToken_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<IssuedIdentityToken>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::JsonDataSetReaderMessageDataType as u32,
+            crate::ObjectId::JsonDataSetReaderMessageDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<JsonDataSetReaderMessageDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::JsonDataSetWriterMessageDataType as u32,
+            crate::ObjectId::JsonDataSetWriterMessageDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<JsonDataSetWriterMessageDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::JsonWriterGroupMessageDataType as u32,
+            crate::ObjectId::JsonWriterGroupMessageDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<JsonWriterGroupMessageDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::KeyValuePair as u32,
+            crate::ObjectId::KeyValuePair_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<KeyValuePair>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::LiteralOperand as u32,
+            crate::ObjectId::LiteralOperand_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<LiteralOperand>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::MdnsDiscoveryConfiguration as u32,
+            crate::ObjectId::MdnsDiscoveryConfiguration_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<MdnsDiscoveryConfiguration>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::MethodAttributes as u32,
+            crate::ObjectId::MethodAttributes_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<MethodAttributes>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ModelChangeStructureDataType as u32,
+            crate::ObjectId::ModelChangeStructureDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ModelChangeStructureDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ModificationInfo as u32,
+            crate::ObjectId::ModificationInfo_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ModificationInfo>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ModifyMonitoredItemsRequest as u32,
+            crate::ObjectId::ModifyMonitoredItemsRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ModifyMonitoredItemsRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ModifyMonitoredItemsResponse as u32,
+            crate::ObjectId::ModifyMonitoredItemsResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ModifyMonitoredItemsResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ModifySubscriptionRequest as u32,
+            crate::ObjectId::ModifySubscriptionRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ModifySubscriptionRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ModifySubscriptionResponse as u32,
+            crate::ObjectId::ModifySubscriptionResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ModifySubscriptionResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::MonitoredItemCreateRequest as u32,
+            crate::ObjectId::MonitoredItemCreateRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<MonitoredItemCreateRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::MonitoredItemCreateResult as u32,
+            crate::ObjectId::MonitoredItemCreateResult_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<MonitoredItemCreateResult>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::MonitoredItemModifyRequest as u32,
+            crate::ObjectId::MonitoredItemModifyRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<MonitoredItemModifyRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::MonitoredItemModifyResult as u32,
+            crate::ObjectId::MonitoredItemModifyResult_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<MonitoredItemModifyResult>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::MonitoredItemNotification as u32,
+            crate::ObjectId::MonitoredItemNotification_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<MonitoredItemNotification>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::MonitoringFilter as u32,
+            crate::ObjectId::MonitoringFilter_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<MonitoringFilter>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::MonitoringFilterResult as u32,
+            crate::ObjectId::MonitoringFilterResult_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<MonitoringFilterResult>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::MonitoringParameters as u32,
+            crate::ObjectId::MonitoringParameters_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<MonitoringParameters>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::NetworkAddressDataType as u32,
+            crate::ObjectId::NetworkAddressDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<NetworkAddressDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::NetworkAddressUrlDataType as u32,
+            crate::ObjectId::NetworkAddressUrlDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<NetworkAddressUrlDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::NetworkGroupDataType as u32,
+            crate::ObjectId::NetworkGroupDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<NetworkGroupDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::NodeAttributes as u32,
+            crate::ObjectId::NodeAttributes_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<NodeAttributes>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::NodeReference as u32,
+            crate::ObjectId::NodeReference_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<NodeReference>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::NodeTypeDescription as u32,
+            crate::ObjectId::NodeTypeDescription_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<NodeTypeDescription>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::NotificationData as u32,
+            crate::ObjectId::NotificationData_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<NotificationData>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::NotificationMessage as u32,
+            crate::ObjectId::NotificationMessage_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<NotificationMessage>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ObjectAttributes as u32,
+            crate::ObjectId::ObjectAttributes_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ObjectAttributes>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ObjectTypeAttributes as u32,
+            crate::ObjectId::ObjectTypeAttributes_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ObjectTypeAttributes>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::OpenSecureChannelRequest as u32,
+            crate::ObjectId::OpenSecureChannelRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<OpenSecureChannelRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::OpenSecureChannelResponse as u32,
+            crate::ObjectId::OpenSecureChannelResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<OpenSecureChannelResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::OptionSet as u32,
+            crate::ObjectId::OptionSet_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<OptionSet>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::Orientation as u32,
+            crate::ObjectId::Orientation_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<Orientation>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ParsingResult as u32,
+            crate::ObjectId::ParsingResult_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ParsingResult>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ProgramDiagnostic2DataType as u32,
+            crate::ObjectId::ProgramDiagnostic2DataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ProgramDiagnostic2DataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ProgramDiagnosticDataType as u32,
+            crate::ObjectId::ProgramDiagnosticDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ProgramDiagnosticDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::PubSubConfigurationDataType as u32,
+            crate::ObjectId::PubSubConfigurationDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<PubSubConfigurationDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::PubSubConnectionDataType as u32,
+            crate::ObjectId::PubSubConnectionDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<PubSubConnectionDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::PubSubGroupDataType as u32,
+            crate::ObjectId::PubSubGroupDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<PubSubGroupDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::PublishRequest as u32,
+            crate::ObjectId::PublishRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<PublishRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::PublishResponse as u32,
+            crate::ObjectId::PublishResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<PublishResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::PublishedDataItemsDataType as u32,
+            crate::ObjectId::PublishedDataItemsDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<PublishedDataItemsDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::PublishedDataSetDataType as u32,
+            crate::ObjectId::PublishedDataSetDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<PublishedDataSetDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::PublishedDataSetSourceDataType as u32,
+            crate::ObjectId::PublishedDataSetSourceDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<PublishedDataSetSourceDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::PublishedEventsDataType as u32,
+            crate::ObjectId::PublishedEventsDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<PublishedEventsDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::PublishedVariableDataType as u32,
+            crate::ObjectId::PublishedVariableDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<PublishedVariableDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::QueryDataDescription as u32,
+            crate::ObjectId::QueryDataDescription_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<QueryDataDescription>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::QueryDataSet as u32,
+            crate::ObjectId::QueryDataSet_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<QueryDataSet>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::QueryFirstRequest as u32,
+            crate::ObjectId::QueryFirstRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<QueryFirstRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::QueryFirstResponse as u32,
+            crate::ObjectId::QueryFirstResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<QueryFirstResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::QueryNextRequest as u32,
+            crate::ObjectId::QueryNextRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<QueryNextRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::QueryNextResponse as u32,
+            crate::ObjectId::QueryNextResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<QueryNextResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::Range as u32,
+            crate::ObjectId::Range_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<Range>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::RationalNumber as u32,
+            crate::ObjectId::RationalNumber_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<RationalNumber>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ReadAnnotationDataDetails as u32,
+            crate::ObjectId::ReadAnnotationDataDetails_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ReadAnnotationDataDetails>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ReadAtTimeDetails as u32,
+            crate::ObjectId::ReadAtTimeDetails_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ReadAtTimeDetails>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ReadEventDetails as u32,
+            crate::ObjectId::ReadEventDetails_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ReadEventDetails>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ReadProcessedDetails as u32,
+            crate::ObjectId::ReadProcessedDetails_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ReadProcessedDetails>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ReadRawModifiedDetails as u32,
+            crate::ObjectId::ReadRawModifiedDetails_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ReadRawModifiedDetails>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ReadRequest as u32,
+            crate::ObjectId::ReadRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ReadRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ReadResponse as u32,
+            crate::ObjectId::ReadResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ReadResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ReadValueId as u32,
+            crate::ObjectId::ReadValueId_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ReadValueId>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ReaderGroupDataType as u32,
+            crate::ObjectId::ReaderGroupDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ReaderGroupDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ReaderGroupMessageDataType as u32,
+            crate::ObjectId::ReaderGroupMessageDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ReaderGroupMessageDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ReaderGroupTransportDataType as u32,
+            crate::ObjectId::ReaderGroupTransportDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ReaderGroupTransportDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::RedundantServerDataType as u32,
+            crate::ObjectId::RedundantServerDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<RedundantServerDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ReferenceDescription as u32,
+            crate::ObjectId::ReferenceDescription_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ReferenceDescription>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ReferenceTypeAttributes as u32,
+            crate::ObjectId::ReferenceTypeAttributes_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ReferenceTypeAttributes>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::RegisterNodesRequest as u32,
+            crate::ObjectId::RegisterNodesRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<RegisterNodesRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::RegisterNodesResponse as u32,
+            crate::ObjectId::RegisterNodesResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<RegisterNodesResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::RegisterServer2Request as u32,
+            crate::ObjectId::RegisterServer2Request_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<RegisterServer2Request>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::RegisterServer2Response as u32,
+            crate::ObjectId::RegisterServer2Response_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<RegisterServer2Response>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::RegisterServerRequest as u32,
+            crate::ObjectId::RegisterServerRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<RegisterServerRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::RegisterServerResponse as u32,
+            crate::ObjectId::RegisterServerResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<RegisterServerResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::RegisteredServer as u32,
+            crate::ObjectId::RegisteredServer_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<RegisteredServer>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::RelativePath as u32,
+            crate::ObjectId::RelativePath_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<RelativePath>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::RelativePathElement as u32,
+            crate::ObjectId::RelativePathElement_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<RelativePathElement>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::RepublishRequest as u32,
+            crate::ObjectId::RepublishRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<RepublishRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::RepublishResponse as u32,
+            crate::ObjectId::RepublishResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<RepublishResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::RolePermissionType as u32,
+            crate::ObjectId::RolePermissionType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<RolePermissionType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SamplingIntervalDiagnosticsDataType as u32,
+            crate::ObjectId::SamplingIntervalDiagnosticsDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<SamplingIntervalDiagnosticsDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SemanticChangeStructureDataType as u32,
+            crate::ObjectId::SemanticChangeStructureDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<SemanticChangeStructureDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ServerDiagnosticsSummaryDataType as u32,
+            crate::ObjectId::ServerDiagnosticsSummaryDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<ServerDiagnosticsSummaryDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ServerOnNetwork as u32,
+            crate::ObjectId::ServerOnNetwork_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ServerOnNetwork>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ServerStatusDataType as u32,
+            crate::ObjectId::ServerStatusDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ServerStatusDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ServiceCounterDataType as u32,
+            crate::ObjectId::ServiceCounterDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ServiceCounterDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ServiceFault as u32,
+            crate::ObjectId::ServiceFault_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ServiceFault>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SessionDiagnosticsDataType as u32,
+            crate::ObjectId::SessionDiagnosticsDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<SessionDiagnosticsDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SessionSecurityDiagnosticsDataType as u32,
+            crate::ObjectId::SessionSecurityDiagnosticsDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<SessionSecurityDiagnosticsDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SessionlessInvokeRequestType as u32,
+            crate::ObjectId::SessionlessInvokeRequestType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<SessionlessInvokeRequestType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SessionlessInvokeResponseType as u32,
+            crate::ObjectId::SessionlessInvokeResponseType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<SessionlessInvokeResponseType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SetMonitoringModeRequest as u32,
+            crate::ObjectId::SetMonitoringModeRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<SetMonitoringModeRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SetMonitoringModeResponse as u32,
+            crate::ObjectId::SetMonitoringModeResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<SetMonitoringModeResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SetPublishingModeRequest as u32,
+            crate::ObjectId::SetPublishingModeRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<SetPublishingModeRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SetPublishingModeResponse as u32,
+            crate::ObjectId::SetPublishingModeResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<SetPublishingModeResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SetTriggeringRequest as u32,
+            crate::ObjectId::SetTriggeringRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<SetTriggeringRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SetTriggeringResponse as u32,
+            crate::ObjectId::SetTriggeringResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<SetTriggeringResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SignatureData as u32,
+            crate::ObjectId::SignatureData_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<SignatureData>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SignedSoftwareCertificate as u32,
+            crate::ObjectId::SignedSoftwareCertificate_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<SignedSoftwareCertificate>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SimpleAttributeOperand as u32,
+            crate::ObjectId::SimpleAttributeOperand_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<SimpleAttributeOperand>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SimpleTypeDescription as u32,
+            crate::ObjectId::SimpleTypeDescription_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<SimpleTypeDescription>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::StatusChangeNotification as u32,
+            crate::ObjectId::StatusChangeNotification_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<StatusChangeNotification>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::StatusResult as u32,
+            crate::ObjectId::StatusResult_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<StatusResult>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::StructureDescription as u32,
+            crate::ObjectId::StructureDescription_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<StructureDescription>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::StructureField as u32,
+            crate::ObjectId::StructureField_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<StructureField>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SubscribedDataSetDataType as u32,
+            crate::ObjectId::SubscribedDataSetDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<SubscribedDataSetDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SubscribedDataSetMirrorDataType as u32,
+            crate::ObjectId::SubscribedDataSetMirrorDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<SubscribedDataSetMirrorDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SubscriptionAcknowledgement as u32,
+            crate::ObjectId::SubscriptionAcknowledgement_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<SubscriptionAcknowledgement>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::SubscriptionDiagnosticsDataType as u32,
+            crate::ObjectId::SubscriptionDiagnosticsDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<SubscriptionDiagnosticsDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::TargetVariablesDataType as u32,
+            crate::ObjectId::TargetVariablesDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<TargetVariablesDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ThreeDCartesianCoordinates as u32,
+            crate::ObjectId::ThreeDCartesianCoordinates_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ThreeDCartesianCoordinates>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ThreeDFrame as u32,
+            crate::ObjectId::ThreeDFrame_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ThreeDFrame>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ThreeDOrientation as u32,
+            crate::ObjectId::ThreeDOrientation_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ThreeDOrientation>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ThreeDVector as u32,
+            crate::ObjectId::ThreeDVector_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ThreeDVector>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::TimeZoneDataType as u32,
+            crate::ObjectId::TimeZoneDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<TimeZoneDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::TransferResult as u32,
+            crate::ObjectId::TransferResult_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<TransferResult>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::TransferSubscriptionsRequest as u32,
+            crate::ObjectId::TransferSubscriptionsRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<TransferSubscriptionsRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::TransferSubscriptionsResponse as u32,
+            crate::ObjectId::TransferSubscriptionsResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<TransferSubscriptionsResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::TranslateBrowsePathsToNodeIdsRequest as u32,
+            crate::ObjectId::TranslateBrowsePathsToNodeIdsRequest_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<TranslateBrowsePathsToNodeIdsRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::TranslateBrowsePathsToNodeIdsResponse as u32,
+            crate::ObjectId::TranslateBrowsePathsToNodeIdsResponse_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<TranslateBrowsePathsToNodeIdsResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::TrustListDataType as u32,
+            crate::ObjectId::TrustListDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<TrustListDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::UABinaryFileDataType as u32,
+            crate::ObjectId::UABinaryFileDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<UABinaryFileDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::UadpDataSetReaderMessageDataType as u32,
+            crate::ObjectId::UadpDataSetReaderMessageDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<UadpDataSetReaderMessageDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::UadpDataSetWriterMessageDataType as u32,
+            crate::ObjectId::UadpDataSetWriterMessageDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<UadpDataSetWriterMessageDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::UadpWriterGroupMessageDataType as u32,
+            crate::ObjectId::UadpWriterGroupMessageDataType_Encoding_DefaultBinary
+                as u32,
+            opcua::types::binary_decode_to_enc::<UadpWriterGroupMessageDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::UnregisterNodesRequest as u32,
+            crate::ObjectId::UnregisterNodesRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<UnregisterNodesRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::UnregisterNodesResponse as u32,
+            crate::ObjectId::UnregisterNodesResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<UnregisterNodesResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::UpdateDataDetails as u32,
+            crate::ObjectId::UpdateDataDetails_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<UpdateDataDetails>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::UpdateEventDetails as u32,
+            crate::ObjectId::UpdateEventDetails_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<UpdateEventDetails>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::UpdateStructureDataDetails as u32,
+            crate::ObjectId::UpdateStructureDataDetails_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<UpdateStructureDataDetails>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::UserIdentityToken as u32,
+            crate::ObjectId::UserIdentityToken_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<UserIdentityToken>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::UserNameIdentityToken as u32,
+            crate::ObjectId::UserNameIdentityToken_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<UserNameIdentityToken>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::UserTokenPolicy as u32,
+            crate::ObjectId::UserTokenPolicy_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<UserTokenPolicy>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::VariableAttributes as u32,
+            crate::ObjectId::VariableAttributes_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<VariableAttributes>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::VariableTypeAttributes as u32,
+            crate::ObjectId::VariableTypeAttributes_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<VariableTypeAttributes>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::Vector as u32,
+            crate::ObjectId::Vector_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<Vector>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ViewAttributes as u32,
+            crate::ObjectId::ViewAttributes_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ViewAttributes>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::ViewDescription as u32,
+            crate::ObjectId::ViewDescription_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<ViewDescription>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::WriteRequest as u32,
+            crate::ObjectId::WriteRequest_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<WriteRequest>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::WriteResponse as u32,
+            crate::ObjectId::WriteResponse_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<WriteResponse>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::WriteValue as u32,
+            crate::ObjectId::WriteValue_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<WriteValue>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::WriterGroupDataType as u32,
+            crate::ObjectId::WriterGroupDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<WriterGroupDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::WriterGroupMessageDataType as u32,
+            crate::ObjectId::WriterGroupMessageDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<WriterGroupMessageDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::WriterGroupTransportDataType as u32,
+            crate::ObjectId::WriterGroupTransportDataType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<WriterGroupTransportDataType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::X509IdentityToken as u32,
+            crate::ObjectId::X509IdentityToken_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<X509IdentityToken>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::XVType as u32,
+            crate::ObjectId::XVType_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<XVType>,
+        );
+        inst.add_binary_type(
+            crate::DataTypeId::Argument as u32,
+            crate::ObjectId::Argument_Encoding_DefaultBinary as u32,
+            opcua::types::binary_decode_to_enc::<crate::argument::Argument>,
+        );
+    }
+    #[cfg(feature = "xml")]
+    {
+        inst.add_xml_type(
+            crate::DataTypeId::ActivateSessionRequest as u32,
+            crate::ObjectId::ActivateSessionRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ActivateSessionRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ActivateSessionResponse as u32,
+            crate::ObjectId::ActivateSessionResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ActivateSessionResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::AddNodesItem as u32,
+            crate::ObjectId::AddNodesItem_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<AddNodesItem>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::AddNodesRequest as u32,
+            crate::ObjectId::AddNodesRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<AddNodesRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::AddNodesResponse as u32,
+            crate::ObjectId::AddNodesResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<AddNodesResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::AddNodesResult as u32,
+            crate::ObjectId::AddNodesResult_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<AddNodesResult>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::AddReferencesItem as u32,
+            crate::ObjectId::AddReferencesItem_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<AddReferencesItem>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::AddReferencesRequest as u32,
+            crate::ObjectId::AddReferencesRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<AddReferencesRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::AddReferencesResponse as u32,
+            crate::ObjectId::AddReferencesResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<AddReferencesResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::AdditionalParametersType as u32,
+            crate::ObjectId::AdditionalParametersType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<AdditionalParametersType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::AggregateConfiguration as u32,
+            crate::ObjectId::AggregateConfiguration_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<AggregateConfiguration>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::AggregateFilter as u32,
+            crate::ObjectId::AggregateFilter_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<AggregateFilter>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::AggregateFilterResult as u32,
+            crate::ObjectId::AggregateFilterResult_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<AggregateFilterResult>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::AliasNameDataType as u32,
+            crate::ObjectId::AliasNameDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<AliasNameDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::Annotation as u32,
+            crate::ObjectId::Annotation_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<Annotation>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::AnonymousIdentityToken as u32,
+            crate::ObjectId::AnonymousIdentityToken_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<AnonymousIdentityToken>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ApplicationDescription as u32,
+            crate::ObjectId::ApplicationDescription_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ApplicationDescription>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::AttributeOperand as u32,
+            crate::ObjectId::AttributeOperand_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<AttributeOperand>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::AxisInformation as u32,
+            crate::ObjectId::AxisInformation_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<AxisInformation>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::BrokerConnectionTransportDataType as u32,
+            crate::ObjectId::BrokerConnectionTransportDataType_Encoding_DefaultXml
+                as u32,
+            opcua::types::xml_decode_to_enc::<BrokerConnectionTransportDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::BrokerDataSetReaderTransportDataType as u32,
+            crate::ObjectId::BrokerDataSetReaderTransportDataType_Encoding_DefaultXml
+                as u32,
+            opcua::types::xml_decode_to_enc::<BrokerDataSetReaderTransportDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::BrokerDataSetWriterTransportDataType as u32,
+            crate::ObjectId::BrokerDataSetWriterTransportDataType_Encoding_DefaultXml
+                as u32,
+            opcua::types::xml_decode_to_enc::<BrokerDataSetWriterTransportDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::BrokerWriterGroupTransportDataType as u32,
+            crate::ObjectId::BrokerWriterGroupTransportDataType_Encoding_DefaultXml
+                as u32,
+            opcua::types::xml_decode_to_enc::<BrokerWriterGroupTransportDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::BrowseDescription as u32,
+            crate::ObjectId::BrowseDescription_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<BrowseDescription>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::BrowseNextRequest as u32,
+            crate::ObjectId::BrowseNextRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<BrowseNextRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::BrowseNextResponse as u32,
+            crate::ObjectId::BrowseNextResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<BrowseNextResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::BrowsePath as u32,
+            crate::ObjectId::BrowsePath_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<BrowsePath>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::BrowsePathResult as u32,
+            crate::ObjectId::BrowsePathResult_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<BrowsePathResult>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::BrowsePathTarget as u32,
+            crate::ObjectId::BrowsePathTarget_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<BrowsePathTarget>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::BrowseRequest as u32,
+            crate::ObjectId::BrowseRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<BrowseRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::BrowseResponse as u32,
+            crate::ObjectId::BrowseResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<BrowseResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::BrowseResult as u32,
+            crate::ObjectId::BrowseResult_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<BrowseResult>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::BuildInfo as u32,
+            crate::ObjectId::BuildInfo_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<BuildInfo>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CallMethodRequest as u32,
+            crate::ObjectId::CallMethodRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CallMethodRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CallMethodResult as u32,
+            crate::ObjectId::CallMethodResult_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CallMethodResult>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CallRequest as u32,
+            crate::ObjectId::CallRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CallRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CallResponse as u32,
+            crate::ObjectId::CallResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CallResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CancelRequest as u32,
+            crate::ObjectId::CancelRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CancelRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CancelResponse as u32,
+            crate::ObjectId::CancelResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CancelResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CartesianCoordinates as u32,
+            crate::ObjectId::CartesianCoordinates_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CartesianCoordinates>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ChannelSecurityToken as u32,
+            crate::ObjectId::ChannelSecurityToken_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ChannelSecurityToken>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CloseSecureChannelRequest as u32,
+            crate::ObjectId::CloseSecureChannelRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CloseSecureChannelRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CloseSecureChannelResponse as u32,
+            crate::ObjectId::CloseSecureChannelResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CloseSecureChannelResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CloseSessionRequest as u32,
+            crate::ObjectId::CloseSessionRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CloseSessionRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CloseSessionResponse as u32,
+            crate::ObjectId::CloseSessionResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CloseSessionResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ComplexNumberType as u32,
+            crate::ObjectId::ComplexNumberType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ComplexNumberType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ConfigurationVersionDataType as u32,
+            crate::ObjectId::ConfigurationVersionDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ConfigurationVersionDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ConnectionTransportDataType as u32,
+            crate::ObjectId::ConnectionTransportDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ConnectionTransportDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ContentFilter as u32,
+            crate::ObjectId::ContentFilter_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ContentFilter>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ContentFilterElement as u32,
+            crate::ObjectId::ContentFilterElement_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ContentFilterElement>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ContentFilterElementResult as u32,
+            crate::ObjectId::ContentFilterElementResult_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ContentFilterElementResult>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ContentFilterResult as u32,
+            crate::ObjectId::ContentFilterResult_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ContentFilterResult>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CreateMonitoredItemsRequest as u32,
+            crate::ObjectId::CreateMonitoredItemsRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CreateMonitoredItemsRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CreateMonitoredItemsResponse as u32,
+            crate::ObjectId::CreateMonitoredItemsResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CreateMonitoredItemsResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CreateSessionRequest as u32,
+            crate::ObjectId::CreateSessionRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CreateSessionRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CreateSessionResponse as u32,
+            crate::ObjectId::CreateSessionResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CreateSessionResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CreateSubscriptionRequest as u32,
+            crate::ObjectId::CreateSubscriptionRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CreateSubscriptionRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CreateSubscriptionResponse as u32,
+            crate::ObjectId::CreateSubscriptionResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CreateSubscriptionResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::CurrencyUnitType as u32,
+            crate::ObjectId::CurrencyUnitType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<CurrencyUnitType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DataChangeFilter as u32,
+            crate::ObjectId::DataChangeFilter_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DataChangeFilter>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DataChangeNotification as u32,
+            crate::ObjectId::DataChangeNotification_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DataChangeNotification>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DataSetMetaDataType as u32,
+            crate::ObjectId::DataSetMetaDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DataSetMetaDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DataSetReaderDataType as u32,
+            crate::ObjectId::DataSetReaderDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DataSetReaderDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DataSetReaderMessageDataType as u32,
+            crate::ObjectId::DataSetReaderMessageDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DataSetReaderMessageDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DataSetReaderTransportDataType as u32,
+            crate::ObjectId::DataSetReaderTransportDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DataSetReaderTransportDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DataSetWriterDataType as u32,
+            crate::ObjectId::DataSetWriterDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DataSetWriterDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DataSetWriterMessageDataType as u32,
+            crate::ObjectId::DataSetWriterMessageDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DataSetWriterMessageDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DataSetWriterTransportDataType as u32,
+            crate::ObjectId::DataSetWriterTransportDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DataSetWriterTransportDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DataTypeAttributes as u32,
+            crate::ObjectId::DataTypeAttributes_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DataTypeAttributes>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DataTypeDescription as u32,
+            crate::ObjectId::DataTypeDescription_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DataTypeDescription>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DataTypeSchemaHeader as u32,
+            crate::ObjectId::DataTypeSchemaHeader_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DataTypeSchemaHeader>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DatagramConnectionTransportDataType as u32,
+            crate::ObjectId::DatagramConnectionTransportDataType_Encoding_DefaultXml
+                as u32,
+            opcua::types::xml_decode_to_enc::<DatagramConnectionTransportDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DatagramWriterGroupTransportDataType as u32,
+            crate::ObjectId::DatagramWriterGroupTransportDataType_Encoding_DefaultXml
+                as u32,
+            opcua::types::xml_decode_to_enc::<DatagramWriterGroupTransportDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DecimalDataType as u32,
+            crate::ObjectId::DecimalDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DecimalDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DeleteAtTimeDetails as u32,
+            crate::ObjectId::DeleteAtTimeDetails_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DeleteAtTimeDetails>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DeleteEventDetails as u32,
+            crate::ObjectId::DeleteEventDetails_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DeleteEventDetails>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DeleteMonitoredItemsRequest as u32,
+            crate::ObjectId::DeleteMonitoredItemsRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DeleteMonitoredItemsRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DeleteMonitoredItemsResponse as u32,
+            crate::ObjectId::DeleteMonitoredItemsResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DeleteMonitoredItemsResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DeleteNodesItem as u32,
+            crate::ObjectId::DeleteNodesItem_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DeleteNodesItem>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DeleteNodesRequest as u32,
+            crate::ObjectId::DeleteNodesRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DeleteNodesRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DeleteNodesResponse as u32,
+            crate::ObjectId::DeleteNodesResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DeleteNodesResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DeleteRawModifiedDetails as u32,
+            crate::ObjectId::DeleteRawModifiedDetails_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DeleteRawModifiedDetails>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DeleteReferencesItem as u32,
+            crate::ObjectId::DeleteReferencesItem_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DeleteReferencesItem>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DeleteReferencesRequest as u32,
+            crate::ObjectId::DeleteReferencesRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DeleteReferencesRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DeleteReferencesResponse as u32,
+            crate::ObjectId::DeleteReferencesResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DeleteReferencesResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DeleteSubscriptionsRequest as u32,
+            crate::ObjectId::DeleteSubscriptionsRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DeleteSubscriptionsRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DeleteSubscriptionsResponse as u32,
+            crate::ObjectId::DeleteSubscriptionsResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DeleteSubscriptionsResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DiscoveryConfiguration as u32,
+            crate::ObjectId::DiscoveryConfiguration_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DiscoveryConfiguration>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::DoubleComplexNumberType as u32,
+            crate::ObjectId::DoubleComplexNumberType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<DoubleComplexNumberType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::EUInformation as u32,
+            crate::ObjectId::EUInformation_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<EUInformation>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ElementOperand as u32,
+            crate::ObjectId::ElementOperand_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ElementOperand>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::EndpointConfiguration as u32,
+            crate::ObjectId::EndpointConfiguration_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<EndpointConfiguration>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::EndpointDescription as u32,
+            crate::ObjectId::EndpointDescription_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<EndpointDescription>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::EndpointType as u32,
+            crate::ObjectId::EndpointType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<EndpointType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::EndpointUrlListDataType as u32,
+            crate::ObjectId::EndpointUrlListDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<EndpointUrlListDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::EnumDescription as u32,
+            crate::ObjectId::EnumDescription_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<EnumDescription>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::EnumField as u32,
+            crate::ObjectId::EnumField_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<EnumField>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::EnumValueType as u32,
+            crate::ObjectId::EnumValueType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<EnumValueType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::EphemeralKeyType as u32,
+            crate::ObjectId::EphemeralKeyType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<EphemeralKeyType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::EventFieldList as u32,
+            crate::ObjectId::EventFieldList_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<EventFieldList>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::EventFilter as u32,
+            crate::ObjectId::EventFilter_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<EventFilter>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::EventFilterResult as u32,
+            crate::ObjectId::EventFilterResult_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<EventFilterResult>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::EventNotificationList as u32,
+            crate::ObjectId::EventNotificationList_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<EventNotificationList>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::FieldMetaData as u32,
+            crate::ObjectId::FieldMetaData_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<FieldMetaData>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::FieldTargetDataType as u32,
+            crate::ObjectId::FieldTargetDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<FieldTargetDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::FilterOperand as u32,
+            crate::ObjectId::FilterOperand_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<FilterOperand>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::FindServersOnNetworkRequest as u32,
+            crate::ObjectId::FindServersOnNetworkRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<FindServersOnNetworkRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::FindServersOnNetworkResponse as u32,
+            crate::ObjectId::FindServersOnNetworkResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<FindServersOnNetworkResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::FindServersRequest as u32,
+            crate::ObjectId::FindServersRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<FindServersRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::FindServersResponse as u32,
+            crate::ObjectId::FindServersResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<FindServersResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::Frame as u32,
+            crate::ObjectId::Frame_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<Frame>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::GenericAttributeValue as u32,
+            crate::ObjectId::GenericAttributeValue_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<GenericAttributeValue>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::GenericAttributes as u32,
+            crate::ObjectId::GenericAttributes_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<GenericAttributes>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::GetEndpointsRequest as u32,
+            crate::ObjectId::GetEndpointsRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<GetEndpointsRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::GetEndpointsResponse as u32,
+            crate::ObjectId::GetEndpointsResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<GetEndpointsResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::HistoryData as u32,
+            crate::ObjectId::HistoryData_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<HistoryData>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::HistoryEvent as u32,
+            crate::ObjectId::HistoryEvent_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<HistoryEvent>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::HistoryEventFieldList as u32,
+            crate::ObjectId::HistoryEventFieldList_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<HistoryEventFieldList>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::HistoryModifiedData as u32,
+            crate::ObjectId::HistoryModifiedData_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<HistoryModifiedData>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::HistoryReadDetails as u32,
+            crate::ObjectId::HistoryReadDetails_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<HistoryReadDetails>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::HistoryReadRequest as u32,
+            crate::ObjectId::HistoryReadRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<HistoryReadRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::HistoryReadResponse as u32,
+            crate::ObjectId::HistoryReadResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<HistoryReadResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::HistoryReadResult as u32,
+            crate::ObjectId::HistoryReadResult_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<HistoryReadResult>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::HistoryReadValueId as u32,
+            crate::ObjectId::HistoryReadValueId_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<HistoryReadValueId>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::HistoryUpdateDetails as u32,
+            crate::ObjectId::HistoryUpdateDetails_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<HistoryUpdateDetails>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::HistoryUpdateRequest as u32,
+            crate::ObjectId::HistoryUpdateRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<HistoryUpdateRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::HistoryUpdateResponse as u32,
+            crate::ObjectId::HistoryUpdateResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<HistoryUpdateResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::HistoryUpdateResult as u32,
+            crate::ObjectId::HistoryUpdateResult_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<HistoryUpdateResult>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::IdentityMappingRuleType as u32,
+            crate::ObjectId::IdentityMappingRuleType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<IdentityMappingRuleType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::IssuedIdentityToken as u32,
+            crate::ObjectId::IssuedIdentityToken_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<IssuedIdentityToken>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::JsonDataSetReaderMessageDataType as u32,
+            crate::ObjectId::JsonDataSetReaderMessageDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<JsonDataSetReaderMessageDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::JsonDataSetWriterMessageDataType as u32,
+            crate::ObjectId::JsonDataSetWriterMessageDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<JsonDataSetWriterMessageDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::JsonWriterGroupMessageDataType as u32,
+            crate::ObjectId::JsonWriterGroupMessageDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<JsonWriterGroupMessageDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::KeyValuePair as u32,
+            crate::ObjectId::KeyValuePair_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<KeyValuePair>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::LiteralOperand as u32,
+            crate::ObjectId::LiteralOperand_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<LiteralOperand>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::MdnsDiscoveryConfiguration as u32,
+            crate::ObjectId::MdnsDiscoveryConfiguration_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<MdnsDiscoveryConfiguration>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::MethodAttributes as u32,
+            crate::ObjectId::MethodAttributes_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<MethodAttributes>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ModelChangeStructureDataType as u32,
+            crate::ObjectId::ModelChangeStructureDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ModelChangeStructureDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ModificationInfo as u32,
+            crate::ObjectId::ModificationInfo_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ModificationInfo>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ModifyMonitoredItemsRequest as u32,
+            crate::ObjectId::ModifyMonitoredItemsRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ModifyMonitoredItemsRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ModifyMonitoredItemsResponse as u32,
+            crate::ObjectId::ModifyMonitoredItemsResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ModifyMonitoredItemsResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ModifySubscriptionRequest as u32,
+            crate::ObjectId::ModifySubscriptionRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ModifySubscriptionRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ModifySubscriptionResponse as u32,
+            crate::ObjectId::ModifySubscriptionResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ModifySubscriptionResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::MonitoredItemCreateRequest as u32,
+            crate::ObjectId::MonitoredItemCreateRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<MonitoredItemCreateRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::MonitoredItemCreateResult as u32,
+            crate::ObjectId::MonitoredItemCreateResult_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<MonitoredItemCreateResult>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::MonitoredItemModifyRequest as u32,
+            crate::ObjectId::MonitoredItemModifyRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<MonitoredItemModifyRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::MonitoredItemModifyResult as u32,
+            crate::ObjectId::MonitoredItemModifyResult_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<MonitoredItemModifyResult>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::MonitoredItemNotification as u32,
+            crate::ObjectId::MonitoredItemNotification_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<MonitoredItemNotification>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::MonitoringFilter as u32,
+            crate::ObjectId::MonitoringFilter_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<MonitoringFilter>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::MonitoringFilterResult as u32,
+            crate::ObjectId::MonitoringFilterResult_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<MonitoringFilterResult>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::MonitoringParameters as u32,
+            crate::ObjectId::MonitoringParameters_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<MonitoringParameters>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::NetworkAddressDataType as u32,
+            crate::ObjectId::NetworkAddressDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<NetworkAddressDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::NetworkAddressUrlDataType as u32,
+            crate::ObjectId::NetworkAddressUrlDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<NetworkAddressUrlDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::NetworkGroupDataType as u32,
+            crate::ObjectId::NetworkGroupDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<NetworkGroupDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::NodeAttributes as u32,
+            crate::ObjectId::NodeAttributes_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<NodeAttributes>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::NodeReference as u32,
+            crate::ObjectId::NodeReference_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<NodeReference>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::NodeTypeDescription as u32,
+            crate::ObjectId::NodeTypeDescription_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<NodeTypeDescription>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::NotificationData as u32,
+            crate::ObjectId::NotificationData_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<NotificationData>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::NotificationMessage as u32,
+            crate::ObjectId::NotificationMessage_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<NotificationMessage>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ObjectAttributes as u32,
+            crate::ObjectId::ObjectAttributes_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ObjectAttributes>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ObjectTypeAttributes as u32,
+            crate::ObjectId::ObjectTypeAttributes_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ObjectTypeAttributes>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::OpenSecureChannelRequest as u32,
+            crate::ObjectId::OpenSecureChannelRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<OpenSecureChannelRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::OpenSecureChannelResponse as u32,
+            crate::ObjectId::OpenSecureChannelResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<OpenSecureChannelResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::OptionSet as u32,
+            crate::ObjectId::OptionSet_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<OptionSet>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::Orientation as u32,
+            crate::ObjectId::Orientation_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<Orientation>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ParsingResult as u32,
+            crate::ObjectId::ParsingResult_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ParsingResult>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ProgramDiagnostic2DataType as u32,
+            crate::ObjectId::ProgramDiagnostic2DataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ProgramDiagnostic2DataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ProgramDiagnosticDataType as u32,
+            crate::ObjectId::ProgramDiagnosticDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ProgramDiagnosticDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::PubSubConfigurationDataType as u32,
+            crate::ObjectId::PubSubConfigurationDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<PubSubConfigurationDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::PubSubConnectionDataType as u32,
+            crate::ObjectId::PubSubConnectionDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<PubSubConnectionDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::PubSubGroupDataType as u32,
+            crate::ObjectId::PubSubGroupDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<PubSubGroupDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::PublishRequest as u32,
+            crate::ObjectId::PublishRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<PublishRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::PublishResponse as u32,
+            crate::ObjectId::PublishResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<PublishResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::PublishedDataItemsDataType as u32,
+            crate::ObjectId::PublishedDataItemsDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<PublishedDataItemsDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::PublishedDataSetDataType as u32,
+            crate::ObjectId::PublishedDataSetDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<PublishedDataSetDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::PublishedDataSetSourceDataType as u32,
+            crate::ObjectId::PublishedDataSetSourceDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<PublishedDataSetSourceDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::PublishedEventsDataType as u32,
+            crate::ObjectId::PublishedEventsDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<PublishedEventsDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::PublishedVariableDataType as u32,
+            crate::ObjectId::PublishedVariableDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<PublishedVariableDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::QueryDataDescription as u32,
+            crate::ObjectId::QueryDataDescription_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<QueryDataDescription>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::QueryDataSet as u32,
+            crate::ObjectId::QueryDataSet_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<QueryDataSet>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::QueryFirstRequest as u32,
+            crate::ObjectId::QueryFirstRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<QueryFirstRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::QueryFirstResponse as u32,
+            crate::ObjectId::QueryFirstResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<QueryFirstResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::QueryNextRequest as u32,
+            crate::ObjectId::QueryNextRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<QueryNextRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::QueryNextResponse as u32,
+            crate::ObjectId::QueryNextResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<QueryNextResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::Range as u32,
+            crate::ObjectId::Range_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<Range>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::RationalNumber as u32,
+            crate::ObjectId::RationalNumber_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<RationalNumber>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ReadAnnotationDataDetails as u32,
+            crate::ObjectId::ReadAnnotationDataDetails_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ReadAnnotationDataDetails>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ReadAtTimeDetails as u32,
+            crate::ObjectId::ReadAtTimeDetails_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ReadAtTimeDetails>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ReadEventDetails as u32,
+            crate::ObjectId::ReadEventDetails_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ReadEventDetails>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ReadProcessedDetails as u32,
+            crate::ObjectId::ReadProcessedDetails_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ReadProcessedDetails>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ReadRawModifiedDetails as u32,
+            crate::ObjectId::ReadRawModifiedDetails_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ReadRawModifiedDetails>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ReadRequest as u32,
+            crate::ObjectId::ReadRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ReadRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ReadResponse as u32,
+            crate::ObjectId::ReadResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ReadResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ReadValueId as u32,
+            crate::ObjectId::ReadValueId_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ReadValueId>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ReaderGroupDataType as u32,
+            crate::ObjectId::ReaderGroupDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ReaderGroupDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ReaderGroupMessageDataType as u32,
+            crate::ObjectId::ReaderGroupMessageDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ReaderGroupMessageDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ReaderGroupTransportDataType as u32,
+            crate::ObjectId::ReaderGroupTransportDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ReaderGroupTransportDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::RedundantServerDataType as u32,
+            crate::ObjectId::RedundantServerDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<RedundantServerDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ReferenceDescription as u32,
+            crate::ObjectId::ReferenceDescription_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ReferenceDescription>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ReferenceTypeAttributes as u32,
+            crate::ObjectId::ReferenceTypeAttributes_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ReferenceTypeAttributes>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::RegisterNodesRequest as u32,
+            crate::ObjectId::RegisterNodesRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<RegisterNodesRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::RegisterNodesResponse as u32,
+            crate::ObjectId::RegisterNodesResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<RegisterNodesResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::RegisterServer2Request as u32,
+            crate::ObjectId::RegisterServer2Request_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<RegisterServer2Request>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::RegisterServer2Response as u32,
+            crate::ObjectId::RegisterServer2Response_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<RegisterServer2Response>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::RegisterServerRequest as u32,
+            crate::ObjectId::RegisterServerRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<RegisterServerRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::RegisterServerResponse as u32,
+            crate::ObjectId::RegisterServerResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<RegisterServerResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::RegisteredServer as u32,
+            crate::ObjectId::RegisteredServer_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<RegisteredServer>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::RelativePath as u32,
+            crate::ObjectId::RelativePath_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<RelativePath>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::RelativePathElement as u32,
+            crate::ObjectId::RelativePathElement_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<RelativePathElement>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::RepublishRequest as u32,
+            crate::ObjectId::RepublishRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<RepublishRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::RepublishResponse as u32,
+            crate::ObjectId::RepublishResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<RepublishResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::RolePermissionType as u32,
+            crate::ObjectId::RolePermissionType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<RolePermissionType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SamplingIntervalDiagnosticsDataType as u32,
+            crate::ObjectId::SamplingIntervalDiagnosticsDataType_Encoding_DefaultXml
+                as u32,
+            opcua::types::xml_decode_to_enc::<SamplingIntervalDiagnosticsDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SemanticChangeStructureDataType as u32,
+            crate::ObjectId::SemanticChangeStructureDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SemanticChangeStructureDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ServerDiagnosticsSummaryDataType as u32,
+            crate::ObjectId::ServerDiagnosticsSummaryDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ServerDiagnosticsSummaryDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ServerOnNetwork as u32,
+            crate::ObjectId::ServerOnNetwork_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ServerOnNetwork>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ServerStatusDataType as u32,
+            crate::ObjectId::ServerStatusDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ServerStatusDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ServiceCounterDataType as u32,
+            crate::ObjectId::ServiceCounterDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ServiceCounterDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ServiceFault as u32,
+            crate::ObjectId::ServiceFault_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ServiceFault>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SessionDiagnosticsDataType as u32,
+            crate::ObjectId::SessionDiagnosticsDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SessionDiagnosticsDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SessionSecurityDiagnosticsDataType as u32,
+            crate::ObjectId::SessionSecurityDiagnosticsDataType_Encoding_DefaultXml
+                as u32,
+            opcua::types::xml_decode_to_enc::<SessionSecurityDiagnosticsDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SessionlessInvokeRequestType as u32,
+            crate::ObjectId::SessionlessInvokeRequestType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SessionlessInvokeRequestType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SessionlessInvokeResponseType as u32,
+            crate::ObjectId::SessionlessInvokeResponseType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SessionlessInvokeResponseType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SetMonitoringModeRequest as u32,
+            crate::ObjectId::SetMonitoringModeRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SetMonitoringModeRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SetMonitoringModeResponse as u32,
+            crate::ObjectId::SetMonitoringModeResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SetMonitoringModeResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SetPublishingModeRequest as u32,
+            crate::ObjectId::SetPublishingModeRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SetPublishingModeRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SetPublishingModeResponse as u32,
+            crate::ObjectId::SetPublishingModeResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SetPublishingModeResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SetTriggeringRequest as u32,
+            crate::ObjectId::SetTriggeringRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SetTriggeringRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SetTriggeringResponse as u32,
+            crate::ObjectId::SetTriggeringResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SetTriggeringResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SignatureData as u32,
+            crate::ObjectId::SignatureData_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SignatureData>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SignedSoftwareCertificate as u32,
+            crate::ObjectId::SignedSoftwareCertificate_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SignedSoftwareCertificate>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SimpleAttributeOperand as u32,
+            crate::ObjectId::SimpleAttributeOperand_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SimpleAttributeOperand>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SimpleTypeDescription as u32,
+            crate::ObjectId::SimpleTypeDescription_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SimpleTypeDescription>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::StatusChangeNotification as u32,
+            crate::ObjectId::StatusChangeNotification_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<StatusChangeNotification>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::StatusResult as u32,
+            crate::ObjectId::StatusResult_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<StatusResult>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::StructureDescription as u32,
+            crate::ObjectId::StructureDescription_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<StructureDescription>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::StructureField as u32,
+            crate::ObjectId::StructureField_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<StructureField>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SubscribedDataSetDataType as u32,
+            crate::ObjectId::SubscribedDataSetDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SubscribedDataSetDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SubscribedDataSetMirrorDataType as u32,
+            crate::ObjectId::SubscribedDataSetMirrorDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SubscribedDataSetMirrorDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SubscriptionAcknowledgement as u32,
+            crate::ObjectId::SubscriptionAcknowledgement_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SubscriptionAcknowledgement>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::SubscriptionDiagnosticsDataType as u32,
+            crate::ObjectId::SubscriptionDiagnosticsDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<SubscriptionDiagnosticsDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::TargetVariablesDataType as u32,
+            crate::ObjectId::TargetVariablesDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<TargetVariablesDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ThreeDCartesianCoordinates as u32,
+            crate::ObjectId::ThreeDCartesianCoordinates_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ThreeDCartesianCoordinates>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ThreeDFrame as u32,
+            crate::ObjectId::ThreeDFrame_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ThreeDFrame>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ThreeDOrientation as u32,
+            crate::ObjectId::ThreeDOrientation_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ThreeDOrientation>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ThreeDVector as u32,
+            crate::ObjectId::ThreeDVector_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ThreeDVector>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::TimeZoneDataType as u32,
+            crate::ObjectId::TimeZoneDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<TimeZoneDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::TransferResult as u32,
+            crate::ObjectId::TransferResult_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<TransferResult>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::TransferSubscriptionsRequest as u32,
+            crate::ObjectId::TransferSubscriptionsRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<TransferSubscriptionsRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::TransferSubscriptionsResponse as u32,
+            crate::ObjectId::TransferSubscriptionsResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<TransferSubscriptionsResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::TranslateBrowsePathsToNodeIdsRequest as u32,
+            crate::ObjectId::TranslateBrowsePathsToNodeIdsRequest_Encoding_DefaultXml
+                as u32,
+            opcua::types::xml_decode_to_enc::<TranslateBrowsePathsToNodeIdsRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::TranslateBrowsePathsToNodeIdsResponse as u32,
+            crate::ObjectId::TranslateBrowsePathsToNodeIdsResponse_Encoding_DefaultXml
+                as u32,
+            opcua::types::xml_decode_to_enc::<TranslateBrowsePathsToNodeIdsResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::TrustListDataType as u32,
+            crate::ObjectId::TrustListDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<TrustListDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::UABinaryFileDataType as u32,
+            crate::ObjectId::UABinaryFileDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<UABinaryFileDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::UadpDataSetReaderMessageDataType as u32,
+            crate::ObjectId::UadpDataSetReaderMessageDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<UadpDataSetReaderMessageDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::UadpDataSetWriterMessageDataType as u32,
+            crate::ObjectId::UadpDataSetWriterMessageDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<UadpDataSetWriterMessageDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::UadpWriterGroupMessageDataType as u32,
+            crate::ObjectId::UadpWriterGroupMessageDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<UadpWriterGroupMessageDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::UnregisterNodesRequest as u32,
+            crate::ObjectId::UnregisterNodesRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<UnregisterNodesRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::UnregisterNodesResponse as u32,
+            crate::ObjectId::UnregisterNodesResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<UnregisterNodesResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::UpdateDataDetails as u32,
+            crate::ObjectId::UpdateDataDetails_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<UpdateDataDetails>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::UpdateEventDetails as u32,
+            crate::ObjectId::UpdateEventDetails_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<UpdateEventDetails>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::UpdateStructureDataDetails as u32,
+            crate::ObjectId::UpdateStructureDataDetails_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<UpdateStructureDataDetails>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::UserIdentityToken as u32,
+            crate::ObjectId::UserIdentityToken_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<UserIdentityToken>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::UserNameIdentityToken as u32,
+            crate::ObjectId::UserNameIdentityToken_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<UserNameIdentityToken>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::UserTokenPolicy as u32,
+            crate::ObjectId::UserTokenPolicy_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<UserTokenPolicy>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::VariableAttributes as u32,
+            crate::ObjectId::VariableAttributes_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<VariableAttributes>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::VariableTypeAttributes as u32,
+            crate::ObjectId::VariableTypeAttributes_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<VariableTypeAttributes>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::Vector as u32,
+            crate::ObjectId::Vector_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<Vector>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ViewAttributes as u32,
+            crate::ObjectId::ViewAttributes_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ViewAttributes>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::ViewDescription as u32,
+            crate::ObjectId::ViewDescription_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<ViewDescription>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::WriteRequest as u32,
+            crate::ObjectId::WriteRequest_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<WriteRequest>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::WriteResponse as u32,
+            crate::ObjectId::WriteResponse_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<WriteResponse>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::WriteValue as u32,
+            crate::ObjectId::WriteValue_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<WriteValue>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::WriterGroupDataType as u32,
+            crate::ObjectId::WriterGroupDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<WriterGroupDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::WriterGroupMessageDataType as u32,
+            crate::ObjectId::WriterGroupMessageDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<WriterGroupMessageDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::WriterGroupTransportDataType as u32,
+            crate::ObjectId::WriterGroupTransportDataType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<WriterGroupTransportDataType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::X509IdentityToken as u32,
+            crate::ObjectId::X509IdentityToken_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<X509IdentityToken>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::XVType as u32,
+            crate::ObjectId::XVType_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<XVType>,
+        );
+        inst.add_xml_type(
+            crate::DataTypeId::Argument as u32,
+            crate::ObjectId::Argument_Encoding_DefaultXml as u32,
+            opcua::types::xml_decode_to_enc::<crate::argument::Argument>,
+        );
+    }
+    #[cfg(feature = "json")]
+    {
+        inst.add_json_type(
+            crate::DataTypeId::ActivateSessionRequest as u32,
+            crate::ObjectId::ActivateSessionRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ActivateSessionRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ActivateSessionResponse as u32,
+            crate::ObjectId::ActivateSessionResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ActivateSessionResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::AddNodesItem as u32,
+            crate::ObjectId::AddNodesItem_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<AddNodesItem>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::AddNodesRequest as u32,
+            crate::ObjectId::AddNodesRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<AddNodesRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::AddNodesResponse as u32,
+            crate::ObjectId::AddNodesResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<AddNodesResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::AddNodesResult as u32,
+            crate::ObjectId::AddNodesResult_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<AddNodesResult>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::AddReferencesItem as u32,
+            crate::ObjectId::AddReferencesItem_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<AddReferencesItem>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::AddReferencesRequest as u32,
+            crate::ObjectId::AddReferencesRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<AddReferencesRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::AddReferencesResponse as u32,
+            crate::ObjectId::AddReferencesResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<AddReferencesResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::AdditionalParametersType as u32,
+            crate::ObjectId::AdditionalParametersType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<AdditionalParametersType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::AggregateConfiguration as u32,
+            crate::ObjectId::AggregateConfiguration_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<AggregateConfiguration>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::AggregateFilter as u32,
+            crate::ObjectId::AggregateFilter_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<AggregateFilter>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::AggregateFilterResult as u32,
+            crate::ObjectId::AggregateFilterResult_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<AggregateFilterResult>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::AliasNameDataType as u32,
+            crate::ObjectId::AliasNameDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<AliasNameDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::Annotation as u32,
+            crate::ObjectId::Annotation_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<Annotation>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::AnonymousIdentityToken as u32,
+            crate::ObjectId::AnonymousIdentityToken_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<AnonymousIdentityToken>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ApplicationDescription as u32,
+            crate::ObjectId::ApplicationDescription_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ApplicationDescription>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::AttributeOperand as u32,
+            crate::ObjectId::AttributeOperand_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<AttributeOperand>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::AxisInformation as u32,
+            crate::ObjectId::AxisInformation_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<AxisInformation>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::BrokerConnectionTransportDataType as u32,
+            crate::ObjectId::BrokerConnectionTransportDataType_Encoding_DefaultJson
+                as u32,
+            opcua::types::json_decode_to_enc::<BrokerConnectionTransportDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::BrokerDataSetReaderTransportDataType as u32,
+            crate::ObjectId::BrokerDataSetReaderTransportDataType_Encoding_DefaultJson
+                as u32,
+            opcua::types::json_decode_to_enc::<BrokerDataSetReaderTransportDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::BrokerDataSetWriterTransportDataType as u32,
+            crate::ObjectId::BrokerDataSetWriterTransportDataType_Encoding_DefaultJson
+                as u32,
+            opcua::types::json_decode_to_enc::<BrokerDataSetWriterTransportDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::BrokerWriterGroupTransportDataType as u32,
+            crate::ObjectId::BrokerWriterGroupTransportDataType_Encoding_DefaultJson
+                as u32,
+            opcua::types::json_decode_to_enc::<BrokerWriterGroupTransportDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::BrowseDescription as u32,
+            crate::ObjectId::BrowseDescription_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<BrowseDescription>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::BrowseNextRequest as u32,
+            crate::ObjectId::BrowseNextRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<BrowseNextRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::BrowseNextResponse as u32,
+            crate::ObjectId::BrowseNextResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<BrowseNextResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::BrowsePath as u32,
+            crate::ObjectId::BrowsePath_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<BrowsePath>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::BrowsePathResult as u32,
+            crate::ObjectId::BrowsePathResult_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<BrowsePathResult>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::BrowsePathTarget as u32,
+            crate::ObjectId::BrowsePathTarget_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<BrowsePathTarget>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::BrowseRequest as u32,
+            crate::ObjectId::BrowseRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<BrowseRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::BrowseResponse as u32,
+            crate::ObjectId::BrowseResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<BrowseResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::BrowseResult as u32,
+            crate::ObjectId::BrowseResult_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<BrowseResult>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::BuildInfo as u32,
+            crate::ObjectId::BuildInfo_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<BuildInfo>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CallMethodRequest as u32,
+            crate::ObjectId::CallMethodRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CallMethodRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CallMethodResult as u32,
+            crate::ObjectId::CallMethodResult_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CallMethodResult>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CallRequest as u32,
+            crate::ObjectId::CallRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CallRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CallResponse as u32,
+            crate::ObjectId::CallResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CallResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CancelRequest as u32,
+            crate::ObjectId::CancelRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CancelRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CancelResponse as u32,
+            crate::ObjectId::CancelResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CancelResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CartesianCoordinates as u32,
+            crate::ObjectId::CartesianCoordinates_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CartesianCoordinates>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ChannelSecurityToken as u32,
+            crate::ObjectId::ChannelSecurityToken_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ChannelSecurityToken>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CloseSecureChannelRequest as u32,
+            crate::ObjectId::CloseSecureChannelRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CloseSecureChannelRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CloseSecureChannelResponse as u32,
+            crate::ObjectId::CloseSecureChannelResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CloseSecureChannelResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CloseSessionRequest as u32,
+            crate::ObjectId::CloseSessionRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CloseSessionRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CloseSessionResponse as u32,
+            crate::ObjectId::CloseSessionResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CloseSessionResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ComplexNumberType as u32,
+            crate::ObjectId::ComplexNumberType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ComplexNumberType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ConfigurationVersionDataType as u32,
+            crate::ObjectId::ConfigurationVersionDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ConfigurationVersionDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ConnectionTransportDataType as u32,
+            crate::ObjectId::ConnectionTransportDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ConnectionTransportDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ContentFilter as u32,
+            crate::ObjectId::ContentFilter_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ContentFilter>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ContentFilterElement as u32,
+            crate::ObjectId::ContentFilterElement_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ContentFilterElement>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ContentFilterElementResult as u32,
+            crate::ObjectId::ContentFilterElementResult_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ContentFilterElementResult>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ContentFilterResult as u32,
+            crate::ObjectId::ContentFilterResult_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ContentFilterResult>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CreateMonitoredItemsRequest as u32,
+            crate::ObjectId::CreateMonitoredItemsRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CreateMonitoredItemsRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CreateMonitoredItemsResponse as u32,
+            crate::ObjectId::CreateMonitoredItemsResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CreateMonitoredItemsResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CreateSessionRequest as u32,
+            crate::ObjectId::CreateSessionRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CreateSessionRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CreateSessionResponse as u32,
+            crate::ObjectId::CreateSessionResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CreateSessionResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CreateSubscriptionRequest as u32,
+            crate::ObjectId::CreateSubscriptionRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CreateSubscriptionRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CreateSubscriptionResponse as u32,
+            crate::ObjectId::CreateSubscriptionResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CreateSubscriptionResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::CurrencyUnitType as u32,
+            crate::ObjectId::CurrencyUnitType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<CurrencyUnitType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DataChangeFilter as u32,
+            crate::ObjectId::DataChangeFilter_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DataChangeFilter>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DataChangeNotification as u32,
+            crate::ObjectId::DataChangeNotification_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DataChangeNotification>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DataSetMetaDataType as u32,
+            crate::ObjectId::DataSetMetaDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DataSetMetaDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DataSetReaderDataType as u32,
+            crate::ObjectId::DataSetReaderDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DataSetReaderDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DataSetReaderMessageDataType as u32,
+            crate::ObjectId::DataSetReaderMessageDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DataSetReaderMessageDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DataSetReaderTransportDataType as u32,
+            crate::ObjectId::DataSetReaderTransportDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DataSetReaderTransportDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DataSetWriterDataType as u32,
+            crate::ObjectId::DataSetWriterDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DataSetWriterDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DataSetWriterMessageDataType as u32,
+            crate::ObjectId::DataSetWriterMessageDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DataSetWriterMessageDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DataSetWriterTransportDataType as u32,
+            crate::ObjectId::DataSetWriterTransportDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DataSetWriterTransportDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DataTypeAttributes as u32,
+            crate::ObjectId::DataTypeAttributes_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DataTypeAttributes>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DataTypeDescription as u32,
+            crate::ObjectId::DataTypeDescription_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DataTypeDescription>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DataTypeSchemaHeader as u32,
+            crate::ObjectId::DataTypeSchemaHeader_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DataTypeSchemaHeader>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DatagramConnectionTransportDataType as u32,
+            crate::ObjectId::DatagramConnectionTransportDataType_Encoding_DefaultJson
+                as u32,
+            opcua::types::json_decode_to_enc::<DatagramConnectionTransportDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DatagramWriterGroupTransportDataType as u32,
+            crate::ObjectId::DatagramWriterGroupTransportDataType_Encoding_DefaultJson
+                as u32,
+            opcua::types::json_decode_to_enc::<DatagramWriterGroupTransportDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DecimalDataType as u32,
+            crate::ObjectId::DecimalDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DecimalDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DeleteAtTimeDetails as u32,
+            crate::ObjectId::DeleteAtTimeDetails_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DeleteAtTimeDetails>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DeleteEventDetails as u32,
+            crate::ObjectId::DeleteEventDetails_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DeleteEventDetails>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DeleteMonitoredItemsRequest as u32,
+            crate::ObjectId::DeleteMonitoredItemsRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DeleteMonitoredItemsRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DeleteMonitoredItemsResponse as u32,
+            crate::ObjectId::DeleteMonitoredItemsResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DeleteMonitoredItemsResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DeleteNodesItem as u32,
+            crate::ObjectId::DeleteNodesItem_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DeleteNodesItem>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DeleteNodesRequest as u32,
+            crate::ObjectId::DeleteNodesRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DeleteNodesRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DeleteNodesResponse as u32,
+            crate::ObjectId::DeleteNodesResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DeleteNodesResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DeleteRawModifiedDetails as u32,
+            crate::ObjectId::DeleteRawModifiedDetails_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DeleteRawModifiedDetails>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DeleteReferencesItem as u32,
+            crate::ObjectId::DeleteReferencesItem_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DeleteReferencesItem>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DeleteReferencesRequest as u32,
+            crate::ObjectId::DeleteReferencesRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DeleteReferencesRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DeleteReferencesResponse as u32,
+            crate::ObjectId::DeleteReferencesResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DeleteReferencesResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DeleteSubscriptionsRequest as u32,
+            crate::ObjectId::DeleteSubscriptionsRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DeleteSubscriptionsRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DeleteSubscriptionsResponse as u32,
+            crate::ObjectId::DeleteSubscriptionsResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DeleteSubscriptionsResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DiscoveryConfiguration as u32,
+            crate::ObjectId::DiscoveryConfiguration_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DiscoveryConfiguration>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::DoubleComplexNumberType as u32,
+            crate::ObjectId::DoubleComplexNumberType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<DoubleComplexNumberType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::EUInformation as u32,
+            crate::ObjectId::EUInformation_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<EUInformation>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ElementOperand as u32,
+            crate::ObjectId::ElementOperand_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ElementOperand>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::EndpointConfiguration as u32,
+            crate::ObjectId::EndpointConfiguration_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<EndpointConfiguration>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::EndpointDescription as u32,
+            crate::ObjectId::EndpointDescription_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<EndpointDescription>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::EndpointType as u32,
+            crate::ObjectId::EndpointType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<EndpointType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::EndpointUrlListDataType as u32,
+            crate::ObjectId::EndpointUrlListDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<EndpointUrlListDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::EnumDescription as u32,
+            crate::ObjectId::EnumDescription_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<EnumDescription>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::EnumField as u32,
+            crate::ObjectId::EnumField_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<EnumField>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::EnumValueType as u32,
+            crate::ObjectId::EnumValueType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<EnumValueType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::EphemeralKeyType as u32,
+            crate::ObjectId::EphemeralKeyType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<EphemeralKeyType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::EventFieldList as u32,
+            crate::ObjectId::EventFieldList_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<EventFieldList>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::EventFilter as u32,
+            crate::ObjectId::EventFilter_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<EventFilter>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::EventFilterResult as u32,
+            crate::ObjectId::EventFilterResult_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<EventFilterResult>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::EventNotificationList as u32,
+            crate::ObjectId::EventNotificationList_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<EventNotificationList>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::FieldMetaData as u32,
+            crate::ObjectId::FieldMetaData_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<FieldMetaData>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::FieldTargetDataType as u32,
+            crate::ObjectId::FieldTargetDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<FieldTargetDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::FilterOperand as u32,
+            crate::ObjectId::FilterOperand_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<FilterOperand>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::FindServersOnNetworkRequest as u32,
+            crate::ObjectId::FindServersOnNetworkRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<FindServersOnNetworkRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::FindServersOnNetworkResponse as u32,
+            crate::ObjectId::FindServersOnNetworkResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<FindServersOnNetworkResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::FindServersRequest as u32,
+            crate::ObjectId::FindServersRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<FindServersRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::FindServersResponse as u32,
+            crate::ObjectId::FindServersResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<FindServersResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::Frame as u32,
+            crate::ObjectId::Frame_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<Frame>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::GenericAttributeValue as u32,
+            crate::ObjectId::GenericAttributeValue_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<GenericAttributeValue>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::GenericAttributes as u32,
+            crate::ObjectId::GenericAttributes_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<GenericAttributes>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::GetEndpointsRequest as u32,
+            crate::ObjectId::GetEndpointsRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<GetEndpointsRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::GetEndpointsResponse as u32,
+            crate::ObjectId::GetEndpointsResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<GetEndpointsResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::HistoryData as u32,
+            crate::ObjectId::HistoryData_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<HistoryData>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::HistoryEvent as u32,
+            crate::ObjectId::HistoryEvent_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<HistoryEvent>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::HistoryEventFieldList as u32,
+            crate::ObjectId::HistoryEventFieldList_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<HistoryEventFieldList>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::HistoryModifiedData as u32,
+            crate::ObjectId::HistoryModifiedData_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<HistoryModifiedData>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::HistoryReadDetails as u32,
+            crate::ObjectId::HistoryReadDetails_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<HistoryReadDetails>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::HistoryReadRequest as u32,
+            crate::ObjectId::HistoryReadRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<HistoryReadRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::HistoryReadResponse as u32,
+            crate::ObjectId::HistoryReadResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<HistoryReadResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::HistoryReadResult as u32,
+            crate::ObjectId::HistoryReadResult_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<HistoryReadResult>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::HistoryReadValueId as u32,
+            crate::ObjectId::HistoryReadValueId_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<HistoryReadValueId>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::HistoryUpdateDetails as u32,
+            crate::ObjectId::HistoryUpdateDetails_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<HistoryUpdateDetails>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::HistoryUpdateRequest as u32,
+            crate::ObjectId::HistoryUpdateRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<HistoryUpdateRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::HistoryUpdateResponse as u32,
+            crate::ObjectId::HistoryUpdateResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<HistoryUpdateResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::HistoryUpdateResult as u32,
+            crate::ObjectId::HistoryUpdateResult_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<HistoryUpdateResult>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::IdentityMappingRuleType as u32,
+            crate::ObjectId::IdentityMappingRuleType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<IdentityMappingRuleType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::IssuedIdentityToken as u32,
+            crate::ObjectId::IssuedIdentityToken_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<IssuedIdentityToken>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::JsonDataSetReaderMessageDataType as u32,
+            crate::ObjectId::JsonDataSetReaderMessageDataType_Encoding_DefaultJson
+                as u32,
+            opcua::types::json_decode_to_enc::<JsonDataSetReaderMessageDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::JsonDataSetWriterMessageDataType as u32,
+            crate::ObjectId::JsonDataSetWriterMessageDataType_Encoding_DefaultJson
+                as u32,
+            opcua::types::json_decode_to_enc::<JsonDataSetWriterMessageDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::JsonWriterGroupMessageDataType as u32,
+            crate::ObjectId::JsonWriterGroupMessageDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<JsonWriterGroupMessageDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::KeyValuePair as u32,
+            crate::ObjectId::KeyValuePair_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<KeyValuePair>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::LiteralOperand as u32,
+            crate::ObjectId::LiteralOperand_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<LiteralOperand>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::MdnsDiscoveryConfiguration as u32,
+            crate::ObjectId::MdnsDiscoveryConfiguration_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<MdnsDiscoveryConfiguration>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::MethodAttributes as u32,
+            crate::ObjectId::MethodAttributes_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<MethodAttributes>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ModelChangeStructureDataType as u32,
+            crate::ObjectId::ModelChangeStructureDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ModelChangeStructureDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ModificationInfo as u32,
+            crate::ObjectId::ModificationInfo_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ModificationInfo>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ModifyMonitoredItemsRequest as u32,
+            crate::ObjectId::ModifyMonitoredItemsRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ModifyMonitoredItemsRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ModifyMonitoredItemsResponse as u32,
+            crate::ObjectId::ModifyMonitoredItemsResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ModifyMonitoredItemsResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ModifySubscriptionRequest as u32,
+            crate::ObjectId::ModifySubscriptionRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ModifySubscriptionRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ModifySubscriptionResponse as u32,
+            crate::ObjectId::ModifySubscriptionResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ModifySubscriptionResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::MonitoredItemCreateRequest as u32,
+            crate::ObjectId::MonitoredItemCreateRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<MonitoredItemCreateRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::MonitoredItemCreateResult as u32,
+            crate::ObjectId::MonitoredItemCreateResult_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<MonitoredItemCreateResult>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::MonitoredItemModifyRequest as u32,
+            crate::ObjectId::MonitoredItemModifyRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<MonitoredItemModifyRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::MonitoredItemModifyResult as u32,
+            crate::ObjectId::MonitoredItemModifyResult_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<MonitoredItemModifyResult>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::MonitoredItemNotification as u32,
+            crate::ObjectId::MonitoredItemNotification_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<MonitoredItemNotification>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::MonitoringFilter as u32,
+            crate::ObjectId::MonitoringFilter_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<MonitoringFilter>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::MonitoringFilterResult as u32,
+            crate::ObjectId::MonitoringFilterResult_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<MonitoringFilterResult>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::MonitoringParameters as u32,
+            crate::ObjectId::MonitoringParameters_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<MonitoringParameters>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::NetworkAddressDataType as u32,
+            crate::ObjectId::NetworkAddressDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<NetworkAddressDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::NetworkAddressUrlDataType as u32,
+            crate::ObjectId::NetworkAddressUrlDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<NetworkAddressUrlDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::NetworkGroupDataType as u32,
+            crate::ObjectId::NetworkGroupDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<NetworkGroupDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::NodeAttributes as u32,
+            crate::ObjectId::NodeAttributes_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<NodeAttributes>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::NodeReference as u32,
+            crate::ObjectId::NodeReference_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<NodeReference>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::NodeTypeDescription as u32,
+            crate::ObjectId::NodeTypeDescription_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<NodeTypeDescription>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::NotificationData as u32,
+            crate::ObjectId::NotificationData_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<NotificationData>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::NotificationMessage as u32,
+            crate::ObjectId::NotificationMessage_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<NotificationMessage>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ObjectAttributes as u32,
+            crate::ObjectId::ObjectAttributes_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ObjectAttributes>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ObjectTypeAttributes as u32,
+            crate::ObjectId::ObjectTypeAttributes_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ObjectTypeAttributes>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::OpenSecureChannelRequest as u32,
+            crate::ObjectId::OpenSecureChannelRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<OpenSecureChannelRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::OpenSecureChannelResponse as u32,
+            crate::ObjectId::OpenSecureChannelResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<OpenSecureChannelResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::OptionSet as u32,
+            crate::ObjectId::OptionSet_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<OptionSet>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::Orientation as u32,
+            crate::ObjectId::Orientation_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<Orientation>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ParsingResult as u32,
+            crate::ObjectId::ParsingResult_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ParsingResult>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ProgramDiagnostic2DataType as u32,
+            crate::ObjectId::ProgramDiagnostic2DataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ProgramDiagnostic2DataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ProgramDiagnosticDataType as u32,
+            crate::ObjectId::ProgramDiagnosticDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ProgramDiagnosticDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::PubSubConfigurationDataType as u32,
+            crate::ObjectId::PubSubConfigurationDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<PubSubConfigurationDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::PubSubConnectionDataType as u32,
+            crate::ObjectId::PubSubConnectionDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<PubSubConnectionDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::PubSubGroupDataType as u32,
+            crate::ObjectId::PubSubGroupDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<PubSubGroupDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::PublishRequest as u32,
+            crate::ObjectId::PublishRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<PublishRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::PublishResponse as u32,
+            crate::ObjectId::PublishResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<PublishResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::PublishedDataItemsDataType as u32,
+            crate::ObjectId::PublishedDataItemsDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<PublishedDataItemsDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::PublishedDataSetDataType as u32,
+            crate::ObjectId::PublishedDataSetDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<PublishedDataSetDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::PublishedDataSetSourceDataType as u32,
+            crate::ObjectId::PublishedDataSetSourceDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<PublishedDataSetSourceDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::PublishedEventsDataType as u32,
+            crate::ObjectId::PublishedEventsDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<PublishedEventsDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::PublishedVariableDataType as u32,
+            crate::ObjectId::PublishedVariableDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<PublishedVariableDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::QueryDataDescription as u32,
+            crate::ObjectId::QueryDataDescription_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<QueryDataDescription>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::QueryDataSet as u32,
+            crate::ObjectId::QueryDataSet_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<QueryDataSet>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::QueryFirstRequest as u32,
+            crate::ObjectId::QueryFirstRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<QueryFirstRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::QueryFirstResponse as u32,
+            crate::ObjectId::QueryFirstResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<QueryFirstResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::QueryNextRequest as u32,
+            crate::ObjectId::QueryNextRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<QueryNextRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::QueryNextResponse as u32,
+            crate::ObjectId::QueryNextResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<QueryNextResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::Range as u32,
+            crate::ObjectId::Range_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<Range>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::RationalNumber as u32,
+            crate::ObjectId::RationalNumber_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<RationalNumber>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ReadAnnotationDataDetails as u32,
+            crate::ObjectId::ReadAnnotationDataDetails_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ReadAnnotationDataDetails>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ReadAtTimeDetails as u32,
+            crate::ObjectId::ReadAtTimeDetails_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ReadAtTimeDetails>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ReadEventDetails as u32,
+            crate::ObjectId::ReadEventDetails_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ReadEventDetails>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ReadProcessedDetails as u32,
+            crate::ObjectId::ReadProcessedDetails_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ReadProcessedDetails>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ReadRawModifiedDetails as u32,
+            crate::ObjectId::ReadRawModifiedDetails_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ReadRawModifiedDetails>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ReadRequest as u32,
+            crate::ObjectId::ReadRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ReadRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ReadResponse as u32,
+            crate::ObjectId::ReadResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ReadResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ReadValueId as u32,
+            crate::ObjectId::ReadValueId_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ReadValueId>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ReaderGroupDataType as u32,
+            crate::ObjectId::ReaderGroupDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ReaderGroupDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ReaderGroupMessageDataType as u32,
+            crate::ObjectId::ReaderGroupMessageDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ReaderGroupMessageDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ReaderGroupTransportDataType as u32,
+            crate::ObjectId::ReaderGroupTransportDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ReaderGroupTransportDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::RedundantServerDataType as u32,
+            crate::ObjectId::RedundantServerDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<RedundantServerDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ReferenceDescription as u32,
+            crate::ObjectId::ReferenceDescription_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ReferenceDescription>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ReferenceTypeAttributes as u32,
+            crate::ObjectId::ReferenceTypeAttributes_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ReferenceTypeAttributes>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::RegisterNodesRequest as u32,
+            crate::ObjectId::RegisterNodesRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<RegisterNodesRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::RegisterNodesResponse as u32,
+            crate::ObjectId::RegisterNodesResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<RegisterNodesResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::RegisterServer2Request as u32,
+            crate::ObjectId::RegisterServer2Request_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<RegisterServer2Request>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::RegisterServer2Response as u32,
+            crate::ObjectId::RegisterServer2Response_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<RegisterServer2Response>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::RegisterServerRequest as u32,
+            crate::ObjectId::RegisterServerRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<RegisterServerRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::RegisterServerResponse as u32,
+            crate::ObjectId::RegisterServerResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<RegisterServerResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::RegisteredServer as u32,
+            crate::ObjectId::RegisteredServer_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<RegisteredServer>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::RelativePath as u32,
+            crate::ObjectId::RelativePath_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<RelativePath>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::RelativePathElement as u32,
+            crate::ObjectId::RelativePathElement_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<RelativePathElement>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::RepublishRequest as u32,
+            crate::ObjectId::RepublishRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<RepublishRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::RepublishResponse as u32,
+            crate::ObjectId::RepublishResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<RepublishResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::RolePermissionType as u32,
+            crate::ObjectId::RolePermissionType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<RolePermissionType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SamplingIntervalDiagnosticsDataType as u32,
+            crate::ObjectId::SamplingIntervalDiagnosticsDataType_Encoding_DefaultJson
+                as u32,
+            opcua::types::json_decode_to_enc::<SamplingIntervalDiagnosticsDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SemanticChangeStructureDataType as u32,
+            crate::ObjectId::SemanticChangeStructureDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SemanticChangeStructureDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ServerDiagnosticsSummaryDataType as u32,
+            crate::ObjectId::ServerDiagnosticsSummaryDataType_Encoding_DefaultJson
+                as u32,
+            opcua::types::json_decode_to_enc::<ServerDiagnosticsSummaryDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ServerOnNetwork as u32,
+            crate::ObjectId::ServerOnNetwork_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ServerOnNetwork>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ServerStatusDataType as u32,
+            crate::ObjectId::ServerStatusDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ServerStatusDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ServiceCounterDataType as u32,
+            crate::ObjectId::ServiceCounterDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ServiceCounterDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ServiceFault as u32,
+            crate::ObjectId::ServiceFault_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ServiceFault>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SessionDiagnosticsDataType as u32,
+            crate::ObjectId::SessionDiagnosticsDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SessionDiagnosticsDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SessionSecurityDiagnosticsDataType as u32,
+            crate::ObjectId::SessionSecurityDiagnosticsDataType_Encoding_DefaultJson
+                as u32,
+            opcua::types::json_decode_to_enc::<SessionSecurityDiagnosticsDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SessionlessInvokeRequestType as u32,
+            crate::ObjectId::SessionlessInvokeRequestType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SessionlessInvokeRequestType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SessionlessInvokeResponseType as u32,
+            crate::ObjectId::SessionlessInvokeResponseType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SessionlessInvokeResponseType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SetMonitoringModeRequest as u32,
+            crate::ObjectId::SetMonitoringModeRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SetMonitoringModeRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SetMonitoringModeResponse as u32,
+            crate::ObjectId::SetMonitoringModeResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SetMonitoringModeResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SetPublishingModeRequest as u32,
+            crate::ObjectId::SetPublishingModeRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SetPublishingModeRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SetPublishingModeResponse as u32,
+            crate::ObjectId::SetPublishingModeResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SetPublishingModeResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SetTriggeringRequest as u32,
+            crate::ObjectId::SetTriggeringRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SetTriggeringRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SetTriggeringResponse as u32,
+            crate::ObjectId::SetTriggeringResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SetTriggeringResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SignatureData as u32,
+            crate::ObjectId::SignatureData_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SignatureData>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SignedSoftwareCertificate as u32,
+            crate::ObjectId::SignedSoftwareCertificate_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SignedSoftwareCertificate>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SimpleAttributeOperand as u32,
+            crate::ObjectId::SimpleAttributeOperand_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SimpleAttributeOperand>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SimpleTypeDescription as u32,
+            crate::ObjectId::SimpleTypeDescription_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SimpleTypeDescription>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::StatusChangeNotification as u32,
+            crate::ObjectId::StatusChangeNotification_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<StatusChangeNotification>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::StatusResult as u32,
+            crate::ObjectId::StatusResult_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<StatusResult>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::StructureDescription as u32,
+            crate::ObjectId::StructureDescription_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<StructureDescription>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::StructureField as u32,
+            crate::ObjectId::StructureField_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<StructureField>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SubscribedDataSetDataType as u32,
+            crate::ObjectId::SubscribedDataSetDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SubscribedDataSetDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SubscribedDataSetMirrorDataType as u32,
+            crate::ObjectId::SubscribedDataSetMirrorDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SubscribedDataSetMirrorDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SubscriptionAcknowledgement as u32,
+            crate::ObjectId::SubscriptionAcknowledgement_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SubscriptionAcknowledgement>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::SubscriptionDiagnosticsDataType as u32,
+            crate::ObjectId::SubscriptionDiagnosticsDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<SubscriptionDiagnosticsDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::TargetVariablesDataType as u32,
+            crate::ObjectId::TargetVariablesDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<TargetVariablesDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ThreeDCartesianCoordinates as u32,
+            crate::ObjectId::ThreeDCartesianCoordinates_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ThreeDCartesianCoordinates>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ThreeDFrame as u32,
+            crate::ObjectId::ThreeDFrame_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ThreeDFrame>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ThreeDOrientation as u32,
+            crate::ObjectId::ThreeDOrientation_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ThreeDOrientation>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ThreeDVector as u32,
+            crate::ObjectId::ThreeDVector_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ThreeDVector>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::TimeZoneDataType as u32,
+            crate::ObjectId::TimeZoneDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<TimeZoneDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::TransferResult as u32,
+            crate::ObjectId::TransferResult_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<TransferResult>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::TransferSubscriptionsRequest as u32,
+            crate::ObjectId::TransferSubscriptionsRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<TransferSubscriptionsRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::TransferSubscriptionsResponse as u32,
+            crate::ObjectId::TransferSubscriptionsResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<TransferSubscriptionsResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::TranslateBrowsePathsToNodeIdsRequest as u32,
+            crate::ObjectId::TranslateBrowsePathsToNodeIdsRequest_Encoding_DefaultJson
+                as u32,
+            opcua::types::json_decode_to_enc::<TranslateBrowsePathsToNodeIdsRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::TranslateBrowsePathsToNodeIdsResponse as u32,
+            crate::ObjectId::TranslateBrowsePathsToNodeIdsResponse_Encoding_DefaultJson
+                as u32,
+            opcua::types::json_decode_to_enc::<TranslateBrowsePathsToNodeIdsResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::TrustListDataType as u32,
+            crate::ObjectId::TrustListDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<TrustListDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::UABinaryFileDataType as u32,
+            crate::ObjectId::UABinaryFileDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<UABinaryFileDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::UadpDataSetReaderMessageDataType as u32,
+            crate::ObjectId::UadpDataSetReaderMessageDataType_Encoding_DefaultJson
+                as u32,
+            opcua::types::json_decode_to_enc::<UadpDataSetReaderMessageDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::UadpDataSetWriterMessageDataType as u32,
+            crate::ObjectId::UadpDataSetWriterMessageDataType_Encoding_DefaultJson
+                as u32,
+            opcua::types::json_decode_to_enc::<UadpDataSetWriterMessageDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::UadpWriterGroupMessageDataType as u32,
+            crate::ObjectId::UadpWriterGroupMessageDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<UadpWriterGroupMessageDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::UnregisterNodesRequest as u32,
+            crate::ObjectId::UnregisterNodesRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<UnregisterNodesRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::UnregisterNodesResponse as u32,
+            crate::ObjectId::UnregisterNodesResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<UnregisterNodesResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::UpdateDataDetails as u32,
+            crate::ObjectId::UpdateDataDetails_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<UpdateDataDetails>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::UpdateEventDetails as u32,
+            crate::ObjectId::UpdateEventDetails_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<UpdateEventDetails>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::UpdateStructureDataDetails as u32,
+            crate::ObjectId::UpdateStructureDataDetails_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<UpdateStructureDataDetails>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::UserIdentityToken as u32,
+            crate::ObjectId::UserIdentityToken_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<UserIdentityToken>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::UserNameIdentityToken as u32,
+            crate::ObjectId::UserNameIdentityToken_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<UserNameIdentityToken>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::UserTokenPolicy as u32,
+            crate::ObjectId::UserTokenPolicy_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<UserTokenPolicy>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::VariableAttributes as u32,
+            crate::ObjectId::VariableAttributes_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<VariableAttributes>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::VariableTypeAttributes as u32,
+            crate::ObjectId::VariableTypeAttributes_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<VariableTypeAttributes>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::Vector as u32,
+            crate::ObjectId::Vector_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<Vector>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ViewAttributes as u32,
+            crate::ObjectId::ViewAttributes_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ViewAttributes>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::ViewDescription as u32,
+            crate::ObjectId::ViewDescription_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<ViewDescription>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::WriteRequest as u32,
+            crate::ObjectId::WriteRequest_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<WriteRequest>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::WriteResponse as u32,
+            crate::ObjectId::WriteResponse_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<WriteResponse>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::WriteValue as u32,
+            crate::ObjectId::WriteValue_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<WriteValue>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::WriterGroupDataType as u32,
+            crate::ObjectId::WriterGroupDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<WriterGroupDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::WriterGroupMessageDataType as u32,
+            crate::ObjectId::WriterGroupMessageDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<WriterGroupMessageDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::WriterGroupTransportDataType as u32,
+            crate::ObjectId::WriterGroupTransportDataType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<WriterGroupTransportDataType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::X509IdentityToken as u32,
+            crate::ObjectId::X509IdentityToken_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<X509IdentityToken>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::XVType as u32,
+            crate::ObjectId::XVType_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<XVType>,
+        );
+        inst.add_json_type(
+            crate::DataTypeId::Argument as u32,
+            crate::ObjectId::Argument_Encoding_DefaultJson as u32,
+            opcua::types::json_decode_to_enc::<crate::argument::Argument>,
+        );
+    }
+    inst
+});
+#[derive(Debug, Clone, Copy)]
+pub struct GeneratedTypeLoader;
+impl opcua::types::TypeLoader for GeneratedTypeLoader {
+    fn load_from_binary(
         &self,
-        body: &opcua::types::xml::XmlElement,
         node_id: &opcua::types::NodeId,
-        ctx: &opcua::types::xml::XmlContext<'_>,
-    ) -> Option<Result<opcua::types::ExtensionObject, opcua::types::xml::FromXmlError>> {
-        use opcua::types::xml::FromXml;
+        stream: &mut dyn std::io::Read,
+        ctx: &opcua::types::Context<'_>,
+    ) -> Option<opcua::types::EncodingResult<Box<dyn opcua::types::DynEncodable>>> {
         if node_id.namespace != 0 {
             return None;
         }
-        let object_id = match node_id
-            .as_u32()
-            .and_then(|v| crate::ObjectId::try_from(v).ok())
-            .ok_or_else(|| format!("Invalid object ID: {node_id}"))
-        {
-            Ok(i) => i,
-            Err(e) => return Some(Err(e.into())),
+        let Some(num_id) = node_id.as_u32() else {
+            return Some(
+                Err(
+                    opcua::types::Error::decoding(
+                        "Unsupported encoding ID. Only numeric encoding IDs are currently supported",
+                    ),
+                ),
+            );
         };
-        let r = match object_id {
-            crate::ObjectId::ActivateSessionRequest_Encoding_DefaultXml => {
-                ActivateSessionRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ActivateSessionResponse_Encoding_DefaultXml => {
-                ActivateSessionResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::AddNodesItem_Encoding_DefaultXml => {
-                AddNodesItem::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::AddNodesRequest_Encoding_DefaultXml => {
-                AddNodesRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::AddNodesResponse_Encoding_DefaultXml => {
-                AddNodesResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::AddNodesResult_Encoding_DefaultXml => {
-                AddNodesResult::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::AddReferencesItem_Encoding_DefaultXml => {
-                AddReferencesItem::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::AddReferencesRequest_Encoding_DefaultXml => {
-                AddReferencesRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::AddReferencesResponse_Encoding_DefaultXml => {
-                AddReferencesResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::AdditionalParametersType_Encoding_DefaultXml => {
-                AdditionalParametersType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::AggregateConfiguration_Encoding_DefaultXml => {
-                AggregateConfiguration::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::AggregateFilter_Encoding_DefaultXml => {
-                AggregateFilter::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::AggregateFilterResult_Encoding_DefaultXml => {
-                AggregateFilterResult::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::AliasNameDataType_Encoding_DefaultXml => {
-                AliasNameDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::Annotation_Encoding_DefaultXml => {
-                Annotation::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::AnonymousIdentityToken_Encoding_DefaultXml => {
-                AnonymousIdentityToken::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ApplicationDescription_Encoding_DefaultXml => {
-                ApplicationDescription::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::Argument_Encoding_DefaultXml => {
-                Argument::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::AttributeOperand_Encoding_DefaultXml => {
-                AttributeOperand::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::AxisInformation_Encoding_DefaultXml => {
-                AxisInformation::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::BrokerConnectionTransportDataType_Encoding_DefaultXml => {
-                BrokerConnectionTransportDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::BrokerDataSetReaderTransportDataType_Encoding_DefaultXml => {
-                BrokerDataSetReaderTransportDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::BrokerDataSetWriterTransportDataType_Encoding_DefaultXml => {
-                BrokerDataSetWriterTransportDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::BrokerWriterGroupTransportDataType_Encoding_DefaultXml => {
-                BrokerWriterGroupTransportDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::BrowseDescription_Encoding_DefaultXml => {
-                BrowseDescription::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::BrowseNextRequest_Encoding_DefaultXml => {
-                BrowseNextRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::BrowseNextResponse_Encoding_DefaultXml => {
-                BrowseNextResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::BrowsePath_Encoding_DefaultXml => {
-                BrowsePath::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::BrowsePathResult_Encoding_DefaultXml => {
-                BrowsePathResult::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::BrowsePathTarget_Encoding_DefaultXml => {
-                BrowsePathTarget::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::BrowseRequest_Encoding_DefaultXml => {
-                BrowseRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::BrowseResponse_Encoding_DefaultXml => {
-                BrowseResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::BrowseResult_Encoding_DefaultXml => {
-                BrowseResult::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::BuildInfo_Encoding_DefaultXml => {
-                BuildInfo::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CallMethodRequest_Encoding_DefaultXml => {
-                CallMethodRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CallMethodResult_Encoding_DefaultXml => {
-                CallMethodResult::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CallRequest_Encoding_DefaultXml => {
-                CallRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CallResponse_Encoding_DefaultXml => {
-                CallResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CancelRequest_Encoding_DefaultXml => {
-                CancelRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CancelResponse_Encoding_DefaultXml => {
-                CancelResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CartesianCoordinates_Encoding_DefaultXml => {
-                CartesianCoordinates::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ChannelSecurityToken_Encoding_DefaultXml => {
-                ChannelSecurityToken::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CloseSecureChannelRequest_Encoding_DefaultXml => {
-                CloseSecureChannelRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CloseSecureChannelResponse_Encoding_DefaultXml => {
-                CloseSecureChannelResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CloseSessionRequest_Encoding_DefaultXml => {
-                CloseSessionRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CloseSessionResponse_Encoding_DefaultXml => {
-                CloseSessionResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ComplexNumberType_Encoding_DefaultXml => {
-                ComplexNumberType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ConfigurationVersionDataType_Encoding_DefaultXml => {
-                ConfigurationVersionDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ConnectionTransportDataType_Encoding_DefaultXml => {
-                ConnectionTransportDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ContentFilter_Encoding_DefaultXml => {
-                ContentFilter::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ContentFilterElement_Encoding_DefaultXml => {
-                ContentFilterElement::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ContentFilterElementResult_Encoding_DefaultXml => {
-                ContentFilterElementResult::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ContentFilterResult_Encoding_DefaultXml => {
-                ContentFilterResult::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CreateMonitoredItemsRequest_Encoding_DefaultXml => {
-                CreateMonitoredItemsRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CreateMonitoredItemsResponse_Encoding_DefaultXml => {
-                CreateMonitoredItemsResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CreateSessionRequest_Encoding_DefaultXml => {
-                CreateSessionRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CreateSessionResponse_Encoding_DefaultXml => {
-                CreateSessionResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CreateSubscriptionRequest_Encoding_DefaultXml => {
-                CreateSubscriptionRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CreateSubscriptionResponse_Encoding_DefaultXml => {
-                CreateSubscriptionResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::CurrencyUnitType_Encoding_DefaultXml => {
-                CurrencyUnitType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DataChangeFilter_Encoding_DefaultXml => {
-                DataChangeFilter::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DataChangeNotification_Encoding_DefaultXml => {
-                DataChangeNotification::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DataSetMetaDataType_Encoding_DefaultXml => {
-                DataSetMetaDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DataSetReaderDataType_Encoding_DefaultXml => {
-                DataSetReaderDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DataSetReaderMessageDataType_Encoding_DefaultXml => {
-                DataSetReaderMessageDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DataSetReaderTransportDataType_Encoding_DefaultXml => {
-                DataSetReaderTransportDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DataSetWriterDataType_Encoding_DefaultXml => {
-                DataSetWriterDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DataSetWriterMessageDataType_Encoding_DefaultXml => {
-                DataSetWriterMessageDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DataSetWriterTransportDataType_Encoding_DefaultXml => {
-                DataSetWriterTransportDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DataTypeAttributes_Encoding_DefaultXml => {
-                DataTypeAttributes::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DataTypeDescription_Encoding_DefaultXml => {
-                DataTypeDescription::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DataTypeSchemaHeader_Encoding_DefaultXml => {
-                DataTypeSchemaHeader::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DatagramConnectionTransportDataType_Encoding_DefaultXml => {
-                DatagramConnectionTransportDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DatagramWriterGroupTransportDataType_Encoding_DefaultXml => {
-                DatagramWriterGroupTransportDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DecimalDataType_Encoding_DefaultXml => {
-                DecimalDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DeleteAtTimeDetails_Encoding_DefaultXml => {
-                DeleteAtTimeDetails::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DeleteEventDetails_Encoding_DefaultXml => {
-                DeleteEventDetails::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DeleteMonitoredItemsRequest_Encoding_DefaultXml => {
-                DeleteMonitoredItemsRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DeleteMonitoredItemsResponse_Encoding_DefaultXml => {
-                DeleteMonitoredItemsResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DeleteNodesItem_Encoding_DefaultXml => {
-                DeleteNodesItem::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DeleteNodesRequest_Encoding_DefaultXml => {
-                DeleteNodesRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DeleteNodesResponse_Encoding_DefaultXml => {
-                DeleteNodesResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DeleteRawModifiedDetails_Encoding_DefaultXml => {
-                DeleteRawModifiedDetails::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DeleteReferencesItem_Encoding_DefaultXml => {
-                DeleteReferencesItem::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DeleteReferencesRequest_Encoding_DefaultXml => {
-                DeleteReferencesRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DeleteReferencesResponse_Encoding_DefaultXml => {
-                DeleteReferencesResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DeleteSubscriptionsRequest_Encoding_DefaultXml => {
-                DeleteSubscriptionsRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DeleteSubscriptionsResponse_Encoding_DefaultXml => {
-                DeleteSubscriptionsResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DiscoveryConfiguration_Encoding_DefaultXml => {
-                DiscoveryConfiguration::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::DoubleComplexNumberType_Encoding_DefaultXml => {
-                DoubleComplexNumberType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::EUInformation_Encoding_DefaultXml => {
-                EUInformation::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ElementOperand_Encoding_DefaultXml => {
-                ElementOperand::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::EndpointConfiguration_Encoding_DefaultXml => {
-                EndpointConfiguration::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::EndpointDescription_Encoding_DefaultXml => {
-                EndpointDescription::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::EndpointType_Encoding_DefaultXml => {
-                EndpointType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::EndpointUrlListDataType_Encoding_DefaultXml => {
-                EndpointUrlListDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::EnumDescription_Encoding_DefaultXml => {
-                EnumDescription::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::EnumField_Encoding_DefaultXml => {
-                EnumField::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::EnumValueType_Encoding_DefaultXml => {
-                EnumValueType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::EphemeralKeyType_Encoding_DefaultXml => {
-                EphemeralKeyType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::EventFieldList_Encoding_DefaultXml => {
-                EventFieldList::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::EventFilter_Encoding_DefaultXml => {
-                EventFilter::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::EventFilterResult_Encoding_DefaultXml => {
-                EventFilterResult::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::EventNotificationList_Encoding_DefaultXml => {
-                EventNotificationList::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::FieldMetaData_Encoding_DefaultXml => {
-                FieldMetaData::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::FieldTargetDataType_Encoding_DefaultXml => {
-                FieldTargetDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::FilterOperand_Encoding_DefaultXml => {
-                FilterOperand::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::FindServersOnNetworkRequest_Encoding_DefaultXml => {
-                FindServersOnNetworkRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::FindServersOnNetworkResponse_Encoding_DefaultXml => {
-                FindServersOnNetworkResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::FindServersRequest_Encoding_DefaultXml => {
-                FindServersRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::FindServersResponse_Encoding_DefaultXml => {
-                FindServersResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::Frame_Encoding_DefaultXml => {
-                Frame::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::GenericAttributeValue_Encoding_DefaultXml => {
-                GenericAttributeValue::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::GenericAttributes_Encoding_DefaultXml => {
-                GenericAttributes::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::GetEndpointsRequest_Encoding_DefaultXml => {
-                GetEndpointsRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::GetEndpointsResponse_Encoding_DefaultXml => {
-                GetEndpointsResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::HistoryData_Encoding_DefaultXml => {
-                HistoryData::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::HistoryEvent_Encoding_DefaultXml => {
-                HistoryEvent::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::HistoryEventFieldList_Encoding_DefaultXml => {
-                HistoryEventFieldList::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::HistoryModifiedData_Encoding_DefaultXml => {
-                HistoryModifiedData::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::HistoryReadDetails_Encoding_DefaultXml => {
-                HistoryReadDetails::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::HistoryReadRequest_Encoding_DefaultXml => {
-                HistoryReadRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::HistoryReadResponse_Encoding_DefaultXml => {
-                HistoryReadResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::HistoryReadResult_Encoding_DefaultXml => {
-                HistoryReadResult::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::HistoryReadValueId_Encoding_DefaultXml => {
-                HistoryReadValueId::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::HistoryUpdateDetails_Encoding_DefaultXml => {
-                HistoryUpdateDetails::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::HistoryUpdateRequest_Encoding_DefaultXml => {
-                HistoryUpdateRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::HistoryUpdateResponse_Encoding_DefaultXml => {
-                HistoryUpdateResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::HistoryUpdateResult_Encoding_DefaultXml => {
-                HistoryUpdateResult::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::IdentityMappingRuleType_Encoding_DefaultXml => {
-                IdentityMappingRuleType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::IssuedIdentityToken_Encoding_DefaultXml => {
-                IssuedIdentityToken::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::JsonDataSetReaderMessageDataType_Encoding_DefaultXml => {
-                JsonDataSetReaderMessageDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::JsonDataSetWriterMessageDataType_Encoding_DefaultXml => {
-                JsonDataSetWriterMessageDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::JsonWriterGroupMessageDataType_Encoding_DefaultXml => {
-                JsonWriterGroupMessageDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::KeyValuePair_Encoding_DefaultXml => {
-                KeyValuePair::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::LiteralOperand_Encoding_DefaultXml => {
-                LiteralOperand::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::MdnsDiscoveryConfiguration_Encoding_DefaultXml => {
-                MdnsDiscoveryConfiguration::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::MethodAttributes_Encoding_DefaultXml => {
-                MethodAttributes::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ModelChangeStructureDataType_Encoding_DefaultXml => {
-                ModelChangeStructureDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ModificationInfo_Encoding_DefaultXml => {
-                ModificationInfo::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ModifyMonitoredItemsRequest_Encoding_DefaultXml => {
-                ModifyMonitoredItemsRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ModifyMonitoredItemsResponse_Encoding_DefaultXml => {
-                ModifyMonitoredItemsResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ModifySubscriptionRequest_Encoding_DefaultXml => {
-                ModifySubscriptionRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ModifySubscriptionResponse_Encoding_DefaultXml => {
-                ModifySubscriptionResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::MonitoredItemCreateRequest_Encoding_DefaultXml => {
-                MonitoredItemCreateRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::MonitoredItemCreateResult_Encoding_DefaultXml => {
-                MonitoredItemCreateResult::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::MonitoredItemModifyRequest_Encoding_DefaultXml => {
-                MonitoredItemModifyRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::MonitoredItemModifyResult_Encoding_DefaultXml => {
-                MonitoredItemModifyResult::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::MonitoredItemNotification_Encoding_DefaultXml => {
-                MonitoredItemNotification::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::MonitoringFilter_Encoding_DefaultXml => {
-                MonitoringFilter::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::MonitoringFilterResult_Encoding_DefaultXml => {
-                MonitoringFilterResult::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::MonitoringParameters_Encoding_DefaultXml => {
-                MonitoringParameters::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::NetworkAddressDataType_Encoding_DefaultXml => {
-                NetworkAddressDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::NetworkAddressUrlDataType_Encoding_DefaultXml => {
-                NetworkAddressUrlDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::NetworkGroupDataType_Encoding_DefaultXml => {
-                NetworkGroupDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::NodeAttributes_Encoding_DefaultXml => {
-                NodeAttributes::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::NodeReference_Encoding_DefaultXml => {
-                NodeReference::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::NodeTypeDescription_Encoding_DefaultXml => {
-                NodeTypeDescription::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::NotificationData_Encoding_DefaultXml => {
-                NotificationData::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::NotificationMessage_Encoding_DefaultXml => {
-                NotificationMessage::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ObjectAttributes_Encoding_DefaultXml => {
-                ObjectAttributes::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ObjectTypeAttributes_Encoding_DefaultXml => {
-                ObjectTypeAttributes::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::OpenSecureChannelRequest_Encoding_DefaultXml => {
-                OpenSecureChannelRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::OpenSecureChannelResponse_Encoding_DefaultXml => {
-                OpenSecureChannelResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::OptionSet_Encoding_DefaultXml => {
-                OptionSet::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::Orientation_Encoding_DefaultXml => {
-                Orientation::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ParsingResult_Encoding_DefaultXml => {
-                ParsingResult::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ProgramDiagnostic2DataType_Encoding_DefaultXml => {
-                ProgramDiagnostic2DataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ProgramDiagnosticDataType_Encoding_DefaultXml => {
-                ProgramDiagnosticDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::PubSubConfigurationDataType_Encoding_DefaultXml => {
-                PubSubConfigurationDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::PubSubConnectionDataType_Encoding_DefaultXml => {
-                PubSubConnectionDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::PubSubGroupDataType_Encoding_DefaultXml => {
-                PubSubGroupDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::PublishRequest_Encoding_DefaultXml => {
-                PublishRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::PublishResponse_Encoding_DefaultXml => {
-                PublishResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::PublishedDataItemsDataType_Encoding_DefaultXml => {
-                PublishedDataItemsDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::PublishedDataSetDataType_Encoding_DefaultXml => {
-                PublishedDataSetDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::PublishedDataSetSourceDataType_Encoding_DefaultXml => {
-                PublishedDataSetSourceDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::PublishedEventsDataType_Encoding_DefaultXml => {
-                PublishedEventsDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::PublishedVariableDataType_Encoding_DefaultXml => {
-                PublishedVariableDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::QueryDataDescription_Encoding_DefaultXml => {
-                QueryDataDescription::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::QueryDataSet_Encoding_DefaultXml => {
-                QueryDataSet::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::QueryFirstRequest_Encoding_DefaultXml => {
-                QueryFirstRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::QueryFirstResponse_Encoding_DefaultXml => {
-                QueryFirstResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::QueryNextRequest_Encoding_DefaultXml => {
-                QueryNextRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::QueryNextResponse_Encoding_DefaultXml => {
-                QueryNextResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::Range_Encoding_DefaultXml => {
-                Range::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::RationalNumber_Encoding_DefaultXml => {
-                RationalNumber::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ReadAnnotationDataDetails_Encoding_DefaultXml => {
-                ReadAnnotationDataDetails::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ReadAtTimeDetails_Encoding_DefaultXml => {
-                ReadAtTimeDetails::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ReadEventDetails_Encoding_DefaultXml => {
-                ReadEventDetails::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ReadProcessedDetails_Encoding_DefaultXml => {
-                ReadProcessedDetails::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ReadRawModifiedDetails_Encoding_DefaultXml => {
-                ReadRawModifiedDetails::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ReadRequest_Encoding_DefaultXml => {
-                ReadRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ReadResponse_Encoding_DefaultXml => {
-                ReadResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ReadValueId_Encoding_DefaultXml => {
-                ReadValueId::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ReaderGroupDataType_Encoding_DefaultXml => {
-                ReaderGroupDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ReaderGroupMessageDataType_Encoding_DefaultXml => {
-                ReaderGroupMessageDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ReaderGroupTransportDataType_Encoding_DefaultXml => {
-                ReaderGroupTransportDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::RedundantServerDataType_Encoding_DefaultXml => {
-                RedundantServerDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ReferenceDescription_Encoding_DefaultXml => {
-                ReferenceDescription::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ReferenceTypeAttributes_Encoding_DefaultXml => {
-                ReferenceTypeAttributes::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::RegisterNodesRequest_Encoding_DefaultXml => {
-                RegisterNodesRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::RegisterNodesResponse_Encoding_DefaultXml => {
-                RegisterNodesResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::RegisterServer2Request_Encoding_DefaultXml => {
-                RegisterServer2Request::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::RegisterServer2Response_Encoding_DefaultXml => {
-                RegisterServer2Response::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::RegisterServerRequest_Encoding_DefaultXml => {
-                RegisterServerRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::RegisterServerResponse_Encoding_DefaultXml => {
-                RegisterServerResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::RegisteredServer_Encoding_DefaultXml => {
-                RegisteredServer::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::RelativePath_Encoding_DefaultXml => {
-                RelativePath::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::RelativePathElement_Encoding_DefaultXml => {
-                RelativePathElement::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::RepublishRequest_Encoding_DefaultXml => {
-                RepublishRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::RepublishResponse_Encoding_DefaultXml => {
-                RepublishResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::RolePermissionType_Encoding_DefaultXml => {
-                RolePermissionType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SamplingIntervalDiagnosticsDataType_Encoding_DefaultXml => {
-                SamplingIntervalDiagnosticsDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SemanticChangeStructureDataType_Encoding_DefaultXml => {
-                SemanticChangeStructureDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ServerDiagnosticsSummaryDataType_Encoding_DefaultXml => {
-                ServerDiagnosticsSummaryDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ServerOnNetwork_Encoding_DefaultXml => {
-                ServerOnNetwork::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ServerStatusDataType_Encoding_DefaultXml => {
-                ServerStatusDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ServiceCounterDataType_Encoding_DefaultXml => {
-                ServiceCounterDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ServiceFault_Encoding_DefaultXml => {
-                ServiceFault::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SessionDiagnosticsDataType_Encoding_DefaultXml => {
-                SessionDiagnosticsDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SessionSecurityDiagnosticsDataType_Encoding_DefaultXml => {
-                SessionSecurityDiagnosticsDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SessionlessInvokeRequestType_Encoding_DefaultXml => {
-                SessionlessInvokeRequestType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SessionlessInvokeResponseType_Encoding_DefaultXml => {
-                SessionlessInvokeResponseType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SetMonitoringModeRequest_Encoding_DefaultXml => {
-                SetMonitoringModeRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SetMonitoringModeResponse_Encoding_DefaultXml => {
-                SetMonitoringModeResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SetPublishingModeRequest_Encoding_DefaultXml => {
-                SetPublishingModeRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SetPublishingModeResponse_Encoding_DefaultXml => {
-                SetPublishingModeResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SetTriggeringRequest_Encoding_DefaultXml => {
-                SetTriggeringRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SetTriggeringResponse_Encoding_DefaultXml => {
-                SetTriggeringResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SignatureData_Encoding_DefaultXml => {
-                SignatureData::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SignedSoftwareCertificate_Encoding_DefaultXml => {
-                SignedSoftwareCertificate::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SimpleAttributeOperand_Encoding_DefaultXml => {
-                SimpleAttributeOperand::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SimpleTypeDescription_Encoding_DefaultXml => {
-                SimpleTypeDescription::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::StatusChangeNotification_Encoding_DefaultXml => {
-                StatusChangeNotification::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::StatusResult_Encoding_DefaultXml => {
-                StatusResult::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::StructureDescription_Encoding_DefaultXml => {
-                StructureDescription::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::StructureField_Encoding_DefaultXml => {
-                StructureField::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SubscribedDataSetDataType_Encoding_DefaultXml => {
-                SubscribedDataSetDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SubscribedDataSetMirrorDataType_Encoding_DefaultXml => {
-                SubscribedDataSetMirrorDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SubscriptionAcknowledgement_Encoding_DefaultXml => {
-                SubscriptionAcknowledgement::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::SubscriptionDiagnosticsDataType_Encoding_DefaultXml => {
-                SubscriptionDiagnosticsDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::TargetVariablesDataType_Encoding_DefaultXml => {
-                TargetVariablesDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ThreeDCartesianCoordinates_Encoding_DefaultXml => {
-                ThreeDCartesianCoordinates::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ThreeDFrame_Encoding_DefaultXml => {
-                ThreeDFrame::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ThreeDOrientation_Encoding_DefaultXml => {
-                ThreeDOrientation::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ThreeDVector_Encoding_DefaultXml => {
-                ThreeDVector::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::TimeZoneDataType_Encoding_DefaultXml => {
-                TimeZoneDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::TransferResult_Encoding_DefaultXml => {
-                TransferResult::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::TransferSubscriptionsRequest_Encoding_DefaultXml => {
-                TransferSubscriptionsRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::TransferSubscriptionsResponse_Encoding_DefaultXml => {
-                TransferSubscriptionsResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::TranslateBrowsePathsToNodeIdsRequest_Encoding_DefaultXml => {
-                TranslateBrowsePathsToNodeIdsRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::TranslateBrowsePathsToNodeIdsResponse_Encoding_DefaultXml => {
-                TranslateBrowsePathsToNodeIdsResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::TrustListDataType_Encoding_DefaultXml => {
-                TrustListDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::UABinaryFileDataType_Encoding_DefaultXml => {
-                UABinaryFileDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::UadpDataSetReaderMessageDataType_Encoding_DefaultXml => {
-                UadpDataSetReaderMessageDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::UadpDataSetWriterMessageDataType_Encoding_DefaultXml => {
-                UadpDataSetWriterMessageDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::UadpWriterGroupMessageDataType_Encoding_DefaultXml => {
-                UadpWriterGroupMessageDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::UnregisterNodesRequest_Encoding_DefaultXml => {
-                UnregisterNodesRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::UnregisterNodesResponse_Encoding_DefaultXml => {
-                UnregisterNodesResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::UpdateDataDetails_Encoding_DefaultXml => {
-                UpdateDataDetails::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::UpdateEventDetails_Encoding_DefaultXml => {
-                UpdateEventDetails::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::UpdateStructureDataDetails_Encoding_DefaultXml => {
-                UpdateStructureDataDetails::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::UserIdentityToken_Encoding_DefaultXml => {
-                UserIdentityToken::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::UserNameIdentityToken_Encoding_DefaultXml => {
-                UserNameIdentityToken::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::UserTokenPolicy_Encoding_DefaultXml => {
-                UserTokenPolicy::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::VariableAttributes_Encoding_DefaultXml => {
-                VariableAttributes::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::VariableTypeAttributes_Encoding_DefaultXml => {
-                VariableTypeAttributes::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::Vector_Encoding_DefaultXml => {
-                Vector::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ViewAttributes_Encoding_DefaultXml => {
-                ViewAttributes::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::ViewDescription_Encoding_DefaultXml => {
-                ViewDescription::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::WriteRequest_Encoding_DefaultXml => {
-                WriteRequest::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::WriteResponse_Encoding_DefaultXml => {
-                WriteResponse::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::WriteValue_Encoding_DefaultXml => {
-                WriteValue::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::WriterGroupDataType_Encoding_DefaultXml => {
-                WriterGroupDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::WriterGroupMessageDataType_Encoding_DefaultXml => {
-                WriterGroupMessageDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::WriterGroupTransportDataType_Encoding_DefaultXml => {
-                WriterGroupTransportDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::X509IdentityToken_Encoding_DefaultXml => {
-                X509IdentityToken::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            crate::ObjectId::XVType_Encoding_DefaultXml => {
-                XVType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(
-                        &v,
-                        ctx.ns_map(),
-                    ))
-            }
-            _ => return None,
-        };
-        match r {
-            Ok(r) => {
-                Some(
-                    r
-                        .map_err(|_| {
-                            opcua::types::xml::FromXmlError::from(
-                                format!(
-                                    "Invalid XML type, missing binary encoding ID: {:?}",
-                                    object_id
-                                ),
-                            )
-                        }),
-                )
-            }
-            Err(e) => Some(Err(e)),
+        TYPES.decode_binary(num_id, stream, ctx)
+    }
+    #[cfg(feature = "xml")]
+    fn load_from_xml(
+        &self,
+        node_id: &opcua::types::NodeId,
+        stream: &opcua::types::xml::XmlElement,
+        ctx: &opcua::types::xml::XmlContext<'_>,
+    ) -> Option<
+        Result<Box<dyn opcua::types::DynEncodable>, opcua::types::xml::FromXmlError>,
+    > {
+        if node_id.namespace != 0 {
+            return None;
         }
+        let Some(num_id) = node_id.as_u32() else {
+            return Some(
+                Err(
+                    opcua::types::xml::FromXmlError::Other(
+                        "Unsupported encoding ID, we only support numeric IDs".to_owned(),
+                    ),
+                ),
+            );
+        };
+        TYPES.decode_xml(num_id, stream, ctx)
+    }
+    #[cfg(feature = "json")]
+    fn load_from_json(
+        &self,
+        node_id: &opcua::types::NodeId,
+        stream: &mut opcua::types::json::JsonStreamReader<&mut dyn std::io::Read>,
+        ctx: &opcua::types::Context<'_>,
+    ) -> Option<opcua::types::EncodingResult<Box<dyn opcua::types::DynEncodable>>> {
+        if node_id.namespace != 0 {
+            return None;
+        }
+        let Some(num_id) = node_id.as_u32() else {
+            return Some(
+                Err(
+                    opcua::types::Error::decoding(
+                        "Unsupported encoding ID. Only numeric encoding IDs are currently supported",
+                    ),
+                ),
+            );
+        };
+        TYPES.decode_json(num_id, stream, ctx)
+    }
+    fn priority(&self) -> opcua::types::TypeLoaderPriority {
+        opcua::types::TypeLoaderPriority::Core
     }
 }

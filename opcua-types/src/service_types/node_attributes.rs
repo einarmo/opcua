@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct NodeAttributes {
@@ -32,53 +33,43 @@ impl opcua::types::MessageInfo for NodeAttributes {
     }
 }
 impl opcua::types::BinaryEncodable for NodeAttributes {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.specified_attributes.byte_len();
-        size += self.display_name.byte_len();
-        size += self.description.byte_len();
-        size += self.write_mask.byte_len();
-        size += self.user_write_mask.byte_len();
+        size += self.specified_attributes.byte_len(ctx);
+        size += self.display_name.byte_len(ctx);
+        size += self.description.byte_len(ctx);
+        size += self.write_mask.byte_len(ctx);
+        size += self.user_write_mask.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.specified_attributes.encode(stream)?;
-        size += self.display_name.encode(stream)?;
-        size += self.description.encode(stream)?;
-        size += self.write_mask.encode(stream)?;
-        size += self.user_write_mask.encode(stream)?;
+        size += self.specified_attributes.encode(stream, ctx)?;
+        size += self.display_name.encode(stream, ctx)?;
+        size += self.description.encode(stream, ctx)?;
+        size += self.write_mask.encode(stream, ctx)?;
+        size += self.user_write_mask.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for NodeAttributes {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            specified_attributes: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            display_name: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            description: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            write_mask: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            user_write_mask: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            specified_attributes: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            display_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            description: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            write_mask: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            user_write_mask: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

@@ -15,7 +15,7 @@ use std::{
 use chrono::{Duration, SecondsFormat, TimeDelta, TimeZone, Timelike, Utc};
 use log::error;
 
-use crate::encoding::*;
+use crate::{encoding::*, Context};
 
 const NANOS_PER_SECOND: i64 = 1_000_000_000;
 const NANOS_PER_TICK: i64 = 100;
@@ -35,26 +35,28 @@ pub struct DateTime {
 
 #[cfg(feature = "json")]
 mod json {
-    use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
+    use crate::{json::*, Error};
 
     use super::DateTime;
-    impl Serialize for DateTime {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: Serializer,
-        {
-            serializer.serialize_str(&self.to_rfc3339())
+
+    impl JsonEncodable for DateTime {
+        fn encode(
+            &self,
+            stream: &mut JsonStreamWriter<&mut dyn std::io::Write>,
+            _ctx: &crate::Context<'_>,
+        ) -> super::EncodingResult<()> {
+            Ok(stream.string_value(&self.to_rfc3339())?)
         }
     }
 
-    impl<'de> Deserialize<'de> for DateTime {
-        fn deserialize<D>(deserializer: D) -> Result<DateTime, D::Error>
-        where
-            D: Deserializer<'de>,
-        {
-            let v = String::deserialize(deserializer)?;
-            let dt = DateTime::parse_from_rfc3339(&v)
-                .map_err(|e| D::Error::custom(format!("Cannot parse date time: {e}")))?;
+    impl JsonDecodable for DateTime {
+        fn decode(
+            stream: &mut JsonStreamReader<&mut dyn std::io::Read>,
+            _ctx: &Context<'_>,
+        ) -> super::EncodingResult<Self> {
+            let v = stream.next_str()?;
+            let dt = DateTime::parse_from_rfc3339(v)
+                .map_err(|e| Error::decoding(format!("Cannot parse date time: {e}")))?;
             Ok(dt)
         }
     }
@@ -62,23 +64,27 @@ mod json {
 
 /// DateTime encoded as 64-bit signed int
 impl BinaryEncodable for DateTime {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, _ctx: &Context<'_>) -> usize {
         8
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        _ctx: &Context<'_>,
+    ) -> EncodingResult<usize> {
         let ticks = self.checked_ticks();
         write_i64(stream, ticks)
     }
 }
 
 impl BinaryDecodable for DateTime {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &Context<'_>) -> EncodingResult<Self> {
         let ticks = read_i64(stream)?;
         let date_time = DateTime::from(ticks);
         // Client offset is a value that can be overridden to account for time discrepancies between client & server -
         // note perhaps it is not a good idea to do it right here but it is the lowest point to intercept DateTime values.
-        Ok(date_time - decoding_options.client_offset)
+        Ok(date_time - ctx.options().client_offset)
     }
 }
 

@@ -10,7 +10,8 @@ use std::io::{Cursor, Read, Write};
 use log::{error, trace};
 use opcua_types::{
     process_decode_io_result, process_encode_io_result, read_u32, read_u8, status_code::StatusCode,
-    write_u32, write_u8, BinaryDecodable, BinaryEncodable, DecodingOptions, EncodingResult,
+    write_u32, write_u8, DecodingOptions, EncodingResult, Error, SimpleBinaryDecodable,
+    SimpleBinaryEncodable,
 };
 
 use super::{
@@ -63,7 +64,7 @@ pub struct MessageChunkHeader {
     pub secure_channel_id: u32,
 }
 
-impl BinaryEncodable for MessageChunkHeader {
+impl SimpleBinaryEncodable for MessageChunkHeader {
     fn byte_len(&self) -> usize {
         MESSAGE_CHUNK_HEADER_SIZE
     }
@@ -91,19 +92,19 @@ impl BinaryEncodable for MessageChunkHeader {
     }
 }
 
-impl BinaryDecodable for MessageChunkHeader {
-    fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
+impl SimpleBinaryDecodable for MessageChunkHeader {
+    fn decode<S: Read + ?Sized>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
         let mut message_type_code = [0u8; 3];
         process_decode_io_result(stream.read_exact(&mut message_type_code))?;
-        let message_type = if message_type_code == CHUNK_MESSAGE {
-            MessageChunkType::Message
-        } else if message_type_code == OPEN_SECURE_CHANNEL_MESSAGE {
-            MessageChunkType::OpenSecureChannel
-        } else if message_type_code == CLOSE_SECURE_CHANNEL_MESSAGE {
-            MessageChunkType::CloseSecureChannel
-        } else {
-            error!("Invalid message code");
-            return Err(StatusCode::BadDecodingError.into());
+        let message_type = match &message_type_code as &[u8] {
+            CHUNK_MESSAGE => MessageChunkType::Message,
+            OPEN_SECURE_CHANNEL_MESSAGE => MessageChunkType::OpenSecureChannel,
+            CLOSE_SECURE_CHANNEL_MESSAGE => MessageChunkType::CloseSecureChannel,
+            r => {
+                return Err(Error::decoding(format!(
+                    "Invalid message chunk type: {r:?}"
+                )));
+            }
         };
 
         let chunk_type_code = read_u8(stream)?;
@@ -111,9 +112,10 @@ impl BinaryDecodable for MessageChunkHeader {
             CHUNK_FINAL => MessageIsFinalType::Final,
             CHUNK_INTERMEDIATE => MessageIsFinalType::Intermediate,
             CHUNK_FINAL_ERROR => MessageIsFinalType::FinalError,
-            _ => {
-                error!("Invalid chunk type");
-                return Err(StatusCode::BadDecodingError.into());
+            r => {
+                return Err(Error::decoding(format!(
+                    "Invalid message final type: {r:?}"
+                )));
             }
         };
 
@@ -140,36 +142,45 @@ pub struct MessageChunk {
     pub data: Vec<u8>,
 }
 
-impl BinaryEncodable for MessageChunk {
+impl SimpleBinaryEncodable for MessageChunk {
     fn byte_len(&self) -> usize {
         self.data.len()
     }
 
     fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
-        stream.write(&self.data).map_err(|_| {
-            error!("Encoding error while writing to stream");
-            StatusCode::BadEncodingError.into()
+        stream.write(&self.data).map_err(|e| {
+            Error::encoding(format!(
+                "Encoding error while writing message chunk to stream: {e}"
+            ))
         })
     }
 }
 
-impl BinaryDecodable for MessageChunk {
-    fn decode<S: Read>(
+impl SimpleBinaryDecodable for MessageChunk {
+    fn decode<S: Read + ?Sized>(
         in_stream: &mut S,
         decoding_options: &DecodingOptions,
     ) -> EncodingResult<Self> {
         // Read the header out first
         let chunk_header =
             MessageChunkHeader::decode(in_stream, decoding_options).map_err(|err| {
-                error!("Cannot decode chunk header {:?}", err);
-                StatusCode::BadCommunicationError
+                Error::new(
+                    StatusCode::BadCommunicationError,
+                    format!("Cannot decode chunk header {:?}", err),
+                )
             })?;
 
         let message_size = chunk_header.message_size as usize;
         if decoding_options.max_message_size > 0 && message_size > decoding_options.max_message_size
         {
             // Message_size should be sanity checked and rejected if too large.
-            Err(StatusCode::BadTcpMessageTooLarge.into())
+            Err(Error::new(
+                StatusCode::BadTcpMessageTooLarge,
+                format!(
+                    "Message size {} exceeds maximum message size {}",
+                    message_size, decoding_options.max_message_size
+                ),
+            ))
         } else {
             // Now make a buffer to write the header and message into
             let data = vec![0u8; message_size];
@@ -201,7 +212,7 @@ impl MessageChunk {
         is_final: MessageIsFinalType,
         secure_channel: &SecureChannel,
         data: &[u8],
-    ) -> Result<MessageChunk, StatusCode> {
+    ) -> EncodingResult<MessageChunk> {
         // security header depends on message type
         let security_header = secure_channel.make_security_header(message_type);
         let sequence_header = SequenceHeader {
@@ -228,14 +239,17 @@ impl MessageChunk {
         };
 
         let mut stream = Cursor::new(vec![0u8; message_size]);
+        let mut size = 0;
         // write chunk header
-        let _ = chunk_header.encode(&mut stream);
+        size += chunk_header.encode(&mut stream)?;
         // write security header
-        let _ = security_header.encode(&mut stream);
+        size += security_header.encode(&mut stream)?;
         // write sequence header
-        let _ = sequence_header.encode(&mut stream);
+        size += sequence_header.encode(&mut stream)?;
         // write message
-        let _ = stream.write(data);
+        size += stream.write(data)?;
+
+        debug_assert_eq!(size, message_size);
 
         Ok(MessageChunk {
             data: stream.into_inner(),
@@ -284,16 +298,16 @@ impl MessageChunk {
     pub fn message_header(
         &self,
         decoding_options: &DecodingOptions,
-    ) -> Result<MessageChunkHeader, StatusCode> {
+    ) -> EncodingResult<MessageChunkHeader> {
         // Message header is first so just read it
         let mut stream = Cursor::new(&self.data);
-        MessageChunkHeader::decode(&mut stream, decoding_options).map_err(|e| e.status())
+        MessageChunkHeader::decode(&mut stream, decoding_options)
     }
 
     pub fn security_header(
         &self,
         decoding_options: &DecodingOptions,
-    ) -> Result<SecurityHeader, StatusCode> {
+    ) -> EncodingResult<SecurityHeader> {
         // Message header is first so just read it
         let mut stream = Cursor::new(&self.data);
         let message_header = MessageChunkHeader::decode(&mut stream, decoding_options)?;
@@ -320,10 +334,7 @@ impl MessageChunk {
         }
     }
 
-    pub fn chunk_info(
-        &self,
-        secure_channel: &SecureChannel,
-    ) -> std::result::Result<ChunkInfo, StatusCode> {
+    pub fn chunk_info(&self, secure_channel: &SecureChannel) -> EncodingResult<ChunkInfo> {
         ChunkInfo::new(self, secure_channel)
     }
 }

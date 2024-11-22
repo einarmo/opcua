@@ -1,7 +1,6 @@
 use crate::comms::message_chunk::MessageChunkType;
 
 use super::{Message, MessageType};
-use log::debug;
 use opcua_types::*;
 use std::io::{Read, Write};
 
@@ -19,15 +18,15 @@ macro_rules! request_enum {
             }
         )*
         impl BinaryEncodable for RequestMessage {
-            fn byte_len(&self) -> usize {
+            fn byte_len(&self, ctx: &opcua_types::Context<'_>) -> usize {
                 match self {
-                    $( Self::$name(value) => value.byte_len(), )*
+                    $( Self::$name(value) => value.byte_len(ctx), )*
                 }
             }
 
-            fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+            fn encode<S: Write + ?Sized>(&self, stream: &mut S, ctx: &opcua_types::Context<'_>) -> EncodingResult<usize> {
                 match self {
-                    $( Self::$name(value) => value.encode(stream), )*
+                    $( Self::$name(value) => value.encode(stream, ctx), )*
                 }
             }
         }
@@ -48,15 +47,14 @@ macro_rules! request_enum {
             fn decode_by_object_id<S: Read>(
                 stream: &mut S,
                 object_id: ObjectId,
-                decoding_options: &DecodingOptions
+                ctx: &opcua_types::Context<'_>
             ) -> EncodingResult<Self> {
                 match object_id {
                     $( ObjectId::$enc => {
-                        Ok($value::decode(stream, decoding_options)?.into())
+                        Ok($value::decode(stream, ctx)?.into())
                     }, )*
                     _ => {
-                        debug!("decoding unsupported for object id {:?}", object_id);
-                        Err(EncodingError::from(StatusCode::BadDecodingError))
+                        Err(Error::decoding(format!("decoding unsupported for object id {:?}", object_id)))
                     }
                 }
             }

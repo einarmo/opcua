@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 pub struct ModificationInfo {
     pub modification_time: opcua::types::date_time::DateTime,
@@ -29,41 +30,37 @@ impl opcua::types::MessageInfo for ModificationInfo {
     }
 }
 impl opcua::types::BinaryEncodable for ModificationInfo {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.modification_time.byte_len();
-        size += self.update_type.byte_len();
-        size += self.user_name.byte_len();
+        size += self.modification_time.byte_len(ctx);
+        size += self.update_type.byte_len(ctx);
+        size += self.user_name.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.modification_time.encode(stream)?;
-        size += self.update_type.encode(stream)?;
-        size += self.user_name.encode(stream)?;
+        size += self.modification_time.encode(stream, ctx)?;
+        size += self.update_type.encode(stream, ctx)?;
+        size += self.user_name.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for ModificationInfo {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            modification_time: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            update_type: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            user_name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            modification_time: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            update_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            user_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

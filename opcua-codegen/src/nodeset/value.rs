@@ -273,7 +273,7 @@ impl<'a> ValueBuilder<'a> {
         let content = self.render_extension_object_inner(&body.data)?;
 
         Ok(quote! {
-            opcua::types::ExtensionObject::from_message_full(&#content, ns_map.namespaces()).expect("Invalid encoding ID")
+            opcua::types::ExtensionObject::from_message(#content)
         })
     }
 

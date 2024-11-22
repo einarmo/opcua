@@ -48,6 +48,9 @@ pub struct ExternalType {
     pub has_default: Option<bool>,
     /// Base type, if any
     pub base_type: Option<String>,
+    /// Add to type loader impl
+    #[serde(default)]
+    pub add_to_type_loader: bool,
 }
 
 impl ExternalType {
@@ -56,6 +59,7 @@ impl ExternalType {
             path: path.to_owned(),
             has_default: Some(has_default),
             base_type: None,
+            add_to_type_loader: false,
         }
     }
 }

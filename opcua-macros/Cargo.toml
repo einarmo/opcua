@@ -12,6 +12,10 @@ readme = "../README.md"
 documentation = "https://docs.rs/opcua/"
 edition = "2021"
 
+[features]
+json = []
+xml = []
+
 [lib]
 name = "opcua_macros"
 

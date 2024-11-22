@@ -1,317 +1,275 @@
-use core::f32;
+use std::io::{Cursor, Read};
 
-use serde::{
-    de::{self, Visitor},
-    ser::{SerializeSeq, SerializeStruct},
-    Deserialize, Serialize,
+use crate::{
+    json::*, ByteString, DataValue, DateTime, DiagnosticInfo, EncodingResult, Error,
+    ExpandedNodeId, ExtensionObject, Guid, LocalizedText, NodeId, QualifiedName, StatusCode,
+    UAString, Variant, VariantScalarTypeId, XmlElement,
 };
-use serde_json::{from_value, Value};
 
-use crate::{Variant, VariantScalarTypeId};
-
-const VALUE_INFINITY: &str = "Infinity";
-const VALUE_NEG_INFINITY: &str = "-Infinity";
-const VALUE_NAN: &str = "NaN";
-
-macro_rules! ser_float {
-    ($v: expr, $t: ty, $ser: expr) => {
-        if *$v == <$t>::INFINITY {
-            $ser.serialize_field("Body", VALUE_INFINITY)
-        } else if *$v == <$t>::NEG_INFINITY {
-            $ser.serialize_field("Body", VALUE_NEG_INFINITY)
-        } else if $v.is_nan() {
-            $ser.serialize_field("Body", VALUE_NAN)
-        } else {
-            $ser.serialize_field("Body", $v)
+impl Variant {
+    pub fn serialize_variant_value(
+        &self,
+        stream: &mut JsonStreamWriter<&mut dyn std::io::Write>,
+        ctx: &crate::Context<'_>,
+    ) -> crate::EncodingResult<()> {
+        match self {
+            Variant::Empty => stream.null_value()?,
+            Variant::Boolean(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::SByte(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::Byte(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::Int16(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::UInt16(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::Int32(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::UInt32(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::Int64(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::UInt64(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::Float(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::Double(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::String(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::DateTime(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::Guid(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::StatusCode(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::ByteString(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::XmlElement(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::QualifiedName(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::LocalizedText(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::NodeId(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::ExpandedNodeId(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::ExtensionObject(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::Variant(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::DataValue(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::DiagnosticInfo(v) => JsonEncodable::encode(v, stream, ctx)?,
+            Variant::Array(array) => {
+                // Shouldn't really happen, but there's a reasonable fallback.
+                stream.begin_array()?;
+                for v in &array.values {
+                    v.serialize_variant_value(stream, ctx)?;
+                }
+                stream.end_array()?;
+            }
         }
-    };
+
+        Ok(())
+    }
 }
 
-impl Serialize for Variant {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        // Technically, null variants are supposed to be omitted if part of a JSON
-        // array, but there isn't any way we can know that at this stage, so we just always
-        // render them as null. The solution is that any type containing a variant
-        // add skip_serialize_if(Variant::is_null) to the field in question.
-        let mut len = 2;
+impl JsonEncodable for Variant {
+    fn encode(
+        &self,
+        stream: &mut JsonStreamWriter<&mut dyn std::io::Write>,
+        ctx: &crate::Context<'_>,
+    ) -> crate::EncodingResult<()> {
         let type_id = match self.type_id() {
-            crate::VariantTypeId::Empty => return serializer.serialize_none(),
-            crate::VariantTypeId::Scalar(s) => s,
-            crate::VariantTypeId::Array(s, dims) => {
-                if dims.is_some_and(|d| d.len() > 1) {
-                    len += 1;
-                }
-                s
+            crate::VariantTypeId::Empty => {
+                stream.null_value()?;
+                return Ok(());
             }
+            crate::VariantTypeId::Scalar(s) => s,
+            crate::VariantTypeId::Array(s, _) => s,
         };
 
-        let mut struct_ser = serializer.serialize_struct("Variant", len)?;
-        struct_ser.serialize_field("Type", &(type_id as u32))?;
+        stream.begin_object()?;
 
-        match self {
-            Variant::Empty => unreachable!(),
-            Variant::Boolean(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::SByte(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::Byte(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::Int16(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::UInt16(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::Int32(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::UInt32(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::Int64(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::UInt64(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::Float(b) => ser_float!(b, f32, struct_ser)?,
-            Variant::Double(b) => ser_float!(b, f64, struct_ser)?,
-            Variant::String(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::DateTime(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::Guid(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::StatusCode(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::ByteString(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::XmlElement(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::QualifiedName(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::LocalizedText(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::NodeId(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::ExpandedNodeId(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::ExtensionObject(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::Variant(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::DataValue(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::DiagnosticInfo(b) => struct_ser.serialize_field("Body", b)?,
-            Variant::Array(array) => {
-                if let Some(dims) = array.dimensions.as_ref() {
-                    if dims.len() > 1 {
-                        struct_ser.serialize_field("Dimensions", &dims)?;
+        stream.name("Type")?;
+        stream.number_value(type_id as u32)?;
+
+        if let Variant::Array(a) = self {
+            if let Some(dims) = a.dimensions.as_ref() {
+                if dims.len() > 1 {
+                    stream.name("Dimensions")?;
+                    JsonEncodable::encode(dims, stream, ctx)?;
+                }
+            }
+            stream.name("Body")?;
+            stream.begin_array()?;
+            for v in &a.values {
+                v.serialize_variant_value(stream, ctx)?;
+            }
+            stream.end_array()?;
+        } else {
+            stream.name("Body")?;
+            self.serialize_variant_value(stream, ctx)?;
+        }
+        stream.end_object()?;
+
+        Ok(())
+    }
+
+    fn is_null_json(&self) -> bool {
+        matches!(self, Variant::Empty)
+    }
+}
+
+enum VariantOrArray {
+    Single(Variant),
+    Array(Vec<Variant>),
+}
+
+impl JsonDecodable for Variant {
+    fn decode(
+        stream: &mut JsonStreamReader<&mut dyn std::io::Read>,
+        ctx: &Context<'_>,
+    ) -> EncodingResult<Self> {
+        if stream.peek()? == ValueType::Null {
+            stream.next_null()?;
+            return Ok(Self::Empty);
+        }
+
+        stream.begin_object()?;
+
+        fn dec_body<T>(
+            stream: &mut JsonStreamReader<&mut dyn std::io::Read>,
+            ctx: &Context<'_>,
+        ) -> EncodingResult<VariantOrArray>
+        where
+            T: Into<Variant> + JsonDecodable + Default,
+        {
+            match stream.peek()? {
+                ValueType::Array => {
+                    let mut res = Vec::new();
+                    stream.begin_array()?;
+                    while stream.has_next()? {
+                        res.push(T::decode(stream, ctx)?.into());
+                    }
+                    stream.end_array()?;
+                    Ok(VariantOrArray::Array(res))
+                }
+                ValueType::Null => Ok(VariantOrArray::Single(T::default().into())),
+                _ => Ok(VariantOrArray::Single(T::decode(stream, ctx)?.into())),
+            }
+        }
+
+        fn dec_body_dyn(
+            stream: &mut JsonStreamReader<&mut dyn std::io::Read>,
+            ctx: &Context<'_>,
+            type_id: VariantScalarTypeId,
+        ) -> EncodingResult<VariantOrArray> {
+            match type_id {
+                VariantScalarTypeId::Boolean => dec_body::<bool>(stream, ctx),
+                VariantScalarTypeId::SByte => dec_body::<i8>(stream, ctx),
+                VariantScalarTypeId::Byte => dec_body::<u8>(stream, ctx),
+                VariantScalarTypeId::Int16 => dec_body::<i16>(stream, ctx),
+                VariantScalarTypeId::UInt16 => dec_body::<u16>(stream, ctx),
+                VariantScalarTypeId::Int32 => dec_body::<i32>(stream, ctx),
+                VariantScalarTypeId::UInt32 => dec_body::<u32>(stream, ctx),
+                VariantScalarTypeId::Int64 => dec_body::<i64>(stream, ctx),
+                VariantScalarTypeId::UInt64 => dec_body::<u64>(stream, ctx),
+                VariantScalarTypeId::Float => dec_body::<f32>(stream, ctx),
+                VariantScalarTypeId::Double => dec_body::<f64>(stream, ctx),
+                VariantScalarTypeId::String => dec_body::<UAString>(stream, ctx),
+                VariantScalarTypeId::DateTime => dec_body::<DateTime>(stream, ctx),
+                VariantScalarTypeId::Guid => dec_body::<Guid>(stream, ctx),
+                VariantScalarTypeId::ByteString => dec_body::<ByteString>(stream, ctx),
+                VariantScalarTypeId::XmlElement => dec_body::<XmlElement>(stream, ctx),
+                VariantScalarTypeId::NodeId => dec_body::<NodeId>(stream, ctx),
+                VariantScalarTypeId::ExpandedNodeId => dec_body::<ExpandedNodeId>(stream, ctx),
+                VariantScalarTypeId::StatusCode => dec_body::<StatusCode>(stream, ctx),
+                VariantScalarTypeId::QualifiedName => dec_body::<QualifiedName>(stream, ctx),
+                VariantScalarTypeId::LocalizedText => dec_body::<LocalizedText>(stream, ctx),
+                VariantScalarTypeId::ExtensionObject => dec_body::<ExtensionObject>(stream, ctx),
+                VariantScalarTypeId::DataValue => dec_body::<DataValue>(stream, ctx),
+                VariantScalarTypeId::Variant => {
+                    let v = dec_body::<Variant>(stream, ctx)?;
+                    // Only place where Into isn't sufficient. Add a layer of indirection
+                    // to Single variants.
+                    match v {
+                        VariantOrArray::Single(variant) => {
+                            Ok(VariantOrArray::Single(Variant::Variant(Box::new(variant))))
+                        }
+                        VariantOrArray::Array(vec) => Ok(VariantOrArray::Array(vec)),
                     }
                 }
-
-                struct_ser.serialize_field("Body", &VariantValueArray(&array.values))?;
+                VariantScalarTypeId::DiagnosticInfo => dec_body::<DiagnosticInfo>(stream, ctx),
             }
+        }
+
+        let mut type_id = None;
+        let mut value = None;
+        let mut dimensions: Option<Vec<u32>> = None;
+        let mut raw_value = None;
+        while stream.has_next()? {
+            match stream.next_name()? {
+                "Type" => {
+                    let ty: u32 = stream.next_number()??;
+                    if ty != 0 {
+                        type_id = Some(VariantScalarTypeId::try_from(ty).map_err(|_| {
+                            Error::decoding(format!("Unexpected variant type: {}", ty))
+                        })?);
+                    }
+                }
+                "Body" => {
+                    if let Some(type_id) = type_id {
+                        value = Some(dec_body_dyn(stream, ctx, type_id)?);
+                    } else {
+                        raw_value = Some(consume_raw_value(stream)?);
+                    }
+                }
+                "Dimensions" => {
+                    dimensions = JsonDecodable::decode(stream, ctx)?;
+                }
+                _ => {
+                    stream.skip_value()?;
+                }
+            }
+        }
+
+        let Some(type_id) = type_id else {
+            stream.end_object()?;
+            return Ok(Variant::Empty);
         };
 
-        struct_ser.end()
-    }
-}
-
-struct VariantValueArray<'a>(&'a [Variant]);
-
-macro_rules! ser_float_seq {
-    ($v: expr, $t: ty, $ser: expr) => {
-        if *$v == <$t>::INFINITY {
-            $ser.serialize_element(VALUE_INFINITY)
-        } else if *$v == <$t>::NEG_INFINITY {
-            $ser.serialize_element(VALUE_NEG_INFINITY)
-        } else if $v.is_nan() {
-            $ser.serialize_element(VALUE_NAN)
-        } else {
-            $ser.serialize_element($v)
-        }
-    };
-}
-
-impl<'a> Serialize for VariantValueArray<'a> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let mut seq_ser = serializer.serialize_seq(Some(self.0.len()))?;
-        for elem in self.0 {
-            match elem {
-                Variant::Empty => seq_ser.serialize_element(&None::<i32>)?,
-                Variant::Boolean(b) => seq_ser.serialize_element(b)?,
-                Variant::SByte(b) => seq_ser.serialize_element(b)?,
-                Variant::Byte(b) => seq_ser.serialize_element(b)?,
-                Variant::Int16(b) => seq_ser.serialize_element(b)?,
-                Variant::UInt16(b) => seq_ser.serialize_element(b)?,
-                Variant::Int32(b) => seq_ser.serialize_element(b)?,
-                Variant::UInt32(b) => seq_ser.serialize_element(b)?,
-                Variant::Int64(b) => seq_ser.serialize_element(b)?,
-                Variant::UInt64(b) => seq_ser.serialize_element(b)?,
-                Variant::Float(b) => ser_float_seq!(b, f32, seq_ser)?,
-                Variant::Double(b) => ser_float_seq!(b, f64, seq_ser)?,
-                Variant::String(b) => seq_ser.serialize_element(b)?,
-                Variant::DateTime(b) => seq_ser.serialize_element(b)?,
-                Variant::Guid(b) => seq_ser.serialize_element(b)?,
-                Variant::StatusCode(b) => seq_ser.serialize_element(b)?,
-                Variant::ByteString(b) => seq_ser.serialize_element(b)?,
-                Variant::XmlElement(b) => seq_ser.serialize_element(b)?,
-                Variant::QualifiedName(b) => seq_ser.serialize_element(b)?,
-                Variant::LocalizedText(b) => seq_ser.serialize_element(b)?,
-                Variant::NodeId(b) => seq_ser.serialize_element(b)?,
-                Variant::ExpandedNodeId(b) => seq_ser.serialize_element(b)?,
-                Variant::ExtensionObject(b) => seq_ser.serialize_element(b)?,
-                Variant::Variant(b) => seq_ser.serialize_element(b)?,
-                Variant::DataValue(b) => seq_ser.serialize_element(b)?,
-                Variant::DiagnosticInfo(b) => seq_ser.serialize_element(b)?,
-                Variant::Array(_) => {
-                    // Should be impossible, just write null
-                    seq_ser.serialize_element(&None::<i32>)?
-                }
-            }
-        }
-        seq_ser.end()
-    }
-}
-
-struct VariantVisitor;
-
-#[derive(Serialize, Deserialize)]
-struct JsonVariant {
-    #[serde(rename = "Type")]
-    variant_type: u32,
-    #[serde(rename = "Body")]
-    body: Option<serde_json::Value>,
-    #[serde(rename = "Dimensions")]
-    dimensions: Option<Vec<u32>>,
-}
-
-macro_rules! from_value {
-    ($body:expr, $t:ident, $dims:expr, $m:ident) => {
-        match $body {
-            Some(serde_json::Value::Array(arr)) => {
-                let values = arr
-                    .into_iter()
-                    .map(|v| $m(v).map_err(de::Error::custom))
-                    .collect::<Result<Vec<_>, _>>()?;
-                Variant::Array(Box::new(crate::Array {
-                    value_type: VariantScalarTypeId::$t,
-                    values: values.into_iter().map(Variant::$t).collect(),
-                    dimensions: $dims,
-                }))
-            }
-            Some(r) => {
-                if $dims.is_some() {
-                    return Err(de::Error::custom("Unexpected dimensions for scalar value"));
-                }
-                Variant::$t($m(r).map_err(de::Error::custom)?)
-            }
-            None => Variant::$t(Default::default()),
-        }
-    };
-}
-
-fn parse_f32(value: Value) -> Result<f32, String> {
-    match value {
-        Value::Number(number) => {
-            let Some(v) = number.as_f64() else {
-                return Err("Invalid float".to_string());
-            };
-            Ok(v as f32)
-        }
-        Value::String(s) => match s.as_str() {
-            VALUE_INFINITY => Ok(f32::INFINITY),
-            VALUE_NEG_INFINITY => Ok(f32::NEG_INFINITY),
-            VALUE_NAN => Ok(f32::NAN),
-            r => Err(format!("Unexpected value for float: {r}")),
-        },
-        _ => Err("Expected string or float".to_owned()),
-    }
-}
-
-fn parse_f64(value: Value) -> Result<f64, String> {
-    match value {
-        Value::Number(number) => {
-            let Some(v) = number.as_f64() else {
-                return Err("Invalid float".to_string());
-            };
-            Ok(v)
-        }
-        Value::String(s) => match s.as_str() {
-            VALUE_INFINITY => Ok(f64::INFINITY),
-            VALUE_NEG_INFINITY => Ok(f64::NEG_INFINITY),
-            VALUE_NAN => Ok(f64::NAN),
-            r => Err(format!("Unexpected value for float: {r}")),
-        },
-        _ => Err("Expected string or float".to_owned()),
-    }
-}
-
-impl<'de> Visitor<'de> for VariantVisitor {
-    type Value = Variant;
-
-    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(formatter, "a variant value or null")
-    }
-
-    fn visit_none<E>(self) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        Ok(Variant::Empty)
-    }
-
-    fn visit_some<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let v = JsonVariant::deserialize(deserializer)?;
-
-        if v.variant_type == 0 {
-            if v.body.is_some() {
-                return Err(de::Error::custom("Unexpected body with type id 0"));
-            }
-            return Ok(Variant::Empty);
+        if let Some(raw_value) = raw_value {
+            let mut cursor = Cursor::new(raw_value);
+            let mut inner_stream = JsonStreamReader::new(&mut cursor as &mut dyn Read);
+            value = Some(dec_body_dyn(&mut inner_stream, ctx, type_id)?);
         }
 
-        let type_id = VariantScalarTypeId::try_from(v.variant_type).map_err(|_| {
-            de::Error::custom(format!("Unexpected variant type {}", v.variant_type))
-        })?;
+        let value = value.unwrap_or_else(|| {
+            VariantOrArray::Single(match type_id {
+                VariantScalarTypeId::Boolean => Variant::from(bool::default()),
+                VariantScalarTypeId::SByte => Variant::from(i8::default()),
+                VariantScalarTypeId::Byte => Variant::from(u8::default()),
+                VariantScalarTypeId::Int16 => Variant::from(i16::default()),
+                VariantScalarTypeId::UInt16 => Variant::from(u16::default()),
+                VariantScalarTypeId::Int32 => Variant::from(i32::default()),
+                VariantScalarTypeId::UInt32 => Variant::from(u32::default()),
+                VariantScalarTypeId::Int64 => Variant::from(i64::default()),
+                VariantScalarTypeId::UInt64 => Variant::from(u64::default()),
+                VariantScalarTypeId::Float => Variant::from(f32::default()),
+                VariantScalarTypeId::Double => Variant::from(f64::default()),
+                VariantScalarTypeId::String => Variant::from(UAString::default()),
+                VariantScalarTypeId::DateTime => Variant::from(DateTime::default()),
+                VariantScalarTypeId::Guid => Variant::from(Guid::default()),
+                VariantScalarTypeId::ByteString => Variant::from(ByteString::default()),
+                VariantScalarTypeId::XmlElement => Variant::from(XmlElement::default()),
+                VariantScalarTypeId::NodeId => Variant::from(NodeId::default()),
+                VariantScalarTypeId::ExpandedNodeId => Variant::from(ExpandedNodeId::default()),
+                VariantScalarTypeId::StatusCode => Variant::from(StatusCode::default()),
+                VariantScalarTypeId::QualifiedName => Variant::from(QualifiedName::default()),
+                VariantScalarTypeId::LocalizedText => Variant::from(LocalizedText::default()),
+                VariantScalarTypeId::ExtensionObject => Variant::from(ExtensionObject::default()),
+                VariantScalarTypeId::DataValue => Variant::from(DataValue::default()),
+                VariantScalarTypeId::Variant => Variant::Variant(Box::default()),
+                VariantScalarTypeId::DiagnosticInfo => Variant::from(DiagnosticInfo::default()),
+            })
+        });
 
-        Ok(match type_id {
-            VariantScalarTypeId::Boolean => from_value!(v.body, Boolean, v.dimensions, from_value),
-            VariantScalarTypeId::SByte => from_value!(v.body, SByte, v.dimensions, from_value),
-            VariantScalarTypeId::Byte => from_value!(v.body, Byte, v.dimensions, from_value),
-            VariantScalarTypeId::Int16 => from_value!(v.body, Int16, v.dimensions, from_value),
-            VariantScalarTypeId::UInt16 => from_value!(v.body, UInt16, v.dimensions, from_value),
-            VariantScalarTypeId::Int32 => from_value!(v.body, Int32, v.dimensions, from_value),
-            VariantScalarTypeId::UInt32 => from_value!(v.body, UInt32, v.dimensions, from_value),
-            VariantScalarTypeId::Int64 => from_value!(v.body, Int64, v.dimensions, from_value),
-            VariantScalarTypeId::UInt64 => from_value!(v.body, UInt64, v.dimensions, from_value),
-            VariantScalarTypeId::Float => from_value!(v.body, Float, v.dimensions, parse_f32),
-            VariantScalarTypeId::Double => from_value!(v.body, Double, v.dimensions, parse_f64),
-            VariantScalarTypeId::String => from_value!(v.body, String, v.dimensions, from_value),
-            VariantScalarTypeId::DateTime => {
-                from_value!(v.body, DateTime, v.dimensions, from_value)
+        let variant = match (value, dimensions) {
+            (VariantOrArray::Single(variant), None) => variant,
+            (VariantOrArray::Single(_), Some(_)) => {
+                return Err(Error::decoding(
+                    "Unexpected dimensions for scalar variant value during json decoding",
+                ));
             }
-            VariantScalarTypeId::Guid => from_value!(v.body, Guid, v.dimensions, from_value),
-            VariantScalarTypeId::ByteString => {
-                from_value!(v.body, ByteString, v.dimensions, from_value)
-            }
-            VariantScalarTypeId::XmlElement => {
-                from_value!(v.body, XmlElement, v.dimensions, from_value)
-            }
-            VariantScalarTypeId::NodeId => from_value!(v.body, NodeId, v.dimensions, from_value),
-            VariantScalarTypeId::ExpandedNodeId => {
-                from_value!(v.body, ExpandedNodeId, v.dimensions, from_value)
-            }
-            VariantScalarTypeId::StatusCode => {
-                from_value!(v.body, StatusCode, v.dimensions, from_value)
-            }
-            VariantScalarTypeId::QualifiedName => {
-                from_value!(v.body, QualifiedName, v.dimensions, from_value)
-            }
-            VariantScalarTypeId::LocalizedText => {
-                from_value!(v.body, LocalizedText, v.dimensions, from_value)
-            }
-            VariantScalarTypeId::ExtensionObject => {
-                from_value!(v.body, ExtensionObject, v.dimensions, from_value)
-            }
-            VariantScalarTypeId::DataValue => {
-                from_value!(v.body, DataValue, v.dimensions, from_value)
-            }
-            VariantScalarTypeId::Variant => from_value!(v.body, Variant, v.dimensions, from_value),
-            VariantScalarTypeId::DiagnosticInfo => {
-                from_value!(v.body, DiagnosticInfo, v.dimensions, from_value)
-            }
-        })
-    }
-}
+            (VariantOrArray::Array(vec), d) => Variant::Array(Box::new(crate::Array {
+                value_type: type_id,
+                values: vec,
+                dimensions: d,
+            })),
+        };
 
-impl<'de> Deserialize<'de> for Variant {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: de::Deserializer<'de>,
-    {
-        deserializer.deserialize_option(VariantVisitor)
+        stream.end_object()?;
+
+        Ok(variant)
     }
 }

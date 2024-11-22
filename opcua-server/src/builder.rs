@@ -6,7 +6,7 @@ use tokio_util::sync::CancellationToken;
 use crate::{constants, node_manager::TypeTreeForUser};
 use opcua_core::config::Config;
 use opcua_crypto::SecurityPolicy;
-use opcua_types::{BuildInfo, MessageSecurityMode};
+use opcua_types::{BuildInfo, MessageSecurityMode, TypeLoader, TypeLoaderCollection};
 
 use super::{
     authenticator::AuthManager, node_manager::NodeManagerBuilder, Limits, Server, ServerConfig,
@@ -18,6 +18,7 @@ pub struct ServerBuilder {
     pub(crate) node_managers: Vec<Box<dyn NodeManagerBuilder>>,
     pub(crate) authenticator: Option<Arc<dyn AuthManager>>,
     pub(crate) type_tree_getter: Option<Arc<dyn TypeTreeForUser>>,
+    pub(crate) type_loaders: TypeLoaderCollection,
     pub(crate) token: CancellationToken,
     pub(crate) build_info: BuildInfo,
 }
@@ -31,6 +32,7 @@ impl Default for ServerBuilder {
             token: CancellationToken::new(),
             type_tree_getter: None,
             build_info: BuildInfo::default(),
+            type_loaders: TypeLoaderCollection::new(),
         };
         #[cfg(feature = "generated-address-space")]
         {
@@ -529,6 +531,11 @@ impl ServerBuilder {
     /// `handle.token()`.
     pub fn token(mut self, token: CancellationToken) -> Self {
         self.token = token;
+        self
+    }
+
+    pub fn with_type_loader(mut self, loader: Arc<dyn TypeLoader>) -> Self {
+        self.type_loaders.add(loader);
         self
     }
 }

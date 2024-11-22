@@ -18,7 +18,7 @@ use log::error;
 use tokio_util::codec::{Decoder, Encoder};
 
 use opcua_types::{
-    encoding::{BinaryDecodable, BinaryEncodable, DecodingOptions},
+    encoding::{DecodingOptions, SimpleBinaryDecodable, SimpleBinaryEncodable},
     status_code::StatusCode,
 };
 
@@ -106,7 +106,7 @@ impl TcpCodec {
     // Writes the encodable thing into the buffer.
     fn write<T>(&self, msg: T, buf: &mut BytesMut) -> Result<(), io::Error>
     where
-        T: BinaryEncodable + std::fmt::Debug,
+        T: SimpleBinaryEncodable + std::fmt::Debug,
     {
         buf.reserve(msg.byte_len());
         msg.encode(&mut buf.writer()).map(|_| ()).map_err(|err| {

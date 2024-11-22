@@ -3,6 +3,7 @@ use std::{self, fmt};
 use log::error;
 
 use crate::{
+    argument::Argument,
     attribute::AttributeId,
     byte_string::ByteString,
     constants,
@@ -13,19 +14,18 @@ use crate::{
     qualified_name::QualifiedName,
     response_header::{AsRequestHandle, ResponseHeader},
     service_types::{
-        AnonymousIdentityToken, ApplicationDescription, ApplicationType, Argument,
-        CallMethodRequest, EndpointDescription, MessageSecurityMode, MonitoredItemCreateRequest,
-        MonitoringMode, MonitoringParameters, ReadValueId, ServiceCounterDataType, ServiceFault,
-        SignatureData, UserNameIdentityToken, UserTokenPolicy, UserTokenType,
+        AnonymousIdentityToken, ApplicationDescription, CallMethodRequest, EndpointDescription,
+        MessageSecurityMode, MonitoredItemCreateRequest, MonitoringMode, MonitoringParameters,
+        ReadValueId, ServiceCounterDataType, ServiceFault, SignatureData, UserNameIdentityToken,
+        UserTokenPolicy, UserTokenType,
     },
     status_code::StatusCode,
     string::UAString,
     variant::Variant,
-    AddNodesItem, AddReferencesItem, ExpandedNodeId, NamespaceMap, NumericRange, PubSubState,
-    ServerState,
+    Error, ExpandedNodeId, HistoryUpdateType, IdentityCriteriaType, NamespaceMap, NumericRange,
 };
 
-use super::{PerformUpdateType, SecurityTokenRequestType};
+use super::PerformUpdateType;
 
 /// Implemented by messages
 pub trait MessageInfo {
@@ -134,12 +134,12 @@ impl UserNameIdentityToken {
     }
 
     // Get the plaintext password as a string, if possible.
-    pub fn plaintext_password(&self) -> Result<String, StatusCode> {
+    pub fn plaintext_password(&self) -> Result<String, Error> {
         if !self.encryption_algorithm.is_empty() {
             // Should not be calling this function at all encryption is applied
             panic!();
         }
-        String::from_utf8(self.password.as_ref().to_vec()).map_err(|_| StatusCode::BadDecodingError)
+        String::from_utf8(self.password.as_ref().to_vec()).map_err(Error::decoding)
     }
 
     /// Authenticates the token against the supplied username and password.
@@ -250,20 +250,6 @@ impl MonitoredItemCreateRequest {
     }
 }
 
-impl Default for ApplicationDescription {
-    fn default() -> Self {
-        Self {
-            application_uri: UAString::null(),
-            product_uri: UAString::null(),
-            application_name: LocalizedText::null(),
-            application_type: ApplicationType::Server,
-            gateway_server_uri: UAString::null(),
-            discovery_profile_uri: UAString::null(),
-            discovery_urls: None,
-        }
-    }
-}
-
 impl From<(NodeId, NodeId, Option<Vec<Variant>>)> for CallMethodRequest {
     fn from(value: (NodeId, NodeId, Option<Vec<Variant>>)) -> Self {
         Self {
@@ -351,12 +337,7 @@ impl fmt::Display for MessageSecurityMode {
 
 impl From<MessageSecurityMode> for String {
     fn from(security_mode: MessageSecurityMode) -> Self {
-        String::from(match security_mode {
-            MessageSecurityMode::None => MESSAGE_SECURITY_MODE_NONE,
-            MessageSecurityMode::Sign => MESSAGE_SECURITY_MODE_SIGN,
-            MessageSecurityMode::SignAndEncrypt => MESSAGE_SECURITY_MODE_SIGN_AND_ENCRYPT,
-            _ => "",
-        })
+        security_mode.to_string()
     }
 }
 
@@ -381,7 +362,7 @@ impl From<(&str, DataTypeId)> for Argument {
             data_type: v.1.into(),
             value_rank: -1,
             array_dimensions: None,
-            description: LocalizedText::new("", ""),
+            description: LocalizedText::null(),
         }
     }
 }
@@ -397,35 +378,9 @@ impl ServiceCounterDataType {
     }
 }
 
-impl Default for MessageSecurityMode {
-    fn default() -> Self {
-        Self::None
-    }
-}
-
-impl Default for SecurityTokenRequestType {
-    fn default() -> Self {
-        Self::Issue
-    }
-}
-
 impl Default for PerformUpdateType {
     fn default() -> Self {
         Self::Insert
-    }
-}
-
-impl Default for AddNodesItem {
-    fn default() -> Self {
-        Self {
-            parent_node_id: Default::default(),
-            reference_type_id: Default::default(),
-            requested_new_node_id: Default::default(),
-            browse_name: Default::default(),
-            node_class: crate::NodeClass::Object,
-            node_attributes: Default::default(),
-            type_definition: Default::default(),
-        }
     }
 }
 
@@ -435,27 +390,20 @@ impl Default for NumericRange {
     }
 }
 
-impl Default for ServerState {
+/* impl Default for ServerState {
     fn default() -> Self {
         Self::Shutdown
     }
-}
+} */
 
-impl Default for AddReferencesItem {
+impl Default for HistoryUpdateType {
     fn default() -> Self {
-        Self {
-            source_node_id: Default::default(),
-            reference_type_id: Default::default(),
-            is_forward: Default::default(),
-            target_server_uri: Default::default(),
-            target_node_id: Default::default(),
-            target_node_class: crate::NodeClass::Object,
-        }
+        Self::Insert
     }
 }
 
-impl Default for PubSubState {
+impl Default for IdentityCriteriaType {
     fn default() -> Self {
-        Self::Disabled
+        Self::Anonymous
     }
 }

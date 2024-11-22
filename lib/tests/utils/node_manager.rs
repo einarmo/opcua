@@ -763,7 +763,7 @@ impl TestNodeManagerImpl {
         for node in nodes {
             let Some(data) = history.get(node.node_id()) else {
                 node.set_status(StatusCode::Good);
-                node.set_result(&opcua::types::HistoryData {
+                node.set_result(opcua::types::HistoryData {
                     data_values: Some(Vec::new()),
                 });
                 continue;
@@ -822,7 +822,7 @@ impl TestNodeManagerImpl {
             };
 
             node.set_status(StatusCode::Good);
-            node.set_result(&opcua::types::HistoryData {
+            node.set_result(opcua::types::HistoryData {
                 data_values: Some(values),
             });
             if is_forward {

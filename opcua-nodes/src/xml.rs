@@ -6,9 +6,9 @@ use std::{
 
 use log::warn;
 use opcua_types::{
-    xml::{FromXmlError, XmlContext, XmlLoader},
+    xml::{FromXmlError, XmlContext},
     DataTypeDefinition, DataValue, EnumDefinition, EnumField, LocalizedText, NodeClass, NodeId,
-    QualifiedName, StructureDefinition, StructureField, StructureType, Variant,
+    QualifiedName, StructureDefinition, StructureField, StructureType, TypeLoader, Variant,
 };
 use opcua_xml::{
     load_nodeset2_file,
@@ -29,9 +29,9 @@ use crate::{
 /// [`NodeSetImport`] implementation for dynamically loading NodeSet2 files at
 /// runtime. Note that structures must be loaded with a type loader. By default
 /// the type loader for the base types is registered, but if your NodeSet2 file uses custom types
-/// you will have to add an [`XmlLoader`] using [`NodeSet2Import::add_type_loader`].
+/// you will have to add an [`TypeLoader`] using [`NodeSet2Import::add_type_loader`].
 pub struct NodeSet2Import {
-    type_loaders: Vec<Arc<dyn XmlLoader>>,
+    type_loaders: Vec<Arc<dyn TypeLoader>>,
     dependent_namespaces: Vec<String>,
     preferred_locale: String,
     file: UANodeSet,
@@ -113,13 +113,13 @@ impl NodeSet2Import {
     ) -> Self {
         Self {
             preferred_locale: preferred_locale.to_owned(),
-            type_loaders: vec![Arc::new(opcua_types::service_types::TypesXmlLoader)],
+            type_loaders: vec![Arc::new(opcua_types::service_types::GeneratedTypeLoader)],
             file: nodeset,
             dependent_namespaces,
         }
     }
 
-    pub fn add_type_loader(&mut self, loader: Arc<dyn XmlLoader>) {
+    pub fn add_type_loader(&mut self, loader: Arc<dyn TypeLoader>) {
         self.type_loaders.push(loader);
     }
 
@@ -633,7 +633,7 @@ mod tests {
         assert_eq!(
             v.value.value,
             Some(Variant::ExtensionObject(Box::new(
-                ExtensionObject::from_message(&EUInformation {
+                ExtensionObject::from_message(EUInformation {
                     namespace_uri: "http://unit-namespace.namespace".into(),
                     unit_id: 15,
                     display_name: LocalizedText::new("en", "Degrees Celsius"),

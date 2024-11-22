@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct PubSubConnectionDataType {
@@ -36,71 +37,55 @@ impl opcua::types::MessageInfo for PubSubConnectionDataType {
     }
 }
 impl opcua::types::BinaryEncodable for PubSubConnectionDataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.name.byte_len();
-        size += self.enabled.byte_len();
-        size += self.publisher_id.byte_len();
-        size += self.transport_profile_uri.byte_len();
-        size += self.address.byte_len();
-        size += self.connection_properties.byte_len();
-        size += self.transport_settings.byte_len();
-        size += self.writer_groups.byte_len();
-        size += self.reader_groups.byte_len();
+        size += self.name.byte_len(ctx);
+        size += self.enabled.byte_len(ctx);
+        size += self.publisher_id.byte_len(ctx);
+        size += self.transport_profile_uri.byte_len(ctx);
+        size += self.address.byte_len(ctx);
+        size += self.connection_properties.byte_len(ctx);
+        size += self.transport_settings.byte_len(ctx);
+        size += self.writer_groups.byte_len(ctx);
+        size += self.reader_groups.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.name.encode(stream)?;
-        size += self.enabled.encode(stream)?;
-        size += self.publisher_id.encode(stream)?;
-        size += self.transport_profile_uri.encode(stream)?;
-        size += self.address.encode(stream)?;
-        size += self.connection_properties.encode(stream)?;
-        size += self.transport_settings.encode(stream)?;
-        size += self.writer_groups.encode(stream)?;
-        size += self.reader_groups.encode(stream)?;
+        size += self.name.encode(stream, ctx)?;
+        size += self.enabled.encode(stream, ctx)?;
+        size += self.publisher_id.encode(stream, ctx)?;
+        size += self.transport_profile_uri.encode(stream, ctx)?;
+        size += self.address.encode(stream, ctx)?;
+        size += self.connection_properties.encode(stream, ctx)?;
+        size += self.transport_settings.encode(stream, ctx)?;
+        size += self.writer_groups.encode(stream, ctx)?;
+        size += self.reader_groups.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for PubSubConnectionDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            name: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            enabled: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            publisher_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            transport_profile_uri: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            address: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            connection_properties: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            transport_settings: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            writer_groups: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            reader_groups: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            enabled: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            publisher_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            transport_profile_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            address: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            connection_properties: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            transport_settings: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            writer_groups: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            reader_groups: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

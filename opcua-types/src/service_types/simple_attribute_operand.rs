@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct SimpleAttributeOperand {
@@ -31,47 +32,40 @@ impl opcua::types::MessageInfo for SimpleAttributeOperand {
     }
 }
 impl opcua::types::BinaryEncodable for SimpleAttributeOperand {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.type_definition_id.byte_len();
-        size += self.browse_path.byte_len();
-        size += self.attribute_id.byte_len();
-        size += self.index_range.byte_len();
+        size += self.type_definition_id.byte_len(ctx);
+        size += self.browse_path.byte_len(ctx);
+        size += self.attribute_id.byte_len(ctx);
+        size += self.index_range.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.type_definition_id.encode(stream)?;
-        size += self.browse_path.encode(stream)?;
-        size += self.attribute_id.encode(stream)?;
-        size += self.index_range.encode(stream)?;
+        size += self.type_definition_id.encode(stream, ctx)?;
+        size += self.browse_path.encode(stream, ctx)?;
+        size += self.attribute_id.encode(stream, ctx)?;
+        size += self.index_range.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for SimpleAttributeOperand {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            type_definition_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            browse_path: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            attribute_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            index_range: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            type_definition_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            browse_path: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            attribute_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            index_range: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

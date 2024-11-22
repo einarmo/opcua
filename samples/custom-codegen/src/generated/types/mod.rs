@@ -11,18 +11,93 @@ pub mod enums;
 pub use enums::*;
 pub mod structs;
 pub use structs::*;
-#[cfg(feature = "xml")]
-#[derive(Debug, Default, Copy, Clone)]
-pub struct TypesXmlLoader;
-#[cfg(feature = "xml")]
-impl opcua::types::xml::XmlLoader for TypesXmlLoader {
-    fn load_extension_object(
+static TYPES: std::sync::LazyLock<opcua::types::TypeLoaderInstance> =
+    std::sync::LazyLock::new(|| {
+        let mut inst = opcua::types::TypeLoaderInstance::new();
+        {
+            inst.add_binary_type(
+                crate::DataTypeId::PnDeviceDiagnosisDataType as u32,
+                crate::ObjectId::PnDeviceDiagnosisDataType_Encoding_DefaultBinary as u32,
+                opcua::types::binary_decode_to_enc::<PnDeviceDiagnosisDataType>,
+            );
+            inst.add_binary_type(
+                crate::DataTypeId::PnDeviceRoleOptionSet as u32,
+                crate::ObjectId::PnDeviceRoleOptionSet_Encoding_DefaultBinary as u32,
+                opcua::types::binary_decode_to_enc::<PnDeviceRoleOptionSet>,
+            );
+            inst.add_binary_type(
+                crate::DataTypeId::PnIM5DataType as u32,
+                crate::ObjectId::PnIM5DataType_Encoding_DefaultBinary as u32,
+                opcua::types::binary_decode_to_enc::<PnIM5DataType>,
+            );
+        }
+        #[cfg(feature = "xml")]
+        {
+            inst.add_xml_type(
+                crate::DataTypeId::PnDeviceDiagnosisDataType as u32,
+                crate::ObjectId::PnDeviceDiagnosisDataType_Encoding_DefaultXml as u32,
+                opcua::types::xml_decode_to_enc::<PnDeviceDiagnosisDataType>,
+            );
+            inst.add_xml_type(
+                crate::DataTypeId::PnDeviceRoleOptionSet as u32,
+                crate::ObjectId::PnDeviceRoleOptionSet_Encoding_DefaultXml as u32,
+                opcua::types::xml_decode_to_enc::<PnDeviceRoleOptionSet>,
+            );
+            inst.add_xml_type(
+                crate::DataTypeId::PnIM5DataType as u32,
+                crate::ObjectId::PnIM5DataType_Encoding_DefaultXml as u32,
+                opcua::types::xml_decode_to_enc::<PnIM5DataType>,
+            );
+        }
+        #[cfg(feature = "json")]
+        {
+            inst.add_json_type(
+                crate::DataTypeId::PnDeviceDiagnosisDataType as u32,
+                crate::ObjectId::PnDeviceDiagnosisDataType_Encoding_DefaultJson as u32,
+                opcua::types::json_decode_to_enc::<PnDeviceDiagnosisDataType>,
+            );
+            inst.add_json_type(
+                crate::DataTypeId::PnDeviceRoleOptionSet as u32,
+                crate::ObjectId::PnDeviceRoleOptionSet_Encoding_DefaultJson as u32,
+                opcua::types::json_decode_to_enc::<PnDeviceRoleOptionSet>,
+            );
+            inst.add_json_type(
+                crate::DataTypeId::PnIM5DataType as u32,
+                crate::ObjectId::PnIM5DataType_Encoding_DefaultJson as u32,
+                opcua::types::json_decode_to_enc::<PnIM5DataType>,
+            );
+        }
+        inst
+    });
+#[derive(Debug, Clone, Copy)]
+pub struct GeneratedTypeLoader;
+impl opcua::types::TypeLoader for GeneratedTypeLoader {
+    fn load_from_binary(
         &self,
-        body: &opcua::types::xml::XmlElement,
         node_id: &opcua::types::NodeId,
+        stream: &mut dyn std::io::Read,
+        ctx: &opcua::types::Context<'_>,
+    ) -> Option<opcua::types::EncodingResult<Box<dyn opcua::types::DynEncodable>>> {
+        let idx = ctx
+            .namespaces()
+            .get_index("http://opcfoundation.org/UA/PROFINET/")?;
+        if idx != node_id.namespace {
+            return None;
+        }
+        let Some(num_id) = node_id.as_u32() else {
+            return Some(Err(opcua::types::Error::decoding(
+                "Unsupported encoding ID. Only numeric encoding IDs are currently supported",
+            )));
+        };
+        TYPES.decode_binary(num_id, stream, ctx)
+    }
+    #[cfg(feature = "xml")]
+    fn load_from_xml(
+        &self,
+        node_id: &opcua::types::NodeId,
+        stream: &opcua::types::xml::XmlElement,
         ctx: &opcua::types::xml::XmlContext<'_>,
-    ) -> Option<Result<opcua::types::ExtensionObject, opcua::types::xml::FromXmlError>> {
-        use opcua::types::xml::FromXml;
+    ) -> Option<Result<Box<dyn opcua::types::DynEncodable>, opcua::types::xml::FromXmlError>> {
         let idx = ctx
             .namespaces
             .namespaces()
@@ -30,37 +105,34 @@ impl opcua::types::xml::XmlLoader for TypesXmlLoader {
         if idx != node_id.namespace {
             return None;
         }
-        let object_id = match node_id
-            .as_u32()
-            .and_then(|v| crate::ObjectId::try_from(v).ok())
-            .ok_or_else(|| format!("Invalid object ID: {node_id}"))
-        {
-            Ok(i) => i,
-            Err(e) => return Some(Err(e.into())),
+        let Some(num_id) = node_id.as_u32() else {
+            return Some(Err(opcua::types::xml::FromXmlError::Other(
+                "Unsupported encoding ID, we only support numeric IDs".to_owned(),
+            )));
         };
-        let r = match object_id {
-            crate::ObjectId::PnDeviceDiagnosisDataType_Encoding_DefaultXml => {
-                PnDeviceDiagnosisDataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(&v, ctx.ns_map()))
-            }
-            crate::ObjectId::PnDeviceRoleOptionSet_Encoding_DefaultXml => {
-                PnDeviceRoleOptionSet::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(&v, ctx.ns_map()))
-            }
-            crate::ObjectId::PnIM5DataType_Encoding_DefaultXml => {
-                PnIM5DataType::from_xml(body, ctx)
-                    .map(|v| opcua::types::ExtensionObject::from_message_full(&v, ctx.ns_map()))
-            }
-            _ => return None,
-        };
-        match r {
-            Ok(r) => Some(r.map_err(|_| {
-                opcua::types::xml::FromXmlError::from(format!(
-                    "Invalid XML type, missing binary encoding ID: {:?}",
-                    object_id
-                ))
-            })),
-            Err(e) => Some(Err(e)),
+        TYPES.decode_xml(num_id, stream, ctx)
+    }
+    #[cfg(feature = "json")]
+    fn load_from_json(
+        &self,
+        node_id: &opcua::types::NodeId,
+        stream: &mut opcua::types::json::JsonStreamReader<&mut dyn std::io::Read>,
+        ctx: &opcua::types::Context<'_>,
+    ) -> Option<opcua::types::EncodingResult<Box<dyn opcua::types::DynEncodable>>> {
+        let idx = ctx
+            .namespaces()
+            .get_index("http://opcfoundation.org/UA/PROFINET/")?;
+        if idx != node_id.namespace {
+            return None;
         }
+        let Some(num_id) = node_id.as_u32() else {
+            return Some(Err(opcua::types::Error::decoding(
+                "Unsupported encoding ID. Only numeric encoding IDs are currently supported",
+            )));
+        };
+        TYPES.decode_json(num_id, stream, ctx)
+    }
+    fn priority(&self) -> opcua::types::TypeLoaderPriority {
+        opcua::types::TypeLoaderPriority::Generated
     }
 }

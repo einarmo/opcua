@@ -5,19 +5,19 @@
 //! Contains the implementation of `ExtensionObject`.
 
 use std::{
-    any::Any,
-    error::Error,
+    any::{Any, TypeId},
     fmt,
-    io::{Cursor, Read, Write},
+    io::{Read, Write},
 };
 
-use log::error;
+use log::warn;
 
-use crate::{ExpandedMessageInfo, NamespaceMap};
+use crate::{write_i32, write_u8, Error, ExpandedMessageInfo, ExpandedNodeId};
 
 use super::{
-    byte_string::ByteString, encoding::*, node_id::NodeId, node_ids::ObjectId,
-    status_code::StatusCode, string::XmlElement, MessageInfo,
+    encoding::{BinaryDecodable, BinaryEncodable, EncodingResult},
+    node_id::NodeId,
+    node_ids::ObjectId,
 };
 
 #[derive(Debug)]
@@ -29,220 +29,277 @@ impl fmt::Display for ExtensionObjectError {
     }
 }
 
-pub trait DynEncodable: Any + std::fmt::Debug {
-    fn encode_dyn(&self, stream: &mut dyn std::io::Write) -> EncodingResult<usize>;
+/// Trait for an OPC-UA struct that can be dynamically encoded back to binary (or JSON).
+/// ExtensionObject wraps a dynamic object for this trait.
+/// Note that this trait is automatically implemented for anything that implements
+/// [BinaryEncodable], [JsonEncodable] (with the `json` feature), [Send], [Sync], [Clone],
+/// [ExpandedMessageInfo], [std::fmt::Debug] and [PartialEq].
+///
+/// All of these are automatically derived during codegen, if you
+/// want to manually implement a type that can be stored as an extension object,
+/// you need to implement or derive all of these traits.
+pub trait DynEncodable: Any + Send + Sync + std::fmt::Debug {
+    /// Encode the struct using OPC-UA binary encoding.
+    fn encode_binary(
+        &self,
+        stream: &mut dyn std::io::Write,
+        ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize>;
 
-    fn byte_len_dyn(&self) -> usize;
-}
-
-impl<T> DynEncodable for T
-where
-    T: BinaryEncodable + Any + std::fmt::Debug,
-{
-    fn encode_dyn(&self, stream: &mut dyn std::io::Write) -> EncodingResult<usize> {
-        BinaryEncodable::encode(self, stream)
-    }
-
-    fn byte_len_dyn(&self) -> usize {
-        BinaryEncodable::byte_len(self)
-    }
-}
-
-impl PartialEq for dyn DynEncodable {
-    fn eq(&self, other: &dyn DynEncodable) -> bool {
-        if self.byte_len_dyn() != other.byte_len_dyn() {
-            return false;
-        }
-        if self.type_id() != other.type_id() {
-            return false;
-        }
-        // For equality, just serialize both sides.
-        let mut cursor = Vec::<u8>::with_capacity(self.byte_len_dyn());
-        let mut cursor2 = Vec::<u8>::with_capacity(self.byte_len_dyn());
-
-        if self.encode_dyn(&mut cursor).is_err() {
-            return false;
-        }
-
-        if other.encode_dyn(&mut cursor2).is_err() {
-            return false;
-        }
-
-        cursor == cursor2
-    }
-}
-
-impl Error for ExtensionObjectError {}
-
-/// Enumeration that holds the kinds of encoding that an ExtensionObject data may be encoded with.
-#[derive(PartialEq, Debug, Clone)]
-pub enum ExtensionObjectEncoding {
-    /// For an extension object with nothing encoded with it
-    None,
-    /// For an extension object with data encoded in a ByteString
-    ByteString(ByteString),
-    /// For an extension object with data encoded in an XML string
-    XmlElement(XmlElement),
-    /// For an extension object with data encoded in a json string
     #[cfg(feature = "json")]
-    Json(serde_json::Value),
+    /// Encode the struct using reversible OPC-UA JSON encoding.
+    fn encode_json(
+        &self,
+        stream: &mut crate::json::JsonStreamWriter<&mut dyn std::io::Write>,
+        ctx: &crate::Context<'_>,
+    ) -> EncodingResult<()>;
+
+    /// Get the binary byte length of this struct.
+    fn byte_len_dyn(&self, ctx: &crate::Context<'_>) -> usize;
+
+    /// Get the binary encoding ID of this struct.
+    fn binary_type_id(&self) -> ExpandedNodeId;
+
+    #[cfg(feature = "json")]
+    /// Get the JSON encoding ID of this struct.
+    fn json_type_id(&self) -> ExpandedNodeId;
+
+    /// Method to cast this to a dyn Any box, required for downcasting.
+    fn as_dyn_any(self: Box<Self>) -> Box<dyn Any + Send + Sync + 'static>;
+
+    /// Method to cast this to a dyn Any trait object, required for downcasting by reference.
+    fn as_dyn_any_ref(&self) -> &(dyn Any + Send + Sync);
+
+    /// Clone this to a dyn box. Required in order to implement Clone for ExtensionObject.
+    fn clone_box(&self) -> Box<dyn DynEncodable>;
+
+    /// Compare this with dynamic object. Invokes the PartialEq implementation of self and other,
+    /// if other has type `Self`.
+    fn dyn_eq(&self, other: &dyn DynEncodable) -> bool;
+
+    /// Get the type name of the type, by calling `std::any::type_name` on `Self`.
+    /// Very useful for debugging.
+    fn type_name(&self) -> &'static str;
+}
+
+macro_rules! blanket_dyn_encodable {
+    ($bound:tt $(+ $others:tt)*) => {
+        impl<T> DynEncodable for T
+        where
+            T: $bound  $(+ $others)* + ExpandedMessageInfo + Any + std::fmt::Debug + Send + Sync + Clone + PartialEq,
+        {
+            fn encode_binary(&self, stream: &mut dyn std::io::Write, ctx: &crate::Context<'_>) -> EncodingResult<usize> {
+                BinaryEncodable::encode(self, stream, ctx)
+            }
+
+            #[cfg(feature = "json")]
+            fn encode_json(
+                &self,
+                stream: &mut crate::json::JsonStreamWriter<&mut dyn std::io::Write>,
+                ctx: &crate::Context<'_>
+            ) -> EncodingResult<()> {
+                JsonEncodable::encode(self, stream, ctx)
+            }
+
+            fn byte_len_dyn(&self, ctx: &crate::Context<'_>,) -> usize {
+                BinaryEncodable::byte_len(self, ctx)
+            }
+
+            fn binary_type_id(&self) -> ExpandedNodeId {
+                self.full_type_id()
+            }
+
+            #[cfg(feature = "json")]
+            fn json_type_id(&self) -> ExpandedNodeId {
+                self.full_json_type_id()
+            }
+
+            fn as_dyn_any(self: Box<Self>) -> Box<dyn Any + Send + Sync + 'static> {
+                self
+            }
+
+            fn as_dyn_any_ref(&self) -> &(dyn Any + Send + Sync) {
+                self
+            }
+
+            fn clone_box(&self) -> Box<dyn DynEncodable> {
+                Box::new(self.clone())
+            }
+
+            fn dyn_eq(&self, other: &dyn DynEncodable) -> bool {
+                if let Some(o) = other.as_dyn_any_ref().downcast_ref::<Self>() {
+                    o == self
+                } else {
+                    false
+                }
+            }
+
+            fn type_name(&self) -> &'static str {
+                std::any::type_name::<Self>()
+            }
+        }
+    };
 }
 
 #[cfg(feature = "json")]
-mod json {
-    use serde::{
-        de::{self, IgnoredAny, Visitor},
-        ser::SerializeStruct,
-        Deserialize, Serialize,
-    };
-    use serde_json::Value;
+use crate::json::JsonEncodable;
 
-    use crate::{ByteString, ExtensionObjectEncoding, NodeId};
+#[cfg(feature = "json")]
+blanket_dyn_encodable!(BinaryEncodable + JsonEncodable);
+
+#[cfg(not(feature = "json"))]
+blanket_dyn_encodable!(BinaryEncodable);
+
+impl PartialEq for dyn DynEncodable {
+    fn eq(&self, other: &dyn DynEncodable) -> bool {
+        self.dyn_eq(other)
+    }
+}
+
+impl std::error::Error for ExtensionObjectError {}
+
+#[cfg(feature = "json")]
+mod json {
+    use std::io::{Cursor, Read};
+
+    use crate::{json::*, ByteString, Error, NodeId};
 
     use super::ExtensionObject;
 
-    impl Serialize for ExtensionObject {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: serde::Serializer,
-        {
-            if matches!(self.body, ExtensionObjectEncoding::None) {
-                return serializer.serialize_none();
-            }
+    impl JsonEncodable for ExtensionObject {
+        fn encode(
+            &self,
+            stream: &mut JsonStreamWriter<&mut dyn std::io::Write>,
+            ctx: &crate::Context<'_>,
+        ) -> super::EncodingResult<()> {
+            let Some(body) = &self.body else {
+                stream.null_value()?;
+                return Ok(());
+            };
 
-            let len = 3;
+            let type_id = body.json_type_id();
 
-            let mut struct_ser = serializer.serialize_struct("ExtensionObject", len)?;
-            struct_ser.serialize_field("TypeId", &self.node_id)?;
-            match &self.body {
-                ExtensionObjectEncoding::None => (),
-                ExtensionObjectEncoding::ByteString(byte_string) => {
-                    struct_ser.serialize_field("Encoding", &1)?;
-                    struct_ser.serialize_field("Body", byte_string)?;
-                }
-                ExtensionObjectEncoding::XmlElement(uastring) => {
-                    struct_ser.serialize_field("Encoding", &2)?;
-                    struct_ser.serialize_field("Body", uastring)?;
-                }
-                ExtensionObjectEncoding::Json(json) => {
-                    struct_ser.serialize_field("Body", json)?;
-                }
-            }
+            let id = type_id.try_resolve(ctx.namespaces()).ok_or_else(|| {
+                Error::encoding(format!("Missing namespace for encoding ID: {}", type_id))
+            })?;
 
-            struct_ser.end()
+            stream.begin_object()?;
+
+            stream.name("TypeId")?;
+            JsonEncodable::encode(id.as_ref(), stream, ctx)?;
+
+            stream.name("Body")?;
+            body.encode_json(stream, ctx)?;
+
+            stream.end_object()?;
+
+            Ok(())
         }
     }
 
-    impl<'de> Deserialize<'de> for ExtensionObject {
-        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: serde::Deserializer<'de>,
-        {
-            struct ExtensionObjectVisitor;
+    impl JsonDecodable for ExtensionObject {
+        fn decode(
+            stream: &mut JsonStreamReader<&mut dyn std::io::Read>,
+            ctx: &Context<'_>,
+        ) -> super::EncodingResult<Self> {
+            if stream.peek()? == ValueType::Null {
+                stream.next_null()?;
+                return Ok(Self::null());
+            }
 
-            impl<'de> Visitor<'de> for ExtensionObjectVisitor {
-                type Value = ExtensionObject;
+            let mut type_id: Option<NodeId> = None;
+            let mut encoding: Option<u32> = None;
+            let mut raw_body = None;
+            let mut raw_binary_body: Option<ByteString> = None;
+            let mut body = None;
 
-                fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-                    write!(formatter, "an object containing an ExtensionObject")
-                }
+            stream.begin_object()?;
 
-                fn visit_none<E>(self) -> Result<Self::Value, E>
-                where
-                    E: de::Error,
-                {
-                    Ok(ExtensionObject::null())
-                }
-
-                fn visit_some<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
-                where
-                    D: de::Deserializer<'de>,
-                {
-                    deserializer.deserialize_map(self)
-                }
-
-                fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
-                where
-                    A: serde::de::MapAccess<'de>,
-                {
-                    let mut encoding: Option<u8> = None;
-                    let mut type_id: Option<NodeId> = None;
-                    let mut body: Option<Value> = None;
-
-                    while let Some(key) = map.next_key::<String>()? {
-                        match key.as_str() {
-                            "TypeId" => {
-                                type_id = Some(map.next_value()?);
+            while stream.has_next()? {
+                match stream.next_name()? {
+                    "TypeId" => type_id = Some(JsonDecodable::decode(stream, ctx)?),
+                    "Encoding" => encoding = Some(JsonDecodable::decode(stream, ctx)?),
+                    "Body" => match stream.peek()? {
+                        ValueType::Object => {
+                            if encoding.is_some_and(|e| e != 0) {
+                                return Err(Error::decoding(format!(
+                                    "Invalid encoding, expected 0 or null, got {:?}",
+                                    encoding
+                                )));
                             }
-                            "Encoding" => {
-                                encoding = Some(map.next_value()?);
-                            }
-                            "Body" => {
-                                body = Some(map.next_value()?);
-                            }
-                            _ => {
-                                map.next_value::<IgnoredAny>()?;
-                            }
-                        }
-                    }
-
-                    // The standard is not super clear, for safety, it should be OK to just
-                    // return a null object here, which is the most likely scenario.
-                    let Some(type_id) = type_id else {
-                        return Ok(ExtensionObject::null());
-                    };
-
-                    let encoding = encoding.unwrap_or_default();
-                    let body = body.unwrap_or_default();
-
-                    let body = match encoding {
-                        0 => {
-                            if body.is_null() {
-                                ExtensionObjectEncoding::None
+                            if let Some(type_id) = &type_id {
+                                body = Some(ctx.load_from_json(type_id, stream, ctx)?);
                             } else {
-                                ExtensionObjectEncoding::Json(body)
+                                raw_body = Some(consume_raw_value(stream)?);
                             }
                         }
-                        1 => {
-                            let Value::String(s) = body else {
-                                return Err(de::Error::custom(
-                                    "Expected a base64 serialized string as ExtensionObject body",
-                                ));
-                            };
-                            ExtensionObjectEncoding::ByteString(ByteString::from_base64(&s).ok_or_else(|| de::Error::custom("Expected a base64 serialized string as ExtensionObject body"))?)
+                        _ => {
+                            if let Some(enc) = encoding {
+                                if enc != 1 {
+                                    return Err(Error::decoding(format!("Unsupported extension object encoding, expected 1 for string, got {enc}")));
+                                }
+                            }
+                            raw_binary_body = Some(JsonDecodable::decode(stream, ctx)?);
                         }
-                        2 => {
-                            let Value::String(s) = body else {
-                                return Err(de::Error::custom(
-                                    "Expected a JSON string as XML ExtensionObject body",
-                                ));
-                            };
-                            ExtensionObjectEncoding::XmlElement(s.into())
-                        }
-                        r => {
-                            return Err(de::Error::custom(format!(
-                                "Expected 0, 1, or 2 as ExtensionObject encoding, got {r}"
-                            )));
-                        }
-                    };
-
-                    Ok(ExtensionObject {
-                        node_id: type_id,
-                        body,
-                    })
+                    },
+                    _ => stream.skip_value()?,
                 }
             }
 
-            deserializer.deserialize_option(ExtensionObjectVisitor)
+            stream.end_object()?;
+
+            let Some(type_id) = type_id else {
+                return Err(Error::decoding("Missing type ID in extension object"));
+            };
+
+            let encoding = encoding.unwrap_or_default();
+
+            if let Some(body) = body {
+                Ok(body)
+            } else if let Some(raw_body) = raw_body {
+                if encoding != 0 {
+                    return Err(Error::decoding(format!(
+                        "Invalid encoding, expected 0 or null, got {}",
+                        encoding
+                    )));
+                }
+                let mut cursor = Cursor::new(raw_body);
+                let mut inner_stream = JsonStreamReader::new(&mut cursor as &mut dyn Read);
+                Ok(ctx.load_from_json(&type_id, &mut inner_stream, ctx)?)
+            } else if let Some(binary_body) = raw_binary_body {
+                if encoding != 1 {
+                    return Err(Error::decoding(format!("Unsupported extension object encoding, expected 1 for string, got {encoding}")));
+                }
+                let Some(raw) = binary_body.value else {
+                    return Err(Error::decoding("Missing extension object body"));
+                };
+                let mut cursor = Cursor::new(raw);
+                Ok(ctx.load_from_binary(&type_id, &mut cursor as &mut dyn Read, ctx)?)
+            } else {
+                Err(Error::decoding("Missing extension object body"))
+            }
         }
     }
 }
 
-/// An extension object holds a serialized object identified by its node id.
-#[derive(PartialEq, Debug, Clone)]
+/// An extension object holds an OPC-UA structure deserialize to a [DynEncodable].
+/// This makes it possible to deserialize an extension object, the serialize it back in a different
+/// format, without reflecting over or inspecting the inner type.
+///
+/// Note that in order for a type to be deserialized into an ExtensionObject, the
+/// [crate::Context] given during deserialization needs to contain a [crate::TypeLoader]
+/// that can handle the type.
+#[derive(PartialEq, Debug)]
 pub struct ExtensionObject {
-    pub node_id: NodeId,
-    pub body: ExtensionObjectEncoding,
+    pub body: Option<Box<dyn DynEncodable>>,
+}
+
+impl Clone for ExtensionObject {
+    fn clone(&self) -> Self {
+        Self {
+            body: self.body.as_ref().map(|b| b.clone_box()),
+        }
+    }
 }
 
 impl Default for ExtensionObject {
@@ -252,191 +309,270 @@ impl Default for ExtensionObject {
 }
 
 impl BinaryEncodable for ExtensionObject {
-    fn byte_len(&self) -> usize {
-        let mut size = self.node_id.byte_len();
-        size += match self.body {
-            ExtensionObjectEncoding::None => 1,
-            ExtensionObjectEncoding::ByteString(ref value) => {
-                // Encoding mask + data
-                1 + value.byte_len()
-            }
-            ExtensionObjectEncoding::XmlElement(ref value) => {
-                // Encoding mask + data
-                1 + value.byte_len()
-            }
-            #[cfg(feature = "json")]
-            ExtensionObjectEncoding::Json(_) => {
-                // Not really something we expect normally. Serialize it as encoding 0, i.e. nothing.
-                1
-            }
+    fn byte_len(&self, ctx: &crate::Context<'_>) -> usize {
+        let type_id = self.binary_type_id();
+        let id = type_id.try_resolve(ctx.namespaces());
+
+        // Just default to null here, we'll fail later.
+        let mut size = id.map(|n| n.byte_len(ctx)).unwrap_or(2usize);
+        size += match &self.body {
+            Some(b) => 4 + b.byte_len_dyn(ctx),
+            None => 1,
         };
+
         size
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        mut stream: &mut S,
+        ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize> {
         let mut size = 0;
-        size += self.node_id.encode(stream)?;
-        match self.body {
-            ExtensionObjectEncoding::None => {
-                size += write_u8(stream, 0x0)?;
-            }
-            ExtensionObjectEncoding::ByteString(ref value) => {
-                // Encoding mask + data
+        let type_id = self.binary_type_id();
+        let id = type_id.try_resolve(ctx.namespaces());
+        let Some(id) = id else {
+            return Err(Error::encoding(format!("Unknown encoding ID: {type_id}")));
+        };
+
+        size += BinaryEncodable::encode(id.as_ref(), stream, ctx)?;
+
+        match &self.body {
+            Some(b) => {
                 size += write_u8(stream, 0x1)?;
-                size += value.encode(stream)?;
+                size += write_i32(stream, b.byte_len_dyn(ctx) as i32)?;
+                size += b.encode_binary(&mut stream as &mut dyn Write, ctx)?;
             }
-            ExtensionObjectEncoding::XmlElement(ref value) => {
-                // Encoding mask + data
-                size += write_u8(stream, 0x2)?;
-                size += value.encode(stream)?;
-            }
-            #[cfg(feature = "json")]
-            ExtensionObjectEncoding::Json(_) => {
-                // We don't support encoding a JSON extension object as binary. Serialize it as encoding 0, i.e. nothing
+            None => {
                 size += write_u8(stream, 0x0)?;
             }
         }
-        assert_eq!(size, self.byte_len());
         Ok(size)
     }
 }
 impl BinaryDecodable for ExtensionObject {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
+    fn decode<S: Read + ?Sized>(
+        mut stream: &mut S,
+        ctx: &crate::Context<'_>,
+    ) -> EncodingResult<Self> {
         // Extension object is depth checked to prevent deep recursion
-        let _depth_lock = decoding_options.depth_lock()?;
-        let node_id = NodeId::decode(stream, decoding_options)?;
-        let encoding_type = u8::decode(stream, decoding_options)?;
+        let _depth_lock = ctx.options().depth_lock()?;
+        let node_id = NodeId::decode(stream, ctx)?;
+        let encoding_type = u8::decode(stream, ctx)?;
         let body = match encoding_type {
-            0x0 => ExtensionObjectEncoding::None,
+            0x0 => None,
             0x1 => {
-                ExtensionObjectEncoding::ByteString(ByteString::decode(stream, decoding_options)?)
+                let size = i32::decode(stream, ctx)?;
+                if size <= 0 {
+                    None
+                } else {
+                    Some(ctx.load_from_binary(&node_id, &mut stream, ctx)?)
+                }
             }
             0x2 => {
-                ExtensionObjectEncoding::XmlElement(XmlElement::decode(stream, decoding_options)?)
+                warn!("Unsupported extension object encoding: XMLElement");
+                None
             }
             _ => {
-                error!("Invalid encoding type {} in stream", encoding_type);
-                return Err(StatusCode::BadDecodingError.into());
+                return Err(Error::decoding(format!(
+                    "Invalid encoding type {} in stream",
+                    encoding_type
+                )));
             }
         };
-        Ok(ExtensionObject { node_id, body })
+        Ok(body.unwrap_or_else(ExtensionObject::null))
     }
 }
 
 impl ExtensionObject {
     /// Creates a null extension object, i.e. one with no value or payload
     pub fn null() -> ExtensionObject {
-        ExtensionObject {
-            node_id: NodeId::null(),
-            body: ExtensionObjectEncoding::None,
-        }
+        ExtensionObject { body: None }
     }
 
-    /// Tests for null node id.
+    /// Tests for an empty extension object.
     pub fn is_null(&self) -> bool {
-        self.node_id.is_null()
+        self.body.is_none()
     }
 
-    /// Tests for empty body.
-    pub fn is_empty(&self) -> bool {
-        self.is_null() || matches!(self.body, ExtensionObjectEncoding::None)
+    /// Get the binary type ID of the inner type.
+    pub fn binary_type_id(&self) -> ExpandedNodeId {
+        self.body
+            .as_ref()
+            .map(|b| b.binary_type_id())
+            .unwrap_or_else(ExpandedNodeId::null)
     }
 
     /// Returns the object id of the thing this extension object contains, assuming the
     /// object id can be recognised from the node id.
     pub fn object_id(&self) -> Result<ObjectId, ExtensionObjectError> {
-        self.node_id
+        self.body
+            .as_ref()
+            .ok_or(ExtensionObjectError)?
+            .binary_type_id()
+            .node_id
             .as_object_id()
             .map_err(|_| ExtensionObjectError)
     }
 
-    /// Creates an extension object with the specified node id and the encodable object as its payload.
-    /// The body is set to a byte string containing the encoded struct.
-    pub fn from_encodable<N, T>(node_id: N, encodable: &T) -> ExtensionObject
+    /// Create an extension object from a structure.
+    pub fn from_message<T>(encodable: T) -> ExtensionObject
     where
-        N: Into<NodeId>,
-        T: BinaryEncodable,
+        T: DynEncodable,
     {
-        // Serialize to extension object
-        let mut stream = Cursor::new(vec![0u8; encodable.byte_len()]);
-        let _ = encodable.encode(&mut stream);
-        ExtensionObject {
-            node_id: node_id.into(),
-            body: ExtensionObjectEncoding::ByteString(ByteString::from(stream.into_inner())),
+        Self {
+            body: Some(Box::new(encodable)),
         }
     }
 
-    pub fn from_message<T>(encodable: &T) -> ExtensionObject
-    where
-        T: BinaryEncodable + MessageInfo,
-    {
-        Self::from_encodable(encodable.type_id(), encodable)
+    /// Consume the extension object and return the inner value downcast to `T`,
+    /// if the inner type is present and is an instance of `T`.
+    ///
+    /// You can use [match_extension_object_owned] for conveniently casting to one or more expected types.
+    pub fn into_inner_as<T: Send + Sync + 'static>(self) -> Option<Box<T>> {
+        self.body.and_then(|b| b.as_dyn_any().downcast().ok())
     }
 
-    #[cfg(feature = "json")]
-    pub fn from_json<T: serde::Serialize + MessageInfo>(
-        object: &T,
-    ) -> Result<ExtensionObject, serde_json::Error> {
-        let value = serde_json::to_value(object)?;
-        Ok(Self {
-            node_id: object.json_type_id().into(),
-            body: ExtensionObjectEncoding::Json(value),
-        })
+    /// Return the inner value by reference downcast to `T`,
+    /// if the inner type is present and is an instance of `T`.
+    ///
+    /// You can use [match_extension_object] for conveniently casting to one or more expected types.
+    pub fn inner_as<T: Send + Sync + 'static>(&self) -> Option<&T> {
+        self.body
+            .as_ref()
+            .and_then(|b| b.as_dyn_any_ref().downcast_ref())
     }
 
-    pub fn from_message_full<T>(
-        encodable: &T,
-        ctx: &NamespaceMap,
-    ) -> Result<ExtensionObject, StatusCode>
-    where
-        T: BinaryEncodable + ExpandedMessageInfo,
-    {
-        let id = ctx
-            .resolve_node_id(&encodable.full_type_id())
-            .ok_or(StatusCode::BadNodeIdUnknown)?
-            .into_owned();
-        Ok(Self::from_encodable(id, encodable))
+    /// Get the rust [std::any::TypeId] of the inner type, if the extension object is not null.
+    pub fn type_id(&self) -> Option<TypeId> {
+        self.body.as_ref().map(|b| (**b).type_id())
     }
 
-    #[cfg(feature = "json")]
-    pub fn from_json_full<T: serde::Serialize + ExpandedMessageInfo>(
-        object: &T,
-        ctx: &crate::EncodingContext,
-    ) -> Result<ExtensionObject, serde_json::Error> {
-        use serde::de::Error;
-
-        let id = ctx
-            .resolve_node_id(&object.full_type_id())
-            .ok_or_else(|| serde_json::Error::custom("Encoding ID cannot be resolved"))?
-            .into_owned();
-        let value = serde_json::to_value(object)?;
-        Ok(Self {
-            node_id: id,
-            body: ExtensionObjectEncoding::Json(value),
-        })
+    /// Return `true` if the inner value is an instance of `T`
+    pub fn inner_is<T: 'static>(&self) -> bool {
+        self.type_id() == Some(TypeId::of::<T>())
     }
 
-    /// Decodes the inner content of the extension object and returns it. The node id is ignored
-    /// for decoding. The caller supplies the binary encoder impl that should be used to extract
-    /// the data. Errors result in a decoding error.
-    pub fn decode_inner<T>(&self, decoding_options: &DecodingOptions) -> EncodingResult<T>
-    where
-        T: BinaryDecodable,
-    {
-        match self.body {
-            ExtensionObjectEncoding::ByteString(ref byte_string) => {
-                if let Some(ref value) = byte_string.value {
-                    // let value = value.clone();
-                    let mut stream = Cursor::new(value);
-                    T::decode(&mut stream, decoding_options)
-                } else {
-                    Err(StatusCode::BadDecodingError.into())
-                }
-            }
-            _ => {
-                error!("decode_inner called on an unsupported ExtensionObject type");
-                Err(StatusCode::BadDecodingError.into())
-            }
-        }
+    pub fn type_name(&self) -> Option<&'static str> {
+        self.body.as_ref().map(|b| b.type_name())
     }
 }
+
+/// Macro for consuming an extension object and taking different actions depending on the
+/// inner type, like a match over types.
+///
+/// # Example
+///
+/// ```
+/// # mod opcua { pub(super) use opcua_types as types; }
+/// use opcua::types::{EUInformation, ExtensionObject, match_extension_object_owned};
+/// let obj = opcua::types::ExtensionObject::from_message(EUInformation {
+///     namespace_uri: "Degrees C".into(),
+///     ..Default::default()
+/// });
+/// match_extension_object_owned!(obj,
+///     _v: opcua::types::Argument => println!("Object is argument"),
+///     _v: EUInformation => println!("Object is EUInformation"),
+///     _ => println!("Body is something else: {:?}", obj.type_name()),
+/// )
+/// ```
+#[macro_export]
+macro_rules! match_extension_object_owned {
+    (_final { $($nom:tt)* }) => {
+        $($nom)*
+    };
+    (_inner $obj:ident, { $($nom:tt)* }, _ => $t:expr $(,)?) => {
+        match_extension_object_owned!(_final {
+            $($nom)*
+            else {
+                $t
+            }
+        })
+    };
+    (_inner $obj:ident, { $($nom:tt)* }, $tok:ident: $typ:ty => $t:expr $(,)?) => {
+        match_extension_object_owned!(_final {
+            $($nom)*
+            else if $obj.inner_is::<$typ>() {
+                let $tok: $typ = *$obj.into_inner_as::<$typ>().unwrap();
+                $t
+            }
+        })
+    };
+    (_inner $obj:ident, { $($nom:tt)* }, $tok:ident: $typ:ty => $t:expr, $($r:tt)*) => {
+        match_extension_object_owned!(_inner $obj, {
+            $($nom)*
+            else if $obj.inner_is::<$typ>() {
+                let $tok: $typ = *$obj.into_inner_as::<$typ>().unwrap();
+                $t
+            }
+        }, $($r)*)
+    };
+    ($obj:ident, $tok:ident: $typ:ty => $t:expr, $($r:tt)*) => {
+        match_extension_object_owned!(_inner $obj, {
+            if $obj.inner_is::<$typ>() {
+                let $tok: $typ = *$obj.into_inner_as::<$typ>().unwrap();
+                $t
+            }
+        }, $($r)*)
+    };
+}
+
+pub use match_extension_object_owned;
+
+/// Macro for inspecting an extension object by reference and taking different actions depending on the
+/// inner type, like a match over types.
+///
+/// # Example
+///
+/// ```
+/// # mod opcua { pub(super) use opcua_types as types; }
+/// use opcua::types::{EUInformation, ExtensionObject, match_extension_object};
+/// let obj = opcua::types::ExtensionObject::from_message(EUInformation {
+///     namespace_uri: "Degrees C".into(),
+///     ..Default::default()
+/// });
+/// match_extension_object!(obj,
+///     _v: opcua::types::Argument => println!("Object is argument"),
+///     _v: EUInformation => println!("Object is EUInformation"),
+///     _ => println!("Body is something else: {:?}", obj.type_name()),
+/// )
+/// ```
+#[macro_export]
+macro_rules! match_extension_object {
+    (_final { $($nom:tt)* }) => {
+        $($nom)*
+    };
+    (_inner $obj:ident, { $($nom:tt)* }, _ => $t:expr $(,)?) => {
+        match_extension_object!(_final {
+            $($nom)*
+            else {
+                $t
+            }
+        })
+    };
+    (_inner $obj:ident, { $($nom:tt)* }, $tok:ident: $typ:ty => $t:expr $(,)?) => {
+        match_extension_object!(_final {
+            $($nom)*
+            else if let Some($tok) = $obj.inner_as::<$typ>() {
+                $t
+            }
+        })
+    };
+    (_inner $obj:ident, { $($nom:tt)* }, $tok:ident: $typ:ty => $t:expr, $($r:tt)*) => {
+        match_extension_object!(_inner $obj, {
+            $($nom)*
+            else if let Some($tok) = $obj.inner_as::<$typ>() {
+                $t
+            }
+        }, $($r)*)
+    };
+    ($obj:ident, $tok:ident: $typ:ty => $t:expr, $($r:tt)*) => {
+        match_extension_object!(_inner $obj, {
+            if let Some($tok) = $obj.inner_as::<$typ>() {
+                $t
+            }
+        }, $($r)*)
+    };
+}
+
+pub use match_extension_object;

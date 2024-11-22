@@ -3,9 +3,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use opcua_types::{
-    DecodingOptions, MonitoringMode, NotificationMessage, SubscriptionAcknowledgement,
-};
+use opcua_types::{MonitoringMode, NotificationMessage, SubscriptionAcknowledgement};
 
 use super::{CreateMonitoredItem, ModifyMonitoredItem, Subscription};
 
@@ -207,11 +205,10 @@ impl SubscriptionState {
         &mut self,
         subscription_id: u32,
         notification: NotificationMessage,
-        decoding_options: &DecodingOptions,
     ) {
         self.add_acknowledgement(subscription_id, notification.sequence_number);
         if let Some(sub) = self.subscriptions.get_mut(&subscription_id) {
-            sub.on_notification(notification, decoding_options);
+            sub.on_notification(notification);
         }
     }
 

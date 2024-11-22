@@ -7,6 +7,12 @@ targets:
     file_path: schemas/1.0.4/Opc.Ua.Types.bsd
     output_dir: opcua-types/src/service_types
     enums_single_file: true
+    types_import_map:
+      Argument:
+        path: "crate::argument"
+        has_default: true
+        base_type: "ua:ExtensionObject"
+        add_to_type_loader: true
     extra_header: |
       #[allow(unused)]
       mod opcua { pub use crate as types; }

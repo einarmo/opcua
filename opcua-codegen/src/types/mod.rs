@@ -4,17 +4,15 @@ mod gen;
 mod loader;
 mod structure;
 
-use std::collections::HashMap;
-
 pub use base_constants::*;
 pub use enum_type::{EnumType, EnumValue};
-pub use gen::{CodeGenItemConfig, CodeGenerator, GeneratedItem, ItemDefinition};
+pub use gen::{CodeGenItemConfig, CodeGenerator, EncodingIds, GeneratedItem, ItemDefinition};
 pub use loader::{BsdTypeLoader, LoadedType, LoadedTypes};
 use opcua_xml::load_bsd_file;
-use proc_macro2::Span;
+use proc_macro2::TokenStream;
 use quote::quote;
 pub use structure::{StructureField, StructureFieldType, StructuredType};
-use syn::{parse_quote, Ident, Item};
+use syn::{parse_quote, parse_str, Item, Path};
 
 use crate::{CodeGenError, TypeCodeGenTarget, BASE_NAMESPACE};
 
@@ -63,16 +61,189 @@ pub fn generate_types(
     Ok((generator.generate_types()?, target_namespace))
 }
 
-pub fn generate_xml_loader_impl(ids: HashMap<String, String>, namespace: &str) -> Vec<Item> {
-    let mut ids: Vec<_> = ids.into_iter().collect();
+pub fn type_loader_impl(ids: &[(EncodingIds, String)], namespace: &str) -> Vec<Item> {
+    let mut ids: Vec<_> = ids.iter().collect();
     ids.sort_by(|a, b| a.1.cmp(&b.1));
+    let mut res = Vec::new();
+
+    let (bin_fields, bin_body) = binary_loader_impl(&ids, namespace);
+    let (xml_fields, xml_body) = xml_loader_impl(&ids, namespace);
+    let (json_fields, json_body) = json_loader_impl(&ids, namespace);
+
+    res.push(parse_quote! {
+        static TYPES: std::sync::LazyLock<opcua::types::TypeLoaderInstance> = std::sync::LazyLock::new(|| {
+            let mut inst = opcua::types::TypeLoaderInstance::new();
+            {
+                #bin_fields
+            }
+            #[cfg(feature = "xml")]
+            {
+                #xml_fields
+            }
+            #[cfg(feature = "json")]
+            {
+                #json_fields
+            }
+            inst
+        });
+    });
+
+    let priority_impl = if namespace == BASE_NAMESPACE {
+        quote! {
+            fn priority(&self) -> opcua::types::TypeLoaderPriority {
+                opcua::types::TypeLoaderPriority::Core
+            }
+        }
+    } else {
+        quote! {
+            fn priority(&self) -> opcua::types::TypeLoaderPriority {
+                opcua::types::TypeLoaderPriority::Generated
+            }
+        }
+    };
+
+    res.push(parse_quote! {
+        #[derive(Debug, Clone, Copy)]
+        pub struct GeneratedTypeLoader;
+    });
+
+    res.push(parse_quote! {
+        impl opcua::types::TypeLoader for GeneratedTypeLoader {
+            #bin_body
+
+            #xml_body
+
+            #json_body
+
+            #priority_impl
+        }
+    });
+
+    res
+}
+
+fn binary_loader_impl(
+    ids: &[&(EncodingIds, String)],
+    namespace: &str,
+) -> (TokenStream, TokenStream) {
     let mut fields = quote! {};
-    for (field, typ) in ids {
-        let field_ident = Ident::new(&field, Span::call_site());
-        let typ_ident = Ident::new(&typ, Span::call_site());
+    for (ids, typ) in ids {
+        let dt_ident = &ids.data_type;
+        let enc_ident = &ids.binary;
+        let typ_path: Path = parse_str(typ).unwrap();
         fields.extend(quote! {
-            crate::ObjectId::#field_ident => #typ_ident::from_xml(body, ctx)
-                .map(|v| opcua::types::ExtensionObject::from_message_full(&v, ctx.ns_map())),
+            inst.add_binary_type(
+                crate::DataTypeId::#dt_ident as u32,
+                crate::ObjectId::#enc_ident as u32,
+                opcua::types::binary_decode_to_enc::<#typ_path>
+            );
+        });
+    }
+
+    let index_check = if namespace != BASE_NAMESPACE {
+        quote! {
+            let idx = ctx.namespaces().get_index(#namespace)?;
+            if idx != node_id.namespace {
+                return None;
+            }
+        }
+    } else {
+        quote! {
+            if node_id.namespace != 0 {
+                return None;
+            }
+        }
+    };
+
+    (
+        fields,
+        quote! {
+            fn load_from_binary(
+                &self,
+                node_id: &opcua::types::NodeId,
+                stream: &mut dyn std::io::Read,
+                ctx: &opcua::types::Context<'_>,
+            ) -> Option<opcua::types::EncodingResult<Box<dyn opcua::types::DynEncodable>>> {
+                #index_check
+
+                let Some(num_id) = node_id.as_u32() else {
+                    return Some(Err(opcua::types::Error::decoding(
+                        "Unsupported encoding ID. Only numeric encoding IDs are currently supported"
+                    )));
+                };
+
+                TYPES.decode_binary(num_id, stream, ctx)
+            }
+        },
+    )
+}
+
+fn json_loader_impl(ids: &[&(EncodingIds, String)], namespace: &str) -> (TokenStream, TokenStream) {
+    let mut fields = quote! {};
+    for (ids, typ) in ids {
+        let dt_ident = &ids.data_type;
+        let enc_ident = &ids.json;
+        let typ_path: Path = parse_str(typ).unwrap();
+        fields.extend(quote! {
+            inst.add_json_type(
+                crate::DataTypeId::#dt_ident as u32,
+                crate::ObjectId::#enc_ident as u32,
+                opcua::types::json_decode_to_enc::<#typ_path>
+            );
+        });
+    }
+
+    let index_check = if namespace != BASE_NAMESPACE {
+        quote! {
+            let idx = ctx.namespaces().get_index(#namespace)?;
+            if idx != node_id.namespace {
+                return None;
+            }
+        }
+    } else {
+        quote! {
+            if node_id.namespace != 0 {
+                return None;
+            }
+        }
+    };
+
+    (
+        fields,
+        quote! {
+            #[cfg(feature = "json")]
+            fn load_from_json(
+                &self,
+                node_id: &opcua::types::NodeId,
+                stream: &mut opcua::types::json::JsonStreamReader<&mut dyn std::io::Read>,
+                ctx: &opcua::types::Context<'_>,
+            ) -> Option<opcua::types::EncodingResult<Box<dyn opcua::types::DynEncodable>>> {
+                #index_check
+
+                let Some(num_id) = node_id.as_u32() else {
+                    return Some(Err(opcua::types::Error::decoding(
+                        "Unsupported encoding ID. Only numeric encoding IDs are currently supported"
+                    )));
+                };
+
+                TYPES.decode_json(num_id, stream, ctx)
+            }
+        },
+    )
+}
+
+fn xml_loader_impl(ids: &[&(EncodingIds, String)], namespace: &str) -> (TokenStream, TokenStream) {
+    let mut fields = quote! {};
+    for (ids, typ) in ids {
+        let dt_ident = &ids.data_type;
+        let enc_ident = &ids.xml;
+        let typ_path: Path = parse_str(typ).unwrap();
+        fields.extend(quote! {
+            inst.add_xml_type(
+                crate::DataTypeId::#dt_ident as u32,
+                crate::ObjectId::#enc_ident as u32,
+                opcua::types::xml_decode_to_enc::<#typ_path>
+            );
         });
     }
 
@@ -91,49 +262,26 @@ pub fn generate_xml_loader_impl(ids: HashMap<String, String>, namespace: &str) -
         }
     };
 
-    let mut items = Vec::new();
-    items.push(Item::Struct(parse_quote! {
-        #[cfg(feature = "xml")]
-        #[derive(Debug, Default, Copy, Clone)]
-        pub struct TypesXmlLoader;
-    }));
-    items.push(Item::Impl(parse_quote! {
-        #[cfg(feature = "xml")]
-        impl opcua::types::xml::XmlLoader for TypesXmlLoader {
-            fn load_extension_object(
+    (
+        fields,
+        quote! {
+            #[cfg(feature = "xml")]
+            fn load_from_xml(
                 &self,
-                body: &opcua::types::xml::XmlElement,
                 node_id: &opcua::types::NodeId,
-                ctx: &opcua::types::xml::XmlContext<'_>
-            ) -> Option<Result<opcua::types::ExtensionObject, opcua::types::xml::FromXmlError>> {
-                use opcua::types::xml::FromXml;
-
+                stream: &opcua::types::xml::XmlElement,
+                ctx: &opcua::types::xml::XmlContext<'_>,
+            ) -> Option<Result<Box<dyn opcua::types::DynEncodable>, opcua::types::xml::FromXmlError>> {
                 #index_check
 
-                let object_id = match node_id
-                    .as_u32()
-                    .and_then(|v| crate::ObjectId::try_from(v).ok())
-                    .ok_or_else(|| format!("Invalid object ID: {node_id}"))
-                {
-                    Ok(i) => i,
-                    Err(e) => return Some(Err(e.into()))
-                };
-                let r = match object_id {
-                    #fields
-                    _ => return None,
+                let Some(num_id) = node_id.as_u32() else {
+                    return Some(Err(opcua::types::xml::FromXmlError::Other(
+                        "Unsupported encoding ID, we only support numeric IDs".to_owned(),
+                    )));
                 };
 
-                match r {
-                    Ok(r) => Some(r.map_err(|_| {
-                        opcua::types::xml::FromXmlError::from(format!(
-                            "Invalid XML type, missing binary encoding ID: {:?}",
-                            object_id
-                        ))
-                    })),
-                    Err(e) => Some(Err(e)),
-                }
+                TYPES.decode_xml(num_id, stream, ctx)
             }
-        }
-    }));
-    items
+        },
+    )
 }

@@ -22,9 +22,9 @@ use opcua_core::{
 };
 use opcua_crypto::{CertificateStore, SecurityPolicy};
 use opcua_types::{
-    ApplicationDescription, DecodingOptions, EndpointDescription, FindServersRequest,
-    GetEndpointsRequest, MessageSecurityMode, RegisterServerRequest, RegisteredServer, StatusCode,
-    UAString,
+    ApplicationDescription, ContextOwned, DecodingOptions, EndpointDescription, FindServersRequest,
+    GetEndpointsRequest, MessageSecurityMode, NamespaceMap, RegisterServerRequest,
+    RegisteredServer, StatusCode, UAString,
 };
 
 use super::{
@@ -221,7 +221,6 @@ impl Client {
             self.certificate_store.clone(),
             session_info,
             self.config.session_retry_policy(),
-            self.decoding_options(),
             self.config.performance.ignore_clock_skew,
             Arc::default(),
             TransportConfiguration {
@@ -234,6 +233,11 @@ impl Client {
             },
             Box::new(TcpConnector),
             channel_lifetime,
+            // We should only ever need the default decoding context for temporary connections.
+            Arc::new(RwLock::new(ContextOwned::new_default(
+                NamespaceMap::new(),
+                self.decoding_options(),
+            ))),
         )
     }
 

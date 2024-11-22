@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct PublishResponse {
@@ -34,72 +35,62 @@ impl opcua::types::MessageInfo for PublishResponse {
     }
 }
 impl opcua::types::BinaryEncodable for PublishResponse {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.response_header.byte_len();
-        size += self.subscription_id.byte_len();
-        size += self.available_sequence_numbers.byte_len();
-        size += self.more_notifications.byte_len();
-        size += self.notification_message.byte_len();
-        size += self.results.byte_len();
-        size += self.diagnostic_infos.byte_len();
+        size += self.response_header.byte_len(ctx);
+        size += self.subscription_id.byte_len(ctx);
+        size += self.available_sequence_numbers.byte_len(ctx);
+        size += self.more_notifications.byte_len(ctx);
+        size += self.notification_message.byte_len(ctx);
+        size += self.results.byte_len(ctx);
+        size += self.diagnostic_infos.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.response_header.encode(stream)?;
-        size += self.subscription_id.encode(stream)?;
-        size += self.available_sequence_numbers.encode(stream)?;
-        size += self.more_notifications.encode(stream)?;
-        size += self.notification_message.encode(stream)?;
-        size += self.results.encode(stream)?;
-        size += self.diagnostic_infos.encode(stream)?;
+        size += self.response_header.encode(stream, ctx)?;
+        size += self.subscription_id.encode(stream, ctx)?;
+        size += self.available_sequence_numbers.encode(stream, ctx)?;
+        size += self.more_notifications.encode(stream, ctx)?;
+        size += self.notification_message.encode(stream, ctx)?;
+        size += self.results.encode(stream, ctx)?;
+        size += self.diagnostic_infos.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for PublishResponse {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let response_header: opcua::types::response_header::ResponseHeader = opcua::types::BinaryDecodable::decode(
             stream,
-            decoding_options,
+            ctx,
         )?;
         let __request_handle = response_header.request_handle;
         Ok(Self {
             response_header,
-            subscription_id: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            subscription_id: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
             available_sequence_numbers: opcua::types::BinaryDecodable::decode(
                     stream,
-                    decoding_options,
+                    ctx,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            more_notifications: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            more_notifications: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            notification_message: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            notification_message: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            results: opcua::types::BinaryDecodable::decode(stream, decoding_options)
+            results: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            diagnostic_infos: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            diagnostic_infos: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }

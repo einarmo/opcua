@@ -8,10 +8,12 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+#[derive(Default)]
 pub struct CreateSessionRequest {
     pub request_header: opcua::types::request_header::RequestHeader,
     pub client_description: super::application_description::ApplicationDescription,
@@ -35,77 +37,67 @@ impl opcua::types::MessageInfo for CreateSessionRequest {
     }
 }
 impl opcua::types::BinaryEncodable for CreateSessionRequest {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.request_header.byte_len();
-        size += self.client_description.byte_len();
-        size += self.server_uri.byte_len();
-        size += self.endpoint_url.byte_len();
-        size += self.session_name.byte_len();
-        size += self.client_nonce.byte_len();
-        size += self.client_certificate.byte_len();
-        size += self.requested_session_timeout.byte_len();
-        size += self.max_response_message_size.byte_len();
+        size += self.request_header.byte_len(ctx);
+        size += self.client_description.byte_len(ctx);
+        size += self.server_uri.byte_len(ctx);
+        size += self.endpoint_url.byte_len(ctx);
+        size += self.session_name.byte_len(ctx);
+        size += self.client_nonce.byte_len(ctx);
+        size += self.client_certificate.byte_len(ctx);
+        size += self.requested_session_timeout.byte_len(ctx);
+        size += self.max_response_message_size.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.request_header.encode(stream)?;
-        size += self.client_description.encode(stream)?;
-        size += self.server_uri.encode(stream)?;
-        size += self.endpoint_url.encode(stream)?;
-        size += self.session_name.encode(stream)?;
-        size += self.client_nonce.encode(stream)?;
-        size += self.client_certificate.encode(stream)?;
-        size += self.requested_session_timeout.encode(stream)?;
-        size += self.max_response_message_size.encode(stream)?;
+        size += self.request_header.encode(stream, ctx)?;
+        size += self.client_description.encode(stream, ctx)?;
+        size += self.server_uri.encode(stream, ctx)?;
+        size += self.endpoint_url.encode(stream, ctx)?;
+        size += self.session_name.encode(stream, ctx)?;
+        size += self.client_nonce.encode(stream, ctx)?;
+        size += self.client_certificate.encode(stream, ctx)?;
+        size += self.requested_session_timeout.encode(stream, ctx)?;
+        size += self.max_response_message_size.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for CreateSessionRequest {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryDecodable::decode(
             stream,
-            decoding_options,
+            ctx,
         )?;
         let __request_handle = request_header.request_handle;
         Ok(Self {
             request_header,
-            client_description: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            client_description: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            server_uri: opcua::types::BinaryDecodable::decode(stream, decoding_options)
+            server_uri: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            endpoint_url: opcua::types::BinaryDecodable::decode(stream, decoding_options)
+            endpoint_url: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            session_name: opcua::types::BinaryDecodable::decode(stream, decoding_options)
+            session_name: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            client_nonce: opcua::types::BinaryDecodable::decode(stream, decoding_options)
+            client_nonce: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            client_certificate: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            client_certificate: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            requested_session_timeout: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            requested_session_timeout: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            max_response_message_size: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            max_response_message_size: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }

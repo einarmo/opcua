@@ -8,10 +8,12 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+#[derive(Default)]
 pub struct RegisteredServer {
     pub server_uri: opcua::types::string::UAString,
     pub product_uri: opcua::types::string::UAString,
@@ -34,68 +36,52 @@ impl opcua::types::MessageInfo for RegisteredServer {
     }
 }
 impl opcua::types::BinaryEncodable for RegisteredServer {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.server_uri.byte_len();
-        size += self.product_uri.byte_len();
-        size += self.server_names.byte_len();
-        size += self.server_type.byte_len();
-        size += self.gateway_server_uri.byte_len();
-        size += self.discovery_urls.byte_len();
-        size += self.semaphore_file_path.byte_len();
-        size += self.is_online.byte_len();
+        size += self.server_uri.byte_len(ctx);
+        size += self.product_uri.byte_len(ctx);
+        size += self.server_names.byte_len(ctx);
+        size += self.server_type.byte_len(ctx);
+        size += self.gateway_server_uri.byte_len(ctx);
+        size += self.discovery_urls.byte_len(ctx);
+        size += self.semaphore_file_path.byte_len(ctx);
+        size += self.is_online.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.server_uri.encode(stream)?;
-        size += self.product_uri.encode(stream)?;
-        size += self.server_names.encode(stream)?;
-        size += self.server_type.encode(stream)?;
-        size += self.gateway_server_uri.encode(stream)?;
-        size += self.discovery_urls.encode(stream)?;
-        size += self.semaphore_file_path.encode(stream)?;
-        size += self.is_online.encode(stream)?;
+        size += self.server_uri.encode(stream, ctx)?;
+        size += self.product_uri.encode(stream, ctx)?;
+        size += self.server_names.encode(stream, ctx)?;
+        size += self.server_type.encode(stream, ctx)?;
+        size += self.gateway_server_uri.encode(stream, ctx)?;
+        size += self.discovery_urls.encode(stream, ctx)?;
+        size += self.semaphore_file_path.encode(stream, ctx)?;
+        size += self.is_online.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for RegisteredServer {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            server_uri: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            product_uri: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            server_names: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            server_type: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            gateway_server_uri: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            discovery_urls: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            semaphore_file_path: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            is_online: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            server_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            product_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            server_names: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            server_type: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            gateway_server_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            discovery_urls: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            semaphore_file_path: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            is_online: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

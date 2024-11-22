@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct BuildInfo {
@@ -33,59 +34,46 @@ impl opcua::types::MessageInfo for BuildInfo {
     }
 }
 impl opcua::types::BinaryEncodable for BuildInfo {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.product_uri.byte_len();
-        size += self.manufacturer_name.byte_len();
-        size += self.product_name.byte_len();
-        size += self.software_version.byte_len();
-        size += self.build_number.byte_len();
-        size += self.build_date.byte_len();
+        size += self.product_uri.byte_len(ctx);
+        size += self.manufacturer_name.byte_len(ctx);
+        size += self.product_name.byte_len(ctx);
+        size += self.software_version.byte_len(ctx);
+        size += self.build_number.byte_len(ctx);
+        size += self.build_date.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.product_uri.encode(stream)?;
-        size += self.manufacturer_name.encode(stream)?;
-        size += self.product_name.encode(stream)?;
-        size += self.software_version.encode(stream)?;
-        size += self.build_number.encode(stream)?;
-        size += self.build_date.encode(stream)?;
+        size += self.product_uri.encode(stream, ctx)?;
+        size += self.manufacturer_name.encode(stream, ctx)?;
+        size += self.product_name.encode(stream, ctx)?;
+        size += self.software_version.encode(stream, ctx)?;
+        size += self.build_number.encode(stream, ctx)?;
+        size += self.build_date.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for BuildInfo {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            product_uri: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            manufacturer_name: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            product_name: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            software_version: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            build_number: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            build_date: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            product_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            manufacturer_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            product_name: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            software_version: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            build_number: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            build_date: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

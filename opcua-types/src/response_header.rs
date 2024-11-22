@@ -8,21 +8,28 @@ use std::{
 };
 
 use crate::{
-    data_types::*, date_time::DateTime, diagnostic_info::DiagnosticInfo, encoding::*,
-    extension_object::ExtensionObject, request_header::RequestHeader, status_code::StatusCode,
+    data_types::*,
+    date_time::DateTime,
+    diagnostic_info::DiagnosticInfo,
+    encoding::{BinaryDecodable, BinaryEncodable, EncodingResult},
+    extension_object::ExtensionObject,
+    request_header::RequestHeader,
+    status_code::StatusCode,
     string::UAString,
+    Error,
 };
 
-#[cfg(feature = "xml")]
+#[allow(unused)]
 mod opcua {
     pub use crate as types;
 }
 
 /// The `ResponseHeader` contains information common to every response from server to client.
 #[derive(Debug, Clone, PartialEq, Default)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua_macros::JsonEncodable, opcua_macros::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(crate::FromXml))]
 pub struct ResponseHeader {
     pub timestamp: UtcTime,
@@ -34,40 +41,43 @@ pub struct ResponseHeader {
 }
 
 impl BinaryEncodable for ResponseHeader {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0;
-        size += self.timestamp.byte_len();
-        size += self.request_handle.byte_len();
-        size += self.service_result.byte_len();
-        size += self.service_diagnostics.byte_len();
-        size += byte_len_array(&self.string_table);
-        size += self.additional_header.byte_len();
+        size += self.timestamp.byte_len(ctx);
+        size += self.request_handle.byte_len(ctx);
+        size += self.service_result.byte_len(ctx);
+        size += self.service_diagnostics.byte_len(ctx);
+        size += self.string_table.byte_len(ctx);
+        size += self.additional_header.byte_len(ctx);
         size
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize> {
         let mut size = 0;
-        size += self.timestamp.encode(stream)?;
-        size += self.request_handle.encode(stream)?;
-        size += self.service_result.encode(stream)?;
-        size += self.service_diagnostics.encode(stream)?;
-        size += write_array(stream, &self.string_table)?;
-        size += self.additional_header.encode(stream)?;
-        assert_eq!(size, self.byte_len());
+        size += self.timestamp.encode(stream, ctx)?;
+        size += self.request_handle.encode(stream, ctx)?;
+        size += self.service_result.encode(stream, ctx)?;
+        size += self.service_diagnostics.encode(stream, ctx)?;
+        size += self.string_table.encode(stream, ctx)?;
+        size += self.additional_header.encode(stream, ctx)?;
         Ok(size)
     }
 }
 
 impl BinaryDecodable for ResponseHeader {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
-        let timestamp = UtcTime::decode(stream, decoding_options)?;
-        let request_handle = IntegerId::decode(stream, decoding_options)?;
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &crate::Context<'_>) -> EncodingResult<Self> {
+        let timestamp = UtcTime::decode(stream, ctx)?;
+        let request_handle = IntegerId::decode(stream, ctx)?;
         // Capture request handle if decoding fails after this.
         let (service_result, service_diagnostics, string_table, additional_header) = (|| {
-            let service_result = StatusCode::decode(stream, decoding_options)?;
-            let service_diagnostics = DiagnosticInfo::decode(stream, decoding_options)?;
-            let string_table: Option<Vec<UAString>> = read_array(stream, decoding_options)?;
-            let additional_header = ExtensionObject::decode(stream, decoding_options)?;
+            let service_result = StatusCode::decode(stream, ctx)?;
+            let service_diagnostics = DiagnosticInfo::decode(stream, ctx)?;
+            let string_table = BinaryDecodable::decode(stream, ctx)?;
+            let additional_header = ExtensionObject::decode(stream, ctx)?;
             Ok((
                 service_result,
                 service_diagnostics,
@@ -75,7 +85,7 @@ impl BinaryDecodable for ResponseHeader {
                 additional_header,
             ))
         })()
-        .map_err(|e: EncodingError| e.with_request_handle(request_handle))?;
+        .map_err(|e: Error| e.with_request_handle(request_handle))?;
         Ok(ResponseHeader {
             timestamp,
             request_handle,

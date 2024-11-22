@@ -8,10 +8,12 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+#[derive(Default)]
 pub struct EndpointType {
     pub endpoint_url: opcua::types::string::UAString,
     pub security_mode: super::enums::MessageSecurityMode,
@@ -30,50 +32,40 @@ impl opcua::types::MessageInfo for EndpointType {
     }
 }
 impl opcua::types::BinaryEncodable for EndpointType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.endpoint_url.byte_len();
-        size += self.security_mode.byte_len();
-        size += self.security_policy_uri.byte_len();
-        size += self.transport_profile_uri.byte_len();
+        size += self.endpoint_url.byte_len(ctx);
+        size += self.security_mode.byte_len(ctx);
+        size += self.security_policy_uri.byte_len(ctx);
+        size += self.transport_profile_uri.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.endpoint_url.encode(stream)?;
-        size += self.security_mode.encode(stream)?;
-        size += self.security_policy_uri.encode(stream)?;
-        size += self.transport_profile_uri.encode(stream)?;
+        size += self.endpoint_url.encode(stream, ctx)?;
+        size += self.security_mode.encode(stream, ctx)?;
+        size += self.security_policy_uri.encode(stream, ctx)?;
+        size += self.transport_profile_uri.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for EndpointType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            endpoint_url: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            security_mode: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            security_policy_uri: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            transport_profile_uri: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            endpoint_url: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            security_mode: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            security_policy_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            transport_profile_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

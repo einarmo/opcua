@@ -9,7 +9,7 @@ use std::str::FromStr;
 
 use log::{error, trace};
 
-use opcua_types::{constants, status_code::StatusCode, ByteString};
+use opcua_types::{constants, status_code::StatusCode, ByteString, Error};
 
 use super::{
     aeskey::AesKey,
@@ -510,7 +510,7 @@ impl SecurityPolicy {
         signing_key: &PrivateKey,
         data: &[u8],
         signature: &mut [u8],
-    ) -> Result<usize, StatusCode> {
+    ) -> Result<usize, Error> {
         let result = match self {
             SecurityPolicy::Basic128Rsa15 | SecurityPolicy::Basic256 => {
                 signing_key.sign_sha1(data, signature)?
@@ -535,7 +535,7 @@ impl SecurityPolicy {
         data: &[u8],
         signature: &[u8],
         their_private_key: Option<PrivateKey>,
-    ) -> Result<(), StatusCode> {
+    ) -> Result<(), Error> {
         // Asymmetric verify signature against supplied certificate
         let result = match self {
             SecurityPolicy::Basic128Rsa15 | SecurityPolicy::Basic256 => {
@@ -554,9 +554,8 @@ impl SecurityPolicy {
         if result {
             Ok(())
         } else {
-            error!("Signature mismatch");
-
             // For debugging / unit testing purposes we might have a their_key to see the source of the error
+            #[cfg(debug_assertions)]
             if let Some(their_key) = their_private_key {
                 // Calculate the signature using their key, see what we were expecting versus theirs
                 let mut their_signature = vec![0u8; their_key.size()];
@@ -566,7 +565,10 @@ impl SecurityPolicy {
                     &their_signature
                 );
             }
-            Err(StatusCode::BadSecurityChecksFailed)
+            Err(Error::new(
+                StatusCode::BadSecurityChecksFailed,
+                "Signature mismatch",
+            ))
         }
     }
 
@@ -608,14 +610,11 @@ impl SecurityPolicy {
         decryption_key: &PrivateKey,
         src: &[u8],
         dst: &mut [u8],
-    ) -> Result<usize, StatusCode> {
+    ) -> Result<usize, Error> {
         let padding = self.asymmetric_encryption_padding();
         decryption_key
             .private_decrypt(src, dst, padding)
-            .map_err(|_| {
-                error!("Asymmetric decryption failed");
-                StatusCode::BadSecurityChecksFailed
-            })
+            .map_err(|e| Error::new(StatusCode::BadSecurityChecksFailed, e))
     }
 
     /// Produce a signature of some data using the supplied symmetric key. Signing algorithm is determined
@@ -645,7 +644,7 @@ impl SecurityPolicy {
         key: &[u8],
         data: &[u8],
         signature: &[u8],
-    ) -> Result<bool, StatusCode> {
+    ) -> Result<bool, Error> {
         // Verify the signature using SHA-1 / SHA-256 HMAC
         let verified = match self {
             SecurityPolicy::Basic128Rsa15 | SecurityPolicy::Basic256 => {
@@ -662,7 +661,10 @@ impl SecurityPolicy {
             Ok(verified)
         } else {
             error!("Signature invalid {:?}", signature);
-            Err(StatusCode::BadSecurityChecksFailed)
+            Err(Error::new(
+                StatusCode::BadSecurityChecksFailed,
+                format!("Signature invalid: {signature:?}"),
+            ))
         }
     }
 
@@ -673,7 +675,7 @@ impl SecurityPolicy {
         iv: &[u8],
         src: &[u8],
         dst: &mut [u8],
-    ) -> Result<usize, StatusCode> {
+    ) -> Result<usize, Error> {
         key.encrypt(src, iv, dst)
     }
 
@@ -684,7 +686,7 @@ impl SecurityPolicy {
         iv: &[u8],
         src: &[u8],
         dst: &mut [u8],
-    ) -> Result<usize, StatusCode> {
+    ) -> Result<usize, Error> {
         key.decrypt(src, iv, dst)
     }
 }

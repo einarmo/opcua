@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct ModifySubscriptionRequest {
@@ -34,72 +35,68 @@ impl opcua::types::MessageInfo for ModifySubscriptionRequest {
     }
 }
 impl opcua::types::BinaryEncodable for ModifySubscriptionRequest {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.request_header.byte_len();
-        size += self.subscription_id.byte_len();
-        size += self.requested_publishing_interval.byte_len();
-        size += self.requested_lifetime_count.byte_len();
-        size += self.requested_max_keep_alive_count.byte_len();
-        size += self.max_notifications_per_publish.byte_len();
-        size += self.priority.byte_len();
+        size += self.request_header.byte_len(ctx);
+        size += self.subscription_id.byte_len(ctx);
+        size += self.requested_publishing_interval.byte_len(ctx);
+        size += self.requested_lifetime_count.byte_len(ctx);
+        size += self.requested_max_keep_alive_count.byte_len(ctx);
+        size += self.max_notifications_per_publish.byte_len(ctx);
+        size += self.priority.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.request_header.encode(stream)?;
-        size += self.subscription_id.encode(stream)?;
-        size += self.requested_publishing_interval.encode(stream)?;
-        size += self.requested_lifetime_count.encode(stream)?;
-        size += self.requested_max_keep_alive_count.encode(stream)?;
-        size += self.max_notifications_per_publish.encode(stream)?;
-        size += self.priority.encode(stream)?;
+        size += self.request_header.encode(stream, ctx)?;
+        size += self.subscription_id.encode(stream, ctx)?;
+        size += self.requested_publishing_interval.encode(stream, ctx)?;
+        size += self.requested_lifetime_count.encode(stream, ctx)?;
+        size += self.requested_max_keep_alive_count.encode(stream, ctx)?;
+        size += self.max_notifications_per_publish.encode(stream, ctx)?;
+        size += self.priority.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for ModifySubscriptionRequest {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         let request_header: opcua::types::request_header::RequestHeader = opcua::types::BinaryDecodable::decode(
             stream,
-            decoding_options,
+            ctx,
         )?;
         let __request_handle = request_header.request_handle;
         Ok(Self {
             request_header,
-            subscription_id: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            subscription_id: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
             requested_publishing_interval: opcua::types::BinaryDecodable::decode(
                     stream,
-                    decoding_options,
+                    ctx,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            requested_lifetime_count: opcua::types::BinaryDecodable::decode(
-                    stream,
-                    decoding_options,
-                )
+            requested_lifetime_count: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
             requested_max_keep_alive_count: opcua::types::BinaryDecodable::decode(
                     stream,
-                    decoding_options,
+                    ctx,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
             max_notifications_per_publish: opcua::types::BinaryDecodable::decode(
                     stream,
-                    decoding_options,
+                    ctx,
                 )
                 .map_err(|e| e.with_request_handle(__request_handle))?,
-            priority: opcua::types::BinaryDecodable::decode(stream, decoding_options)
+            priority: opcua::types::BinaryDecodable::decode(stream, ctx)
                 .map_err(|e| e.with_request_handle(__request_handle))?,
         })
     }

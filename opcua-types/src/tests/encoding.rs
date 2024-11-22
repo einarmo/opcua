@@ -1,6 +1,13 @@
 use std::{io::Cursor, str::FromStr};
 
-use crate::{encoding::DecodingOptions, string::UAString, tests::*};
+use crate::{
+    encoding::{BinaryDecodable, DecodingOptions},
+    string::UAString,
+    tests::*,
+    Array, ByteString, ContextOwned, DataValue, DateTime, DepthGauge, DiagnosticInfo, EncodingMask,
+    ExpandedNodeId, ExtensionObject, Guid, LocalizedText, NamespaceMap, NodeId, ObjectId,
+    QualifiedName, Variant, VariantScalarTypeId, XmlElement,
+};
 
 #[test]
 fn encoding_bool() {
@@ -102,9 +109,9 @@ fn decode_string_malformed_utf8() {
     // Bytes below are a mangled 水Boy, missing a byte
     let bytes = [0x06, 0x00, 0x00, 0xE6, 0xB0, 0xB4, 0x42, 0x6F, 0x79];
     let mut stream = Cursor::new(bytes);
-    let decoding_options = DecodingOptions::test();
+    let ctx = ContextOwned::default();
     assert_eq!(
-        UAString::decode(&mut stream, &decoding_options)
+        <UAString as BinaryDecodable>::decode(&mut stream, &ctx.context())
             .unwrap_err()
             .status(),
         StatusCode::BadDecodingError
@@ -231,24 +238,6 @@ fn node_id_byte_string() {
     let node_id = NodeId::new(30, ByteString::from(b"this is a byte string"));
     assert!(node_id.is_byte_string());
     serialize_test(node_id);
-}
-
-#[test]
-fn extension_object() {
-    let eo = ExtensionObject::null();
-    serialize_test(eo);
-
-    let eo = ExtensionObject {
-        node_id: ObjectId::CreateSessionResponse_Encoding_DefaultBinary.into(),
-        body: ExtensionObjectEncoding::ByteString(ByteString::from(b"hello world")),
-    };
-    serialize_test(eo);
-
-    let eo = ExtensionObject {
-        node_id: ObjectId::CreateSessionResponse_Encoding_DefaultBinary.into(),
-        body: ExtensionObjectEncoding::XmlElement(XmlElement::from("hello world")),
-    };
-    serialize_test(eo);
 }
 
 #[test]
@@ -513,14 +502,16 @@ fn argument() {
 fn null_array() {
     // @FIXME currently creating an null array via Array or Variant is not possible so do it by hand
     let vec = Vec::new();
+    let ctx_f = ContextOwned::default();
+    let ctx = ctx_f.context();
     let mut stream = Cursor::new(vec);
     let mask = EncodingMask::BOOLEAN | EncodingMask::ARRAY_MASK;
-    mask.encode(&mut stream).unwrap();
+    mask.encode(&mut stream, &ctx).unwrap();
     let length = 0i32;
-    length.encode(&mut stream).unwrap();
+    length.encode(&mut stream, &ctx).unwrap();
     let actual = stream.into_inner();
     let mut stream = Cursor::new(actual);
-    let arr = Variant::decode(&mut stream, &DecodingOptions::test()).unwrap();
+    let arr = Variant::decode(&mut stream, &ctx).unwrap();
     assert_eq!(
         arr,
         Variant::Array(Box::new(Array {
@@ -544,13 +535,16 @@ fn deep_encoding() {
     let d3 = Variant::Variant(Box::new(d4));
     let d2 = Variant::Variant(Box::new(d3));
 
+    let ctx_f = ContextOwned::new_default(NamespaceMap::new(), decoding_options);
+    let ctx = ctx_f.context();
+
     // This should decode
     let mut stream = serialize_as_stream(d2.clone());
-    assert_eq!(Variant::decode(&mut stream, &decoding_options).unwrap(), d2);
+    assert_eq!(Variant::decode(&mut stream, &ctx).unwrap(), d2);
 
     // This should not decode, too deep
     let d1 = Variant::Variant(Box::new(d2));
     let mut stream = serialize_as_stream(d1);
-    let res = Variant::decode(&mut stream, &decoding_options);
+    let res = Variant::decode(&mut stream, &ctx);
     assert_eq!(res.unwrap_err().status(), StatusCode::BadDecodingError);
 }

@@ -7,11 +7,10 @@ use std::{
     time::Duration,
 };
 
-use log::warn;
 use opcua_types::{
-    DataChangeNotification, DataValue, DecodingOptions, EventNotificationList, ExtensionObject,
-    Identifier, MonitoringMode, NotificationMessage, ObjectId, ReadValueId,
-    StatusChangeNotification, Variant,
+    match_extension_object_owned, DataChangeNotification, DataValue, EventNotificationList,
+    ExtensionObject, MonitoringMode, NotificationMessage, ReadValueId, StatusChangeNotification,
+    Variant,
 };
 
 pub use service::{
@@ -408,62 +407,41 @@ impl Subscription {
         }
     }
 
-    pub(crate) fn on_notification(
-        &mut self,
-        notification: NotificationMessage,
-        decoding_options: &DecodingOptions,
-    ) {
+    pub(crate) fn on_notification(&mut self, notification: NotificationMessage) {
         let Some(notifications) = notification.notification_data else {
             return;
         };
 
         for obj in notifications {
-            if obj.node_id.namespace != 0 {
-                continue;
-            }
+            match_extension_object_owned!(obj,
+                v: DataChangeNotification => {
+                    for notif in v.monitored_items.into_iter().flatten() {
+                        let item = self
+                            .client_handles
+                            .get(&notif.client_handle)
+                            .and_then(|handle| self.monitored_items.get(handle));
 
-            let Identifier::Numeric(id) = obj.node_id.identifier else {
-                continue;
-            };
-
-            if id == ObjectId::DataChangeNotification_Encoding_DefaultBinary as u32 {
-                match obj.decode_inner::<DataChangeNotification>(decoding_options) {
-                    Ok(it) => {
-                        for notif in it.monitored_items.into_iter().flatten() {
-                            let item = self
-                                .client_handles
-                                .get(&notif.client_handle)
-                                .and_then(|handle| self.monitored_items.get(handle));
-
-                            if let Some(item) = item {
-                                self.callback.on_data_value(notif.value, item);
-                            }
+                        if let Some(item) = item {
+                            self.callback.on_data_value(notif.value, item);
                         }
                     }
-                    Err(e) => warn!("Failed to decode data change notification: {e}"),
-                }
-            } else if id == ObjectId::EventNotificationList_Encoding_DefaultBinary as u32 {
-                match obj.decode_inner::<EventNotificationList>(decoding_options) {
-                    Ok(it) => {
-                        for notif in it.events.into_iter().flatten() {
-                            let item = self
-                                .client_handles
-                                .get(&notif.client_handle)
-                                .and_then(|handle| self.monitored_items.get(handle));
+                },
+                v: EventNotificationList => {
+                    for notif in v.events.into_iter().flatten() {
+                        let item = self
+                            .client_handles
+                            .get(&notif.client_handle)
+                            .and_then(|handle| self.monitored_items.get(handle));
 
-                            if let Some(item) = item {
-                                self.callback.on_event(notif.event_fields, item);
-                            }
+                        if let Some(item) = item {
+                            self.callback.on_event(notif.event_fields, item);
                         }
                     }
-                    Err(e) => warn!("Failed to decode event notification: {e}"),
+                },
+                v: StatusChangeNotification => {
+                    self.callback.on_subscription_status_change(v);
                 }
-            } else if id == ObjectId::StatusChangeNotification_Encoding_DefaultBinary as u32 {
-                match obj.decode_inner::<StatusChangeNotification>(decoding_options) {
-                    Ok(it) => self.callback.on_subscription_status_change(it),
-                    Err(e) => warn!("Failed to decode status change notification: {e}"),
-                }
-            }
+            )
         }
     }
 }

@@ -8,10 +8,12 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+#[derive(Default)]
 pub struct SessionSecurityDiagnosticsDataType {
     pub session_id: opcua::types::node_id::NodeId,
     pub client_user_id_of_session: opcua::types::string::UAString,
@@ -35,74 +37,61 @@ impl opcua::types::MessageInfo for SessionSecurityDiagnosticsDataType {
     }
 }
 impl opcua::types::BinaryEncodable for SessionSecurityDiagnosticsDataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.session_id.byte_len();
-        size += self.client_user_id_of_session.byte_len();
-        size += self.client_user_id_history.byte_len();
-        size += self.authentication_mechanism.byte_len();
-        size += self.encoding.byte_len();
-        size += self.transport_protocol.byte_len();
-        size += self.security_mode.byte_len();
-        size += self.security_policy_uri.byte_len();
-        size += self.client_certificate.byte_len();
+        size += self.session_id.byte_len(ctx);
+        size += self.client_user_id_of_session.byte_len(ctx);
+        size += self.client_user_id_history.byte_len(ctx);
+        size += self.authentication_mechanism.byte_len(ctx);
+        size += self.encoding.byte_len(ctx);
+        size += self.transport_protocol.byte_len(ctx);
+        size += self.security_mode.byte_len(ctx);
+        size += self.security_policy_uri.byte_len(ctx);
+        size += self.client_certificate.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.session_id.encode(stream)?;
-        size += self.client_user_id_of_session.encode(stream)?;
-        size += self.client_user_id_history.encode(stream)?;
-        size += self.authentication_mechanism.encode(stream)?;
-        size += self.encoding.encode(stream)?;
-        size += self.transport_protocol.encode(stream)?;
-        size += self.security_mode.encode(stream)?;
-        size += self.security_policy_uri.encode(stream)?;
-        size += self.client_certificate.encode(stream)?;
+        size += self.session_id.encode(stream, ctx)?;
+        size += self.client_user_id_of_session.encode(stream, ctx)?;
+        size += self.client_user_id_history.encode(stream, ctx)?;
+        size += self.authentication_mechanism.encode(stream, ctx)?;
+        size += self.encoding.encode(stream, ctx)?;
+        size += self.transport_protocol.encode(stream, ctx)?;
+        size += self.security_mode.encode(stream, ctx)?;
+        size += self.security_policy_uri.encode(stream, ctx)?;
+        size += self.client_certificate.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for SessionSecurityDiagnosticsDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            session_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            session_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             client_user_id_of_session: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            client_user_id_history: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            client_user_id_history: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             authentication_mechanism: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            encoding: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            transport_protocol: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            security_mode: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            security_policy_uri: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            client_certificate: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            encoding: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            transport_protocol: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            security_mode: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            security_policy_uri: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            client_certificate: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

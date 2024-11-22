@@ -6,14 +6,39 @@ use std::{
 
 use crate::BinaryDecodable;
 
-use super::encoding::{read_u32, write_u32, BinaryEncodable, DecodingOptions, EncodingResult};
+use super::encoding::{read_u32, write_u32, BinaryEncodable, EncodingResult};
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Default)]
 /// Wrapper around an OPC-UA status code, with utilities for displaying,
 /// parsing, and reading.
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(transparent))]
 pub struct StatusCode(u32);
+
+#[cfg(feature = "json")]
+mod json {
+    use crate::json::*;
+    use std::io::{Read, Write};
+
+    use super::StatusCode;
+
+    impl JsonEncodable for StatusCode {
+        fn encode(
+            &self,
+            stream: &mut JsonStreamWriter<&mut dyn Write>,
+            _ctx: &crate::json::Context<'_>,
+        ) -> crate::EncodingResult<()> {
+            Ok(stream.number_value(self.0)?)
+        }
+    }
+
+    impl JsonDecodable for StatusCode {
+        fn decode(
+            stream: &mut JsonStreamReader<&mut dyn Read>,
+            _ctx: &Context<'_>,
+        ) -> crate::EncodingResult<Self> {
+            Ok(Self::from(stream.next_number::<u32>()??))
+        }
+    }
+}
 
 const SUBCODE_MASK: u32 = 0xffff_0000;
 const INFO_BITS_MASK: u32 = 0b0011_1111_1111;
@@ -254,17 +279,21 @@ impl std::fmt::Debug for StatusCode {
 }
 
 impl BinaryEncodable for StatusCode {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, _ctx: &crate::Context<'_>) -> usize {
         4
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        _ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize> {
         write_u32(stream, self.bits())
     }
 }
 
 impl BinaryDecodable for StatusCode {
-    fn decode<S: Read>(stream: &mut S, _: &DecodingOptions) -> EncodingResult<Self> {
+    fn decode<S: Read + ?Sized>(stream: &mut S, _ctx: &crate::Context<'_>) -> EncodingResult<Self> {
         Ok(StatusCode(read_u32(stream)?))
     }
 }

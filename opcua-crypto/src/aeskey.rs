@@ -12,9 +12,9 @@ use aes::cipher::{
     KeyIvInit,
 };
 use cbc;
-use log::error;
 
 use opcua_types::status_code::StatusCode;
+use opcua_types::Error;
 
 use super::SecurityPolicy;
 
@@ -30,7 +30,7 @@ const AES256_KEY_SIZE: usize = 32;
 type AesArray128 = GenericArray<u8, <aes::Aes128 as aes::cipher::BlockSizeUser>::BlockSize>;
 type AesArray256 = GenericArray<u8, <aes::Aes256 as aes::cipher::KeySizeUser>::KeySize>;
 
-type EncryptResult = Result<usize, StatusCode>;
+type EncryptResult = Result<usize, Error>;
 
 #[derive(Debug)]
 pub struct AesKey {
@@ -49,20 +49,24 @@ impl AesKey {
         &self.value
     }
 
-    fn validate_aes_args(&self, src: &[u8], iv: &[u8], dst: &mut [u8]) -> Result<(), StatusCode> {
+    fn validate_aes_args(&self, src: &[u8], iv: &[u8], dst: &mut [u8]) -> Result<(), Error> {
         if dst.len() < src.len() + self.block_size() {
-            error!(
-                "Dst buffer is too small {} vs {} + {}",
-                src.len(),
-                dst.len(),
-                self.block_size()
-            );
-            Err(StatusCode::BadUnexpectedError)
+            Err(Error::new(
+                StatusCode::BadUnexpectedError,
+                format!(
+                    "Dst buffer is too small {} vs {} + {}",
+                    src.len(),
+                    dst.len(),
+                    self.block_size()
+                ),
+            ))
         } else if iv.len() != self.iv_length() {
             // ... It would be nice to compare iv size to be exact to the key size here (should be the
             // same) but AesKey doesn't tell us that info. Have to check elsewhere
-            error!("IV is not an expected size, len = {}", iv.len());
-            Err(StatusCode::BadUnexpectedError)
+            Err(Error::new(
+                StatusCode::BadUnexpectedError,
+                format!("IV is not an expected size, len = {}", iv.len()),
+            ))
         } else if src.len() % self.block_size() != 0 {
             panic!("Block size {} is wrong, check stack", src.len());
         } else {
@@ -77,7 +81,7 @@ impl AesKey {
             AesArray128::from_slice(iv),
         )
         .encrypt_padded_b2b_mut::<NoPadding>(src, dst)
-        .map_err(|_| StatusCode::BadUnexpectedError)?;
+        .map_err(|e| Error::new(StatusCode::BadUnexpectedError, e.to_string()))?;
         Ok(src.len())
     }
 
@@ -88,7 +92,7 @@ impl AesKey {
             AesArray128::from_slice(iv),
         )
         .encrypt_padded_b2b_mut::<NoPadding>(src, dst)
-        .map_err(|_| StatusCode::BadUnexpectedError)?;
+        .map_err(|e| Error::new(StatusCode::BadUnexpectedError, e.to_string()))?;
         Ok(src.len())
     }
 
@@ -99,7 +103,7 @@ impl AesKey {
             AesArray128::from_slice(iv),
         )
         .decrypt_padded_b2b_mut::<NoPadding>(src, dst)
-        .map_err(|_| StatusCode::BadUnexpectedError)?;
+        .map_err(|e| Error::new(StatusCode::BadUnexpectedError, e.to_string()))?;
         Ok(src.len())
     }
 
@@ -110,7 +114,7 @@ impl AesKey {
             AesArray128::from_slice(iv),
         )
         .decrypt_padded_b2b_mut::<NoPadding>(src, dst)
-        .map_err(|_| StatusCode::BadUnexpectedError)?;
+        .map_err(|e| Error::new(StatusCode::BadUnexpectedError, e.to_string()))?;
         Ok(src.len())
     }
 
@@ -157,7 +161,10 @@ impl AesKey {
             | SecurityPolicy::Basic256Sha256
             | SecurityPolicy::Aes256Sha256RsaPss => self.encrypt_aes256_cbc(src, iv, dst),
 
-            _ => Err(StatusCode::BadUnexpectedError),
+            _ => Err(Error::new(
+                StatusCode::BadUnexpectedError,
+                "Unsupported security policy",
+            )),
         }
     }
 
@@ -172,7 +179,10 @@ impl AesKey {
             | SecurityPolicy::Basic256Sha256
             | SecurityPolicy::Aes256Sha256RsaPss => self.decrypt_aes256_cbc(src, iv, dst),
 
-            _ => Err(StatusCode::BadUnexpectedError),
+            _ => Err(Error::new(
+                StatusCode::BadUnexpectedError,
+                "Unsupported security policy",
+            )),
         }
     }
 }

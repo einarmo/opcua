@@ -1,7 +1,7 @@
 use opcua_types::{
-    AddNodeAttributes, AddNodesItem, AddNodesResult, AddReferencesItem, DecodingOptions,
-    DeleteNodesItem, DeleteReferencesItem, DiagnosticBits, DiagnosticInfo, ExpandedNodeId,
-    NodeClass, NodeId, QualifiedName, StatusCode,
+    AddNodeAttributes, AddNodesItem, AddNodesResult, AddReferencesItem, DeleteNodesItem,
+    DeleteReferencesItem, DiagnosticBits, DiagnosticInfo, ExpandedNodeId, NodeClass, NodeId,
+    QualifiedName, StatusCode,
 };
 
 use super::IntoResult;
@@ -24,20 +24,15 @@ pub struct AddNodeItem {
 }
 
 impl AddNodeItem {
-    pub(crate) fn new(
-        item: AddNodesItem,
-        options: &DecodingOptions,
-        diagnostic_bits: DiagnosticBits,
-    ) -> Self {
+    pub(crate) fn new(item: AddNodesItem, diagnostic_bits: DiagnosticBits) -> Self {
         let mut status = StatusCode::BadNotSupported;
-        let attributes =
-            match AddNodeAttributes::from_extension_object(item.node_attributes, options) {
-                Ok(attr) => attr,
-                Err(e) => {
-                    status = e;
-                    AddNodeAttributes::None
-                }
-            };
+        let attributes = match AddNodeAttributes::from_extension_object(item.node_attributes) {
+            Ok(attr) => attr,
+            Err(e) => {
+                status = e;
+                AddNodeAttributes::None
+            }
+        };
         if item.requested_new_node_id.server_index != 0 {
             status = StatusCode::BadNodeIdRejected;
         }

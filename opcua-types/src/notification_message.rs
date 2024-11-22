@@ -7,10 +7,8 @@ use log::{debug, trace};
 use crate::{
     date_time::DateTime,
     diagnostic_info::DiagnosticInfo,
-    encoding::DecodingOptions,
     extension_object::ExtensionObject,
-    node_id::Identifier,
-    node_ids::ObjectId,
+    match_extension_object_owned,
     service_types::{
         DataChangeNotification, EventFieldList, EventNotificationList, MonitoredItemNotification,
         NotificationMessage, StatusChangeNotification,
@@ -39,20 +37,14 @@ impl NotificationMessage {
                 diagnostic_infos: None,
             };
             trace!("data change notification = {:?}", data_change_notification);
-            notification_data.push(ExtensionObject::from_encodable(
-                ObjectId::DataChangeNotification_Encoding_DefaultBinary,
-                &data_change_notification,
-            ));
+            notification_data.push(ExtensionObject::from_message(data_change_notification));
         }
         if !event_notifications.is_empty() {
             let event_notification_list = EventNotificationList {
                 events: Some(event_notifications),
             };
             trace!("event notification = {:?}", event_notification_list);
-            notification_data.push(ExtensionObject::from_encodable(
-                ObjectId::EventNotificationList_Encoding_DefaultBinary,
-                &event_notification_list,
-            ));
+            notification_data.push(ExtensionObject::from_message(event_notification_list));
         }
 
         // Both data and events are serialized
@@ -72,10 +64,7 @@ impl NotificationMessage {
             status,
             diagnostic_info: DiagnosticInfo::null(),
         };
-        let notification_data = ExtensionObject::from_encodable(
-            ObjectId::StatusChangeNotification_Encoding_DefaultBinary,
-            &status_change_notification,
-        );
+        let notification_data = ExtensionObject::from_message(status_change_notification);
         NotificationMessage {
             sequence_number,
             publish_time,
@@ -93,43 +82,35 @@ impl NotificationMessage {
     }
 
     fn process_notification(
-        n: &ExtensionObject,
-        decoding_options: &DecodingOptions,
+        n: ExtensionObject,
         data_changes: &mut Vec<DataChangeNotification>,
         events: &mut Vec<EventNotificationList>,
     ) {
-        if n.node_id.namespace == 0 {
-            if let Identifier::Numeric(id) = n.node_id.identifier {
-                if id == ObjectId::DataChangeNotification_Encoding_DefaultBinary as u32 {
-                    if let Ok(v) = n.decode_inner::<DataChangeNotification>(decoding_options) {
-                        data_changes.push(v);
-                    }
-                } else if id == ObjectId::EventNotificationList_Encoding_DefaultBinary as u32 {
-                    if let Ok(v) = n.decode_inner::<EventNotificationList>(decoding_options) {
-                        events.push(v);
-                    }
-                } else if id == ObjectId::StatusChangeNotification_Encoding_DefaultBinary as u32 {
+        match_extension_object_owned!(n,
+            n: DataChangeNotification => data_changes.push(n),
+            n: EventNotificationList => events.push(n),
+            _ => {
+                if n.inner_is::<StatusChangeNotification>() {
                     debug!("Ignoring a StatusChangeNotification");
                 } else {
-                    debug!("Ignoring a notification of type {:?}", n.node_id);
+                    debug!("Ignoring a notification of type {:?}", n.binary_type_id());
                 }
             }
-        }
+        )
     }
 
     /// Extract notifications from the message. Unrecognized / unparseable notifications will be
     /// ignored. If there are no notifications, the function will return `None`.
-    pub fn notifications(
-        &self,
-        decoding_options: &DecodingOptions,
+    pub fn into_notifications(
+        self,
     ) -> Option<(Vec<DataChangeNotification>, Vec<EventNotificationList>)> {
-        if let Some(ref notification_data) = self.notification_data {
+        if let Some(notification_data) = self.notification_data {
             let mut data_changes = Vec::with_capacity(notification_data.len());
             let mut events = Vec::with_capacity(notification_data.len());
 
             // Build up the notifications
-            notification_data.iter().for_each(|n| {
-                Self::process_notification(n, decoding_options, &mut data_changes, &mut events);
+            notification_data.into_iter().for_each(|n| {
+                Self::process_notification(n, &mut data_changes, &mut events);
             });
             if data_changes.is_empty() && events.is_empty() {
                 None

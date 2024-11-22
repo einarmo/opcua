@@ -790,7 +790,7 @@ async fn history_read_raw() {
     // Read up to 100, should get the 100 first.
     let r = session
         .history_read(
-            &action,
+            action.clone(),
             TimestampsToReturn::Both,
             false,
             &[HistoryReadValueId {
@@ -809,9 +809,10 @@ async fn history_read_raw() {
     assert_eq!(v.status_code, StatusCode::Good);
     let mut data = v
         .history_data
-        .decode_inner::<HistoryData>(session.decoding_options())
+        .inner_as::<HistoryData>()
         .unwrap()
         .data_values
+        .clone()
         .unwrap();
 
     assert_eq!(data.len(), 100);
@@ -822,7 +823,7 @@ async fn history_read_raw() {
     for i in 0..9 {
         let r = session
             .history_read(
-                &action,
+                action.clone(),
                 TimestampsToReturn::Both,
                 false,
                 &[HistoryReadValueId {
@@ -845,13 +846,14 @@ async fn history_read_raw() {
         assert_eq!(v.status_code, StatusCode::Good);
         let next_data = v
             .history_data
-            .decode_inner::<HistoryData>(session.decoding_options())
+            .inner_as::<HistoryData>()
             .unwrap()
             .data_values
+            .as_ref()
             .unwrap();
 
         assert_eq!(next_data.len(), 100);
-        data.extend(next_data);
+        data.extend(next_data.iter().cloned());
 
         cp = v.continuation_point.clone();
     }
@@ -919,7 +921,7 @@ async fn history_read_release_continuation_points() {
 
     let r = session
         .history_read(
-            &action,
+            action.clone(),
             TimestampsToReturn::Both,
             false,
             &[HistoryReadValueId {
@@ -938,9 +940,10 @@ async fn history_read_release_continuation_points() {
     assert_eq!(v.status_code, StatusCode::Good);
     let data = v
         .history_data
-        .decode_inner::<HistoryData>(session.decoding_options())
+        .inner_as::<HistoryData>()
         .unwrap()
         .data_values
+        .as_ref()
         .unwrap();
 
     assert_eq!(data.len(), 100);
@@ -949,7 +952,7 @@ async fn history_read_release_continuation_points() {
 
     let r = session
         .history_read(
-            &action,
+            action,
             TimestampsToReturn::Both,
             true,
             &[HistoryReadValueId {
@@ -1004,7 +1007,7 @@ async fn history_read_fail() {
 
     // Read nothing
     let r = session
-        .history_read(&action, TimestampsToReturn::Both, false, &[])
+        .history_read(action.clone(), TimestampsToReturn::Both, false, &[])
         .await
         .unwrap_err();
     assert_eq!(r, StatusCode::BadNothingToDo);
@@ -1020,7 +1023,7 @@ async fn history_read_fail() {
     // Read too many
     let r = session
         .history_read(
-            &action,
+            action.clone(),
             TimestampsToReturn::Both,
             false,
             &(0..(history_read_limit + 1))
@@ -1039,7 +1042,7 @@ async fn history_read_fail() {
     // Read without access
     let r = session
         .history_read(
-            &action,
+            action.clone(),
             TimestampsToReturn::Both,
             false,
             &[HistoryReadValueId {
@@ -1057,7 +1060,7 @@ async fn history_read_fail() {
     // Read node that doesn't exist
     let r = session
         .history_read(
-            &action,
+            action,
             TimestampsToReturn::Both,
             false,
             &[HistoryReadValueId {

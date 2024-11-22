@@ -5,11 +5,14 @@
 //! Contains the definition of `QualifiedName`.
 use std::io::{Read, Write};
 
-use crate::{encoding::*, string::*};
+use crate::{
+    encoding::{BinaryDecodable, BinaryEncodable, EncodingResult},
+    string::*,
+};
 
-#[cfg(feature = "json")]
-fn is_zero(id: &u16) -> bool {
-    *id == 0
+#[allow(unused)]
+mod opcua {
+    pub use crate as types;
 }
 
 /// An identifier for a error or condition that is associated with a value or an operation.
@@ -28,21 +31,15 @@ fn is_zero(id: &u16) -> bool {
 ///        JSON string unless the NamespaceIndexis 1 or if NamespaceUriis unknown. In these cases,
 ///        the NamespaceIndexis encoded as a JSON number.
 #[derive(PartialEq, Debug, Clone, Eq, Hash)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua_macros::JsonEncodable, opcua_macros::JsonDecodable)
+)]
 pub struct QualifiedName {
     /// The namespace index
-    #[cfg_attr(
-        feature = "json",
-        serde(rename = "Uri", default, skip_serializing_if = "is_zero")
-    )]
+    #[cfg_attr(feature = "json", opcua(rename = "Uri"))]
     pub namespace_index: u16,
     /// The name.
-    #[cfg_attr(
-        feature = "json",
-        serde(skip_serializing_if = "UAString::is_null", default)
-    )]
     pub name: UAString,
 }
 
@@ -80,25 +77,28 @@ impl From<String> for QualifiedName {
 }
 
 impl BinaryEncodable for QualifiedName {
-    fn byte_len(&self) -> usize {
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size: usize = 0;
-        size += self.namespace_index.byte_len();
-        size += self.name.byte_len();
+        size += self.namespace_index.byte_len(ctx);
+        size += self.name.byte_len(ctx);
         size
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize> {
         let mut size: usize = 0;
-        size += self.namespace_index.encode(stream)?;
-        size += self.name.encode(stream)?;
-        assert_eq!(size, self.byte_len());
+        size += self.namespace_index.encode(stream, ctx)?;
+        size += self.name.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl BinaryDecodable for QualifiedName {
-    fn decode<S: Read>(stream: &mut S, decoding_options: &DecodingOptions) -> EncodingResult<Self> {
-        let namespace_index = u16::decode(stream, decoding_options)?;
-        let name = UAString::decode(stream, decoding_options)?;
+    fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &crate::Context<'_>) -> EncodingResult<Self> {
+        let namespace_index = u16::decode(stream, ctx)?;
+        let name = UAString::decode(stream, ctx)?;
         Ok(QualifiedName {
             namespace_index,
             name,

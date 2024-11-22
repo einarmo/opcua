@@ -8,10 +8,12 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
+#[derive(Default)]
 pub struct ContentFilterElement {
     pub filter_operator: super::enums::FilterOperator,
     pub filter_operands: Option<Vec<opcua::types::extension_object::ExtensionObject>>,
@@ -28,38 +30,34 @@ impl opcua::types::MessageInfo for ContentFilterElement {
     }
 }
 impl opcua::types::BinaryEncodable for ContentFilterElement {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.filter_operator.byte_len();
-        size += self.filter_operands.byte_len();
+        size += self.filter_operator.byte_len(ctx);
+        size += self.filter_operands.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.filter_operator.encode(stream)?;
-        size += self.filter_operands.encode(stream)?;
+        size += self.filter_operator.encode(stream, ctx)?;
+        size += self.filter_operands.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for ContentFilterElement {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            filter_operator: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            filter_operands: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            filter_operator: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            filter_operands: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

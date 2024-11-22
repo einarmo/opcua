@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct SubscriptionDiagnosticsDataType {
@@ -58,205 +59,156 @@ impl opcua::types::MessageInfo for SubscriptionDiagnosticsDataType {
     }
 }
 impl opcua::types::BinaryEncodable for SubscriptionDiagnosticsDataType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.session_id.byte_len();
-        size += self.subscription_id.byte_len();
-        size += self.priority.byte_len();
-        size += self.publishing_interval.byte_len();
-        size += self.max_keep_alive_count.byte_len();
-        size += self.max_lifetime_count.byte_len();
-        size += self.max_notifications_per_publish.byte_len();
-        size += self.publishing_enabled.byte_len();
-        size += self.modify_count.byte_len();
-        size += self.enable_count.byte_len();
-        size += self.disable_count.byte_len();
-        size += self.republish_request_count.byte_len();
-        size += self.republish_message_request_count.byte_len();
-        size += self.republish_message_count.byte_len();
-        size += self.transfer_request_count.byte_len();
-        size += self.transferred_to_alt_client_count.byte_len();
-        size += self.transferred_to_same_client_count.byte_len();
-        size += self.publish_request_count.byte_len();
-        size += self.data_change_notifications_count.byte_len();
-        size += self.event_notifications_count.byte_len();
-        size += self.notifications_count.byte_len();
-        size += self.late_publish_request_count.byte_len();
-        size += self.current_keep_alive_count.byte_len();
-        size += self.current_lifetime_count.byte_len();
-        size += self.unacknowledged_message_count.byte_len();
-        size += self.discarded_message_count.byte_len();
-        size += self.monitored_item_count.byte_len();
-        size += self.disabled_monitored_item_count.byte_len();
-        size += self.monitoring_queue_overflow_count.byte_len();
-        size += self.next_sequence_number.byte_len();
-        size += self.event_queue_over_flow_count.byte_len();
+        size += self.session_id.byte_len(ctx);
+        size += self.subscription_id.byte_len(ctx);
+        size += self.priority.byte_len(ctx);
+        size += self.publishing_interval.byte_len(ctx);
+        size += self.max_keep_alive_count.byte_len(ctx);
+        size += self.max_lifetime_count.byte_len(ctx);
+        size += self.max_notifications_per_publish.byte_len(ctx);
+        size += self.publishing_enabled.byte_len(ctx);
+        size += self.modify_count.byte_len(ctx);
+        size += self.enable_count.byte_len(ctx);
+        size += self.disable_count.byte_len(ctx);
+        size += self.republish_request_count.byte_len(ctx);
+        size += self.republish_message_request_count.byte_len(ctx);
+        size += self.republish_message_count.byte_len(ctx);
+        size += self.transfer_request_count.byte_len(ctx);
+        size += self.transferred_to_alt_client_count.byte_len(ctx);
+        size += self.transferred_to_same_client_count.byte_len(ctx);
+        size += self.publish_request_count.byte_len(ctx);
+        size += self.data_change_notifications_count.byte_len(ctx);
+        size += self.event_notifications_count.byte_len(ctx);
+        size += self.notifications_count.byte_len(ctx);
+        size += self.late_publish_request_count.byte_len(ctx);
+        size += self.current_keep_alive_count.byte_len(ctx);
+        size += self.current_lifetime_count.byte_len(ctx);
+        size += self.unacknowledged_message_count.byte_len(ctx);
+        size += self.discarded_message_count.byte_len(ctx);
+        size += self.monitored_item_count.byte_len(ctx);
+        size += self.disabled_monitored_item_count.byte_len(ctx);
+        size += self.monitoring_queue_overflow_count.byte_len(ctx);
+        size += self.next_sequence_number.byte_len(ctx);
+        size += self.event_queue_over_flow_count.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.session_id.encode(stream)?;
-        size += self.subscription_id.encode(stream)?;
-        size += self.priority.encode(stream)?;
-        size += self.publishing_interval.encode(stream)?;
-        size += self.max_keep_alive_count.encode(stream)?;
-        size += self.max_lifetime_count.encode(stream)?;
-        size += self.max_notifications_per_publish.encode(stream)?;
-        size += self.publishing_enabled.encode(stream)?;
-        size += self.modify_count.encode(stream)?;
-        size += self.enable_count.encode(stream)?;
-        size += self.disable_count.encode(stream)?;
-        size += self.republish_request_count.encode(stream)?;
-        size += self.republish_message_request_count.encode(stream)?;
-        size += self.republish_message_count.encode(stream)?;
-        size += self.transfer_request_count.encode(stream)?;
-        size += self.transferred_to_alt_client_count.encode(stream)?;
-        size += self.transferred_to_same_client_count.encode(stream)?;
-        size += self.publish_request_count.encode(stream)?;
-        size += self.data_change_notifications_count.encode(stream)?;
-        size += self.event_notifications_count.encode(stream)?;
-        size += self.notifications_count.encode(stream)?;
-        size += self.late_publish_request_count.encode(stream)?;
-        size += self.current_keep_alive_count.encode(stream)?;
-        size += self.current_lifetime_count.encode(stream)?;
-        size += self.unacknowledged_message_count.encode(stream)?;
-        size += self.discarded_message_count.encode(stream)?;
-        size += self.monitored_item_count.encode(stream)?;
-        size += self.disabled_monitored_item_count.encode(stream)?;
-        size += self.monitoring_queue_overflow_count.encode(stream)?;
-        size += self.next_sequence_number.encode(stream)?;
-        size += self.event_queue_over_flow_count.encode(stream)?;
+        size += self.session_id.encode(stream, ctx)?;
+        size += self.subscription_id.encode(stream, ctx)?;
+        size += self.priority.encode(stream, ctx)?;
+        size += self.publishing_interval.encode(stream, ctx)?;
+        size += self.max_keep_alive_count.encode(stream, ctx)?;
+        size += self.max_lifetime_count.encode(stream, ctx)?;
+        size += self.max_notifications_per_publish.encode(stream, ctx)?;
+        size += self.publishing_enabled.encode(stream, ctx)?;
+        size += self.modify_count.encode(stream, ctx)?;
+        size += self.enable_count.encode(stream, ctx)?;
+        size += self.disable_count.encode(stream, ctx)?;
+        size += self.republish_request_count.encode(stream, ctx)?;
+        size += self.republish_message_request_count.encode(stream, ctx)?;
+        size += self.republish_message_count.encode(stream, ctx)?;
+        size += self.transfer_request_count.encode(stream, ctx)?;
+        size += self.transferred_to_alt_client_count.encode(stream, ctx)?;
+        size += self.transferred_to_same_client_count.encode(stream, ctx)?;
+        size += self.publish_request_count.encode(stream, ctx)?;
+        size += self.data_change_notifications_count.encode(stream, ctx)?;
+        size += self.event_notifications_count.encode(stream, ctx)?;
+        size += self.notifications_count.encode(stream, ctx)?;
+        size += self.late_publish_request_count.encode(stream, ctx)?;
+        size += self.current_keep_alive_count.encode(stream, ctx)?;
+        size += self.current_lifetime_count.encode(stream, ctx)?;
+        size += self.unacknowledged_message_count.encode(stream, ctx)?;
+        size += self.discarded_message_count.encode(stream, ctx)?;
+        size += self.monitored_item_count.encode(stream, ctx)?;
+        size += self.disabled_monitored_item_count.encode(stream, ctx)?;
+        size += self.monitoring_queue_overflow_count.encode(stream, ctx)?;
+        size += self.next_sequence_number.encode(stream, ctx)?;
+        size += self.event_queue_over_flow_count.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for SubscriptionDiagnosticsDataType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            session_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            subscription_id: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            priority: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            publishing_interval: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            max_keep_alive_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            max_lifetime_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            session_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            subscription_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            priority: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            publishing_interval: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            max_keep_alive_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            max_lifetime_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             max_notifications_per_publish: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            publishing_enabled: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            modify_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            enable_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            disable_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            republish_request_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            publishing_enabled: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            modify_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            enable_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            disable_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            republish_request_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             republish_message_request_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            republish_message_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            transfer_request_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            republish_message_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            transfer_request_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             transferred_to_alt_client_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             transferred_to_same_client_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            publish_request_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            publish_request_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             data_change_notifications_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             event_notifications_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            notifications_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            notifications_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             late_publish_request_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             current_keep_alive_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            current_lifetime_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            current_lifetime_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             unacknowledged_message_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            discarded_message_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            monitored_item_count: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            discarded_message_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            monitored_item_count: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             disabled_monitored_item_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
             monitoring_queue_overflow_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
-            next_sequence_number: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            next_sequence_number: opcua::types::BinaryDecodable::decode(stream, ctx)?,
             event_queue_over_flow_count: opcua::types::BinaryDecodable::decode(
                 stream,
-                decoding_options,
+                ctx,
             )?,
         })
     }

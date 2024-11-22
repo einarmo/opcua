@@ -226,8 +226,8 @@ mod tests {
     use crate::{BaseEventType, Event, EventField};
     use opcua_types::event_field::PlaceholderEventField;
     use opcua_types::{
-        AttributeId, ByteString, DecodingOptions, EUInformation, KeyValuePair, LocalizedText,
-        NodeId, NumericRange, ObjectTypeId, QualifiedName, StatusCode, UAString, Variant,
+        AttributeId, ByteString, EUInformation, KeyValuePair, LocalizedText, NodeId, NumericRange,
+        ObjectTypeId, QualifiedName, StatusCode, UAString, Variant,
     };
     #[derive(Event)]
     #[opcua(identifier = "s=myevent", namespace = "uri:my:namespace")]
@@ -361,7 +361,7 @@ mod tests {
             Variant::from(StatusCode::BadMaxAgeInvalid)
         );
         let kvp: KeyValuePair = match get(&id, &evt, "Kvp") {
-            Variant::ExtensionObject(o) => o.decode_inner(&DecodingOptions::test()).unwrap(),
+            Variant::ExtensionObject(o) => *o.into_inner_as().unwrap(),
             _ => panic!("Wrong variant type"),
         };
         assert_eq!(kvp.key, "Key".into());
@@ -375,7 +375,7 @@ mod tests {
             Variant::from(vec![3i32, 2i32, 1i32])
         );
         let euinfo: EUInformation = match get(&id, &evt, "Euinfo") {
-            Variant::ExtensionObject(o) => o.decode_inner(&DecodingOptions::test()).unwrap(),
+            Variant::ExtensionObject(o) => *o.into_inner_as().unwrap(),
             _ => panic!("Wrong variant type"),
         };
         assert_eq!(euinfo.namespace_uri.as_ref(), "uri:my:namespace");

@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct ReadRawModifiedDetails {
@@ -32,50 +33,43 @@ impl opcua::types::MessageInfo for ReadRawModifiedDetails {
     }
 }
 impl opcua::types::BinaryEncodable for ReadRawModifiedDetails {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.is_read_modified.byte_len();
-        size += self.start_time.byte_len();
-        size += self.end_time.byte_len();
-        size += self.num_values_per_node.byte_len();
-        size += self.return_bounds.byte_len();
+        size += self.is_read_modified.byte_len(ctx);
+        size += self.start_time.byte_len(ctx);
+        size += self.end_time.byte_len(ctx);
+        size += self.num_values_per_node.byte_len(ctx);
+        size += self.return_bounds.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.is_read_modified.encode(stream)?;
-        size += self.start_time.encode(stream)?;
-        size += self.end_time.encode(stream)?;
-        size += self.num_values_per_node.encode(stream)?;
-        size += self.return_bounds.encode(stream)?;
+        size += self.is_read_modified.encode(stream, ctx)?;
+        size += self.start_time.encode(stream, ctx)?;
+        size += self.end_time.encode(stream, ctx)?;
+        size += self.num_values_per_node.encode(stream, ctx)?;
+        size += self.return_bounds.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for ReadRawModifiedDetails {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            is_read_modified: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            start_time: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            end_time: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            num_values_per_node: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            return_bounds: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
+            is_read_modified: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            start_time: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            end_time: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            num_values_per_node: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            return_bounds: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

@@ -8,9 +8,10 @@
 #[allow(unused)]
 mod opcua { pub use crate as types; }
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde_with::skip_serializing_none)]
-#[cfg_attr(feature = "json", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "json", serde(rename_all = "PascalCase"))]
+#[cfg_attr(
+    feature = "json",
+    derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+)]
 #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
 #[derive(Default)]
 pub struct SessionlessInvokeRequestType {
@@ -32,50 +33,43 @@ impl opcua::types::MessageInfo for SessionlessInvokeRequestType {
     }
 }
 impl opcua::types::BinaryEncodable for SessionlessInvokeRequestType {
-    fn byte_len(&self) -> usize {
+    #[allow(unused_variables)]
+    fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
         let mut size = 0usize;
-        size += self.uris_version.byte_len();
-        size += self.namespace_uris.byte_len();
-        size += self.server_uris.byte_len();
-        size += self.locale_ids.byte_len();
-        size += self.service_id.byte_len();
+        size += self.uris_version.byte_len(ctx);
+        size += self.namespace_uris.byte_len(ctx);
+        size += self.server_uris.byte_len(ctx);
+        size += self.locale_ids.byte_len(ctx);
+        size += self.service_id.byte_len(ctx);
         size
     }
     #[allow(unused_variables)]
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<usize> {
         let mut size = 0usize;
-        size += self.uris_version.encode(stream)?;
-        size += self.namespace_uris.encode(stream)?;
-        size += self.server_uris.encode(stream)?;
-        size += self.locale_ids.encode(stream)?;
-        size += self.service_id.encode(stream)?;
+        size += self.uris_version.encode(stream, ctx)?;
+        size += self.namespace_uris.encode(stream, ctx)?;
+        size += self.server_uris.encode(stream, ctx)?;
+        size += self.locale_ids.encode(stream, ctx)?;
+        size += self.service_id.encode(stream, ctx)?;
         Ok(size)
     }
 }
 impl opcua::types::BinaryDecodable for SessionlessInvokeRequestType {
     #[allow(unused_variables)]
-    fn decode<S: std::io::Read>(
+    fn decode<S: std::io::Read + ?Sized>(
         stream: &mut S,
-        decoding_options: &opcua::types::DecodingOptions,
+        ctx: &opcua::types::Context<'_>,
     ) -> opcua::types::EncodingResult<Self> {
         Ok(Self {
-            uris_version: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            namespace_uris: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            server_uris: opcua::types::BinaryDecodable::decode(
-                stream,
-                decoding_options,
-            )?,
-            locale_ids: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
-            service_id: opcua::types::BinaryDecodable::decode(stream, decoding_options)?,
+            uris_version: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            namespace_uris: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            server_uris: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            locale_ids: opcua::types::BinaryDecodable::decode(stream, ctx)?,
+            service_id: opcua::types::BinaryDecodable::decode(stream, ctx)?,
         })
     }
 }

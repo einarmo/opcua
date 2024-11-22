@@ -22,6 +22,7 @@ impl Parse for XmlFieldAttribute {
                     let val: LitStr = input.parse()?;
                     slf.rename = Some(val.value());
                 }
+                "ignore" | "required" => (),
                 _ => return Err(syn::Error::new_spanned(ident, "Unknown attribute value")),
             }
             if !input.peek(Token![,]) {
