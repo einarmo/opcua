@@ -3,8 +3,8 @@
 // Copyright (C) 2017-2024 Adam Lock
 
 use opcua_types::{
-    service_types::NodeClass, status_code::StatusCode, AttributeId, DataEncoding, DataValue,
-    LocalizedText, NodeId, NumericRange, QualifiedName, TimestampsToReturn, Variant, WriteMask,
+    status_code::StatusCode, AttributeId, DataEncoding, DataValue, LocalizedText, NodeClass,
+    NodeId, NumericRange, QualifiedName, TimestampsToReturn, Variant, WriteMask,
 };
 
 use super::{DataType, Method, Object, ObjectType, ReferenceType, Variable, VariableType, View};

@@ -10,10 +10,7 @@ use std::result::Result;
 use serde;
 use serde_yaml;
 
-use opcua_types::{
-    service_types::{ApplicationDescription, ApplicationType},
-    LocalizedText, UAString,
-};
+use opcua_types::{ApplicationDescription, ApplicationType, LocalizedText, UAString};
 
 /// Error returned from saving or loading config objects.
 #[derive(Debug)]

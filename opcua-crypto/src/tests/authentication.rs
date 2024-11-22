@@ -57,7 +57,7 @@ fn user_name_identity_token_encrypted() {
     let (cert, pkey) = make_test_cert_1024();
     let cert = Some(cert);
 
-    let mut user_token_policy = opcua_types::service_types::UserTokenPolicy {
+    let mut user_token_policy = opcua_types::UserTokenPolicy {
         policy_id: UAString::from("x"),
         token_type: UserTokenType::UserName,
         issued_token_type: UAString::null(),

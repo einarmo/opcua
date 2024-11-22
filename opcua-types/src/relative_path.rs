@@ -12,10 +12,9 @@ use regex::Regex;
 
 use crate::{
     node_id::{Identifier, NodeId},
-    node_ids::*,
     qualified_name::QualifiedName,
-    service_types::{RelativePath, RelativePathElement},
     string::UAString,
+    ReferenceTypeId, RelativePath, RelativePathElement,
 };
 
 impl RelativePath {

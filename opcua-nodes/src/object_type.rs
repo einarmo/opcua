@@ -6,8 +6,8 @@
 
 use log::error;
 use opcua_types::{
-    service_types::ObjectTypeAttributes, AttributeId, AttributesMask, DataEncoding, DataValue,
-    NumericRange, StatusCode, TimestampsToReturn, Variant,
+    AttributeId, AttributesMask, DataEncoding, DataValue, NumericRange, ObjectTypeAttributes,
+    StatusCode, TimestampsToReturn, Variant,
 };
 
 use crate::FromAttributesError;

@@ -14,9 +14,9 @@ use log::{error, warn};
 use opcua_types::Error;
 use opcua_types::{
     encoding::{read_u32, write_u32},
-    service_types::{SignatureData, UserNameIdentityToken, UserTokenPolicy, X509IdentityToken},
     status_code::StatusCode,
     ByteString, UAString,
+    {SignatureData, UserNameIdentityToken, UserTokenPolicy, X509IdentityToken},
 };
 
 use super::{KeySize, PrivateKey, RsaPadding, SecurityPolicy, X509};

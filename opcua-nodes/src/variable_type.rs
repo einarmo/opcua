@@ -8,8 +8,8 @@ use std::convert::TryFrom;
 
 use log::error;
 use opcua_types::{
-    service_types::VariableTypeAttributes, AttributeId, AttributesMask, DataEncoding, DataValue,
-    NumericRange, StatusCode, TimestampsToReturn, Variant,
+    AttributeId, AttributesMask, DataEncoding, DataValue, NumericRange, StatusCode,
+    TimestampsToReturn, VariableTypeAttributes, Variant,
 };
 
 use crate::FromAttributesError;

@@ -6,9 +6,9 @@
 
 use log::error;
 use opcua_types::{
-    service_types::MethodAttributes, Argument, AttributeId, AttributesMask, DataEncoding,
-    DataTypeId, DataValue, ExtensionObject, NumericRange, StatusCode, TimestampsToReturn,
-    VariableTypeId, Variant, VariantScalarTypeId,
+    Argument, AttributeId, AttributesMask, DataEncoding, DataTypeId, DataValue, ExtensionObject,
+    MethodAttributes, NumericRange, StatusCode, TimestampsToReturn, VariableTypeId, Variant,
+    VariantScalarTypeId,
 };
 
 use crate::{FromAttributesError, NodeInsertTarget};

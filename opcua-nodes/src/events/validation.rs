@@ -511,7 +511,7 @@ mod tests {
         let type_tree = DefaultTypeTree::new();
 
         // check for filter operator invalid, by giving it a bogus extension object for an element
-        use opcua_types::{service_types::ContentFilterElement, ExtensionObject};
+        use opcua_types::{ContentFilterElement, ExtensionObject};
         let bad_operator = ExtensionObject::null();
         let where_clause = ContentFilter {
             elements: Some(vec![ContentFilterElement {

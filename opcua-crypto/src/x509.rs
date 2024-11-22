@@ -29,9 +29,7 @@ use const_oid;
 use x509::builder::Error as BuilderError;
 use x509::ext::pkix::name as xname;
 
-use opcua_types::{
-    service_types::ApplicationDescription, status_code::StatusCode, ByteString, Error,
-};
+use opcua_types::{status_code::StatusCode, ApplicationDescription, ByteString, Error};
 
 use super::{
     hostname,

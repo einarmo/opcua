@@ -5,7 +5,7 @@ extra_header: |
 targets:
   - type: types
     file_path: schemas/1.0.4/Opc.Ua.Types.bsd
-    output_dir: opcua-types/src/service_types
+    output_dir: opcua-types/src/generated/types
     enums_single_file: true
     types_import_map:
       Argument:
@@ -43,4 +43,4 @@ targets:
     file_path: schemas/1.05/NodeIds.csv
     extra_header: |
       mod opcua { pub use crate as types; }
-    output_file: opcua-types/src/node_ids.rs
+    output_file: opcua-types/src/generated/node_ids.rs

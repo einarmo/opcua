@@ -1,13 +1,9 @@
 use crate::match_extension_object_owned;
 
 use super::{
-    extension_object::ExtensionObject,
-    service_types::{
-        DataTypeAttributes, GenericAttributes, MethodAttributes, ObjectAttributes,
-        ObjectTypeAttributes, ReferenceTypeAttributes, VariableAttributes, VariableTypeAttributes,
-        ViewAttributes,
-    },
-    status_code::StatusCode,
+    extension_object::ExtensionObject, status_code::StatusCode, DataTypeAttributes,
+    GenericAttributes, MethodAttributes, ObjectAttributes, ObjectTypeAttributes,
+    ReferenceTypeAttributes, VariableAttributes, VariableTypeAttributes, ViewAttributes,
 };
 
 #[derive(Clone, Debug)]

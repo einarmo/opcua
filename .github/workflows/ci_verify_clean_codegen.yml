@@ -10,10 +10,11 @@ jobs:
       - name: Run code gen
         run: cargo run --bin opcua-codegen code_gen_config.yml
       - name: Format generated code
-        run: rustfmt opcua-types/src/service_types/mod.rs
-      - name: Format address space
-        run: rustfmt opcua-core-namespace/src/generated/mod.rs
-      - name: Format events
-        run: rustfmt opcua-core-namespace/src/events/generated.rs
+        run: cargo fmt --all
       - name: Verify generated code matches committed code
-        run: git status --porcelain
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "Workspace is not clean, it has not been formatted, or codegen is not up to date"
+            git status --porcelain
+            exit 1
+          fi
