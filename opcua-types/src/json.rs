@@ -36,12 +36,6 @@ impl From<struson::reader::ReaderError> for Error {
     }
 }
 
-impl From<std::io::Error> for Error {
-    fn from(value: std::io::Error) -> Self {
-        Self::decoding(value)
-    }
-}
-
 impl From<ParseIntError> for Error {
     fn from(value: ParseIntError) -> Self {
         Self::decoding(value)
@@ -321,7 +315,7 @@ impl JsonDecodable for bool {
     }
 }
 
-pub(crate) fn consume_raw_value(
+pub fn consume_raw_value(
     r: &mut JsonStreamReader<&mut dyn std::io::Read>,
 ) -> EncodingResult<Vec<u8>> {
     let mut res = Vec::new();

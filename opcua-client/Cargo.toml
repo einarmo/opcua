@@ -12,6 +12,10 @@ readme = "../README.md"
 documentation = "https://docs.rs/opcua/"
 edition = "2021"
 
+[features]
+json = ["opcua-types/json"]
+xml = ["opcua-xml", "opcua-types/xml"]
+
 [lib]
 name = "opcua_client"
 
@@ -32,3 +36,4 @@ serde = { workspace = true }
 opcua-types = { path = "../opcua-types" }
 opcua-core = { path = "../opcua-core" }
 opcua-crypto = { path = "../opcua-crypto" }
+opcua-xml = { path = "../opcua-xml", optional = true }

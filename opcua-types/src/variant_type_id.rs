@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
+use std::fmt::Display;
+
 use crate::{DataTypeId, NodeId, NodeIdError, StatusCode};
 
 /// The variant type id is the type of the variant but without its payload.
@@ -52,6 +54,38 @@ pub enum VariantScalarTypeId {
     DataValue = 23,
     Variant = 24,
     DiagnosticInfo = 25,
+}
+
+impl Display for VariantScalarTypeId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            VariantScalarTypeId::Boolean => write!(f, "Boolean"),
+            VariantScalarTypeId::SByte => write!(f, "SByte"),
+            VariantScalarTypeId::Byte => write!(f, "Byte"),
+            VariantScalarTypeId::Int16 => write!(f, "Int16"),
+            VariantScalarTypeId::UInt16 => write!(f, "UInt16"),
+            VariantScalarTypeId::Int32 => write!(f, "Int32"),
+            VariantScalarTypeId::UInt32 => write!(f, "UInt32"),
+            VariantScalarTypeId::Int64 => write!(f, "Int64"),
+            VariantScalarTypeId::UInt64 => write!(f, "UInt64"),
+            VariantScalarTypeId::Float => write!(f, "Float"),
+            VariantScalarTypeId::Double => write!(f, "Double"),
+            VariantScalarTypeId::String => write!(f, "String"),
+            VariantScalarTypeId::DateTime => write!(f, "DateTime"),
+            VariantScalarTypeId::Guid => write!(f, "Guid"),
+            VariantScalarTypeId::ByteString => write!(f, "ByteString"),
+            VariantScalarTypeId::XmlElement => write!(f, "XmlElement"),
+            VariantScalarTypeId::NodeId => write!(f, "NodeId"),
+            VariantScalarTypeId::ExpandedNodeId => write!(f, "ExpandedNodeId"),
+            VariantScalarTypeId::StatusCode => write!(f, "StatusCode"),
+            VariantScalarTypeId::QualifiedName => write!(f, "QualifiedName"),
+            VariantScalarTypeId::LocalizedText => write!(f, "LocalizedText"),
+            VariantScalarTypeId::ExtensionObject => write!(f, "ExtensionObject"),
+            VariantScalarTypeId::DataValue => write!(f, "DataValue"),
+            VariantScalarTypeId::Variant => write!(f, "Variant"),
+            VariantScalarTypeId::DiagnosticInfo => write!(f, "DiagnosticInfo"),
+        }
+    }
 }
 
 impl TryFrom<u32> for VariantScalarTypeId {

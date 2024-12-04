@@ -210,6 +210,12 @@ impl TypeLoaderCollection {
         }
     }
 
+    pub fn new_empty() -> Self {
+        Self {
+            loaders: Vec::new(),
+        }
+    }
+
     pub fn add_type_loader(&mut self, loader: impl TypeLoader + 'static) {
         self.add(Arc::new(loader));
     }
