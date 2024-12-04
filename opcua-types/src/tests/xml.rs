@@ -14,14 +14,14 @@ fn namespaces() -> NamespaceMap {
     NamespaceMap::new()
 }
 
-fn mapper<'a>(ns: &'a mut NamespaceMap) -> NodeSetNamespaceMapper<'a> {
+fn mapper(ns: &mut NamespaceMap) -> NodeSetNamespaceMapper<'_> {
     NodeSetNamespaceMapper::new(ns)
 }
 
 fn context<'a>(mapper: &'a NodeSetNamespaceMapper<'a>) -> XmlContext<'a> {
     XmlContext {
         aliases: HashMap::new(),
-        namespaces: &mapper,
+        namespaces: mapper,
         loaders: vec![Arc::new(GeneratedTypeLoader)],
     }
 }
@@ -45,7 +45,7 @@ fn from_xml_str_ctx<T: FromXml>(data: &str, ctx: &XmlContext<'_>) -> Result<T, F
     let Some(element) = element else {
         return Err(FromXmlError::MissingContent("root"));
     };
-    T::from_xml(&element, &ctx)
+    T::from_xml(&element, ctx)
 }
 
 #[test]
@@ -100,8 +100,8 @@ fn from_xml_f64() {
 
 #[test]
 fn from_xml_bool() {
-    assert_eq!(true, from_xml_str::<bool>("<Data>true</Data>").unwrap());
-    assert_eq!(false, from_xml_str::<bool>("<Data>false</Data>").unwrap());
+    assert!(from_xml_str::<bool>("<Data>true</Data>").unwrap());
+    assert!(!from_xml_str::<bool>("<Data>false</Data>").unwrap());
 }
 
 #[test]

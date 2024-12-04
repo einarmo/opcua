@@ -106,22 +106,6 @@ impl VariableBuilder {
         self
     }
 
-    /// Sets a value getter function for the variable. Whenever the value of a variable
-    /// needs to be fetched (e.g. from a monitored item subscription), this trait will be called
-    /// to get the value.
-    /* pub fn value_getter(mut self, getter: Arc<Mutex<dyn AttributeGetter + Send>>) -> Self {
-        self.node.set_value_getter(getter);
-        self
-    } */
-
-    /// Sets a value setter function for the variable. Whenever the value of a variable is set via
-    /// a service, this trait will be called to set the value. It is up to the implementation
-    /// to decide what to do if that happens.
-    /* pub fn value_setter(mut self, setter: Arc<Mutex<dyn AttributeSetter + Send>>) -> Self {
-        self.node.set_value_setter(setter);
-        self
-    } */
-
     /// Add a reference to the variable indicating it has a type of another node.
     pub fn has_type_definition<T>(self, type_id: T) -> Self
     where
@@ -619,16 +603,6 @@ impl Variable {
     pub fn set_data_value(&mut self, value: DataValue) {
         self.value = value;
     }
-
-    /// Sets a getter function that will be called to get the value of this variable.
-    // pub fn set_value_getter(&mut self, value_getter: Arc<Mutex<dyn AttributeGetter + Send>>) {
-    //     self.value_getter = Some(value_getter);
-    // }
-
-    /// Sets a setter function that will be called to set the value of this variable.
-    // pub fn set_value_setter(&mut self, value_setter: Arc<Mutex<dyn AttributeSetter + Send>>) {
-    //     self.value_setter = Some(value_setter);
-    // }
 
     /// Gets the minimum sampling interval, if the attribute was set
     pub fn minimum_sampling_interval(&self) -> Option<f64> {

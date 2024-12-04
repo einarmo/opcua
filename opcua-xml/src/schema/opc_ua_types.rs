@@ -236,7 +236,7 @@ impl XmlElement {
     pub fn children_with_name<'a>(
         &'a self,
         name: &'a str,
-    ) -> impl Iterator<Item = &XmlElement> + 'a {
+    ) -> impl Iterator<Item = &'a XmlElement> + 'a {
         let inner = self.children.get(name);
         inner.into_iter().flat_map(|m| m.iter())
     }

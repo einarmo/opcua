@@ -66,7 +66,7 @@ impl<'a, T> SessionBuilder<'a, T, ()> {
     }
 }
 
-impl<'a, T, R> SessionBuilder<'a, T, R> {
+impl<T, R> SessionBuilder<'_, T, R> {
     /// Set the user identity token to use.
     pub fn user_identity_token(mut self, identity_token: IdentityToken) -> Self {
         self.inner.user_identity_token = identity_token;
@@ -262,7 +262,7 @@ impl<'a, R> SessionBuilder<'a, (), R> {
     }
 }
 
-impl<'a, R> SessionBuilder<'a, EndpointDescription, R> {
+impl<R> SessionBuilder<'_, EndpointDescription, R> {
     /// Build the session and session event loop. Note that you will need to
     /// start polling the event loop before a connection is actually established.
     pub fn build(

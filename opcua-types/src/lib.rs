@@ -197,6 +197,7 @@ pub mod array;
 pub mod attribute;
 pub mod basic_types;
 pub mod byte_string;
+pub mod custom;
 pub mod data_change;
 pub mod data_type_definition;
 pub mod data_types;

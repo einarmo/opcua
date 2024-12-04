@@ -272,6 +272,7 @@ fn string_value() {
 }
 
 #[test]
+#[allow(clippy::comparison_to_empty)]
 fn string_eq() {
     let s = UAString::null();
     assert!(!s.eq(""));

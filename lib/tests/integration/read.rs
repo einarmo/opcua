@@ -1135,7 +1135,7 @@ async fn read_retry() {
         .unwrap();
 
     assert_eq!(
-        r.results.unwrap_or_default().get(0).unwrap().value,
+        r.results.unwrap_or_default().first().unwrap().value,
         Some(Variant::Int32(1))
     );
 }

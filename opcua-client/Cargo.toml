@@ -32,3 +32,4 @@ serde = { workspace = true }
 opcua-types = { path = "../opcua-types" }
 opcua-core = { path = "../opcua-core" }
 opcua-crypto = { path = "../opcua-crypto" }
+opcua-xml = { path = "../opcua-xml", optional = true }

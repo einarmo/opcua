@@ -91,9 +91,7 @@ impl NodeSet2Import {
         dependent_namespaces: Vec<String>,
     ) -> Result<Self, LoadXmlError> {
         let nodeset = load_nodeset2_file(nodeset)?;
-        let nodeset = nodeset
-            .node_set
-            .ok_or_else(|| LoadXmlError::MissingNodeSet)?;
+        let nodeset = nodeset.node_set.ok_or(LoadXmlError::MissingNodeSet)?;
 
         Ok(Self::new_nodeset(
             preferred_locale,
@@ -555,7 +553,7 @@ mod tests {
 
     use super::NodeSet2Import;
 
-    const TEST_NODESET: &'static str = r#"
+    const TEST_NODESET: &str = r#"
 <UANodeSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" LastModified="2023-12-15T00:00:00Z" xmlns="http://opcfoundation.org/UA/2011/03/UANodeSet.xsd">
   <NamespaceUris>
     <Uri>http://test.com</Uri>

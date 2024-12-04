@@ -576,15 +576,9 @@ try_from_variant_to_array_impl!(u64, UInt64);
 try_from_variant_to_array_impl!(f32, Float);
 try_from_variant_to_array_impl!(f64, Double);
 
-impl BinaryEncodable for Variant {
-    fn byte_len(&self, ctx: &crate::Context<'_>) -> usize {
-        let mut size: usize = 0;
-
-        // Encoding mask
-        size += 1;
-
-        // Value itself
-        size += match self {
+impl Variant {
+    pub fn value_byte_len(&self, ctx: &crate::Context<'_>) -> usize {
+        match self {
             Variant::Empty => 0,
             Variant::Boolean(value) => value.byte_len(ctx),
             Variant::SByte(value) => value.byte_len(ctx),
@@ -626,48 +620,41 @@ impl BinaryEncodable for Variant {
                 }
                 size
             }
-        };
-        size
+        }
     }
 
-    fn encode<S: Write + ?Sized>(
+    pub fn encode_value<S: Write + ?Sized>(
         &self,
         stream: &mut S,
         ctx: &crate::Context<'_>,
     ) -> EncodingResult<usize> {
-        let mut size: usize = 0;
-
-        // Encoding mask will include the array bits if applicable for the type
-        let encoding_mask = self.encoding_mask();
-        size += write_u8(stream, encoding_mask)?;
-
-        size += match self {
-            Variant::Empty => 0,
-            Variant::Boolean(value) => value.encode(stream, ctx)?,
-            Variant::SByte(value) => value.encode(stream, ctx)?,
-            Variant::Byte(value) => value.encode(stream, ctx)?,
-            Variant::Int16(value) => value.encode(stream, ctx)?,
-            Variant::UInt16(value) => value.encode(stream, ctx)?,
-            Variant::Int32(value) => value.encode(stream, ctx)?,
-            Variant::UInt32(value) => value.encode(stream, ctx)?,
-            Variant::Int64(value) => value.encode(stream, ctx)?,
-            Variant::UInt64(value) => value.encode(stream, ctx)?,
-            Variant::Float(value) => value.encode(stream, ctx)?,
-            Variant::Double(value) => value.encode(stream, ctx)?,
-            Variant::String(value) => value.encode(stream, ctx)?,
-            Variant::DateTime(value) => value.encode(stream, ctx)?,
-            Variant::Guid(value) => value.encode(stream, ctx)?,
-            Variant::ByteString(value) => value.encode(stream, ctx)?,
-            Variant::XmlElement(value) => value.encode(stream, ctx)?,
-            Variant::NodeId(value) => value.encode(stream, ctx)?,
-            Variant::ExpandedNodeId(value) => value.encode(stream, ctx)?,
-            Variant::StatusCode(value) => value.encode(stream, ctx)?,
-            Variant::QualifiedName(value) => value.encode(stream, ctx)?,
-            Variant::LocalizedText(value) => value.encode(stream, ctx)?,
-            Variant::ExtensionObject(value) => value.encode(stream, ctx)?,
-            Variant::DataValue(value) => value.encode(stream, ctx)?,
-            Variant::Variant(value) => value.encode(stream, ctx)?,
-            Variant::DiagnosticInfo(value) => value.encode(stream, ctx)?,
+        match self {
+            Variant::Empty => Ok(0),
+            Variant::Boolean(value) => value.encode(stream, ctx),
+            Variant::SByte(value) => value.encode(stream, ctx),
+            Variant::Byte(value) => value.encode(stream, ctx),
+            Variant::Int16(value) => value.encode(stream, ctx),
+            Variant::UInt16(value) => value.encode(stream, ctx),
+            Variant::Int32(value) => value.encode(stream, ctx),
+            Variant::UInt32(value) => value.encode(stream, ctx),
+            Variant::Int64(value) => value.encode(stream, ctx),
+            Variant::UInt64(value) => value.encode(stream, ctx),
+            Variant::Float(value) => value.encode(stream, ctx),
+            Variant::Double(value) => value.encode(stream, ctx),
+            Variant::String(value) => value.encode(stream, ctx),
+            Variant::DateTime(value) => value.encode(stream, ctx),
+            Variant::Guid(value) => value.encode(stream, ctx),
+            Variant::ByteString(value) => value.encode(stream, ctx),
+            Variant::XmlElement(value) => value.encode(stream, ctx),
+            Variant::NodeId(value) => value.encode(stream, ctx),
+            Variant::ExpandedNodeId(value) => value.encode(stream, ctx),
+            Variant::StatusCode(value) => value.encode(stream, ctx),
+            Variant::QualifiedName(value) => value.encode(stream, ctx),
+            Variant::LocalizedText(value) => value.encode(stream, ctx),
+            Variant::ExtensionObject(value) => value.encode(stream, ctx),
+            Variant::DataValue(value) => value.encode(stream, ctx),
+            Variant::Variant(value) => value.encode(stream, ctx),
+            Variant::DiagnosticInfo(value) => value.encode(stream, ctx),
             Variant::Array(array) => {
                 let mut size = write_i32(stream, array.values.len() as i32)?;
                 for value in array.values.iter() {
@@ -684,9 +671,37 @@ impl BinaryEncodable for Variant {
                         size += write_i32(stream, *dimension as i32)?;
                     }
                 }
-                size
+                Ok(size)
             }
-        };
+        }
+    }
+}
+
+impl BinaryEncodable for Variant {
+    fn byte_len(&self, ctx: &crate::Context<'_>) -> usize {
+        let mut size: usize = 0;
+
+        // Encoding mask
+        size += 1;
+
+        // Value itself
+        size += self.value_byte_len(ctx);
+
+        size
+    }
+
+    fn encode<S: Write + ?Sized>(
+        &self,
+        stream: &mut S,
+        ctx: &crate::Context<'_>,
+    ) -> EncodingResult<usize> {
+        let mut size: usize = 0;
+
+        // Encoding mask will include the array bits if applicable for the type
+        let encoding_mask = self.encoding_mask();
+        size += write_u8(stream, encoding_mask)?;
+
+        size += self.encode_value(stream, ctx)?;
         Ok(size)
     }
 }

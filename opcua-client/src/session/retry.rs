@@ -73,7 +73,7 @@ impl<'a> DefaultRetryPolicy<'a> {
     }
 }
 
-impl<'a> RequestRetryPolicy for DefaultRetryPolicy<'a> {
+impl RequestRetryPolicy for DefaultRetryPolicy<'_> {
     fn get_next_delay(&mut self, status: StatusCode) -> Option<Duration> {
         // These status codes should generally be safe to retry, by default.
         // If users disagree they can simply implement `RequestRetryPolicy` themselves.

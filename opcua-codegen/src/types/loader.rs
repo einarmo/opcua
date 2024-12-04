@@ -77,7 +77,7 @@ impl BsdTypeLoader {
             let field_name = to_snake_case(&field.name);
             let type_name = field
                 .type_name
-                .ok_or_else(|| CodeGenError::MissingRequiredValue("TypeName"))?;
+                .ok_or(CodeGenError::MissingRequiredValue("TypeName"))?;
             let typ = strip_first_segment(&type_name, ":")?;
             let typ = self.massage_type_name(typ);
 
