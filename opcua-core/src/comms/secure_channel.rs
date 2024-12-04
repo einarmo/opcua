@@ -1281,15 +1281,13 @@ impl SecureChannel {
             }
             MessageSecurityMode::Sign => {
                 self.expect_supported_security_policy();
+                dst.copy_from_slice(src);
                 // Copy everything
-                let all = ..src.len();
-                trace!("copying from slice {:?}", all);
-                dst[all].copy_from_slice(&src[all]);
-                // Verify signature
+                let signature_range = signed_range.end..src.len();
                 trace!(
-                    "Verifying range from {:?} to signature {}..",
+                    "signed range = {:?}, signature range = {:?}",
                     signed_range,
-                    signed_range.end
+                    signature_range
                 );
                 let verification_key = self.verification_key(token_id).ok_or_else(|| {
                     Error::new(
@@ -1300,7 +1298,7 @@ impl SecureChannel {
                 self.security_policy.symmetric_verify_signature(
                     verification_key,
                     &dst[signed_range.clone()],
-                    &dst[signed_range.end..],
+                    &dst[signature_range],
                 )?;
 
                 Ok(signed_range.end)
