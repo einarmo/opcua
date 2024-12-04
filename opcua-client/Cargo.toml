@@ -12,10 +12,6 @@ readme = "../README.md"
 documentation = "https://docs.rs/opcua/"
 edition = "2021"
 
-[features]
-json = ["opcua-types/json"]
-xml = ["opcua-xml", "opcua-types/xml"]
-
 [lib]
 name = "opcua_client"
 

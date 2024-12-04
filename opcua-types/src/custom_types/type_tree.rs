@@ -1,6 +1,6 @@
 use std::{collections::HashMap, sync::Arc};
 
-use opcua_types::{
+use crate::{
     DataTypeDefinition, EnumField, Error, NodeId, StatusCode, StructureField, StructureType,
     Variant, VariantScalarTypeId, VariantTypeId,
 };
@@ -163,51 +163,45 @@ impl ParentIds {
     pub fn get_builtin_type(&self, id: &NodeId) -> Option<VariantScalarTypeId> {
         if let Some(t) = id.as_data_type_id().ok() {
             match t {
-                opcua_types::DataTypeId::Boolean => return Some(VariantScalarTypeId::Boolean),
-                opcua_types::DataTypeId::SByte => return Some(VariantScalarTypeId::SByte),
-                opcua_types::DataTypeId::Byte => return Some(VariantScalarTypeId::Byte),
-                opcua_types::DataTypeId::Int16 => return Some(VariantScalarTypeId::Int16),
-                opcua_types::DataTypeId::UInt16 => return Some(VariantScalarTypeId::UInt16),
-                opcua_types::DataTypeId::Int32 => return Some(VariantScalarTypeId::Int32),
-                opcua_types::DataTypeId::UInt32 => return Some(VariantScalarTypeId::UInt32),
-                opcua_types::DataTypeId::Int64 => return Some(VariantScalarTypeId::Int64),
-                opcua_types::DataTypeId::UInt64 => return Some(VariantScalarTypeId::UInt64),
-                opcua_types::DataTypeId::Float => return Some(VariantScalarTypeId::Float),
-                opcua_types::DataTypeId::Double => return Some(VariantScalarTypeId::Double),
-                opcua_types::DataTypeId::String => return Some(VariantScalarTypeId::String),
-                opcua_types::DataTypeId::DateTime => return Some(VariantScalarTypeId::DateTime),
-                opcua_types::DataTypeId::Guid => return Some(VariantScalarTypeId::Guid),
-                opcua_types::DataTypeId::ByteString => {
-                    return Some(VariantScalarTypeId::ByteString)
-                }
-                opcua_types::DataTypeId::XmlElement => {
-                    return Some(VariantScalarTypeId::XmlElement)
-                }
-                opcua_types::DataTypeId::NodeId => return Some(VariantScalarTypeId::NodeId),
-                opcua_types::DataTypeId::ExpandedNodeId => {
+                crate::DataTypeId::Boolean => return Some(VariantScalarTypeId::Boolean),
+                crate::DataTypeId::SByte => return Some(VariantScalarTypeId::SByte),
+                crate::DataTypeId::Byte => return Some(VariantScalarTypeId::Byte),
+                crate::DataTypeId::Int16 => return Some(VariantScalarTypeId::Int16),
+                crate::DataTypeId::UInt16 => return Some(VariantScalarTypeId::UInt16),
+                crate::DataTypeId::Int32 => return Some(VariantScalarTypeId::Int32),
+                crate::DataTypeId::UInt32 => return Some(VariantScalarTypeId::UInt32),
+                crate::DataTypeId::Int64 => return Some(VariantScalarTypeId::Int64),
+                crate::DataTypeId::UInt64 => return Some(VariantScalarTypeId::UInt64),
+                crate::DataTypeId::Float => return Some(VariantScalarTypeId::Float),
+                crate::DataTypeId::Double => return Some(VariantScalarTypeId::Double),
+                crate::DataTypeId::String => return Some(VariantScalarTypeId::String),
+                crate::DataTypeId::DateTime => return Some(VariantScalarTypeId::DateTime),
+                crate::DataTypeId::Guid => return Some(VariantScalarTypeId::Guid),
+                crate::DataTypeId::ByteString => return Some(VariantScalarTypeId::ByteString),
+                crate::DataTypeId::XmlElement => return Some(VariantScalarTypeId::XmlElement),
+                crate::DataTypeId::NodeId => return Some(VariantScalarTypeId::NodeId),
+                crate::DataTypeId::ExpandedNodeId => {
                     return Some(VariantScalarTypeId::ExpandedNodeId)
                 }
-                opcua_types::DataTypeId::StatusCode => {
-                    return Some(VariantScalarTypeId::StatusCode)
-                }
-                opcua_types::DataTypeId::QualifiedName => {
+                crate::DataTypeId::StatusCode => return Some(VariantScalarTypeId::StatusCode),
+                crate::DataTypeId::QualifiedName => {
                     return Some(VariantScalarTypeId::QualifiedName)
                 }
-                opcua_types::DataTypeId::LocalizedText => {
+                crate::DataTypeId::LocalizedText => {
                     return Some(VariantScalarTypeId::LocalizedText)
                 }
                 // ExtensionObject in this context just means "Structure", which is what
                 // the base type in the type hierarchy is.
-                opcua_types::DataTypeId::Structure | opcua_types::DataTypeId::Decimal => {
+                crate::DataTypeId::Structure | crate::DataTypeId::Decimal => {
                     return Some(VariantScalarTypeId::ExtensionObject)
                 }
-                opcua_types::DataTypeId::DataValue => return Some(VariantScalarTypeId::DataValue),
-                opcua_types::DataTypeId::DiagnosticInfo => {
+                crate::DataTypeId::DataValue => return Some(VariantScalarTypeId::DataValue),
+                crate::DataTypeId::DiagnosticInfo => {
                     return Some(VariantScalarTypeId::DiagnosticInfo)
                 }
-                opcua_types::DataTypeId::Enumeration => return Some(VariantScalarTypeId::Int32),
+                crate::DataTypeId::Enumeration => return Some(VariantScalarTypeId::Int32),
                 // Not sure if this is actually correct, it's the only thing that really makes sense.
-                opcua_types::DataTypeId::BaseDataType => return Some(VariantScalarTypeId::Variant),
+                crate::DataTypeId::BaseDataType => return Some(VariantScalarTypeId::Variant),
                 _ => (),
             }
         }

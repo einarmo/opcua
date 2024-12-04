@@ -1,6 +1,6 @@
 use std::{io::Write, sync::Arc};
 
-use opcua_types::{
+use crate::{
     write_i32, write_u32, Array, BinaryDecodable, BinaryEncodable, ByteString, Context, DataValue,
     DateTime, DiagnosticInfo, EncodingResult, Error, ExpandedMessageInfo, ExpandedNodeId,
     ExtensionObject, Guid, LocalizedText, NodeId, QualifiedName, StatusCode, StructureType,
@@ -224,7 +224,7 @@ impl DynamicStructure {
 }
 
 impl BinaryEncodable for DynamicStructure {
-    fn byte_len(&self, ctx: &opcua_types::Context<'_>) -> usize {
+    fn byte_len(&self, ctx: &crate::Context<'_>) -> usize {
         // Byte length is the sum of the individual structure fields
         let mut size = 0;
         let s = &self.type_def;
@@ -262,8 +262,8 @@ impl BinaryEncodable for DynamicStructure {
     fn encode<S: std::io::Write + ?Sized>(
         &self,
         stream: &mut S,
-        ctx: &opcua_types::Context<'_>,
-    ) -> opcua_types::EncodingResult<usize> {
+        ctx: &crate::Context<'_>,
+    ) -> crate::EncodingResult<usize> {
         let s = &self.type_def;
         let mut size = 0;
         match s.structure_type {
@@ -321,70 +321,70 @@ impl DynamicTypeLoader {
         ctx: &Context<'_>,
     ) -> EncodingResult<Variant> {
         match field.scalar_type {
-            opcua_types::VariantScalarTypeId::Boolean => Ok(Variant::from(
+            crate::VariantScalarTypeId::Boolean => Ok(Variant::from(
                 <bool as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::SByte => {
+            crate::VariantScalarTypeId::SByte => {
                 Ok(Variant::from(<i8 as BinaryDecodable>::decode(stream, ctx)?))
             }
-            opcua_types::VariantScalarTypeId::Byte => {
+            crate::VariantScalarTypeId::Byte => {
                 Ok(Variant::from(<u8 as BinaryDecodable>::decode(stream, ctx)?))
             }
-            opcua_types::VariantScalarTypeId::Int16 => Ok(Variant::from(
+            crate::VariantScalarTypeId::Int16 => Ok(Variant::from(
                 <i16 as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::UInt16 => Ok(Variant::from(
+            crate::VariantScalarTypeId::UInt16 => Ok(Variant::from(
                 <u16 as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::Int32 => Ok(Variant::from(
+            crate::VariantScalarTypeId::Int32 => Ok(Variant::from(
                 <i32 as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::UInt32 => Ok(Variant::from(
+            crate::VariantScalarTypeId::UInt32 => Ok(Variant::from(
                 <u32 as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::Int64 => Ok(Variant::from(
+            crate::VariantScalarTypeId::Int64 => Ok(Variant::from(
                 <i64 as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::UInt64 => Ok(Variant::from(
+            crate::VariantScalarTypeId::UInt64 => Ok(Variant::from(
                 <u64 as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::Float => Ok(Variant::from(
+            crate::VariantScalarTypeId::Float => Ok(Variant::from(
                 <f32 as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::Double => Ok(Variant::from(
+            crate::VariantScalarTypeId::Double => Ok(Variant::from(
                 <f64 as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::String => Ok(Variant::from(
+            crate::VariantScalarTypeId::String => Ok(Variant::from(
                 <UAString as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::DateTime => Ok(Variant::from(
+            crate::VariantScalarTypeId::DateTime => Ok(Variant::from(
                 <DateTime as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::Guid => Ok(Variant::from(
+            crate::VariantScalarTypeId::Guid => Ok(Variant::from(
                 <Guid as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::ByteString => Ok(Variant::from(
+            crate::VariantScalarTypeId::ByteString => Ok(Variant::from(
                 <ByteString as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::XmlElement => Ok(Variant::from(
+            crate::VariantScalarTypeId::XmlElement => Ok(Variant::from(
                 <XmlElement as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::NodeId => Ok(Variant::from(
+            crate::VariantScalarTypeId::NodeId => Ok(Variant::from(
                 <NodeId as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::ExpandedNodeId => Ok(Variant::from(
+            crate::VariantScalarTypeId::ExpandedNodeId => Ok(Variant::from(
                 <ExpandedNodeId as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::StatusCode => Ok(Variant::from(
+            crate::VariantScalarTypeId::StatusCode => Ok(Variant::from(
                 <StatusCode as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::QualifiedName => Ok(Variant::from(
+            crate::VariantScalarTypeId::QualifiedName => Ok(Variant::from(
                 <QualifiedName as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::LocalizedText => Ok(Variant::from(
+            crate::VariantScalarTypeId::LocalizedText => Ok(Variant::from(
                 <LocalizedText as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::ExtensionObject => {
+            crate::VariantScalarTypeId::ExtensionObject => {
                 let Some(field_ty) = self.type_tree.get_struct_type(&field.type_id) else {
                     return Err(Error::decoding(format!(
                         "Dynamic type field missing from type tree: {}",
@@ -407,13 +407,13 @@ impl DynamicTypeLoader {
                     )?))
                 }
             }
-            opcua_types::VariantScalarTypeId::DataValue => Ok(Variant::from(
+            crate::VariantScalarTypeId::DataValue => Ok(Variant::from(
                 <DataValue as BinaryDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::Variant => Ok(Variant::Variant(Box::new(
+            crate::VariantScalarTypeId::Variant => Ok(Variant::Variant(Box::new(
                 <Variant as BinaryDecodable>::decode(stream, ctx)?,
             ))),
-            opcua_types::VariantScalarTypeId::DiagnosticInfo => Ok(Variant::from(
+            crate::VariantScalarTypeId::DiagnosticInfo => Ok(Variant::from(
                 <DiagnosticInfo as BinaryDecodable>::decode(stream, ctx)?,
             )),
         }
@@ -482,7 +482,7 @@ impl DynamicTypeLoader {
         stream: &mut dyn std::io::Read,
         ctx: &Context<'_>,
         t: &Arc<StructTypeInfo>,
-    ) -> opcua_types::EncodingResult<Box<dyn opcua_types::DynEncodable>> {
+    ) -> crate::EncodingResult<Box<dyn crate::DynEncodable>> {
         match t.structure_type {
             StructureType::Structure => {
                 let mut values = Vec::with_capacity(t.fields.len());
@@ -539,7 +539,7 @@ impl TypeLoader for DynamicTypeLoader {
         node_id: &NodeId,
         stream: &mut dyn std::io::Read,
         ctx: &Context<'_>,
-    ) -> Option<opcua_types::EncodingResult<Box<dyn opcua_types::DynEncodable>>> {
+    ) -> Option<crate::EncodingResult<Box<dyn crate::DynEncodable>>> {
         let ty_node_id = if let Some(mapped) = self.type_tree.encoding_to_data_type().get(node_id) {
             mapped
         } else {
@@ -552,17 +552,17 @@ impl TypeLoader for DynamicTypeLoader {
         Some(self.decode_type_inner(stream, ctx, t))
     }
 
-    fn priority(&self) -> opcua_types::TypeLoaderPriority {
-        opcua_types::TypeLoaderPriority::Dynamic(50)
+    fn priority(&self) -> crate::TypeLoaderPriority {
+        crate::TypeLoaderPriority::Dynamic(50)
     }
 
     #[cfg(feature = "xml")]
     fn load_from_xml(
         &self,
-        _node_id: &opcua_types::NodeId,
+        _node_id: &crate::NodeId,
         _body: &opcua_xml::XmlElement,
-        _ctx: &opcua_types::xml::XmlContext<'_>,
-    ) -> Option<Result<Box<dyn opcua_types::DynEncodable>, opcua_types::xml::FromXmlError>> {
+        _ctx: &crate::xml::XmlContext<'_>,
+    ) -> Option<Result<Box<dyn crate::DynEncodable>, crate::xml::FromXmlError>> {
         // TODO: Unimplemented.
         // This is a lot less useful than the others, since this method is currently only
         // used server-side, and server software will usually use codegen instead.
@@ -572,10 +572,10 @@ impl TypeLoader for DynamicTypeLoader {
     #[cfg(feature = "json")]
     fn load_from_json(
         &self,
-        node_id: &opcua_types::NodeId,
-        stream: &mut opcua_types::json::JsonStreamReader<&mut dyn std::io::Read>,
+        node_id: &crate::NodeId,
+        stream: &mut crate::json::JsonStreamReader<&mut dyn std::io::Read>,
         ctx: &Context<'_>,
-    ) -> Option<opcua_types::EncodingResult<Box<dyn opcua_types::DynEncodable>>> {
+    ) -> Option<crate::EncodingResult<Box<dyn crate::DynEncodable>>> {
         let ty_node_id = if let Some(mapped) = self.type_tree.encoding_to_data_type().get(node_id) {
             mapped
         } else {
@@ -596,7 +596,7 @@ pub(crate) mod tests {
         sync::Arc,
     };
 
-    use opcua_types::{
+    use crate::{
         Array, BinaryDecodable, BinaryEncodable, ContextOwned, DataTypeDefinition, DataTypeId,
         DecodingOptions, EUInformation, ExtensionObject, LocalizedText, NamespaceMap, NodeId,
         ObjectId, StructureDefinition, StructureField, TypeLoaderCollection, Variant,
@@ -633,7 +633,7 @@ pub(crate) mod tests {
                 DataTypeDefinition::Structure(StructureDefinition {
                     default_encoding_id: NodeId::null(),
                     base_data_type: DataTypeId::Structure.into(),
-                    structure_type: opcua_types::StructureType::Structure,
+                    structure_type: crate::StructureType::Structure,
                     fields: Some(vec![
                         StructureField {
                             name: "NamespaceUri".into(),
@@ -741,7 +741,7 @@ pub(crate) mod tests {
                 DataTypeDefinition::Structure(StructureDefinition {
                     default_encoding_id: NodeId::null(),
                     base_data_type: DataTypeId::Structure.into(),
-                    structure_type: opcua_types::StructureType::Structure,
+                    structure_type: crate::StructureType::Structure,
                     fields: Some(vec![
                         StructureField {
                             name: "Info".into(),

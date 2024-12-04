@@ -4,7 +4,7 @@ use std::{
     sync::Arc,
 };
 
-use opcua_types::{
+use crate::{
     json::{
         consume_raw_value, JsonDecodable, JsonEncodable, JsonReader, JsonStreamReader,
         JsonStreamWriter, JsonWriter,
@@ -44,7 +44,7 @@ impl DynamicStructure {
         } else {
             stream.begin_array()?;
             for _ in 0..remaining_dims[0] {
-                self.json_encode_array(stream, field, ctx, items, remaining_dims, index)?;
+                self.json_encode_array(stream, field, ctx, items, &remaining_dims[1..], index)?;
             }
             stream.end_array()?;
         }
@@ -111,74 +111,74 @@ impl DynamicTypeLoader {
     fn json_decode_field_value(
         &self,
         field: &ParsedStructureField,
-        stream: &mut opcua_types::json::JsonStreamReader<&mut dyn std::io::Read>,
-        ctx: &opcua_types::Context<'_>,
+        stream: &mut crate::json::JsonStreamReader<&mut dyn std::io::Read>,
+        ctx: &crate::Context<'_>,
     ) -> EncodingResult<Variant> {
         match field.scalar_type {
-            opcua_types::VariantScalarTypeId::Boolean => {
+            crate::VariantScalarTypeId::Boolean => {
                 Ok(Variant::from(<bool as JsonDecodable>::decode(stream, ctx)?))
             }
-            opcua_types::VariantScalarTypeId::SByte => {
+            crate::VariantScalarTypeId::SByte => {
                 Ok(Variant::from(<i8 as JsonDecodable>::decode(stream, ctx)?))
             }
-            opcua_types::VariantScalarTypeId::Byte => {
+            crate::VariantScalarTypeId::Byte => {
                 Ok(Variant::from(<u8 as JsonDecodable>::decode(stream, ctx)?))
             }
-            opcua_types::VariantScalarTypeId::Int16 => {
+            crate::VariantScalarTypeId::Int16 => {
                 Ok(Variant::from(<i16 as JsonDecodable>::decode(stream, ctx)?))
             }
-            opcua_types::VariantScalarTypeId::UInt16 => {
+            crate::VariantScalarTypeId::UInt16 => {
                 Ok(Variant::from(<u16 as JsonDecodable>::decode(stream, ctx)?))
             }
-            opcua_types::VariantScalarTypeId::Int32 => {
+            crate::VariantScalarTypeId::Int32 => {
                 Ok(Variant::from(<i32 as JsonDecodable>::decode(stream, ctx)?))
             }
-            opcua_types::VariantScalarTypeId::UInt32 => {
+            crate::VariantScalarTypeId::UInt32 => {
                 Ok(Variant::from(<u32 as JsonDecodable>::decode(stream, ctx)?))
             }
-            opcua_types::VariantScalarTypeId::Int64 => {
+            crate::VariantScalarTypeId::Int64 => {
                 Ok(Variant::from(<i64 as JsonDecodable>::decode(stream, ctx)?))
             }
-            opcua_types::VariantScalarTypeId::UInt64 => {
+            crate::VariantScalarTypeId::UInt64 => {
                 Ok(Variant::from(<u64 as JsonDecodable>::decode(stream, ctx)?))
             }
-            opcua_types::VariantScalarTypeId::Float => {
+            crate::VariantScalarTypeId::Float => {
                 Ok(Variant::from(<f32 as JsonDecodable>::decode(stream, ctx)?))
             }
-            opcua_types::VariantScalarTypeId::Double => {
+            crate::VariantScalarTypeId::Double => {
                 Ok(Variant::from(<f64 as JsonDecodable>::decode(stream, ctx)?))
             }
-            opcua_types::VariantScalarTypeId::String => Ok(Variant::from(
+            crate::VariantScalarTypeId::String => Ok(Variant::from(
                 <UAString as JsonDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::DateTime => Ok(Variant::from(
+            crate::VariantScalarTypeId::DateTime => Ok(Variant::from(
                 <DateTime as JsonDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::Guid => {
+            crate::VariantScalarTypeId::Guid => {
                 Ok(Variant::from(<Guid as JsonDecodable>::decode(stream, ctx)?))
             }
-            opcua_types::VariantScalarTypeId::ByteString => Ok(Variant::from(
+            crate::VariantScalarTypeId::ByteString => Ok(Variant::from(
                 <ByteString as JsonDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::XmlElement => Ok(Variant::from(
+            crate::VariantScalarTypeId::XmlElement => Ok(Variant::from(
                 <XmlElement as JsonDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::NodeId => Ok(Variant::from(
+            crate::VariantScalarTypeId::NodeId => Ok(Variant::from(
                 <NodeId as JsonDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::ExpandedNodeId => Ok(Variant::from(
+            crate::VariantScalarTypeId::ExpandedNodeId => Ok(Variant::from(
                 <ExpandedNodeId as JsonDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::StatusCode => Ok(Variant::from(
+            crate::VariantScalarTypeId::StatusCode => Ok(Variant::from(
                 <StatusCode as JsonDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::QualifiedName => Ok(Variant::from(
+            crate::VariantScalarTypeId::QualifiedName => Ok(Variant::from(
                 <QualifiedName as JsonDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::LocalizedText => Ok(Variant::from(
+            crate::VariantScalarTypeId::LocalizedText => Ok(Variant::from(
                 <LocalizedText as JsonDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::ExtensionObject => {
+            crate::VariantScalarTypeId::ExtensionObject => {
                 let Some(field_ty) = self.type_tree.get_struct_type(&field.type_id) else {
                     return Err(Error::decoding(format!(
                         "Dynamic type field missing from type tree: {}",
@@ -198,13 +198,13 @@ impl DynamicTypeLoader {
                     )?))
                 }
             }
-            opcua_types::VariantScalarTypeId::DataValue => Ok(Variant::from(
+            crate::VariantScalarTypeId::DataValue => Ok(Variant::from(
                 <DataValue as JsonDecodable>::decode(stream, ctx)?,
             )),
-            opcua_types::VariantScalarTypeId::Variant => Ok(Variant::Variant(Box::new(
+            crate::VariantScalarTypeId::Variant => Ok(Variant::Variant(Box::new(
                 <Variant as JsonDecodable>::decode(stream, ctx)?,
             ))),
-            opcua_types::VariantScalarTypeId::DiagnosticInfo => Ok(Variant::from(
+            crate::VariantScalarTypeId::DiagnosticInfo => Ok(Variant::from(
                 <DiagnosticInfo as JsonDecodable>::decode(stream, ctx)?,
             )),
         }
@@ -213,7 +213,7 @@ impl DynamicTypeLoader {
     fn json_decode_array(
         &self,
         field: &ParsedStructureField,
-        stream: &mut opcua_types::json::JsonStreamReader<&mut dyn std::io::Read>,
+        stream: &mut crate::json::JsonStreamReader<&mut dyn std::io::Read>,
         ctx: &Context<'_>,
         value_rank: i32,
         depth: i32,
@@ -225,7 +225,7 @@ impl DynamicTypeLoader {
         if value_rank > depth {
             while stream.has_next()? {
                 size += 1;
-                self.json_decode_array(field, stream, ctx, value_rank, depth, values, dims)?;
+                self.json_decode_array(field, stream, ctx, value_rank, depth + 1, values, dims)?;
             }
         } else {
             while stream.has_next()? {
@@ -233,14 +233,14 @@ impl DynamicTypeLoader {
                 values.push(self.json_decode_field_value(field, stream, ctx)?);
             }
         }
-        let old_dim = dims[depth as usize];
+        let old_dim = dims[depth as usize - 1];
         if old_dim > 0 && size != old_dim {
             return Err(Error::decoding(format!(
                 "JSON matrix in field {} does not have even dimensions",
                 field.name
             )));
         } else if old_dim == 0 {
-            dims[depth as usize] = size;
+            dims[depth as usize - 1] = size;
         }
         stream.end_array()?;
 
@@ -250,7 +250,7 @@ impl DynamicTypeLoader {
     fn json_decode_field(
         &self,
         field: &ParsedStructureField,
-        stream: &mut opcua_types::json::JsonStreamReader<&mut dyn std::io::Read>,
+        stream: &mut crate::json::JsonStreamReader<&mut dyn std::io::Read>,
         ctx: &Context<'_>,
     ) -> EncodingResult<Variant> {
         if field.value_rank > 0 {
@@ -282,13 +282,12 @@ impl DynamicTypeLoader {
 
     pub(super) fn json_decode_type_inner(
         &self,
-        stream: &mut opcua_types::json::JsonStreamReader<&mut dyn std::io::Read>,
+        stream: &mut crate::json::JsonStreamReader<&mut dyn std::io::Read>,
         ctx: &Context<'_>,
         t: &Arc<StructTypeInfo>,
     ) -> EncodingResult<Box<dyn DynEncodable>> {
         match t.structure_type {
-            opcua_types::StructureType::Structure
-            | opcua_types::StructureType::StructureWithOptionalFields => {
+            crate::StructureType::Structure | crate::StructureType::StructureWithOptionalFields => {
                 let mut by_name = HashMap::new();
                 stream.begin_object()?;
                 while stream.has_next()? {
@@ -327,7 +326,7 @@ impl DynamicTypeLoader {
                     data,
                 }))
             }
-            opcua_types::StructureType::Union => {
+            crate::StructureType::Union => {
                 let mut value_raw: Option<Vec<u8>> = None;
                 let mut value: Option<Variant> = None;
                 let mut discriminant: Option<u32> = None;
@@ -390,19 +389,19 @@ impl DynamicTypeLoader {
 impl JsonEncodable for DynamicStructure {
     fn encode(
         &self,
-        stream: &mut opcua_types::json::JsonStreamWriter<&mut dyn std::io::Write>,
-        ctx: &opcua_types::Context<'_>,
-    ) -> opcua_types::EncodingResult<()> {
+        stream: &mut crate::json::JsonStreamWriter<&mut dyn std::io::Write>,
+        ctx: &crate::Context<'_>,
+    ) -> crate::EncodingResult<()> {
         let s = &self.type_def;
         stream.begin_object()?;
         match s.structure_type {
-            opcua_types::StructureType::Structure => {
+            crate::StructureType::Structure => {
                 for (value, field) in self.data.iter().zip(s.fields.iter()) {
                     stream.name(&field.name)?;
                     self.json_encode_field(stream, value, field, ctx)?;
                 }
             }
-            opcua_types::StructureType::StructureWithOptionalFields => {
+            crate::StructureType::StructureWithOptionalFields => {
                 let mut encoding_mask = 0u32;
                 for (idx, (value, field)) in self.data.iter().zip(s.fields.iter()).enumerate() {
                     if !field.is_optional || !matches!(value, Variant::Empty) {
@@ -419,7 +418,7 @@ impl JsonEncodable for DynamicStructure {
                     }
                 }
             }
-            opcua_types::StructureType::Union => {
+            crate::StructureType::Union => {
                 stream.name("SwitchField")?;
                 stream.number_value(self.discriminant)?;
                 let (Some(value), Some(field)) =
@@ -446,15 +445,17 @@ mod tests {
         sync::Arc,
     };
 
-    use opcua_types::{
+    use crate::{
         json::{JsonDecodable, JsonEncodable, JsonStreamReader, JsonStreamWriter, JsonWriter},
-        ContextOwned, DecodingOptions, EUInformation, ExtensionObject, LocalizedText, NamespaceMap,
-        TypeLoaderCollection, Variant,
+        Array, ContextOwned, DataTypeDefinition, DataTypeId, DecodingOptions, EUInformation,
+        ExtensionObject, LocalizedText, NamespaceMap, NodeId, StructureDefinition, StructureField,
+        TypeLoaderCollection, Variant, VariantScalarTypeId,
     };
 
     use crate::custom_types::{
         custom_struct::tests::{add_eu_information, make_type_tree},
-        DynamicStructure, DynamicTypeLoader,
+        type_tree::TypeInfo,
+        DynamicStructure, DynamicTypeLoader, EncodingIds,
     };
 
     #[test]
@@ -513,5 +514,120 @@ mod tests {
         let obj3: ExtensionObject = JsonDecodable::decode(&mut reader, &ctx.context()).unwrap();
 
         assert_eq!(obj, obj3);
+    }
+
+    #[test]
+    fn json_dynamic_nested_struct_round_trip() {
+        let mut type_tree = make_type_tree();
+        add_eu_information(&mut type_tree);
+        let type_node_id = NodeId::new(1, 5);
+        type_tree
+            .parent_ids_mut()
+            .add_type(type_node_id.clone(), DataTypeId::Structure.into());
+        type_tree.add_type(
+            type_node_id.clone(),
+            TypeInfo::from_type_definition(
+                DataTypeDefinition::Structure(StructureDefinition {
+                    default_encoding_id: NodeId::null(),
+                    base_data_type: DataTypeId::Structure.into(),
+                    structure_type: crate::StructureType::Structure,
+                    fields: Some(vec![
+                        StructureField {
+                            name: "Info".into(),
+                            data_type: DataTypeId::EUInformation.into(),
+                            value_rank: -1,
+                            ..Default::default()
+                        },
+                        StructureField {
+                            name: "InfoArray".into(),
+                            data_type: DataTypeId::EUInformation.into(),
+                            value_rank: 1,
+                            ..Default::default()
+                        },
+                        StructureField {
+                            name: "AbstractField".into(),
+                            data_type: DataTypeId::BaseDataType.into(),
+                            value_rank: -1,
+                            ..Default::default()
+                        },
+                        StructureField {
+                            name: "PrimitiveArray".into(),
+                            data_type: DataTypeId::Int32.into(),
+                            value_rank: 2,
+                            ..Default::default()
+                        },
+                    ]),
+                }),
+                Some(EncodingIds {
+                    binary_id: NodeId::new(1, 6).into(),
+                    json_id: NodeId::new(1, 7).into(),
+                    xml_id: NodeId::new(1, 8).into(),
+                }),
+                false,
+                &type_node_id,
+                type_tree.parent_ids(),
+            )
+            .unwrap(),
+        );
+        let type_tree = Arc::new(type_tree);
+        let loader = DynamicTypeLoader::new(type_tree.clone());
+        let mut loaders = TypeLoaderCollection::new();
+        loaders.add_type_loader(loader);
+        let ctx = ContextOwned::new(NamespaceMap::new(), loaders, DecodingOptions::test());
+
+        let obj = DynamicStructure::new_struct(
+            type_tree.get_struct_type(&type_node_id).unwrap().clone(),
+            type_tree,
+            vec![
+                Variant::from(ExtensionObject::from_message(EUInformation {
+                    namespace_uri: "my.namespace.uri".into(),
+                    unit_id: 5,
+                    display_name: "Degrees Celsius".into(),
+                    description: "Description".into(),
+                })),
+                Variant::from(vec![
+                    ExtensionObject::from_message(EUInformation {
+                        namespace_uri: "my.namespace.uri".into(),
+                        unit_id: 5,
+                        display_name: "Degrees Celsius".into(),
+                        description: "Description".into(),
+                    }),
+                    ExtensionObject::from_message(EUInformation {
+                        namespace_uri: "my.namespace.uri.2".into(),
+                        unit_id: 6,
+                        display_name: "Degrees Celsius 2".into(),
+                        description: "Description 2".into(),
+                    }),
+                ]),
+                Variant::Variant(Box::new(Variant::from(123))),
+                Variant::from(
+                    Array::new_multi(
+                        VariantScalarTypeId::Int32,
+                        [1i32, 2, 3, 4, 5, 6]
+                            .into_iter()
+                            .map(Variant::from)
+                            .collect::<Vec<_>>(),
+                        vec![2, 3],
+                    )
+                    .unwrap(),
+                ),
+            ],
+        )
+        .unwrap();
+        let obj = ExtensionObject::from_message(obj);
+
+        let mut write_buf = Vec::<u8>::new();
+        let mut cursor = Cursor::new(&mut write_buf);
+        let mut writer = JsonStreamWriter::new(&mut cursor as &mut dyn Write);
+
+        JsonEncodable::encode(&obj, &mut writer, &ctx.context()).unwrap();
+        writer.finish_document().unwrap();
+
+        cursor.seek(std::io::SeekFrom::Start(0)).unwrap();
+
+        let mut reader = JsonStreamReader::new(&mut cursor as &mut dyn Read);
+        let obj2: ExtensionObject = JsonDecodable::decode(&mut reader, &ctx.context()).unwrap();
+
+        assert_eq!(obj, obj2);
     }
 }
