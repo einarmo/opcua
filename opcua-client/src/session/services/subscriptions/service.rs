@@ -461,6 +461,7 @@ impl<'b> UARequest for SetPublishingMode<'b> {
                     .collect::<Vec<_>>();
                 subscription_state.set_publishing_mode(&ids, self.publishing_enabled);
             }
+
             builder_debug!(self, "set_publishing_mode success");
             Ok(*response)
         } else {
@@ -1459,7 +1460,7 @@ impl Session {
             .send(&self.channel)
             .await?;
 
-        let _ = self.trigger_publish_tx.send(Instant::now());
+        self.trigger_publish_now();
 
         Ok(response.subscription_id)
     }
@@ -1617,12 +1618,16 @@ impl Session {
         subscription_ids: &[u32],
         publishing_enabled: bool,
     ) -> Result<Vec<StatusCode>, StatusCode> {
-        Ok(SetPublishingMode::new(publishing_enabled, self)
+        let r = SetPublishingMode::new(publishing_enabled, self)
             .subscription_ids(subscription_ids.to_vec())
             .send(&self.channel)
             .await?
             .results
-            .unwrap_or_default())
+            .unwrap_or_default();
+        if publishing_enabled {
+            self.trigger_publish_now();
+        }
+        Ok(r)
     }
 
     /// Transfers Subscriptions and their MonitoredItems from one Session to another. For example,
@@ -1652,13 +1657,17 @@ impl Session {
         subscription_ids: &[u32],
         send_initial_values: bool,
     ) -> Result<Vec<TransferResult>, StatusCode> {
-        Ok(TransferSubscriptions::new(self)
+        let r = TransferSubscriptions::new(self)
             .send_initial_values(send_initial_values)
             .subscription_ids(subscription_ids.to_vec())
             .send(&self.channel)
             .await?
             .results
-            .unwrap_or_default())
+            .unwrap_or_default();
+
+        self.trigger_publish_now();
+
+        Ok(r)
     }
 
     /// Deletes a subscription by sending a [`DeleteSubscriptionsRequest`] to the server.
