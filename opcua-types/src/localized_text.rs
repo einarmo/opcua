@@ -17,12 +17,6 @@ use crate::{
 mod opcua {
     pub use crate as types;
 }
-
-/// JSON encoding
-///  Locale    The Localeportion of LocalizedTextvalues shall be encoded as a JSON string
-///
-/// Text       The Textportion of LocalizedTextvalues shall be encoded as a JSON string.
-
 /// A human readable text with an optional locale identifier.
 #[derive(PartialEq, Default, Debug, Clone)]
 #[cfg_attr(

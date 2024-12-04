@@ -787,7 +787,7 @@ async fn history_update_insert() {
         .unwrap();
 
     assert_eq!(data.len(), 1000);
-    for (idx, it) in data.into_iter().enumerate() {
+    for (idx, it) in data.iter().enumerate() {
         let v = match it.value.as_ref().unwrap() {
             Variant::Int32(v) => *v,
             _ => panic!("Wrong value type: {:?}", it.value),

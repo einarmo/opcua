@@ -46,7 +46,7 @@ struct MonitoredItemKeyRef<'a> {
     attribute_id: AttributeId,
 }
 
-impl<'a> Equivalent<MonitoredItemKey> for MonitoredItemKeyRef<'a> {
+impl Equivalent<MonitoredItemKey> for MonitoredItemKeyRef<'_> {
     fn equivalent(&self, key: &MonitoredItemKey) -> bool {
         self.id == &key.id && self.attribute_id == key.attribute_id
     }

@@ -217,7 +217,7 @@ impl DynamicStructure {
                 }
                 Ok(size)
             }
-            Variant::Empty => return Err(Error::encoding("Empty variant value in structure")),
+            Variant::Empty => Err(Error::encoding("Empty variant value in structure")),
             r => r.encode_value(stream, ctx),
         }
     }
@@ -248,7 +248,7 @@ impl BinaryEncodable for DynamicStructure {
                 // discriminant
                 size += 4;
                 let (Some(value), Some(field)) =
-                    (self.data.get(0), s.fields.get(self.discriminant as usize))
+                    (self.data.first(), s.fields.get(self.discriminant as usize))
                 else {
                     return 0;
                 };
@@ -290,7 +290,7 @@ impl BinaryEncodable for DynamicStructure {
             StructureType::Union => {
                 size += write_u32(stream, self.discriminant)?;
                 let (Some(value), Some(field)) =
-                    (self.data.get(0), s.fields.get(self.discriminant as usize))
+                    (self.data.first(), s.fields.get(self.discriminant as usize))
                 else {
                     return Err(Error::encoding(
                         "Discriminant was out of range of known fields",
@@ -545,9 +545,7 @@ impl TypeLoader for DynamicTypeLoader {
         } else {
             node_id
         };
-        let Some(t) = self.type_tree.get_struct_type(ty_node_id) else {
-            return None;
-        };
+        let t = self.type_tree.get_struct_type(ty_node_id)?;
 
         Some(self.decode_type_inner(stream, ctx, t))
     }
@@ -581,9 +579,7 @@ impl TypeLoader for DynamicTypeLoader {
         } else {
             node_id
         };
-        let Some(t) = self.type_tree.get_struct_type(ty_node_id) else {
-            return None;
-        };
+        let t = self.type_tree.get_struct_type(ty_node_id)?;
 
         Some(self.json_decode_type_inner(stream, ctx, t))
     }
@@ -603,7 +599,7 @@ pub(crate) mod tests {
         VariantScalarTypeId,
     };
 
-    use crate::custom_types::type_tree::{
+    use crate::custom::type_tree::{
         DataTypeTree, EncodingIds, GenericTypeInfo, ParentIds, TypeInfo,
     };
 
@@ -770,9 +766,9 @@ pub(crate) mod tests {
                     ]),
                 }),
                 Some(EncodingIds {
-                    binary_id: NodeId::new(1, 6).into(),
-                    json_id: NodeId::new(1, 7).into(),
-                    xml_id: NodeId::new(1, 8).into(),
+                    binary_id: NodeId::new(1, 6),
+                    json_id: NodeId::new(1, 7),
+                    xml_id: NodeId::new(1, 8),
                 }),
                 false,
                 &type_node_id,

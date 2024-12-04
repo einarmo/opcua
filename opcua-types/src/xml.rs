@@ -65,7 +65,7 @@ pub struct XmlContext<'a> {
     pub loaders: Vec<Arc<dyn TypeLoader>>,
 }
 
-impl<'a> XmlContext<'a> {
+impl XmlContext<'_> {
     fn load_extension_object(
         &self,
         body: &XmlElement,

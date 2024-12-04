@@ -146,7 +146,7 @@ pub struct DepthLock<'a> {
     depth_gauge: &'a DepthGauge,
 }
 
-impl<'a> Drop for DepthLock<'a> {
+impl Drop for DepthLock<'_> {
     fn drop(&mut self) {
         // This will overflow back if the gauge is somehow at 0. That really should not be possible, if it is only ever
         // incremented from `obtain`

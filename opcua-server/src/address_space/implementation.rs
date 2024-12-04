@@ -28,7 +28,7 @@ struct ReferenceKey<'a> {
     pub target_node: &'a NodeId,
 }
 
-impl<'a> Equivalent<Reference> for ReferenceKey<'a> {
+impl Equivalent<Reference> for ReferenceKey<'_> {
     fn equivalent(&self, key: &Reference) -> bool {
         &key.reference_type == self.reference_type && &key.target_node == self.target_node
     }
@@ -281,7 +281,7 @@ struct ReferenceIterator<'a, 'b> {
     iter_t: Option<hashbrown::hash_set::Iter<'a, Reference>>,
 }
 
-impl<'a, 'b> Iterator for ReferenceIterator<'a, 'b> {
+impl<'a> Iterator for ReferenceIterator<'a, '_> {
     type Item = ReferenceRef<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {

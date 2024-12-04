@@ -149,6 +149,12 @@ pub struct ParentIds {
     parent_ids: HashMap<NodeId, NodeId>,
 }
 
+impl Default for ParentIds {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ParentIds {
     pub fn new() -> Self {
         Self {
@@ -161,7 +167,7 @@ impl ParentIds {
     }
 
     pub fn get_builtin_type(&self, id: &NodeId) -> Option<VariantScalarTypeId> {
-        if let Some(t) = id.as_data_type_id().ok() {
+        if let Ok(t) = id.as_data_type_id() {
             match t {
                 crate::DataTypeId::Boolean => return Some(VariantScalarTypeId::Boolean),
                 crate::DataTypeId::SByte => return Some(VariantScalarTypeId::SByte),
@@ -305,11 +311,7 @@ impl DataTypeTree {
             Some(TypeInfoRef::Struct(d))
         } else if let Some(d) = self.enum_types.get(id) {
             Some(TypeInfoRef::Enum(d))
-        } else if let Some(d) = self.other_types.get(id) {
-            Some(TypeInfoRef::Primitive(d))
-        } else {
-            None
-        }
+        } else { self.other_types.get(id).map(TypeInfoRef::Primitive) }
     }
 
     pub fn get_struct_type(&self, id: &NodeId) -> Option<&Arc<StructTypeInfo>> {

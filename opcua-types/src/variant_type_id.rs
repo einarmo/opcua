@@ -14,7 +14,7 @@ pub enum VariantTypeId<'a> {
     Array(VariantScalarTypeId, Option<&'a [u32]>),
 }
 
-impl<'a> From<VariantScalarTypeId> for VariantTypeId<'a> {
+impl From<VariantScalarTypeId> for VariantTypeId<'_> {
     fn from(value: VariantScalarTypeId) -> Self {
         Self::Scalar(value)
     }
@@ -159,7 +159,7 @@ impl TryFrom<&NodeId> for VariantScalarTypeId {
     }
 }
 
-impl<'a> TryFrom<&NodeId> for VariantTypeId<'a> {
+impl TryFrom<&NodeId> for VariantTypeId<'_> {
     type Error = NodeIdError;
     fn try_from(value: &NodeId) -> Result<Self, NodeIdError> {
         Ok(Self::Scalar(VariantScalarTypeId::try_from(value)?))
@@ -275,7 +275,7 @@ impl VariantScalarTypeId {
     }
 }
 
-impl<'a> VariantTypeId<'a> {
+impl VariantTypeId<'_> {
     pub fn encoding_mask(&self) -> u8 {
         match self {
             // Null / Empty

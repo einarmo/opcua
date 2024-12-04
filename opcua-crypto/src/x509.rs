@@ -170,7 +170,7 @@ pub struct AlternateNamesStringIterator<'a> {
     index: usize,
 }
 
-impl<'a> Iterator for AlternateNamesStringIterator<'a> {
+impl Iterator for AlternateNamesStringIterator<'_> {
     type Item = String;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -710,7 +710,6 @@ impl X509 {
     }
 
     /// Tests if the supplied hostname matches any of the dns alt subject name entries on the cert
-
     pub fn is_hostname_valid(&self, hostname: &str) -> Result<(), StatusCode> {
         trace!("is_hostname_valid against {} on cert", hostname);
         // Look through alt subject names for a matching entry

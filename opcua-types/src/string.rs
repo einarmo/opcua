@@ -274,10 +274,10 @@ fn string_value() {
 #[test]
 fn string_eq() {
     let s = UAString::null();
-    assert!(!s.eq(""));
+    assert!(!s.is_empty());
 
     let s = UAString::from("");
-    assert!(s.eq(""));
+    assert!(s.is_empty());
 
     let s = UAString::from("Sunshine");
     assert!(s.ne("Moonshine"));

@@ -91,7 +91,7 @@ impl DynamicStructure {
                         ));
                     }
                     let mut index = 0;
-                    self.json_encode_array(stream, field, ctx, &a.values, &dims, &mut index)?;
+                    self.json_encode_array(stream, field, ctx, &a.values, dims, &mut index)?;
                 } else {
                     stream.begin_array()?;
                     for value in a.values.iter() {
@@ -210,6 +210,7 @@ impl DynamicTypeLoader {
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn json_decode_array(
         &self,
         field: &ParsedStructureField,
@@ -422,7 +423,7 @@ impl JsonEncodable for DynamicStructure {
                 stream.name("SwitchField")?;
                 stream.number_value(self.discriminant)?;
                 let (Some(value), Some(field)) =
-                    (self.data.get(0), s.fields.get(self.discriminant as usize))
+                    (self.data.first(), s.fields.get(self.discriminant as usize))
                 else {
                     return Err(Error::encoding(
                         "Discriminant was out of range of known fields",
@@ -452,7 +453,7 @@ mod tests {
         TypeLoaderCollection, Variant, VariantScalarTypeId,
     };
 
-    use crate::custom_types::{
+    use crate::custom::{
         custom_struct::tests::{add_eu_information, make_type_tree},
         type_tree::TypeInfo,
         DynamicStructure, DynamicTypeLoader, EncodingIds,
@@ -559,9 +560,9 @@ mod tests {
                     ]),
                 }),
                 Some(EncodingIds {
-                    binary_id: NodeId::new(1, 6).into(),
-                    json_id: NodeId::new(1, 7).into(),
-                    xml_id: NodeId::new(1, 8).into(),
+                    binary_id: NodeId::new(1, 6),
+                    json_id: NodeId::new(1, 7),
+                    xml_id: NodeId::new(1, 8),
                 }),
                 false,
                 &type_node_id,
