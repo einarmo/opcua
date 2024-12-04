@@ -311,7 +311,9 @@ impl DataTypeTree {
             Some(TypeInfoRef::Struct(d))
         } else if let Some(d) = self.enum_types.get(id) {
             Some(TypeInfoRef::Enum(d))
-        } else { self.other_types.get(id).map(TypeInfoRef::Primitive) }
+        } else {
+            self.other_types.get(id).map(TypeInfoRef::Primitive)
+        }
     }
 
     pub fn get_struct_type(&self, id: &NodeId) -> Option<&Arc<StructTypeInfo>> {

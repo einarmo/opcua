@@ -91,9 +91,7 @@ impl NodeSet2Import {
         dependent_namespaces: Vec<String>,
     ) -> Result<Self, LoadXmlError> {
         let nodeset = load_nodeset2_file(nodeset)?;
-        let nodeset = nodeset
-            .node_set
-            .ok_or(LoadXmlError::MissingNodeSet)?;
+        let nodeset = nodeset.node_set.ok_or(LoadXmlError::MissingNodeSet)?;
 
         Ok(Self::new_nodeset(
             preferred_locale,
