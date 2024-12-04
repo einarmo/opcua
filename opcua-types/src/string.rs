@@ -272,12 +272,13 @@ fn string_value() {
 }
 
 #[test]
+#[allow(clippy::comparison_to_empty)]
 fn string_eq() {
     let s = UAString::null();
-    assert!(!s.is_empty());
+    assert!(!s.eq(""));
 
     let s = UAString::from("");
-    assert!(s.is_empty());
+    assert!(s.eq(""));
 
     let s = UAString::from("Sunshine");
     assert!(s.ne("Moonshine"));
