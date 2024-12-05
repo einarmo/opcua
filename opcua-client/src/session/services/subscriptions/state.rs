@@ -23,7 +23,7 @@ impl SubscriptionState {
     /// # Arguments
     ///
     /// * `min_publishing_interval` - The minimum accepted publishing interval, any lower values
-    /// will be set to this.
+    ///   will be set to this.
     pub(crate) fn new(
         min_publish_interval: Duration,
         publish_limits_watch_tx: tokio::sync::watch::Sender<PublishLimits>,
