@@ -83,6 +83,7 @@ request_enum! {
     CloseSecureChannel: CloseSecureChannelRequest; CloseSecureChannelRequest_Encoding_DefaultBinary,
     GetEndpoints: GetEndpointsRequest; GetEndpointsRequest_Encoding_DefaultBinary,
     FindServers: FindServersRequest; FindServersRequest_Encoding_DefaultBinary,
+    FindServersOnNetwork: FindServersOnNetworkRequest; FindServersOnNetworkRequest_Encoding_DefaultBinary,
     RegisterServer: RegisterServerRequest; RegisterServerRequest_Encoding_DefaultBinary,
     RegisterServer2: RegisterServer2Request; RegisterServer2Request_Encoding_DefaultBinary,
     CreateSession: CreateSessionRequest; CreateSessionRequest_Encoding_DefaultBinary,

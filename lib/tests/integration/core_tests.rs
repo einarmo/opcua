@@ -247,7 +247,11 @@ async fn connect_basic128rsa_15_with_invalid_token() {
 #[tokio::test]
 async fn find_servers() {
     let tester = Tester::new_default_server(true).await;
-    let servers = tester.client.find_servers(tester.endpoint()).await.unwrap();
+    let servers = tester
+        .client
+        .find_servers(tester.endpoint(), None, None)
+        .await
+        .unwrap();
     assert_eq!(servers.len(), 1);
 
     let s = &servers[0];

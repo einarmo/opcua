@@ -83,6 +83,7 @@ response_enum! {
     CloseSecureChannel: CloseSecureChannelResponse; CloseSecureChannelResponse_Encoding_DefaultBinary,
     GetEndpoints: GetEndpointsResponse; GetEndpointsResponse_Encoding_DefaultBinary,
     FindServers: FindServersResponse; FindServersResponse_Encoding_DefaultBinary,
+    FindServersOnNetwork: FindServersOnNetworkResponse; FindServersOnNetworkResponse_Encoding_DefaultBinary,
     RegisterServer: RegisterServerResponse; RegisterServerResponse_Encoding_DefaultBinary,
     RegisterServer2: RegisterServer2Response; RegisterServer2Response_Encoding_DefaultBinary,
     CreateSession: CreateSessionResponse; CreateSessionResponse_Encoding_DefaultBinary,

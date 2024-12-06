@@ -15,34 +15,22 @@ Unit tests should cover at least the following
 * Subscription state engine
 * Bug fixes
 
-Unit tests are part of a normal development cycle and you should ensure adequate coverage of new code with tests that are preferably in the same
-file as the code being tested.
+Unit tests are part of a normal development cycle and you should ensure adequate coverage of new code with tests that are preferably in the same file as the code being tested.
+
+You can run only the unit tests with, but generally you will just run all tests whenever you need to test the library.
 
 ```bash
-cd opcua
-cargo test --all
+cargo test --skip integration
 ```
 
 ## Integration testing
 
-Integration tests will run a server listening on a port and a client connecting to it via a socket to perform tests such as:
+Integration tests are all tests that start a server and a client. Each integration test spins up a server on a dynamically allocated port, then connects to it with a fresh client. This means that integration tests are completely isolated. Despite this they largely run in a few seconds total.
 
-* Discovery service
-* Connect / disconnect
-* Create / Activate session
-* Subscribe to values
-* Encrypted communication with each security profile
-* User identity tokens - anonymous, user/pass, x509
-* Permission based actions, e.g. read node values without session
-
-The integration tests are slower than unit tests and cannot run concurrently so they are run manually.
-
-Integration tests are under `integration/`. The tests are marked `#[ignore]` to prevent them running as a unit test. To run them use the provided
-script that runs them one at a time.
+Integration tests are found under `lib/tests`.
 
 ```bash
-cd opcua/integration
-sh ./run.sh
+cargo test
 ```
 
 ## Fuzz testing
@@ -80,36 +68,11 @@ Future candidates for fuzzing might include:
 
 We might also want to make the fuzzing "structure aware". This involves implementing or deriving an "Arbitrary" trait on types we want to be randomized. See link above for examples.
 
-## Benchmarks
-
-Bench tests will cover potentially CPU intensive operations. Benchmarks will use [Criterion](https://bheisler.github.io/criterion.rs/book/criterion_rs.html)
-benchmark framework.
-
-At present there is only benchmark for:
-
-* Populating the address space with the default node set (server)
-
-Invoking benchmarks:
-
-```bash
-cd opcua/lib
-cargo bench
-```
-
-The Criterion tool runs tests and requires `gnuplot` to generate reports of performance over time.
-
-Potential benchmarks might include:
-
-* Handling multiple concurrent connections under load
-* Performing complex pattern searches on the address space
-* Memory
-
 ## OPC UA test cases
 
 The OPC UA foundation describes tests that servers/clients must pass to implement various profiles or facets. Each is described under the test case links against the facets of each [OPC UA profile](http://opcfoundation-onlineapplications.org/ProfileReporting/index.htm).
 
-These are not performed manually or automatically at present, however much of the functionality
-they describe is covered by unit / integration tests and of course interoperability testing.
+These are not performed manually or automatically at present, however much of the functionality they describe is covered by unit / integration tests and of course interoperability testing.
 
 ## 3rd party interoperability testing
 
@@ -140,3 +103,5 @@ cmake -G "Unix Makefiles" -B ./cmake-build -S .
 cd cmake-build
 make
 ```
+
+In the future we will build tests that interface with some external library, to verify the correctness of the library.

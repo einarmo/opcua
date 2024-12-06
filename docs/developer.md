@@ -30,8 +30,7 @@ rustup component add rustfmt
 Ensure you run `cargo fmt` on any changes you make. e.g.
 
 ```
-cd opcua
-cargo fmt
+cargo fmt --all
 ```
 
 ## CLion / RustRover
@@ -48,12 +47,6 @@ If you are using RustRover then you get Rust out of the box but you need to ensu
 ## Visual Studio Code
 
 Visual Studio Code has pretty decent Rust support these days. You will need to install `rust-analyzer`, `Even Better TOML` extensions to make it work. You might also install `CodeLLDB` if you intend to debug.
-
-## OpenSSL
-
-OpenSSL is the most painful build component so ensure you read [setup](./setup.md) for information.
-
-It would be very nice if OpenSSL could be replaced by a native Rust crypto library but given the breadth of things we use, this seems unlikely in the short term. See [crypto](./crypto.md) for more info.
 
 ## Wireshark
 

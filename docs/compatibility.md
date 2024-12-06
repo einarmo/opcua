@@ -19,21 +19,26 @@ The following services are supported in the server:
 
 * Discovery service set
   * GetEndpoints
-  * FindServers - stub that returns BadNotSupported
-  * RegisterServer - stub that returns BadNotSupported
-  * RegisterServer2 - stub that returns BadNotSupported
+  * FindServers - stub that only ever returns the current server URI.
+  * FindServersOnNetwork - stub that returns BadServiceUnsupported
+  * RegisterServer - stub that returns BadServiceUnsupported
+  * RegisterServer2 - stub that returns BadServiceUnsupported
+
+* SecureChannel service set
+  * OpenSecureChannel
+  * CloseSecureChannel
 
 * Attribute service set
   * Read
   * Write
-  * History Read - 0.8+. The server-side functionality is delegated to callbacks that must be implemented. 
-  * History Update - 0.8+. The server-side functionality is delegated to callbacks that must be implemented.
+  * History Read
+  * History Update
 
 * Session service set
   * CreateSession
   * ActivateSession
   * CloseSession
-  * Cancel - stub implementation
+  * Cancel
   
 * Node Management service set
   * AddNodes
@@ -49,6 +54,8 @@ The following services are supported in the server:
   * Browse
   * BrowseNext
   * TranslateBrowsePathsToNodeIds
+  * RegisterNodes
+  * UnregisterNodes
 
 * MonitoredItem service set
   * CreateMonitoredItems 
@@ -63,7 +70,7 @@ The following services are supported in the server:
   * CreateSubscription
   * ModifySubscription
   * DeleteSubscriptions
-  * TransferSubscriptions - Poorly tested
+  * TransferSubscriptions
   * Publish
   * Republish
   * SetPublishingMode
@@ -79,23 +86,16 @@ The standard OPC UA address space is exposed through the `CoreNodeManager` imple
 
 Currently the following are not supported
 
-* Diagnostic info. OPC UA allows for you to ask for diagnostics with any request. None is supplied at this time
-* Default node set is mostly static. Certain fields of server information will contain their default values unless explicitly set.
 * Multiple created sessions in a single transport.
-  * This should now technically be supported, but without any client that supports this it is not tested at all.
+  * This should now technically be supported, but without any client that support it is not tested at all.
 
 ## Client
 
 The client API is asynchronous, but require you to "drive" the connection by polling an event loop. Convenience methods are provided for polling the event loop on a background thread.
 
-The client exposes functions that correspond to the current server supported profile, i.e. look above at the server services and there will be client-side functions that are analogous to those services.  
+The client exposes functions that correspond to the current server supported profile, i.e. look above at the server services and there will be client-side functions that are analogous to those services.
 
-In addition to the server services above, the following are also supported.
-
-* FindServers - when connected to a discovery server, to find other servers  
-* RegisterServer - when connected to a discovery server, to register a server
-
-The client is only automatically tested against the server implementation, so primarily only services supported by the current server implementation are supported.
+The client is only automatically tested against the server implementation, so primarily only services supported by the current server implementation are supported. The implementation aims to contain all services, tested against other servers where necessary.
 
 ## Configuration
 

@@ -34,6 +34,24 @@ pub struct NodeMetadata {
     pub node_class: NodeClass,
 }
 
+impl NodeMetadata {
+    pub fn into_ref_desc(
+        self,
+        is_forward: bool,
+        reference_type_id: impl Into<NodeId>,
+    ) -> ReferenceDescription {
+        ReferenceDescription {
+            reference_type_id: reference_type_id.into(),
+            is_forward,
+            node_id: self.node_id,
+            browse_name: self.browse_name,
+            display_name: self.display_name,
+            node_class: self.node_class,
+            type_definition: self.type_definition,
+        }
+    }
+}
+
 #[derive(Debug)]
 /// Container for a request for the metadata of a single node.
 pub struct ExternalReferenceRequest {

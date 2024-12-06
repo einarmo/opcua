@@ -14,25 +14,16 @@ to a pure Rust crypto library.
 
 OPC UA for Rust is implemented in various crates that encapsulate server, client and common code.
 
-The crypto functionality is contained in the `opcua-crypto` crate that both the server and client depend on.
-This provides functions and wrappers that call the `openssl` crate without exposing the internals to the rest of the
-code base.
- 
-OpenSSL is external to Rust and implemented in C so it does add complexity. The `openssl` crate tries its best to
-hide it but in reality it can cause configuration problems. Replacing OpenSSL with a pure Rust encryption would be
-highly desirable in future.
+The crypto functionality is contained in the `opcua-crypto` crate that both the server and client depend on. This provides functions and wrappers that call various rust cryptography packages from the [`rustcrypto`](https://github.com/rustcrypto) project.
 
-There are a number of crypto / PKI related crates that offer pure Rust implementations of various cryptographic
-services but as yet most are not sufficient to replace OpenSSL. For example, these crates are frequently cited and
-popular.
-
-* [`ring`](https://github.com/briansmith/ring) - this is basically a bag of cryptographic functions and so is capable of doing
- everything except X509. However it lacks OAEP padding and perhaps other functions.
-* [`webpki`](https://github.com/briansmith/webpki) - this is a higher level crate written over `ring` that offers
-  client-side X509 certificate validation. However it does not support creating X509 certs.
-* `rcgen` - is a helper that creates self-signed X509 certs wrapping `ring` and the crates below to accomplish it.
-    * `pem` - a PEM encoder 
-    * `x509-parser` - is an X509 parser
+* [`hmac`](https://github.com/RustCrypto/MACs/tree/master/hmac)
+* [`sha2`](https://github.com/RustCrypto/hashes/tree/master/sha2)
+* [`sha1`](https://docs.rs/sha1/latest/sha1/), note that SHA-1 is considered broken, and OPC-UA methods using this are considered unsafe.
+* [`cbc`](https://docs.rs/cbc/latest/cbc/) for Cipher Block Chaining encryption and decryption.
+* [`aes`](https://docs.rs/aes/latest/aes/) for AES encryption.
+* [`rsa`](https://docs.rs/rsa/latest/rsa/) for RSA encryption.
+* [`rand`](https://docs.rs/rand/latest/rand/) for cryptographically secure random numbers.
+* [`x509-cert`](https://docs.rs/x509-cert/latest/x509_cert/) for tools for working with X509 certificates.
 
 ## Security Profiles
 
@@ -48,16 +39,14 @@ It also supports these OPC UA 1.04 policies.
 * Aes128-Sha256-RsaOaep - AES-128 / SHA-256 / RSA-OAEP (a replacement for Basic128Rsa15 with stronger hash & padding)
 * Aes256-Sha256-RsaPss - AES256 / SHA-256 / RSA-OAEP with RSA-PSS for signature algorithm
 
-OPC UA 1.04 deprecates Basic128Rsa15 and Basic256 due to perceived weaknesses with SHA-1, but they remain supported
-by the implementation.
+OPC UA 1.04 deprecates Basic128Rsa15 and Basic256 due to perceived weaknesses with SHA-1, but they remain supported by the implementation.
 
 ## Hash
 
 Hashing functions are used to produce message authentication codes and for signing / verification.
 
 * SHA-1 - used to create a filename from an X509 certificate and for comparison purposes of the public key. Also used by signing / verification functions.
-* SHA-2 - Used by signing / verification functions. Below it is referred to as SHA-256 because this is the variant
-  used in OPC UA to create a 256-bit digest.
+* SHA-2 - Used by signing / verification functions. Below it is referred to as SHA-256 because this is the variant used in OPC UA to create a 256-bit digest.
 
 ## Pseudo-random generator
 
@@ -80,8 +69,8 @@ into a pseudo random function that generates a key that allows each to talk with
 Messages are signed / verified using a hash based message authentication code (HMAC) using either SHA-1 or SHA-256 according
 to the security policy.
 
-* HMAC_SHA1 - via `hash::hmac_sha1()` and `hash::verify_hmac_sha1()`
-* HMAC_SHA256 - via `hash::hmac_sha256()` and `hash::verify_hmac_sha256()`
+* HMAC_SHA1 - via `sha1::Sha1` and `hmac::Hmac`
+* HMAC_SHA256 - via `sha2::Sha256` and `hmac::Hmac`
 
 ## Symmetric ciphers
 
@@ -113,17 +102,12 @@ Encrypted data is padded to randomly salt the message and make it harder to decr
 * OAEP - Optimal Asymmetric Encryption Padding used by later versions of RSA
 * RSA-PSS - Probabilistic Signature Scheme - a form of padding used when making signatures. 
 
-NOTE - `ring` supports PKCS #1 1.5 but does not appear to support OAEP. 
-See [issue #691](https://github.com/briansmith/ring/issues/691).
-
 OPC UA 1.04 introduced the Aes256-Sha256-RsaPss security profile that requires a RSA-PSS
-padding scheme for signatures.   
+padding scheme for signatures.
 
 ## X509 certificates
 
-X509 certificates wrap an asymmetric public key with some meta information and a signature - the issuer, serial number, 
-subject alternative names. The signature is either by the private key in the key pair (a self-signed cert)
-or by another certificate's private key. 
+X509 certificates wrap an asymmetric public key with some meta information and a signature - the issuer, serial number, subject alternative names. The signature is either by the private key in the key pair (a self-signed cert) or by another certificate's private key. 
 
 The biggest difficulty with OPC UA is that it needs the ability to:
 
@@ -135,24 +119,15 @@ The biggest difficulty with OPC UA is that it needs the ability to:
 
 Future versions of the crate might also want to:
 
-* Check the certificate's signing chain
-* Maintain a trust store or folder where trusted root signing keys can be stored. 
-
-All of this is supplied by OpenSSL and has comprehensive support for doing all these things. Whereas it appears to be rather
-weak in pure-Rust implementations. For example `webpki` is primarily concerned with parsing an X509,
-and not creating one or signing another one. The `rcgen` crate might be a viable way of generating certs and `pem` may be
-viable for encoding / decoding them.
+* Check the certificate's signing chain.
+* Maintain a trust store or folder where trusted root signing keys can be stored.
 
 ### X509 Fields
 
-X509 Certs are generated subject to the requirements of OPC UA which requires a serial number and the first alt subject
-name to be an application URI. Subsequent alt subjects can be IP or DNS entries of the host. 
+X509 Certs are generated subject to the requirements of OPC UA which requires a serial number and the first alt subject name to be an application URI. Subsequent alt subjects can be IP or DNS entries of the host.
 
-Ordinarily a valid self signed cert can be produced by using the `certificate-creator` tool. 
+Ordinarily a valid self signed cert can be produced by using the `certificate-creator` tool.
 
 ## PKI infrastructure
 
-All certificates and a server's private key are managed by the `CertificateStore`. Each cert and key is stored on disk in a PEM
-encoded file with different directories representing rejected and accepted certs. 
-
-The certificate store is implemented in Rust but uses OpenSSL to read/write certs from PEM format and validate their contents. 
+All certificates and a server's private key are managed by the `CertificateStore`. Each cert and key is stored on disk in a PEM encoded file with different directories representing rejected and accepted certs. 
