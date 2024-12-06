@@ -127,7 +127,7 @@ impl Guid {
         self.uuid.as_bytes()
     }
 
-    // Creates a guid from bytes
+    /// Creates a guid from a byte array.
     pub fn from_bytes(bytes: [u8; 16]) -> Guid {
         Guid {
             uuid: Uuid::from_bytes(bytes),

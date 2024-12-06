@@ -1,3 +1,5 @@
+//! Core logic for reading Variant values from an event.
+
 use std::collections::HashMap;
 
 use crate::{
@@ -214,12 +216,13 @@ impl EventField for NumericRange {
         if !remaining_path.is_empty() || attribute_id != AttributeId::Value {
             return Variant::Empty;
         }
-        let val: Variant = self.clone().as_string().into();
+        let val: Variant = self.to_string().into();
         val.range_of_owned(index_range).unwrap_or(Variant::Empty)
     }
 }
 
 #[derive(Debug)]
+/// Struct for an event field placeholder, i.e. a dynamic list of fields.
 pub struct PlaceholderEventField<T> {
     items: HashMap<QualifiedName, T>,
 }
@@ -233,38 +236,46 @@ impl<T> Default for PlaceholderEventField<T> {
 }
 
 impl<T> PlaceholderEventField<T> {
+    /// Create a new empty placeholder field.
     pub fn new() -> Self {
         Self {
             items: HashMap::new(),
         }
     }
 
+    /// Get the field given by `name`.
     pub fn get_field(&self, name: &QualifiedName) -> Option<&T> {
         self.items.get(name)
     }
 
+    /// Get a mutable reference to the field given by `name`.
     pub fn get_field_mut(&mut self, name: &QualifiedName) -> Option<&mut T> {
         self.items.get_mut(name)
     }
 
+    /// Remove the field given by `name`.
     pub fn remove_field(&mut self, name: &QualifiedName) -> Option<T> {
         self.items.remove(name)
     }
 
+    /// Insert `field` with key `name`.
     pub fn insert_field(&mut self, name: QualifiedName, field: T) -> Option<T> {
         self.items.insert(name, field)
     }
 
+    /// Get a mutable reference to the inner items map.
     pub fn items_mut(&mut self) -> &mut HashMap<QualifiedName, T> {
         &mut self.items
     }
 
+    /// Get a reference to the inner items map.
     pub fn items(&self) -> &HashMap<QualifiedName, T> {
         &self.items
     }
 }
 
 impl<T: EventField> PlaceholderEventField<T> {
+    /// Try to get the inner event value given by `key`.
     pub fn try_get_value(
         &self,
         key: &QualifiedName,
@@ -273,9 +284,7 @@ impl<T: EventField> PlaceholderEventField<T> {
         remaining_path: &[QualifiedName],
         ctx: &EncodingContext,
     ) -> Option<Variant> {
-        println!("Get nested {key:?}");
         let field = self.get_field(key)?;
-        println!("Found field");
         Some(field.get_value(attribute_id, index_range, remaining_path, ctx))
     }
 }

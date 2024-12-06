@@ -6,21 +6,31 @@ use crate::{
 };
 
 #[derive(Debug)]
+/// Parsed type information about an enum variant.
 pub struct EnumTypeInfo {
+    /// Enum fields.
     pub variants: HashMap<i64, EnumField>,
 }
 
 #[derive(Debug)]
+/// Parsed type information about a struct field.
 pub struct ParsedStructureField {
+    /// Field name.
     pub name: String,
+    /// Field data type ID.
     pub type_id: NodeId,
+    /// Field value rank.
     pub value_rank: i32,
+    /// Field array dimensions.
     pub array_dimensions: Option<Vec<u32>>,
+    /// Whether this field is optional.
     pub is_optional: bool,
+    /// Variant type used to store this field.
     pub scalar_type: VariantScalarTypeId,
 }
 
 impl ParsedStructureField {
+    /// Parse this from a structure field.
     pub fn from_field(f: StructureField, scalar_type: VariantScalarTypeId) -> Result<Self, String> {
         if f.name.is_empty() || f.name.is_null() {
             return Err("Field has null name".to_owned());
@@ -35,6 +45,7 @@ impl ParsedStructureField {
         })
     }
 
+    /// Validate that `value` could be this field.
     pub fn validate(&self, value: &Variant) -> Result<(), Error> {
         let ty = match value.type_id() {
             VariantTypeId::Empty => {
@@ -73,20 +84,29 @@ impl ParsedStructureField {
 }
 
 #[derive(Debug)]
+/// Parsed info about a structure type.
 pub struct StructTypeInfo {
+    /// Structure variant. Structure, StructureWithOptionalFields, or Union.
     pub structure_type: StructureType,
+    /// List of structure fields. The order is significant.
     pub fields: Vec<ParsedStructureField>,
+    /// Field index by name.
     pub index_by_name: HashMap<String, usize>,
+    /// Collection of encoding IDs.
     pub encoding_ids: EncodingIds,
+    /// Whether this type is abstract and cannot be instantiated.
     pub is_abstract: bool,
+    /// Structure node ID.
     pub node_id: NodeId,
 }
 
 impl StructTypeInfo {
+    /// Get a field by index.
     pub fn get_field(&self, idx: usize) -> Option<&ParsedStructureField> {
         self.fields.get(idx)
     }
 
+    /// Get a field by name.
     pub fn get_field_by_name(&self, idx: &str) -> Option<&ParsedStructureField> {
         self.index_by_name
             .get(idx)
@@ -95,9 +115,13 @@ impl StructTypeInfo {
 }
 
 #[derive(Debug)]
+/// Encoding IDs for a structure type.
 pub struct EncodingIds {
+    /// Binary encoding ID.
     pub binary_id: NodeId,
+    /// Json encoding ID.
     pub json_id: NodeId,
+    /// XML encoding ID.
     pub xml_id: NodeId,
 }
 
@@ -145,6 +169,7 @@ impl From<GenericTypeInfo> for TypeInfo {
 }
 
 #[derive(Debug)]
+/// Map from child to parent node ID.
 pub struct ParentIds {
     parent_ids: HashMap<NodeId, NodeId>,
 }
@@ -156,16 +181,20 @@ impl Default for ParentIds {
 }
 
 impl ParentIds {
+    /// Create a new empty parent ID map.
     pub fn new() -> Self {
         Self {
             parent_ids: HashMap::new(),
         }
     }
 
+    /// Add a child, parent type pair.
     pub fn add_type(&mut self, node_id: NodeId, parent_id: NodeId) {
         self.parent_ids.insert(node_id, parent_id);
     }
 
+    /// Get the variant type for the given `id` by recursively traversing up
+    /// the hierarchy until we hit a known type.
     pub fn get_builtin_type(&self, id: &NodeId) -> Option<VariantScalarTypeId> {
         if let Ok(t) = id.as_data_type_id() {
             match t {
@@ -266,6 +295,7 @@ impl TypeInfo {
 }
 
 #[derive(Debug)]
+/// Data type tree, used for loading custom types at runtime.
 pub struct DataTypeTree {
     struct_types: HashMap<NodeId, Arc<StructTypeInfo>>,
     enum_types: HashMap<NodeId, Arc<EnumTypeInfo>>,
@@ -275,6 +305,9 @@ pub struct DataTypeTree {
 }
 
 impl DataTypeTree {
+    /// Create a new data type tree with the given parent IDs.
+    ///
+    /// Parent IDs should be populated before starting to populate the type tree.
     pub fn new(parent_ids: ParentIds) -> Self {
         Self {
             struct_types: HashMap::new(),
@@ -285,6 +318,7 @@ impl DataTypeTree {
         }
     }
 
+    /// Add a type to the tree.
     pub fn add_type(&mut self, id: NodeId, info: impl Into<TypeInfo>) {
         let info = info.into();
         match info {
@@ -306,6 +340,7 @@ impl DataTypeTree {
         }
     }
 
+    /// Get a type from the tree.
     pub fn get_type<'a>(&'a self, id: &NodeId) -> Option<TypeInfoRef<'a>> {
         if let Some(d) = self.struct_types.get(id) {
             Some(TypeInfoRef::Struct(d))
@@ -316,18 +351,22 @@ impl DataTypeTree {
         }
     }
 
+    /// Get a struct type from the tree.
     pub fn get_struct_type(&self, id: &NodeId) -> Option<&Arc<StructTypeInfo>> {
         self.struct_types.get(id)
     }
 
+    /// Get a mutable reference to the parent ID map.
     pub fn parent_ids_mut(&mut self) -> &mut ParentIds {
         &mut self.parent_ids
     }
 
+    /// Get a reference to the parent ID map.
     pub fn parent_ids(&self) -> &ParentIds {
         &self.parent_ids
     }
 
+    /// Get the inner map from encoding to data type ID.
     pub fn encoding_to_data_type(&self) -> &HashMap<NodeId, NodeId> {
         &self.encoding_to_data_type
     }

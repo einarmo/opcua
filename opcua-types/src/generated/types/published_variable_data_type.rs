@@ -36,4 +36,7 @@ impl opcua::types::MessageInfo for PublishedVariableDataType {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::PublishedVariableDataType_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::PublishedVariableDataType
+    }
 }

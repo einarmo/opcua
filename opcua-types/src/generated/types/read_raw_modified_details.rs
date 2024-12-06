@@ -33,4 +33,7 @@ impl opcua::types::MessageInfo for ReadRawModifiedDetails {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ReadRawModifiedDetails_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::ReadRawModifiedDetails
+    }
 }

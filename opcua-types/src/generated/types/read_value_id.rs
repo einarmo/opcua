@@ -32,4 +32,7 @@ impl opcua::types::MessageInfo for ReadValueId {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ReadValueId_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::ReadValueId
+    }
 }

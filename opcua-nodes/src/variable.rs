@@ -288,14 +288,14 @@ impl Variable {
         S: Into<LocalizedText>,
         V: Into<Variant>,
     {
-        let value = value.into();
-        let data_type = value.scalar_data_type().or_else(|| value.array_data_type());
+        let value: Variant = value.into();
+        let data_type = value.data_type().or_else(|| value.data_type());
         if let Some(data_type) = data_type {
             Variable::new_data_value(
                 node_id,
                 browse_name,
                 display_name,
-                data_type,
+                data_type.node_id,
                 None,
                 None,
                 value,

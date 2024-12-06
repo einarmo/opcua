@@ -7,20 +7,32 @@ use super::{
 };
 
 #[derive(Clone, Debug)]
+/// Enum over different attribute collections for AddNodes.
 pub enum AddNodeAttributes {
+    /// Object attributes.
     Object(ObjectAttributes),
+    /// Variable attributes.
     Variable(VariableAttributes),
+    /// Method attributes.
     Method(MethodAttributes),
+    /// ObjectType attributes.
     ObjectType(ObjectTypeAttributes),
+    /// VariableType attributes.
     VariableType(VariableTypeAttributes),
+    /// ReferenceType attributes.
     ReferenceType(ReferenceTypeAttributes),
+    /// DataType attributes.
     DataType(DataTypeAttributes),
+    /// View attributes.
     View(ViewAttributes),
+    /// Generic attributes.
     Generic(GenericAttributes),
+    /// No extra attributes.
     None,
 }
 
 impl AddNodeAttributes {
+    /// Get Self from an extension object body.
     pub fn from_extension_object(obj: ExtensionObject) -> Result<Self, StatusCode> {
         if obj.is_null() {
             return Ok(Self::None);
@@ -39,6 +51,7 @@ impl AddNodeAttributes {
         )
     }
 
+    /// Convert this into an extension object.
     pub fn as_extension_object(&self) -> ExtensionObject {
         match self.clone() {
             AddNodeAttributes::Object(o) => ExtensionObject::from_message(o),

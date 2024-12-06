@@ -35,4 +35,7 @@ impl opcua::types::MessageInfo for PubSubGroupDataType {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::PubSubGroupDataType_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::PubSubGroupDataType
+    }
 }

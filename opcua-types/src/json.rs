@@ -1,3 +1,7 @@
+//! Enabled with the "json" feature.
+//!
+//! Core utilities for JSON encoding and decoding from OPC-UA JSON.
+
 use std::{
     io::{Cursor, Read, Write},
     num::{ParseFloatError, ParseIntError},
@@ -60,8 +64,10 @@ impl From<struson::reader::TransferError> for Error {
     }
 }
 
+/// Trait for decoding a type from a JSON stream.
 pub trait JsonDecodable: Sized {
     #[allow(unused)]
+    /// Decode Self from a JSON stream.
     fn decode(
         stream: &mut JsonStreamReader<&mut dyn Read>,
         ctx: &Context<'_>,
@@ -315,6 +321,8 @@ impl JsonDecodable for bool {
     }
 }
 
+/// Utility method used in unions to consume a JSON value from the stream,
+/// and return it as a vector that can be parsed later.
 pub fn consume_raw_value(
     r: &mut JsonStreamReader<&mut dyn std::io::Read>,
 ) -> EncodingResult<Vec<u8>> {

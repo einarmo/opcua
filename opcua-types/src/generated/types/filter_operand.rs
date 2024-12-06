@@ -27,4 +27,7 @@ impl opcua::types::MessageInfo for FilterOperand {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::FilterOperand_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::FilterOperand
+    }
 }

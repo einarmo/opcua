@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
+//! Message header for requests.
+
 use std::{
     self,
     io::{Read, Write},
@@ -178,6 +180,7 @@ impl BinaryDecodable for RequestHeader {
 }
 
 impl RequestHeader {
+    /// Create a new request header.
     pub fn new(
         authentication_token: &NodeId,
         timestamp: &DateTime,
@@ -194,6 +197,7 @@ impl RequestHeader {
         }
     }
 
+    /// Create a new dummy request header.
     pub fn dummy() -> RequestHeader {
         RequestHeader::new(&NodeId::null(), &DateTime::now(), 1)
     }

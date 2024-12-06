@@ -32,4 +32,7 @@ impl opcua::types::MessageInfo for DeleteRawModifiedDetails {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::DeleteRawModifiedDetails_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::DeleteRawModifiedDetails
+    }
 }

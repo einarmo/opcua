@@ -115,9 +115,16 @@ pub fn validate_value_to_write(
         return Ok(());
     }
 
-    if let Some(value_data_type) = value.scalar_data_type() {
+    if let Some(value_data_type) = value.data_type() {
+        let Some(data_type) = value_data_type.try_resolve(type_tree.namespaces()) else {
+            return Err(StatusCode::BadTypeMismatch);
+        };
         // Value is scalar, check if the data type matches
-        let data_type_matches = type_tree.is_subtype_of(&value_data_type, &node_data_type);
+        let data_type_matches = type_tree.is_subtype_of(&data_type, &node_data_type);
+        if value.is_array() {
+            return Err(StatusCode::BadTypeMismatch);
+        }
+
         if !data_type_matches {
             // Check if the value to write is a byte string and the receiving node type a byte array.
             // This code is a mess just for some weird edge case in the spec that a write from
@@ -138,12 +145,6 @@ pub fn validate_value_to_write(
         } else {
             Ok(())
         }
-    } else if let Some(value_data_type) = value.array_data_type() {
-        // TODO check that value is array of same dimensions
-        if !type_tree.is_subtype_of(&value_data_type, &node_data_type) {
-            return Err(StatusCode::BadTypeMismatch);
-        }
-        Ok(())
     } else {
         Err(StatusCode::BadTypeMismatch)
     }

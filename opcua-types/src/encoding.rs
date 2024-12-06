@@ -19,15 +19,21 @@ use log::error;
 use crate::{constants, status_code::StatusCode, Context, QualifiedName};
 
 #[derive(Debug, Clone, Default)]
+/// Parsed data encoding.
 pub enum DataEncoding {
     #[default]
+    /// Binary data decoding.
     Binary,
+    /// XML data encoding.
     XML,
+    /// JSON data encoding.
     JSON,
+    /// Some other data encoding.
     Other(QualifiedName),
 }
 
 impl DataEncoding {
+    /// Parse data encoding from the browse name in a service call.
     pub fn from_browse_name(name: QualifiedName) -> std::result::Result<Self, StatusCode> {
         match name.name.as_ref() {
             "Default Binary" | "" => Ok(Self::Binary),
@@ -39,9 +45,14 @@ impl DataEncoding {
     }
 }
 
+/// Result of an encoding or decoding operation.
 pub type EncodingResult<T> = std::result::Result<T, Error>;
 
 #[derive(Debug)]
+/// General OPC-UA error.
+///
+/// Contains context about the request this error occured as part of, if that is possible to retrieve,
+/// as well as details about the error that caused this, and a status code.
 pub struct Error {
     status: StatusCode,
     request_id: Option<u32>,
@@ -56,6 +67,8 @@ impl Display for Error {
 }
 
 impl Error {
+    /// Create a new error with the specified `status` code and
+    /// `context` as a dynamic error source.
     pub fn new(status: StatusCode, context: impl Into<Box<dyn StdError>>) -> Self {
         Self {
             status,
@@ -65,6 +78,8 @@ impl Error {
         }
     }
 
+    /// Create a new error with status code `BadDecodingError` and
+    /// `context` as a dynamic error source.
     pub fn decoding(context: impl Into<Box<dyn StdError>>) -> Self {
         Self {
             status: StatusCode::BadDecodingError,
@@ -74,6 +89,8 @@ impl Error {
         }
     }
 
+    /// Create a new error with status code `BadEncodingError` and
+    /// `context` as a dynamic error source.
     pub fn encoding(context: impl Into<Box<dyn StdError>>) -> Self {
         Self {
             status: StatusCode::BadEncodingError,
@@ -83,17 +100,20 @@ impl Error {
         }
     }
 
-    pub fn with_context(mut self, id: Option<u32>, handle: Option<u32>) -> Self {
-        self.request_id = id;
-        self.request_handle = handle;
+    /// Add request ID and request handle to this error.
+    pub fn with_context(mut self, request_id: Option<u32>, request_handle: Option<u32>) -> Self {
+        self.request_id = request_id;
+        self.request_handle = request_handle;
         self
     }
 
+    /// Add request ID to this error.
     pub fn with_request_id(mut self, id: u32) -> Self {
         self.request_id = Some(id);
         self
     }
 
+    /// Add request handle to this error.
     pub fn with_request_handle(mut self, handle: u32) -> Self {
         self.request_handle = Some(handle);
         self
@@ -107,10 +127,12 @@ impl Error {
         self
     }
 
+    /// Get the inner status code of this error.
     pub fn status(&self) -> StatusCode {
         self.status
     }
 
+    /// Get the full context of this error, if both fields are present.
     pub fn full_context(&self) -> Option<(u32, u32)> {
         if let (Some(id), Some(handle)) = (self.request_id, self.request_handle) {
             Some((id, handle))
@@ -207,6 +229,7 @@ impl Default for DepthGauge {
 }
 
 impl DepthGauge {
+    /// Create a new depth gauge with specified max depth.
     pub fn new(max_depth: u64) -> Self {
         Self {
             max_depth,
@@ -214,18 +237,22 @@ impl DepthGauge {
         }
     }
 
+    /// Create a minimal depth gauge with max depth of 1.
     pub fn minimal() -> Self {
         Self {
             max_depth: 1,
             ..Default::default()
         }
     }
+
+    /// Get the max depth of the gauge.
     pub fn max_depth(&self) -> u64 {
         self.max_depth
     }
 }
 
 #[derive(Clone, Debug)]
+/// General decoding options.
 pub struct DecodingOptions {
     /// Time offset between the client and the server, only used by the client when it's configured
     /// to ignore time skew.
@@ -276,6 +303,8 @@ impl DecodingOptions {
         Self::default()
     }
 
+    /// Get a lease on depth, this will fail if max depth is exceeded.
+    /// Once the lease is dropped, current depth is decremented.
     pub fn depth_lock(&self) -> core::result::Result<DepthLock<'_>, Error> {
         DepthLock::obtain(&self.decoding_depth_gauge)
     }
@@ -293,8 +322,8 @@ pub trait BinaryEncodable {
     fn encode<S: Write + ?Sized>(&self, stream: &mut S, ctx: &Context<'_>)
         -> EncodingResult<usize>;
 
-    // Convenience method for encoding a message straight into an array of bytes. It is preferable to reuse buffers than
-    // to call this so it should be reserved for tests and trivial code.
+    /// Convenience method for encoding a message straight into an array of bytes. It is preferable to reuse buffers than
+    /// to call this so it should be reserved for tests and trivial code.
     fn encode_to_vec(&self, ctx: &Context<'_>) -> Vec<u8> {
         let mut buffer = Cursor::new(Vec::with_capacity(self.byte_len(ctx)));
         let _ = self.encode(&mut buffer, ctx);
@@ -302,6 +331,7 @@ pub trait BinaryEncodable {
     }
 }
 
+/// Trait for decoding a type from OPC UA binary.
 pub trait BinaryDecodable: Sized {
     /// Decodes an instance from the read stream. The decoding options contains restrictions set by
     /// the server / client on the length of strings, arrays etc. If these limits are exceeded the
@@ -309,12 +339,19 @@ pub trait BinaryDecodable: Sized {
     fn decode<S: Read + ?Sized>(stream: &mut S, ctx: &Context<'_>) -> EncodingResult<Self>;
 }
 
+/// Trait for encoding a type that cannot contain any custom types
+/// to OPC UA binary. Used in some core modules to encode raw binary messages.
 pub trait SimpleBinaryEncodable {
     #[allow(unused)]
+    // Returns the exact byte length of the structure as it would be if `encode` were called.
+    /// This may be called prior to writing to ensure the correct amount of space is available.
     fn byte_len(&self) -> usize;
+
     /// Encodes the instance to the write stream.
     fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize>;
 
+    /// Convenience method for encoding a message straight into an array of bytes. It is preferable to reuse buffers than
+    /// to call this so it should be reserved for tests and trivial code.
     fn encode_to_vec(&self) -> Vec<u8> {
         let mut buffer = Cursor::new(Vec::with_capacity(self.byte_len()));
         let _ = self.encode(&mut buffer);
@@ -339,7 +376,10 @@ where
     }
 }
 
+/// Trait for decoding a type that cannot contain any custom types
+/// from OPC UA binary. Used in some core modules to decode raw binary messages.
 pub trait SimpleBinaryDecodable: Sized {
+    /// Decode Self from the byte stream.
     fn decode<S: Read + ?Sized>(
         stream: &mut S,
         decoding_options: &DecodingOptions,

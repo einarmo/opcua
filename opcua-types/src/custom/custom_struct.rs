@@ -42,7 +42,6 @@ impl PartialEq for DynamicStructure {
 }
 
 impl ExpandedMessageInfo for DynamicStructure {
-    #[cfg(feature = "json")]
     fn full_json_type_id(&self) -> ExpandedNodeId {
         ExpandedNodeId::new(self.type_def.encoding_ids.json_id.clone())
     }
@@ -51,9 +50,12 @@ impl ExpandedMessageInfo for DynamicStructure {
         ExpandedNodeId::new(self.type_def.encoding_ids.binary_id.clone())
     }
 
-    #[cfg(feature = "xml")]
     fn full_xml_type_id(&self) -> ExpandedNodeId {
         ExpandedNodeId::new(self.type_def.encoding_ids.xml_id.clone())
+    }
+
+    fn full_data_type_id(&self) -> ExpandedNodeId {
+        ExpandedNodeId::new(self.type_def.node_id.clone())
     }
 }
 
@@ -305,11 +307,14 @@ impl BinaryEncodable for DynamicStructure {
     }
 }
 
+/// Type loader that can load types dynamically using data type definitions loaded at
+/// runtime.
 pub struct DynamicTypeLoader {
     pub(super) type_tree: Arc<DataTypeTree>,
 }
 
 impl DynamicTypeLoader {
+    /// Create a new type loader that loads types from the given type tree.
     pub fn new(type_tree: Arc<DataTypeTree>) -> Self {
         Self { type_tree }
     }

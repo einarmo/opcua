@@ -24,6 +24,7 @@ const TICKS_PER_SECOND: i64 = NANOS_PER_SECOND / NANOS_PER_TICK;
 const MIN_YEAR: u16 = 1601;
 const MAX_YEAR: u16 = 9999;
 
+/// Alias for a chrono datetime at UTC, which is how OPC UA represent timestmaps.
 pub type DateTimeUtc = chrono::DateTime<Utc>;
 
 /// A date/time value. This is a wrapper around the chrono type with extra functionality

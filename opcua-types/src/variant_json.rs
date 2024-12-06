@@ -1,3 +1,5 @@
+//! Utilities for JSON encoding variants.
+
 use std::io::{Cursor, Read};
 
 use crate::{
@@ -7,6 +9,10 @@ use crate::{
 };
 
 impl Variant {
+    /// JSON serialize the value of a variant using OPC-UA JSON encoding.
+    ///
+    /// Note that this serializes just the _value_. To include the type ID,
+    /// use [`JsonEncodable::encode`].
     pub fn serialize_variant_value(
         &self,
         stream: &mut JsonStreamWriter<&mut dyn std::io::Write>,

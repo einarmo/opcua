@@ -1,3 +1,6 @@
+//! The [`Array`] type, used to contain OPC-UA arrays, which are potentially
+//! multi-dimensional, but stored as a single vector of Variants.
+
 use log::error;
 use thiserror::Error;
 
@@ -8,7 +11,7 @@ use crate::{variant::*, variant_type_id::*};
 /// properly. The dimensions should match the number of values, or the array is invalid.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Array {
-    // Type of elements in the array
+    /// Type of elements in the array
     pub value_type: VariantScalarTypeId,
 
     /// Values are stored sequentially
@@ -22,9 +25,12 @@ pub struct Array {
 }
 
 #[derive(Debug, Error)]
+/// Error returned when creating arrays.
 pub enum ArrayError {
     #[error("Variant array do not match outer type")]
+    /// Variant array does not match outer type.
     ContentMismatch,
+    /// Variant array dimensions multiplied together does not equal the actual array length.
     #[error("Variant array dimensions multiplied together do not equal the actual array length")]
     InvalidDimensions,
 }
@@ -84,10 +90,12 @@ impl Array {
         }
     }
 
+    /// Whether this is a valid array.
     pub fn is_valid(&self) -> bool {
         self.is_valid_dimensions() && Self::array_is_valid(&self.values)
     }
 
+    /// Encoding mask.
     pub fn encoding_mask(&self) -> u8 {
         let mut encoding_mask = self.value_type.encoding_mask();
         encoding_mask |= EncodingMask::ARRAY_VALUES_BIT;

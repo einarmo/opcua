@@ -190,7 +190,7 @@ impl RelativePathElement {
         )
     }
 
-    pub fn default_browse_name_resolver(node_id: &NodeId) -> Option<String> {
+    fn default_browse_name_resolver(node_id: &NodeId) -> Option<String> {
         match &node_id.identifier {
             Identifier::String(browse_name) => Some(browse_name.as_ref().to_string()),
             Identifier::Numeric(id) => {
@@ -339,6 +339,7 @@ impl RelativePathElement {
 }
 
 #[derive(Debug, Clone)]
+/// Error returned from parsing a relative path.
 pub enum RelativePathError {
     /// Namespace is out of range of a u16.
     NamespaceOutOfRange,

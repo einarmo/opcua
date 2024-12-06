@@ -77,6 +77,8 @@ pub trait TypeTree {
     ) -> Option<&TypeProperty>;
 
     fn get_supertype<'a>(&'a self, node: &NodeId) -> Option<&'a NodeId>;
+
+    fn namespaces(&self) -> &NamespaceMap;
 }
 
 impl TypeTree for DefaultTypeTree {
@@ -137,6 +139,10 @@ impl TypeTree for DefaultTypeTree {
 
     fn get_supertype<'a>(&'a self, node: &NodeId) -> Option<&'a NodeId> {
         self.subtypes_by_target.get(node)
+    }
+
+    fn namespaces(&self) -> &NamespaceMap {
+        &self.namespaces
     }
 }
 

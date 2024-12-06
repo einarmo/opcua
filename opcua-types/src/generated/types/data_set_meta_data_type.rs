@@ -37,4 +37,7 @@ impl opcua::types::MessageInfo for DataSetMetaDataType {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::DataSetMetaDataType_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::DataSetMetaDataType
+    }
 }

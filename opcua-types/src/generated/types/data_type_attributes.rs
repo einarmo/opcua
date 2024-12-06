@@ -34,4 +34,7 @@ impl opcua::types::MessageInfo for DataTypeAttributes {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::DataTypeAttributes_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::DataTypeAttributes
+    }
 }

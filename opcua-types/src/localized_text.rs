@@ -121,6 +121,7 @@ impl BinaryDecodable for LocalizedText {
 }
 
 impl LocalizedText {
+    /// Create a new LocalizedText from the specified locale and text.
     pub fn new(locale: &str, text: &str) -> LocalizedText {
         LocalizedText {
             locale: UAString::from(locale),
@@ -128,6 +129,7 @@ impl LocalizedText {
         }
     }
 
+    /// Create a null LocalizedText.
     pub fn null() -> LocalizedText {
         LocalizedText {
             locale: UAString::null(),

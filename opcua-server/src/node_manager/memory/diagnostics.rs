@@ -450,7 +450,7 @@ impl DiagnosticsNodeManager {
                 "StaticNumericNodeIdRange" => namespace
                     .static_numeric_node_id_range
                     .as_ref()
-                    .map(|r| r.iter().map(|v| v.as_string()).collect::<Vec<_>>())
+                    .map(|r| r.iter().map(|v| v.to_string()).collect::<Vec<_>>())
                     .into(),
                 "StaticStringNodeIdPattern" => {
                     namespace.static_string_node_id_pattern.clone().into()

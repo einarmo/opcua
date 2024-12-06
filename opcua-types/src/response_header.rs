@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
+//! Message header for responses.
+
 use std::{
     self,
     io::{Read, Write},
@@ -32,11 +34,17 @@ mod opcua {
 )]
 #[cfg_attr(feature = "xml", derive(crate::FromXml))]
 pub struct ResponseHeader {
+    /// Response timestamp.
     pub timestamp: UtcTime,
+    /// Handle of the request this message is responding to.
     pub request_handle: IntegerId,
+    /// Status of the service call as a whole.
     pub service_result: StatusCode,
+    /// Requested diagnostics.
     pub service_diagnostics: DiagnosticInfo,
+    /// String table for the message.
     pub string_table: Option<Vec<UAString>>,
+    /// Reserved space for additional header details.
     pub additional_header: ExtensionObject,
 }
 
@@ -97,7 +105,9 @@ impl BinaryDecodable for ResponseHeader {
     }
 }
 
+/// Trait for types that can contain a request handle.
 pub trait AsRequestHandle {
+    /// Get the handle of this request.
     fn as_request_handle(&self) -> u32;
 }
 
@@ -114,10 +124,12 @@ impl AsRequestHandle for u32 {
 }
 
 impl ResponseHeader {
+    /// Create a new response header with status `Good`.
     pub fn new_good(request_header: impl AsRequestHandle) -> ResponseHeader {
         ResponseHeader::new_service_result(request_header, StatusCode::Good)
     }
 
+    /// Create a new response header with given status.
     pub fn new_service_result(
         request_header: impl AsRequestHandle,
         service_result: StatusCode,
@@ -129,6 +141,7 @@ impl ResponseHeader {
         )
     }
 
+    /// Create a new response header with given status and timestamp.
     pub fn new_timestamped_service_result(
         timestamp: DateTime,
         request_header: impl AsRequestHandle,

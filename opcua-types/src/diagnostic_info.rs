@@ -15,20 +15,29 @@ use crate::{
 use bitflags::bitflags;
 
 bitflags! {
+    /// Mask for fields present in DiagnosticInfo.
     #[derive(Copy, Clone, Debug, PartialEq, Default)]
     pub struct DiagnosticInfoMask: u8 {
+        /// Symbolic ID is present.
         const HAS_SYMBOLIC_ID = 0x01;
+        /// Namespace is present.
         const HAS_NAMESPACE = 0x02;
+        /// Localized text is present.
         const HAS_LOCALIZED_TEXT = 0x04;
+        /// Locale is present.
         const HAS_LOCALE = 0x08;
+        /// AdditionalInfo is present.
         const HAS_ADDITIONAL_INFO = 0x10;
+        /// Inner status code is present.
         const HAS_INNER_STATUS_CODE = 0x20;
+        /// Inner diagnostic info is present.
         const HAS_INNER_DIAGNOSTIC_INFO = 0x40;
     }
 }
 
 bitflags! {
     #[derive(Copy, Clone, Debug, PartialEq, Default)]
+    /// Requested diagnostic infos.
     pub struct DiagnosticBits: u32 {
         /// ServiceLevel / SymbolicId
         const SERVICE_LEVEL_SYMBOLIC_ID = 0x0000_0001;
@@ -239,6 +248,7 @@ impl Default for DiagnosticInfo {
 }
 
 impl DiagnosticInfo {
+    /// Return an empty diagnostic info.
     pub fn null() -> DiagnosticInfo {
         DiagnosticInfo {
             symbolic_id: None,
@@ -251,6 +261,7 @@ impl DiagnosticInfo {
         }
     }
 
+    /// Get the encoding mask for this diagnostic info.
     pub fn encoding_mask(&self) -> DiagnosticInfoMask {
         let mut encoding_mask = DiagnosticInfoMask::empty();
         if self.symbolic_id.is_some() {

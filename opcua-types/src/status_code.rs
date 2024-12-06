@@ -1,3 +1,7 @@
+//! Implementation of OPC UA status codes.
+//!
+//! See OPC-UA Part 4, part 7.34.1
+
 use std::{
     error::Error,
     fmt::Display,
@@ -44,14 +48,17 @@ const SUBCODE_MASK: u32 = 0xffff_0000;
 const INFO_BITS_MASK: u32 = 0b0011_1111_1111;
 
 impl StatusCode {
+    /// Return `true` if the severity is `Good`
     pub fn is_good(&self) -> bool {
         matches!(self.severity(), StatusCodeSeverity::Good)
     }
 
+    /// Return `true` if the severity is `Bad`
     pub fn is_bad(&self) -> bool {
         matches!(self.severity(), StatusCodeSeverity::Bad)
     }
 
+    /// Return `true` if the severity is `Uncertain`
     pub fn is_uncertain(&self) -> bool {
         matches!(self.severity(), StatusCodeSeverity::Uncertain)
     }
@@ -61,6 +68,7 @@ impl StatusCode {
         self.0
     }
 
+    /// Create a status code from the given status code category.
     pub fn from_category(category: SubStatusCode) -> Self {
         Self(category as u32)
     }
@@ -313,6 +321,7 @@ impl From<StatusCode> for std::io::Error {
 impl Error for StatusCode {}
 
 #[derive(Debug, Clone)]
+/// Error returned on status code validation failure.
 pub enum StatusCodeValidationError {
     /// Severity is the reserved value 0b11
     InvalidSeverity,
@@ -362,6 +371,7 @@ macro_rules! value_enum_impl {
 
     ($type:ident, _name $($code:ident),*) => {
         impl $type {
+            /// Enum variant name.
             pub fn name(&self) -> &'static str {
                 match self {
                     $(Self::$code => stringify!($code)),*
@@ -389,6 +399,7 @@ macro_rules! value_enum_impl {
 
     ($type:ident, _description $($comment:literal $code:ident),*) => {
         impl $type {
+            /// Enum variant description.
             pub fn description(&self) -> &'static str {
                 match self {
                     $(Self::$code => $comment),*
@@ -399,6 +410,7 @@ macro_rules! value_enum_impl {
 
     ($type:ident, _from_val $($code:ident = $val:literal),*) => {
         impl $type {
+            /// Create an enum variant from a numeric value.
             pub fn from_value(val: u32) -> Option<Self> {
                 match val {
                     $($val => Some(Self::$code)),*,

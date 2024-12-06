@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
+//! The [`VariantTypeId`] type, which is used to inspect variant types without looking at the value.
+
 use std::fmt::Display;
 
 use crate::{DataTypeId, NodeId, NodeIdError, StatusCode};
@@ -9,8 +11,11 @@ use crate::{DataTypeId, NodeId, NodeIdError, StatusCode};
 /// The variant type id is the type of the variant but without its payload.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum VariantTypeId<'a> {
+    /// The variant is empty.
     Empty,
+    /// The variant is a scalar with this inner type.
     Scalar(VariantScalarTypeId),
+    /// The variant is an array with this inner type and optionally these ArrayDimensions.
     Array(VariantScalarTypeId, Option<&'a [u32]>),
 }
 
@@ -28,31 +33,57 @@ impl<'a> From<(VariantScalarTypeId, &'a [u32])> for VariantTypeId<'a> {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(u32)]
+/// The scalar type of a variant.
 pub enum VariantScalarTypeId {
+    /// Boolean
     Boolean = 1,
+    /// Signed byte
     SByte = 2,
+    /// Unsigned byte
     Byte = 3,
+    /// Signed 16 bit integer
     Int16 = 4,
+    /// Unsigned 16 bit integer
     UInt16 = 5,
+    /// Signed 32 bit integer
     Int32 = 6,
+    /// Unsigned 32 bit integer
     UInt32 = 7,
+    /// Signed 64 bit integer
     Int64 = 8,
+    /// Unsigned 64 bit integer
     UInt64 = 9,
+    /// 32 bit floating point number
     Float = 10,
+    /// 64 bit floating point number
     Double = 11,
+    /// String
     String = 12,
+    /// Datetime
     DateTime = 13,
+    /// Globally unique ID
     Guid = 14,
+    /// Byte string
     ByteString = 15,
+    /// XmlElement
     XmlElement = 16,
+    /// Node ID
     NodeId = 17,
+    /// Expanded node ID
     ExpandedNodeId = 18,
+    /// Status code
     StatusCode = 19,
+    /// Qualified name
     QualifiedName = 20,
+    /// Localized text
     LocalizedText = 21,
+    /// Extension object, containing some dynamic structure.
     ExtensionObject = 22,
+    /// Data value
     DataValue = 23,
+    /// A nested variant.
     Variant = 24,
+    /// Diagnostic info
     DiagnosticInfo = 25,
 }
 
@@ -167,6 +198,7 @@ impl TryFrom<&NodeId> for VariantTypeId<'_> {
 }
 
 impl VariantScalarTypeId {
+    /// Get the encoding mask corresponding to this type ID.
     pub fn encoding_mask(&self) -> u8 {
         match self {
             Self::Boolean => EncodingMask::BOOLEAN,
@@ -197,6 +229,7 @@ impl VariantScalarTypeId {
         }
     }
 
+    /// Try to get a scalar type from the encoding mask.
     pub fn from_encoding_mask(encoding_mask: u8) -> Option<Self> {
         Some(match encoding_mask & !EncodingMask::ARRAY_MASK {
             EncodingMask::BOOLEAN => Self::Boolean,
@@ -276,6 +309,7 @@ impl VariantScalarTypeId {
 }
 
 impl VariantTypeId<'_> {
+    /// Get the encoding mask.
     pub fn encoding_mask(&self) -> u8 {
         match self {
             // Null / Empty
@@ -293,6 +327,7 @@ impl VariantTypeId<'_> {
         }
     }
 
+    /// Get the precedence when converting between different variant types.
     pub fn precedence(&self) -> u8 {
         match self {
             Self::Scalar(s) => s.precedence(),

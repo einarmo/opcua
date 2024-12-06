@@ -32,4 +32,7 @@ impl opcua::types::MessageInfo for BrokerWriterGroupTransportDataType {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::BrokerWriterGroupTransportDataType_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::BrokerWriterGroupTransportDataType
+    }
 }

@@ -30,4 +30,7 @@ impl opcua::types::MessageInfo for GenericAttributeValue {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::GenericAttributeValue_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::GenericAttributeValue
+    }
 }

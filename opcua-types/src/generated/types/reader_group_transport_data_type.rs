@@ -27,4 +27,7 @@ impl opcua::types::MessageInfo for ReaderGroupTransportDataType {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::ReaderGroupTransportDataType_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::ReaderGroupTransportDataType
+    }
 }

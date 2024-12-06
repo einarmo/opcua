@@ -26,8 +26,11 @@ use crate::{
 /// A NodeId that allows the namespace URI to be specified instead of an index.
 #[derive(PartialEq, Debug, Clone, Eq, Hash, Default)]
 pub struct ExpandedNodeId {
+    /// The inner NodeId.
     pub node_id: NodeId,
+    /// The full namespace URI. If this is set, the node ID namespace index may be zero.
     pub namespace_uri: UAString,
+    /// The server index. 0 means current server.
     pub server_index: u32,
 }
 
@@ -493,10 +496,12 @@ impl ExpandedNodeId {
         value.into()
     }
 
+    /// Return a null ExpandedNodeId.
     pub fn null() -> ExpandedNodeId {
         Self::new(NodeId::null())
     }
 
+    /// Return `true` if this expanded node ID is null.
     pub fn is_null(&self) -> bool {
         self.node_id.is_null()
     }
