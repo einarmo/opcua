@@ -36,6 +36,7 @@ pub struct CoreNodeManagerImpl {
 /// Node manager for the core namespace.
 pub type CoreNodeManager = InMemoryNodeManager<CoreNodeManagerImpl>;
 
+/// Builder for the [CoreNodeManager].
 pub struct CoreNodeManagerBuilder;
 
 impl InMemoryNodeManagerImplBuilder for CoreNodeManagerBuilder {

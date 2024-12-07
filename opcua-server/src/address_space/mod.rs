@@ -1,3 +1,5 @@
+//! Implementation of [AddressSpace], and in-memory OPC-UA address space.
+
 mod implementation;
 mod utils;
 

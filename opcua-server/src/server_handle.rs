@@ -110,6 +110,7 @@ impl ServerHandle {
         self.token.cancel();
     }
 
+    /// Shorthand for getting the index of a namespace defined in the global server type tree.
     pub fn get_namespace_index(&self, namespace: &str) -> Option<u16> {
         self.type_tree.read().namespaces().get_index(namespace)
     }

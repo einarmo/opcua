@@ -8,6 +8,8 @@ use opcua_types::{
 
 use super::{AddressSpace, HasNodeId, NodeType, UserAccessLevel, Variable};
 
+/// Validate that the user given by `context` can read the value
+/// of the given node.
 pub fn is_readable(context: &RequestContext, node: &NodeType) -> Result<(), StatusCode> {
     if !user_access_level(context, node).contains(UserAccessLevel::CURRENT_READ) {
         Err(StatusCode::BadUserAccessDenied)
@@ -16,6 +18,8 @@ pub fn is_readable(context: &RequestContext, node: &NodeType) -> Result<(), Stat
     }
 }
 
+/// Validate that the user given by `context` can write to the
+/// attribute given by `attribute_id`.
 pub fn is_writable(
     context: &RequestContext,
     node: &NodeType,
@@ -66,6 +70,7 @@ pub fn is_writable(
     }
 }
 
+/// Get the effective user access level for `node`.
 pub fn user_access_level(context: &RequestContext, node: &NodeType) -> UserAccessLevel {
     let user_access_level = if let NodeType::Variable(ref node) = node {
         node.user_access_level()
@@ -79,6 +84,8 @@ pub fn user_access_level(context: &RequestContext, node: &NodeType) -> UserAcces
     )
 }
 
+/// Validate that the user given by `context` is allowed to read
+/// the value of `node`.
 pub fn validate_node_read(
     node: &NodeType,
     context: &RequestContext,
@@ -103,6 +110,8 @@ pub fn validate_node_read(
     Ok(())
 }
 
+/// Validate `value`, verifying that it can be written as the value of
+/// `variable`.
 pub fn validate_value_to_write(
     variable: &Variable,
     value: &Variant,
@@ -150,6 +159,8 @@ pub fn validate_value_to_write(
     }
 }
 
+/// Validate that the user given by `context` can write to the attribute given
+/// by `node_to_write` on `node`.
 pub fn validate_node_write(
     node: &NodeType,
     context: &RequestContext,
@@ -174,10 +185,16 @@ pub fn validate_node_write(
     Ok(())
 }
 
+/// Return `true` if we support the given data encoding.
+/// 
+/// We currently only support `Binary`.
 pub fn is_supported_data_encoding(data_encoding: &DataEncoding) -> bool {
     matches!(data_encoding, DataEncoding::Binary)
 }
 
+/// Invoke `Read` for the given `node_to_read` on `node`.
+/// 
+/// This can return a data value containing an error if validation failed.
 pub fn read_node_value(
     node: &NodeType,
     context: &RequestContext,
@@ -255,6 +272,8 @@ pub fn read_node_value(
     result_value
 }
 
+/// Add the given list of namespaces to the type tree in `context` and
+/// `address_space`.
 pub fn add_namespaces(
     context: &ServerContext,
     address_space: &mut AddressSpace,

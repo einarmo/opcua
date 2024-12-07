@@ -154,6 +154,8 @@ impl ServerStatusWrapper {
         )
     }
 
+    /// Set the state of the server. Note that this is not necessarily reflected in server
+    /// behavior.
     pub fn set_state(&self, state: ServerState) {
         self.status.lock().state = state;
         self.subscriptions.notify_data_change(
@@ -184,18 +186,22 @@ impl ServerStatusWrapper {
         });
     }
 
+    /// Get a copy of the current build info.
     pub fn build_info(&self) -> BuildInfo {
         self.status.lock().build_info.clone()
     }
 
+    /// Get the current server state.
     pub fn state(&self) -> ServerState {
         self.status.lock().state
     }
 
+    /// Get the start time of the server.
     pub fn start_time(&self) -> DateTime {
         self.status.lock().start_time
     }
 
+    /// Get the current seconds till shutdown value.
     pub fn seconds_till_shutdown(&self) -> Option<u32> {
         self.shutdown.get().map(|v| {
             let now = Instant::now();
@@ -208,10 +214,12 @@ impl ServerStatusWrapper {
         })
     }
 
+    /// Get the current shutdown reason.
     pub fn shutdown_reason(&self) -> Option<LocalizedText> {
         self.shutdown.get().map(|v| v.reason.clone())
     }
 
+    /// Get the full status object as an extension object.
     pub fn full_status_obj(&self) -> ExtensionObject {
         ExtensionObject::from_message(self.status.lock().clone())
     }

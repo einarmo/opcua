@@ -13,17 +13,28 @@ use opcua_types::{
 use super::monitored_item::{MonitoredItem, Notification};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
+/// Current internal state of the subscription.
 pub enum SubscriptionState {
+    /// The subscription has been closed and will be removed soon.
     Closed,
+    /// The subscription is being created.
     Creating,
+    /// The subscription is operating normally.
     Normal,
+    /// The subscription is waiting for publish requests that are
+    /// not arriving as expected.
     Late,
+    /// The subscription is sending keep alives because no
+    /// data is being produced.
     KeepAlive,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+/// Unique identifier for a monitored item on the server.
 pub struct MonitoredItemHandle {
+    /// Subscription this monitored item belongs to.
     pub subscription_id: u32,
+    /// ID of this monitored item.
     pub monitored_item_id: u32,
 }
 
@@ -200,6 +211,8 @@ impl Subscription {
         self.monitored_items.drain()
     }
 
+    /// Set `resend_data`. The next publish request will send values for all
+    /// monitored items, whether or not they have produced any new data.
     pub fn set_resend_data(&mut self) {
         self.resend_data = true;
     }

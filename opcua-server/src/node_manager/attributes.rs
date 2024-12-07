@@ -8,9 +8,13 @@ use super::IntoResult;
 #[derive(Debug, Clone)]
 /// Parsed and validated version of a raw ReadValueId from OPC-UA.
 pub struct ParsedReadValueId {
+    /// ID of the node to read from.
     pub node_id: NodeId,
+    /// Attribute ID to read.
     pub attribute_id: AttributeId,
+    /// Index range to read.
     pub index_range: NumericRange,
+    /// Requested data encoding.
     pub data_encoding: DataEncoding,
 }
 
@@ -139,9 +143,13 @@ impl IntoResult for ReadNode {
 #[derive(Debug, Clone)]
 /// Parsed and validated version of the raw OPC-UA `WriteValue`.
 pub struct ParsedWriteValue {
+    /// ID of node to write to.
     pub node_id: NodeId,
+    /// Attribute to write.
     pub attribute_id: AttributeId,
+    /// Index range of value to write.
     pub index_range: NumericRange,
+    /// Value to write.
     pub value: DataValue,
 }
 
