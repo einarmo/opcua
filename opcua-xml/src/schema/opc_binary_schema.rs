@@ -11,7 +11,9 @@ use crate::{
 };
 
 #[derive(Debug)]
+/// Documentation object.
 pub struct Documentation {
+    /// Documentation node content.
     pub contents: Option<String>,
 }
 
@@ -24,13 +26,16 @@ impl<'input> XmlLoad<'input> for Documentation {
 }
 
 #[derive(Debug)]
+/// Byte order for a value.
 pub enum ByteOrder {
+    /// Big endian.
     BigEndian,
+    /// Little endian.
     LittleEndian,
 }
 
 impl ByteOrder {
-    pub fn from_node(node: &Node<'_, '_>, attr: &str) -> Result<Option<Self>, XmlError> {
+    pub(crate) fn from_node(node: &Node<'_, '_>, attr: &str) -> Result<Option<Self>, XmlError> {
         Ok(match node.attribute(attr) {
             Some("LittleEndian") => Some(ByteOrder::LittleEndian),
             Some("BigEndian") => Some(ByteOrder::BigEndian),
@@ -46,9 +51,13 @@ impl ByteOrder {
 }
 
 #[derive(Debug)]
+/// Description of a type in an OPC-UA binary schema.
 pub struct TypeDescription {
+    /// Documentation object.
     pub documentation: Option<Documentation>,
+    /// Type name.
     pub name: String,
+    /// Default byte order.
     pub default_byte_order: Option<ByteOrder>,
 }
 
@@ -63,9 +72,13 @@ impl<'input> XmlLoad<'input> for TypeDescription {
 }
 
 #[derive(Debug)]
+/// Opaque type, these are stored as some other primitive type.
 pub struct OpaqueType {
+    /// Type description.
     pub description: TypeDescription,
+    /// Fixed length in bits. Can be left out if the type has dynamic length.
     pub length_in_bits: Option<i64>,
+    /// Whether the byte order is significant.
     pub byte_order_significant: bool,
 }
 
@@ -80,9 +93,13 @@ impl<'input> XmlLoad<'input> for OpaqueType {
 }
 
 #[derive(Debug)]
+/// Description of an enum value.
 pub struct EnumeratedValue {
+    /// Value documentation.
     pub documentation: Option<Documentation>,
+    /// Enum value name.
     pub name: Option<String>,
+    /// Numeric value.
     pub value: Option<i64>,
 }
 impl<'input> XmlLoad<'input> for EnumeratedValue {
@@ -96,9 +113,13 @@ impl<'input> XmlLoad<'input> for EnumeratedValue {
 }
 
 #[derive(Debug)]
+/// Description of an enumerated type.
 pub struct EnumeratedType {
+    /// Base opaque type.
     pub opaque: OpaqueType,
+    /// Possible enum variants.
     pub variants: Vec<EnumeratedValue>,
+    /// Whether this is an option set, i.e. it can have multiple values at the same time.
     pub is_option_set: bool,
 }
 
@@ -113,17 +134,24 @@ impl<'input> XmlLoad<'input> for EnumeratedType {
 }
 
 #[derive(Debug)]
+/// Switch operand.
 pub enum SwitchOperand {
+    /// Equality operator.
     Equals,
+    /// Greater than operator.
     GreaterThan,
+    /// Less than operator.
     LessThan,
+    /// Greater than or equal to operator.
     GreaterThanOrEqual,
+    /// Less than or eqaul to operator.
     LessThanOrEqual,
+    /// Not equal operator.
     NotEqual,
 }
 
 impl SwitchOperand {
-    pub fn from_node(node: &Node<'_, '_>, attr: &str) -> Result<Option<Self>, XmlError> {
+    pub(crate) fn from_node(node: &Node<'_, '_>, attr: &str) -> Result<Option<Self>, XmlError> {
         Ok(match node.attribute(attr) {
             Some("Equals") => Some(SwitchOperand::Equals),
             Some("GreaterThan") => Some(SwitchOperand::GreaterThan),
@@ -143,16 +171,27 @@ impl SwitchOperand {
 }
 
 #[derive(Debug)]
+/// Type of a struct field.
 pub struct FieldType {
+    /// Field documentation.
     pub documentation: Option<Documentation>,
+    /// Field name.
     pub name: String,
+    /// Name of this fields type.
     pub type_name: Option<String>,
+    /// Fixed field length.
     pub length: Option<u64>,
+    /// Name of field storing this fields length.
     pub length_field: Option<String>,
+    /// Whether the length is in bytes or number of elements.
     pub is_length_in_bytes: bool,
+    /// Field to switch on.
     pub switch_field: Option<String>,
+    /// Value to compare to.
     pub switch_value: Option<u64>,
+    /// Switch operand.
     pub switch_operand: Option<SwitchOperand>,
+    /// Field terminator.
     pub terminator: Option<String>,
 }
 
@@ -174,9 +213,13 @@ impl<'input> XmlLoad<'input> for FieldType {
 }
 
 #[derive(Debug)]
+/// Description of a structured type.
 pub struct StructuredType {
+    /// Type description.
     pub description: TypeDescription,
+    /// List of fields, the order is significant.
     pub fields: Vec<FieldType>,
+    /// Base type.
     pub base_type: Option<String>,
 }
 
@@ -191,8 +234,11 @@ impl<'input> XmlLoad<'input> for StructuredType {
 }
 
 #[derive(Debug)]
+/// Import types from some other schema.
 pub struct ImportDirective {
+    /// Namespace to import.
     pub namespace: Option<String>,
+    /// Location of import.
     pub location: Option<String>,
 }
 
@@ -206,18 +252,28 @@ impl<'input> XmlLoad<'input> for ImportDirective {
 }
 
 #[derive(Debug)]
+/// Item in the outer type dictionary.
 pub enum TypeDictionaryItem {
+    /// An opaque type represented via some primitive type.
     Opaque(OpaqueType),
+    /// An enum.
     Enumerated(EnumeratedType),
+    /// A structured type.
     Structured(StructuredType),
 }
 
 #[derive(Debug)]
+/// The outer type dictionary containing the types in an OPC UA BSD file.
 pub struct TypeDictionary {
+    /// Type dictionary documentation.
     pub documentation: Option<Documentation>,
+    /// List of imports.
     pub imports: Vec<ImportDirective>,
+    /// List of types defined in this schema.
     pub elements: Vec<TypeDictionaryItem>,
+    /// Target OPC-UA namespace, required.
     pub target_namespace: String,
+    /// Default byte order for types in this schema.
     pub default_byte_order: Option<ByteOrder>,
 }
 
@@ -245,6 +301,7 @@ impl<'input> XmlLoad<'input> for TypeDictionary {
     }
 }
 
+/// Load an OPC-UA BSD file from a string, `document` is the content of an OPC-UA BSD file.
 pub fn load_bsd_file(document: &str) -> Result<TypeDictionary, XmlError> {
     let document = Document::parse(document).map_err(|e| XmlError {
         span: 0..1,

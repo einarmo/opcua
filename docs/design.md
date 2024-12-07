@@ -27,6 +27,8 @@ OPC UA for Rust is split over several crates which are periodically published:
 * [`opcua-server`](../opcua-server) - contains the server side API. The server may optionally use `opcua-client` to register the server with a local discovery server.
 * [`opcua-nodes`](../opcua-nodes) - contains the `NodeType` as well as types necessary to define the core namespace.
 * [`opcua-core-namespace`](../opcua-core-namespace) - contains the generated code for populating the core namespace.
+* [`opcua-xml](../opcua-xml) - contains tools for parsing various OPC-UA XML files. Used by opcua-codegen and by opcua-nodes for loading NodeSet2 files at runtime. Only included with the `xml` feature.
+* [`opcua-macros`](../opcua-macros) - procedural macros for encoding, decoding, events, and likely more in the future.
 * [`opcua-codegen`](../opcua-codegen) - a command line tool for generating code based on OPC-UA XML files.
 * [`opcua-certificate-creator`](../tools/certificate-creator) - a command-line tool for creating OPC UA compatible public cert and private key.
 

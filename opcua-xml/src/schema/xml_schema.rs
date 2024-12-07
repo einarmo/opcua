@@ -11,6 +11,7 @@ use crate::{
     FromValue, XmlError, XmlLoad,
 };
 
+/// Load an XSD schema from a document.
 pub fn load_xsd_schema(document: &str) -> Result<XmlSchema, XmlError> {
     let document = Document::parse(document).map_err(|e| XmlError {
         span: 0..1,
@@ -21,8 +22,11 @@ pub fn load_xsd_schema(document: &str) -> Result<XmlSchema, XmlError> {
 }
 
 #[derive(Debug)]
+/// Value of a Facet node.
 pub struct FacetValue {
+    /// Facet value.
     pub value: String,
+    /// Whether the facet is fixed.
     pub fixed: bool,
 }
 
@@ -36,18 +40,31 @@ impl<'input> XmlLoad<'input> for FacetValue {
 }
 
 #[derive(Debug)]
+/// A restriction facet.
 pub enum Facet {
+    /// Exclusive minimum of the type value.
     MinExclusive(FacetValue),
+    /// Inclusive minimum of the type value.
     MinInclusive(FacetValue),
+    /// Exclusive maximum of the type value.
     MaxExclusive(FacetValue),
+    /// Inclusive maximum of the type value.
     MaxInclusive(FacetValue),
+    /// Total number of digits in values of this type.
     TotalDigits(FacetValue),
+    /// Total number of digits after the comma in values of this type.
     FractionDigits(FacetValue),
+    /// Length of values of this type.
     Length(FacetValue),
+    /// Minimum length of values of this type.
     MinLength(FacetValue),
+    /// Maximum length of values of this type.
     MaxLength(FacetValue),
+    /// Possible value. The presence of one of these means the type is an enum.
     Enumeration(FacetValue),
+    /// Handling of white space in the value.
     WhiteSpace(FacetValue),
+    /// Pattern values of this type must match.
     Pattern(FacetValue),
 }
 
@@ -72,11 +89,17 @@ impl<'input> XmlLoad<'input> for Option<Facet> {
 }
 
 #[derive(Debug)]
+/// A restriction is a property of a type that limits valid values.
 pub struct Restriction {
+    /// Inherit from some other type.
     pub base: Option<String>,
+    /// List of facets.
     pub facets: Vec<Facet>,
+    /// Inner structure type, may not be present for primitive types.
     pub content: Option<SimpleType>,
+    /// Type definition particle.
     pub particle: Option<TypeDefParticle>,
+    /// Extra attributes.
     pub attributes: Vec<Attribute>,
 }
 
@@ -93,8 +116,11 @@ impl<'input> XmlLoad<'input> for Restriction {
 }
 
 #[derive(Debug)]
+/// List of values.
 pub struct List {
+    /// Inner type.
     pub content: Option<SimpleType>,
+    /// Item type.
     pub item_type: Option<String>,
 }
 
@@ -108,8 +134,11 @@ impl<'input> XmlLoad<'input> for List {
 }
 
 #[derive(Debug)]
+/// Discriminated union of different variants.
 pub struct Union {
+    /// Possible variants.
     pub variants: Vec<SimpleType>,
+    /// Member types.
     pub member_types: Option<Vec<String>>,
 }
 
@@ -123,9 +152,13 @@ impl<'input> XmlLoad<'input> for Union {
 }
 
 #[derive(Debug)]
+/// Simple derivation.
 pub enum SimpleDerivation {
+    /// Restriction type.
     Restriction(Box<Restriction>),
+    /// List type.
     List(Box<List>),
+    /// Union type.
     Union(Box<Union>),
 }
 
@@ -141,8 +174,11 @@ impl<'input> XmlLoad<'input> for Option<SimpleDerivation> {
 }
 
 #[derive(Debug)]
+/// A simple type.
 pub struct SimpleType {
+    /// Type name.
     pub name: Option<String>,
+    /// Type content.
     pub content: Option<SimpleDerivation>,
 }
 
@@ -156,8 +192,11 @@ impl<'input> XmlLoad<'input> for SimpleType {
 }
 
 #[derive(Debug)]
+/// The Any type.
 pub struct Any {
+    /// Minimum number of times this field occurs.
     pub min_occurs: Option<u32>,
+    /// Maximum number of times this field occurs.
     pub max_uccors: Option<MaxOccurs>,
 }
 
@@ -170,11 +209,17 @@ impl<'input> XmlLoad<'input> for Any {
     }
 }
 
+/// Particle, some element of the schema.
 pub enum Particle {
+    /// General element.
     Element(Element),
+    /// An list of particles that must all be true.
     All(Group),
+    /// A choice between a list of different particles.
     Choice(Group),
+    /// A sequence of particles in a fixed order.
     Sequence(Group),
+    /// Anything
     Any(Any),
 }
 
@@ -192,10 +237,15 @@ impl<'input> XmlLoad<'input> for Option<Particle> {
 }
 
 #[derive(Debug)]
+/// A variant of particle that can occur inside another object.
 pub enum NestedParticle {
+    /// Element type
     Element(Element),
+    /// Choice between different types.
     Choice(Group),
+    /// Sequence of particles in a fixed order.
     Sequence(Group),
+    /// Anything
     Any(Any),
 }
 
@@ -212,9 +262,13 @@ impl<'input> XmlLoad<'input> for Option<NestedParticle> {
 }
 
 #[derive(Debug)]
+/// A group of multiple particles.
 pub struct Group {
+    /// Particles in the group.
     pub content: Vec<NestedParticle>,
+    /// Minimum occurences of the group.
     pub min_occurs: Option<u32>,
+    /// Maximum occurences of the group.
     pub max_uccors: Option<MaxOccurs>,
 }
 
@@ -229,9 +283,13 @@ impl<'input> XmlLoad<'input> for Group {
 }
 
 #[derive(Debug)]
+/// Type definition particle.
 pub enum TypeDefParticle {
+    /// All elements of the group must hold.
     All(Group),
+    /// One of the elements of the group.
     Choice(Group),
+    /// A fixed sequence of group elements.
     Sequence(Group),
 }
 
@@ -247,9 +305,13 @@ impl<'input> XmlLoad<'input> for Option<TypeDefParticle> {
 }
 
 #[derive(Debug)]
+/// A type that extends another type.
 pub struct Extension {
+    /// Extension content.
     pub content: Option<TypeDefParticle>,
+    /// Attributes on the extension.
     pub attributes: Vec<Attribute>,
+    /// Base type.
     pub base: String,
 }
 
@@ -264,8 +326,11 @@ impl<'input> XmlLoad<'input> for Extension {
 }
 
 #[derive(Debug)]
+/// Content of a simple type.
 pub enum SimpleContent {
+    /// Restriction of some other type.
     Restriction(Restriction),
+    /// Extension of some other type.
     Extension(Extension),
 }
 
@@ -280,8 +345,11 @@ impl<'input> XmlLoad<'input> for Option<SimpleContent> {
 }
 
 #[derive(Debug)]
+/// Complex restriction variant.
 pub struct ComplexRestriction {
+    /// Inner base restriction.
     pub base: Restriction,
+    /// Extension particle.
     pub particle: Option<TypeDefParticle>,
 }
 
@@ -295,8 +363,11 @@ impl<'input> XmlLoad<'input> for ComplexRestriction {
 }
 
 #[derive(Debug)]
+/// Content of a complex type.
 pub enum ComplexContent {
+    /// Complex restriction of some other type.
     Restriction(ComplexRestriction),
+    /// Extension of some other type.
     Extension(Extension),
 }
 
@@ -311,8 +382,11 @@ impl<'input> XmlLoad<'input> for Option<ComplexContent> {
 }
 
 #[derive(Debug)]
+/// Possible contents of a complex type.
 pub enum ComplexTypeContents {
+    /// Simple content.
     Simple(SimpleContent),
+    /// Complex content.
     Complex(ComplexContent),
 }
 
@@ -335,10 +409,15 @@ impl<'input> XmlLoad<'input> for Option<ComplexTypeContents> {
 }
 
 #[derive(Debug)]
+/// A complex structure.
 pub struct ComplexType {
+    /// Complex type contents.
     pub content: Option<ComplexTypeContents>,
+    /// Inner particle.
     pub particle: Option<TypeDefParticle>,
+    /// List of attributes.
     pub attributes: Vec<Attribute>,
+    /// Type name.
     pub name: Option<String>,
 }
 
@@ -354,8 +433,11 @@ impl<'input> XmlLoad<'input> for ComplexType {
 }
 
 #[derive(Debug)]
+/// Contents of an element.
 pub enum ElementContents {
+    /// A simple type.
     SimpleType(SimpleType),
+    /// A complex type.
     ComplexType(ComplexType),
 }
 
@@ -370,8 +452,11 @@ impl<'input> XmlLoad<'input> for Option<ElementContents> {
 }
 
 #[derive(Debug)]
+/// Maximum number of occurences of something.
 pub enum MaxOccurs {
+    /// A specific number.
     Count(u32),
+    /// Unbounded.
     Unbounded,
 }
 
@@ -386,9 +471,13 @@ impl FromValue for MaxOccurs {
 }
 
 #[derive(Debug)]
+/// Legal uses of an attribute.
 pub enum AttributeUse {
+    /// Attribute cannot be used.
     Prohibited,
+    /// Attribute is optional.
     Optional,
+    /// Attribute is required.
     Required,
 }
 
@@ -407,12 +496,19 @@ impl FromValue for AttributeUse {
 }
 
 #[derive(Debug)]
+/// Definition of an attribute on a type.
 pub struct Attribute {
+    /// Attribute content.
     pub content: Option<SimpleType>,
+    /// Attribute name.
     pub name: Option<String>,
+    /// Attribute reference.
     pub r#ref: Option<String>,
+    /// Attribute type.
     pub r#type: Option<String>,
+    /// Usage patterns.
     pub r#use: AttributeUse,
+    /// Attribute default value.
     pub default: Option<String>,
 }
 
@@ -430,7 +526,9 @@ impl<'input> XmlLoad<'input> for Attribute {
 }
 
 #[derive(Debug)]
+/// Attribute declaration wrapper.
 pub struct AttrDecls {
+    /// Attributes in declaration.
     pub attributes: Vec<Attribute>,
 }
 
@@ -443,15 +541,24 @@ impl<'input> XmlLoad<'input> for AttrDecls {
 }
 
 #[derive(Debug)]
+/// Element, representing some part of a type.
 pub struct Element {
+    /// Element type.
     pub r#type: Option<String>,
+    /// Element default value.
     pub default: Option<String>,
+    /// Whether the element is nullable.
     pub nillable: bool,
+    /// Contents.
     pub contents: Option<ElementContents>,
+    /// Element name.
     pub name: Option<String>,
+    /// Element reference.
     pub r#ref: Option<String>,
+    /// Minimum number of occurences.
     pub min_occurs: Option<u32>,
-    pub max_uccors: Option<MaxOccurs>,
+    /// Maximum number of occurences.
+    pub max_occurs: Option<MaxOccurs>,
 }
 
 impl<'input> XmlLoad<'input> for Element {
@@ -463,16 +570,20 @@ impl<'input> XmlLoad<'input> for Element {
             name: value_from_attr_opt(node, "name")?,
             r#ref: value_from_attr_opt(node, "ref")?,
             min_occurs: value_from_attr_opt(node, "minOccurs")?,
-            max_uccors: value_from_attr_opt(node, "maxOccurs")?,
+            max_occurs: value_from_attr_opt(node, "maxOccurs")?,
             contents: first_child_of_type(node)?,
         })
     }
 }
 
 #[derive(Debug)]
+/// Item in an XSD file.
 pub enum XsdFileItem {
+    /// A simple type.
     SimpleType(SimpleType),
+    /// A complex type.
     ComplexType(ComplexType),
+    /// A top level element.
     Element(Element),
 }
 
@@ -488,9 +599,13 @@ impl<'input> XmlLoad<'input> for Option<XsdFileItem> {
 }
 
 #[derive(Debug)]
+/// Type representing a full XmlSchema file.
 pub struct XmlSchema {
+    /// Top level items.
     pub items: Vec<XsdFileItem>,
+    /// Target namespace.
     pub target_namespace: Option<String>,
+    /// Schema version.
     pub version: Option<String>,
 }
 
@@ -505,7 +620,10 @@ impl<'input> XmlLoad<'input> for XmlSchema {
 }
 
 #[derive(Debug)]
+/// Top level element in an XML schema when it is a type.
 pub enum XsdFileType {
+    /// Simple type.
     Simple(SimpleType),
+    /// Complex type.
     Complex(ComplexType),
 }
