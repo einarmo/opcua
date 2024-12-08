@@ -4,11 +4,15 @@
 
 //! Contains the implementation of `NumericRange`.
 
-use std::{fmt, str::FromStr};
+use std::{
+    fmt::{self, Display},
+    str::FromStr,
+};
 
 use regex::Regex;
 
 #[derive(Debug)]
+/// Error returned when parsing a numeric range.
 pub struct NumericRangeError;
 
 impl fmt::Display for NumericRangeError {
@@ -58,8 +62,14 @@ pub enum NumericRange {
 }
 
 impl NumericRange {
+    /// Check if this is non-empty.
     pub fn has_range(&self) -> bool {
-        *self != NumericRange::None
+        !self.is_none()
+    }
+
+    /// Check if this range is empty.
+    pub fn is_none(&self) -> bool {
+        matches!(self, NumericRange::None)
     }
 }
 
@@ -109,7 +119,7 @@ fn valid_numeric_ranges() {
         }
         assert!(range.is_ok());
         assert_eq!(range.unwrap(), vr.1);
-        assert_eq!(vr.2, &vr.1.as_string());
+        assert_eq!(vr.2, &vr.1.to_string());
     }
 }
 
@@ -187,28 +197,31 @@ impl FromStr for NumericRange {
     }
 }
 
-impl NumericRange {
-    pub fn new<T>(s: T) -> Result<Self, NumericRangeError>
-    where
-        T: Into<String>,
-    {
-        Self::from_str(s.into().as_ref())
-    }
-
-    pub fn as_string(&self) -> String {
+impl Display for NumericRange {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            NumericRange::None => String::new(),
-            NumericRange::Index(idx) => {
-                format!("{}", idx)
-            }
-            NumericRange::Range(min, max) => {
-                format!("{}:{}", min, max)
-            }
-            NumericRange::MultipleRanges(ref ranges) => {
-                let ranges: Vec<String> = ranges.iter().map(|r| r.as_string()).collect();
-                ranges.join(",")
+            NumericRange::None => write!(f, ""),
+            NumericRange::Index(idx) => write!(f, "{}", idx),
+            NumericRange::Range(min, max) => write!(f, "{}:{}", min, max),
+            NumericRange::MultipleRanges(vec) => {
+                let mut needs_comma = false;
+                for r in vec {
+                    if needs_comma {
+                        write!(f, ",")?;
+                    }
+                    needs_comma = true;
+                    write!(f, "{}", r)?;
+                }
+                Ok(())
             }
         }
+    }
+}
+
+impl NumericRange {
+    /// Parse a numeric range from a string.
+    pub fn new(s: &str) -> Result<Self, NumericRangeError> {
+        Self::from_str(s)
     }
 
     fn parse_range(s: &str) -> Result<NumericRange, NumericRangeError> {

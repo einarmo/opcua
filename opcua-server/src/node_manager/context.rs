@@ -21,6 +21,10 @@ use super::{
 /// instead it returns something that wraps a type tree, for example
 /// a `RwLockReadGuard<'_, RawRwLock, dyn TypeTree>`
 pub trait TypeTreeForUser: Send + Sync {
+    /// Get the type tree for the user associated with the given `ctx`.
+    /// This can be the server global type tree, or a custom type tree for each individual user.
+    ///
+    /// It is sync, so you should do any setup in your [`AuthManager`] implementation.
     fn get_type_tree_for_user<'a>(
         &'a self,
         ctx: &'a RequestContext,
@@ -38,7 +42,10 @@ impl TypeTreeForUser for DefaultTypeTreeGetter {
     }
 }
 
+/// Type returned from [`TypeTreeForUser`], a trait for something that dereferences
+/// to a `dyn TypeTree`.
 pub trait TypeTreeReadContext {
+    /// Dereference to a dynamic [TypeTree].
     fn get(&self) -> &dyn TypeTree;
 }
 
@@ -74,6 +81,7 @@ pub struct RequestContext {
 }
 
 impl RequestContext {
+    /// Get the type tree for the current user.
     pub fn get_type_tree_for_user<'a>(&'a self) -> Box<dyn TypeTreeReadContext + 'a> {
         self.type_tree_getter.get_type_tree_for_user(self)
     }

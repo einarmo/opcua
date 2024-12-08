@@ -30,4 +30,7 @@ impl opcua::types::MessageInfo for EventFieldList {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::EventFieldList_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::EventFieldList
+    }
 }

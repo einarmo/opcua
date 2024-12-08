@@ -3,8 +3,7 @@ use opcua::{
     client::{HistoryReadAction, HistoryUpdateAction, Session},
     server::address_space::{
         AccessLevel, DataTypeBuilder, EventNotifier, MethodBuilder, NodeType, ObjectBuilder,
-        ObjectTypeBuilder, ReferenceTypeBuilder, UserAccessLevel, VariableBuilder,
-        VariableTypeBuilder, ViewBuilder,
+        ObjectTypeBuilder, ReferenceTypeBuilder, VariableBuilder, VariableTypeBuilder, ViewBuilder,
     },
     types::{
         AttributeId, ByteString, DataTypeId, DataValue, DateTime, HistoryData, HistoryReadValueId,
@@ -116,9 +115,9 @@ async fn write_variable() {
             ),
             write_value(
                 AttributeId::UserAccessLevel,
-                (UserAccessLevel::CURRENT_READ
-                    | UserAccessLevel::CURRENT_WRITE
-                    | UserAccessLevel::HISTORY_READ)
+                (AccessLevel::CURRENT_READ
+                    | AccessLevel::CURRENT_WRITE
+                    | AccessLevel::HISTORY_READ)
                     .bits(),
                 &id,
             ),
@@ -583,7 +582,7 @@ async fn write_bytestring_to_byte_array() {
             .data_type(DataTypeId::Byte)
             .value_rank(1)
             .access_level(AccessLevel::CURRENT_WRITE)
-            .user_access_level(UserAccessLevel::CURRENT_WRITE)
+            .user_access_level(AccessLevel::CURRENT_WRITE)
             .build()
             .into(),
         &ObjectId::ObjectsFolder.into(),
@@ -643,7 +642,7 @@ async fn write_index_range() {
                 .data_type(DataTypeId::Byte)
                 .value_rank(1)
                 .access_level(AccessLevel::CURRENT_WRITE)
-                .user_access_level(UserAccessLevel::CURRENT_WRITE)
+                .user_access_level(AccessLevel::CURRENT_WRITE)
                 .build()
                 .into(),
             &ObjectId::ObjectsFolder.into(),
@@ -720,7 +719,7 @@ async fn history_update_insert() {
             .description("Description")
             .data_type(DataTypeId::Int32)
             .access_level(AccessLevel::HISTORY_WRITE | AccessLevel::HISTORY_READ)
-            .user_access_level(UserAccessLevel::HISTORY_WRITE | UserAccessLevel::HISTORY_READ)
+            .user_access_level(AccessLevel::HISTORY_WRITE | AccessLevel::HISTORY_READ)
             .build()
             .into(),
         &ObjectId::ObjectsFolder.into(),
@@ -814,7 +813,7 @@ async fn history_update_fail() {
             .description("Description")
             .data_type(DataTypeId::Int32)
             .access_level(AccessLevel::CURRENT_READ)
-            .user_access_level(UserAccessLevel::CURRENT_READ)
+            .user_access_level(AccessLevel::CURRENT_READ)
             .build()
             .into(),
         &ObjectId::ObjectsFolder.into(),

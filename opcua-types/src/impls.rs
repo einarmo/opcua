@@ -32,6 +32,8 @@ pub trait MessageInfo {
     fn json_type_id(&self) -> ObjectId;
     /// The XML type id associated with the message.
     fn xml_type_id(&self) -> ObjectId;
+    /// The data type id associated with the message.
+    fn data_type_id(&self) -> DataTypeId;
 }
 
 /// Trait implemented by all messages, allowing for custom message types.
@@ -40,8 +42,10 @@ pub trait ExpandedMessageInfo {
     fn full_type_id(&self) -> ExpandedNodeId;
     /// The JSON type id associated with the message.
     fn full_json_type_id(&self) -> ExpandedNodeId;
-    /// Tge XML type id associated with the message.
+    /// The XML type id associated with the message.
     fn full_xml_type_id(&self) -> ExpandedNodeId;
+    /// The data type ID associated with the message.
+    fn full_data_type_id(&self) -> ExpandedNodeId;
 }
 
 impl<T> ExpandedMessageInfo for T
@@ -59,19 +63,25 @@ where
     fn full_xml_type_id(&self) -> ExpandedNodeId {
         self.xml_type_id().into()
     }
+
+    fn full_data_type_id(&self) -> ExpandedNodeId {
+        self.data_type_id().into()
+    }
 }
 
-/// Context for encoding.
+/// Context used during event encoding and decoding.
 #[derive(Debug, Default)]
 pub struct EncodingContext {
     namespaces: NamespaceMap,
 }
 
 impl EncodingContext {
+    /// Create a new context.
     pub fn new(namespaces: NamespaceMap) -> Self {
         Self { namespaces }
     }
 
+    /// Resolve the given ExpandedNodeId to a NodeId.
     pub fn resolve_node_id<'b>(
         &self,
         id: &'b ExpandedNodeId,
@@ -79,12 +89,14 @@ impl EncodingContext {
         id.try_resolve(&self.namespaces)
     }
 
+    /// Return the namespace map.
     pub fn namespaces(&self) -> &NamespaceMap {
         &self.namespaces
     }
 }
 
 impl ServiceFault {
+    /// Create a new ServiceFault from a request handle and a status code.
     pub fn new(request_header: impl AsRequestHandle, service_result: StatusCode) -> ServiceFault {
         ServiceFault {
             response_header: ResponseHeader::new_service_result(request_header, service_result),
@@ -93,6 +105,7 @@ impl ServiceFault {
 }
 
 impl UserTokenPolicy {
+    /// Return the anonymous user token policy.
     pub fn anonymous() -> UserTokenPolicy {
         UserTokenPolicy {
             policy_id: UAString::from("anonymous"),
@@ -130,7 +143,7 @@ impl UserNameIdentityToken {
         !self.user_name.is_null() && !self.password.is_null()
     }
 
-    // Get the plaintext password as a string, if possible.
+    /// Get the plaintext password as a string, if possible.
     pub fn plaintext_password(&self) -> Result<String, Error> {
         if !self.encryption_algorithm.is_empty() {
             // Should not be calling this function at all encryption is applied
@@ -214,6 +227,7 @@ impl Default for AnonymousIdentityToken {
 }
 
 impl SignatureData {
+    /// Return an empty SignatureData.
     pub fn null() -> SignatureData {
         SignatureData {
             algorithm: UAString::null(),
@@ -365,10 +379,12 @@ impl From<(&str, DataTypeId)> for Argument {
 }
 
 impl ServiceCounterDataType {
+    /// Register a successful entry.
     pub fn success(&mut self) {
         self.total_count += 1;
     }
 
+    /// Register an error.
     pub fn error(&mut self) {
         self.total_count += 1;
         self.error_count += 1;

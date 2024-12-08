@@ -22,7 +22,8 @@ use opcua_core::{
 };
 use opcua_crypto::{CertificateStore, SecurityPolicy};
 use opcua_types::{
-    ApplicationDescription, ContextOwned, DecodingOptions, EndpointDescription, FindServersRequest,
+    ApplicationDescription, ContextOwned, DecodingOptions, EndpointDescription,
+    FindServersOnNetworkRequest, FindServersOnNetworkResponse, FindServersRequest,
     GetEndpointsRequest, MessageSecurityMode, NamespaceMap, RegisterServerRequest,
     RegisteredServer, StatusCode, UAString,
 };
@@ -32,6 +33,8 @@ use super::{
     SessionEventLoop, SessionInfo,
 };
 
+/// Wrapper around common data for generating sessions and performing requests
+/// with one-shot connections.
 pub struct Client {
     /// Client configuration
     pub(super) config: ClientConfig,
@@ -81,6 +84,7 @@ impl Client {
         }
     }
 
+    /// Get a new session builder that can be used to build a session dynamically.
     pub fn session_builder(&self) -> SessionBuilder<'_, (), ()> {
         SessionBuilder::<'_, (), ()>::new(&self.config)
     }
@@ -91,7 +95,7 @@ impl Client {
     ///
     /// # Returns
     ///
-    /// * `Ok((Arc<AsyncSession>, SessionEventLoop))` - Session and event loop.
+    /// * `Ok((Arc<Session>, SessionEventLoop))` - Session and event loop.
     /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
     ///
     pub async fn connect_to_endpoint_id(
@@ -125,7 +129,7 @@ impl Client {
     ///
     /// # Returns
     ///
-    /// * `Ok((Arc<AsyncSession>, SessionEventLoop))` - Session and event loop.
+    /// * `Ok((Arc<Session>, SessionEventLoop))` - Session and event loop.
     /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
     ///
     pub async fn connect_to_matching_endpoint(
@@ -161,7 +165,7 @@ impl Client {
     ///
     /// # Returns
     ///
-    /// * `Ok((Arc<AsyncSession>, SessionEventLoop))` - Session and event loop.
+    /// * `Ok((Arc<Session>, SessionEventLoop))` - Session and event loop.
     /// * `Err(String)` - Endpoint is invalid.
     ///
     pub fn connect_to_endpoint_directly(
@@ -176,7 +180,7 @@ impl Client {
             .build(self.certificate_store.clone()))
     }
 
-    /// Creates a new [`AsyncSession`] using the default endpoint specified in the config. If
+    /// Creates a new [`Session`] using the default endpoint specified in the config. If
     /// there is no default, or the endpoint does not exist, this function will return an error
     ///
     /// This function returns both a reference to the session, and a `SessionEventLoop`. You must run and
@@ -191,7 +195,7 @@ impl Client {
     ///
     /// # Returns
     ///
-    /// * `Ok((Arc<AsyncSession>, SessionEventLoop))` - Session and event loop.
+    /// * `Ok((Arc<Session>, SessionEventLoop))` - Session and event loop.
     /// * `Err(String)` - Endpoint is invalid.
     ///
     pub async fn connect_to_default_endpoint(
@@ -211,7 +215,7 @@ impl Client {
     /// Create a secure channel using the provided [`SessionInfo`].
     ///
     /// This is used when creating temporary connections to the server, when creating a session,
-    /// [`AsyncSession`] manages its own channel.
+    /// [`Session`] manages its own channel.
     fn channel_from_session_info(
         &self,
         session_info: SessionInfo,
@@ -416,12 +420,14 @@ impl Client {
         &self,
         endpoint_url: String,
         channel: &AsyncSecureChannel,
+        locale_ids: Option<Vec<UAString>>,
+        server_uris: Option<Vec<UAString>>,
     ) -> Result<Vec<ApplicationDescription>, StatusCode> {
         let request = FindServersRequest {
             request_header: channel.make_request_header(self.config.request_timeout),
             endpoint_url: endpoint_url.into(),
-            locale_ids: None,
-            server_uris: None,
+            locale_ids,
+            server_uris,
         };
 
         let response = channel.send(request, self.config.request_timeout).await?;
@@ -439,6 +445,8 @@ impl Client {
     /// # Arguments
     ///
     /// * `discovery_endpoint_url` - Discovery endpoint to connect to.
+    /// * `locale_ids` - List of locales to use.
+    /// * `server_uris` - List of servers to return. If empty, all known servers are returned.
     ///
     /// # Returns
     ///
@@ -447,6 +455,8 @@ impl Client {
     pub async fn find_servers(
         &self,
         discovery_endpoint_url: impl Into<String>,
+        locale_ids: Option<Vec<UAString>>,
+        server_uris: Option<Vec<UAString>>,
     ) -> Result<Vec<ApplicationDescription>, StatusCode> {
         let discovery_endpoint_url = discovery_endpoint_url.into();
         debug!("find_servers, {}", discovery_endpoint_url);
@@ -460,7 +470,98 @@ impl Client {
 
         let mut evt_loop = channel.connect().await?;
 
-        let send_fut = self.find_servers_inner(discovery_endpoint_url, &channel);
+        let send_fut =
+            self.find_servers_inner(discovery_endpoint_url, &channel, locale_ids, server_uris);
+        pin!(send_fut);
+
+        let res = loop {
+            select! {
+                r = evt_loop.poll() => {
+                    if let TransportPollResult::Closed(e) = r {
+                        return Err(e);
+                    }
+                },
+                res = &mut send_fut => break res
+            }
+        };
+
+        channel.close_channel().await;
+
+        loop {
+            if matches!(evt_loop.poll().await, TransportPollResult::Closed(_)) {
+                break;
+            }
+        }
+
+        res
+    }
+
+    async fn find_servers_on_network_inner(
+        &self,
+        starting_record_id: u32,
+        max_records_to_return: u32,
+        server_capability_filter: Option<Vec<UAString>>,
+        channel: &AsyncSecureChannel,
+    ) -> Result<FindServersOnNetworkResponse, StatusCode> {
+        let request = FindServersOnNetworkRequest {
+            request_header: channel.make_request_header(self.config.request_timeout),
+            starting_record_id,
+            max_records_to_return,
+            server_capability_filter,
+        };
+
+        let response = channel.send(request, self.config.request_timeout).await?;
+        if let ResponseMessage::FindServersOnNetwork(response) = response {
+            process_service_result(&response.response_header)?;
+            Ok(*response)
+        } else {
+            Err(process_unexpected_response(response))
+        }
+    }
+
+    /// Connects to a discovery server and asks for a list of available servers on the network.
+    ///
+    /// See OPC UA Part 4 - Services 5.5.3 for a complete description of the service.
+    ///
+    /// # Arguments
+    ///
+    /// * `discovery_endpoint_url` - Endpoint URL to connect to.
+    /// * `starting_record_id` - Only records with an identifier greater than this number
+    ///   will be returned.
+    /// * `max_records_to_return` - The maximum number of records to return in the response.
+    ///   0 indicates that there is no limit.
+    /// * `server_capability_filter` - List of server capability filters. Only records with
+    ///   all the specified server capabilities are returned.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(FindServersOnNetworkResponse)` - Full service response object.
+    /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
+    pub async fn find_servers_on_network(
+        &self,
+        discovery_endpoint_url: impl Into<String>,
+        starting_record_id: u32,
+        max_records_to_return: u32,
+        server_capability_filter: Option<Vec<UAString>>,
+    ) -> Result<FindServersOnNetworkResponse, StatusCode> {
+        let discovery_endpoint_url = discovery_endpoint_url.into();
+        debug!("find_servers, {}", discovery_endpoint_url);
+        let endpoint = EndpointDescription::from(discovery_endpoint_url.as_ref());
+        let session_info = SessionInfo {
+            endpoint: endpoint.clone(),
+            user_identity_token: IdentityToken::Anonymous,
+            preferred_locales: Vec::new(),
+        };
+        let channel = self.channel_from_session_info(session_info, self.config.channel_lifetime);
+
+        let mut evt_loop = channel.connect().await?;
+
+        let send_fut = self.find_servers_on_network_inner(
+            starting_record_id,
+            max_records_to_return,
+            server_capability_filter,
+            &channel,
+        );
         pin!(send_fut);
 
         let res = loop {
@@ -650,6 +751,7 @@ impl Client {
         res
     }
 
+    /// Get the certificate store.
     pub fn certificate_store(&self) -> &Arc<RwLock<CertificateStore>> {
         &self.certificate_store
     }

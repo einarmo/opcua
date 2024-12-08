@@ -1,3 +1,7 @@
+//! The implementation of [InMemoryNodeManager], a generic node manager that keeps
+//! all its nodes in memory, and delegates implementing
+//! details to a type implementing [InMemoryNodeManagerImpl].
+
 mod diagnostics;
 mod implementation;
 mod simple;
@@ -24,8 +28,8 @@ use hashbrown::HashMap;
 
 use crate::{
     address_space::{
-        read_node_value, user_access_level, EventNotifier, NodeType, ReferenceDirection,
-        UserAccessLevel,
+        read_node_value, user_access_level, AccessLevel, EventNotifier, NodeType,
+        ReferenceDirection,
     },
     subscriptions::CreateMonitoredItem,
     SubscriptionCache,
@@ -55,17 +59,25 @@ struct BrowseContinuationPoint {
     nodes: VecDeque<ReferenceDescription>,
 }
 
+/// A node manager that stores its nodes in an in-memory [AddressSpace]. This
+/// only supports a static list of namespaces, and a attributes stored in memory.
+///
+/// Implementations of custom behavior are provided with a type implementing
+/// [InMemoryNodeManagerImpl].
 pub struct InMemoryNodeManager<TImpl> {
     address_space: Arc<RwLock<AddressSpace>>,
     namespaces: HashMap<u16, String>,
     inner: TImpl,
 }
 
+/// Builder for the in-memory node manager.
 pub struct InMemoryNodeManagerBuilder<T> {
     impl_builder: T,
 }
 
 impl<T: InMemoryNodeManagerImplBuilder> InMemoryNodeManagerBuilder<T> {
+    /// Create a new in memory node manager builder with the given
+    /// builder for the [InMemoryNodeManagerImpl].
     pub fn new(impl_builder: T) -> Self {
         Self { impl_builder }
     }
@@ -88,18 +100,26 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
         }
     }
 
+    /// Return the inner [InMemoryNodeManagerImpl].
     pub fn inner(&self) -> &TImpl {
         &self.inner
     }
 
+    /// Get the address space.
     pub fn address_space(&self) -> &Arc<RwLock<AddressSpace>> {
         &self.address_space
     }
 
+    /// Get a reference to the namespaces managed by this node manager,
+    /// by namespace index.
     pub fn namespaces(&self) -> &HashMap<u16, String> {
         &self.namespaces
     }
 
+    /// Set the attributes given in `values` and notify any subscriptions
+    /// about the changes.
+    ///
+    /// To set values, use [InMemoryNodeManager::set_values].
     pub fn set_attributes<'a>(
         &self,
         subscriptions: &SubscriptionCache,
@@ -140,6 +160,8 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
         Ok(())
     }
 
+    /// Set the attribute given by `attribute_id` on the node with ID `id` to
+    /// `value`.
     pub fn set_attribute(
         &self,
         subscriptions: &SubscriptionCache,
@@ -150,6 +172,8 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
         self.set_attributes(subscriptions, [(id, attribute_id, value)].into_iter())
     }
 
+    /// Set variable values with updates given by `values`, notifying any
+    /// subscriptions of the changes.
     pub fn set_values<'a>(
         &self,
         subscriptions: &SubscriptionCache,
@@ -206,6 +230,8 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
         Ok(())
     }
 
+    /// Set the variable value to `value`, using `index_range`, on the
+    /// node with ID `id`.
     pub fn set_value(
         &self,
         subscriptions: &SubscriptionCache,
@@ -446,7 +472,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
 
                 let user_access_level = user_access_level(context, node);
 
-                if !user_access_level.contains(UserAccessLevel::HISTORY_READ) {
+                if !user_access_level.contains(AccessLevel::HISTORY_READ) {
                     history_node.set_status(StatusCode::BadUserAccessDenied);
                     continue;
                 }
@@ -498,7 +524,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
 
                 let user_access_level = user_access_level(context, node);
 
-                if !user_access_level.contains(UserAccessLevel::HISTORY_WRITE) {
+                if !user_access_level.contains(AccessLevel::HISTORY_WRITE) {
                     history_node.set_status(StatusCode::BadUserAccessDenied);
                     continue;
                 }

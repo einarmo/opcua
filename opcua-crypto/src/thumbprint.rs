@@ -24,6 +24,7 @@ impl From<Thumbprint> for ByteString {
 }
 
 impl Thumbprint {
+    /// Size of thumbprint.
     pub const THUMBPRINT_SIZE: usize = 20;
 
     /// Constructs a thumbprint from a message digest which is expected to be the proper length
@@ -36,6 +37,7 @@ impl Thumbprint {
         Thumbprint { value }
     }
 
+    /// Create a byte string from this thumbprint.
     pub fn as_byte_string(&self) -> ByteString {
         ByteString::from(&self.value)
     }

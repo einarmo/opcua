@@ -1,3 +1,8 @@
+//! The [NodeManager] trait, as well as utilities related to
+//! calling services on this, and tooling for implementing custom node managers.
+//!
+//! See docs/advanced_server.md for help on how to implement custom node managers.
+
 use std::{
     any::{Any, TypeId},
     ops::Index,
@@ -237,6 +242,7 @@ pub struct ServerContext {
     pub info: Arc<ServerInfo>,
     /// Global authenticator object.
     pub authenticator: Arc<dyn AuthManager>,
+    /// The server default type tree.
     pub type_tree: Arc<RwLock<DefaultTypeTree>>,
     /// Wrapper to get a type tree for a specific user.
     pub type_tree_getter: Arc<dyn TypeTreeForUser>,
@@ -247,6 +253,7 @@ pub struct ServerContext {
 /// This trait is a workaround for the lack of
 /// dyn upcasting coercion.
 pub trait IntoAnyArc {
+    /// Upcast to `Arc<dyn Any>`.
     fn into_any_arc(self: Arc<Self>) -> Arc<dyn Any + Send + Sync>;
 }
 

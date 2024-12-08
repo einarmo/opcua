@@ -22,6 +22,7 @@ use opcua_types::{
 
 use super::{endpoint::ServerEndpoint, limits::Limits};
 
+/// Token ID for the anonymous user token.
 pub const ANONYMOUS_USER_TOKEN_ID: &str = "ANONYMOUS";
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
@@ -35,15 +36,17 @@ pub struct TcpConfig {
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Default)]
+/// User token handled by the default authenticator.
 pub struct ServerUserToken {
     /// User name
     pub user: String,
     /// Password
     #[serde(skip_serializing_if = "Option::is_none")]
     pub pass: Option<String>,
-    // X509 file path (as a string)
+    /// X509 file path (as a string)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub x509: Option<String>,
+    /// X509 thumbprint.
     #[serde(skip)]
     pub thumbprint: Option<Thumbprint>,
 }
@@ -120,10 +123,12 @@ impl ServerUserToken {
         }
     }
 
+    /// Return `true` if this token is for username/password auth.
     pub fn is_user_pass(&self) -> bool {
         self.x509.is_none()
     }
 
+    /// Return `true` if this token is for X509-based auth.
     pub fn is_x509(&self) -> bool {
         self.x509.is_some()
     }
@@ -148,6 +153,7 @@ impl Default for CertificateValidation {
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
+/// Server configuration object.
 pub struct ServerConfig {
     /// An id for this server
     pub application_name: String,
@@ -377,6 +383,8 @@ impl ServerConfig {
     /// The default PKI directory
     pub const PKI_DIR: &'static str = "pki";
 
+    /// Create a new default server config with the given list
+    /// of user tokens and endpoints.
     pub fn new<T>(
         application_name: T,
         user_tokens: BTreeMap<String, ServerUserToken>,
@@ -421,6 +429,7 @@ impl ServerConfig {
         }
     }
 
+    /// Decoding options given by this config.
     pub fn decoding_options(&self) -> DecodingOptions {
         DecodingOptions {
             client_offset: chrono::Duration::zero(),
@@ -433,10 +442,12 @@ impl ServerConfig {
         }
     }
 
+    /// Add an endpoint to the server config.
     pub fn add_endpoint(&mut self, id: &str, endpoint: ServerEndpoint) {
         self.endpoints.insert(id.to_string(), endpoint);
     }
 
+    /// Get x509 thumbprints from registered server user tokens.
     pub fn read_x509_thumbprints(&mut self) {
         self.user_tokens
             .iter_mut()

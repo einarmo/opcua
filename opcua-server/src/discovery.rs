@@ -25,7 +25,7 @@ async fn register_with_discovery_server(
     discovery_server_url: &str,
     registered_server: RegisteredServer,
 ) {
-    match client.find_servers(discovery_server_url).await {
+    match client.find_servers(discovery_server_url, None, None).await {
         Ok(servers) => {
             debug!("Servers on the discovery endpoint - {:?}", servers);
             match client

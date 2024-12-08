@@ -755,6 +755,7 @@ impl CodeGenerator {
             let (json_encoding_ident, _) =
                 safe_ident(&format!("{}_Encoding_DefaultJson", item.name));
             let (xml_encoding_ident, _) = safe_ident(&format!("{}_Encoding_DefaultXml", item.name));
+            let (data_type_ident, _) = safe_ident(&item.name);
             if self.is_base_namespace() {
                 impls.push(parse_quote! {
                     impl opcua::types::MessageInfo for #struct_ident {
@@ -766,6 +767,9 @@ impl CodeGenerator {
                         }
                         fn xml_type_id(&self) -> opcua::types::ObjectId {
                             opcua::types::ObjectId::#xml_encoding_ident
+                        }
+                        fn data_type_id(&self) -> opcua::types::DataTypeId {
+                            opcua::types::DataTypeId::#data_type_ident
                         }
                     }
                 });
@@ -783,6 +787,10 @@ impl CodeGenerator {
                         }
                         fn full_xml_type_id(&self) -> opcua::types::ExpandedNodeId {
                             let id: opcua::types::NodeId = crate::ObjectId::#xml_encoding_ident.into();
+                            opcua::types::ExpandedNodeId::from((id, #namespace))
+                        }
+                        fn full_data_type_id(&self) -> opcua::types::ExpandedNodeId {
+                            let id: opcua::types::NodeId = crate::DataTypeId::#data_type_ident.into();
                             opcua::types::ExpandedNodeId::from((id, #namespace))
                         }
                     }

@@ -107,6 +107,7 @@ impl BinaryDecodable for QualifiedName {
 }
 
 impl QualifiedName {
+    /// Create a new qualified name from namespace index and name.
     pub fn new<T>(namespace_index: u16, name: T) -> QualifiedName
     where
         T: Into<UAString>,
@@ -117,6 +118,7 @@ impl QualifiedName {
         }
     }
 
+    /// Create a new empty QualifiedName.
     pub fn null() -> QualifiedName {
         QualifiedName {
             namespace_index: 0,
@@ -124,6 +126,7 @@ impl QualifiedName {
         }
     }
 
+    /// Return `true` if this is the null QualifiedName.
     pub fn is_null(&self) -> bool {
         self.namespace_index == 0 && self.name.is_null()
     }

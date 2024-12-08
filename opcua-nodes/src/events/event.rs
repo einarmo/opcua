@@ -4,7 +4,13 @@ use opcua_types::{
     NodeId, NumericRange, ObjectTypeId, QualifiedName, TimeZoneDataType, UAString, Variant,
 };
 
+/// Trait implemented by all events.
+///
+/// This is used repeatedly when publishing event notifications to
+/// clients.
 pub trait Event: EventField {
+    /// Get a field from the event. Should return [`Variant::Empty`]
+    /// if the field is not valid for the event.
     fn get_field(
         &self,
         type_definition_id: &NodeId,
@@ -14,6 +20,7 @@ pub trait Event: EventField {
         ctx: &EncodingContext,
     ) -> Variant;
 
+    /// Get the `Time` of this event.
     fn time(&self) -> &DateTime;
 }
 
@@ -142,6 +149,7 @@ impl EventField for BaseEventType {
 }
 
 impl BaseEventType {
+    /// Create a new event with `Time` set to current time.
     pub fn new_now(
         type_id: impl Into<NodeId>,
         event_id: ByteString,
@@ -151,6 +159,7 @@ impl BaseEventType {
         Self::new(type_id, event_id, message, time)
     }
 
+    /// Create a new event.
     pub fn new(
         type_id: impl Into<NodeId>,
         event_id: ByteString,
@@ -167,6 +176,7 @@ impl BaseEventType {
         }
     }
 
+    /// Create a new event, resolving the event type ID.
     pub fn new_event(
         type_id: impl Into<NodeId>,
         event_id: ByteString,
@@ -177,21 +187,25 @@ impl BaseEventType {
         Self::new(type_id, event_id, message, time)
     }
 
+    /// Set the event source node.
     pub fn set_source_node(mut self, source_node: NodeId) -> Self {
         self.source_node = source_node;
         self
     }
 
+    /// Set the event source name.
     pub fn set_source_name(mut self, source_name: UAString) -> Self {
         self.source_name = source_name;
         self
     }
 
+    /// Set the event receive time.
     pub fn set_receive_time(mut self, receive_time: DateTime) -> Self {
         self.receive_time = receive_time;
         self
     }
 
+    /// Set the event severity.
     pub fn set_severity(mut self, severity: u16) -> Self {
         self.severity = severity;
         self
@@ -209,7 +223,9 @@ mod method_event_field {
         pub use opcua_types as types;
     }
     #[derive(Default, EventField, Debug)]
+    /// A field of an event that references a method.
     pub struct MethodEventField {
+        /// Method node ID.
         pub node_id: NodeId,
     }
 }

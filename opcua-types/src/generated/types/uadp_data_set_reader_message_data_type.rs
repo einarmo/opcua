@@ -37,4 +37,7 @@ impl opcua::types::MessageInfo for UadpDataSetReaderMessageDataType {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::UadpDataSetReaderMessageDataType_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::UadpDataSetReaderMessageDataType
+    }
 }

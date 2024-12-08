@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
+#![warn(missing_docs)]
+
 //! Crypto related functionality. It is used for establishing
 //! trust between a client and server via certificate exchange and validation. It also used for
 //! encrypting / decrypting messages and signing messages.
@@ -30,9 +32,9 @@ pub mod thumbprint;
 pub mod user_identity;
 pub mod x509;
 
-// Size of a SHA1 hash value in bytes
+/// Size of a SHA1 hash value in bytes
 pub const SHA1_SIZE: usize = 20;
-// Size of a SHA256 hash value bytes
+/// Size of a SHA256 hash value bytes
 pub const SHA256_SIZE: usize = 32;
 
 /// These are algorithms that are used by various policies or external to this file
@@ -154,6 +156,7 @@ pub fn verify_signature_data(
 }
 
 #[derive(Debug)]
+/// Error resolving computer hostname.
 pub struct HostnameError;
 
 impl fmt::Display for HostnameError {

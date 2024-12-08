@@ -23,6 +23,8 @@ use super::{
     InMemoryNodeManagerImplBuilder, NamespaceMetadata,
 };
 
+/// A simple in-memory node manager with utility methods for updating the address space,
+/// and a mechanism for setting callbacks on `Read` and `Write` of values.
 pub type SimpleNodeManager = InMemoryNodeManager<SimpleNodeManagerImpl>;
 
 type WriteCB = Arc<dyn Fn(DataValue, &NumericRange) -> StatusCode + Send + Sync + 'static>;
@@ -34,6 +36,7 @@ type ReadCB = Arc<
 >;
 type MethodCB = Arc<dyn Fn(&[Variant]) -> Result<Vec<Variant>, StatusCode> + Send + Sync + 'static>;
 
+/// Builder for the [SimpleNodeManager].
 pub struct SimpleNodeManagerBuilder {
     namespaces: Vec<NamespaceMetadata>,
     imports: Vec<Box<dyn NodeSetImport>>,
@@ -41,6 +44,8 @@ pub struct SimpleNodeManagerBuilder {
 }
 
 impl SimpleNodeManagerBuilder {
+    /// Create a new simple node manager builder with the given namespace
+    /// and name.
     pub fn new(namespace: NamespaceMetadata, name: &str) -> Self {
         Self {
             namespaces: vec![namespace],
@@ -49,6 +54,8 @@ impl SimpleNodeManagerBuilder {
         }
     }
 
+    /// Create a new simple node manager that imports from the given list
+    /// of [NodeSetImport]s.
     pub fn new_imports(imports: Vec<Box<dyn NodeSetImport>>, name: &str) -> Self {
         Self {
             namespaces: Vec::new(),
@@ -87,10 +94,14 @@ impl InMemoryNodeManagerImplBuilder for SimpleNodeManagerBuilder {
     }
 }
 
+/// Create a node manager builder for the simple node manager with the given
+/// namespace and name.
 pub fn simple_node_manager(namespace: NamespaceMetadata, name: &str) -> impl NodeManagerBuilder {
     InMemoryNodeManagerBuilder::new(SimpleNodeManagerBuilder::new(namespace, name))
 }
 
+/// Create a new simple node manager that imports from the given list
+/// of [NodeSetImport]s.
 pub fn simple_node_manager_imports(
     imports: Vec<Box<dyn NodeSetImport>>,
     name: &str,
@@ -291,11 +302,7 @@ impl InMemoryNodeManagerImpl for SimpleNodeManagerImpl {
 }
 
 impl SimpleNodeManagerImpl {
-    pub fn new(
-        namespaces: Vec<NamespaceMetadata>,
-        name: &str,
-        node_managers: NodeManagersRef,
-    ) -> Self {
+    fn new(namespaces: Vec<NamespaceMetadata>, name: &str, node_managers: NodeManagersRef) -> Self {
         Self {
             write_cbs: Default::default(),
             read_cbs: Default::default(),
@@ -371,6 +378,7 @@ impl SimpleNodeManagerImpl {
         write.set_status(cb(write.value().value.clone(), &write.value().index_range));
     }
 
+    /// Add a callback called on `Write` for the node given by `id`.
     pub fn add_write_callback(
         &self,
         id: NodeId,
@@ -380,6 +388,7 @@ impl SimpleNodeManagerImpl {
         cbs.insert(id, Arc::new(cb));
     }
 
+    /// Add a callback for `Read` on the node given by `id`.
     pub fn add_read_callback(
         &self,
         id: NodeId,
@@ -392,6 +401,7 @@ impl SimpleNodeManagerImpl {
         cbs.insert(id, Arc::new(cb));
     }
 
+    /// Add a callback for `Call` on the method given by `id`.
     pub fn add_method_callback(
         &self,
         id: NodeId,

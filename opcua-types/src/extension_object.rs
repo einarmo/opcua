@@ -21,6 +21,7 @@ use super::{
 };
 
 #[derive(Debug)]
+/// Error returned when working with extension objects.
 pub struct ExtensionObjectError;
 
 impl fmt::Display for ExtensionObjectError {
@@ -63,6 +64,13 @@ pub trait DynEncodable: Any + Send + Sync + std::fmt::Debug {
     #[cfg(feature = "json")]
     /// Get the JSON encoding ID of this struct.
     fn json_type_id(&self) -> ExpandedNodeId;
+
+    #[cfg(feature = "xml")]
+    /// Get the XML encoding ID of this struct.
+    fn xml_type_id(&self) -> ExpandedNodeId;
+
+    /// Get the data type ID of this struct.
+    fn data_type_id(&self) -> ExpandedNodeId;
 
     /// Method to cast this to a dyn Any box, required for downcasting.
     fn as_dyn_any(self: Box<Self>) -> Box<dyn Any + Send + Sync + 'static>;
@@ -112,6 +120,15 @@ macro_rules! blanket_dyn_encodable {
             #[cfg(feature = "json")]
             fn json_type_id(&self) -> ExpandedNodeId {
                 self.full_json_type_id()
+            }
+
+            #[cfg(feature = "xml")]
+            fn xml_type_id(&self) -> ExpandedNodeId {
+                self.full_xml_type_id()
+            }
+
+            fn data_type_id(&self) -> ExpandedNodeId {
+                self.full_data_type_id()
             }
 
             fn as_dyn_any(self: Box<Self>) -> Box<dyn Any + Send + Sync + 'static> {
@@ -291,6 +308,7 @@ mod json {
 /// that can handle the type.
 #[derive(PartialEq, Debug)]
 pub struct ExtensionObject {
+    /// The raw extension object body.
     pub body: Option<Box<dyn DynEncodable>>,
 }
 
@@ -453,8 +471,16 @@ impl ExtensionObject {
         self.type_id() == Some(TypeId::of::<T>())
     }
 
+    /// Get the name of the Rust type stored in the extension object, unless it is empty.
     pub fn type_name(&self) -> Option<&'static str> {
         self.body.as_ref().map(|b| b.type_name())
+    }
+
+    /// Get the full data type ID of the inner type.
+    /// Note that for custom types this will not be resolved, so you need
+    /// to call [`ExpandedNodeId::try_resolve`] to get the actual `NodeId`.
+    pub fn data_type(&self) -> Option<ExpandedNodeId> {
+        self.body.as_ref().map(|b| b.data_type_id())
     }
 }
 

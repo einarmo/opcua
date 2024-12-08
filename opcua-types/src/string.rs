@@ -196,10 +196,12 @@ impl PartialEq<str> for UAString {
 }
 
 impl UAString {
+    /// Get the inner raw value.
     pub fn value(&self) -> &Option<String> {
         &self.value
     }
 
+    /// Set the inner value.
     pub fn set_value(&mut self, value: Option<String>) {
         self.value = value;
     }

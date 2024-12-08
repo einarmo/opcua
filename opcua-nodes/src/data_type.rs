@@ -18,16 +18,20 @@ node_builder_impl!(DataTypeBuilder, DataType);
 node_builder_impl_subtype!(DataTypeBuilder);
 
 impl DataTypeBuilder {
+    /// Set whether the data type is abstract, meaning
+    /// it cannot be used by nodes in the instance hierarchy.
     pub fn is_abstract(mut self, is_abstract: bool) -> Self {
         self.node.set_is_abstract(is_abstract);
         self
     }
 
+    /// Set the data type write mask.
     pub fn write_mask(mut self, write_mask: WriteMask) -> Self {
         self.node.set_write_mask(write_mask);
         self
     }
 
+    /// Set the data type definition.
     pub fn data_type_definition(mut self, data_type_definition: DataTypeDefinition) -> Self {
         self.node
             .set_data_type_definition(Some(data_type_definition));
@@ -112,16 +116,13 @@ impl Node for DataType {
 }
 
 impl DataType {
-    pub fn new<R, S>(
+    /// Create a new data type.
+    pub fn new(
         node_id: &NodeId,
-        browse_name: R,
-        display_name: S,
+        browse_name: impl Into<QualifiedName>,
+        display_name: impl Into<LocalizedText>,
         is_abstract: bool,
-    ) -> DataType
-    where
-        R: Into<QualifiedName>,
-        S: Into<LocalizedText>,
-    {
+    ) -> DataType {
         DataType {
             base: Base::new(NodeClass::DataType, node_id, browse_name, display_name),
             is_abstract,
@@ -143,14 +144,12 @@ impl DataType {
         }
     }
 
-    pub fn from_attributes<S>(
+    /// Create a new data type from [DataTypeAttributes].
+    pub fn from_attributes(
         node_id: &NodeId,
-        browse_name: S,
+        browse_name: impl Into<QualifiedName>,
         attributes: DataTypeAttributes,
-    ) -> Result<Self, FromAttributesError>
-    where
-        S: Into<QualifiedName>,
-    {
+    ) -> Result<Self, FromAttributesError> {
         let mask = AttributesMask::from_bits(attributes.specified_attributes)
             .ok_or(FromAttributesError::InvalidMask)?;
         if mask.contains(AttributesMask::DISPLAY_NAME | AttributesMask::IS_ABSTRACT) {
@@ -176,22 +175,27 @@ impl DataType {
         }
     }
 
+    /// Get whether this data type is valid.
     pub fn is_valid(&self) -> bool {
         self.base.is_valid()
     }
 
+    /// Get the `IsAbstract` attribute for this data type.
     pub fn is_abstract(&self) -> bool {
         self.is_abstract
     }
 
+    /// Set the `IsAbstract` attribute for this data type.
     pub fn set_is_abstract(&mut self, is_abstract: bool) {
         self.is_abstract = is_abstract;
     }
 
+    /// Set the data type definition of this data type.
     pub fn set_data_type_definition(&mut self, data_type_definition: Option<DataTypeDefinition>) {
         self.data_type_definition = data_type_definition;
     }
 
+    /// Get the data type definition of this data type.
     pub fn data_type_definition(&self) -> Option<&DataTypeDefinition> {
         self.data_type_definition.as_ref()
     }

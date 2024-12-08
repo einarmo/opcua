@@ -19,24 +19,26 @@ node_builder_impl_component_of!(ObjectBuilder);
 node_builder_impl_property_of!(ObjectBuilder);
 
 impl ObjectBuilder {
+    /// Get whether this is building an object with `FolderType` as the
+    /// type definition.
     pub fn is_folder(self) -> Self {
         self.has_type_definition(ObjectTypeId::FolderType)
     }
 
+    /// Set the event notifier of the object.
     pub fn event_notifier(mut self, event_notifier: EventNotifier) -> Self {
         self.node.set_event_notifier(event_notifier);
         self
     }
 
+    /// Set the write mask of the object.
     pub fn write_mask(mut self, write_mask: WriteMask) -> Self {
         self.node.set_write_mask(write_mask);
         self
     }
 
-    pub fn has_type_definition<T>(self, type_id: T) -> Self
-    where
-        T: Into<NodeId>,
-    {
+    /// Add a `HasTypeDefinition` reference to the given object type.
+    pub fn has_type_definition(self, type_id: impl Into<NodeId>) -> Self {
         self.reference(
             type_id,
             ReferenceTypeId::HasTypeDefinition,
@@ -44,10 +46,8 @@ impl ObjectBuilder {
         )
     }
 
-    pub fn has_event_source<T>(self, source_id: T) -> Self
-    where
-        T: Into<NodeId>,
-    {
+    /// Add a `HasEventSource` reference to the given node.
+    pub fn has_event_source(self, source_id: impl Into<NodeId>) -> Self {
         self.reference(
             source_id,
             ReferenceTypeId::HasEventSource,
@@ -115,16 +115,13 @@ impl Node for Object {
 }
 
 impl Object {
-    pub fn new<R, S>(
+    /// Create a new object.
+    pub fn new(
         node_id: &NodeId,
-        browse_name: R,
-        display_name: S,
+        browse_name: impl Into<QualifiedName>,
+        display_name: impl Into<LocalizedText>,
         event_notifier: EventNotifier,
-    ) -> Object
-    where
-        R: Into<QualifiedName>,
-        S: Into<LocalizedText>,
-    {
+    ) -> Object {
         Object {
             base: Base::new(NodeClass::Object, node_id, browse_name, display_name),
             event_notifier,
@@ -140,14 +137,12 @@ impl Object {
         }
     }
 
-    pub fn from_attributes<S>(
+    /// Create a new object from [ObjectAttributes].
+    pub fn from_attributes(
         node_id: &NodeId,
-        browse_name: S,
+        browse_name: impl Into<QualifiedName>,
         attributes: ObjectAttributes,
-    ) -> Result<Self, FromAttributesError>
-    where
-        S: Into<QualifiedName>,
-    {
+    ) -> Result<Self, FromAttributesError> {
         let mandatory_attributes = AttributesMask::DISPLAY_NAME | AttributesMask::EVENT_NOTIFIER;
 
         let mask = AttributesMask::from_bits(attributes.specified_attributes)
@@ -176,14 +171,17 @@ impl Object {
         }
     }
 
+    /// Get whether this object is valid.
     pub fn is_valid(&self) -> bool {
         self.base.is_valid()
     }
 
+    /// Get the event notifier status of this object.
     pub fn event_notifier(&self) -> EventNotifier {
         self.event_notifier
     }
 
+    /// Set the event notifier status of this object.
     pub fn set_event_notifier(&mut self, event_notifier: EventNotifier) {
         self.event_notifier = event_notifier;
     }

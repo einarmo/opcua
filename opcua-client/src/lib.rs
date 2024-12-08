@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
+#![warn(missing_docs)]
+
 //! The OPC UA Client module contains the functionality necessary for a client to connect to an OPC UA server,
 //! authenticate itself, send messages, receive responses, get values, browse the address space and
 //! provide callbacks for things to be propagated to the client.
@@ -132,7 +134,7 @@ pub use transport::AsyncSecureChannel;
 
 pub mod services {
     //! This module contains request builders for most OPC-UA services.
-    //! Typically you can just use the methods on [`Session`], but if you need to specify
+    //! Typically you can just use the methods on [`super::Session`], but if you need to specify
     //! diagnostics, set a custom timeout, or do other header manipulation, you must use the
     //! raw request builders.
     //! Note that these let you pass a session manually, in this case you are responsible for
@@ -147,6 +149,7 @@ pub mod services {
 }
 
 #[derive(Debug, Clone)]
+/// Client-side identity token representation.
 pub enum IdentityToken {
     /// Anonymous identity token
     Anonymous,

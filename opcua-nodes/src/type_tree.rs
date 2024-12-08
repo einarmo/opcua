@@ -63,20 +63,32 @@ pub enum TypeTreeNode<'a> {
     Property(&'a TypePropertyInverseRef),
 }
 
+/// Trait for a type tree, a structure that provides methods to
+/// inspect type relationships. This is used for getting reference sub-types,
+/// and for events.
 pub trait TypeTree {
+    /// Return `true` if `child` is a descendant of `ancestor`, meaning they
+    /// are connected with a chain of `HasSubtype` references.
     fn is_subtype_of(&self, child: &NodeId, ancestor: &NodeId) -> bool;
 
+    /// Get a reference to the node with ID `node`.
     fn get_node<'a>(&'a self, node: &NodeId) -> Option<TypeTreeNode<'a>>;
 
+    /// Get the node class of a type in the type tree given by `node`.
     fn get(&self, node: &NodeId) -> Option<NodeClass>;
 
+    /// Find a property of a type from its browse path.
     fn find_type_prop_by_browse_path(
         &self,
         type_id: &NodeId,
         path: &[QualifiedName],
     ) -> Option<&TypeProperty>;
 
+    /// Get the supertype of the given node.
     fn get_supertype<'a>(&'a self, node: &NodeId) -> Option<&'a NodeId>;
+
+    /// Get the namespace map used by this type tree.
+    fn namespaces(&self) -> &NamespaceMap;
 }
 
 impl TypeTree for DefaultTypeTree {
@@ -137,6 +149,10 @@ impl TypeTree for DefaultTypeTree {
 
     fn get_supertype<'a>(&'a self, node: &NodeId) -> Option<&'a NodeId> {
         self.subtypes_by_target.get(node)
+    }
+
+    fn namespaces(&self) -> &NamespaceMap {
+        &self.namespaces
     }
 }
 
@@ -240,14 +256,12 @@ impl DefaultTypeTree {
         false
     }
 
-    pub fn namespaces(&self) -> &NamespaceMap {
-        &self.namespaces
-    }
-
+    /// Get a mutable reference to the namespaces used by this type tree.
     pub fn namespaces_mut(&mut self) -> &mut NamespaceMap {
         &mut self.namespaces
     }
 
+    /// Get a vector of all the descendants of the given root node.
     pub fn get_all_children<'a>(&'a self, root: &'a NodeId) -> Vec<&'a NodeId> {
         let mut res = Vec::new();
         let mut roots = vec![root];

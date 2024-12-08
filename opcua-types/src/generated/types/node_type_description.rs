@@ -31,4 +31,7 @@ impl opcua::types::MessageInfo for NodeTypeDescription {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::NodeTypeDescription_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::NodeTypeDescription
+    }
 }

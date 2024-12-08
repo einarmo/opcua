@@ -13,6 +13,9 @@ use super::{
     ServerEndpoint, ServerHandle, ServerUserToken, ANONYMOUS_USER_TOKEN_ID,
 };
 
+/// Server builder, used to configure the server programatically,
+/// and for setting core components like node managers, authenticator,
+/// and type collections.
 pub struct ServerBuilder {
     pub(crate) config: ServerConfig,
     pub(crate) node_managers: Vec<Box<dyn NodeManagerBuilder>>,
@@ -50,6 +53,10 @@ impl Default for ServerBuilder {
 }
 
 impl ServerBuilder {
+    /// Create a new server builder.
+    ///
+    /// If the generated address space is enabled, this will add the core and
+    /// diagnostic node managers.
     pub fn new() -> Self {
         Self::default()
     }
@@ -534,6 +541,10 @@ impl ServerBuilder {
         self
     }
 
+    /// Register a type loader. Any deserialization will
+    /// use this type loader to handle types coming from the user.
+    ///
+    /// If the user sends a type not in any registered type loader, decoding will fail.
     pub fn with_type_loader(mut self, loader: Arc<dyn TypeLoader>) -> Self {
         self.type_loaders.add(loader);
         self

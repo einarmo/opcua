@@ -27,9 +27,13 @@ use crate::{
 /// The kind of identifier, numeric, string, guid or byte
 #[derive(Eq, PartialEq, Clone, Debug, Hash)]
 pub enum Identifier {
+    /// Numeric node ID identifier. i=123
     Numeric(u32),
+    /// String node ID identifier, s=...
     String(UAString),
+    /// GUID node ID identifier, g=...
     Guid(Guid),
+    /// Opaque node ID identifier, o=...
     ByteString(ByteString),
 }
 
@@ -113,6 +117,7 @@ impl From<ByteString> for Identifier {
 }
 
 #[derive(Debug)]
+/// Error returned from working with node IDs.
 pub struct NodeIdError;
 
 impl fmt::Display for NodeIdError {
@@ -601,8 +606,8 @@ impl Default for NodeId {
 }
 
 impl NodeId {
-    // Constructs a new NodeId from anything that can be turned into Identifier
-    // u32, Guid, ByteString or String
+    /// Constructs a new NodeId from anything that can be turned into Identifier
+    /// u32, Guid, ByteString or String
     pub fn new<T>(namespace: u16, value: T) -> NodeId
     where
         T: 'static + Into<Identifier>,
@@ -643,7 +648,7 @@ impl NodeId {
         NodeId::new(0, 0u32)
     }
 
-    // Creates a numeric node id with an id incrementing up from 1000
+    /// Creates a numeric node id with an id incrementing up from 1000
     pub fn next_numeric(namespace: u16) -> NodeId {
         NodeId::new(
             namespace,
@@ -661,6 +666,7 @@ impl NodeId {
         }
     }
 
+    /// Try to convert this to a builtin variable ID.
     pub fn as_variable_id(&self) -> std::result::Result<VariableId, NodeIdError> {
         match self.identifier {
             Identifier::Numeric(id) if self.namespace == 0 => {
@@ -670,6 +676,7 @@ impl NodeId {
         }
     }
 
+    /// Try to convert this to a builtin reference type ID.
     pub fn as_reference_type_id(&self) -> std::result::Result<ReferenceTypeId, NodeIdError> {
         if self.is_null() {
             Err(NodeIdError)
@@ -683,6 +690,7 @@ impl NodeId {
         }
     }
 
+    /// Try to convert this to a builtin data type ID.
     pub fn as_data_type_id(&self) -> std::result::Result<DataTypeId, NodeIdError> {
         match self.identifier {
             Identifier::Numeric(id) if self.namespace == 0 => {
@@ -692,6 +700,7 @@ impl NodeId {
         }
     }
 
+    /// Try to convert this to a builtin method ID.
     pub fn as_method_id(&self) -> std::result::Result<MethodId, NodeIdError> {
         match self.identifier {
             Identifier::Numeric(id) if self.namespace == 0 => {

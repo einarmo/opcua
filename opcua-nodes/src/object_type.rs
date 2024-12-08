@@ -22,11 +22,14 @@ node_builder_impl_component_of!(ObjectTypeBuilder);
 node_builder_impl_property_of!(ObjectTypeBuilder);
 
 impl ObjectTypeBuilder {
+    /// Set whether the object type is abstract, meaning
+    /// it cannot be used by types in the instance hierarchy.
     pub fn is_abstract(mut self, is_abstract: bool) -> Self {
         self.node.set_is_abstract(is_abstract);
         self
     }
 
+    /// Set the object type write mask.
     pub fn write_mask(mut self, write_mask: WriteMask) -> Self {
         self.node.set_write_mask(write_mask);
         self
@@ -92,16 +95,13 @@ impl Node for ObjectType {
 }
 
 impl ObjectType {
-    pub fn new<R, S>(
+    /// Create a new object type.
+    pub fn new(
         node_id: &NodeId,
-        browse_name: R,
-        display_name: S,
+        browse_name: impl Into<QualifiedName>,
+        display_name: impl Into<LocalizedText>,
         is_abstract: bool,
-    ) -> ObjectType
-    where
-        R: Into<QualifiedName>,
-        S: Into<LocalizedText>,
-    {
+    ) -> ObjectType {
         ObjectType {
             base: Base::new(NodeClass::ObjectType, node_id, browse_name, display_name),
             is_abstract,
@@ -114,14 +114,12 @@ impl ObjectType {
         Self { base, is_abstract }
     }
 
-    pub fn from_attributes<S>(
+    /// Create a new object type from [ObjectTypeAttributes].
+    pub fn from_attributes(
         node_id: &NodeId,
-        browse_name: S,
+        browse_name: impl Into<QualifiedName>,
         attributes: ObjectTypeAttributes,
-    ) -> Result<Self, FromAttributesError>
-    where
-        S: Into<QualifiedName>,
-    {
+    ) -> Result<Self, FromAttributesError> {
         let mandatory_attributes = AttributesMask::DISPLAY_NAME | AttributesMask::IS_ABSTRACT;
         let mask = AttributesMask::from_bits(attributes.specified_attributes)
             .ok_or(FromAttributesError::InvalidMask)?;
@@ -148,14 +146,17 @@ impl ObjectType {
         }
     }
 
+    /// Get whether this object type is valid.
     pub fn is_valid(&self) -> bool {
         self.base.is_valid()
     }
 
+    /// Get the `IsAbstract` attribute for this object type.
     pub fn is_abstract(&self) -> bool {
         self.is_abstract
     }
 
+    /// Set the `IsAbstract` attribute for this object type.
     pub fn set_is_abstract(&mut self, is_abstract: bool) {
         self.is_abstract = is_abstract;
     }

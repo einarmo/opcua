@@ -16,8 +16,11 @@ use super::{
 };
 
 #[derive(PartialEq, Eq, Clone, Debug, Hash)]
+/// Owned OPC-UA reference.
 pub struct Reference {
+    /// Reference type ID.
     pub reference_type: NodeId,
+    /// Target node ID.
     pub target_node: NodeId,
 }
 
@@ -44,9 +47,13 @@ impl<'a> From<&'a Reference> for ReferenceKey<'a> {
 }
 
 #[derive(PartialEq, Eq, Clone, Debug, Hash)]
+/// A borrowed version of an OPC-UA reference.
 pub struct ReferenceRef<'a> {
+    /// Reference type ID.
     pub reference_type: &'a NodeId,
+    /// Target node ID.
     pub target_node: &'a NodeId,
+    /// Reference direction.
     pub direction: ReferenceDirection,
 }
 
@@ -387,6 +394,7 @@ pub struct AddressSpace {
 }
 
 impl AddressSpace {
+    /// Create a new empty address space.
     pub fn new() -> Self {
         Self {
             node_map: HashMap::new(),
@@ -395,6 +403,8 @@ impl AddressSpace {
         }
     }
 
+    /// Import a node set into this address space.
+    /// This will register namespaces from the node set import.
     pub fn import_node_set<T: NodeSetImport + ?Sized>(
         &mut self,
         import: &T,
@@ -419,6 +429,7 @@ impl AddressSpace {
         info!("Imported {count} nodes");
     }
 
+    /// Load types from this address space into the given type tree.
     pub fn load_into_type_tree(&self, type_tree: &mut DefaultTypeTree) {
         let mut found_ids = VecDeque::new();
         // Populate types first so that we have reference types to browse in the next stage.
@@ -503,10 +514,12 @@ impl AddressSpace {
         }
     }
 
+    /// Add a namespace to this address space.
     pub fn add_namespace(&mut self, namespace: &str, index: u16) {
         self.namespaces.insert(index, namespace.to_string());
     }
 
+    /// Insert a node and a list of references from/to that node.
     pub fn insert<'a, T, S>(
         &mut self,
         node: T,
@@ -535,6 +548,7 @@ impl AddressSpace {
         }
     }
 
+    /// Import a node from an [ImportedItem].
     pub fn import_node(&mut self, node: ImportedItem) -> bool {
         let node_id = node.node.node_id().clone();
 
@@ -552,6 +566,7 @@ impl AddressSpace {
         }
     }
 
+    /// Get the namespace index of the given namespace URI.
     pub fn namespace_index(&self, namespace: &str) -> Option<u16> {
         self.namespaces
             .iter()
@@ -565,10 +580,13 @@ impl AddressSpace {
         }
     }
 
+    /// Return `true` if the node with the given node ID exists in this address space.
     pub fn node_exists(&self, node_id: &NodeId) -> bool {
         self.node_map.contains_key(node_id)
     }
 
+    /// Insert a references from `source_node` to `target_node` with
+    /// the given reference type.
     pub fn insert_reference(
         &mut self,
         source_node: &NodeId,
@@ -579,6 +597,7 @@ impl AddressSpace {
             .insert_reference(source_node, target_node, reference_type)
     }
 
+    /// Insert a list of references.
     pub fn insert_references<'a>(
         &mut self,
         references: impl Iterator<Item = (&'a NodeId, &'a NodeId, impl Into<NodeId>)>,
@@ -586,6 +605,7 @@ impl AddressSpace {
         self.references.insert_references(references)
     }
 
+    /// Delete a reference.
     pub fn delete_reference(
         &mut self,
         source_node: &NodeId,
@@ -596,10 +616,13 @@ impl AddressSpace {
             .delete_reference(source_node, target_node, reference_type)
     }
 
+    /// Delete references starting at or pointing to the given node.
     pub fn delete_node_references(&mut self, source_node: &NodeId) -> bool {
         self.references.delete_node_references(source_node)
     }
 
+    /// Check if the reference given by `source_node`, `target_node` and
+    /// `reference_type` exists in the address space.
     pub fn has_reference(
         &self,
         source_node: &NodeId,
@@ -610,6 +633,8 @@ impl AddressSpace {
             .has_reference(source_node, target_node, reference_type)
     }
 
+    /// Return a lazy iterator over references starting at `source_node`
+    /// that match `filter`.
     pub fn find_references<'a: 'b, 'b>(
         &'a self,
         source_node: &'b NodeId,
@@ -621,6 +646,8 @@ impl AddressSpace {
             .find_references(source_node, filter, type_tree, direction)
     }
 
+    /// Find a child of `source_node` matching the given `filter` with
+    /// browse name equal to `browse_name`.
     pub fn find_node_by_browse_name<'a: 'b, 'b>(
         &'a self,
         source_node: &'b NodeId,
@@ -641,6 +668,8 @@ impl AddressSpace {
         None
     }
 
+    /// Find a node by traversing a browse path starting from `source_node`.
+    /// All traversed references must match `filter`.
     pub fn find_node_by_browse_path<'a: 'b, 'b>(
         &'a self,
         source_node: &'b NodeId,
@@ -670,6 +699,7 @@ impl AddressSpace {
         Some(node)
     }
 
+    /// Get the inner namespace map.
     pub fn namespaces(&self) -> &HashMap<u16, String> {
         &self.namespaces
     }
@@ -700,6 +730,7 @@ impl AddressSpace {
         self.node_map.get_mut(node_id)
     }
 
+    /// Check if the read is allowed.
     pub fn validate_node_read<'a>(
         &'a self,
         context: &RequestContext,
@@ -718,6 +749,8 @@ impl AddressSpace {
         Ok(node)
     }
 
+    /// Invoke the `Read` service on the given node, returning the
+    /// data value. The returned data value can be an error.
     pub fn read(
         &self,
         context: &RequestContext,
@@ -738,6 +771,7 @@ impl AddressSpace {
         read_node_value(node, context, node_to_read, max_age, timestamps_to_return)
     }
 
+    /// Check if the given write is allowed.
     pub fn validate_node_write<'a>(
         &'a mut self,
         context: &RequestContext,
@@ -757,6 +791,7 @@ impl AddressSpace {
         Ok(node)
     }
 
+    /// Remove a node from the address space.
     pub fn delete(&mut self, node_id: &NodeId, delete_target_references: bool) -> Option<NodeType> {
         let n = self.node_map.remove(node_id);
         let source = self.references.by_source.remove(node_id);
@@ -789,6 +824,7 @@ impl AddressSpace {
         n
     }
 
+    /// Add a `FolderType` node.
     pub fn add_folder(
         &mut self,
         node_id: &NodeId,
@@ -803,6 +839,7 @@ impl AddressSpace {
             .insert(self)
     }
 
+    /// Add a list of variables to the address space.
     pub fn add_variables(
         &mut self,
         variables: Vec<Variable>,

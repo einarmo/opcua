@@ -6,9 +6,12 @@ use crate::AsyncSecureChannel;
 
 use super::Session;
 
+/// Trait for a type that can be sent as an OPC-UA request.
 pub trait UARequest {
+    /// Response message type.
     type Out;
 
+    /// Send the message and wait for a response.
     fn send<'a>(
         self,
         channel: &'a AsyncSecureChannel,
@@ -81,11 +84,13 @@ macro_rules! builder_base {
             self
         }
 
+        /// Set the audit entry ID for the request.
         pub fn audit_entry_id(mut self, entry: impl Into<opcua_types::UAString>) -> Self {
             self.header.header.audit_entry_id = entry.into();
             self
         }
 
+        /// Get the request header.
         pub fn header(&self) -> &opcua_types::RequestHeader {
             &self.header.header
         }

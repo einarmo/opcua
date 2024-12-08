@@ -6,23 +6,27 @@ use opcua_types::{
     Variant, WriteMask,
 };
 
-use super::{AddressSpace, HasNodeId, NodeType, UserAccessLevel, Variable};
+use super::{AccessLevel, AddressSpace, HasNodeId, NodeType, Variable};
 
+/// Validate that the user given by `context` can read the value
+/// of the given node.
 pub fn is_readable(context: &RequestContext, node: &NodeType) -> Result<(), StatusCode> {
-    if !user_access_level(context, node).contains(UserAccessLevel::CURRENT_READ) {
+    if !user_access_level(context, node).contains(AccessLevel::CURRENT_READ) {
         Err(StatusCode::BadUserAccessDenied)
     } else {
         Ok(())
     }
 }
 
+/// Validate that the user given by `context` can write to the
+/// attribute given by `attribute_id`.
 pub fn is_writable(
     context: &RequestContext,
     node: &NodeType,
     attribute_id: AttributeId,
 ) -> Result<(), StatusCode> {
     if let (NodeType::Variable(_), AttributeId::Value) = (node, attribute_id) {
-        if !user_access_level(context, node).contains(UserAccessLevel::CURRENT_WRITE) {
+        if !user_access_level(context, node).contains(AccessLevel::CURRENT_WRITE) {
             return Err(StatusCode::BadUserAccessDenied);
         }
 
@@ -66,11 +70,12 @@ pub fn is_writable(
     }
 }
 
-pub fn user_access_level(context: &RequestContext, node: &NodeType) -> UserAccessLevel {
+/// Get the effective user access level for `node`.
+pub fn user_access_level(context: &RequestContext, node: &NodeType) -> AccessLevel {
     let user_access_level = if let NodeType::Variable(ref node) = node {
         node.user_access_level()
     } else {
-        UserAccessLevel::CURRENT_READ
+        AccessLevel::CURRENT_READ
     };
     context.authenticator.effective_user_access_level(
         &context.token,
@@ -79,6 +84,8 @@ pub fn user_access_level(context: &RequestContext, node: &NodeType) -> UserAcces
     )
 }
 
+/// Validate that the user given by `context` is allowed to read
+/// the value of `node`.
 pub fn validate_node_read(
     node: &NodeType,
     context: &RequestContext,
@@ -103,6 +110,8 @@ pub fn validate_node_read(
     Ok(())
 }
 
+/// Validate `value`, verifying that it can be written as the value of
+/// `variable`.
 pub fn validate_value_to_write(
     variable: &Variable,
     value: &Variant,
@@ -115,10 +124,18 @@ pub fn validate_value_to_write(
         return Ok(());
     }
 
-    if let Some(value_data_type) = value.scalar_data_type() {
+    if let Some(value_data_type) = value.data_type() {
+        let Some(data_type) = value_data_type.try_resolve(type_tree.namespaces()) else {
+            return Err(StatusCode::BadTypeMismatch);
+        };
+        println!("{data_type:?}");
         // Value is scalar, check if the data type matches
-        let data_type_matches = type_tree.is_subtype_of(&value_data_type, &node_data_type);
+        let data_type_matches = type_tree.is_subtype_of(&data_type, &node_data_type);
+
         if !data_type_matches {
+            if value.is_array() {
+                return Err(StatusCode::BadTypeMismatch);
+            }
             // Check if the value to write is a byte string and the receiving node type a byte array.
             // This code is a mess just for some weird edge case in the spec that a write from
             // a byte string to a byte array should succeed
@@ -138,17 +155,13 @@ pub fn validate_value_to_write(
         } else {
             Ok(())
         }
-    } else if let Some(value_data_type) = value.array_data_type() {
-        // TODO check that value is array of same dimensions
-        if !type_tree.is_subtype_of(&value_data_type, &node_data_type) {
-            return Err(StatusCode::BadTypeMismatch);
-        }
-        Ok(())
     } else {
         Err(StatusCode::BadTypeMismatch)
     }
 }
 
+/// Validate that the user given by `context` can write to the attribute given
+/// by `node_to_write` on `node`.
 pub fn validate_node_write(
     node: &NodeType,
     context: &RequestContext,
@@ -173,10 +186,16 @@ pub fn validate_node_write(
     Ok(())
 }
 
+/// Return `true` if we support the given data encoding.
+///
+/// We currently only support `Binary`.
 pub fn is_supported_data_encoding(data_encoding: &DataEncoding) -> bool {
     matches!(data_encoding, DataEncoding::Binary)
 }
 
+/// Invoke `Read` for the given `node_to_read` on `node`.
+///
+/// This can return a data value containing an error if validation failed.
 pub fn read_node_value(
     node: &NodeType,
     context: &RequestContext,
@@ -200,7 +219,7 @@ pub fn read_node_value(
     let value = if node_to_read.attribute_id == AttributeId::UserAccessLevel {
         match attribute.value {
             Some(Variant::Byte(val)) => {
-                let access_level = UserAccessLevel::from_bits_truncate(val);
+                let access_level = AccessLevel::from_bits_truncate(val);
                 let access_level = context.authenticator.effective_user_access_level(
                     &context.token,
                     access_level,
@@ -254,6 +273,8 @@ pub fn read_node_value(
     result_value
 }
 
+/// Add the given list of namespaces to the type tree in `context` and
+/// `address_space`.
 pub fn add_namespaces(
     context: &ServerContext,
     address_space: &mut AddressSpace,

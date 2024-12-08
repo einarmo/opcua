@@ -30,4 +30,7 @@ impl opcua::types::MessageInfo for SubscriptionAcknowledgement {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::SubscriptionAcknowledgement_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::SubscriptionAcknowledgement
+    }
 }

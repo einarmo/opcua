@@ -31,4 +31,7 @@ impl opcua::types::MessageInfo for EnumValueType {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::EnumValueType_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::EnumValueType
+    }
 }

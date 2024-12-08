@@ -1,3 +1,7 @@
+//! Definition of types for representing values in a NodeSet2 file.
+//!
+//! These use a slightly different schema than similar fields in the rest of the file.
+
 use std::collections::HashMap;
 
 use chrono::Utc;
@@ -14,52 +18,99 @@ use crate::{
 /// Owned XML element, simplified greatly.
 
 #[derive(Debug)]
+/// Variant as defined in a NodeSet2 file.
 pub enum Variant {
+    /// Boolean
     Boolean(bool),
+    /// List of boolean
     ListOfBoolean(Vec<bool>),
+    /// Signed byte
     SByte(i8),
+    /// List of signed bytes
     ListOfSByte(Vec<i8>),
+    /// Byte
     Byte(u8),
+    /// List of bytes
     ListOfByte(Vec<u8>),
+    /// Signed 16 bit int
     Int16(i16),
+    /// List of signed 16 bit ints
     ListOfInt16(Vec<i16>),
+    /// Unsigned 16 bit int
     UInt16(u16),
+    /// List of unsigned 16 bit ints
     ListOfUInt16(Vec<u16>),
+    /// Signed 32 bit int
     Int32(i32),
+    /// List of signed 32 bit ints
     ListOfInt32(Vec<i32>),
+    /// Unsigned 32 bit int
     UInt32(u32),
+    /// List of unsigned 32 bit ints
     ListOfUInt32(Vec<u32>),
+    /// Signed 64 bit int
     Int64(i64),
+    /// List of signed 64 bit ints
     ListOfInt64(Vec<i64>),
+    /// Unsigned 64 bit int
     UInt64(u64),
+    /// List of unsigned 64 bit ints
     ListOfUInt64(Vec<u64>),
+    /// 32 bit floating point number
     Float(f32),
+    /// List of 32 bit floating point numbers
     ListOfFloat(Vec<f32>),
+    /// 64 bit floating point number.
     Double(f64),
+    /// List of 64 bit floating point numbers.
     ListOfDouble(Vec<f64>),
+    /// String
     String(String),
+    /// List of strings
     ListOfString(Vec<String>),
+    /// DateTime
     DateTime(chrono::DateTime<Utc>),
+    /// List of DateTimes
     ListOfDateTime(Vec<chrono::DateTime<Utc>>),
+    /// GUID
     Guid(uuid::Uuid),
+    /// List of GUIDs
     ListOfGuid(Vec<uuid::Uuid>),
+    /// ByteString
     ByteString(String),
+    /// List of ByteStrings
     ListOfByteString(Vec<String>),
+    /// XmlElement
     XmlElement(Vec<XmlElement>),
+    /// List of XmlElements
     ListOfXmlElement(Vec<Vec<XmlElement>>),
+    /// QualifiedName
     QualifiedName(QualifiedName),
+    /// List of QualifiedNames
     ListOfQualifiedName(Vec<QualifiedName>),
+    /// LocalizedText
     LocalizedText(LocalizedText),
+    /// List of LocalizedTexts
     ListOfLocalizedText(Vec<LocalizedText>),
+    /// NodeId
     NodeId(NodeId),
+    /// List of NodeIds
     ListOfNodeId(Vec<NodeId>),
+    /// ExpandedNodeId
     ExpandedNodeId(NodeId),
+    /// List of ExpandedNodeIds
     ListOfExpandedNodeId(Vec<NodeId>),
+    /// ExtensionObject
     ExtensionObject(ExtensionObject),
+    /// List of ExtensionObjects
     ListOfExtensionObject(Vec<ExtensionObject>),
+    /// Variant
     Variant(Box<Variant>),
+    /// List of Variants
     ListOfVariant(Vec<Variant>),
+    /// StatusCode
     StatusCode(StatusCode),
+    /// List of StatusCodes
     ListOfStatusCode(Vec<StatusCode>),
 }
 
@@ -145,7 +196,9 @@ impl<'input> XmlLoad<'input> for uuid::Uuid {
 }
 
 #[derive(Debug)]
+/// Node ID as defined in a data type.
 pub struct NodeId {
+    /// Node ID identifier or alias.
     pub identifier: Option<String>,
 }
 
@@ -158,7 +211,9 @@ impl<'input> XmlLoad<'input> for NodeId {
 }
 
 #[derive(Debug)]
+/// Status code.
 pub struct StatusCode {
+    /// Status code numeric value.
     pub code: u32,
 }
 
@@ -171,10 +226,15 @@ impl<'input> XmlLoad<'input> for StatusCode {
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
+/// Full XML element, requires further type information to convert to a data type.
 pub struct XmlElement {
+    /// XML Element body.
     pub text: Option<String>,
+    /// Tag name.
     pub tag: String,
+    /// Map of attribute names to values.
     pub attributes: HashMap<String, String>,
+    /// Map of child tag names to value.
     pub children: HashMap<String, Vec<XmlElement>>,
 }
 
@@ -233,6 +293,7 @@ impl<'input> XmlLoad<'input> for Option<XmlElement> {
 }
 
 impl XmlElement {
+    /// Get all children of this node with the given name.
     pub fn children_with_name<'a>(
         &'a self,
         name: &'a str,
@@ -241,10 +302,12 @@ impl XmlElement {
         inner.into_iter().flat_map(|m| m.iter())
     }
 
+    /// Get the first child with the given name.
     pub fn first_child_with_name<'a>(&'a self, name: &'a str) -> Option<&'a XmlElement> {
         self.children_with_name(name).next()
     }
 
+    /// Get the content of the first child with the given name.
     pub fn child_content<'a>(&'a self, name: &'a str) -> Option<&'a str> {
         self.first_child_with_name(name)
             .and_then(|c| c.text.as_ref())
@@ -253,8 +316,11 @@ impl XmlElement {
 }
 
 #[derive(Debug)]
+/// Qualified name in an OPC-UA type.
 pub struct QualifiedName {
+    /// Namespace index, defaults to 0.
     pub namespace_index: Option<u16>,
+    /// Qualified name value.
     pub name: Option<String>,
 }
 
@@ -268,8 +334,11 @@ impl<'input> XmlLoad<'input> for QualifiedName {
 }
 
 #[derive(Debug)]
+/// Localized text in an OPC-UA type.
 pub struct LocalizedText {
+    /// Locale.
     pub locale: Option<String>,
+    /// Body.
     pub text: Option<String>,
 }
 
@@ -283,7 +352,9 @@ impl<'input> XmlLoad<'input> for LocalizedText {
 }
 
 #[derive(Debug)]
+/// Body of an extension object.
 pub struct ExtensionObjectBody {
+    /// Raw extension object body, just an XML node.
     pub data: XmlElement,
 }
 
@@ -296,8 +367,11 @@ impl<'input> XmlLoad<'input> for ExtensionObjectBody {
 }
 
 #[derive(Debug)]
+/// Extension object, containing some custom type resolved later.
 pub struct ExtensionObject {
+    /// Extension object type ID.
     pub type_id: Option<NodeId>,
+    /// Extension object body.
     pub body: Option<ExtensionObjectBody>,
 }
 

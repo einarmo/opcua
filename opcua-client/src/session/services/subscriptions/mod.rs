@@ -175,6 +175,7 @@ pub struct MonitoredItem {
 }
 
 impl MonitoredItem {
+    /// Create a new monitored item.
     pub fn new(client_handle: u32) -> MonitoredItem {
         MonitoredItem {
             id: 0,
@@ -297,38 +298,50 @@ impl Subscription {
         }
     }
 
+    /// Get the monitored items in this subscription.
     pub fn monitored_items(&self) -> &HashMap<u32, MonitoredItem> {
         &self.monitored_items
     }
 
+    /// Get the subscription ID.
     pub fn subscription_id(&self) -> u32 {
         self.subscription_id
     }
 
+    /// Get the configured publishing interval.
     pub fn publishing_interval(&self) -> Duration {
         self.publishing_interval
     }
 
+    /// Get the `LifetimeCount` parameter for this subscription.
     pub fn lifetime_count(&self) -> u32 {
         self.lifetime_count
     }
 
+    /// Get the configured priority.
     pub fn priority(&self) -> u8 {
         self.priority
     }
 
+    /// Get the configured maximum keep alive count.
     pub fn max_keep_alive_count(&self) -> u32 {
         self.max_keep_alive_count
     }
 
+    /// Get the configured maximum number of notifications per publish request.
     pub fn max_notifications_per_publish(&self) -> u32 {
         self.max_notifications_per_publish
     }
 
+    /// Get whether publishing is enabled.
     pub fn publishing_enabled(&self) -> bool {
         self.publishing_enabled
     }
 
+    /// Insert a monitored item that has been created on the server.
+    ///
+    /// If you call this yourself you are responsible for knowing that the
+    /// monitored item already exists.
     pub fn insert_existing_monitored_item(&mut self, item: MonitoredItem) {
         let client_handle = item.client_handle();
         let monitored_item_id = item.id();

@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
-use crate::date_time::DateTime;
+//! Certain aliases for OPC-UA data types.
+
+use crate::{date_time::DateTime, ByteString, UAString};
 
 /// This primitive data type is a UInt32 that is used as an identifier, such as a handle.
 /// All values, except for 0, are valid. IntegerId = 288,
@@ -15,3 +17,9 @@ pub type Duration = f64;
 
 /// UtcTime = 294,
 pub type UtcTime = DateTime;
+
+/// OPC-UA UriString, represented as just a string.
+pub type UriString = UAString;
+
+/// OPC-UA AudiDataType, represented as just a ByteString.
+pub type AudioDataType = ByteString;

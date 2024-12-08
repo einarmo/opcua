@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
+//! The secure channel handles security on an OPC-UA connection.
+
 use std::{
     collections::HashMap,
     io::{Cursor, Write},
@@ -33,9 +35,13 @@ use super::{
 };
 
 #[derive(Debug, PartialEq)]
+/// Role of an application in OPC-UA communication.
 pub enum Role {
+    /// Role is unknown.
     Unknown,
+    /// Role is client.
     Client,
+    /// Role is server.
     Server,
 }
 
@@ -79,7 +85,7 @@ pub struct SecureChannel {
     /// SecurityToken for up to 25 % of the token lifetime.
     ///
     /// See the "OpenSecureChannel" section in the spec for more info:
-    /// https://reference.opcfoundation.org/Core/Part4/v105/docs/5.5.2
+    /// [Part 4, 5.5.2](https://reference.opcfoundation.org/Core/Part4/v105/docs/5.5.2)
     remote_keys: HashMap<u32, RemoteKeys>,
     /// Server (i.e. our end's set of keys) Symmetric Signing Key, Decrypt Key, IV
     local_keys: Option<(Vec<u8>, AesKey, Vec<u8>)>,
@@ -110,6 +116,8 @@ impl SecureChannel {
         }
     }
 
+    /// Create a new secure channel with the given certificate store
+    /// and role.
     pub fn new(
         certificate_store: Arc<RwLock<CertificateStore>>,
         role: Role,
@@ -152,46 +160,57 @@ impl SecureChannel {
         }
     }
 
+    /// Return `true` if this channel is for a client.
     pub fn is_client_role(&self) -> bool {
         self.role == Role::Client
     }
 
+    /// Set the application certificate.
     pub fn set_cert(&mut self, cert: Option<X509>) {
         self.cert = cert;
     }
 
+    /// Get the application certificate.
     pub fn cert(&self) -> Option<X509> {
         self.cert.clone()
     }
 
+    /// Set the remote certificate.
     pub fn set_remote_cert(&mut self, remote_cert: Option<X509>) {
         self.remote_cert = remote_cert;
     }
 
+    /// Get the remote certificate.
     pub fn remote_cert(&self) -> Option<X509> {
         self.remote_cert.clone()
     }
 
+    /// Set the application private key.
     pub fn set_private_key(&mut self, private_key: Option<PrivateKey>) {
         self.private_key = private_key;
     }
 
+    /// Get the application security mode.
     pub fn security_mode(&self) -> MessageSecurityMode {
         self.security_mode
     }
 
+    /// Set the application security mode.
     pub fn set_security_mode(&mut self, security_mode: MessageSecurityMode) {
         self.security_mode = security_mode;
     }
 
+    /// Get the application security policy.
     pub fn security_policy(&self) -> SecurityPolicy {
         self.security_policy
     }
 
+    /// Set the application security policy.
     pub fn set_security_policy(&mut self, security_policy: SecurityPolicy) {
         self.security_policy = security_policy;
     }
 
+    /// Clear the configured security token.
     pub fn clear_security_token(&mut self) {
         self.secure_channel_id = 0;
         self.token_id = 0;
@@ -199,6 +218,7 @@ impl SecureChannel {
         self.token_lifetime = 0;
     }
 
+    /// Set the channel security token.
     pub fn set_security_token(&mut self, channel_token: ChannelSecurityToken) {
         self.secure_channel_id = channel_token.channel_id;
         self.token_id = channel_token.token_id;
@@ -206,34 +226,42 @@ impl SecureChannel {
         self.token_lifetime = channel_token.revised_lifetime;
     }
 
+    /// Set the ID of the secure channel, this is chosen by the server.
     pub fn set_secure_channel_id(&mut self, secure_channel_id: u32) {
         self.secure_channel_id = secure_channel_id;
     }
 
+    /// Get the ID of the secure channel on the server.
     pub fn secure_channel_id(&self) -> u32 {
         self.secure_channel_id
     }
 
+    /// Get the time the currently active token was created.
     pub fn token_created_at(&self) -> DateTime {
         self.token_created_at
     }
 
+    /// Get the lifetime of the active token.
     pub fn token_lifetime(&self) -> u32 {
         self.token_lifetime
     }
 
+    /// Set the ID of the active token.
     pub fn set_token_id(&mut self, token_id: u32) {
         self.token_id = token_id;
     }
 
+    /// Get the ID of the active token.
     pub fn token_id(&self) -> u32 {
         self.token_id
     }
 
+    /// Set the offset in time between the clock of the server and client.
     pub fn set_client_offset(&mut self, client_offset: chrono::Duration) {
         self.encoding_context.write().options_mut().client_offset = client_offset;
     }
 
+    /// Set the decoding options, will not change the client offset.
     pub fn set_decoding_options(&mut self, decoding_options: DecodingOptions) {
         let mut context = self.encoding_context.write();
         let offset = context.options().client_offset;
@@ -243,14 +271,17 @@ impl SecureChannel {
         };
     }
 
+    /// Get a reference to the encoding context.
     pub fn context(&self) -> impl Deref<Target = ContextOwned> + '_ {
         self.encoding_context.read()
     }
 
+    /// Set the namespace map.
     pub fn set_namespaces(&self, namespaces: NamespaceMap) {
         *self.encoding_context.write().namespaces_mut() = namespaces;
     }
 
+    /// Get the decoding options.
     pub fn decoding_options(&self) -> DecodingOptions {
         self.context().options().clone()
     }
@@ -409,6 +440,8 @@ impl SecureChannel {
         trace!("Derived local keys = {:?}", self.local_keys);
     }
 
+    /// Get the deadline as an [`Instant`] for token renewal, used
+    /// for timeouts on the server.
     pub fn token_renewal_deadline(&self) -> Instant {
         let deadline =
             self.token_created_at + Duration::seconds((self.token_lifetime as i64) * 4 / 3);
@@ -581,7 +614,7 @@ impl SecureChannel {
         Ok(())
     }
 
-    // Truncates a vec and writes the message size
+    /// Writes message size and truncates the message to fit.
     pub fn update_message_size_and_truncate(
         mut data: Vec<u8>,
         message_size: usize,
@@ -1083,15 +1116,18 @@ impl SecureChannel {
         }
     }
 
+    /// Get the local nonce.
     pub fn local_nonce(&self) -> &[u8] {
         &self.local_nonce
     }
 
+    /// Set the local nonce.
     pub fn set_local_nonce(&mut self, local_nonce: &[u8]) {
         self.local_nonce.clear();
         self.local_nonce.extend_from_slice(local_nonce);
     }
 
+    /// Get the local nonce as a byte string.
     pub fn local_nonce_as_byte_string(&self) -> ByteString {
         if self.local_nonce.is_empty() {
             ByteString::null()
@@ -1100,15 +1136,18 @@ impl SecureChannel {
         }
     }
 
+    /// Set the remote nonce.
     pub fn set_remote_nonce(&mut self, remote_nonce: &[u8]) {
         self.remote_nonce.clear();
         self.remote_nonce.extend_from_slice(remote_nonce);
     }
 
+    /// Get the remote nonce.
     pub fn remote_nonce(&self) -> &[u8] {
         &self.remote_nonce
     }
 
+    /// Get the remote nonce as a byte string.
     pub fn remote_nonce_as_byte_string(&self) -> ByteString {
         if self.remote_nonce.is_empty() {
             ByteString::null()
@@ -1393,6 +1432,7 @@ impl SecureChannel {
         }
     }
 
+    /// Set the token lifetime.
     pub fn set_token_lifetime(&mut self, token_lifetime: u32) {
         self.token_lifetime = token_lifetime;
     }

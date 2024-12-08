@@ -5,6 +5,10 @@ use crate::node_manager::{
 use hashbrown::HashMap;
 use opcua_types::{BrowseDescriptionResultMask, NamespaceMap, NodeId};
 
+/// Fetch external references by requesting them from their owning node manager.
+///
+/// This calls `resolve_external_references` on each node manager with the ids
+/// in `ids` that they return `true` on `owns_node` for.
 pub async fn get_node_metadata(
     context: &RequestContext,
     node_managers: &impl NodeManagerCollection,
@@ -26,6 +30,8 @@ pub async fn get_node_metadata(
     reqs.into_iter().map(|r| r.into_inner()).collect()
 }
 
+/// Get the namespaces visible to the current user by calling `namespaces_for_user`
+/// on each node manager.
 pub fn get_namespaces_for_user(
     context: &RequestContext,
     node_managers: &impl NodeManagerCollection,

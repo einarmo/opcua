@@ -16,6 +16,9 @@ use super::{
 };
 
 impl ParsedEventFilter {
+    /// Evaluate the event filter, returning `None` if the
+    /// filter does not accept the event, and a list of event fields fetched from
+    /// the event if it does.
     pub fn evaluate(
         &self,
         event: &dyn Event,
@@ -70,7 +73,12 @@ macro_rules! bw_op {
     }};
 }
 
+/// Trait for something that can be queried for attribute values.
+///
+/// Implemented by `dyn Event`. Types passed to a content filter must
+/// implement this.
 pub trait AttributeQueryable: Copy {
+    /// Get an attribute value from the item.
     fn get_attribute(
         &self,
         type_definition_id: &NodeId,
@@ -106,16 +114,18 @@ enum BitOperation {
 }
 
 impl ParsedContentFilter {
-    pub fn evaluate(&self, event: impl AttributeQueryable, ctx: &EncodingContext) -> bool {
+    /// Evaluate the content filter, returning `true` if it
+    /// passes the filter.
+    pub fn evaluate(&self, item: impl AttributeQueryable, ctx: &EncodingContext) -> bool {
         if self.elements.is_empty() {
             return true;
         }
-        matches!(self.evulate_element(event, 0, ctx), Variant::Boolean(true))
+        matches!(self.evulate_element(item, 0, ctx), Variant::Boolean(true))
     }
 
     fn evulate_element(
         &self,
-        event: impl AttributeQueryable,
+        item: impl AttributeQueryable,
         index: usize,
         ctx: &EncodingContext,
     ) -> Variant {
@@ -124,64 +134,64 @@ impl ParsedContentFilter {
         };
 
         match op.operator {
-            FilterOperator::Equals => cmp_op!(self, event, ctx, op, Some(Ordering::Equal)),
+            FilterOperator::Equals => cmp_op!(self, item, ctx, op, Some(Ordering::Equal)),
             FilterOperator::IsNull => {
-                (self.evaluate_operand(event, &op.operands[0], ctx) == Variant::Empty).into()
+                (self.evaluate_operand(item, &op.operands[0], ctx) == Variant::Empty).into()
             }
-            FilterOperator::GreaterThan => cmp_op!(self, event, ctx, op, Some(Ordering::Greater)),
-            FilterOperator::LessThan => cmp_op!(self, event, ctx, op, Some(Ordering::Less)),
+            FilterOperator::GreaterThan => cmp_op!(self, item, ctx, op, Some(Ordering::Greater)),
+            FilterOperator::LessThan => cmp_op!(self, item, ctx, op, Some(Ordering::Less)),
             FilterOperator::GreaterThanOrEqual => {
                 cmp_op!(
                     self,
-                    event,
+                    item,
                     ctx,
                     op,
                     Some(Ordering::Equal | Ordering::Greater)
                 )
             }
             FilterOperator::LessThanOrEqual => {
-                cmp_op!(self, event, ctx, op, Some(Ordering::Equal | Ordering::Less))
+                cmp_op!(self, item, ctx, op, Some(Ordering::Equal | Ordering::Less))
             }
             FilterOperator::Like => Self::like(
-                self.evaluate_operand(event, &op.operands[0], ctx),
-                self.evaluate_operand(event, &op.operands[1], ctx),
+                self.evaluate_operand(item, &op.operands[0], ctx),
+                self.evaluate_operand(item, &op.operands[1], ctx),
             )
             .into(),
-            FilterOperator::Not => Self::not(self.evaluate_operand(event, &op.operands[0], ctx)),
+            FilterOperator::Not => Self::not(self.evaluate_operand(item, &op.operands[0], ctx)),
             FilterOperator::Between => Self::between(
-                self.evaluate_operand(event, &op.operands[0], ctx),
-                self.evaluate_operand(event, &op.operands[1], ctx),
-                self.evaluate_operand(event, &op.operands[2], ctx),
+                self.evaluate_operand(item, &op.operands[0], ctx),
+                self.evaluate_operand(item, &op.operands[1], ctx),
+                self.evaluate_operand(item, &op.operands[2], ctx),
             )
             .into(),
             FilterOperator::InList => Self::in_list(
-                self.evaluate_operand(event, &op.operands[0], ctx),
+                self.evaluate_operand(item, &op.operands[0], ctx),
                 op.operands
                     .iter()
                     .skip(1)
-                    .map(|o| self.evaluate_operand(event, o, ctx)),
+                    .map(|o| self.evaluate_operand(item, o, ctx)),
             )
             .into(),
             FilterOperator::And => Self::and(
-                self.evaluate_operand(event, &op.operands[0], ctx),
-                self.evaluate_operand(event, &op.operands[1], ctx),
+                self.evaluate_operand(item, &op.operands[0], ctx),
+                self.evaluate_operand(item, &op.operands[1], ctx),
             ),
             FilterOperator::Or => Self::or(
-                self.evaluate_operand(event, &op.operands[0], ctx),
-                self.evaluate_operand(event, &op.operands[1], ctx),
+                self.evaluate_operand(item, &op.operands[0], ctx),
+                self.evaluate_operand(item, &op.operands[1], ctx),
             ),
             FilterOperator::Cast => Self::cast(
-                self.evaluate_operand(event, &op.operands[0], ctx),
-                self.evaluate_operand(event, &op.operands[1], ctx),
+                self.evaluate_operand(item, &op.operands[0], ctx),
+                self.evaluate_operand(item, &op.operands[1], ctx),
             ),
             FilterOperator::BitwiseAnd => Self::bitwise_op(
-                self.evaluate_operand(event, &op.operands[0], ctx),
-                self.evaluate_operand(event, &op.operands[1], ctx),
+                self.evaluate_operand(item, &op.operands[0], ctx),
+                self.evaluate_operand(item, &op.operands[1], ctx),
                 BitOperation::And,
             ),
             FilterOperator::BitwiseOr => Self::bitwise_op(
-                self.evaluate_operand(event, &op.operands[0], ctx),
-                self.evaluate_operand(event, &op.operands[1], ctx),
+                self.evaluate_operand(item, &op.operands[0], ctx),
+                self.evaluate_operand(item, &op.operands[1], ctx),
                 BitOperation::Or,
             ),
             _ => Variant::Empty,
@@ -190,15 +200,15 @@ impl ParsedContentFilter {
 
     fn evaluate_operand(
         &self,
-        event: impl AttributeQueryable,
+        item: impl AttributeQueryable,
         op: &ParsedOperand,
         ctx: &EncodingContext,
     ) -> Variant {
         match op {
-            ParsedOperand::ElementOperand(o) => self.evulate_element(event, o.index as usize, ctx),
+            ParsedOperand::ElementOperand(o) => self.evulate_element(item, o.index as usize, ctx),
             ParsedOperand::LiteralOperand(o) => o.value.clone(),
             ParsedOperand::AttributeOperand(_) => unreachable!(),
-            ParsedOperand::SimpleAttributeOperand(o) => event.get_attribute(
+            ParsedOperand::SimpleAttributeOperand(o) => item.get_attribute(
                 &o.type_definition_id,
                 &o.browse_path,
                 o.attribute_id,

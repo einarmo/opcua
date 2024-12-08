@@ -50,6 +50,10 @@ impl opcua::types::ExpandedMessageInfo for PnDeviceDiagnosisDataType {
             crate::ObjectId::PnDeviceDiagnosisDataType_Encoding_DefaultXml.into();
         opcua::types::ExpandedNodeId::from((id, "http://opcfoundation.org/UA/PROFINET/"))
     }
+    fn full_data_type_id(&self) -> opcua::types::ExpandedNodeId {
+        let id: opcua::types::NodeId = crate::DataTypeId::PnDeviceDiagnosisDataType.into();
+        opcua::types::ExpandedNodeId::from((id, "http://opcfoundation.org/UA/PROFINET/"))
+    }
 }
 #[derive(Debug, Clone, PartialEq, opcua::types::BinaryEncodable, opcua::types::BinaryDecodable)]
 #[cfg_attr(
@@ -76,6 +80,10 @@ impl opcua::types::ExpandedMessageInfo for PnDeviceRoleOptionSet {
     fn full_xml_type_id(&self) -> opcua::types::ExpandedNodeId {
         let id: opcua::types::NodeId =
             crate::ObjectId::PnDeviceRoleOptionSet_Encoding_DefaultXml.into();
+        opcua::types::ExpandedNodeId::from((id, "http://opcfoundation.org/UA/PROFINET/"))
+    }
+    fn full_data_type_id(&self) -> opcua::types::ExpandedNodeId {
+        let id: opcua::types::NodeId = crate::DataTypeId::PnDeviceRoleOptionSet.into();
         opcua::types::ExpandedNodeId::from((id, "http://opcfoundation.org/UA/PROFINET/"))
     }
 }
@@ -106,6 +114,10 @@ impl opcua::types::ExpandedMessageInfo for PnIM5DataType {
     }
     fn full_xml_type_id(&self) -> opcua::types::ExpandedNodeId {
         let id: opcua::types::NodeId = crate::ObjectId::PnIM5DataType_Encoding_DefaultXml.into();
+        opcua::types::ExpandedNodeId::from((id, "http://opcfoundation.org/UA/PROFINET/"))
+    }
+    fn full_data_type_id(&self) -> opcua::types::ExpandedNodeId {
+        let id: opcua::types::NodeId = crate::DataTypeId::PnIM5DataType.into();
         opcua::types::ExpandedNodeId::from((id, "http://opcfoundation.org/UA/PROFINET/"))
     }
 }

@@ -29,4 +29,7 @@ impl opcua::types::MessageInfo for TargetVariablesDataType {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::TargetVariablesDataType_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::TargetVariablesDataType
+    }
 }

@@ -19,24 +19,28 @@ As the project proceeds more functionality will be added with a lot of code back
 
 OPC UA for Rust is split over several crates which are periodically published:
 
-* [`opcua-types`](../types) - contains machine generated types and handwritten types
-* [`opcua-core`](../core) - contains functionality common to client and server such as encoding / decoding chunks.
-* [`opcua-crypto`](../crypto) - contains all encryption functionality
-* [`opcua-client`](../client) - contains the client side API
-* [`opcua-server`](../server) - contains the server side API. The server may optionally use `opcua-client` to register the server with a local discovery server.
+* [`lib`](../lib) - a mostly empty wrapper crate that re-exports the other crates based on enabled features.
+* [`opcua-types`](../opcua-types) - contains machine generated types and handwritten types
+* [`opcua-core`](../opcua-core) - contains functionality common to client and server such as encoding / decoding chunks.
+* [`opcua-crypto`](../opcua-crypto) - contains all encryption functionality
+* [`opcua-client`](../opcua-client) - contains the client side API
+* [`opcua-server`](../opcua-server) - contains the server side API. The server may optionally use `opcua-client` to register the server with a local discovery server.
+* [`opcua-nodes`](../opcua-nodes) - contains the `NodeType` as well as types necessary to define the core namespace.
+* [`opcua-core-namespace`](../opcua-core-namespace) - contains the generated code for populating the core namespace.
+* [`opcua-xml](../opcua-xml) - contains tools for parsing various OPC-UA XML files. Used by opcua-codegen and by opcua-nodes for loading NodeSet2 files at runtime. Only included with the `xml` feature.
+* [`opcua-macros`](../opcua-macros) - procedural macros for encoding, decoding, events, and likely more in the future.
+* [`opcua-codegen`](../opcua-codegen) - a command line tool for generating code based on OPC-UA XML files.
 * [`opcua-certificate-creator`](../tools/certificate-creator) - a command-line tool for creating OPC UA compatible public cert and private key.
 
-These are all published on [crates.io](https://crates.io). Generally speaking there is a 4-6 month gap between releases unless a breaking bug is found. The API tend to receive breaking changes between releases but the functionality grows and becomes more complete.
+These are all published on [crates.io](https://crates.io). The API tend to receive breaking changes between releases but the functionality grows and becomes more complete.
 
 The workspace also contains some other folders:
 
 * [`samples`](../samples) - containing various client and server examples.
-* [`tools`](../tools) - various scripts and tools including scripts that machine generate OPC UA status codes, structs and node ids.
-* [`integration`](../integration) - integration tests
 
 ## Testing
 
-Unit and integration tests will cover all functional aspects of the project. In addition the implementation will be tested with 3rd party OPC UA implementations so the client / server parts can be tested in isolation.
+Unit and integration tests will cover all functional aspects of the project. In addition the implementation should be tested with 3rd party OPC UA implementations so the client / server parts can be tested in isolation.
 
 See the [testing](./testing.md) document.
 
@@ -47,13 +51,12 @@ OPC UA for Rust uses convention and idiomatic Rust to minimize the amount of cod
 Here is a minimal, functioning server.
 
 ```rust
-extern crate opcua;
-
+use opcua::server::ServerBuilder;
 use opcua::types::*;
 
 fn main() {
-    let server: Server = ServerBuilder::new_sample().server().unwrap();
-    server.run();
+    let (server, _handle) = ServerBuilder::new_sample().build().unwrap();
+    server.run().await.unwrap();
 }
 ```
 
@@ -64,9 +67,9 @@ for something that adds variables to the address space and changes their values.
 
 ## Types
 
-OPC UA defines a lot of types. Some of those correspond to Rust primitives while others are types, structures or enums which are used by the protocol. All types are defined in the [`opcua-types`](../types) crate.
+OPC UA defines a lot of types. Some of those correspond to Rust primitives while others are types, structures or enums which are used by the protocol. All types are defined in the [`opcua-types`](../opcua-types) crate.
 
-All types can be encoded / decoded to a stream according to the opc.tcp:// binary transport. They do so by implementing a `BinaryEncodable` trait. The three functions on this trait allow a struct to be deserialized, serialized, or the byte size of it to be calculated.
+All types can be encoded / decoded to a stream according to the opc.tcp:// binary transport. They do so by implementing a `BinaryEncodable` and `BinaryDecodable` traits. The three functions on this trait allow a struct to be deserialized, serialized, or the byte size of it to be calculated.
 
 Typically encoding will begin with a structure, e.g. `CreateSubscriptionRequest` whose implementation will encode each member in turn.
 
@@ -74,14 +77,13 @@ Types can also be encoded into `ExtensionObject`s in a simple fashion.
 
 ```rust
 let operand = AttributeOperand { /* ... */ };
-let obj = ExtensionObject::from_encodable(ObjectId::AttributeOperand_Encoding_DefaultBinary, operand);
+let obj = ExtensionObject::from_message(operand);
 ```
 
 And out:
 
 ```rust
-let decoding_options = DecodingOptions::default();
-let operand = obj.decode_inner::<AttributeOperand>(&decoding_options)?;
+let operand: Box<AttributeOperand> = obj.into_inner_as::<AttributeOperand>().unwrap();
 ```
 
 ### Primitives
@@ -126,15 +128,9 @@ A `Variant` is a special catch-all enum which can hold any other primitive or ba
 
 ### Machine generated types
 
-Machine generated types reside in `types/src/service_types`. The `enums.rs` holds all of the enumerations. A special `impls.rs` contains additional hand written functions that are associated with types.
+Machine generated types reside in `opcua-types/src/generated/types`. The `enums.rs` holds all of the enumerations. A special `src/impls.rs` contains additional hand written functions that are associated with types.
 
-The `tools/schema/` directory contains NodeJS scripts that will generate Rust code from OPC UA schemas.
-
-* Status codes
-* Node Ids (objects, variables, references etc.)
-* Data structures including serialization.
-* Request and Response messages including serialization
-* Address space nodes
+All these are generated using `opcua-codegen`. The configuration used to generate the core namespace is found [here](../code_gen_config.yml).
 
 ## Handling OPC UA names in Rust
 
@@ -158,26 +154,26 @@ pub enum SecurityPolicy {
 
 The enum will be turned in and out of a scalar value during serialization via a match.
 
-Wherever possible Rust idioms will be used - enums, options and other conveniences of the language will be used to represent data in the most efficient and strict way possible. e.g. here is the ExtensionObject
+Wherever possible Rust idioms will be used - enums, options and other conveniences of the language will be used to represent data in the most efficient and strict way possible. e.g. here is the node ID `Identifier`:
 
 ```rust
-#[derive(PartialEq, Debug, Clone)]
-pub enum ExtensionObjectEncoding {
-    None,
+#[derive(Eq, PartialEq, Clone, Debug, Hash)]
+pub enum Identifier {
+    Numeric(u32),
+    String(UAString),
+    Guid(Guid),
     ByteString(ByteString),
-    XmlElement(XmlElement),
 }
 
-/// A structure that contains an application specific data type that may not be recognized by the receiver.
-/// Data type ID 22
-#[derive(PartialEq, Debug, Clone)]
-pub struct ExtensionObject {
-    pub node_id: NodeId,
-    pub body: ExtensionObjectEncoding,
+/// An identifier for a node in the address space of an OPC UA Server.
+#[derive(PartialEq, Eq, Clone, Debug, Hash)]
+pub struct NodeId {
+    /// The index for a namespace
+    pub namespace: u16,
+    /// The identifier for the node in the address space
+    pub identifier: Identifier,
 }
 ```
-
-Rust enables the `body` payload to be `None`, `ByteString` or `XmlElement` and this is handled during serialization.
 
 ### Lint exceptions for OPC UA
 
@@ -198,33 +194,23 @@ pub enum VariableId {
 
 ### Status codes
 
-Most uses of a status code will be via a `StatusCode` enum. Values such as `Good`, `BadUnexpectedError` etc.
+Status codes are managed by the `StatusCode` struct, which is jsut a wrapper around `u32`. Built in status codes are given as associated constants, and the type contains methods suc has `set_limit` to set flags.
 
-The enum will also implement `Copy` so that status codes are copy on assign. The enum provides helpers `is_good()`, `is_bad()`, `name()` and `description()` for testing and debugging purposes. It also provides functions for turning the code into and out of a UInt32 and masking status / info bits.
+Status code subscription is also available at runtime through `sub_code().description()`.
 
 ## Formatting
 
 All code (with the exceptions noted for OPC UA) should be follow the most current Rust RFC coding guidelines for naming conventions, layout etc.
 
-Code should be formatted with the IntelliJ rust plugin, or with rustfmt.
+Code should be formatted with rustfmt. CI checks for clean execution of `cargo fmt --all`.
 
 ## Encryption
 
-OPC UA for Rust uses OpenSSL for encryption. This decision was basically made for me since there is no Rust crate at this time that satisfies the requirements for OPC UA. That includes:
-
-* Message digest - SHA1, SHA256
-* Symmetric encryption algorithms - AES128 CBC, AES256 CBC
-* Asymmetric encryption algorithms - RSA_15, RSA_OAEP
-* Hash message authentication codes - HMACs
-* Certificate creation - X509
-* Reading and writing certificate and private key file formats - .pem and .der
-* Random numbers - PRNG
+OPC UA for Rust now uses a set of pure rust crates for cryptography.
 
 ## Address Space
 
-The server maintains an address space. The `AddressSpace` struct manages the address space.
-
-Each nodes in the address space is stored in a big hash map keyed by their `NodeId`. The value is enum called a `NodeType` that is one of the standard OPC UA node types:
+Each node manager on the server manages an address space. The server contains an implementation of an in-memory address space as `AddressSpace`. This is essentially a big map of `NodeId` to `NodeType`, which is an enum with a variant for each OPC UA node type:
 
 * DataType
 * Method
@@ -239,11 +225,9 @@ References are managed by a `References` struct which has a map of vectors of ou
 
 ### Generated nodeset
 
-Calling `Address::new()` automatically populates itself with the default nodeset. The population code is machine generated and resides under `server/src/address_space/generated`.
+We define a trait `NodeSetImport` for methods that import namespaces. This is implemented by a struct in each generated nodeset. The built-in namespace is called `CoreNamespace`. An `AddressSpace` struct can import a nodeset by calling `import_node_set`.
 
-## Encryption
-
-Encryption is through functions that call onto OpenSSL. See this [document](crypto.md) for information.
+`opcua-codegen` can be used to generate nodeset imports by parsing `NodeSet2` files. This is mostly useful for namespaces consisting of just types, since we also generate event types. If all you want to do is import a nodeset, it may be easier (and kinder on compile times) to use `NodeSet2Import` from `opcua-nodes` to import a `NodeSet2.xml` file at runtime.
 
 ## Networking
 
@@ -256,68 +240,23 @@ Tokio is used to provide asynchronous I/O and timers.
 * Inherently multi-threaded via Tokio's executor.
 * Supports timers and other kinds of asynchronous operation.
 
-The penalty for this is that asynchronous programming can be _hard_. Fortunately Rust has acquired  new `async` and `await`
-keyword functionality that simplifies the async logic a bit, but it can still get hairy in places. 
+The penalty for this is that asynchronous programming can be _hard_. Fortunately Rust has acquired  new `async` and `await` keyword functionality that simplifies the async logic a bit, but it can still get hairy in places.
 
-In the new async world a session is a state machine:
+Tokio provides `tasks` that are scheduled on a thread pool to run in _parallel_. A fundamental design consideration of both the server and client library is that we are _very_ deliberate about when we `spawn` a task, and when we just await multiple futures concurrently using `select` or `join`.
 
-* `New`
-* `WaitingHello` - waiting for a client to send a HEL message.
-* `ProcessMessages` - main processing
-* `Finished(StatusCode)` - Session is finished, sockets are closed. The `StatusCode` indicates why the session finished which might be
-  `Good` if a normal termination occurred or another OPC UA error otherwise.
+In general, there should be a _very_ good reason to `spawn` by default, and we _never_ spawn tasks that we do not somehow monitor.
 
-There are tasks running to monitor the health of the session and finish it if it goes into error. When it goes into error the socket must close and all tasks terminate.
+The client does, in fact, not spawn anything at all by default. Instead, to drive the connection, it provides an event loop that must be polled in some way to make progress. This can be as easy as just calling `SessionEventLoop::spawn` to spawn a tokio task, or awaiting the future returned by `SessionEventLoop::run`, but users also have the option to consume the `SessionEventLoop::enter` thread to get a view into exactly what the client is doing.
 
-The main loop for a server is this:
+The event loop is a single-threaded state machine. This does mean that the client is fundamentally single-threaded, which greatly simplifies the architecture.
 
-1. for_each socket
-    1. Spawn looping task
-        1. Spawn hello timeout task (mpsc sender). Runs at connect waiting for HELLO and then exits or sets Finished if it timesout.
-        2. Spawn reading task (mpsc sender). The reader waits for complete messages to arrive
-        3. Spawn writing task (mpsc receiver). The writer waits on messages to either quit or write something.
-        4. Spawn finished monitor task (mpsc sender). Checks for finished state.
-
-Each of the tasks would terminate if the state goes to `Finished`. Any task can also set the state to `Finished`
-for whatever reason - timeout, encoding error etc. The mpsc senders can send a Quit to the writer to wait it from its
-slumber and shutdown the socket.
-
-So if the Hello task times out it sets the session to `Finished`, sends a quit to the writer. This breaks the reader and
-writer loop and also the finished monitor.
-
-When a session ends in a Finished state it will hold a status code explaining the reason for finishing.
-
-## Implementation plan
-
-Client and server will work their ways through OPC UA profiles to the point of usability. But presently they are working towards.
-
-* Nano Embedded Device Server Profile, which has these main points
-  * UA-TCP binary
-  * SecurityPolicy of None (i.e. no encryption / signing)
-  * Username / Password support (plaintext)
-  * Address space
-  * Discovery Services
-  * Session Services (minimum, single session)
-  * View Services (basic)
-* Micro Embedded Device Server Profile. This is a bump up from Nano.
-  * UA secure conversation
-  * 2 or more sessions
-  * Data change notifications via a subscription.
-* Embedded UA Server Profile
-  * Standard data change notifications via a subscription
-    * Queueing
-    * Deadband filter
-    * CallMethod service
-    * GetMonitoredItems via call
-    * ResendData via call
-
-This [OPC UA link](http://opcfoundation-onlineapplications.org/ProfileReporting/index.htm) provides interactive and descriptive information about profiles and relevant test cases.
+The server has a very different approach to this, instead using a pattern common in web servers, where each incoming message spawns a `task`, and each connection runs on a dedicated `task`.
 
 ## Major 3rd party dependencies
 
 * log - for logging / auditing
-* openssl - cryptographic functions for signing, certifications and encryption/decryption
 * serde, server_yaml - for processing config files
+* struson - for streamed JSON processing.
 * clap - used by sample apps & certificate creator for command line argument processing
 * byteorder - for serializing values with the proper endian-ness
 * tokio - for asynchronous IO and timers

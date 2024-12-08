@@ -56,7 +56,7 @@ async fn main() -> Result<(), ()> {
 
         // The client API has a simple `find_servers` function that connects and returns servers for us.
         let client = Client::new(ClientConfig::new("DiscoveryClient", "urn:DiscoveryClient"));
-        match client.find_servers(url).await {
+        match client.find_servers(url, None, None).await {
             Ok(servers) => {
                 println!("Discovery server responded with {} servers:", servers.len());
                 for server in servers {

@@ -31,4 +31,7 @@ impl opcua::types::MessageInfo for BrowseResult {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::BrowseResult_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::BrowseResult
+    }
 }

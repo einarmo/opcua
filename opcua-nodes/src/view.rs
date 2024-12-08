@@ -18,16 +18,19 @@ node_builder_impl!(ViewBuilder, View);
 node_builder_impl_generates_event!(ViewBuilder);
 
 impl ViewBuilder {
+    /// Set whether the view contains no loops.
     pub fn contains_no_loops(mut self, contains_no_loops: bool) -> Self {
         self.node.set_contains_no_loops(contains_no_loops);
         self
     }
 
+    /// Set view event notifier.
     pub fn event_notifier(mut self, event_notifier: EventNotifier) -> Self {
         self.node.set_event_notifier(event_notifier);
         self
     }
 
+    /// Set view write mask.
     pub fn write_mask(mut self, write_mask: WriteMask) -> Self {
         self.node.set_write_mask(write_mask);
         self
@@ -104,17 +107,14 @@ impl Node for View {
 }
 
 impl View {
-    pub fn new<R, S>(
+    /// Create a new view.
+    pub fn new(
         node_id: &NodeId,
-        browse_name: R,
-        display_name: S,
+        browse_name: impl Into<QualifiedName>,
+        display_name: impl Into<LocalizedText>,
         event_notifier: EventNotifier,
         contains_no_loops: bool,
-    ) -> View
-    where
-        R: Into<QualifiedName>,
-        S: Into<LocalizedText>,
-    {
+    ) -> View {
         View {
             base: Base::new(NodeClass::View, node_id, browse_name, display_name),
             event_notifier,
@@ -122,6 +122,7 @@ impl View {
         }
     }
 
+    /// Create a new view from the full `Base` node.
     pub fn new_full(base: Base, event_notifier: EventNotifier, contains_no_loops: bool) -> Self {
         Self {
             base,
@@ -130,14 +131,12 @@ impl View {
         }
     }
 
-    pub fn from_attributes<S>(
+    /// Create a new view from [ViewAttributes].
+    pub fn from_attributes(
         node_id: &NodeId,
-        browse_name: S,
+        browse_name: impl Into<QualifiedName>,
         attributes: ViewAttributes,
-    ) -> Result<Self, FromAttributesError>
-    where
-        S: Into<QualifiedName>,
-    {
+    ) -> Result<Self, FromAttributesError> {
         let mandatory_attributes = AttributesMask::DISPLAY_NAME
             | AttributesMask::EVENT_NOTIFIER
             | AttributesMask::CONTAINS_NO_LOOPS;
@@ -167,22 +166,27 @@ impl View {
         }
     }
 
+    /// Check whether this node is valid.
     pub fn is_valid(&self) -> bool {
         self.base.is_valid()
     }
 
+    /// Get the event notifier of this view.
     pub fn event_notifier(&self) -> EventNotifier {
         self.event_notifier
     }
 
+    /// Set the event notifier of this view.
     pub fn set_event_notifier(&mut self, event_notifier: EventNotifier) {
         self.event_notifier = event_notifier;
     }
 
+    /// Get the `ContainsNoLoops` attribute of this view.
     pub fn contains_no_loops(&self) -> bool {
         self.contains_no_loops
     }
 
+    /// Set the `ContainsNoLoops` attribute on this view.
     pub fn set_contains_no_loops(&mut self, contains_no_loops: bool) {
         self.contains_no_loops = contains_no_loops
     }

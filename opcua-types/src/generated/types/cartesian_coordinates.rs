@@ -27,4 +27,7 @@ impl opcua::types::MessageInfo for CartesianCoordinates {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::CartesianCoordinates_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::CartesianCoordinates
+    }
 }

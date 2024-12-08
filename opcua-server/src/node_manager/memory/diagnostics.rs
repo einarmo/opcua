@@ -14,7 +14,10 @@ use crate::{
         as_opaque_node_id,
         build::NodeManagerBuilder,
         from_opaque_node_id,
-        view::{impl_translate_browse_paths_using_browse, AddReferenceResult, NodeMetadata},
+        view::{
+            impl_translate_browse_paths_using_browse, AddReferenceResult, ExternalReferenceRequest,
+            NodeMetadata,
+        },
         BrowseNode, BrowsePathItem, DefaultTypeTree, DynNodeManager, NodeManager, NodeManagersRef,
         ReadNode, RequestContext, ServerContext, SyncSampler,
     },
@@ -49,17 +52,30 @@ of nodes without explicitly storing each node ID.
 */
 
 #[derive(Default, Clone, Debug)]
+/// Namespace metadata. This is visible in the namespace array under
+/// the `Server` node.
 pub struct NamespaceMetadata {
+    /// Default access restrictions on this namespace.
     pub default_access_restrictions: AccessRestrictionType,
+    /// Default role permissions on this namespace.
     pub default_role_permissions: Option<Vec<RolePermissionType>>,
+    /// Default user role permissions on this namespace.
     pub default_user_role_permissions: Option<Vec<RolePermissionType>>,
+    /// Whether this namespace is a subset of the full namespace.
     pub is_namespace_subset: Option<bool>,
+    /// Time this namespace was last updated.
     pub namespace_publication_date: Option<DateTime>,
+    /// Namespace URI.
     pub namespace_uri: String,
+    /// Namespace version.
     pub namespace_version: Option<String>,
+    /// List of ID types in this namespace.
     pub static_node_id_types: Option<Vec<IdType>>,
+    /// List of ranges for numeric node IDs on static nodes in this namespace.
     pub static_numeric_node_id_range: Option<Vec<NumericRange>>,
+    /// Pattern that applies to string node IDs on static nodes in this namespace.
     pub static_string_node_id_pattern: Option<String>,
+    /// Namespace index on the server.
     pub namespace_index: u16,
 }
 
@@ -79,6 +95,7 @@ enum DiagnosticsNode {
     Namespace(NamespaceNode),
 }
 
+/// Builder for the diagnostics node manager.
 pub struct DiagnosticsNodeManagerBuilder;
 
 impl NodeManagerBuilder for DiagnosticsNodeManagerBuilder {
@@ -129,6 +146,25 @@ impl DiagnosticsNodeManager {
         }
     }
 
+    fn property_node_metadata(&self, namespace: &str, name: &str) -> NodeMetadata {
+        NodeMetadata {
+            node_id: ExpandedNodeId::new(
+                as_opaque_node_id(
+                    &DiagnosticsNode::Namespace(NamespaceNode {
+                        namespace: namespace.to_owned(),
+                        property: Some(name.to_owned()),
+                    }),
+                    self.namespace_index,
+                )
+                .unwrap_or_default(),
+            ),
+            type_definition: VariableTypeId::PropertyType.into(),
+            browse_name: QualifiedName::new(0, name),
+            display_name: LocalizedText::new("", name),
+            node_class: NodeClass::Variable,
+        }
+    }
+
     fn browse_namespaces(
         &self,
         node_to_browse: &mut BrowseNode,
@@ -175,6 +211,22 @@ impl DiagnosticsNodeManager {
         }
     }
 
+    fn is_valid_property(prop: &str) -> bool {
+        matches!(
+            prop,
+            "DefaultAccessRestrictions"
+                | "DefaultRolePermissions"
+                | "DefaultUserRolePermissions"
+                | "IsNamespaceSubset"
+                | "NamespacePublicationDate"
+                | "NamespaceUri"
+                | "NamespaceVersion"
+                | "StaticNodeIdTypes"
+                | "StaticNumericNodeIdRange"
+                | "StaticStringNodeIdPattern"
+        )
+    }
+
     fn browse_namespace_metadata_node(
         &self,
         node_to_browse: &mut BrowseNode,
@@ -202,24 +254,9 @@ impl DiagnosticsNodeManager {
                     "StaticNumericNodeIdRange",
                     "StaticStringNodeIdPattern",
                 ] {
-                    let ref_desc = ReferenceDescription {
-                        reference_type_id: ReferenceTypeId::HasProperty.into(),
-                        is_forward: true,
-                        node_id: ExpandedNodeId::new(
-                            as_opaque_node_id(
-                                &DiagnosticsNode::Namespace(NamespaceNode {
-                                    namespace: meta.namespace_uri.clone(),
-                                    property: Some(prop.to_owned()),
-                                }),
-                                self.namespace_index,
-                            )
-                            .unwrap(),
-                        ),
-                        type_definition: ExpandedNodeId::new(VariableTypeId::PropertyType),
-                        browse_name: QualifiedName::new(0, prop),
-                        display_name: LocalizedText::new("", prop),
-                        node_class: NodeClass::Variable,
-                    };
+                    let meta = self.property_node_metadata(&meta.namespace_uri, prop);
+                    let ref_desc = meta.into_ref_desc(true, ReferenceTypeId::HasProperty);
+
                     if let AddReferenceResult::Full(c) = node_to_browse.add(type_tree, ref_desc) {
                         cp.nodes.push_back(c);
                     }
@@ -298,15 +335,7 @@ impl DiagnosticsNodeManager {
             BrowseDirection::Inverse | BrowseDirection::Both
         ) {
             let metadata = self.namespace_node_metadata(meta);
-            let ref_desc = ReferenceDescription {
-                reference_type_id: ReferenceTypeId::HasComponent.into(),
-                is_forward: false,
-                node_id: metadata.node_id,
-                browse_name: metadata.browse_name,
-                display_name: metadata.display_name,
-                node_class: metadata.node_class,
-                type_definition: metadata.type_definition,
-            };
+            let ref_desc = metadata.into_ref_desc(false, ReferenceTypeId::HasComponent);
 
             if let AddReferenceResult::Full(c) = node_to_browse.add(type_tree, ref_desc) {
                 cp.nodes.push_back(c);
@@ -383,19 +412,7 @@ impl DiagnosticsNodeManager {
         namespace: &NamespaceMetadata,
         prop: &str,
     ) {
-        if !matches!(
-            prop,
-            "DefaultAccessRestrictions"
-                | "DefaultRolePermissions"
-                | "DefaultUserRolePermissions"
-                | "IsNamespaceSubset"
-                | "NamespacePublicationDate"
-                | "NamespaceUri"
-                | "NamespaceVersion"
-                | "StaticNodeIdTypes"
-                | "StaticNumericNodeIdRange"
-                | "StaticStringNodeIdPattern"
-        ) {
+        if !Self::is_valid_property(prop) {
             node_to_read.set_error(StatusCode::BadNodeIdUnknown);
             return;
         }
@@ -447,7 +464,7 @@ impl DiagnosticsNodeManager {
                 "StaticNumericNodeIdRange" => namespace
                     .static_numeric_node_id_range
                     .as_ref()
-                    .map(|r| r.iter().map(|v| v.as_string()).collect::<Vec<_>>())
+                    .map(|r| r.iter().map(|v| v.to_string()).collect::<Vec<_>>())
                     .into(),
                 "StaticStringNodeIdPattern" => {
                     namespace.static_string_node_id_pattern.clone().into()
@@ -570,6 +587,39 @@ impl NodeManager for DiagnosticsNodeManager {
         );
     }
 
+    async fn resolve_external_references(
+        &self,
+        context: &RequestContext,
+        items: &mut [&mut ExternalReferenceRequest],
+    ) {
+        let mut lazy_namespaces = None::<BTreeMap<String, NamespaceMetadata>>;
+
+        for req in items {
+            let Some(node_desc) = from_opaque_node_id::<DiagnosticsNode>(req.node_id()) else {
+                continue;
+            };
+            let meta = match node_desc {
+                DiagnosticsNode::Namespace(ns) => {
+                    let namespaces =
+                        lazy_namespaces.get_or_insert_with(|| self.namespaces(context));
+                    let Some(ns_node) = namespaces.get(&ns.namespace) else {
+                        continue;
+                    };
+
+                    if let Some(prop) = &ns.property {
+                        if !Self::is_valid_property(prop) {
+                            continue;
+                        }
+                        self.property_node_metadata(&ns.namespace, prop)
+                    } else {
+                        self.namespace_node_metadata(ns_node)
+                    }
+                }
+            };
+            req.set(meta);
+        }
+    }
+
     async fn browse(
         &self,
         context: &RequestContext,
@@ -634,7 +684,6 @@ impl NodeManager for DiagnosticsNodeManager {
         for node in nodes_to_read {
             let Some(node_desc) = from_opaque_node_id::<DiagnosticsNode>(&node.node().node_id)
             else {
-                log::warn!("Unknown node...");
                 node.set_error(StatusCode::BadNodeIdUnknown);
                 continue;
             };

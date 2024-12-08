@@ -1,3 +1,15 @@
+#![warn(missing_docs)]
+
+//! A general implementation of an OPC-UA server.
+//!
+//! Support for subscriptions, complex address spaces, methods, all OPC-UA services,
+//! node set import, and more.
+//!
+//! The server starts a tokio `task` for each connection, and another task for each incoming
+//! service call.
+//!
+//! See docs for the main `opcua` crate for details on usage.
+
 pub mod address_space;
 pub mod authenticator;
 mod builder;

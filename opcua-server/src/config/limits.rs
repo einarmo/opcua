@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
+/// Server limits configuration.
 pub struct Limits {
     /// Max array length in elements
     #[serde(default = "defaults::max_array_length")]
@@ -64,11 +65,16 @@ impl Default for Limits {
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Serialize, Deserialize)]
+/// Subscription-related limits.
 pub struct SubscriptionLimits {
+    /// Maximum number of subscriptions per session.
     #[serde(default = "defaults::max_subscriptions_per_session")]
     pub max_subscriptions_per_session: usize,
+    /// Maximum number of pending publish requests per session.
     #[serde(default = "defaults::max_pending_publish_requests")]
     pub max_pending_publish_requests: usize,
+    /// Maximum number of publish requests per session, per subscription.
+    /// The smallest of this and `max_pending_publish_requests` is used.
     #[serde(default = "defaults::max_publish_requests_per_subscription")]
     pub max_publish_requests_per_subscription: usize,
     /// Specifies the minimum sampling interval for this server in seconds.
@@ -77,8 +83,10 @@ pub struct SubscriptionLimits {
     /// Specifies the minimum publishing interval for this server in seconds.
     #[serde(default = "defaults::min_publishing_interval_ms")]
     pub min_publishing_interval_ms: f64,
+    /// Maximum value of `KeepAliveCount`
     #[serde(default = "defaults::max_keep_alive_count")]
     pub max_keep_alive_count: u32,
+    /// Default value of `KeepAliveCount`, used if the client sets it to 0.
     #[serde(default = "defaults::default_keep_alive_count")]
     pub default_keep_alive_count: u32,
     /// Maximum number of monitored items per subscription, 0 for no limit
@@ -119,39 +127,57 @@ impl Default for SubscriptionLimits {
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
+/// Limits on service calls.
 pub struct OperationalLimits {
+    /// Maximum number of nodes per translate browse paths to node IDs call.
     #[serde(default = "defaults::max_nodes_per_translate_browse_paths_to_node_ids")]
     pub max_nodes_per_translate_browse_paths_to_node_ids: usize,
+    /// Maximum number of nodes per Read call.
     #[serde(default = "defaults::max_nodes_per_read")]
     pub max_nodes_per_read: usize,
+    /// Maximum number of nodes per Write call.
     #[serde(default = "defaults::max_nodes_per_write")]
     pub max_nodes_per_write: usize,
+    /// Maximum number of nodes per Call service call.
     #[serde(default = "defaults::max_nodes_per_method_call")]
     pub max_nodes_per_method_call: usize,
+    /// Maximum number of nodes per Browse call.
     #[serde(default = "defaults::max_nodes_per_browse")]
     pub max_nodes_per_browse: usize,
+    /// Maximum number of nodes per RegisterNodes call.
     #[serde(default = "defaults::max_nodes_per_register_nodes")]
     pub max_nodes_per_register_nodes: usize,
+    /// Maximum number of nodes per create/modify/delete monitored items call.
     #[serde(default = "defaults::max_monitored_items_per_call")]
     pub max_monitored_items_per_call: usize,
+    /// Maximum number of nodes per history read call for data values.
     #[serde(default = "defaults::max_nodes_per_history_read_data")]
     pub max_nodes_per_history_read_data: usize,
+    /// Maximum number of nodes per history read call for events.
     #[serde(default = "defaults::max_nodes_per_history_read_events")]
     pub max_nodes_per_history_read_events: usize,
+    /// Maximum number of nodes per history update call.
     #[serde(default = "defaults::max_nodes_per_history_update")]
     pub max_nodes_per_history_update: usize,
+    /// Maximum number of references per node during browse.
     #[serde(default = "defaults::max_references_per_browse_node")]
     pub max_references_per_browse_node: usize,
+    /// Maximum number of node descriptions per query call.
     #[serde(default = "defaults::max_node_descs_per_query")]
     pub max_node_descs_per_query: usize,
+    /// Maximum number of data sets returned per node on query calls.
     #[serde(default = "defaults::max_data_sets_query_return")]
     pub max_data_sets_query_return: usize,
+    /// Maximum number of references per data set on query calls.
     #[serde(default = "defaults::max_references_query_return")]
     pub max_references_query_return: usize,
+    /// Maximum number of nodes per add/delete nodes call.
     #[serde(default = "defaults::max_nodes_per_node_management")]
     pub max_nodes_per_node_management: usize,
+    /// Maximum number of references per add/delete references call.
     #[serde(default = "defaults::max_references_per_references_management")]
     pub max_references_per_references_management: usize,
+    /// Maximum number of subscriptions per create/modify/delete subscriptions call.
     #[serde(default = "defaults::max_subscriptions_per_call")]
     pub max_subscriptions_per_call: usize,
 }

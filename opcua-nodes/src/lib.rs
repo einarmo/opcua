@@ -1,3 +1,10 @@
+#![warn(missing_docs)]
+
+//! The nodes crate contains core types for generated address spaces.
+//!
+//! This includes types for each node class, some common enums for references,
+//! core event types, and core types for node set import.
+
 use bitflags::bitflags;
 
 mod events;
@@ -31,18 +38,27 @@ pub use view::{View, ViewBuilder};
 pub use opcua_macros::{Event, EventField};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+/// Direction of a reference in the address space.
 pub enum ReferenceDirection {
+    /// Reference from the source node to the target.
     Forward,
+    /// Reference from the target node to the source.
     Inverse,
 }
 
 #[derive(Debug)]
+/// Error returned when creating a node from attributes.
 pub enum FromAttributesError {
+    /// The provided attribute mask is invalid.
     InvalidMask,
+    /// The provided attributes are missing mandatory values.
     MissingMandatoryValues,
 }
 
+/// Something a list of nodes can be inserted into. Implemented for
+/// AddressSpace in the server crate.
 pub trait NodeInsertTarget {
+    /// Insert a node with a list of references into a target.
     fn insert<'a>(
         &mut self,
         node: impl Into<NodeType>,
@@ -83,6 +99,7 @@ macro_rules! node_builder_impl {
                 .display_name(display_name)
             }
 
+            /// Get the node ID of the node being built.
             pub fn get_node_id(&self) -> &NodeId {
                 self.node.node_id()
             }
@@ -206,6 +223,7 @@ macro_rules! node_builder_impl {
 macro_rules! node_builder_impl_generates_event {
     ( $node_builder_ty:ident ) => {
         impl $node_builder_ty {
+            /// Add a `GeneratesEvent` reference to the given event type.
             pub fn generates_event<T>(self, event_type: T) -> Self
             where
                 T: Into<NodeId>,
@@ -223,6 +241,8 @@ macro_rules! node_builder_impl_generates_event {
 macro_rules! node_builder_impl_subtype {
     ( $node_builder_ty:ident ) => {
         impl $node_builder_ty {
+            /// Add an inverse `HasSubtype` reference to the given
+            /// type.
             pub fn subtype_of<T>(self, type_id: T) -> Self
             where
                 T: Into<NodeId>,
@@ -234,6 +254,7 @@ macro_rules! node_builder_impl_subtype {
                 )
             }
 
+            /// Add a `HasSubtype` reference to the given type.
             pub fn has_subtype<T>(self, subtype_id: T) -> Self
             where
                 T: Into<NodeId>,
@@ -251,6 +272,8 @@ macro_rules! node_builder_impl_subtype {
 macro_rules! node_builder_impl_component_of {
     ( $node_builder_ty:ident ) => {
         impl $node_builder_ty {
+            /// Add an inverse `HasComponent` reference to the
+            /// given node.
             pub fn component_of<T>(self, component_of_id: T) -> Self
             where
                 T: Into<NodeId>,
@@ -261,7 +284,8 @@ macro_rules! node_builder_impl_component_of {
                     ReferenceDirection::Inverse,
                 )
             }
-
+            /// Add a `HasComponent` reference to the
+            /// given node.
             pub fn has_component<T>(self, has_component_id: T) -> Self
             where
                 T: Into<NodeId>,
@@ -279,6 +303,7 @@ macro_rules! node_builder_impl_component_of {
 macro_rules! node_builder_impl_property_of {
     ( $node_builder_ty:ident ) => {
         impl $node_builder_ty {
+            /// Add a `HasProperty` reference to the given node.
             pub fn has_property<T>(self, has_component_id: T) -> Self
             where
                 T: Into<NodeId>,
@@ -290,6 +315,7 @@ macro_rules! node_builder_impl_property_of {
                 )
             }
 
+            /// Add an inverse `HasProperty` reference to the given node.
             pub fn property_of<T>(self, component_of_id: T) -> Self
             where
                 T: Into<NodeId>,
@@ -378,35 +404,35 @@ mod variable_type;
 mod view;
 
 bitflags! {
+    #[derive(Debug, Clone, Copy, Default)]
+    /// Variable access level.
     pub struct AccessLevel: u8 {
+        /// Read the current value of the node.
         const CURRENT_READ = 1;
+        /// Write the current value of the node.
         const CURRENT_WRITE = 2;
+        /// Read historical values of the node.
         const HISTORY_READ = 4;
+        /// Write historical values of the node.
         const HISTORY_WRITE = 8;
-        // These can be uncommented if they become used
-        // const SEMANTIC_CHANGE = 16;
-        // const STATUS_WRITE = 32;
-        // const TIMESTAMP_WRITE = 64;
+        /// Allow changing properties that define semantics of the parent node.
+        const SEMANTIC_CHANGE = 16;
+        /// Write the status code of the current value.
+        const STATUS_WRITE = 32;
+        /// Write the timestamp of the current value.
+        const TIMESTAMP_WRITE = 64;
     }
 }
 
 bitflags! {
-    pub struct UserAccessLevel: u8 {
-        const CURRENT_READ = 1;
-        const CURRENT_WRITE = 2;
-        const HISTORY_READ = 4;
-        const HISTORY_WRITE = 8;
-        // These can be uncommented if they become used
-        // const STATUS_WRITE = 32;
-        // const TIMESTAMP_WRITE = 64;
-    }
-}
-
-bitflags! {
-    #[derive(Debug, Clone, Copy)]
+    #[derive(Debug, Clone, Copy, Default)]
+    /// Node event notifier.
     pub struct EventNotifier: u8 {
+        /// Allow subscribing to events.
         const SUBSCRIBE_TO_EVENTS = 1;
+        /// Allow reading historical events.
         const HISTORY_READ = 4;
+        /// Allow writing historical events.
         const HISTORY_WRITE = 8;
     }
 }

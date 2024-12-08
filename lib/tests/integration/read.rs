@@ -6,8 +6,7 @@ use opcua::{
     client::HistoryReadAction,
     server::address_space::{
         AccessLevel, DataTypeBuilder, EventNotifier, MethodBuilder, ObjectBuilder,
-        ObjectTypeBuilder, ReferenceTypeBuilder, UserAccessLevel, VariableBuilder,
-        VariableTypeBuilder, ViewBuilder,
+        ObjectTypeBuilder, ReferenceTypeBuilder, VariableBuilder, VariableTypeBuilder, ViewBuilder,
     },
     types::{
         AttributeId, DataTypeId, DataValue, DateTime, HistoryData, HistoryReadValueId, NodeClass,
@@ -55,7 +54,7 @@ async fn read_variable() {
             .value_rank(1)
             .data_type(DataTypeId::Int32)
             .access_level(AccessLevel::CURRENT_READ)
-            .user_access_level(UserAccessLevel::CURRENT_READ)
+            .user_access_level(AccessLevel::CURRENT_READ)
             .build()
             .into(),
         &ObjectId::ObjectsFolder.into(),
@@ -615,7 +614,7 @@ async fn read_mixed() {
             .value_rank(1)
             .data_type(DataTypeId::String)
             .access_level(AccessLevel::CURRENT_READ)
-            .user_access_level(UserAccessLevel::CURRENT_READ)
+            .user_access_level(AccessLevel::CURRENT_READ)
             .build()
             .into(),
         &ObjectId::ObjectsFolder.into(),
@@ -757,7 +756,7 @@ async fn history_read_raw() {
             .description("Description")
             .data_type(DataTypeId::Int32)
             .access_level(AccessLevel::CURRENT_READ | AccessLevel::HISTORY_READ)
-            .user_access_level(UserAccessLevel::CURRENT_READ | UserAccessLevel::HISTORY_READ)
+            .user_access_level(AccessLevel::CURRENT_READ | AccessLevel::HISTORY_READ)
             .build()
             .into(),
         &ObjectId::ObjectsFolder.into(),
@@ -889,7 +888,7 @@ async fn history_read_release_continuation_points() {
             .description("Description")
             .data_type(DataTypeId::Int32)
             .access_level(AccessLevel::CURRENT_READ | AccessLevel::HISTORY_READ)
-            .user_access_level(UserAccessLevel::CURRENT_READ | UserAccessLevel::HISTORY_READ)
+            .user_access_level(AccessLevel::CURRENT_READ | AccessLevel::HISTORY_READ)
             .build()
             .into(),
         &ObjectId::ObjectsFolder.into(),
@@ -986,7 +985,7 @@ async fn history_read_fail() {
             .description("Description")
             .data_type(DataTypeId::Int32)
             .access_level(AccessLevel::CURRENT_READ)
-            .user_access_level(UserAccessLevel::CURRENT_READ)
+            .user_access_level(AccessLevel::CURRENT_READ)
             .build()
             .into(),
         &ObjectId::ObjectsFolder.into(),
@@ -1090,7 +1089,7 @@ async fn read_retry() {
             .description("Description")
             .data_type(DataTypeId::Int32)
             .access_level(AccessLevel::CURRENT_READ)
-            .user_access_level(UserAccessLevel::CURRENT_READ)
+            .user_access_level(AccessLevel::CURRENT_READ)
             .build()
             .into(),
         &ObjectId::ObjectsFolder.into(),

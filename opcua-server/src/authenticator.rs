@@ -1,3 +1,5 @@
+//! The [AuthManager] trait, and tooling related to this.
+
 use async_trait::async_trait;
 
 use log::{debug, error};
@@ -12,8 +14,7 @@ use crate::identity_token::{
 };
 
 use super::{
-    address_space::UserAccessLevel, config::ANONYMOUS_USER_TOKEN_ID, ServerEndpoint,
-    ServerUserToken,
+    address_space::AccessLevel, config::ANONYMOUS_USER_TOKEN_ID, ServerEndpoint, ServerUserToken,
 };
 use std::{collections::BTreeMap, fmt::Debug};
 
@@ -28,10 +29,12 @@ impl Debug for Password {
 }
 
 impl Password {
+    /// Create a new debug-safe password.
     pub fn new(password: String) -> Self {
         Self(password)
     }
 
+    /// get the inner value. Note: you should make sure not to log this!
     pub fn get(&self) -> &str {
         &self.0
     }
@@ -48,12 +51,16 @@ pub struct UserToken(pub String);
 /// information about the application URI and security mode as well.
 #[derive(Debug, Clone)]
 pub struct UserSecurityKey {
+    /// Raw user token.
     pub token: UserToken,
+    /// Connection security mode.
     pub security_mode: MessageSecurityMode,
+    /// Client application URI.
     pub application_uri: String,
 }
 
 impl UserToken {
+    /// `true` if this is an anonymous user token.
     pub fn is_anonymous(&self) -> bool {
         self.0 == ANONYMOUS_USER_TOKEN_ID
     }
@@ -116,9 +123,9 @@ pub trait AuthManager: Send + Sync + 'static {
     fn effective_user_access_level(
         &self,
         token: &UserToken,
-        user_access_level: UserAccessLevel,
+        user_access_level: AccessLevel,
         node_id: &NodeId,
-    ) -> UserAccessLevel {
+    ) -> AccessLevel {
         user_access_level
     }
 
@@ -162,6 +169,7 @@ pub struct DefaultAuthenticator {
 }
 
 impl DefaultAuthenticator {
+    /// Create a new default authenticator with the given set of users.
     pub fn new(users: BTreeMap<String, ServerUserToken>) -> Self {
         Self { users }
     }
@@ -297,6 +305,7 @@ impl AuthManager for DefaultAuthenticator {
     }
 }
 
+/// Get the username and password policy ID for the given endpioint.
 pub fn user_pass_security_policy_id(endpoint: &ServerEndpoint) -> UAString {
     match endpoint.password_security_policy() {
         SecurityPolicy::None => POLICY_ID_USER_PASS_NONE,
@@ -313,6 +322,7 @@ pub fn user_pass_security_policy_id(endpoint: &ServerEndpoint) -> UAString {
     .into()
 }
 
+/// Get the username and password policy URI for the given endpioint.
 pub fn user_pass_security_policy_uri(_endpoint: &ServerEndpoint) -> UAString {
     // TODO we could force the security policy uri for passwords to be something other than the default
     //  here to ensure they're secure even when the endpoint's security policy is None.

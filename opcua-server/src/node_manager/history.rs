@@ -44,11 +44,17 @@ impl HistoryReadDetails {
 /// Details object for history updates.
 #[derive(Debug, Clone)]
 pub enum HistoryUpdateDetails {
+    /// Update data values.
     UpdateData(UpdateDataDetails),
+    /// Update historical structure data.
     UpdateStructureData(UpdateStructureDataDetails),
+    /// Update historical events.
     UpdateEvent(UpdateEventDetails),
+    /// Delete raw/modified data values.
     DeleteRawModified(DeleteRawModifiedDetails),
+    /// Delete at a specific list of timestamps.
     DeleteAtTime(DeleteAtTimeDetails),
+    /// Delete historical events.
     DeleteEvent(DeleteEventDetails),
 }
 

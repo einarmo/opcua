@@ -31,7 +31,7 @@ use crate::{
     string::{UAString, XmlElement},
     variant_type_id::*,
     write_i32, write_u8, DataTypeId, DataValue, DiagnosticInfo, DynEncodable, EncodingContext,
-    Error, MessageInfo,
+    Error, ExpandedMessageInfo, MessageInfo,
 };
 
 use super::DateTimeUtc;
@@ -90,14 +90,16 @@ pub enum Variant {
     ExpandedNodeId(Box<ExpandedNodeId>),
     /// ExtensionObject
     ExtensionObject(Box<ExtensionObject>),
-    // Variant
+    /// Variant containing a nested variant.
     Variant(Box<Variant>),
-    // DataValue
+    /// DataValue
     DataValue(Box<DataValue>),
-    // Diagnostics
+    /// DiagnosticInfo
     DiagnosticInfo(Box<DiagnosticInfo>),
     /// Single dimension array which can contain any scalar type, all the same type. Nested
     /// arrays will be rejected.
+    /// To represent matrices or nested arrays, set the `array_dimensions` field
+    /// on the `Array`.
     Array(Box<Array>),
 }
 
@@ -106,13 +108,14 @@ pub enum Variant {
 /// _must_ be the variant type ID of the variant returned by the corresponding
 /// `From` trait implementation!
 pub trait VariantType {
+    /// The variant kind this type will be represented as.
     fn variant_type_id() -> VariantScalarTypeId;
 }
 
 // Any type that implements MessageInfo is encoded as an extension object.
 impl<T> VariantType for T
 where
-    T: MessageInfo,
+    T: ExpandedMessageInfo,
 {
     fn variant_type_id() -> VariantScalarTypeId {
         VariantScalarTypeId::ExtensionObject
@@ -122,6 +125,7 @@ where
 /// Trait for types that can be converted to a variant from a reference
 /// directly, typically through encoding.
 pub trait AsVariantRef {
+    /// Convert this type to a variant by reference.
     fn as_variant(&self, ctx: &EncodingContext) -> Variant;
 }
 
@@ -577,6 +581,11 @@ try_from_variant_to_array_impl!(f32, Float);
 try_from_variant_to_array_impl!(f64, Double);
 
 impl Variant {
+    /// Get the value in bytes of the _contents_ of this variant
+    /// if it is serialize to OPC-UA binary.
+    ///
+    /// To get the full byte length including type ID, use
+    /// [`BinaryEncodable::encode`]
     pub fn value_byte_len(&self, ctx: &crate::Context<'_>) -> usize {
         match self {
             Variant::Empty => 0,
@@ -623,6 +632,10 @@ impl Variant {
         }
     }
 
+    /// Encode the _value_ of this variant as binary to the given `stream`.
+    ///
+    /// Note that to encode a full variant with type ID and other details,
+    /// use [`BinaryEncodable::encode`]
     pub fn encode_value<S: Write + ?Sized>(
         &self,
         stream: &mut S,
@@ -1572,6 +1585,9 @@ impl Variant {
         }
     }
 
+    /// Get the type ID of this variant. This can be useful to
+    /// work with the variant abstractly, and check if the variant is
+    /// of the expected type and dimensions.
     pub fn type_id(&self) -> VariantTypeId<'_> {
         match self {
             Variant::Empty => VariantTypeId::Empty,
@@ -1610,12 +1626,20 @@ impl Variant {
         }
     }
 
+    /// Get the scalar type id of this variant, if present.
+    ///
+    /// This returns None only if the variant is empty.
     pub fn scalar_type_id(&self) -> Option<VariantScalarTypeId> {
         match self.type_id() {
             VariantTypeId::Empty => None,
             VariantTypeId::Scalar(s) => Some(s),
             VariantTypeId::Array(s, _) => Some(s),
         }
+    }
+
+    /// Returns `true` if this variant is [`Variant::Empty`].
+    pub fn is_empty(&self) -> bool {
+        matches!(self, Self::Empty)
     }
 
     /// Tests and returns true if the variant holds a numeric type
@@ -1640,6 +1664,7 @@ impl Variant {
         matches!(self, Variant::Array(_))
     }
 
+    /// Try to get the inner array if this is an array variant.
     pub fn as_array(&self) -> Option<&Vec<Variant>> {
         match self {
             Variant::Array(a) => Some(&a.values),
@@ -1647,8 +1672,8 @@ impl Variant {
         }
     }
 
+    /// Check if this is an array of the given variant type.
     pub fn is_array_of_type(&self, variant_type: VariantScalarTypeId) -> bool {
-        // A non-numeric value in the array means it is not numeric
         match self {
             Variant::Array(array) => values_are_of_type(array.values.as_slice(), variant_type),
             _ => false,
@@ -1688,24 +1713,8 @@ impl Variant {
         }
     }
 
-    // Returns the data type of elements in array. Returns None if this is not an array or type
-    // cannot be determined
-    pub fn array_data_type(&self) -> Option<NodeId> {
-        match self {
-            Variant::Array(array) => {
-                if array.values.is_empty() {
-                    error!("Cannot get the data type of an empty array");
-                    None
-                } else {
-                    array.values[0].scalar_data_type()
-                }
-            }
-            _ => None,
-        }
-    }
-
-    // Returns the scalar data type. Returns None for arrays
-    pub fn scalar_data_type(&self) -> Option<NodeId> {
+    /// Returns the scalar data type. Returns None if the variant is Empty.
+    pub fn data_type(&self) -> Option<ExpandedNodeId> {
         match self {
             Variant::Boolean(_) => Some(DataTypeId::Boolean.into()),
             Variant::SByte(_) => Some(DataTypeId::SByte.into()),
@@ -1731,7 +1740,14 @@ impl Variant {
             Variant::Variant(_) => Some(DataTypeId::BaseDataType.into()),
             Variant::DataValue(_) => Some(DataTypeId::DataValue.into()),
             Variant::DiagnosticInfo(_) => Some(DataTypeId::DiagnosticInfo.into()),
-            _ => None,
+            Variant::ExtensionObject(extension_object) => extension_object.data_type(),
+            Variant::Array(array) => {
+                if array.values.is_empty() {
+                    return None;
+                }
+                array.values[0].data_type()
+            }
+            Variant::Empty => None,
         }
     }
 
@@ -1798,36 +1814,15 @@ impl Variant {
             _ => panic!("Should not be calling substring on other types"),
         }
     }
-
-    pub fn eq_scalar_type(&self, other: &Variant) -> bool {
-        let self_data_type = self.scalar_data_type();
-        let other_data_type = other.scalar_data_type();
-        if self_data_type.is_none() || other_data_type.is_none() {
-            false
-        } else {
-            self_data_type == other_data_type
-        }
-    }
-
-    pub fn eq_array_type(&self, other: &Variant) -> bool {
-        // array
-        let self_data_type = self.array_data_type();
-        let other_data_type = other.array_data_type();
-        println!("{:?}, {:?}", self_data_type, other_data_type);
-        if self_data_type.is_none() || other_data_type.is_none() {
-            false
-        } else {
-            self_data_type == other_data_type
-        }
-    }
-
+    /// Set a range of values in this variant using a different variant.
     pub fn set_range_of(
         &mut self,
         range: &NumericRange,
         other: &Variant,
     ) -> Result<(), StatusCode> {
+        // TODO: This doesn't seem complete.
         // Types need to be the same
-        if !self.eq_array_type(other) {
+        if self.data_type() != other.data_type() {
             return Err(StatusCode::BadIndexRangeDataMismatch);
         }
 

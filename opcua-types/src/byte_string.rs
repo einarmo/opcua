@@ -20,6 +20,7 @@ use crate::{
 /// A sequence of octets.
 #[derive(Eq, PartialEq, Debug, Clone, Hash)]
 pub struct ByteString {
+    /// Raw inner byte string values as an array of bytes.
     pub value: Option<Vec<u8>>,
 }
 
@@ -188,7 +189,7 @@ impl ByteString {
         self.value.is_none()
     }
 
-    // Test if the bytestring has an empty value (not the same as null)
+    /// Test if the bytestring has an empty value (not the same as null)
     pub fn is_empty(&self) -> bool {
         if let Some(v) = &self.value {
             v.is_empty()

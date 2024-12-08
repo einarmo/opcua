@@ -108,11 +108,11 @@ mod basic_256_sha_256 {
 
 /// Basic128Rsa15 security policy (deprecated in OPC UA 1.04)
 ///
-///   AsymmetricSignatureAlgorithm – RsaSha1 – (http://www.w3.org/2000/09/xmldsig#rsa-sha1).
-///   AsymmetricEncryptionAlgorithm – Rsa15 – (http://www.w3.org/2001/04/xmlenc#rsa-1_5).
-///   SymmetricSignatureAlgorithm – HmacSha1 – (http://www.w3.org/2000/09/xmldsig#hmac-sha1).
-///   SymmetricEncryptionAlgorithm – Aes128 – (http://www.w3.org/2001/04/xmlenc#aes128-cbc).
-///   KeyDerivationAlgorithm – PSha1 – (http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512/dk/p_sha1).
+/// * AsymmetricSignatureAlgorithm – [RsaSha1](http://www.w3.org/2000/09/xmldsig#rsa-sha1).
+/// * AsymmetricEncryptionAlgorithm – [Rsa15](http://www.w3.org/2001/04/xmlenc#rsa-1_5).
+/// * SymmetricSignatureAlgorithm – [HmacSha1](http://www.w3.org/2000/09/xmldsig#hmac-sha1).
+/// * SymmetricEncryptionAlgorithm – [Aes128](http://www.w3.org/2001/04/xmlenc#aes128-cbc).
+/// * KeyDerivationAlgorithm – [PSha1](http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512/dk/p_sha1).
 ///
 /// # Limits
 ///
@@ -135,11 +135,11 @@ mod basic_128_rsa_15 {
 
 /// Basic256 security policy (deprecated in OPC UA 1.04)
 ///
-///   AsymmetricSignatureAlgorithm – RsaSha1 – (http://www.w3.org/2000/09/xmldsig#rsa-sha1).
-///   AsymmetricEncryptionAlgorithm – RsaOaep – (http://www.w3.org/2001/04/xmlenc#rsa-oaep).
-///   SymmetricSignatureAlgorithm – HmacSha1 – (http://www.w3.org/2000/09/xmldsig#hmac-sha1).
-///   SymmetricEncryptionAlgorithm – Aes256 – (http://www.w3.org/2001/04/xmlenc#aes256-cbc).
-///   KeyDerivationAlgorithm – PSha1 – (http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512/dk/p_sha1).
+/// * AsymmetricSignatureAlgorithm – [RsaSha1](http://www.w3.org/2000/09/xmldsig#rsa-sha1).
+/// * AsymmetricEncryptionAlgorithm – [RsaOaep](http://www.w3.org/2001/04/xmlenc#rsa-oaep).
+/// * SymmetricSignatureAlgorithm – [HmacSha1](http://www.w3.org/2000/09/xmldsig#hmac-sha1).
+/// * SymmetricEncryptionAlgorithm – [Aes256](http://www.w3.org/2001/04/xmlenc#aes256-cbc).
+/// * KeyDerivationAlgorithm – [PSha1](http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512/dk/p_sha1).
 ///
 /// # Limits
 ///
@@ -163,12 +163,19 @@ mod basic_256 {
 /// are used during an encrypted session.
 #[derive(Debug, Clone, PartialEq, Copy)]
 pub enum SecurityPolicy {
+    /// Security policy is unknown, this is generally an error.
     Unknown,
+    /// No security.
     None,
+    /// AES128/SHA256 RSA-OAEP.
     Aes128Sha256RsaOaep,
+    /// Basic256/SHA256
     Basic256Sha256,
+    /// AES256/SHA256 RSA-PSS
     Aes256Sha256RsaPss,
+    /// Basic128. Note that this security policy is deprecated.
     Basic128Rsa15,
+    /// Basic256.
     Basic256,
 }
 
@@ -212,6 +219,9 @@ impl From<SecurityPolicy> for String {
 }
 
 impl SecurityPolicy {
+    /// Get the security policy URI from this policy.
+    ///
+    /// This will panic if the security policy is `Unknown`.
     pub fn to_uri(&self) -> &'static str {
         match self {
             SecurityPolicy::None => constants::SECURITY_POLICY_NONE_URI,
@@ -248,6 +258,9 @@ impl SecurityPolicy {
         )
     }
 
+    /// Get a string representation of this policy.
+    ///
+    /// This will panic if the security policy is `Unknown`.
     pub fn to_str(&self) -> &'static str {
         match self {
             SecurityPolicy::None => constants::SECURITY_POLICY_NONE,
@@ -262,6 +275,9 @@ impl SecurityPolicy {
         }
     }
 
+    /// Get the asymmetric encryption algorithm for this security policy.
+    ///
+    /// This will panic if the security policy is `Unknown` or `None`.
     pub fn asymmetric_encryption_algorithm(&self) -> &'static str {
         match self {
             SecurityPolicy::Basic128Rsa15 => basic_128_rsa_15::ASYMMETRIC_ENCRYPTION_ALGORITHM,
@@ -279,6 +295,9 @@ impl SecurityPolicy {
         }
     }
 
+    /// Get the asymmetric signature algorithm for this security policy.
+    ///
+    /// This will panic if the security policy is `Unknown` or `None`.
     pub fn asymmetric_signature_algorithm(&self) -> &'static str {
         match self {
             SecurityPolicy::Basic128Rsa15 => basic_128_rsa_15::ASYMMETRIC_SIGNATURE_ALGORITHM,
@@ -296,6 +315,9 @@ impl SecurityPolicy {
         }
     }
 
+    /// Get the symmetric signature algorithm for this security policy.
+    ///
+    /// This will panic if the security policy is `Unknown` or `None`.
     pub fn symmetric_signature_algorithm(&self) -> &'static str {
         match self {
             SecurityPolicy::Basic128Rsa15 => basic_128_rsa_15::SYMMETRIC_SIGNATURE_ALGORITHM,
@@ -313,7 +335,9 @@ impl SecurityPolicy {
         }
     }
 
-    // Plaintext block size in bytes
+    /// Plaintext block size in bytes.
+    ///
+    /// This will panic if the security policy is `Unknown` or `None`.
     pub fn plain_block_size(&self) -> usize {
         match self {
             SecurityPolicy::Basic128Rsa15
@@ -327,7 +351,9 @@ impl SecurityPolicy {
         }
     }
 
-    // Signature size in bytes
+    /// Signature size in bytes.
+    ///
+    /// This will panic if the security policy is `Unknown` or `None`.
     pub fn symmetric_signature_size(&self) -> usize {
         match self {
             SecurityPolicy::None => 0,
@@ -341,7 +367,9 @@ impl SecurityPolicy {
         }
     }
 
-    /// Returns the derived signature key (not the signature) size in bytes
+    /// Returns the derived signature key (not the signature) size in bytes.
+    ///
+    /// This will panic if the security policy is `Unknown` or `None`.
     pub fn derived_signature_key_size(&self) -> usize {
         let length = match self {
             SecurityPolicy::Basic128Rsa15 => basic_128_rsa_15::DERIVED_SIGNATURE_KEY_LENGTH,
@@ -388,6 +416,7 @@ impl SecurityPolicy {
         }
     }
 
+    /// Length of the secure channel nonce for this security policy.
     pub fn secure_channel_nonce_length(&self) -> usize {
         match self {
             SecurityPolicy::Basic128Rsa15 => 16,
@@ -402,6 +431,8 @@ impl SecurityPolicy {
         }
     }
 
+    /// Get the security policy from the given URI. Returns `Unknown`
+    /// if the URI does not match any known policy.
     pub fn from_uri(uri: &str) -> SecurityPolicy {
         match uri {
             constants::SECURITY_POLICY_NONE_URI => SecurityPolicy::None,

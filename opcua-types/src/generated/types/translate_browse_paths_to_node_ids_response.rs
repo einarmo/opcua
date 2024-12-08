@@ -31,4 +31,7 @@ impl opcua::types::MessageInfo for TranslateBrowsePathsToNodeIdsResponse {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::TranslateBrowsePathsToNodeIdsResponse_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::TranslateBrowsePathsToNodeIdsResponse
+    }
 }

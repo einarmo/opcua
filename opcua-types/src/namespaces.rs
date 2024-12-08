@@ -1,3 +1,5 @@
+//! Utilities for working with namespaces.
+
 use hashbrown::HashMap;
 
 use crate::{ExpandedNodeId, NodeId};
@@ -9,6 +11,7 @@ pub struct NamespaceMap {
 }
 
 impl NamespaceMap {
+    /// Create a new namespace map containing only the base namespace.
     pub fn new() -> Self {
         let mut known_namespaces = HashMap::new();
         known_namespaces.insert("http://opcfoundation.org/UA/".to_owned(), 0u16);
@@ -16,12 +19,15 @@ impl NamespaceMap {
         Self { known_namespaces }
     }
 
+    /// Create a new namespace map from the given list of namespaces.
     pub fn new_full(map: HashMap<String, u16>) -> Self {
         Self {
             known_namespaces: map,
         }
     }
 
+    /// Add a new namespace, returning its index in the namespace map.
+    /// If the namespace is already added, its old index is returned.
     pub fn add_namespace(&mut self, namespace: &str) -> u16 {
         if let Some(ns) = self.known_namespaces.get(namespace) {
             return *ns;
@@ -37,14 +43,17 @@ impl NamespaceMap {
         max + 1
     }
 
+    /// Return the inner namespace map.
     pub fn known_namespaces(&self) -> &HashMap<String, u16> {
         &self.known_namespaces
     }
 
+    /// Get the index of the given namespace.
     pub fn get_index(&self, ns: &str) -> Option<u16> {
         self.known_namespaces.get(ns).copied()
     }
 
+    /// Try to resolve an expanded node ID to a NodeId.
     pub fn resolve_node_id<'b>(
         &self,
         id: &'b ExpandedNodeId,
@@ -60,9 +69,11 @@ pub struct NodeSetNamespaceMapper<'a> {
 }
 
 #[derive(Debug)]
+/// Error returned when trying to get an index that is not initialized.
 pub struct UninitializedIndex(pub u16);
 
 impl<'a> NodeSetNamespaceMapper<'a> {
+    /// Create a new namespace mapper from the given namespace map.
     pub fn new(namespaces: &'a mut NamespaceMap) -> Self {
         Self {
             namespaces,
@@ -70,11 +81,13 @@ impl<'a> NodeSetNamespaceMapper<'a> {
         }
     }
 
+    /// Add a namespace. `index_in_node_set` is the index in the NodeSet2 file being loaded.
     pub fn add_namespace(&mut self, namespace: &str, index_in_node_set: u16) {
         let index = self.namespaces.add_namespace(namespace);
         self.index_map.insert(index_in_node_set, index);
     }
 
+    /// Get the index of a namespace given its index in a NodeSet2 file.
     pub fn get_index(&self, index_in_node_set: u16) -> Result<u16, UninitializedIndex> {
         if index_in_node_set == 0 {
             return Ok(0);
@@ -85,6 +98,7 @@ impl<'a> NodeSetNamespaceMapper<'a> {
         Ok(*idx)
     }
 
+    /// Return the inner namespace map.
     pub fn namespaces(&'a self) -> &'a NamespaceMap {
         &*self.namespaces
     }

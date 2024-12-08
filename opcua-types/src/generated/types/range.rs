@@ -30,4 +30,7 @@ impl opcua::types::MessageInfo for Range {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::Range_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::Range
+    }
 }

@@ -34,4 +34,7 @@ impl opcua::types::MessageInfo for QueryFirstResponse {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::QueryFirstResponse_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::QueryFirstResponse
+    }
 }

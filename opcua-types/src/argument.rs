@@ -2,6 +2,14 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
+//! The [`Argument`] type, used for input and output arguments of methods.
+//!
+//! OPC UA Part 3, 8.6:
+//!
+//! This Structured DataType defines a Method input or output argument specification.
+//! It is for example used in the input and output argument Properties for Methods.
+//! Its elements are described in Table 28.
+
 use std::io::{Read, Write};
 
 use crate::{
@@ -9,7 +17,7 @@ use crate::{
     localized_text::LocalizedText,
     node_id::NodeId,
     string::UAString,
-    write_u32, Context, Error, MessageInfo, ObjectId,
+    write_u32, Context, DataTypeId, Error, MessageInfo, ObjectId,
 };
 
 // From OPC UA Part 3 - Address Space Model 1.03 Specification
@@ -26,11 +34,17 @@ mod opcua {
 #[derive(Clone, Debug, PartialEq, Default)]
 #[cfg_attr(feature = "json", derive(crate::JsonEncodable, crate::JsonDecodable))]
 #[cfg_attr(feature = "xml", derive(crate::FromXml))]
+/// OPC-UA method argument.
 pub struct Argument {
+    /// Argument name.
     pub name: UAString,
+    /// Node ID of the argument data type.
     pub data_type: NodeId,
+    /// Argument value rank.
     pub value_rank: i32,
+    /// Argument array dimensions.
     pub array_dimensions: Option<Vec<u32>>,
+    /// Argument description.
     pub description: LocalizedText,
 }
 
@@ -43,6 +57,9 @@ impl MessageInfo for Argument {
     }
     fn xml_type_id(&self) -> ObjectId {
         ObjectId::Argument_Encoding_DefaultXml
+    }
+    fn data_type_id(&self) -> crate::DataTypeId {
+        DataTypeId::Argument
     }
 }
 

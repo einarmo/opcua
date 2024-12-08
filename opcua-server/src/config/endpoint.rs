@@ -11,6 +11,7 @@ use opcua_types::MessageSecurityMode;
 use super::server::{ServerUserToken, ANONYMOUS_USER_TOKEN_ID};
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
+/// A configured server endpoint.
 pub struct ServerEndpoint {
     /// Endpoint path
     pub path: String,
@@ -27,6 +28,7 @@ pub struct ServerEndpoint {
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, Hash, Eq)]
+/// Unique ID of an endpoint.
 pub struct EndpointIdentifier {
     /// Endpoint path
     pub path: String,
@@ -61,6 +63,7 @@ impl<'a> From<(&'a str, SecurityPolicy, MessageSecurityMode, &'a [&'a str])> for
 }
 
 impl ServerEndpoint {
+    /// Create a new server endpoint.
     pub fn new<T>(
         path: T,
         security_policy: SecurityPolicy,
@@ -97,6 +100,7 @@ impl ServerEndpoint {
         }
     }
 
+    /// Create a new unsecured server endpoint.
     pub fn new_none<T>(path: T, user_token_ids: &[String]) -> Self
     where
         T: Into<String>,
@@ -109,6 +113,12 @@ impl ServerEndpoint {
         )
     }
 
+    #[deprecated]
+    /// Create a new server endpoint with Basic128 signature.
+    ///
+    /// # Warning
+    ///
+    /// This security mode is deprecated in the OPC-UA standard for being insecure.
     pub fn new_basic128rsa15_sign<T>(path: T, user_token_ids: &[String]) -> Self
     where
         T: Into<String>,
@@ -121,6 +131,12 @@ impl ServerEndpoint {
         )
     }
 
+    #[deprecated]
+    /// Create a new server endpoint with Basic128 encryption.
+    ///
+    /// # Warning
+    ///
+    /// This security mode is deprecated in the OPC-UA standard for being insecure.
     pub fn new_basic128rsa15_sign_encrypt<T>(path: T, user_token_ids: &[String]) -> Self
     where
         T: Into<String>,
@@ -133,6 +149,12 @@ impl ServerEndpoint {
         )
     }
 
+    #[deprecated]
+    /// Create a new server endpoint with Basic256 signature.
+    ///
+    /// # Warning
+    ///
+    /// This security mode is deprecated in the OPC-UA standard for being insecure.
     pub fn new_basic256_sign<T>(path: T, user_token_ids: &[String]) -> Self
     where
         T: Into<String>,
@@ -145,6 +167,12 @@ impl ServerEndpoint {
         )
     }
 
+    #[deprecated]
+    /// Create a new server endpoint with Basic256 encryption.
+    ///
+    /// # Warning
+    ///
+    /// This security mode is deprecated in the OPC-UA standard for being insecure.
     pub fn new_basic256_sign_encrypt<T>(path: T, user_token_ids: &[String]) -> Self
     where
         T: Into<String>,
@@ -157,6 +185,12 @@ impl ServerEndpoint {
         )
     }
 
+    #[deprecated]
+    /// Create a new server endpoint with Basic256/Sha256 signing.
+    ///
+    /// # Warning
+    ///
+    /// This security mode is deprecated in the OPC-UA standard for being insecure.
     pub fn new_basic256sha256_sign<T>(path: T, user_token_ids: &[String]) -> Self
     where
         T: Into<String>,
@@ -169,6 +203,11 @@ impl ServerEndpoint {
         )
     }
 
+    /// Create a new server endpoint with Basic256/Sha256 encryption.
+    ///
+    /// # Warning
+    ///
+    /// This security mode is deprecated in the OPC-UA standard for being insecure.
     pub fn new_basic256sha256_sign_encrypt<T>(path: T, user_token_ids: &[String]) -> Self
     where
         T: Into<String>,
@@ -181,6 +220,7 @@ impl ServerEndpoint {
         )
     }
 
+    /// Create a new server endpoint with AES128/SHA256 RSA-OAEP signing.
     pub fn new_aes128_sha256_rsaoaep_sign<T>(path: T, user_token_ids: &[String]) -> Self
     where
         T: Into<String>,
@@ -193,6 +233,7 @@ impl ServerEndpoint {
         )
     }
 
+    /// Create a new server endpoint with AES128/SHA256 RSA-OAEP encryption.
     pub fn new_aes128_sha256_rsaoaep_sign_encrypt<T>(path: T, user_token_ids: &[String]) -> Self
     where
         T: Into<String>,
@@ -205,6 +246,7 @@ impl ServerEndpoint {
         )
     }
 
+    /// Create a new server endpoint with AES128/SHA256 RSA-PSS signing.
     pub fn new_aes256_sha256_rsapss_sign<T>(path: T, user_token_ids: &[String]) -> Self
     where
         T: Into<String>,
@@ -217,6 +259,7 @@ impl ServerEndpoint {
         )
     }
 
+    /// Create a new server endpoint with AES128/SHA256 RSA-PSS encryption.
     pub fn new_aes256_sha256_rsapss_sign_encrypt<T>(path: T, user_token_ids: &[String]) -> Self
     where
         T: Into<String>,
@@ -229,6 +272,7 @@ impl ServerEndpoint {
         )
     }
 
+    /// Validate the endpoint and return a list of validation errors.
     pub fn validate(
         &self,
         id: &str,
@@ -281,14 +325,17 @@ impl ServerEndpoint {
         }
     }
 
+    /// Get the security policy of this endpoint.
     pub fn security_policy(&self) -> SecurityPolicy {
         SecurityPolicy::from_str(&self.security_policy).unwrap()
     }
 
+    /// Get the message security mode of this endpoint.
     pub fn message_security_mode(&self) -> MessageSecurityMode {
         MessageSecurityMode::from(self.security_mode.as_ref())
     }
 
+    /// Get the URL of this endpoint, with `base_endpoint` as root.
     pub fn endpoint_url(&self, base_endpoint: &str) -> String {
         format!("{}{}", base_endpoint, self.path)
     }

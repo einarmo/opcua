@@ -1,6 +1,10 @@
+//! Implementation of data change filters, and `Deadband`
+
 use crate::{DataChangeFilter, DataChangeTrigger, DataValue, DeadbandType, StatusCode, Variant};
 
 #[derive(Debug, Clone)]
+/// Parsed percent deadband. Percent deadband works by applying a deadband
+/// based on the EURange of the node.
 pub struct PercentDeadband {
     // Computed from high and low. high = low + range
     low: f64,
@@ -10,15 +14,18 @@ pub struct PercentDeadband {
 }
 
 #[derive(Debug, Clone)]
+/// Deadband type, used in data change filters.
 pub enum Deadband {
+    /// No deadband.
     None,
-    // Threshold is a positive number.
+    /// A positive number deadbanding on absolute change.
     Absolute(f64),
+    /// Deadband based on a percent of EURange.
     Percent(PercentDeadband),
 }
 
 impl Deadband {
-    pub fn is_changed_option(&self, v1: Option<&Variant>, v2: Option<&Variant>) -> bool {
+    fn is_changed_option(&self, v1: Option<&Variant>, v2: Option<&Variant>) -> bool {
         match (v1, v2) {
             (Some(_), None) | (None, Some(_)) => true,
             (None, None) => {
@@ -32,7 +39,7 @@ impl Deadband {
         }
     }
 
-    pub fn is_changed(&self, v1: &Variant, v2: &Variant) -> bool {
+    fn is_changed(&self, v1: &Variant, v2: &Variant) -> bool {
         if let (Some(v1), Some(v2)) = (v1.as_array(), v2.as_array()) {
             // From the standard:
             // "If the item is an array of values, the entire array is returned if
@@ -71,12 +78,16 @@ impl Deadband {
 }
 
 #[derive(Debug, Clone)]
+/// Parsed variant of the data change filter that can be directly checked for data changes.
 pub struct ParsedDataChangeFilter {
+    /// What is considered a change.
     pub trigger: DataChangeTrigger,
+    /// Deadband filter.
     pub deadband: Deadband,
 }
 
 impl ParsedDataChangeFilter {
+    /// Check if this data change filter considers `v1` different from `v2`.
     pub fn is_changed(&self, v1: &DataValue, v2: &DataValue) -> bool {
         match self.trigger {
             DataChangeTrigger::Status => v1.status != v2.status,
@@ -98,6 +109,7 @@ impl ParsedDataChangeFilter {
         }
     }
 
+    /// Parse from a raw data change filter and the EURange of the node, if present.
     pub fn parse(
         filter: DataChangeFilter,
         eu_range: Option<(f64, f64)>,

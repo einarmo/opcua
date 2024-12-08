@@ -1,3 +1,7 @@
+//! Enabled with the "xml" feature.
+//!
+//! Core utilities for working with decoding OPC UA types from NodeSet2 XML files.
+
 use std::{collections::HashMap, str::FromStr, sync::Arc};
 
 use log::warn;
@@ -11,13 +15,18 @@ use crate::{
 };
 
 #[derive(Error, Debug)]
+/// Error returned when creating types from NodeSet2 XML files.
 pub enum FromXmlError {
+    /// Required field is missing.
     #[error("Missing required field in XML: {0}")]
     MissingRequired(&'static str),
+    /// Field with given name has no content.
     #[error("Field {0} is missing required content")]
     MissingContent(&'static str),
+    /// Something else went wrong.
     #[error("{0}")]
     Other(String),
+    /// Namespace index was not initialized.
     #[error("Uninitialized index {0}")]
     UninitializedIndex(u16),
 }
@@ -59,9 +68,15 @@ impl From<String> for FromXmlError {
     }
 }
 
+/// Context used during XML decoding.
 pub struct XmlContext<'a> {
+    /// NodeId alias map.
     pub aliases: HashMap<String, String>,
+    /// Namespace mapper, converts from namespace index in the nodeset
+    /// to real namespace index on the server.
     pub namespaces: &'a NodeSetNamespaceMapper<'a>,
+    /// List of type loaders used to load extension object bodies
+    /// from XML.
     pub loaders: Vec<Arc<dyn TypeLoader>>,
 }
 
@@ -81,6 +96,7 @@ impl XmlContext<'_> {
         )))
     }
 
+    /// The inner namespace map containing all registered namespaces.
     pub fn ns_map(&self) -> &NamespaceMap {
         self.namespaces.namespaces()
     }
@@ -389,6 +405,7 @@ where
 /// XML node to extract is one or more fields of a parent node.
 /// It is implemented for `T`, `Vec<T>`, `Option<T>`, and `Option<Vec<T>>`, notably.
 pub trait XmlField: Sized {
+    /// Get the child of `parent` with name `name` as `Self`.
     fn get_xml_field(
         parent: &XmlElement,
         name: &'static str,

@@ -367,6 +367,45 @@ impl SessionController {
                     id,
                 )
             }
+            RequestMessage::FindServersOnNetwork(request) => {
+                if let Err(e) = self.transport.enqueue_message_for_send(
+                    &mut self.channel,
+                    ServiceFault::new(&request.request_header, StatusCode::BadServiceUnsupported)
+                        .into(),
+                    id,
+                ) {
+                    error!("Failed to send request response: {e}");
+                    RequestProcessResult::Close
+                } else {
+                    RequestProcessResult::Ok
+                }
+            }
+            RequestMessage::RegisterServer(request) => {
+                if let Err(e) = self.transport.enqueue_message_for_send(
+                    &mut self.channel,
+                    ServiceFault::new(&request.request_header, StatusCode::BadServiceUnsupported)
+                        .into(),
+                    id,
+                ) {
+                    error!("Failed to send request response: {e}");
+                    RequestProcessResult::Close
+                } else {
+                    RequestProcessResult::Ok
+                }
+            }
+            RequestMessage::RegisterServer2(request) => {
+                if let Err(e) = self.transport.enqueue_message_for_send(
+                    &mut self.channel,
+                    ServiceFault::new(&request.request_header, StatusCode::BadServiceUnsupported)
+                        .into(),
+                    id,
+                ) {
+                    error!("Failed to send request response: {e}");
+                    RequestProcessResult::Close
+                } else {
+                    RequestProcessResult::Ok
+                }
+            }
 
             message => {
                 let now = Instant::now();

@@ -32,4 +32,7 @@ impl opcua::types::MessageInfo for UserNameIdentityToken {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::UserNameIdentityToken_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::UserNameIdentityToken
+    }
 }

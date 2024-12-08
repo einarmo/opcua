@@ -18,21 +18,28 @@ node_builder_impl!(ReferenceTypeBuilder, ReferenceType);
 node_builder_impl_subtype!(ReferenceTypeBuilder);
 
 impl ReferenceTypeBuilder {
+    /// Set the `IsAbstract` attribute of this reference type,
+    /// indicating whether references in the instance hierarchy
+    /// are allowed to use this reference type.
     pub fn is_abstract(mut self, is_abstract: bool) -> Self {
         self.node.set_is_abstract(is_abstract);
         self
     }
 
+    /// Set the write mask of this type.
     pub fn write_mask(mut self, write_mask: WriteMask) -> Self {
         self.node.set_write_mask(write_mask);
         self
     }
 
+    /// Set whether references of this type are symmetric, meaning
+    /// they have the same name in both directions.
     pub fn symmetric(mut self, symmetric: bool) -> Self {
         self.node.set_symmetric(symmetric);
         self
     }
 
+    /// Set the inverse name of this reference type.
     pub fn inverse_name(mut self, inverse_name: impl Into<LocalizedText>) -> Self {
         self.node.set_inverse_name(inverse_name.into());
         self
@@ -120,18 +127,15 @@ impl Node for ReferenceType {
 }
 
 impl ReferenceType {
-    pub fn new<R, S>(
+    /// Create a new reference type.
+    pub fn new(
         node_id: &NodeId,
-        browse_name: R,
-        display_name: S,
+        browse_name: impl Into<QualifiedName>,
+        display_name: impl Into<LocalizedText>,
         inverse_name: Option<LocalizedText>,
         symmetric: bool,
         is_abstract: bool,
-    ) -> ReferenceType
-    where
-        R: Into<QualifiedName>,
-        S: Into<LocalizedText>,
-    {
+    ) -> ReferenceType {
         ReferenceType {
             base: Base::new(NodeClass::ReferenceType, node_id, browse_name, display_name),
             symmetric,
@@ -156,14 +160,12 @@ impl ReferenceType {
         }
     }
 
-    pub fn from_attributes<S>(
+    /// Create a new reference type from [ReferenceTypeAttributes].
+    pub fn from_attributes(
         node_id: &NodeId,
-        browse_name: S,
+        browse_name: impl Into<QualifiedName>,
         attributes: ReferenceTypeAttributes,
-    ) -> Result<Self, FromAttributesError>
-    where
-        S: Into<QualifiedName>,
-    {
+    ) -> Result<Self, FromAttributesError> {
         let mandatory_attributes =
             AttributesMask::DISPLAY_NAME | AttributesMask::IS_ABSTRACT | AttributesMask::SYMMETRIC;
         let mask = AttributesMask::from_bits(attributes.specified_attributes)
@@ -202,30 +204,37 @@ impl ReferenceType {
         }
     }
 
+    /// Get whether this reference type is valid.
     pub fn is_valid(&self) -> bool {
         self.base.is_valid()
     }
 
+    /// Get whether this reference type is symmetric.
     pub fn symmetric(&self) -> bool {
         self.symmetric
     }
 
+    /// Set whether this reference type is symmetric.
     pub fn set_symmetric(&mut self, symmetric: bool) {
         self.symmetric = symmetric;
     }
 
+    /// Get whether this reference type is abstract.
     pub fn is_abstract(&self) -> bool {
         self.is_abstract
     }
 
+    /// Get whether this reference type is abstract.
     pub fn set_is_abstract(&mut self, is_abstract: bool) {
         self.is_abstract = is_abstract;
     }
 
+    /// Get the inverse name of this reference type.
     pub fn inverse_name(&self) -> Option<LocalizedText> {
         self.inverse_name.clone()
     }
 
+    /// Set the inverse name of this reference type.
     pub fn set_inverse_name(&mut self, inverse_name: LocalizedText) {
         self.inverse_name = Some(inverse_name);
     }

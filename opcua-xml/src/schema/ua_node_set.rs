@@ -1,3 +1,5 @@
+//! Definition of types representing OPC UA NodeSet2 files.
+
 use chrono::{DateTime, Utc};
 use roxmltree::{Document, Node};
 
@@ -12,12 +14,19 @@ use crate::{
 use super::opc_ua_types::Variant;
 
 #[derive(Debug)]
+/// Struct representing a NodeSet2.xml file.
+///
+/// NodeSet files are used as a portable format for OPC-UA node hierarchies.
 pub struct NodeSet2 {
+    /// Full node set.
     pub node_set: Option<UANodeSet>,
+    /// Partial node set diff.
     pub node_set_changes: Option<UANodeSetChanges>,
+    /// Status of node set changes.
     pub node_set_changes_status: Option<UANodeSetChangesStatus>,
 }
 
+/// Load a NodeSet2 file from an XML file. `document` is the content of a NodeSet2.xml file.
 pub fn load_nodeset2_file(document: &str) -> Result<NodeSet2, XmlError> {
     let document = Document::parse(document).map_err(|e| XmlError {
         span: 0..1,
@@ -32,19 +41,28 @@ pub fn load_nodeset2_file(document: &str) -> Result<NodeSet2, XmlError> {
 }
 
 #[derive(Debug)]
+/// A NodeSet2 node.
 pub enum UANode {
+    /// Object
     Object(UAObject),
+    /// Variable, can have value.
     Variable(UAVariable),
+    /// Method.
     Method(UAMethod),
+    /// View
     View(UAView),
+    /// Object type.
     ObjectType(UAObjectType),
+    /// Variable type, can have value.
     VariableType(UAVariableType),
+    /// Data type
     DataType(UADataType),
+    /// Reference type.
     ReferenceType(UAReferenceType),
 }
 
 impl UANode {
-    pub fn from_node(node: &Node<'_, '_>) -> Result<Option<Self>, XmlError> {
+    pub(crate) fn from_node(node: &Node<'_, '_>) -> Result<Option<Self>, XmlError> {
         Ok(Some(match node.tag_name().name() {
             "UAObject" => Self::Object(XmlLoad::load(node)?),
             "UAVariable" => Self::Variable(XmlLoad::load(node)?),
@@ -58,6 +76,7 @@ impl UANode {
         }))
     }
 
+    /// Get the base node, independent of node class.
     pub fn base(&self) -> &UANodeBase {
         match self {
             UANode::Object(n) => &n.base.base,
@@ -73,12 +92,19 @@ impl UANode {
 }
 
 #[derive(Debug, Default)]
+/// A full OPC-UA node set.
 pub struct UANodeSet {
+    /// List of namespace URIs covered by this node set.
     pub namespace_uris: Option<UriTable>,
+    /// List of server URIs used in this node set.
     pub server_uris: Option<UriTable>,
+    /// List of referenced models.
     pub models: Option<ModelTable>,
+    /// List of aliases available in this node set.
     pub aliases: Option<AliasTable>,
+    /// The full list of nodes.
     pub nodes: Vec<UANode>,
+    /// Last modified time.
     pub last_modified: Option<DateTime<Utc>>,
 }
 
@@ -118,16 +144,28 @@ impl<'input> XmlLoad<'input> for UANodeSet {
 }
 
 #[derive(Debug)]
+/// Differential update of a node set.
 pub struct UANodeSetChanges {
+    /// List of namespace URIs in this node set.
     pub namespace_uris: Option<UriTable>,
+    /// List of server URIs used in this node set.
     pub server_uris: Option<UriTable>,
+    /// List of aliases available in this node set.
     pub aliases: Option<AliasTable>,
+    /// New nodes.
     pub nodes_to_add: Option<NodesToAdd>,
+    /// New references.
     pub references_to_add: Option<ReferencesToChange>,
+    /// Nodes that should be deleted.
     pub nodes_to_delete: Option<NodesToDelete>,
+    /// References that should be deleted.
     pub references_to_delete: Option<ReferencesToChange>,
+    /// Last modified time.
     pub last_modified: Option<DateTime<Utc>>,
+    /// Change transaction ID. Used to identify this change.
     pub transaction_id: String,
+    /// If `true`, applications loading this should either accept all nodes in the change set,
+    /// or fail completely, applying no changes at all.
     pub accept_all_or_nothing: bool,
 }
 
@@ -150,12 +188,19 @@ impl<'input> XmlLoad<'input> for UANodeSetChanges {
 }
 
 #[derive(Debug)]
+/// Status of a node set change.
 pub struct UANodeSetChangesStatus {
+    /// Status of nodes being added.
     pub nodes_to_add: Option<NodeSetStatusList>,
+    /// Status of references being added.
     pub references_to_add: Option<NodeSetStatusList>,
+    /// Status of nodes being deleted.
     pub nodes_to_delete: Option<NodeSetStatusList>,
+    /// Status of references being deleted.
     pub references_to_delete: Option<NodeSetStatusList>,
+    /// Last modified time.
     pub last_modified: Option<DateTime<Utc>>,
+    /// Change transaction ID. Used to identify this change.
     pub transaction_id: String,
 }
 
@@ -173,7 +218,9 @@ impl<'input> XmlLoad<'input> for UANodeSetChangesStatus {
 }
 
 #[derive(Debug)]
+/// List of nodes to add.
 pub struct NodesToAdd {
+    /// Nodes to add.
     pub nodes: Vec<UANode>,
 }
 
@@ -189,8 +236,12 @@ impl<'input> XmlLoad<'input> for NodesToAdd {
 }
 
 #[derive(Debug)]
+/// Node that should be deleted.
 pub struct NodeToDelete {
+    /// Node ID of node being deleted.
     pub node_id: NodeId,
+    /// Whether to delete references _to_ this node. References _from_ this node
+    /// should always be deleted.
     pub delete_reverse_references: bool,
 }
 
@@ -205,7 +256,9 @@ impl<'input> XmlLoad<'input> for NodeToDelete {
 }
 
 #[derive(Debug)]
+/// List of nodes to delete.
 pub struct NodesToDelete {
+    /// Nodes to delete.
     pub nodes: Vec<NodeToDelete>,
 }
 
@@ -218,10 +271,15 @@ impl<'input> XmlLoad<'input> for NodesToDelete {
 }
 
 #[derive(Debug)]
+/// Reference being created or deleted.
 pub struct ReferenceChange {
+    /// Target node ID.
     pub node_id: NodeId,
+    /// Source node ID.
     pub source: NodeId,
+    /// Reference type ID.
     pub reference_type: NodeId,
+    /// Whether this is a forward or inverse reference.
     pub is_forward: bool,
 }
 
@@ -237,7 +295,9 @@ impl<'input> XmlLoad<'input> for ReferenceChange {
 }
 
 #[derive(Debug)]
+/// List of references to add or remove.
 pub struct ReferencesToChange {
+    /// References to change.
     pub references: Vec<ReferenceChange>,
 }
 
@@ -250,8 +310,11 @@ impl<'input> XmlLoad<'input> for ReferencesToChange {
 }
 
 #[derive(Debug)]
+/// Status of a node set change element.
 pub struct NodeSetStatus {
+    /// Status symbol.
     pub status: String,
+    /// Status code.
     pub code: u64,
 }
 
@@ -265,7 +328,9 @@ impl<'input> XmlLoad<'input> for NodeSetStatus {
 }
 
 #[derive(Debug)]
+/// List of statuses for a node set change.
 pub struct NodeSetStatusList {
+    /// Node set statuses.
     pub statuses: Vec<NodeSetStatus>,
 }
 
@@ -278,7 +343,9 @@ impl<'input> XmlLoad<'input> for NodeSetStatusList {
 }
 
 #[derive(Debug)]
+/// List of URIs.
 pub struct UriTable {
+    /// URIs.
     pub uris: Vec<String>,
 }
 
@@ -294,8 +361,9 @@ impl<'input> XmlLoad<'input> for UriTable {
 }
 
 macro_rules! value_wrapper {
-    ($key:ident, $ty:ident) => {
+    ($key:ident, $doc:expr, $ty:ident) => {
         #[derive(Debug, Default, Clone)]
+        #[doc = $doc]
         pub struct $key(pub $ty);
 
         impl FromValue for $key {
@@ -307,12 +375,19 @@ macro_rules! value_wrapper {
 }
 
 #[derive(Debug)]
+/// Description of a model contained in a nodeset file.
 pub struct ModelTableEntry {
+    /// Role permissions that apply to this entry.
     pub role_permissions: Option<ListOfRolePermissions>,
+    /// List of required models.
     pub required_model: Vec<ModelTableEntry>,
+    /// Model URI.
     pub model_uri: String,
+    /// Model version.
     pub version: Option<String>,
+    /// Model publication date.
     pub publication_date: Option<DateTime<Utc>>,
+    /// Default access restrictions for this model.
     pub access_restrictions: AccessRestriction,
 }
 
@@ -331,7 +406,9 @@ impl<'input> XmlLoad<'input> for ModelTableEntry {
 }
 
 #[derive(Debug)]
+/// Table containing models defined in a nodeset file.
 pub struct ModelTable {
+    /// List of models.
     pub models: Vec<ModelTableEntry>,
 }
 
@@ -343,16 +420,28 @@ impl<'input> XmlLoad<'input> for ModelTable {
     }
 }
 
-value_wrapper!(NodeId, String);
-value_wrapper!(QualifiedName, String);
-value_wrapper!(Locale, String);
-value_wrapper!(WriteMask, u32);
-value_wrapper!(EventNotifier, u8);
-value_wrapper!(ValueRank, i32);
-value_wrapper!(AccessRestriction, u8);
-value_wrapper!(ArrayDimensions, String);
-value_wrapper!(Duration, f64);
-value_wrapper!(AccessLevel, u8);
+value_wrapper!(NodeId, "An OPC-UA node ID or alias", String);
+value_wrapper!(
+    QualifiedName,
+    "An OPC-UA QualifiedName on the form Name:Index",
+    String
+);
+value_wrapper!(Locale, "A text locale", String);
+value_wrapper!(WriteMask, "A node write mask", u32);
+value_wrapper!(EventNotifier, "Node event notifier", u8);
+value_wrapper!(ValueRank, "Variable value rank", i32);
+value_wrapper!(AccessRestriction, "Access restriction flags", u8);
+value_wrapper!(
+    ArrayDimensions,
+    "Array dimensions as a comma separated list of lengths",
+    String
+);
+value_wrapper!(
+    Duration,
+    "Duration as a floating point number of seconds",
+    f64
+);
+value_wrapper!(AccessLevel, "Access level flags", u8);
 
 impl FromValue for chrono::DateTime<Utc> {
     fn from_value(node: &Node<'_, '_>, attr: &str, v: &str) -> Result<Self, XmlError> {
@@ -363,8 +452,11 @@ impl FromValue for chrono::DateTime<Utc> {
 }
 
 #[derive(Debug)]
+/// Entry in the alias table.
 pub struct NodeIdAlias {
+    /// Node ID.
     pub id: NodeId,
+    /// Alias name.
     pub alias: String,
 }
 
@@ -378,7 +470,9 @@ impl<'input> XmlLoad<'input> for NodeIdAlias {
 }
 
 #[derive(Debug, Default)]
+/// List of aliases used in a nodeset.
 pub struct AliasTable {
+    /// Alias list.
     pub aliases: Vec<NodeIdAlias>,
 }
 
@@ -391,8 +485,11 @@ impl<'input> XmlLoad<'input> for AliasTable {
 }
 
 #[derive(Debug, Default, Clone)]
+/// A localized text with a body and a locale.
 pub struct LocalizedText {
+    /// Localized text body.
     pub text: String,
+    /// Localized text locale.
     pub locale: Locale,
 }
 impl<'input> XmlLoad<'input> for LocalizedText {
@@ -405,7 +502,9 @@ impl<'input> XmlLoad<'input> for LocalizedText {
 }
 
 #[derive(Debug)]
+/// Symbolic name.
 pub struct SymbolicName {
+    /// Name alternatives.
     pub names: Vec<String>,
 }
 
@@ -418,9 +517,13 @@ impl FromValue for SymbolicName {
 }
 
 #[derive(Debug)]
+/// A reference defined inside a node.
 pub struct Reference {
+    /// Target node ID.
     pub node_id: NodeId,
+    /// Reference type ID.
     pub reference_type: NodeId,
+    /// Whether this is a forward or inverse reference.
     pub is_forward: bool,
 }
 
@@ -435,7 +538,9 @@ impl<'input> XmlLoad<'input> for Reference {
 }
 
 #[derive(Debug)]
+/// List of references in a node definition.
 pub struct ListOfReferences {
+    /// References.
     pub references: Vec<Reference>,
 }
 impl<'input> XmlLoad<'input> for ListOfReferences {
@@ -447,8 +552,11 @@ impl<'input> XmlLoad<'input> for ListOfReferences {
 }
 
 #[derive(Debug)]
+/// Role permission for a node.
 pub struct RolePermission {
+    /// Role ID.
     pub node_id: NodeId,
+    /// Permission flags.
     pub permissions: u64,
 }
 
@@ -462,7 +570,9 @@ impl<'input> XmlLoad<'input> for RolePermission {
 }
 
 #[derive(Debug)]
+/// List of role permissions.
 pub struct ListOfRolePermissions {
+    /// Role permissions.
     pub role_permissions: Vec<RolePermission>,
 }
 impl<'input> XmlLoad<'input> for ListOfRolePermissions {
@@ -474,9 +584,13 @@ impl<'input> XmlLoad<'input> for ListOfRolePermissions {
 }
 
 #[derive(Debug)]
+/// Status of a node set.
 pub enum ReleaseStatus {
+    /// Node set has been released.
     Released,
+    /// Node set is a draft.
     Draft,
+    /// Node set has been deprecated.
     Deprecated,
 }
 
@@ -495,19 +609,33 @@ impl FromValue for ReleaseStatus {
 }
 
 #[derive(Debug)]
+/// Common fields for nodeset nodes.
 pub struct UANodeBase {
+    /// Display name alternatives.
     pub display_names: Vec<LocalizedText>,
+    /// Description alternatives.
     pub description: Vec<LocalizedText>,
+    /// Category alternatives.
     pub category: Vec<String>,
+    /// Documentation about this node.
     pub documentation: Option<String>,
+    /// List of references.
     pub references: Option<ListOfReferences>,
+    /// List of required role permissions.
     pub role_permissions: Option<ListOfRolePermissions>,
+    /// Node ID of this node.
     pub node_id: NodeId,
+    /// Browse name of this node.
     pub browse_name: QualifiedName,
+    /// Default write mask.
     pub write_mask: WriteMask,
+    /// Default user write mask.
     pub user_write_mask: WriteMask,
+    /// Default access restrictions.
     pub access_restrictions: AccessRestriction,
+    /// Symbolic name for this node.
     pub symbolic_name: Option<SymbolicName>,
+    /// Release status of this node.
     pub release_status: ReleaseStatus,
 }
 
@@ -534,8 +662,11 @@ impl<'input> XmlLoad<'input> for UANodeBase {
 }
 
 #[derive(Debug)]
+/// Base type for node instances.
 pub struct UAInstance {
+    /// Common fields.
     pub base: UANodeBase,
+    /// Parent node ID, not required.
     pub parent_node_id: Option<NodeId>,
 }
 
@@ -549,8 +680,11 @@ impl<'input> XmlLoad<'input> for UAInstance {
 }
 
 #[derive(Debug)]
+/// OPC UA Object in a nodeset.
 pub struct UAObject {
+    /// Base data.
     pub base: UAInstance,
+    /// Default node event notifier.
     pub event_notifier: EventNotifier,
 }
 
@@ -564,6 +698,7 @@ impl<'input> XmlLoad<'input> for UAObject {
 }
 
 #[derive(Debug)]
+/// Variable initial value.
 pub struct Value(pub Variant);
 
 impl<'input> XmlLoad<'input> for Value {
@@ -579,15 +714,25 @@ impl<'input> XmlLoad<'input> for Value {
 }
 
 #[derive(Debug)]
+/// Variable defined in a nodeset.
 pub struct UAVariable {
+    /// Base data.
     pub base: UAInstance,
+    /// Initial or default value.
     pub value: Option<Value>,
+    /// Data type ID.
     pub data_type: NodeId,
+    /// Node value rank.
     pub value_rank: ValueRank,
+    /// Array dimensions.
     pub array_dimensions: ArrayDimensions,
+    /// Default access level.
     pub access_level: AccessLevel,
+    /// Default user access level.
     pub user_access_level: AccessLevel,
+    /// Default minimum sampling interval.
     pub minimum_sampling_interval: Duration,
+    /// Default value of "historizing", whether this node stores its history.
     pub historizing: bool,
 }
 
@@ -612,8 +757,11 @@ impl<'input> XmlLoad<'input> for UAVariable {
 }
 
 #[derive(Debug)]
+/// Argument of a method in a node set file.
 pub struct UAMethodArgument {
+    /// Method argument name.
     pub name: Option<String>,
+    /// List of possible descriptions (in different locales).
     pub descriptions: Vec<LocalizedText>,
 }
 
@@ -627,11 +775,17 @@ impl<'input> XmlLoad<'input> for UAMethodArgument {
 }
 
 #[derive(Debug)]
+/// Method defined in a node set file.
 pub struct UAMethod {
+    /// Base data.
     pub base: UAInstance,
+    /// List of method arguments.
     pub arguments: Vec<UAMethodArgument>,
+    /// Whether this method is executable.
     pub executable: bool,
+    /// Default value of user executable.
     pub user_executable: bool,
+    /// ID of another node serving as the method declaration in the type hierarchy.
     pub method_declaration_id: Option<NodeId>,
 }
 
@@ -648,8 +802,11 @@ impl<'input> XmlLoad<'input> for UAMethod {
 }
 
 #[derive(Debug)]
+/// Structure translation.
 pub struct StructureTranslationType {
+    /// Possible translations.
     pub text: Vec<LocalizedText>,
+    /// Name of the translation field.
     pub name: String,
 }
 
@@ -663,9 +820,13 @@ impl<'input> XmlLoad<'input> for StructureTranslationType {
 }
 
 #[derive(Debug)]
+/// Translation variant.
 pub enum TranslationType {
+    /// Raw list of alternative translations.
     Text(Vec<LocalizedText>),
+    /// Named list of translations.
     Field(Vec<StructureTranslationType>),
+    /// No translation.
     None,
 }
 
@@ -684,9 +845,13 @@ impl<'input> XmlLoad<'input> for TranslationType {
 }
 
 #[derive(Debug)]
+/// View defined in a node set file.
 pub struct UAView {
+    /// Base data.
     pub base: UAInstance,
+    /// Whether this view contains no loops.
     pub contains_no_loops: bool,
+    /// Event notifier.
     pub event_notifier: EventNotifier,
 }
 
@@ -701,8 +866,11 @@ impl<'input> XmlLoad<'input> for UAView {
 }
 
 #[derive(Debug)]
+/// Base type for node set types.
 pub struct UAType {
+    /// Base data.
     pub base: UANodeBase,
+    /// Whether this type is abstract, i.e. it cannot be used in the instance hierarchy.
     pub is_abstract: bool,
 }
 
@@ -716,7 +884,9 @@ impl<'input> XmlLoad<'input> for UAType {
 }
 
 #[derive(Debug)]
+/// Object type defined in a node set file.
 pub struct UAObjectType {
+    /// Base data.
     pub base: UAType,
 }
 
@@ -729,11 +899,17 @@ impl<'input> XmlLoad<'input> for UAObjectType {
 }
 
 #[derive(Debug)]
+/// Variable type defined in a node set file.
 pub struct UAVariableType {
+    /// Base data.
     pub base: UAType,
+    /// Default value of instances of this type.
     pub value: Option<Value>,
+    /// Data type, implementing types may use a subtype of this.
     pub data_type: NodeId,
+    /// Value rank.
     pub value_rank: ValueRank,
+    /// Array dimensions.
     pub array_dimensions: ArrayDimensions,
 }
 
@@ -752,9 +928,13 @@ impl<'input> XmlLoad<'input> for UAVariableType {
 }
 
 #[derive(Debug)]
+/// Purpose of a data type in a node set.
 pub enum DataTypePurpose {
+    /// Normal OPC-UA type.
     Normal,
+    /// Only used as part of service calls, not intended to be in ExtensionObjects.
     ServicesOnly,
+    /// Used for code generation.
     CodeGenerator,
 }
 
@@ -773,17 +953,29 @@ impl FromValue for DataTypePurpose {
 }
 
 #[derive(Debug)]
+/// Field in a data type definition.
 pub struct DataTypeField {
+    /// Possible display name translations.
     pub display_names: Vec<LocalizedText>,
+    /// Possible description translations.
     pub descriptions: Vec<LocalizedText>,
+    /// Field name, required.
     pub name: String,
+    /// Field symbolic name.
     pub symbolic_name: Option<SymbolicName>,
+    /// Field data type, required.
     pub data_type: NodeId,
+    /// Value rank, default -1.
     pub value_rank: ValueRank,
+    /// Array dimensions.
     pub array_dimensions: ArrayDimensions,
+    /// Max string length, can be 0 for no limit.
     pub max_string_length: u64,
+    /// Value, only applies to enum fields.
     pub value: i64,
+    /// Whether this is an optional structure field.
     pub is_optional: bool,
+    /// Whether to allow sub types of the field.
     pub allow_sub_types: bool,
 }
 
@@ -808,11 +1000,17 @@ impl<'input> XmlLoad<'input> for DataTypeField {
 }
 
 #[derive(Debug)]
+/// Data type definition.
 pub struct DataTypeDefinition {
+    /// Fields in this data type.
     pub fields: Vec<DataTypeField>,
+    /// Qualified name of this data type.
     pub name: QualifiedName,
+    /// Symbolic name.
     pub symbolic_name: SymbolicName,
+    /// Whether this defines a union.
     pub is_union: bool,
+    /// Whether this defines an option set.
     pub is_option_set: bool,
 }
 
@@ -830,9 +1028,13 @@ impl<'input> XmlLoad<'input> for DataTypeDefinition {
 }
 
 #[derive(Debug)]
+/// Data type defined in a node set file.
 pub struct UADataType {
+    /// Base data.
     pub base: UAType,
+    /// Data type definition.
     pub definition: Option<DataTypeDefinition>,
+    /// Purpose of this data type.
     pub purpose: DataTypePurpose,
 }
 
@@ -847,9 +1049,13 @@ impl<'input> XmlLoad<'input> for UADataType {
 }
 
 #[derive(Debug)]
+/// Reference type defined in a ndoe set file.
 pub struct UAReferenceType {
+    /// Base data.
     pub base: UAType,
+    /// Possible inverse name translations.
     pub inverse_names: Vec<LocalizedText>,
+    /// Whether this uses the same name for forward and inverse references.
     pub symmetric: bool,
 }
 

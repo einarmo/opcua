@@ -30,4 +30,7 @@ impl opcua::types::MessageInfo for X509IdentityToken {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::X509IdentityToken_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::X509IdentityToken
+    }
 }

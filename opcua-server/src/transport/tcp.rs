@@ -225,7 +225,7 @@ impl Connector for TcpConnector {
             let _ = self.write.write_all(&buf).await;
         }
 
-        Err(StatusCode::from(err.error))
+        Err(err.error)
     }
 }
 

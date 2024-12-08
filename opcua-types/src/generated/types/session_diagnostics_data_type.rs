@@ -72,4 +72,7 @@ impl opcua::types::MessageInfo for SessionDiagnosticsDataType {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::SessionDiagnosticsDataType_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::SessionDiagnosticsDataType
+    }
 }

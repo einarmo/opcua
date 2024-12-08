@@ -378,7 +378,7 @@ impl<'a> ValueBuilder<'a> {
         node: &XmlElement,
     ) -> Result<TokenStream, CodeGenError> {
         let is_array = field
-            .max_uccors
+            .max_occurs
             .as_ref()
             .is_some_and(|m| !matches!(m, MaxOccurs::Count(1)));
         let Some(type_name) = &field.r#type else {

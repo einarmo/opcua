@@ -54,7 +54,10 @@ macro_rules! masked_or_default_opt {
 }
 
 macro_rules! base {
-    ($attrs:expr, $node_id:expr, $node_class:expr, $browse_name:expr) => {
+    ($attrs:expr, $node_id:expr, $node_class:expr, $browse_name:expr, $expected_node_class:pat) => {{
+        if !matches!($node_class, $expected_node_class) {
+            return Err(StatusCode::BadNodeAttributesInvalid);
+        }
         Base {
             node_id: $node_id,
             node_class: $node_class,
@@ -68,9 +71,12 @@ macro_rules! base {
                 user_write_mask
             ),
         }
-    };
+    }};
 }
 
+/// Create a new node from [AddNodeAttributes].
+///
+/// The cr
 pub fn new_node_from_attributes(
     node_id: NodeId,
     browse_name: QualifiedName,
@@ -80,7 +86,7 @@ pub fn new_node_from_attributes(
     let now = DateTime::now();
     let r = match node_attributes {
         AddNodeAttributes::Object(a) => NodeType::Object(Box::new(Object {
-            base: base!(a, node_id, node_class, browse_name),
+            base: base!(a, node_id, node_class, browse_name, NodeClass::Object),
             event_notifier: if (1 << mask(AttributeId::EventNotifier)) & a.specified_attributes != 0
             {
                 EventNotifier::from_bits(a.event_notifier)
@@ -90,7 +96,7 @@ pub fn new_node_from_attributes(
             },
         })),
         AddNodeAttributes::Variable(a) => NodeType::Variable(Box::new(Variable {
-            base: base!(a, node_id, node_class, browse_name),
+            base: base!(a, node_id, node_class, browse_name, NodeClass::Variable),
             data_type: masked_or_default!(AttributeId::DataType, a, data_type),
             historizing: masked_or_default!(AttributeId::Historizing, a, historizing),
             value_rank: masked_or_default!(AttributeId::ValueRank, a, value_rank),
@@ -119,16 +125,16 @@ pub fn new_node_from_attributes(
             ),
         })),
         AddNodeAttributes::Method(a) => NodeType::Method(Box::new(Method {
-            base: base!(a, node_id, node_class, browse_name),
+            base: base!(a, node_id, node_class, browse_name, NodeClass::Method),
             executable: masked_or_default!(AttributeId::Executable, a, executable),
             user_executable: masked_or_default!(AttributeId::UserExecutable, a, user_executable),
         })),
         AddNodeAttributes::ObjectType(a) => NodeType::ObjectType(Box::new(ObjectType {
-            base: base!(a, node_id, node_class, browse_name),
+            base: base!(a, node_id, node_class, browse_name, NodeClass::ObjectType),
             is_abstract: masked_or_default!(AttributeId::IsAbstract, a, is_abstract),
         })),
         AddNodeAttributes::VariableType(a) => NodeType::VariableType(Box::new(VariableType {
-            base: base!(a, node_id, node_class, browse_name),
+            base: base!(a, node_id, node_class, browse_name, NodeClass::VariableType),
             data_type: masked_or_default!(AttributeId::DataType, a, data_type),
             is_abstract: masked_or_default!(AttributeId::IsAbstract, a, is_abstract),
             value_rank: masked_or_default!(AttributeId::ValueRank, a, value_rank),
@@ -146,18 +152,24 @@ pub fn new_node_from_attributes(
             array_dimensions: masked_or_default!(AttributeId::ArrayDimensions, a, array_dimensions),
         })),
         AddNodeAttributes::ReferenceType(a) => NodeType::ReferenceType(Box::new(ReferenceType {
-            base: base!(a, node_id, node_class, browse_name),
+            base: base!(
+                a,
+                node_id,
+                node_class,
+                browse_name,
+                NodeClass::ReferenceType
+            ),
             symmetric: masked_or_default!(AttributeId::Symmetric, a, symmetric),
             is_abstract: masked_or_default!(AttributeId::IsAbstract, a, is_abstract),
             inverse_name: masked_or_default_opt!(AttributeId::InverseName, a, inverse_name),
         })),
         AddNodeAttributes::DataType(a) => NodeType::DataType(Box::new(DataType {
-            base: base!(a, node_id, node_class, browse_name),
+            base: base!(a, node_id, node_class, browse_name, NodeClass::DataType),
             is_abstract: masked_or_default!(AttributeId::IsAbstract, a, is_abstract),
             data_type_definition: None,
         })),
         AddNodeAttributes::View(a) => NodeType::View(Box::new(View {
-            base: base!(a, node_id, node_class, browse_name),
+            base: base!(a, node_id, node_class, browse_name, NodeClass::View),
             event_notifier: if (1 << mask(AttributeId::EventNotifier)) & a.specified_attributes != 0
             {
                 EventNotifier::from_bits(a.event_notifier)
@@ -172,7 +184,7 @@ pub fn new_node_from_attributes(
             ),
         })),
         AddNodeAttributes::Generic(a) => {
-            let base = base!(a, node_id, node_class, browse_name);
+            let base = base!(a, node_id, node_class, browse_name, _);
             let mut node = match node_class {
                 NodeClass::Unspecified => return Err(StatusCode::BadNodeClassInvalid),
                 NodeClass::Object => NodeType::Object(Box::new(Object {

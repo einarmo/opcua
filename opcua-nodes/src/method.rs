@@ -48,16 +48,22 @@ impl MethodBuilder {
         self
     }
 
+    /// Set whether this method is executable, meaning it can be
+    /// called by users at all.
     pub fn executable(mut self, executable: bool) -> Self {
         self.node.set_executable(executable);
         self
     }
 
+    /// Set whether this method is executable by the current user.
+    /// This value is usually modified by the server depending on the
+    /// user asking for it.
     pub fn user_executable(mut self, executable: bool) -> Self {
         self.node.set_user_executable(executable);
         self
     }
 
+    /// Set the write mask for this method.
     pub fn write_mask(mut self, write_mask: WriteMask) -> Self {
         self.node.set_write_mask(write_mask);
         self
@@ -161,17 +167,14 @@ impl Node for Method {
 }
 
 impl Method {
-    pub fn new<R, S>(
+    /// Create a new method.
+    pub fn new(
         node_id: &NodeId,
-        browse_name: R,
-        display_name: S,
+        browse_name: impl Into<QualifiedName>,
+        display_name: impl Into<LocalizedText>,
         executable: bool,
         user_executable: bool,
-    ) -> Method
-    where
-        R: Into<QualifiedName>,
-        S: Into<LocalizedText>,
-    {
+    ) -> Method {
         Method {
             base: Base::new(NodeClass::Method, node_id, browse_name, display_name),
             executable,
@@ -189,14 +192,12 @@ impl Method {
         }
     }
 
-    pub fn from_attributes<S>(
+    /// Create a new method from [MethodAttributes].
+    pub fn from_attributes(
         node_id: &NodeId,
-        browse_name: S,
+        browse_name: impl Into<QualifiedName>,
         attributes: MethodAttributes,
-    ) -> Result<Self, FromAttributesError>
-    where
-        S: Into<QualifiedName>,
-    {
+    ) -> Result<Self, FromAttributesError> {
         let mandatory_attributes = AttributesMask::DISPLAY_NAME
             | AttributesMask::EXECUTABLE
             | AttributesMask::USER_EXECUTABLE;
@@ -226,23 +227,28 @@ impl Method {
         }
     }
 
+    /// Get whether this method is valid.
     pub fn is_valid(&self) -> bool {
         self.base.is_valid()
     }
 
+    /// Get whether this method is executable.
     pub fn executable(&self) -> bool {
         self.executable
     }
 
+    /// Set whether this method is executable.
     pub fn set_executable(&mut self, executable: bool) {
         self.executable = executable;
     }
 
+    /// Get whether this method is executable by the current user by default.
     pub fn user_executable(&self) -> bool {
         // User executable cannot be true unless executable is true
         self.executable && self.user_executable
     }
 
+    /// Set whether this method is executable by the current user by default.
     pub fn set_user_executable(&mut self, user_executable: bool) {
         self.user_executable = user_executable;
     }

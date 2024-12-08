@@ -61,7 +61,7 @@ async fn hello_timeout() {
     let Some(Message::Error(msg)) = msg else {
         panic!("Expected error got {msg:?}");
     };
-    assert_eq!(msg.error, StatusCode::BadTimeout.bits());
+    assert_eq!(msg.error, StatusCode::BadTimeout);
 
     let result = stream.read_buf(&mut bytes).await;
 
@@ -247,7 +247,11 @@ async fn connect_basic128rsa_15_with_invalid_token() {
 #[tokio::test]
 async fn find_servers() {
     let tester = Tester::new_default_server(true).await;
-    let servers = tester.client.find_servers(tester.endpoint()).await.unwrap();
+    let servers = tester
+        .client
+        .find_servers(tester.endpoint(), None, None)
+        .await
+        .unwrap();
     assert_eq!(servers.len(), 1);
 
     let s = &servers[0];

@@ -68,6 +68,8 @@ impl CertificateStore {
         }
     }
 
+    /// Create a new certificate store with application certificate from the given
+    /// `cert_path`.
     pub fn new_with_x509_data<X>(
         pki_path: &Path,
         overwrite: bool,
@@ -117,14 +119,18 @@ impl CertificateStore {
         (certificate_store, cert, pkey)
     }
 
+    /// Set `skip_verify_certs` to not verify incoming certificates.
     pub fn set_skip_verify_certs(&mut self, skip_verify_certs: bool) {
         self.skip_verify_certs = skip_verify_certs;
     }
 
+    /// Set `trust_unknown_certs` to automatically trust valid but
+    /// untrusted certificates.
     pub fn set_trust_unknown_certs(&mut self, trust_unknown_certs: bool) {
         self.trust_unknown_certs = trust_unknown_certs;
     }
 
+    /// Check expiration time of incoming certificates.
     pub fn set_check_time(&mut self, check_time: bool) {
         self.check_time = check_time;
     }
@@ -148,6 +154,7 @@ impl CertificateStore {
         })
     }
 
+    /// Read own private key from file.
     pub fn read_own_pkey(&self) -> Result<PrivateKey, String> {
         CertificateStore::read_pkey(&self.own_private_key_path()).map_err(|e| {
             format!(
@@ -383,7 +390,7 @@ impl CertificateStore {
     }
 
     /// Returns a certificate file name from the cert's issuer and thumbprint fields.
-    /// File name is either "prefix - [thumbprint].der" or "thumbprint.der" depending on
+    /// File name is either "prefix - \[thumbprint\].der" or "thumbprint.der" depending on
     /// the cert's common name being empty or not
     pub fn cert_file_name(cert: &X509) -> String {
         let prefix = if let Ok(common_name) = cert.common_name() {

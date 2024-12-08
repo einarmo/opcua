@@ -31,4 +31,7 @@ impl opcua::types::MessageInfo for RegisterServer2Response {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::RegisterServer2Response_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::RegisterServer2Response
+    }
 }

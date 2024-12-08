@@ -21,9 +21,13 @@ use opcua_types::{
 /// Enumeration used with Session::history_read()
 #[derive(Debug, Clone)]
 pub enum HistoryReadAction {
+    /// Read historical events.
     ReadEventDetails(ReadEventDetails),
+    /// Read raw data values.
     ReadRawModifiedDetails(ReadRawModifiedDetails),
+    /// Read data values with processing.
     ReadProcessedDetails(ReadProcessedDetails),
+    /// Read data values at specific timestamps.
     ReadAtTimeDetails(ReadAtTimeDetails),
 }
 
@@ -41,11 +45,17 @@ impl From<HistoryReadAction> for ExtensionObject {
 /// Enumeration used with Session::history_update()
 #[derive(Debug, Clone)]
 pub enum HistoryUpdateAction {
+    /// Update historical data values.
     UpdateDataDetails(UpdateDataDetails),
+    /// Update historical structures.
     UpdateStructureDataDetails(UpdateStructureDataDetails),
+    /// Update historical events.
     UpdateEventDetails(UpdateEventDetails),
+    /// Delete raw data values.
     DeleteRawModifiedDetails(DeleteRawModifiedDetails),
+    /// Delete data values at specific timestamps.
     DeleteAtTimeDetails(DeleteAtTimeDetails),
+    /// Delete historical events.
     DeleteEventDetails(DeleteEventDetails),
 }
 
@@ -188,6 +198,15 @@ impl UARequest for Read {
 }
 
 #[derive(Debug, Clone)]
+/// Reads historical values or events of one or more nodes. The caller is expected to provide
+/// a HistoryReadAction enum which must be one of the following:
+///
+/// * [`ReadEventDetails`]
+/// * [`ReadRawModifiedDetails`]
+/// * [`ReadProcessedDetails`]
+/// * [`ReadAtTimeDetails`]
+///
+/// See OPC UA Part 4 - Services 5.10.3 for complete description of the service and error responses.
 pub struct HistoryRead {
     details: HistoryReadAction,
     timestamps_to_return: TimestampsToReturn,
@@ -200,6 +219,7 @@ pub struct HistoryRead {
 builder_base!(HistoryRead);
 
 impl HistoryRead {
+    /// Create a new `HistoryRead` request.
     pub fn new(details: HistoryReadAction, session: &Session) -> Self {
         Self {
             details,
@@ -577,7 +597,7 @@ impl Session {
     ///
     /// # Returns
     ///
-    /// * `Ok(Vec<ClientHistoryUpdateResult>)` - A list of [`ClientHistoryUpdateResult`] results corresponding to history update operation.
+    /// * `Ok(Vec<HistoryUpdateResult>)` - A list of [`HistoryUpdateResult`] results corresponding to history update operation.
     /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
     ///
     pub async fn history_update(

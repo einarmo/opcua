@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
+//! Utility for configuring console logging based on the
+//! `RUST_OPCUA_LOG` environment variable.
+
 use std::{
     fmt,
     io::Write,
@@ -21,6 +24,8 @@ impl<T: fmt::Display> fmt::Display for Pad<T> {
     }
 }
 
+/// Initialize config loading by parsing the
+/// `RUST_OPCUA_LOG` environment variable.
 pub fn init() {
     lazy_static::lazy_static! {
         static ref INITIALISED: AtomicBool = AtomicBool::new(false);

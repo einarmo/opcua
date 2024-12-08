@@ -2,6 +2,10 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
+//! Implementation of content filters.
+//!
+//! These are used as part of the `Query` service, and for events.
+
 use std::convert::TryFrom;
 
 use crate::{
@@ -12,18 +16,28 @@ use crate::{
 };
 
 #[derive(PartialEq)]
+/// Type of operand.
 pub enum OperandType {
+    /// Operand pointing at another filter element.
     ElementOperand,
+    /// Operand resolving to a literal value.
     LiteralOperand,
+    /// Operand resolving to an attribute of some node.
     AttributeOperand,
+    /// Operand resolving to an attribute of some type.
     SimpleAttributeOperand,
 }
 
 #[derive(Debug, Clone)]
+/// A filter operand.
 pub enum Operand {
+    /// Operand pointing at another filter element.
     ElementOperand(ElementOperand),
+    /// Operand resolving to a literal value.
     LiteralOperand(LiteralOperand),
+    /// Operand resolving to an attribute of some node.
     AttributeOperand(AttributeOperand),
+    /// Operand resolving to an attribute of some type.
     SimpleAttributeOperand(SimpleAttributeOperand),
 }
 
@@ -160,10 +174,12 @@ impl From<SimpleAttributeOperand> for Operand {
 }
 
 impl Operand {
+    /// Create an element operand with the given index.
     pub fn element(index: u32) -> Operand {
         ElementOperand { index }.into()
     }
 
+    /// Create a literal operand with the given type.
     pub fn literal<T>(literal: T) -> Operand
     where
         T: Into<LiteralOperand>,
@@ -185,6 +201,7 @@ impl Operand {
             .into()
     }
 
+    /// Get the operand type.
     pub fn operand_type(&self) -> OperandType {
         match self {
             Operand::ElementOperand(_) => OperandType::ElementOperand,
@@ -194,18 +211,22 @@ impl Operand {
         }
     }
 
+    /// Return `true` if the operand is an element operand.
     pub fn is_element(&self) -> bool {
         self.operand_type() == OperandType::ElementOperand
     }
 
+    /// Return `true` if the operand is a literal operand.
     pub fn is_literal(&self) -> bool {
         self.operand_type() == OperandType::LiteralOperand
     }
 
+    /// Return `true` if the operand is an attribute operand.
     pub fn is_attribute(&self) -> bool {
         self.operand_type() == OperandType::AttributeOperand
     }
 
+    /// Return `true` if the operand is a simple attribute operand.
     pub fn is_simple_attribute(&self) -> bool {
         self.operand_type() == OperandType::SimpleAttributeOperand
     }
@@ -218,19 +239,13 @@ impl Operand {
 ///
 /// The builder takes generic types to make it easier to work with. Operands are converted to
 /// extension objects.
+#[derive(Debug, Default)]
 pub struct ContentFilterBuilder {
     elements: Vec<ContentFilterElement>,
 }
 
-impl Default for ContentFilterBuilder {
-    fn default() -> Self {
-        ContentFilterBuilder {
-            elements: Vec::with_capacity(20),
-        }
-    }
-}
-
 impl ContentFilterBuilder {
+    /// Create a new empty content filter builder.
     pub fn new() -> Self {
         Self::default()
     }
@@ -248,6 +263,7 @@ impl ContentFilterBuilder {
         self
     }
 
+    /// Add an equality operand.
     pub fn eq<T, S>(self, o1: T, o2: S) -> Self
     where
         T: Into<Operand>,
@@ -256,13 +272,15 @@ impl ContentFilterBuilder {
         self.add_element(FilterOperator::Equals, vec![o1.into(), o2.into()])
     }
 
-    pub fn null<T>(self, o1: T) -> Self
+    /// Add an `is_null` operand.
+    pub fn is_null<T>(self, o1: T) -> Self
     where
         T: Into<Operand>,
     {
         self.add_element(FilterOperator::IsNull, vec![o1.into()])
     }
 
+    /// Add a greater than operand.
     pub fn gt<T, S>(self, o1: T, o2: S) -> Self
     where
         T: Into<Operand>,
@@ -271,6 +289,7 @@ impl ContentFilterBuilder {
         self.add_element(FilterOperator::GreaterThan, vec![o1.into(), o2.into()])
     }
 
+    /// Add a less than operand.
     pub fn lt<T, S>(self, o1: T, o2: S) -> Self
     where
         T: Into<Operand>,
@@ -279,6 +298,7 @@ impl ContentFilterBuilder {
         self.add_element(FilterOperator::LessThan, vec![o1.into(), o2.into()])
     }
 
+    /// Add a greater than or equal operand.
     pub fn gte<T, S>(self, o1: T, o2: S) -> Self
     where
         T: Into<Operand>,
@@ -290,6 +310,7 @@ impl ContentFilterBuilder {
         )
     }
 
+    /// Add a less than or equal operand.
     pub fn lte<T, S>(self, o1: T, o2: S) -> Self
     where
         T: Into<Operand>,
@@ -298,6 +319,7 @@ impl ContentFilterBuilder {
         self.add_element(FilterOperator::LessThanOrEqual, vec![o1.into(), o2.into()])
     }
 
+    /// Add a "like" operand.
     pub fn like<T, S>(self, o1: T, o2: S) -> Self
     where
         T: Into<Operand>,
@@ -306,6 +328,7 @@ impl ContentFilterBuilder {
         self.add_element(FilterOperator::Like, vec![o1.into(), o2.into()])
     }
 
+    /// Add a "not" operand.
     pub fn not<T>(self, o1: T) -> Self
     where
         T: Into<Operand>,
@@ -313,6 +336,7 @@ impl ContentFilterBuilder {
         self.add_element(FilterOperator::Not, vec![o1.into()])
     }
 
+    /// Add a "between" operand.
     pub fn between<T, S, U>(self, o1: T, o2: S, o3: U) -> Self
     where
         T: Into<Operand>,
@@ -325,6 +349,7 @@ impl ContentFilterBuilder {
         )
     }
 
+    /// Add an "in list" operand.
     pub fn in_list<T, S>(self, o1: T, list_items: Vec<S>) -> Self
     where
         T: Into<Operand>,
@@ -339,6 +364,7 @@ impl ContentFilterBuilder {
         self.add_element(FilterOperator::InList, filter_operands)
     }
 
+    /// Add an "and" operand.
     pub fn and<T, S>(self, o1: T, o2: S) -> Self
     where
         T: Into<Operand>,
@@ -347,6 +373,7 @@ impl ContentFilterBuilder {
         self.add_element(FilterOperator::And, vec![o1.into(), o2.into()])
     }
 
+    /// Add an "or" operand.
     pub fn or<T, S>(self, o1: T, o2: S) -> Self
     where
         T: Into<Operand>,
@@ -355,6 +382,7 @@ impl ContentFilterBuilder {
         self.add_element(FilterOperator::Or, vec![o1.into(), o2.into()])
     }
 
+    /// Add a "cast" operand.
     pub fn cast<T, S>(self, o1: T, o2: S) -> Self
     where
         T: Into<Operand>,
@@ -363,6 +391,7 @@ impl ContentFilterBuilder {
         self.add_element(FilterOperator::Cast, vec![o1.into(), o2.into()])
     }
 
+    /// Add a "bitwise and" operand.
     pub fn bitwise_and<T, S>(self, o1: T, o2: S) -> Self
     where
         T: Into<Operand>,
@@ -371,6 +400,7 @@ impl ContentFilterBuilder {
         self.add_element(FilterOperator::BitwiseAnd, vec![o1.into(), o2.into()])
     }
 
+    /// Add a "bitwise or" operand.
     pub fn bitwise_or<T, S>(self, o1: T, o2: S) -> Self
     where
         T: Into<Operand>,
@@ -379,6 +409,7 @@ impl ContentFilterBuilder {
         self.add_element(FilterOperator::BitwiseOr, vec![o1.into(), o2.into()])
     }
 
+    /// Build a content filter.
     pub fn build(self) -> ContentFilter {
         ContentFilter {
             elements: Some(self.elements),
@@ -387,6 +418,7 @@ impl ContentFilterBuilder {
 }
 
 impl SimpleAttributeOperand {
+    /// Create a new simple attribute operand.
     pub fn new<T>(
         type_definition_id: T,
         browse_path: &str,

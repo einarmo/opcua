@@ -7,8 +7,12 @@ use std::io::{Read, Write};
 macro_rules! request_enum {
     ($($name:ident: $value:ident; $enc:ident),*,) => {
         #[derive(Debug, PartialEq, Clone)]
+        /// Enum of all possible _request_ service messages.
         pub enum RequestMessage {
-            $( $name(Box<$value>), )*
+            $(
+                #[doc = stringify!($name)]
+                $name(Box<$value>),
+            )*
         }
         $(
             impl From<$value> for RequestMessage {
@@ -32,6 +36,7 @@ macro_rules! request_enum {
         }
 
         impl RequestMessage {
+            /// Get the request header.
             pub fn request_header(&self) -> &RequestHeader {
                 match self {
                     $( Self::$name(value) => &value.request_header, )*
@@ -83,6 +88,7 @@ request_enum! {
     CloseSecureChannel: CloseSecureChannelRequest; CloseSecureChannelRequest_Encoding_DefaultBinary,
     GetEndpoints: GetEndpointsRequest; GetEndpointsRequest_Encoding_DefaultBinary,
     FindServers: FindServersRequest; FindServersRequest_Encoding_DefaultBinary,
+    FindServersOnNetwork: FindServersOnNetworkRequest; FindServersOnNetworkRequest_Encoding_DefaultBinary,
     RegisterServer: RegisterServerRequest; RegisterServerRequest_Encoding_DefaultBinary,
     RegisterServer2: RegisterServer2Request; RegisterServer2Request_Encoding_DefaultBinary,
     CreateSession: CreateSessionRequest; CreateSessionRequest_Encoding_DefaultBinary,

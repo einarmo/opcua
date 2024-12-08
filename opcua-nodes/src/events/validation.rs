@@ -12,27 +12,43 @@ use opcua_types::{
 use crate::TypeTree;
 
 #[derive(Debug, Clone)]
+/// Parsed version of the raw [opcua_types::AttributeOperand]
 pub struct ParsedAttributeOperand {
+    /// Node ID of the node to get attribute from.
     pub node_id: NodeId,
+    /// Attribute alias.
     pub alias: UAString,
+    /// Browse path to the property to get from.
     pub browse_path: RelativePath,
+    /// Attribute ID to get.
     pub attribute_id: AttributeId,
+    /// Range of attribute to get.
     pub index_range: NumericRange,
 }
 
 #[derive(Debug, Clone)]
+/// Parsed version of the raw [SimpleAttributeOperand].
 pub struct ParsedSimpleAttributeOperand {
+    /// Node ID of the type definition to get values from.
     pub type_definition_id: NodeId,
+    /// Path to the property to get.
     pub browse_path: Vec<QualifiedName>,
+    /// Attribute ID to get.
     pub attribute_id: AttributeId,
+    /// Range of attribute to get.
     pub index_range: NumericRange,
 }
 
 #[derive(Debug, Clone)]
+/// Parsed and validated [Operand].
 pub enum ParsedOperand {
+    /// Another element in the filter.
     ElementOperand(ElementOperand),
+    /// A literal value.
     LiteralOperand(LiteralOperand),
+    /// An attribute in a different node.
     AttributeOperand(ParsedAttributeOperand),
+    /// An attribute of a type.
     SimpleAttributeOperand(ParsedSimpleAttributeOperand),
 }
 
@@ -41,7 +57,7 @@ impl ParsedOperand {
         operand: Operand,
         num_elements: usize,
         type_tree: &dyn TypeTree,
-        allow_attribute_operand: bool,
+        allow_attribute_operands: bool,
     ) -> Result<Self, StatusCode> {
         match operand {
             Operand::ElementOperand(e) => {
@@ -53,7 +69,7 @@ impl ParsedOperand {
             }
             Operand::LiteralOperand(o) => Ok(Self::LiteralOperand(o)),
             Operand::AttributeOperand(o) => {
-                if !allow_attribute_operand {
+                if !allow_attribute_operands {
                     return Err(StatusCode::BadFilterOperandInvalid);
                 }
                 let attribute_id = AttributeId::from_u32(o.attribute_id)
@@ -79,12 +95,16 @@ impl ParsedOperand {
 }
 
 #[derive(Debug, Clone)]
+/// Parsed version of the raw [EventFilter].
 pub struct ParsedEventFilter {
     pub(super) content_filter: ParsedContentFilter,
     pub(super) select_clauses: Vec<ParsedSimpleAttributeOperand>,
 }
 
 impl ParsedEventFilter {
+    /// Try to build a parsed filter from a raw [EventFilter].
+    ///
+    /// This may fail, but will always return an [EventFilterResult].
     pub fn new(
         raw: EventFilter,
         type_tree: &dyn TypeTree,
@@ -94,33 +114,43 @@ impl ParsedEventFilter {
 }
 
 #[derive(Debug, Clone)]
+/// Parsed version of the raw [ContentFilter].
 pub struct ParsedContentFilter {
     pub(super) elements: Vec<ParsedContentFilterElement>,
 }
 
 impl ParsedContentFilter {
+    /// Create a new empty content filter.
     pub fn empty() -> Self {
         Self {
             elements: Vec::new(),
         }
     }
 
+    /// Create a new content filter from the raw [ContentFilter].
+    ///
+    /// If `allow_attribute_operands` is false, parsing will fail
+    /// if it encounters an attribute operand.
+    ///
+    /// If `allow_complex_operators` is false, parsing will fail
+    /// if it encounters operators `InView`, `OfType`, or `RelatedTo`.
     pub fn parse(
         filter: ContentFilter,
         type_tree: &dyn TypeTree,
-        allow_attribute_operand: bool,
+        allow_attribute_operands: bool,
         allow_complex_operators: bool,
     ) -> (ContentFilterResult, Result<ParsedContentFilter, StatusCode>) {
         validate_where_clause(
             filter,
             type_tree,
-            allow_attribute_operand,
+            allow_attribute_operands,
             allow_complex_operators,
         )
     }
 }
 
 #[derive(Debug, Clone)]
+/// Element of a parsed content filter.
 pub struct ParsedContentFilterElement {
     pub(super) operator: FilterOperator,
     pub(super) operands: Vec<ParsedOperand>,

@@ -180,16 +180,13 @@ impl Node for Base {
 }
 
 impl Base {
-    pub fn new<R, S>(
+    /// Create a new base node.
+    pub fn new(
         node_class: NodeClass,
         node_id: &NodeId,
-        browse_name: R,
-        display_name: S,
-    ) -> Base
-    where
-        R: Into<QualifiedName>,
-        S: Into<LocalizedText>,
-    {
+        browse_name: impl Into<QualifiedName>,
+        display_name: impl Into<LocalizedText>,
+    ) -> Base {
         Base {
             node_id: node_id.clone(),
             node_class,
@@ -223,19 +220,19 @@ impl Base {
         }
     }
 
+    /// Get whether this base node is valid.
     pub fn is_valid(&self) -> bool {
         let invalid = self.node_id().is_null() || self.browse_name.is_null();
         !invalid
     }
 
+    /// Set the node ID of this node.
     pub fn set_node_id(&mut self, node_id: NodeId) {
         self.node_id = node_id;
     }
 
-    pub fn set_browse_name<S>(&mut self, browse_name: S)
-    where
-        S: Into<QualifiedName>,
-    {
+    /// Set the browse name of this node.
+    pub fn set_browse_name(&mut self, browse_name: impl Into<QualifiedName>) {
         self.browse_name = browse_name.into();
     }
 }

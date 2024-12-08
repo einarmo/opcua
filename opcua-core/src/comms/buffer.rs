@@ -1,3 +1,6 @@
+//! Shared implementaton of an OPC-UA buffer, handling
+//! encoding of data and the state of a communication channel.
+
 use std::{
     collections::VecDeque,
     io::{BufRead, Cursor},
@@ -28,6 +31,7 @@ enum PendingPayload {
     Error(ErrorMessage),
 }
 
+/// General implementation of a buffer of outgoing messages.
 pub struct SendBuffer {
     /// The send buffer
     buffer: Cursor<Vec<u8>>,
@@ -53,6 +57,7 @@ pub struct SendBuffer {
 //  - Once the buffer is exhausted, the state is set back to `Reading`.
 //  - `write` cannot be called while we are writing to the output.
 impl SendBuffer {
+    /// Create a new send buffer with the given initial limits.
     pub fn new(buffer_size: usize, max_message_size: usize, max_chunk_count: usize) -> Self {
         Self {
             buffer: Cursor::new(vec![0u8; buffer_size + 1024]),
@@ -66,6 +71,7 @@ impl SendBuffer {
         }
     }
 
+    /// Encode the next chunk in the queue to the out-buffer.
     pub fn encode_next_chunk(&mut self, secure_channel: &SecureChannel) -> Result<(), StatusCode> {
         if matches!(self.state, SendBufferState::Reading(_)) {
             return Err(StatusCode::BadInvalidState);
@@ -87,16 +93,22 @@ impl SendBuffer {
         Ok(())
     }
 
+    /// Clear the list of pending messages, then
+    /// add an error.
     pub fn write_error(&mut self, error: ErrorMessage) {
         // Clear any pending chunks, we're erroring out
         self.chunks.clear();
         self.chunks.push_back(PendingPayload::Error(error));
     }
 
+    /// Write an acknowledge message to the list of pending messages.
     pub fn write_ack(&mut self, ack: AcknowledgeMessage) {
         self.chunks.push_back(PendingPayload::Ack(ack));
     }
 
+    /// Encode a message to chunks, then write them to the pending message queue.
+    ///
+    /// The messages are encrypted as they are sent.
     pub fn write(
         &mut self,
         request_id: u32,
@@ -137,11 +149,13 @@ impl SendBuffer {
         }
     }
 
+    /// Get the next request ID.
     pub fn next_request_id(&mut self) -> u32 {
         self.last_request_id += 1;
         self.last_request_id
     }
 
+    /// Read the pending buffer into the given stream.
     pub async fn read_into_async(
         &mut self,
         write: &mut (impl tokio::io::AsyncWrite + Unpin),
@@ -174,14 +188,17 @@ impl SendBuffer {
         Ok(())
     }
 
+    /// Return `true` if we should encode a new chunk.
     pub fn should_encode_chunks(&self) -> bool {
         !self.chunks.is_empty() && !self.can_read()
     }
 
+    /// Check if we can read data from the buffer into the stream.
     pub fn can_read(&self) -> bool {
         matches!(self.state, SendBufferState::Reading(_)) || self.buffer.position() != 0
     }
 
+    /// Revise the limits with the result of a hello/acknowledge message.
     pub fn revise(
         &mut self,
         send_buffer_size: usize,

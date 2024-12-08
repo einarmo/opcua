@@ -18,9 +18,15 @@ use opcua_types::{
 
 use super::NamespaceMetadata;
 
+/// Trait for constructing an [InMemoryNodeManagerImpl].
+///
+/// Note that this is called with the lock on the [AddressSpace] held,
+/// if you try to lock it again, it will deadlock.
 pub trait InMemoryNodeManagerImplBuilder {
+    /// Type implementing [InMemoryNodeManagerImpl] constructed by this builder.
     type Impl: InMemoryNodeManagerImpl;
 
+    /// Build the node manager impl.
     fn build(self, context: ServerContext, address_space: &mut AddressSpace) -> Self::Impl;
 }
 
@@ -37,6 +43,7 @@ where
 
 #[async_trait]
 #[allow(unused)]
+/// Trait for user-provided implementation of the [InMemoryNodeManager](crate::node_manager::memory::InMemoryNodeManager)
 pub trait InMemoryNodeManagerImpl: Send + Sync + 'static {
     /// Populate the address space.
     async fn init(&self, address_space: &mut AddressSpace, context: ServerContext);
@@ -44,6 +51,7 @@ pub trait InMemoryNodeManagerImpl: Send + Sync + 'static {
     /// Name of this node manager, for debug purposes.
     fn name(&self) -> &str;
 
+    /// Return the static list of namespaces this node manager uses.
     fn namespaces(&self) -> Vec<NamespaceMetadata>;
 
     /// Return whether this node should handle requests to create a node
@@ -53,10 +61,17 @@ pub trait InMemoryNodeManagerImpl: Send + Sync + 'static {
         false
     }
 
+    /// Return `true` if a node with no requested node ID and parent `parent_id`
+    /// should be created using this node manager.
+    ///
+    /// This does not commit to actually allowing the node to be created, it just means
+    /// that no other node managers will be called to create the node.
     fn handle_new_node(&self, parent_id: &ExpandedNodeId) -> bool {
         false
     }
 
+    /// Perform the register nodes service. The default behavior for this service is to
+    /// do nothing and pretend the nodes were registered.
     async fn register_nodes(
         &self,
         context: &RequestContext,
@@ -70,6 +85,9 @@ pub trait InMemoryNodeManagerImpl: Send + Sync + 'static {
         Ok(())
     }
 
+    /// Read for variable values. Other attributes are handled by the parent
+    /// node ID. This should return a list of data values with the same length
+    /// and order as `nodes`.
     async fn read_values(
         &self,
         context: &RequestContext,
@@ -152,6 +170,8 @@ pub trait InMemoryNodeManagerImpl: Send + Sync + 'static {
     /// Handle deletion of monitored items.
     async fn delete_monitored_items(&self, context: &RequestContext, items: &[&MonitoredItemRef]) {}
 
+    /// Perform the unregister nodes service. The default behavior for this service is to
+    /// do nothing.
     async fn unregister_nodes(
         &self,
         context: &RequestContext,

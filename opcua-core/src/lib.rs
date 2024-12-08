@@ -2,19 +2,10 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
+#![warn(missing_docs)]
+
 //! The OPC UA Core module holds functionality that is common to server and clients that make use of OPC UA.
 //! It contains message chunking, cryptography / pki, communications and standard handshake messages.
-
-#[macro_export]
-macro_rules! supported_message_as {
-    ($v: expr, $i: ident) => {
-        if let SupportedMessage::$i(value) = $v {
-            *value
-        } else {
-            panic!("Cannot convert to {:?}", stringify!($i));
-        }
-    };
-}
 
 /// Contains debugging utility helper functions
 pub mod debug {
@@ -63,6 +54,7 @@ pub mod debug {
 #[cfg(test)]
 pub mod tests;
 
+/// Contains common OPC-UA constants.
 pub mod constants {
     /// Default OPC UA port number. Used by a discovery server. Other servers would normally run
     /// on a different port. So OPC UA for Rust does not use this nr by default but it is used
@@ -120,9 +112,10 @@ macro_rules! trace_write_lock {
     }
 }
 
-// Synchronization structs. This is a wrapper mod around `parking_lot` types so opcua users don't have
-// to reference that other crate.
+/// Common synchronous locks. Re-exports locks from parking_lot used internally.
 pub mod sync {
+    /// Read-write lock. Use this if you usually only need to read the value.
     pub type RwLock<T> = parking_lot::RwLock<T>;
+    /// Mutually exclusive lock. Use this if you need both read and write often.
     pub type Mutex<T> = parking_lot::Mutex<T>;
 }

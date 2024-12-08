@@ -11,6 +11,8 @@ The Rust OPC UA server API supports all of the OPC UA embedded profile services 
 
 These are implemented for you so generally once you create a server configuration, set up an address space and register some callbacks you are ready to run a server.
 
+The server API is designed to be extremely flexible, allowing you to create servers that do pretty much anything. On top of this are some defaults and tools that make assumptions about the way the server is used, which can be used to make it easier to develop servers.
+
 ## Lifecycle
 
 1. Create or load a configuration that defines the TCP address / port server runs on, the endpoints it supports, user identities etc.
@@ -33,7 +35,7 @@ To use the server crate we need to add a dependency to the `Cargo.toml`.
 
 ```
 [dependencies]
-opcua = { "0.12", features = ["server"] }
+opcua = { "0.15", features = ["server", "console-logging"] }
 ```
 
 ## Create your server
@@ -54,24 +56,20 @@ use std::sync::Arc;
 
 use opcua::server::address_space::Variable;
 use opcua::server::node_manager::memory::{
-    InMemoryNodeManager, NamespaceMetadata, SimpleNodeManager, SimpleNodeManagerImpl,
+    simple_node_manager, InMemoryNodeManager, NamespaceMetadata, SimpleNodeManager,
+    SimpleNodeManagerImpl,
 };
+use opcua::server::{ServerBuilder, SubscriptionCache};
+use opcua::types::{BuildInfo, DataValue, DateTime, NodeId, UAString};
 
 #[tokio::main]
 async fn main() {
-    // First, create a simple node manager to contain any custom nodes we make.
-    // The namespace should be 2 here, since there are two default namespaces, making
-    // this the third.
-    let ns = 2;
-    let node_manager = Arc::new(SimpleNodeManager::new_simple(
-        NamespaceMetadata {
-            namespace_index: ns,
-            namespace_uri: "urn:my_server".to_owned(),
-            ..Default::default()
-        },
-        "simple",
-    ));
+    // First, for convenience, we enable console logging based on the
+    // `RUST_OPCUA_LOG` environment variable. You could enable this using
+    // any other system to interact with the `log` framework if you prefer.
+    opcua::console_logging::init();
 
+    // Construct the server.
     let (server, handle) = ServerBuilder::new()
         .application_name("Server Name")
         .application_uri("urn:server_uri")
@@ -103,8 +101,23 @@ async fn main() {
                 &user_token_ids as &[&str],
             ),
         )
+        // Add a custom node manager. The namespace index is populated after the
+        // server has been built.
+        .with_node_manager(simple_node_manager(
+            NamespaceMetadata {
+                namespace_uri: "urn:SimpleServer".to_owned(),
+                ..Default::default()
+            },
+            "my-namespace",
+        ))
+        .trust_client_certs(true)
         .build().unwrap();
-
+    // Get the node manager from the server.
+    let node_manager = handle
+        .node_managers()
+        .get_of_type::<SimpleNodeManager>()
+        .unwrap();
+    let namespace = handle.get_namespace_index("urn:SimpleServer").unwrap();
     // Add initial nodes here...
 
     // Run the server.
@@ -132,7 +145,13 @@ fn main() {
 
     let (server, handle) = ServerBuilder::new()
         .with_config_from("../server.conf")
-        .with_node_manager(node_manager.clone())
+        .with_node_manager(simple_node_manager(
+            NamespaceMetadata {
+                namespace_uri: "urn:SimpleServer".to_owned(),
+                ..Default::default()
+            },
+            "my-namespace",
+        ))
         .build()
         .unwrap();
     //...
@@ -164,10 +183,9 @@ async fn main() {
 
 #### TCP Configuration
 
-The default TCP config uses an address / port of `127.0.0.1` and `4855`. If you intend for your server
-to be remotely accessible then explicitly set the address to the assigned IP address or resolvable hostname for the network adapter your server will listen on.
+The default TCP config uses an address / port of `localhost` and `4855`. If you intend for your server to be remotely accessible then explicitly set the address to the assigned IP address or resolvable hostname for the network adapter your server will listen on.
 
-Also ensure that your machine has a firewall rule to allow through the port number you use. 
+Also ensure that your machine has a firewall rule to allow through the port number you use.
 
 ### Security
 
@@ -192,18 +210,21 @@ create new nodes with a builder, e.g:
 async fn main() {
     //... after server is set up
     let address_space = node_manager.address_space();
-    let address_space = address_space.write().unwrap();
+    {
+        let mut address_space = address_space.write();
 
-    // This is a convenience helper
-    let folder_id = NodeId::new(2, "Variables");
-    address_space.add_folder(&folder_id, "Variables", "Variables", &NodeId::objects_folder_id());
+        // This is a convenience helper
+        let folder_id = NodeId::new(2, "Variables");
+        address_space.add_folder(&folder_id, "Variables", "Variables", &NodeId::objects_folder_id());
 
-    // Build a variable
-    let node_id = NodeId::new(2, "MyVar");
-    VariableBuilder::new(&node_id, "MyVar", "MyVar")
-        .organized_by(&folder_id)
-        .value(0u8)
-        .insert(&mut address_space);
+        // Build a variable
+        let node_id = NodeId::new(2, "MyVar");
+        VariableBuilder::new(&node_id, "MyVar", "MyVar")
+            .organized_by(&folder_id)
+            .value(0u8)
+            .insert(&mut address_space);
+    }
+    
 
     // Make sure to not keep the address space locked, or nothing will be able to
     // read from the server.
@@ -216,21 +237,17 @@ to other nodes before inserting it into the address space.
 
 ### Variables
 
-Clients of servers will typically read values of variables, and may do so from a subscription. A variable can reflect a value from a physical device that your server will update either as it changes, or on a timer, or when a client requests it.
+Clients of servers will typically read values of variables, and may do so from a subscription. The server will, by default, just get the value from the node in the address space, but there are a few ways to dynamically read values, detailed below.
 
-* Add hoc. Your code sets the variable when you deem the value to have changed.
-* Getter. The server invokes a getter in your code whenever the value is requested.
-* Timer. The server invokes a call back on a timed interval allowing you the chance to update the value. OPC UA for Rust provides a timer mechanism as a convenience
-
-In addition you may also register a setter callback which is called whenever a client attempts to write a value to the variable. Your callback could ignore the change, clamp it to some range or call the physical device with the change.
+In addition you may also register a write callback which is called whenever a client attempts to write a value to the variable. Your callback could ignore the change, clamp it to some range or call the physical device with the change.
 
 #### Setting variable values manually
 
-For some values you may prefer to set them once when they change. How you do this is up to you - a timer, an event, a separate thread receiving messages... Basically whatever mechanism you use, from your handler you will call something like this:
+For some values you may prefer to set them once when they change. How you do this is up to you - a timer, an event, a separate thread receiving messages... Whatever mechanism you use, from your handler you will call something like this:
 
 ```rust
     let now = DateTime::now();
-    let value = 123.456f;
+    let value = 123.456f64;
     let node_id = NodeId::new(2, "myvalue");
     // You can set the value directly on the address space, but prefer calling this method instead,
     // which will notify any listening clients.
@@ -307,3 +324,7 @@ fn main() {
 ### log4rs
  
 The `demo-server` sample demonstrates more sophisticated logging using the [log4rs crate](https://github.com/sfackler/log4rs).
+
+## Advanced usage
+
+For advanced usage of the server, see [advanced_server](./advanced_server.md)

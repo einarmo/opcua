@@ -32,4 +32,7 @@ impl opcua::types::MessageInfo for MonitoredItemModifyResult {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::MonitoredItemModifyResult_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::MonitoredItemModifyResult
+    }
 }

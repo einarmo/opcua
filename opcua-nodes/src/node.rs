@@ -9,20 +9,30 @@ use opcua_types::{
 
 use super::{DataType, Method, Object, ObjectType, ReferenceType, Variable, VariableType, View};
 
-/// A `NodeType` is an enumeration holding every kind of node which can be hosted within the `AddressSpace`.
+/// The `NodeType` enum enumerates the different OPC-UA node classes.
 #[derive(Debug)]
 pub enum NodeType {
+    /// Objects are general structural nodes without special meaning.
     Object(Box<Object>),
+    /// Object types define properties of object nodes.
     ObjectType(Box<ObjectType>),
+    /// Reference types define properties of references.
     ReferenceType(Box<ReferenceType>),
+    /// Variables are nodes with a current value that can be stored historically.
     Variable(Box<Variable>),
+    /// Variable types define properties of variable nodes.
     VariableType(Box<VariableType>),
+    /// Views are pre-defined subsets of the address space.
     View(Box<View>),
+    /// Data types define different types used by variables.
     DataType(Box<DataType>),
+    /// Methods are nodes that can be called with the `Call` service.
     Method(Box<Method>),
 }
 
+/// Trait for types that have a node ID.
 pub trait HasNodeId {
+    /// Get the node ID of this item.
     fn node_id(&self) -> &NodeId;
 }
 
@@ -33,6 +43,7 @@ impl HasNodeId for NodeType {
 }
 
 impl NodeType {
+    /// Get a reference to this as dyn [Node].
     pub fn as_node<'a>(&'a self) -> &'a (dyn Node + 'a) {
         match self {
             NodeType::Object(value) => value.as_ref(),
@@ -46,6 +57,7 @@ impl NodeType {
         }
     }
 
+    /// Get a reference to this as mut dyn [Node].
     pub fn as_mut_node(&mut self) -> &mut dyn Node {
         match self {
             NodeType::Object(ref mut value) => value.as_mut(),
@@ -59,7 +71,7 @@ impl NodeType {
         }
     }
 
-    // Returns the `NodeClass` of this `NodeType`.
+    /// Returns the [`NodeClass`] of this `NodeType`.
     pub fn node_class(&self) -> NodeClass {
         match self {
             NodeType::Object(_) => NodeClass::Object,
@@ -92,16 +104,22 @@ pub trait NodeBase {
     /// Sets the node's display name
     fn set_display_name(&mut self, display_name: LocalizedText);
 
+    /// Get the description of this node.
     fn description(&self) -> Option<&LocalizedText>;
 
+    /// Set the description of this node.
     fn set_description(&mut self, description: LocalizedText);
 
+    /// Get the write mask of this node.
     fn write_mask(&self) -> Option<WriteMask>;
 
+    /// Set the write mask of this node.
     fn set_write_mask(&mut self, write_mask: WriteMask);
 
+    /// Get the user write mask for this node.
     fn user_write_mask(&self) -> Option<WriteMask>;
 
+    /// Set the user write mask for this node.
     fn set_user_write_mask(&mut self, write_mask: WriteMask);
 }
 

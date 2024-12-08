@@ -30,4 +30,7 @@ impl opcua::types::MessageInfo for CallRequest {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::CallRequest_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::CallRequest
+    }
 }

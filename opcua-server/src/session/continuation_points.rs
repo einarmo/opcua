@@ -9,6 +9,7 @@ pub struct ContinuationPoint {
 }
 
 impl ContinuationPoint {
+    /// Create a new continuation point with `item` as content.
     pub fn new<T: Send + Sync + 'static>(item: Box<T>) -> Self {
         Self { payload: item }
     }

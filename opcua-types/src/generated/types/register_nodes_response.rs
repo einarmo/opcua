@@ -30,4 +30,7 @@ impl opcua::types::MessageInfo for RegisterNodesResponse {
     fn xml_type_id(&self) -> opcua::types::ObjectId {
         opcua::types::ObjectId::RegisterNodesResponse_Encoding_DefaultXml
     }
+    fn data_type_id(&self) -> opcua::types::DataTypeId {
+        opcua::types::DataTypeId::RegisterNodesResponse
+    }
 }

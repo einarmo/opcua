@@ -597,6 +597,7 @@ impl MonitoredItem {
         self.discard_oldest
     }
 
+    /// Get the client defined handle for this monitored item.
     pub fn client_handle(&self) -> u32 {
         self.client_handle
     }

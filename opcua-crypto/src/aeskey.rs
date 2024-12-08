@@ -33,11 +33,13 @@ type AesArray256 = GenericArray<u8, <aes::Aes256 as aes::cipher::KeySizeUser>::K
 type EncryptResult = Result<usize, Error>;
 
 #[derive(Debug)]
+/// Wrapper around an AES key.
 pub struct AesKey {
     value: Vec<u8>,
     security_policy: SecurityPolicy,
 }
 impl AesKey {
+    /// Create a new AES key with the given security policy and raw value.
     pub fn new(security_policy: SecurityPolicy, value: &[u8]) -> AesKey {
         AesKey {
             value: value.to_vec(),
@@ -45,6 +47,7 @@ impl AesKey {
         }
     }
 
+    /// Get the raw value of this AES key.
     pub fn value(&self) -> &[u8] {
         &self.value
     }
@@ -118,6 +121,7 @@ impl AesKey {
         Ok(src.len())
     }
 
+    /// Get the block size of the associated security policy for this key.
     pub fn block_size(&self) -> usize {
         match self.security_policy {
             SecurityPolicy::Basic128Rsa15
@@ -129,6 +133,7 @@ impl AesKey {
         }
     }
 
+    /// Get the IV length of the associated security policy for this key.
     pub fn iv_length(&self) -> usize {
         match self.security_policy {
             SecurityPolicy::Basic128Rsa15
@@ -140,6 +145,7 @@ impl AesKey {
         }
     }
 
+    /// Get the AES key length.
     pub fn key_length(&self) -> usize {
         match self.security_policy {
             SecurityPolicy::Basic128Rsa15 | SecurityPolicy::Aes128Sha256RsaOaep => AES128_KEY_SIZE,
@@ -151,6 +157,7 @@ impl AesKey {
         }
     }
 
+    /// Encrypt data in `src` into `dst`.
     pub fn encrypt(&self, src: &[u8], iv: &[u8], dst: &mut [u8]) -> EncryptResult {
         match self.security_policy {
             SecurityPolicy::Basic128Rsa15 | SecurityPolicy::Aes128Sha256RsaOaep => {

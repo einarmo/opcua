@@ -1,3 +1,11 @@
+//! The [`TypeLoader`] trait and associated tools.
+//!
+//! When deserializing from OPC UA formats, extension objects can contain
+//! a large variety of structures, including custom ones defined by extensions to the standard.
+//!
+//! In order to work with these, each set of types implements [`TypeLoader`], and a list
+//! of type loaders are passed along during decoding.
+
 use std::{borrow::Cow, io::Read, sync::Arc};
 
 use chrono::TimeDelta;
@@ -61,27 +69,32 @@ pub fn xml_decode_to_enc<T: DynEncodable + crate::xml::FromXml>(
 }
 
 impl TypeLoaderInstance {
+    /// Create a new empty type loader instance.
     pub fn new() -> Self {
         Self::default()
     }
 
+    /// Add a binary type decoding function.
     pub fn add_binary_type(&mut self, data_type: u32, encoding_type: u32, fun: BinaryLoadFun) {
         self.binary_types.insert(data_type, fun);
         self.binary_types.insert(encoding_type, fun);
     }
 
     #[cfg(feature = "xml")]
+    /// Add an XML type decoding function.
     pub fn add_xml_type(&mut self, data_type: u32, encoding_type: u32, fun: XmlLoadFun) {
         self.xml_types.insert(data_type, fun);
         self.xml_types.insert(encoding_type, fun);
     }
 
     #[cfg(feature = "json")]
+    /// Add a JSON type decoding function.
     pub fn add_json_type(&mut self, data_type: u32, encoding_type: u32, fun: JsonLoadFun) {
         self.json_types.insert(data_type, fun);
         self.json_types.insert(encoding_type, fun);
     }
 
+    /// Decode the type with ID `ty` using binary encoding.
     pub fn decode_binary(
         &self,
         ty: u32,
@@ -93,6 +106,7 @@ impl TypeLoaderInstance {
     }
 
     #[cfg(feature = "xml")]
+    /// Decode the type with ID `ty` from a NodeSet2 XML node.
     pub fn decode_xml(
         &self,
         ty: u32,
@@ -104,6 +118,7 @@ impl TypeLoaderInstance {
     }
 
     #[cfg(feature = "json")]
+    /// Decode the type with ID `ty` using JSON encoding.
     pub fn decode_json(
         &self,
         ty: u32,
@@ -181,6 +196,7 @@ impl ContextOwned {
         &mut self.options
     }
 
+    /// Get a mutable reference to the type loaders.
     pub fn loaders_mut(&mut self) -> &mut TypeLoaderCollection {
         &mut self.loaders
     }
@@ -193,6 +209,8 @@ impl Default for ContextOwned {
 }
 
 #[derive(Clone)]
+/// Wrapper type around a vector of type loaders that maintains
+/// sorted order according to the `priority` of each type loader.
 pub struct TypeLoaderCollection {
     loaders: Vec<Arc<dyn TypeLoader>>,
 }
@@ -204,22 +222,28 @@ impl Default for TypeLoaderCollection {
 }
 
 impl TypeLoaderCollection {
+    /// Create a new type loader collection containing only the
+    /// generated type loader.
     pub fn new() -> Self {
         Self {
             loaders: vec![Arc::new(GeneratedTypeLoader)],
         }
     }
 
+    /// Create a new type loader collection without any type loaders at all,
+    /// not even the built-ins. This is usually only useful for testing.
     pub fn new_empty() -> Self {
         Self {
             loaders: Vec::new(),
         }
     }
 
+    /// Add a type loader to the collection.
     pub fn add_type_loader(&mut self, loader: impl TypeLoader + 'static) {
         self.add(Arc::new(loader));
     }
 
+    /// Add a type loader to the collection.
     pub fn add(&mut self, loader: Arc<dyn TypeLoader>) {
         let priority = loader.priority();
         for i in 0..self.loaders.len() {
@@ -231,6 +255,7 @@ impl TypeLoaderCollection {
         self.loaders.push(loader);
     }
 
+    /// Iterate over the type loaders.
     pub fn iter(&self) -> <&Self as IntoIterator>::IntoIter {
         self.into_iter()
     }
@@ -272,6 +297,7 @@ pub enum TypeLoaderPriority {
 }
 
 impl TypeLoaderPriority {
+    /// Get the priority of the type loader as a number.
     pub fn priority(&self) -> u32 {
         match self {
             Self::Core => 0,
@@ -301,6 +327,8 @@ impl Ord for TypeLoaderPriority {
 /// but decoding failed.
 pub trait TypeLoader: Send + Sync {
     #[cfg(feature = "xml")]
+    /// Load the type given by `node_id` from XML by trying each
+    /// registered type loader until one returns `Some`.
     fn load_from_xml(
         &self,
         node_id: &crate::NodeId,
@@ -309,6 +337,8 @@ pub trait TypeLoader: Send + Sync {
     ) -> Option<Result<Box<dyn crate::DynEncodable>, crate::xml::FromXmlError>>;
 
     #[cfg(feature = "json")]
+    /// Load the type given by `node_id` from JSON by trying each
+    /// registered type loader until one returns `Some`.
     fn load_from_json(
         &self,
         node_id: &crate::NodeId,
@@ -316,6 +346,8 @@ pub trait TypeLoader: Send + Sync {
         ctx: &Context<'_>,
     ) -> Option<crate::EncodingResult<Box<dyn crate::DynEncodable>>>;
 
+    /// Load the type given by `node_id` from Binary by trying each
+    /// registered type loader until one returns `Some`.
     fn load_from_binary(
         &self,
         node_id: &NodeId,
@@ -323,6 +355,7 @@ pub trait TypeLoader: Send + Sync {
         ctx: &Context<'_>,
     ) -> Option<crate::EncodingResult<Box<dyn crate::DynEncodable>>>;
 
+    /// Get the priority of this type loader.
     fn priority(&self) -> TypeLoaderPriority {
         TypeLoaderPriority::Generated
     }

@@ -22,31 +22,38 @@ node_builder_impl_generates_event!(VariableTypeBuilder);
 node_builder_impl_subtype!(VariableTypeBuilder);
 
 impl VariableTypeBuilder {
+    /// Set whether the variable type is abstract, meaning
+    /// it cannot be used by nodes in the instance hierarchy.
     pub fn is_abstract(mut self, is_abstract: bool) -> Self {
         self.node.set_is_abstract(is_abstract);
         self
     }
 
+    /// Set the variable type write mask.
     pub fn write_mask(mut self, write_mask: WriteMask) -> Self {
         self.node.set_write_mask(write_mask);
         self
     }
 
+    /// Set the base data type for instances of this type.
     pub fn data_type(mut self, data_type: impl Into<NodeId>) -> Self {
         self.node.set_data_type(data_type);
         self
     }
 
+    /// Set the default value for instances of this type.
     pub fn value(mut self, value: impl Into<Variant>) -> Self {
         self.node.set_value(value);
         self
     }
 
+    /// Set the array dimensions of this type.
     pub fn array_dimensions(mut self, array_dimensions: &[u32]) -> Self {
         self.node.set_array_dimensions(array_dimensions);
         self
     }
 
+    /// Set the value rank of this type.
     pub fn value_rank(mut self, value_rank: i32) -> Self {
         self.node.set_value_rank(value_rank);
         self
@@ -89,8 +96,8 @@ impl Node for VariableType {
         max_age: f64,
     ) -> Option<DataValue> {
         match attribute_id {
-            AttributeId::Value => self.value(),
-            AttributeId::DataType => Some(self.data_type().into()),
+            AttributeId::Value => self.value().cloned(),
+            AttributeId::DataType => Some(self.data_type().clone().into()),
             AttributeId::IsAbstract => Some(self.is_abstract().into()),
             AttributeId::ValueRank => Some(self.value_rank().into()),
             // Optional attributes
@@ -154,18 +161,15 @@ impl Node for VariableType {
 }
 
 impl VariableType {
-    pub fn new<R, S>(
+    /// Create a new variable type node.
+    pub fn new(
         node_id: &NodeId,
-        browse_name: R,
-        display_name: S,
+        browse_name: impl Into<QualifiedName>,
+        display_name: impl Into<LocalizedText>,
         data_type: NodeId,
         is_abstract: bool,
         value_rank: i32,
-    ) -> VariableType
-    where
-        R: Into<QualifiedName>,
-        S: Into<LocalizedText>,
-    {
+    ) -> VariableType {
         VariableType {
             base: Base::new(NodeClass::VariableType, node_id, browse_name, display_name),
             data_type,
@@ -196,14 +200,12 @@ impl VariableType {
         }
     }
 
-    pub fn from_attributes<S>(
+    /// Create a new variable type from [VariableTypeAttributes].
+    pub fn from_attributes(
         node_id: &NodeId,
-        browse_name: S,
+        browse_name: impl Into<QualifiedName>,
         attributes: VariableTypeAttributes,
-    ) -> Result<Self, FromAttributesError>
-    where
-        S: Into<QualifiedName>,
-    {
+    ) -> Result<Self, FromAttributesError> {
         let mandatory_attributes = AttributesMask::DISPLAY_NAME
             | AttributesMask::IS_ABSTRACT
             | AttributesMask::DATA_TYPE
@@ -241,57 +243,63 @@ impl VariableType {
         }
     }
 
+    /// Get whether this type is valid.
     pub fn is_valid(&self) -> bool {
         self.base.is_valid()
     }
 
-    pub fn data_type(&self) -> NodeId {
-        self.data_type.clone()
+    /// Get the data type of this variable type.
+    pub fn data_type(&self) -> &NodeId {
+        &self.data_type
     }
 
-    pub fn set_data_type<T>(&mut self, data_type: T)
-    where
-        T: Into<NodeId>,
-    {
+    /// Set the data type of this variable type.
+    pub fn set_data_type(&mut self, data_type: impl Into<NodeId>) {
         self.data_type = data_type.into();
     }
 
+    /// Get the `IsAbstract` attribute for this variable type.
     pub fn is_abstract(&self) -> bool {
         self.is_abstract
     }
 
+    /// Set the `IsAbstract` attribute for this variable type.
     pub fn set_is_abstract(&mut self, is_abstract: bool) {
         self.is_abstract = is_abstract;
     }
 
+    /// Get the value rank of this variable type.
     pub fn value_rank(&self) -> i32 {
         self.value_rank
     }
 
+    /// Set the value rank of this variable type.
     pub fn set_value_rank(&mut self, value_rank: i32) {
         self.value_rank = value_rank;
     }
 
+    /// Get the array dimensions of this type.
     pub fn array_dimensions(&self) -> Option<Vec<u32>> {
         self.array_dimensions.clone()
     }
 
+    /// Set the array dimensions of this type.
     pub fn set_array_dimensions(&mut self, array_dimensions: &[u32]) {
         self.array_dimensions = Some(array_dimensions.to_vec());
     }
 
-    pub fn value(&self) -> Option<DataValue> {
-        self.value.clone()
+    /// Get the default value for instances of this type.
+    pub fn value(&self) -> Option<&DataValue> {
+        self.value.as_ref()
     }
 
-    pub fn set_value<V>(&mut self, value: V)
-    where
-        V: Into<Variant>,
-    {
+    /// Set the default value for instances of this type.
+    pub fn set_value(&mut self, value: impl Into<Variant>) {
         self.value = Some(DataValue::new_now(value));
     }
 
-    /// Sets the variable type's `DataValue`
+    /// Set the default value for instances of this type to
+    /// a full data value.
     pub fn set_data_value(&mut self, value: DataValue) {
         self.value = Some(value);
     }
