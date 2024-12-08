@@ -131,7 +131,7 @@ pub fn validate_value_to_write(
         println!("{data_type:?}");
         // Value is scalar, check if the data type matches
         let data_type_matches = type_tree.is_subtype_of(&data_type, &node_data_type);
-        
+
         if !data_type_matches {
             if value.is_array() {
                 return Err(StatusCode::BadTypeMismatch);
