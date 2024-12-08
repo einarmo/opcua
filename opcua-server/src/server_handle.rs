@@ -4,7 +4,7 @@ use std::{
 };
 
 use log::info;
-use opcua_nodes::DefaultTypeTree;
+use opcua_nodes::{DefaultTypeTree, TypeTree};
 use tokio_util::sync::CancellationToken;
 
 use opcua_core::sync::RwLock;

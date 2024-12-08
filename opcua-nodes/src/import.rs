@@ -8,8 +8,11 @@ pub use opcua_types::NodeSetNamespaceMapper;
 /// A reference produced by a type implementing [`NodeSetImport`].
 /// Note that the source of this reference is given by the node in the outer [`ImportedItem`]
 pub struct ImportedReference {
+    /// Reference target ID.
     pub target_id: NodeId,
+    /// Reference type ID.
     pub type_id: NodeId,
+    /// Whether this is a forward or inverse reference.
     pub is_forward: bool,
 }
 

@@ -6,12 +6,12 @@ use opcua_types::{
     Variant, WriteMask,
 };
 
-use super::{AddressSpace, HasNodeId, NodeType, UserAccessLevel, Variable};
+use super::{AddressSpace, HasNodeId, NodeType, AccessLevel, Variable};
 
 /// Validate that the user given by `context` can read the value
 /// of the given node.
 pub fn is_readable(context: &RequestContext, node: &NodeType) -> Result<(), StatusCode> {
-    if !user_access_level(context, node).contains(UserAccessLevel::CURRENT_READ) {
+    if !user_access_level(context, node).contains(AccessLevel::CURRENT_READ) {
         Err(StatusCode::BadUserAccessDenied)
     } else {
         Ok(())
@@ -26,7 +26,7 @@ pub fn is_writable(
     attribute_id: AttributeId,
 ) -> Result<(), StatusCode> {
     if let (NodeType::Variable(_), AttributeId::Value) = (node, attribute_id) {
-        if !user_access_level(context, node).contains(UserAccessLevel::CURRENT_WRITE) {
+        if !user_access_level(context, node).contains(AccessLevel::CURRENT_WRITE) {
             return Err(StatusCode::BadUserAccessDenied);
         }
 
@@ -71,11 +71,11 @@ pub fn is_writable(
 }
 
 /// Get the effective user access level for `node`.
-pub fn user_access_level(context: &RequestContext, node: &NodeType) -> UserAccessLevel {
+pub fn user_access_level(context: &RequestContext, node: &NodeType) -> AccessLevel {
     let user_access_level = if let NodeType::Variable(ref node) = node {
         node.user_access_level()
     } else {
-        UserAccessLevel::CURRENT_READ
+        AccessLevel::CURRENT_READ
     };
     context.authenticator.effective_user_access_level(
         &context.token,
@@ -218,7 +218,7 @@ pub fn read_node_value(
     let value = if node_to_read.attribute_id == AttributeId::UserAccessLevel {
         match attribute.value {
             Some(Variant::Byte(val)) => {
-                let access_level = UserAccessLevel::from_bits_truncate(val);
+                let access_level = AccessLevel::from_bits_truncate(val);
                 let access_level = context.authenticator.effective_user_access_level(
                     &context.token,
                     access_level,

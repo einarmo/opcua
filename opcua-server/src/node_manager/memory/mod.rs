@@ -29,7 +29,7 @@ use hashbrown::HashMap;
 use crate::{
     address_space::{
         read_node_value, user_access_level, EventNotifier, NodeType, ReferenceDirection,
-        UserAccessLevel,
+        AccessLevel,
     },
     subscriptions::CreateMonitoredItem,
     SubscriptionCache,
@@ -472,7 +472,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
 
                 let user_access_level = user_access_level(context, node);
 
-                if !user_access_level.contains(UserAccessLevel::HISTORY_READ) {
+                if !user_access_level.contains(AccessLevel::HISTORY_READ) {
                     history_node.set_status(StatusCode::BadUserAccessDenied);
                     continue;
                 }
@@ -524,7 +524,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
 
                 let user_access_level = user_access_level(context, node);
 
-                if !user_access_level.contains(UserAccessLevel::HISTORY_WRITE) {
+                if !user_access_level.contains(AccessLevel::HISTORY_WRITE) {
                     history_node.set_status(StatusCode::BadUserAccessDenied);
                     continue;
                 }

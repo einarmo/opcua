@@ -14,7 +14,7 @@ use crate::identity_token::{
 };
 
 use super::{
-    address_space::UserAccessLevel, config::ANONYMOUS_USER_TOKEN_ID, ServerEndpoint,
+    address_space::AccessLevel, config::ANONYMOUS_USER_TOKEN_ID, ServerEndpoint,
     ServerUserToken,
 };
 use std::{collections::BTreeMap, fmt::Debug};
@@ -124,9 +124,9 @@ pub trait AuthManager: Send + Sync + 'static {
     fn effective_user_access_level(
         &self,
         token: &UserToken,
-        user_access_level: UserAccessLevel,
+        user_access_level: AccessLevel,
         node_id: &NodeId,
-    ) -> UserAccessLevel {
+    ) -> AccessLevel {
         user_access_level
     }
 
