@@ -4,11 +4,9 @@ This is an [OPC UA](https://opcfoundation.org/about/opc-technologies/opc-ua/) se
 
 [![Build Status](https://github.com/locka99/opcua/workflows/OPC%20UA%20for%20Rust/badge.svg)](https://github.com/locka99/opcua/actions/workflows/main.yml)
 
-OPC UA is an industry standard for monitoring of data. It's used extensively for embedded devices, industrial control, IoT,
-etc. - just about anything that has data that something else wants to monitor, control or visualize. 
+OPC-UA is an industry standard for information modeling and communication. It is used for control systems, IoT, etc.
 
-Rust is a systems programming language and is therefore a natural choice for implementing OPC UA. This implementation 
-supports the embedded, micro and nano profiles but may grow to support features in time.
+The OPC-UA standard is very large and complex, and implementations are often flawed. The strictness of Rust makes it a good choice for implementing OPC-UA, and the performance characteristics are useful when creating OPC-UA tooling that will run in constrained environments.
 
 Read the [compatibility](./docs/compatibility.md) page for how the implementation conforms with the OPC UA spec.
 

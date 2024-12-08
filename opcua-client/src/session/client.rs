@@ -95,7 +95,7 @@ impl Client {
     ///
     /// # Returns
     ///
-    /// * `Ok((Arc<AsyncSession>, SessionEventLoop))` - Session and event loop.
+    /// * `Ok((Arc<Session>, SessionEventLoop))` - Session and event loop.
     /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
     ///
     pub async fn connect_to_endpoint_id(
@@ -129,7 +129,7 @@ impl Client {
     ///
     /// # Returns
     ///
-    /// * `Ok((Arc<AsyncSession>, SessionEventLoop))` - Session and event loop.
+    /// * `Ok((Arc<Session>, SessionEventLoop))` - Session and event loop.
     /// * `Err(StatusCode)` - Request failed, [Status code](StatusCode) is the reason for failure.
     ///
     pub async fn connect_to_matching_endpoint(
@@ -165,7 +165,7 @@ impl Client {
     ///
     /// # Returns
     ///
-    /// * `Ok((Arc<AsyncSession>, SessionEventLoop))` - Session and event loop.
+    /// * `Ok((Arc<Session>, SessionEventLoop))` - Session and event loop.
     /// * `Err(String)` - Endpoint is invalid.
     ///
     pub fn connect_to_endpoint_directly(
@@ -180,7 +180,7 @@ impl Client {
             .build(self.certificate_store.clone()))
     }
 
-    /// Creates a new [`AsyncSession`] using the default endpoint specified in the config. If
+    /// Creates a new [`Session`] using the default endpoint specified in the config. If
     /// there is no default, or the endpoint does not exist, this function will return an error
     ///
     /// This function returns both a reference to the session, and a `SessionEventLoop`. You must run and
@@ -195,7 +195,7 @@ impl Client {
     ///
     /// # Returns
     ///
-    /// * `Ok((Arc<AsyncSession>, SessionEventLoop))` - Session and event loop.
+    /// * `Ok((Arc<Session>, SessionEventLoop))` - Session and event loop.
     /// * `Err(String)` - Endpoint is invalid.
     ///
     pub async fn connect_to_default_endpoint(
@@ -215,7 +215,7 @@ impl Client {
     /// Create a secure channel using the provided [`SessionInfo`].
     ///
     /// This is used when creating temporary connections to the server, when creating a session,
-    /// [`AsyncSession`] manages its own channel.
+    /// [`Session`] manages its own channel.
     fn channel_from_session_info(
         &self,
         session_info: SessionInfo,

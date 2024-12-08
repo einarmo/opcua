@@ -134,7 +134,7 @@ pub use transport::AsyncSecureChannel;
 
 pub mod services {
     //! This module contains request builders for most OPC-UA services.
-    //! Typically you can just use the methods on [`Session`], but if you need to specify
+    //! Typically you can just use the methods on [`super::Session`], but if you need to specify
     //! diagnostics, set a custom timeout, or do other header manipulation, you must use the
     //! raw request builders.
     //! Note that these let you pass a session manually, in this case you are responsible for

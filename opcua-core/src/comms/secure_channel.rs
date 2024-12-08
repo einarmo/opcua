@@ -85,7 +85,7 @@ pub struct SecureChannel {
     /// SecurityToken for up to 25 % of the token lifetime.
     ///
     /// See the "OpenSecureChannel" section in the spec for more info:
-    /// https://reference.opcfoundation.org/Core/Part4/v105/docs/5.5.2
+    /// [Part 4, 5.5.2](https://reference.opcfoundation.org/Core/Part4/v105/docs/5.5.2)
     remote_keys: HashMap<u32, RemoteKeys>,
     /// Server (i.e. our end's set of keys) Symmetric Signing Key, Decrypt Key, IV
     local_keys: Option<(Vec<u8>, AesKey, Vec<u8>)>,

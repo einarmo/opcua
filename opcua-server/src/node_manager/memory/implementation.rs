@@ -43,7 +43,7 @@ where
 
 #[async_trait]
 #[allow(unused)]
-/// Trait for user-provided implementation of the [crate::node_manager::memory::InMemoryNodeManager<T>]
+/// Trait for user-provided implementation of the [InMemoryNodeManager](crate::node_manager::memory::InMemoryNodeManager)
 pub trait InMemoryNodeManagerImpl: Send + Sync + 'static {
     /// Populate the address space.
     async fn init(&self, address_space: &mut AddressSpace, context: ServerContext);

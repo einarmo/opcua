@@ -22,8 +22,9 @@ type Sha256Output = digest::CtOutput<HmacSha256>;
 
 /// Pseudo random `P_SHA` implementation for creating pseudo random range of bytes from an input
 ///
-/// https://www.ietf.org/rfc/rfc4346.txt
-/// https://tools.ietf.org/html/rfc5246
+/// [IETF RFC 4346](https://www.ietf.org/rfc/rfc4346.txt)
+/// 
+/// [IETF RFC 5246](https://tools.ietf.org/html/rfc5246)
 ///
 /// P_SHA1(secret, seed) = HMAC_SHA1(secret, A(1) + seed) +
 ///                        HMAC_SHA1(secret, A(2) + seed) +
