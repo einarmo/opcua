@@ -61,6 +61,7 @@ pub struct Session {
     pub(super) publish_timeout: Duration,
     pub(super) recreate_monitored_items_chunk: usize,
     pub(super) session_timeout: f64,
+    /// Reference to the subscription cache for the client.
     pub subscription_state: Mutex<SubscriptionState>,
     pub(super) publish_limits_watch_rx: tokio::sync::watch::Receiver<PublishLimits>,
     pub(super) publish_limits_watch_tx: tokio::sync::watch::Sender<PublishLimits>,
@@ -261,14 +262,17 @@ impl Session {
         self.disconnect_inner(false, true).await
     }
 
+    /// Get the decoding options used by the session.
     pub fn decoding_options(&self) -> &DecodingOptions {
         &self.decoding_options
     }
 
+    /// Get a reference to the inner secure channel.
     pub fn channel(&self) -> &AsyncSecureChannel {
         &self.channel
     }
 
+    /// Get the next request handle.
     pub fn request_handle(&self) -> IntegerId {
         self.channel.request_handle()
     }

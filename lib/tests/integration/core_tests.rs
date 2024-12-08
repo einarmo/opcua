@@ -61,7 +61,7 @@ async fn hello_timeout() {
     let Some(Message::Error(msg)) = msg else {
         panic!("Expected error got {msg:?}");
     };
-    assert_eq!(msg.error, StatusCode::BadTimeout.bits());
+    assert_eq!(msg.error, StatusCode::BadTimeout);
 
     let result = stream.read_buf(&mut bytes).await;
 

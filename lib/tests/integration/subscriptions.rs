@@ -4,7 +4,7 @@ use crate::utils::{test_server, ChannelNotifications, TestNodeManager, Tester};
 
 use super::utils::setup;
 use opcua::{
-    server::address_space::{AccessLevel, UserAccessLevel, VariableBuilder},
+    server::address_space::{AccessLevel, VariableBuilder},
     types::{
         AttributeId, DataTypeId, DataValue, MonitoredItemCreateRequest, MonitoredItemModifyRequest,
         MonitoringMode, MonitoringParameters, NodeId, ObjectId, ReadValueId, ReferenceTypeId,
@@ -30,7 +30,7 @@ async fn simple_subscriptions() {
             .value(-1)
             .data_type(DataTypeId::Int32)
             .access_level(AccessLevel::CURRENT_READ)
-            .user_access_level(UserAccessLevel::CURRENT_READ)
+            .user_access_level(AccessLevel::CURRENT_READ)
             .build()
             .into(),
         &ObjectId::ObjectsFolder.into(),
@@ -131,7 +131,7 @@ async fn many_subscriptions() {
                 .data_type(DataTypeId::Int32)
                 .value(-1)
                 .access_level(AccessLevel::CURRENT_READ)
-                .user_access_level(UserAccessLevel::CURRENT_READ)
+                .user_access_level(AccessLevel::CURRENT_READ)
                 .build()
                 .into(),
             &ObjectId::ObjectsFolder.into(),
@@ -206,7 +206,7 @@ async fn modify_subscription() {
             .value(-1)
             .data_type(DataTypeId::Int32)
             .access_level(AccessLevel::CURRENT_READ)
-            .user_access_level(UserAccessLevel::CURRENT_READ)
+            .user_access_level(AccessLevel::CURRENT_READ)
             .build()
             .into(),
         &ObjectId::ObjectsFolder.into(),
@@ -471,7 +471,7 @@ async fn transfer_subscriptions() {
             .value(-1)
             .data_type(DataTypeId::Int32)
             .access_level(AccessLevel::CURRENT_READ)
-            .user_access_level(UserAccessLevel::CURRENT_READ)
+            .user_access_level(AccessLevel::CURRENT_READ)
             .build()
             .into(),
         &ObjectId::ObjectsFolder.into(),
@@ -613,7 +613,7 @@ async fn test_data_change_filters() {
             .value(0.0f64)
             .data_type(DataTypeId::Double)
             .access_level(AccessLevel::CURRENT_READ)
-            .user_access_level(UserAccessLevel::CURRENT_READ)
+            .user_access_level(AccessLevel::CURRENT_READ)
             .build()
             .into(),
         &ObjectId::ObjectsFolder.into(),
@@ -629,7 +629,7 @@ async fn test_data_change_filters() {
             .value(6.0f64)
             .data_type(DataTypeId::Double)
             .access_level(AccessLevel::CURRENT_READ)
-            .user_access_level(UserAccessLevel::CURRENT_READ)
+            .user_access_level(AccessLevel::CURRENT_READ)
             .build()
             .into(),
         &ObjectId::ObjectsFolder.into(),
@@ -649,7 +649,7 @@ async fn test_data_change_filters() {
             })
             .data_type(DataTypeId::Range)
             .access_level(AccessLevel::CURRENT_READ)
-            .user_access_level(UserAccessLevel::CURRENT_READ)
+            .user_access_level(AccessLevel::CURRENT_READ)
             .build()
             .into(),
         &id2,

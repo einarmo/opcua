@@ -6,6 +6,7 @@ use opcua_core::config::{Config, ConfigError};
 use super::{Client, ClientConfig, ClientEndpoint, ClientUserToken, ANONYMOUS_USER_TOKEN_ID};
 
 #[derive(Default)]
+/// Client builder.
 pub struct ClientBuilder {
     config: ClientConfig,
 }

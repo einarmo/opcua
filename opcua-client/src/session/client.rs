@@ -33,6 +33,8 @@ use super::{
     SessionEventLoop, SessionInfo,
 };
 
+/// Wrapper around common data for generating sessions and performing requests
+/// with one-shot connections.
 pub struct Client {
     /// Client configuration
     pub(super) config: ClientConfig,
@@ -82,6 +84,7 @@ impl Client {
         }
     }
 
+    /// Get a new session builder that can be used to build a session dynamically.
     pub fn session_builder(&self) -> SessionBuilder<'_, (), ()> {
         SessionBuilder::<'_, (), ()>::new(&self.config)
     }
@@ -748,6 +751,7 @@ impl Client {
         res
     }
 
+    /// Get the certificate store.
     pub fn certificate_store(&self) -> &Arc<RwLock<CertificateStore>> {
         &self.certificate_store
     }

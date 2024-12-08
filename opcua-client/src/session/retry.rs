@@ -54,6 +54,7 @@ pub struct DefaultRetryPolicy<'a> {
 }
 
 impl<'a> DefaultRetryPolicy<'a> {
+    /// Create a new default retry policy with the given backoff generator.
     pub fn new(backoff: ExponentialBackoff) -> Self {
         Self {
             backoff,

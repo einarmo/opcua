@@ -17,6 +17,9 @@ use opcua_types::{
 };
 
 #[derive(Debug, Clone)]
+/// Add nodes by sending a [`AddNodesRequest`] to the server.
+///
+/// See OPC UA Part 4 - Services 5.7.2 for complete description of the service and error responses.
 pub struct AddNodes {
     nodes_to_add: Vec<AddNodesItem>,
 
@@ -25,9 +28,6 @@ pub struct AddNodes {
 
 builder_base!(AddNodes);
 
-/// Add nodes by sending a [`AddNodesRequest`] to the server.
-///
-/// See OPC UA Part 4 - Services 5.7.2 for complete description of the service and error responses.
 impl AddNodes {
     /// Construct a new call to the `AddNodes` service.
     pub fn new(session: &Session) -> Self {

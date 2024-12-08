@@ -60,6 +60,7 @@ impl AsyncSecureChannel {
         self.state.make_request_header(timeout)
     }
 
+    /// Get the next request handle on the channel.
     pub fn request_handle(&self) -> IntegerId {
         self.state.request_handle()
     }
@@ -87,6 +88,7 @@ impl AsyncSecureChannel {
 }
 
 impl AsyncSecureChannel {
+    /// Create a new client secure channel.
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         certificate_store: Arc<RwLock<CertificateStore>>,
@@ -119,6 +121,7 @@ impl AsyncSecureChannel {
         }
     }
 
+    /// Send a message on the secure channel, and wait for a response.
     pub async fn send(
         &self,
         request: impl Into<RequestMessage>,
@@ -164,6 +167,8 @@ impl AsyncSecureChannel {
         Request::new(request, send, timeout).send().await
     }
 
+    /// Attempt to establish a connection using this channel, returning an event loop
+    /// for polling the connection.
     pub async fn connect(&self) -> Result<SecureChannelEventLoop, StatusCode> {
         self.request_send.store(None);
         let mut backoff = self.session_retry_policy.new_backoff();
@@ -183,6 +188,7 @@ impl AsyncSecureChannel {
         }
     }
 
+    /// Connect to the server without attempting to retry if it fails.
     pub async fn connect_no_retry(&self) -> Result<SecureChannelEventLoop, StatusCode> {
         {
             let mut secure_channel = trace_write_lock!(self.secure_channel);

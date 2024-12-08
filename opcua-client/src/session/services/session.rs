@@ -56,7 +56,10 @@ pub struct CreateSession<'a> {
 builder_base!(CreateSession<'a>);
 
 impl<'a> CreateSession<'a> {
-    pub fn new(session: &'a Session) -> Self {
+    /// Create a new `CreateSession` request on the given session.
+    ///
+    /// Crate private since there is no way to safely use this.
+    pub(crate) fn new(session: &'a Session) -> Self {
         Self {
             endpoint_url: session.session_info.endpoint.endpoint_url.clone(),
             server_uri: UAString::null(),
@@ -78,6 +81,7 @@ impl<'a> CreateSession<'a> {
         }
     }
 
+    /// Create a new `CreateSession` request with the given data.
     pub fn new_manual(
         certificate_store: &'a RwLock<CertificateStore>,
         endpoint: &'a EndpointDescription,
@@ -100,31 +104,37 @@ impl<'a> CreateSession<'a> {
         }
     }
 
+    /// Set the client description.
     pub fn client_description(mut self, desc: impl Into<ApplicationDescription>) -> Self {
         self.client_description = desc.into();
         self
     }
 
+    /// Set the server URI.
     pub fn server_uri(mut self, server_uri: impl Into<UAString>) -> Self {
         self.server_uri = server_uri.into();
         self
     }
 
+    /// Set the target endpoint URL.
     pub fn endpoint_url(mut self, endpoint_url: impl Into<UAString>) -> Self {
         self.endpoint_url = endpoint_url.into();
         self
     }
 
+    /// Set the session name.
     pub fn session_name(mut self, session_name: impl Into<UAString>) -> Self {
         self.session_name = session_name.into();
         self
     }
 
+    /// Set the client certificate.
     pub fn client_certificate(mut self, client_certificate: ByteString) -> Self {
         self.client_certificate = client_certificate;
         self
     }
 
+    /// Load the client certificate from the certificate store.
     pub fn client_cert_from_store(mut self, certificate_store: &RwLock<CertificateStore>) -> Self {
         let cert_store = trace_read_lock!(certificate_store);
         self.client_certificate = cert_store
@@ -135,11 +145,13 @@ impl<'a> CreateSession<'a> {
         self
     }
 
+    /// Set the timeout for the session.
     pub fn session_timeout(mut self, session_timeout: f64) -> Self {
         self.session_timeout = session_timeout;
         self
     }
 
+    /// Set the requested maximum response message size.
     pub fn max_response_message_size(mut self, max_response_message_size: u32) -> Self {
         self.max_response_message_size = max_response_message_size;
         self
@@ -225,7 +237,10 @@ pub struct ActivateSession {
 builder_base!(ActivateSession);
 
 impl ActivateSession {
-    pub fn new(session: &Session) -> Self {
+    /// Create a new `ActivateSession` request.
+    ///
+    /// Crate private since there is no way to safely use this.
+    pub(crate) fn new(session: &Session) -> Self {
         Self {
             identity_token: session.session_info.user_identity_token.clone(),
             private_key: {
@@ -244,6 +259,7 @@ impl ActivateSession {
         }
     }
 
+    /// Create a new `ActivateSession` request.
     pub fn new_manual(
         endpoint: EndpointDescription,
         session_id: u32,
@@ -261,26 +277,31 @@ impl ActivateSession {
         }
     }
 
+    /// Set the identity token.
     pub fn identity_token(mut self, identity_token: IdentityToken) -> Self {
         self.identity_token = identity_token;
         self
     }
 
+    /// Set the client private key.
     pub fn private_key(mut self, private_key: PKey<RsaPrivateKey>) -> Self {
         self.private_key = Some(private_key);
         self
     }
 
+    /// Set the requested list of locales.
     pub fn locale_ids(mut self, locale_ids: Vec<UAString>) -> Self {
         self.locale_ids = locale_ids;
         self
     }
 
+    /// Add a requested locale with the given ID.
     pub fn locale_id(mut self, locale_id: impl Into<UAString>) -> Self {
         self.locale_ids.push(locale_id.into());
         self
     }
 
+    /// Set the client software certificates.
     pub fn client_software_certificates(
         mut self,
         certificates: Vec<SignedSoftwareCertificate>,
@@ -289,6 +310,7 @@ impl ActivateSession {
         self
     }
 
+    /// Add a client software certificate.
     pub fn client_software_certificate(mut self, certificate: SignedSoftwareCertificate) -> Self {
         self.client_software_certificates.push(certificate);
         self
@@ -483,13 +505,17 @@ pub struct CloseSession {
 builder_base!(CloseSession);
 
 impl CloseSession {
-    pub fn new(session: &Session) -> Self {
+    /// Create a new `CloseSession` request.
+    ///
+    /// Crate private as there is no way to use this safely.
+    pub(crate) fn new(session: &Session) -> Self {
         Self {
             delete_subscriptions: true,
             header: RequestHeaderBuilder::new_from_session(session),
         }
     }
 
+    /// Create a new `CloseSession` request.
     pub fn new_manual(
         session_id: u32,
         timeout: Duration,
@@ -502,6 +528,8 @@ impl CloseSession {
         }
     }
 
+    /// Set `DeleteSubscriptions`, indicating to the server whether it should
+    /// delete subscriptions immediately or wait for them to expire.
     pub fn delete_subscriptions(mut self, delete_subscriptions: bool) -> Self {
         self.delete_subscriptions = delete_subscriptions;
         self
@@ -542,6 +570,7 @@ pub struct Cancel {
 builder_base!(Cancel);
 
 impl Cancel {
+    /// Create a new cancel request, to cancel a running service call.
     pub fn new(request_to_cancel: IntegerId, session: &Session) -> Self {
         Self {
             request_handle: request_to_cancel,
@@ -549,6 +578,7 @@ impl Cancel {
         }
     }
 
+    /// Create a new cancel request, to cancel a running service call.
     pub fn new_manual(
         request_to_cancel: IntegerId,
         session_id: u32,

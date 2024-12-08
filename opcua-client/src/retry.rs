@@ -10,6 +10,7 @@ pub struct ExponentialBackoff {
 }
 
 impl ExponentialBackoff {
+    /// Create a new exponential backoff generator.
     pub fn new(max_sleep: Duration, max_retries: Option<u32>, initial_sleep: Duration) -> Self {
         Self {
             max_sleep,
@@ -37,6 +38,10 @@ impl Iterator for ExponentialBackoff {
 }
 
 #[derive(Debug, Clone)]
+/// Session retry policy.
+///
+/// Configure the maximum delay between reconnect attempts, the
+/// initial delay between reconnect attempts, and the maximum number of reconnect attempts.
 pub struct SessionRetryPolicy {
     reconnect_max_sleep: Duration,
     reconnect_retry_limit: Option<u32>,
@@ -54,10 +59,14 @@ impl Default for SessionRetryPolicy {
 }
 
 impl SessionRetryPolicy {
+    /// Default maximum number of retries.
     pub const DEFAULT_RETRY_LIMIT: u32 = 10;
+    /// Default initial delay between requests in milliseconds.
     pub const DEFAULT_INITIAL_SLEEP_MS: u64 = 500;
+    /// Default maximum delay between requests in milliseconds.
     pub const DEFAULT_MAX_SLEEP_MS: u64 = 30000;
 
+    /// Create a new session retry policy.
     pub fn new(max_sleep: Duration, retry_limit: Option<u32>, initial_sleep: Duration) -> Self {
         Self {
             reconnect_max_sleep: max_sleep,
@@ -74,6 +83,7 @@ impl SessionRetryPolicy {
         )
     }
 
+    /// Retry forever with the given max delay and initial delay.
     pub fn infinity(max_sleep: Duration, initial_sleep: Duration) -> Self {
         Self {
             reconnect_initial_sleep: initial_sleep,
@@ -82,6 +92,7 @@ impl SessionRetryPolicy {
         }
     }
 
+    /// Never reconnect.
     pub fn never() -> Self {
         Self {
             reconnect_retry_limit: Some(0),

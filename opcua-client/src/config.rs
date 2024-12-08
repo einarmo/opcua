@@ -22,17 +22,21 @@ use opcua_types::{ApplicationType, EndpointDescription, MessageSecurityMode, UAS
 
 use crate::{Client, IdentityToken, SessionRetryPolicy};
 
+/// Token ID of the anonymous user token.
 pub const ANONYMOUS_USER_TOKEN_ID: &str = "ANONYMOUS";
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
+/// User token in client configuration.
 pub struct ClientUserToken {
     /// Username
     pub user: String,
     /// Password
     #[serde(skip_serializing_if = "Option::is_none")]
     pub password: Option<String>,
+    /// Certificate path for x509 authentication.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cert_path: Option<String>,
+    /// Private key path for x509 authentication.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub private_key_path: Option<String>,
 }
@@ -133,7 +137,7 @@ impl ClientEndpoint {
         ANONYMOUS_USER_TOKEN_ID.to_string()
     }
 
-    // Returns the security policy
+    /// Returns the security policy for this endpoint.
     pub fn security_policy(&self) -> SecurityPolicy {
         SecurityPolicy::from_str(&self.security_policy).unwrap()
     }
@@ -386,6 +390,7 @@ impl Config for ClientConfig {
 }
 
 impl ClientConfig {
+    /// Get the configured session retry policy.
     pub fn session_retry_policy(&self) -> SessionRetryPolicy {
         SessionRetryPolicy::new(
             self.session_retry_max,
@@ -556,6 +561,7 @@ impl ClientConfig {
     /// The default PKI directory
     pub const PKI_DIR: &'static str = "pki";
 
+    /// Create a new default client config.
     pub fn new(application_name: impl Into<String>, application_uri: impl Into<String>) -> Self {
         let mut pki_dir = std::env::current_dir().unwrap();
         pki_dir.push(Self::PKI_DIR);
