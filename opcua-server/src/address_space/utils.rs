@@ -128,13 +128,14 @@ pub fn validate_value_to_write(
         let Some(data_type) = value_data_type.try_resolve(type_tree.namespaces()) else {
             return Err(StatusCode::BadTypeMismatch);
         };
+        println!("{data_type:?}");
         // Value is scalar, check if the data type matches
         let data_type_matches = type_tree.is_subtype_of(&data_type, &node_data_type);
-        if value.is_array() {
-            return Err(StatusCode::BadTypeMismatch);
-        }
-
+        
         if !data_type_matches {
+            if value.is_array() {
+                return Err(StatusCode::BadTypeMismatch);
+            }
             // Check if the value to write is a byte string and the receiving node type a byte array.
             // This code is a mess just for some weird edge case in the spec that a write from
             // a byte string to a byte array should succeed
