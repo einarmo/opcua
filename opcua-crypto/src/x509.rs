@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
-// X509 certificate wrapper.
+//! Wrapper for X509 certificates, and related tooling.
 
 use std::{
     self,
@@ -42,12 +42,14 @@ const DEFAULT_COUNTRY: &str = "IE";
 const DEFAULT_STATE: &str = "Dublin";
 
 #[derive(Debug, Default)]
-/// Used to create an X509 cert (and private key)
+/// Alternate names for an X509 certificate.
 pub struct AlternateNames {
+    /// List of alternative names.
     pub names: x509::ext::pkix::SubjectAltName,
 }
 
 impl AlternateNames {
+    /// Create a new `AlternateNames` struct with no contents.
     pub fn new() -> Self {
         use x509::ext::pkix::SubjectAltName;
         Self {
@@ -55,45 +57,47 @@ impl AlternateNames {
         }
     }
 
-    pub fn new_addresses(ads: Vec<String>) -> Self {
+    /// Create a new list of alternate names from a list of addresses.
+    pub fn new_from_addresses(ads: Vec<String>) -> Self {
         let mut result = Self::new();
         result.add_addresses(&ads);
         result
     }
 
+    /// `true` if no alternate names are added.
     pub fn is_empty(&self) -> bool {
         self.names.0.is_empty()
     }
 
+    /// Number of alternate names added.
     pub fn len(&self) -> usize {
         self.names.0.len()
     }
 
+    /// Add an IPV4 address as alternate name.
     pub fn add_ipv4(&mut self, ad: &std::net::Ipv4Addr) {
         if let Ok(v) = x509::der::asn1::OctetString::new(ad.octets()) {
             self.names.0.push(xname::GeneralName::IpAddress(v));
         }
     }
 
+    /// Add an IPV6 address as alternate name.
     pub fn add_ipv6(&mut self, ad: &std::net::Ipv6Addr) {
         if let Ok(v) = x509::der::asn1::OctetString::new(ad.octets()) {
             self.names.0.push(xname::GeneralName::IpAddress(v))
         }
     }
 
-    pub fn add_dns_str(&mut self, v: &str) {
-        if let Ok(v) = x509::der::asn1::Ia5String::new(v) {
+    /// Add a DNS name as alternate name.
+    pub fn add_dns(&mut self, v: impl AsRef<str>) {
+        if let Ok(v) = x509::der::asn1::Ia5String::new(v.as_ref()) {
             self.names.0.push(xname::GeneralName::DnsName(v));
         }
     }
 
-    pub fn add_dns(&mut self, v: &String) {
-        if let Ok(v) = x509::der::asn1::Ia5String::new(v) {
-            self.names.0.push(xname::GeneralName::DnsName(v));
-        }
-    }
-
-    pub fn add_address(&mut self, v: &String) {
+    /// Add an IP or hostname.
+    pub fn add_address(&mut self, v: impl AsRef<str>) {
+        let v = v.as_ref();
         {
             if let Ok(ip) = v.parse::<std::net::Ipv4Addr>() {
                 self.add_ipv4(&ip);
@@ -109,6 +113,7 @@ impl AlternateNames {
         self.add_dns(v);
     }
 
+    /// Add a URI.
     pub fn add_uri(&mut self, v: &str) {
         if let Ok(uri) = Ia5String::new(v) {
             self.names
@@ -117,10 +122,7 @@ impl AlternateNames {
         }
     }
 
-    pub fn add_address_str(&mut self, v: &str) {
-        self.add_address(&v.to_string());
-    }
-
+    /// Add a list of addresses.
     pub fn add_addresses(&mut self, ads: &[String]) {
         ads.iter().for_each(|h| {
             self.add_address(h);
@@ -157,7 +159,8 @@ impl AlternateNames {
         }
     }
 
-    pub fn iter(&self) -> AlternateNamesStringIterator {
+    /// Iterate over all the registered names.
+    pub fn iter(&self) -> impl Iterator<Item = String> + '_ {
         AlternateNamesStringIterator {
             source: &self.names.0,
             index: 0,
@@ -165,7 +168,7 @@ impl AlternateNames {
     }
 }
 
-pub struct AlternateNamesStringIterator<'a> {
+struct AlternateNamesStringIterator<'a> {
     source: &'a xname::GeneralNames,
     index: usize,
 }
@@ -190,16 +193,23 @@ impl Iterator for AlternateNamesStringIterator<'_> {
 
 impl From<Vec<String>> for AlternateNames {
     fn from(source: Vec<String>) -> Self {
-        Self::new_addresses(source)
+        Self::new_from_addresses(source)
     }
 }
 
+/// Data for constructing an X509 certificate.
 pub struct X509Data {
+    /// Requested key size.
     pub key_size: u32,
+    /// Certificate CN.
     pub common_name: String,
+    /// Certificate organization.
     pub organization: String,
+    /// Certificate organizational unit.
     pub organizational_unit: String,
+    /// Certificate country.
     pub country: String,
+    /// Certificate state.
     pub state: String,
     /// A list of alternate host names as text. The first entry is expected to be the application uri.
     /// The remainder are treated as IP addresses or DNS names depending on whether they parse as IPv4, IPv6 or neither.
@@ -267,6 +277,8 @@ impl X509Data {
         result
     }
 
+    /// Create `AlternateNames` from the current host and application URI, with
+    /// an optional extra list of addresses.
     pub fn alt_host_names(
         application_uri: &str,
         addresses: Option<Vec<String>>,
@@ -306,10 +318,10 @@ impl X509Data {
 
         // The remainder are alternative IP/DNS entries
         if add_localhost {
-            result.add_address_str("localhost");
+            result.add_address("localhost");
             if add_ip_addresses {
-                result.add_address_str("127.0.0.1");
-                result.add_address_str("::1");
+                result.add_address("127.0.0.1");
+                result.add_address("::1");
             }
         }
         // Get the machine name / ip address
@@ -364,6 +376,7 @@ impl X509Data {
 }
 
 #[derive(Debug)]
+/// Error returned when handling X509 certificates.
 pub struct X509Error;
 
 impl fmt::Display for X509Error {
@@ -381,6 +394,7 @@ impl From<x509::der::Error> for X509Error {
 }
 
 #[derive(Clone)]
+/// Wrapper around an X509 certificate.
 pub struct X509 {
     value: x509::certificate::Certificate,
 }
@@ -394,6 +408,7 @@ impl Debug for X509 {
 }
 
 impl X509 {
+    /// Load an X509 certificate from a pem file.
     pub fn from_pem(data: &[u8]) -> Result<Self, X509Error> {
         use der::Decode;
         use der::Reader;
@@ -408,6 +423,7 @@ impl X509 {
         //let r = x509::certificate::Certificate::load_pem_chain(data);
     }
 
+    /// Load an X509 certificate from a der file.
     pub fn from_der(data: &[u8]) -> Result<Self, X509Error> {
         use x509::der::Decode;
 
@@ -415,6 +431,7 @@ impl X509 {
         Ok(X509 { value: val })
     }
 
+    /// Serialize the X509 file to a der file.
     pub fn to_der(&self) -> Result<Vec<u8>, X509Error> {
         use x509_cert::der::Encode;
         let data = self.value.to_der()?;
@@ -464,6 +481,7 @@ impl X509 {
         }
     }
 
+    /// Create a certificate from a private key and certificate description.
     pub fn from_pkey(pkey: &PrivateKey, x509_data: &X509Data) -> Result<Self, String> {
         let result = Self::create_from_pkey(pkey, x509_data);
 
@@ -590,6 +608,7 @@ impl X509 {
         Ok(X509 { value: built })
     }
 
+    /// Load a certificate from a der byte string.
     pub fn from_byte_string(data: &ByteString) -> Result<X509, Error> {
         if data.is_null() {
             Err(Error::new(
@@ -611,6 +630,7 @@ impl X509 {
         ByteString::from(&der)
     }
 
+    /// Try to get the public key from this certificate.
     pub fn public_key(&self) -> Result<PublicKey, Error> {
         use x509_cert::der::referenced::OwnedToRef;
 
@@ -649,8 +669,7 @@ impl X509 {
         Err(X509Error)
     }
 
-    // Produces a string such as "CN=foo/C=IE"
-    //TO check usage
+    /// Produces a subject name string such as "CN=foo/C=IE"
     pub fn subject_name(&self) -> String {
         let r = self.value.tbs_certificate.subject.to_string();
         r.replace(";", "/")
@@ -853,11 +872,11 @@ mod tests {
     #[test]
     fn alt_hostnames() {
         let mut alt_host_names = AlternateNames::new();
-        alt_host_names.add_dns_str("uri:foo"); //the application uri
-        alt_host_names.add_address_str("host2");
-        alt_host_names.add_address_str("www.google.com");
-        alt_host_names.add_address_str("192.168.1.1");
-        alt_host_names.add_address_str("::1");
+        alt_host_names.add_dns("uri:foo"); //the application uri
+        alt_host_names.add_address("host2");
+        alt_host_names.add_address("www.google.com");
+        alt_host_names.add_address("192.168.1.1");
+        alt_host_names.add_address("::1");
 
         // Create a cert with alt hostnames which are both IP and DNS entries
         let args = X509Data {

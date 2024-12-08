@@ -25,13 +25,18 @@ use x509_cert::spki::SubjectPublicKeyInfoOwned;
 use opcua_types::{status_code::StatusCode, Error};
 
 #[derive(Copy, Clone, Debug, PartialEq)]
+/// RSA padding variant.
 pub enum RsaPadding {
+    /// PKCS1
     Pkcs1,
+    /// OAEP-SHA1
     OaepSha1,
+    /// OAEP-SHA256
     OaepSha256,
 }
 
 #[derive(Debug)]
+/// Error from working with a private key.
 pub struct PKeyError;
 
 impl fmt::Display for PKeyError {
@@ -69,7 +74,7 @@ pub struct PKey<T> {
 
 /// A public key
 pub type PublicKey = PKey<RsaPublicKey>;
-// A private key
+/// A private key
 pub type PrivateKey = PKey<RsaPrivateKey>;
 
 impl<T> Debug for PKey<T> {
@@ -80,14 +85,17 @@ impl<T> Debug for PKey<T> {
     }
 }
 
+/// Trait for computing the key size of a private key.
 pub trait KeySize {
+    /// Length in bits.
     fn bit_length(&self) -> usize {
         self.size() * 8
     }
 
+    /// Length in bytes.
     fn size(&self) -> usize;
 
-    //the following functions is only used in secure channel
+    /// Get the cipher block size with given data size and padding.
     fn calculate_cipher_text_size(&self, data_size: usize, padding: RsaPadding) -> usize {
         let plain_text_block_size = self.plain_text_block_size(padding);
         let block_count = if data_size % plain_text_block_size == 0 {
@@ -99,6 +107,7 @@ pub trait KeySize {
         block_count * self.cipher_text_block_size()
     }
 
+    /// Get the plain text block size for the given padding type.
     fn plain_text_block_size(&self, padding: RsaPadding) -> usize {
         // the maximum plain text size block is given by
         // for pkcs#1 v1.5 , keyLength - 11
@@ -114,6 +123,7 @@ pub trait KeySize {
         }
     }
 
+    /// Get the cipher text block size.
     fn cipher_text_block_size(&self) -> usize {
         self.size()
     }
@@ -128,6 +138,7 @@ impl KeySize for PrivateKey {
 }
 
 impl PrivateKey {
+    /// Generate a new private key with the given length in bits.
     pub fn new(bit_length: u32) -> Result<PrivateKey, rsa::Error> {
         let mut rng = rand::thread_rng();
 
@@ -135,6 +146,7 @@ impl PrivateKey {
         Ok(PKey { value: key })
     }
 
+    /// Read a private key from the given path.
     pub fn read_pem_file(path: &std::path::Path) -> Result<PrivateKey, PKeyError> {
         use pkcs8::DecodePrivateKey;
         use rsa::pkcs1::DecodeRsaPrivateKey;
@@ -149,6 +161,7 @@ impl PrivateKey {
         }
     }
 
+    /// Create a private key from a pem file loaded into a byte array.
     pub fn from_pem(bytes: &[u8]) -> Result<PrivateKey, PKeyError> {
         use pkcs8::DecodePrivateKey;
         use rsa::pkcs1::DecodeRsaPrivateKey;
@@ -169,12 +182,14 @@ impl PrivateKey {
         }
     }
 
+    /// Serialize the private key to a der file.
     pub fn to_der(&self) -> pkcs8::Result<pkcs8::SecretDocument> {
         use pkcs8::EncodePrivateKey;
 
         self.value.to_pkcs8_der()
     }
 
+    /// Get the public key info for this private key.
     pub fn public_key_to_info(&self) -> x509_cert::spki::Result<SubjectPublicKeyInfoOwned> {
         use rsa::pkcs8::EncodePublicKey;
         SubjectPublicKeyInfoOwned::try_from(
@@ -186,6 +201,7 @@ impl PrivateKey {
         )
     }
 
+    /// Create a public key based on this private key.
     pub fn to_public_key(&self) -> PublicKey {
         PublicKey {
             value: self.value.to_public_key(),
