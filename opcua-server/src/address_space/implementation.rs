@@ -771,7 +771,7 @@ impl AddressSpace {
         read_node_value(node, context, node_to_read, max_age, timestamps_to_return)
     }
 
-    /// Check if the given write is allowed. 
+    /// Check if the given write is allowed.
     pub fn validate_node_write<'a>(
         &'a mut self,
         context: &RequestContext,

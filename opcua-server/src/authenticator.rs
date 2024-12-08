@@ -14,8 +14,7 @@ use crate::identity_token::{
 };
 
 use super::{
-    address_space::AccessLevel, config::ANONYMOUS_USER_TOKEN_ID, ServerEndpoint,
-    ServerUserToken,
+    address_space::AccessLevel, config::ANONYMOUS_USER_TOKEN_ID, ServerEndpoint, ServerUserToken,
 };
 use std::{collections::BTreeMap, fmt::Debug};
 

@@ -1,6 +1,6 @@
 //! The [NodeManager] trait, as well as utilities related to
 //! calling services on this, and tooling for implementing custom node managers.
-//! 
+//!
 //! See docs/advanced_server.md for help on how to implement custom node managers.
 
 use std::{

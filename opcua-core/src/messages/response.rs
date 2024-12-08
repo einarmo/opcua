@@ -7,8 +7,12 @@ use std::io::{Read, Write};
 macro_rules! response_enum {
     ($($name:ident: $value:ident; $enc:ident),*,) => {
         #[derive(Debug, PartialEq, Clone)]
+        /// Enum of all possible _response_ service messages.
         pub enum ResponseMessage {
-            $( $name(Box<$value>), )*
+            $(
+                #[doc = stringify!($name)]
+                $name(Box<$value>),
+            )*
         }
         $(
             impl From<$value> for ResponseMessage {
@@ -32,6 +36,7 @@ macro_rules! response_enum {
         }
 
         impl ResponseMessage {
+            /// Get the response header.
             pub fn response_header(&self) -> &ResponseHeader {
                 match self {
                     $( Self::$name(value) => &value.response_header, )*

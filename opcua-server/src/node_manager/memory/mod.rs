@@ -28,8 +28,8 @@ use hashbrown::HashMap;
 
 use crate::{
     address_space::{
-        read_node_value, user_access_level, EventNotifier, NodeType, ReferenceDirection,
-        AccessLevel,
+        read_node_value, user_access_level, AccessLevel, EventNotifier, NodeType,
+        ReferenceDirection,
     },
     subscriptions::CreateMonitoredItem,
     SubscriptionCache,
@@ -61,7 +61,7 @@ struct BrowseContinuationPoint {
 
 /// A node manager that stores its nodes in an in-memory [AddressSpace]. This
 /// only supports a static list of namespaces, and a attributes stored in memory.
-/// 
+///
 /// Implementations of custom behavior are provided with a type implementing
 /// [InMemoryNodeManagerImpl].
 pub struct InMemoryNodeManager<TImpl> {
@@ -118,7 +118,7 @@ impl<TImpl: InMemoryNodeManagerImpl> InMemoryNodeManager<TImpl> {
 
     /// Set the attributes given in `values` and notify any subscriptions
     /// about the changes.
-    /// 
+    ///
     /// To set values, use [InMemoryNodeManager::set_values].
     pub fn set_attributes<'a>(
         &self,

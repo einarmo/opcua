@@ -54,7 +54,7 @@ impl Default for ServerBuilder {
 
 impl ServerBuilder {
     /// Create a new server builder.
-    /// 
+    ///
     /// If the generated address space is enabled, this will add the core and
     /// diagnostic node managers.
     pub fn new() -> Self {
@@ -543,7 +543,7 @@ impl ServerBuilder {
 
     /// Register a type loader. Any deserialization will
     /// use this type loader to handle types coming from the user.
-    /// 
+    ///
     /// If the user sends a type not in any registered type loader, decoding will fail.
     pub fn with_type_loader(mut self, loader: Arc<dyn TypeLoader>) -> Self {
         self.type_loaders.add(loader);

@@ -122,8 +122,7 @@ impl DataType {
         browse_name: impl Into<QualifiedName>,
         display_name: impl Into<LocalizedText>,
         is_abstract: bool,
-    ) -> DataType
-    {
+    ) -> DataType {
         DataType {
             base: Base::new(NodeClass::DataType, node_id, browse_name, display_name),
             is_abstract,
@@ -150,8 +149,7 @@ impl DataType {
         node_id: &NodeId,
         browse_name: impl Into<QualifiedName>,
         attributes: DataTypeAttributes,
-    ) -> Result<Self, FromAttributesError>
-    {
+    ) -> Result<Self, FromAttributesError> {
         let mask = AttributesMask::from_bits(attributes.specified_attributes)
             .ok_or(FromAttributesError::InvalidMask)?;
         if mask.contains(AttributesMask::DISPLAY_NAME | AttributesMask::IS_ABSTRACT) {

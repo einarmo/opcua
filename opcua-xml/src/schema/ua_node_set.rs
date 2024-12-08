@@ -15,7 +15,7 @@ use super::opc_ua_types::Variant;
 
 #[derive(Debug)]
 /// Struct representing a NodeSet2.xml file.
-/// 
+///
 /// NodeSet files are used as a portable format for OPC-UA node hierarchies.
 pub struct NodeSet2 {
     /// Full node set.
@@ -421,14 +421,26 @@ impl<'input> XmlLoad<'input> for ModelTable {
 }
 
 value_wrapper!(NodeId, "An OPC-UA node ID or alias", String);
-value_wrapper!(QualifiedName, "An OPC-UA QualifiedName on the form Name:Index", String);
+value_wrapper!(
+    QualifiedName,
+    "An OPC-UA QualifiedName on the form Name:Index",
+    String
+);
 value_wrapper!(Locale, "A text locale", String);
 value_wrapper!(WriteMask, "A node write mask", u32);
 value_wrapper!(EventNotifier, "Node event notifier", u8);
 value_wrapper!(ValueRank, "Variable value rank", i32);
 value_wrapper!(AccessRestriction, "Access restriction flags", u8);
-value_wrapper!(ArrayDimensions, "Array dimensions as a comma separated list of lengths", String);
-value_wrapper!(Duration, "Duration as a floating point number of seconds", f64);
+value_wrapper!(
+    ArrayDimensions,
+    "Array dimensions as a comma separated list of lengths",
+    String
+);
+value_wrapper!(
+    Duration,
+    "Duration as a floating point number of seconds",
+    f64
+);
 value_wrapper!(AccessLevel, "Access level flags", u8);
 
 impl FromValue for chrono::DateTime<Utc> {

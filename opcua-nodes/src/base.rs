@@ -186,8 +186,7 @@ impl Base {
         node_id: &NodeId,
         browse_name: impl Into<QualifiedName>,
         display_name: impl Into<LocalizedText>,
-    ) -> Base
-    {
+    ) -> Base {
         Base {
             node_id: node_id.clone(),
             node_class,
@@ -233,8 +232,7 @@ impl Base {
     }
 
     /// Set the browse name of this node.
-    pub fn set_browse_name(&mut self, browse_name: impl Into<QualifiedName>)
-    {
+    pub fn set_browse_name(&mut self, browse_name: impl Into<QualifiedName>) {
         self.browse_name = browse_name.into();
     }
 }

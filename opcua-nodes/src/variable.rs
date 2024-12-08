@@ -286,9 +286,8 @@ impl Variable {
         node_id: &NodeId,
         browse_name: impl Into<QualifiedName>,
         display_name: impl Into<LocalizedText>,
-        value: impl Into<Variant>
-    ) -> Variable
-    {
+        value: impl Into<Variant>,
+    ) -> Variable {
         let value: Variant = value.into();
         let data_type = value.data_type().or_else(|| value.data_type());
         if let Some(data_type) = data_type {
@@ -341,8 +340,7 @@ impl Variable {
         node_id: &NodeId,
         browse_name: impl Into<QualifiedName>,
         attributes: VariableAttributes,
-    ) -> Result<Self, FromAttributesError>
-    {
+    ) -> Result<Self, FromAttributesError> {
         let mandatory_attributes = AttributesMask::DISPLAY_NAME
             | AttributesMask::ACCESS_LEVEL
             | AttributesMask::USER_ACCESS_LEVEL
@@ -627,8 +625,7 @@ impl Variable {
 
     /// Test if the variable is user readable.
     pub fn is_user_readable(&self) -> bool {
-        self.user_access_level()
-            .contains(AccessLevel::CURRENT_READ)
+        self.user_access_level().contains(AccessLevel::CURRENT_READ)
     }
 
     /// Test if the variable is user writable.
@@ -685,8 +682,7 @@ impl Variable {
     }
 
     /// Set the data type of this variable.
-    pub fn set_data_type(&mut self, data_type: impl Into<NodeId>)
-    {
+    pub fn set_data_type(&mut self, data_type: impl Into<NodeId>) {
         self.data_type = data_type.into();
     }
 }

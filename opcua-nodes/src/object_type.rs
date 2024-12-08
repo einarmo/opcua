@@ -101,8 +101,7 @@ impl ObjectType {
         browse_name: impl Into<QualifiedName>,
         display_name: impl Into<LocalizedText>,
         is_abstract: bool,
-    ) -> ObjectType
-    {
+    ) -> ObjectType {
         ObjectType {
             base: Base::new(NodeClass::ObjectType, node_id, browse_name, display_name),
             is_abstract,
@@ -120,8 +119,7 @@ impl ObjectType {
         node_id: &NodeId,
         browse_name: impl Into<QualifiedName>,
         attributes: ObjectTypeAttributes,
-    ) -> Result<Self, FromAttributesError>
-    {
+    ) -> Result<Self, FromAttributesError> {
         let mandatory_attributes = AttributesMask::DISPLAY_NAME | AttributesMask::IS_ABSTRACT;
         let mask = AttributesMask::from_bits(attributes.specified_attributes)
             .ok_or(FromAttributesError::InvalidMask)?;

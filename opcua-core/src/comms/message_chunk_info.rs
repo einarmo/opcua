@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
+//! Implementation of [ChunkInfo], utility wrapping various message headers
+//! to provide a common source of info about a message chunk.
+
 use std::io::Cursor;
 
 use opcua_crypto::SecurityPolicy;
@@ -20,8 +23,9 @@ use super::{
 /// garbage.
 #[derive(Debug, Clone, PartialEq)]
 pub struct ChunkInfo {
+    /// Message header.
     pub message_header: MessageChunkHeader,
-    // Chunks either have an asymmetric or symmetric security header
+    /// Chunks either have an asymmetric or symmetric security header
     pub security_header: SecurityHeader,
     /// Sequence header information
     pub sequence_header: SequenceHeader,
@@ -36,6 +40,8 @@ pub struct ChunkInfo {
 }
 
 impl ChunkInfo {
+    /// Create a new message chunk info instance, containing detailed information
+    /// about the chunk.
     pub fn new(chunk: &MessageChunk, secure_channel: &SecureChannel) -> EncodingResult<ChunkInfo> {
         let mut stream = Cursor::new(&chunk.data);
 

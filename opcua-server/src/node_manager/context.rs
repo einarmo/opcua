@@ -23,7 +23,7 @@ use super::{
 pub trait TypeTreeForUser: Send + Sync {
     /// Get the type tree for the user associated with the given `ctx`.
     /// This can be the server global type tree, or a custom type tree for each individual user.
-    /// 
+    ///
     /// It is sync, so you should do any setup in your [`AuthManager`] implementation.
     fn get_type_tree_for_user<'a>(
         &'a self,

@@ -38,8 +38,7 @@ impl ObjectBuilder {
     }
 
     /// Add a `HasTypeDefinition` reference to the given object type.
-    pub fn has_type_definition(self, type_id: impl Into<NodeId>) -> Self
-    {
+    pub fn has_type_definition(self, type_id: impl Into<NodeId>) -> Self {
         self.reference(
             type_id,
             ReferenceTypeId::HasTypeDefinition,
@@ -48,8 +47,7 @@ impl ObjectBuilder {
     }
 
     /// Add a `HasEventSource` reference to the given node.
-    pub fn has_event_source(self, source_id: impl Into<NodeId>) -> Self
-    {
+    pub fn has_event_source(self, source_id: impl Into<NodeId>) -> Self {
         self.reference(
             source_id,
             ReferenceTypeId::HasEventSource,
@@ -123,8 +121,7 @@ impl Object {
         browse_name: impl Into<QualifiedName>,
         display_name: impl Into<LocalizedText>,
         event_notifier: EventNotifier,
-    ) -> Object
-    {
+    ) -> Object {
         Object {
             base: Base::new(NodeClass::Object, node_id, browse_name, display_name),
             event_notifier,
@@ -145,8 +142,7 @@ impl Object {
         node_id: &NodeId,
         browse_name: impl Into<QualifiedName>,
         attributes: ObjectAttributes,
-    ) -> Result<Self, FromAttributesError>
-    {
+    ) -> Result<Self, FromAttributesError> {
         let mandatory_attributes = AttributesMask::DISPLAY_NAME | AttributesMask::EVENT_NOTIFIER;
 
         let mask = AttributesMask::from_bits(attributes.specified_attributes)

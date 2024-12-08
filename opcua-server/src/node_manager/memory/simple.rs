@@ -302,11 +302,7 @@ impl InMemoryNodeManagerImpl for SimpleNodeManagerImpl {
 }
 
 impl SimpleNodeManagerImpl {
-    fn new(
-        namespaces: Vec<NamespaceMetadata>,
-        name: &str,
-        node_managers: NodeManagersRef,
-    ) -> Self {
+    fn new(namespaces: Vec<NamespaceMetadata>, name: &str, node_managers: NodeManagersRef) -> Self {
         Self {
             write_cbs: Default::default(),
             read_cbs: Default::default(),

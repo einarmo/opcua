@@ -19,7 +19,7 @@ use opcua_types::{
 use super::NamespaceMetadata;
 
 /// Trait for constructing an [InMemoryNodeManagerImpl].
-/// 
+///
 /// Note that this is called with the lock on the [AddressSpace] held,
 /// if you try to lock it again, it will deadlock.
 pub trait InMemoryNodeManagerImplBuilder {
@@ -63,7 +63,7 @@ pub trait InMemoryNodeManagerImpl: Send + Sync + 'static {
 
     /// Return `true` if a node with no requested node ID and parent `parent_id`
     /// should be created using this node manager.
-    /// 
+    ///
     /// This does not commit to actually allowing the node to be created, it just means
     /// that no other node managers will be called to create the node.
     fn handle_new_node(&self, parent_id: &ExpandedNodeId) -> bool {

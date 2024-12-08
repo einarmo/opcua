@@ -103,7 +103,7 @@ pub struct ParsedEventFilter {
 
 impl ParsedEventFilter {
     /// Try to build a parsed filter from a raw [EventFilter].
-    /// 
+    ///
     /// This may fail, but will always return an [EventFilterResult].
     pub fn new(
         raw: EventFilter,
@@ -128,10 +128,10 @@ impl ParsedContentFilter {
     }
 
     /// Create a new content filter from the raw [ContentFilter].
-    /// 
+    ///
     /// If `allow_attribute_operands` is false, parsing will fail
     /// if it encounters an attribute operand.
-    /// 
+    ///
     /// If `allow_complex_operators` is false, parsing will fail
     /// if it encounters operators `InView`, `OfType`, or `RelatedTo`.
     pub fn parse(

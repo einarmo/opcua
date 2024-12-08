@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
+//! Utility for producing sequential message handles.
+
 use std::sync::atomic::{AtomicU32, Ordering};
 
 use serde::Serialize;
@@ -33,6 +35,7 @@ impl Handle {
         next
     }
 
+    /// Set the next handle value manually.
     pub fn set_next(&mut self, next: u32) {
         self.next = next;
     }
@@ -51,6 +54,8 @@ pub struct AtomicHandle {
 }
 
 impl AtomicHandle {
+    /// Create a new atomic handle. `first` is the starting point and lowest value
+    /// this will produce.
     pub fn new(first: u32) -> Self {
         Self {
             next: AtomicU32::new(first),
@@ -58,6 +63,7 @@ impl AtomicHandle {
         }
     }
 
+    /// Get the next handle.
     pub fn next(&self) -> u32 {
         let mut val = self.next.fetch_add(1, Ordering::Relaxed);
 
@@ -83,6 +89,7 @@ impl AtomicHandle {
         val
     }
 
+    /// Set the next handle.
     pub fn set_next(&self, next: u32) {
         debug_assert!(next >= self.first);
         self.next.store(next, Ordering::Relaxed);

@@ -5,7 +5,7 @@ use opcua_types::{
 };
 
 /// Trait implemented by all events.
-/// 
+///
 /// This is used repeatedly when publishing event notifications to
 /// clients.
 pub trait Event: EventField {

@@ -31,10 +31,16 @@ use super::{
 };
 
 #[derive(Debug)]
+/// Message type sent over OPC-UA streams.
 pub enum Message {
+    /// Hello message, the first part of a connection negotiation.
     Hello(HelloMessage),
+    /// Acknowledge message, acceptance of negotiation.
     Acknowledge(AcknowledgeMessage),
+    /// Error message, final fatal message describing reason for
+    /// why the channel will be closed.
     Error(ErrorMessage),
+    /// Part of a general OPC-UA message.
     Chunk(MessageChunk),
 }
 

@@ -220,7 +220,7 @@ impl From<SecurityPolicy> for String {
 
 impl SecurityPolicy {
     /// Get the security policy URI from this policy.
-    /// 
+    ///
     /// This will panic if the security policy is `Unknown`.
     pub fn to_uri(&self) -> &'static str {
         match self {
@@ -259,7 +259,7 @@ impl SecurityPolicy {
     }
 
     /// Get a string representation of this policy.
-    /// 
+    ///
     /// This will panic if the security policy is `Unknown`.
     pub fn to_str(&self) -> &'static str {
         match self {
@@ -276,7 +276,7 @@ impl SecurityPolicy {
     }
 
     /// Get the asymmetric encryption algorithm for this security policy.
-    /// 
+    ///
     /// This will panic if the security policy is `Unknown` or `None`.
     pub fn asymmetric_encryption_algorithm(&self) -> &'static str {
         match self {
@@ -296,7 +296,7 @@ impl SecurityPolicy {
     }
 
     /// Get the asymmetric signature algorithm for this security policy.
-    /// 
+    ///
     /// This will panic if the security policy is `Unknown` or `None`.
     pub fn asymmetric_signature_algorithm(&self) -> &'static str {
         match self {
@@ -316,7 +316,7 @@ impl SecurityPolicy {
     }
 
     /// Get the symmetric signature algorithm for this security policy.
-    /// 
+    ///
     /// This will panic if the security policy is `Unknown` or `None`.
     pub fn symmetric_signature_algorithm(&self) -> &'static str {
         match self {
@@ -336,7 +336,7 @@ impl SecurityPolicy {
     }
 
     /// Plaintext block size in bytes.
-    /// 
+    ///
     /// This will panic if the security policy is `Unknown` or `None`.
     pub fn plain_block_size(&self) -> usize {
         match self {
@@ -352,7 +352,7 @@ impl SecurityPolicy {
     }
 
     /// Signature size in bytes.
-    /// 
+    ///
     /// This will panic if the security policy is `Unknown` or `None`.
     pub fn symmetric_signature_size(&self) -> usize {
         match self {
@@ -368,7 +368,7 @@ impl SecurityPolicy {
     }
 
     /// Returns the derived signature key (not the signature) size in bytes.
-    /// 
+    ///
     /// This will panic if the security policy is `Unknown` or `None`.
     pub fn derived_signature_key_size(&self) -> usize {
         let length = match self {

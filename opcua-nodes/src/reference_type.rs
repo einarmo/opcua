@@ -135,8 +135,7 @@ impl ReferenceType {
         inverse_name: Option<LocalizedText>,
         symmetric: bool,
         is_abstract: bool,
-    ) -> ReferenceType
-    {
+    ) -> ReferenceType {
         ReferenceType {
             base: Base::new(NodeClass::ReferenceType, node_id, browse_name, display_name),
             symmetric,
@@ -166,8 +165,7 @@ impl ReferenceType {
         node_id: &NodeId,
         browse_name: impl Into<QualifiedName>,
         attributes: ReferenceTypeAttributes,
-    ) -> Result<Self, FromAttributesError>
-    {
+    ) -> Result<Self, FromAttributesError> {
         let mandatory_attributes =
             AttributesMask::DISPLAY_NAME | AttributesMask::IS_ABSTRACT | AttributesMask::SYMMETRIC;
         let mask = AttributesMask::from_bits(attributes.specified_attributes)

@@ -2,6 +2,11 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (C) 2017-2024 Adam Lock
 
+//! [SecurityHeader] and related utilities.
+//!
+//! The security header is part of an OPC-UA message containing information about
+//! the security token and encryption used.
+
 use std::io::{Read, Write};
 
 use opcua_types::{
@@ -17,7 +22,9 @@ use opcua_crypto::{SecurityPolicy, Thumbprint, X509};
 /// security header, regular messages use a symmetric security header.
 #[derive(Debug, Clone, PartialEq)]
 pub enum SecurityHeader {
+    /// Security header for asymmetric encryption.
     Asymmetric(AsymmetricSecurityHeader),
+    /// Security header for symmetric encryption.
     Symmetric(SymmetricSecurityHeader),
 }
 
@@ -38,7 +45,9 @@ impl SimpleBinaryEncodable for SecurityHeader {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Security header for symmetric encryption.
 pub struct SymmetricSecurityHeader {
+    /// Security token ID.
     pub token_id: u32,
 }
 
@@ -63,9 +72,13 @@ impl SimpleBinaryDecodable for SymmetricSecurityHeader {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Security header for asymmetric encryption.
 pub struct AsymmetricSecurityHeader {
+    /// Security policy URI.
     pub security_policy_uri: UAString,
+    /// Sender certificate as a byte string.
     pub sender_certificate: ByteString,
+    /// Thumbprint of the receiver certificate as a byte string.
     pub receiver_certificate_thumbprint: ByteString,
 }
 
@@ -147,6 +160,7 @@ impl SimpleBinaryDecodable for AsymmetricSecurityHeader {
 }
 
 impl AsymmetricSecurityHeader {
+    /// Create a new asymmetric security header with no security policy.
     pub fn none() -> AsymmetricSecurityHeader {
         AsymmetricSecurityHeader {
             security_policy_uri: UAString::from(SecurityPolicy::None.to_uri()),
@@ -155,6 +169,7 @@ impl AsymmetricSecurityHeader {
         }
     }
 
+    /// Create a new asymmetric security header.
     pub fn new(
         security_policy: SecurityPolicy,
         sender_certificate: &X509,
@@ -169,8 +184,12 @@ impl AsymmetricSecurityHeader {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Part of message headers containing the sequence number of the chunk
+/// and the request ID it is part of.
 pub struct SequenceHeader {
+    /// Sequence number of the chunk.
     pub sequence_number: u32,
+    /// ID of the request this chunk is part of.
     pub request_id: u32,
 }
 

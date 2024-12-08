@@ -115,9 +115,9 @@ impl ServerEndpoint {
 
     #[deprecated]
     /// Create a new server endpoint with Basic128 signature.
-    /// 
+    ///
     /// # Warning
-    /// 
+    ///
     /// This security mode is deprecated in the OPC-UA standard for being insecure.
     pub fn new_basic128rsa15_sign<T>(path: T, user_token_ids: &[String]) -> Self
     where
@@ -133,9 +133,9 @@ impl ServerEndpoint {
 
     #[deprecated]
     /// Create a new server endpoint with Basic128 encryption.
-    /// 
+    ///
     /// # Warning
-    /// 
+    ///
     /// This security mode is deprecated in the OPC-UA standard for being insecure.
     pub fn new_basic128rsa15_sign_encrypt<T>(path: T, user_token_ids: &[String]) -> Self
     where
@@ -151,9 +151,9 @@ impl ServerEndpoint {
 
     #[deprecated]
     /// Create a new server endpoint with Basic256 signature.
-    /// 
+    ///
     /// # Warning
-    /// 
+    ///
     /// This security mode is deprecated in the OPC-UA standard for being insecure.
     pub fn new_basic256_sign<T>(path: T, user_token_ids: &[String]) -> Self
     where
@@ -169,9 +169,9 @@ impl ServerEndpoint {
 
     #[deprecated]
     /// Create a new server endpoint with Basic256 encryption.
-    /// 
+    ///
     /// # Warning
-    /// 
+    ///
     /// This security mode is deprecated in the OPC-UA standard for being insecure.
     pub fn new_basic256_sign_encrypt<T>(path: T, user_token_ids: &[String]) -> Self
     where
@@ -187,9 +187,9 @@ impl ServerEndpoint {
 
     #[deprecated]
     /// Create a new server endpoint with Basic256/Sha256 signing.
-    /// 
+    ///
     /// # Warning
-    /// 
+    ///
     /// This security mode is deprecated in the OPC-UA standard for being insecure.
     pub fn new_basic256sha256_sign<T>(path: T, user_token_ids: &[String]) -> Self
     where
@@ -204,9 +204,9 @@ impl ServerEndpoint {
     }
 
     /// Create a new server endpoint with Basic256/Sha256 encryption.
-    /// 
+    ///
     /// # Warning
-    /// 
+    ///
     /// This security mode is deprecated in the OPC-UA standard for being insecure.
     pub fn new_basic256sha256_sign_encrypt<T>(path: T, user_token_ids: &[String]) -> Self
     where

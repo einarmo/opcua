@@ -6,7 +6,7 @@ use hashbrown::HashMap;
 use opcua_types::{BrowseDescriptionResultMask, NamespaceMap, NodeId};
 
 /// Fetch external references by requesting them from their owning node manager.
-/// 
+///
 /// This calls `resolve_external_references` on each node manager with the ids
 /// in `ids` that they return `true` on `owns_node` for.
 pub async fn get_node_metadata(

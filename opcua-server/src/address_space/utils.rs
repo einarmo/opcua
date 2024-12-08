@@ -6,7 +6,7 @@ use opcua_types::{
     Variant, WriteMask,
 };
 
-use super::{AddressSpace, HasNodeId, NodeType, AccessLevel, Variable};
+use super::{AccessLevel, AddressSpace, HasNodeId, NodeType, Variable};
 
 /// Validate that the user given by `context` can read the value
 /// of the given node.
@@ -186,14 +186,14 @@ pub fn validate_node_write(
 }
 
 /// Return `true` if we support the given data encoding.
-/// 
+///
 /// We currently only support `Binary`.
 pub fn is_supported_data_encoding(data_encoding: &DataEncoding) -> bool {
     matches!(data_encoding, DataEncoding::Binary)
 }
 
 /// Invoke `Read` for the given `node_to_read` on `node`.
-/// 
+///
 /// This can return a data value containing an error if validation failed.
 pub fn read_node_value(
     node: &NodeType,

@@ -17,9 +17,7 @@ use opcua_types::{
 use super::{
     message_chunk_info::ChunkInfo,
     secure_channel::SecureChannel,
-    security_header::{
-        AsymmetricSecurityHeader, SecurityHeader, SequenceHeader, SymmetricSecurityHeader,
-    },
+    security_header::SequenceHeader,
     tcp_types::{
         CHUNK_FINAL, CHUNK_FINAL_ERROR, CHUNK_INTERMEDIATE, CHUNK_MESSAGE,
         CLOSE_SECURE_CHANNEL_MESSAGE, MIN_CHUNK_SIZE, OPEN_SECURE_CHANNEL_MESSAGE,
@@ -30,19 +28,25 @@ use super::{
 pub const MESSAGE_CHUNK_HEADER_SIZE: usize = 12;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+/// Type of message chunk.
 pub enum MessageChunkType {
+    /// Chunk is part of a normal service message.
     Message,
+    /// Chunk is an open secure channel message.
     OpenSecureChannel,
+    /// Chunk is a close secure channel message.
     CloseSecureChannel,
 }
 
 impl MessageChunkType {
+    /// `true` if this is an `OpenSecureChannel` message.
     pub fn is_open_secure_channel(&self) -> bool {
         *self == MessageChunkType::OpenSecureChannel
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+/// Type of message chunk.
 pub enum MessageIsFinalType {
     /// Intermediate
     Intermediate,
@@ -53,6 +57,7 @@ pub enum MessageIsFinalType {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Message chunk header.
 pub struct MessageChunkHeader {
     /// The kind of chunk - message, open or close
     pub message_type: MessageChunkType,
@@ -202,9 +207,12 @@ impl SimpleBinaryDecodable for MessageChunk {
 }
 
 #[derive(Debug)]
+/// Error returned if the chunk is too small, this indicates
+/// an error somewhere else.
 pub struct MessageChunkTooSmall;
 
 impl MessageChunk {
+    /// Create a new message chunk.
     pub fn new(
         sequence_number: u32,
         request_id: u32,
@@ -295,6 +303,7 @@ impl MessageChunk {
         }
     }
 
+    /// Decode the message header from the inner data.
     pub fn message_header(
         &self,
         decoding_options: &DecodingOptions,
@@ -304,28 +313,7 @@ impl MessageChunk {
         MessageChunkHeader::decode(&mut stream, decoding_options)
     }
 
-    pub fn security_header(
-        &self,
-        decoding_options: &DecodingOptions,
-    ) -> EncodingResult<SecurityHeader> {
-        // Message header is first so just read it
-        let mut stream = Cursor::new(&self.data);
-        let message_header = MessageChunkHeader::decode(&mut stream, decoding_options)?;
-        let security_header = if message_header.message_type == MessageChunkType::OpenSecureChannel
-        {
-            SecurityHeader::Asymmetric(AsymmetricSecurityHeader::decode(
-                &mut stream,
-                decoding_options,
-            )?)
-        } else {
-            SecurityHeader::Symmetric(SymmetricSecurityHeader::decode(
-                &mut stream,
-                decoding_options,
-            )?)
-        };
-        Ok(security_header)
-    }
-
+    /// Check if this message is an OpenSecureChannel request.
     pub fn is_open_secure_channel(&self, decoding_options: &DecodingOptions) -> bool {
         if let Ok(message_header) = self.message_header(decoding_options) {
             message_header.message_type.is_open_secure_channel()
@@ -334,6 +322,7 @@ impl MessageChunk {
         }
     }
 
+    /// Decode info about this chunk.
     pub fn chunk_info(&self, secure_channel: &SecureChannel) -> EncodingResult<ChunkInfo> {
         ChunkInfo::new(self, secure_channel)
     }

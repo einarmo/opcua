@@ -174,8 +174,7 @@ impl Method {
         display_name: impl Into<LocalizedText>,
         executable: bool,
         user_executable: bool,
-    ) -> Method
-    {
+    ) -> Method {
         Method {
             base: Base::new(NodeClass::Method, node_id, browse_name, display_name),
             executable,
@@ -198,8 +197,7 @@ impl Method {
         node_id: &NodeId,
         browse_name: impl Into<QualifiedName>,
         attributes: MethodAttributes,
-    ) -> Result<Self, FromAttributesError>
-    {
+    ) -> Result<Self, FromAttributesError> {
         let mandatory_attributes = AttributesMask::DISPLAY_NAME
             | AttributesMask::EXECUTABLE
             | AttributesMask::USER_EXECUTABLE;

@@ -1,5 +1,5 @@
 //! Definition of types for representing values in a NodeSet2 file.
-//! 
+//!
 //! These use a slightly different schema than similar fields in the rest of the file.
 
 use std::collections::HashMap;

@@ -169,8 +169,7 @@ impl VariableType {
         data_type: NodeId,
         is_abstract: bool,
         value_rank: i32,
-    ) -> VariableType
-    {
+    ) -> VariableType {
         VariableType {
             base: Base::new(NodeClass::VariableType, node_id, browse_name, display_name),
             data_type,
@@ -206,8 +205,7 @@ impl VariableType {
         node_id: &NodeId,
         browse_name: impl Into<QualifiedName>,
         attributes: VariableTypeAttributes,
-    ) -> Result<Self, FromAttributesError>
-    {
+    ) -> Result<Self, FromAttributesError> {
         let mandatory_attributes = AttributesMask::DISPLAY_NAME
             | AttributesMask::IS_ABSTRACT
             | AttributesMask::DATA_TYPE
@@ -256,8 +254,7 @@ impl VariableType {
     }
 
     /// Set the data type of this variable type.
-    pub fn set_data_type(&mut self, data_type: impl Into<NodeId>)
-    {
+    pub fn set_data_type(&mut self, data_type: impl Into<NodeId>) {
         self.data_type = data_type.into();
     }
 
@@ -297,8 +294,7 @@ impl VariableType {
     }
 
     /// Set the default value for instances of this type.
-    pub fn set_value(&mut self, value: impl Into<Variant>)
-    {
+    pub fn set_value(&mut self, value: impl Into<Variant>) {
         self.value = Some(DataValue::new_now(value));
     }
 

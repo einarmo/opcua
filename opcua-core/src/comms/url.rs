@@ -9,6 +9,7 @@ use url::Url;
 
 use opcua_types::status_code::StatusCode;
 
+/// Scheme for OPC-UA TCP.
 pub const OPC_TCP_SCHEME: &str = "opc.tcp";
 
 /// Creates a `Url` from the input string, supplying a default port if necessary.
@@ -68,10 +69,12 @@ pub fn server_url_from_endpoint_url(
     })
 }
 
+/// Check if this is a valid OPC-UA TCP URL.
 pub fn is_valid_opc_ua_url(url: &str) -> bool {
     is_opc_ua_binary_url(url)
 }
 
+/// Check if this is an OPC-UA TCP URL.
 pub fn is_opc_ua_binary_url(url: &str) -> bool {
     if let Ok(url) = opc_url_from_str(url) {
         url.scheme() == OPC_TCP_SCHEME
@@ -80,8 +83,11 @@ pub fn is_opc_ua_binary_url(url: &str) -> bool {
     }
 }
 
+/// Error returned when getting host name from URL.
 pub enum HostnameFromUrlError {
+    /// URL failed to parse.
     Parse(url::ParseError),
+    /// Host is not present in URL.
     MissingHost,
 }
 
@@ -91,6 +97,7 @@ impl From<url::ParseError> for HostnameFromUrlError {
     }
 }
 
+/// Get the hostname from the given URL.
 pub fn hostname_from_url(url: &str) -> Result<String, HostnameFromUrlError> {
     // Validate and split out the endpoint we have
     let url = Url::parse(url)?;
@@ -101,6 +108,7 @@ pub fn hostname_from_url(url: &str) -> Result<String, HostnameFromUrlError> {
     }
 }
 
+/// Get the hostname and port from the given URL, defaulting to `default_port`.
 pub fn hostname_port_from_url(url: &str, default_port: u16) -> Result<(String, u16), StatusCode> {
     // Validate and split out the endpoint we have
     let url = Url::parse(url).map_err(|_| StatusCode::BadTcpEndpointUrlInvalid)?;

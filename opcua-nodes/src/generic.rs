@@ -54,31 +54,28 @@ macro_rules! masked_or_default_opt {
 }
 
 macro_rules! base {
-    ($attrs:expr, $node_id:expr, $node_class:expr, $browse_name:expr, $expected_node_class:pat) => {
-        {
-            if !matches!($node_class, $expected_node_class) {
-                return Err(StatusCode::BadNodeAttributesInvalid);
-            }
-            Base {
-                node_id: $node_id,
-                node_class: $node_class,
-                browse_name: $browse_name,
-                display_name: masked_or_default!(AttributeId::DisplayName, $attrs, display_name),
-                description: masked_or_default_opt!(AttributeId::Description, $attrs, description),
-                write_mask: masked_or_default_opt!(AttributeId::WriteMask, $attrs, write_mask),
-                user_write_mask: masked_or_default_opt!(
-                    AttributeId::UserWriteMask,
-                    $attrs,
-                    user_write_mask
-                ),
-            }
+    ($attrs:expr, $node_id:expr, $node_class:expr, $browse_name:expr, $expected_node_class:pat) => {{
+        if !matches!($node_class, $expected_node_class) {
+            return Err(StatusCode::BadNodeAttributesInvalid);
         }
-        
-    };
+        Base {
+            node_id: $node_id,
+            node_class: $node_class,
+            browse_name: $browse_name,
+            display_name: masked_or_default!(AttributeId::DisplayName, $attrs, display_name),
+            description: masked_or_default_opt!(AttributeId::Description, $attrs, description),
+            write_mask: masked_or_default_opt!(AttributeId::WriteMask, $attrs, write_mask),
+            user_write_mask: masked_or_default_opt!(
+                AttributeId::UserWriteMask,
+                $attrs,
+                user_write_mask
+            ),
+        }
+    }};
 }
 
 /// Create a new node from [AddNodeAttributes].
-/// 
+///
 /// The cr
 pub fn new_node_from_attributes(
     node_id: NodeId,
@@ -155,7 +152,13 @@ pub fn new_node_from_attributes(
             array_dimensions: masked_or_default!(AttributeId::ArrayDimensions, a, array_dimensions),
         })),
         AddNodeAttributes::ReferenceType(a) => NodeType::ReferenceType(Box::new(ReferenceType {
-            base: base!(a, node_id, node_class, browse_name, NodeClass::ReferenceType),
+            base: base!(
+                a,
+                node_id,
+                node_class,
+                browse_name,
+                NodeClass::ReferenceType
+            ),
             symmetric: masked_or_default!(AttributeId::Symmetric, a, symmetric),
             is_abstract: masked_or_default!(AttributeId::IsAbstract, a, is_abstract),
             inverse_name: masked_or_default_opt!(AttributeId::InverseName, a, inverse_name),

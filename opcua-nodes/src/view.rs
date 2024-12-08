@@ -114,8 +114,7 @@ impl View {
         display_name: impl Into<LocalizedText>,
         event_notifier: EventNotifier,
         contains_no_loops: bool,
-    ) -> View
-    {
+    ) -> View {
         View {
             base: Base::new(NodeClass::View, node_id, browse_name, display_name),
             event_notifier,
@@ -137,8 +136,7 @@ impl View {
         node_id: &NodeId,
         browse_name: impl Into<QualifiedName>,
         attributes: ViewAttributes,
-    ) -> Result<Self, FromAttributesError>
-    {
+    ) -> Result<Self, FromAttributesError> {
         let mandatory_attributes = AttributesMask::DISPLAY_NAME
             | AttributesMask::EVENT_NOTIFIER
             | AttributesMask::CONTAINS_NO_LOOPS;
@@ -183,7 +181,7 @@ impl View {
         self.event_notifier = event_notifier;
     }
 
-    /// Get the `ContainsNoLoops` attribute of this view. 
+    /// Get the `ContainsNoLoops` attribute of this view.
     pub fn contains_no_loops(&self) -> bool {
         self.contains_no_loops
     }

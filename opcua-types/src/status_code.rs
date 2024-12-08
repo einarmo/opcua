@@ -8,9 +8,9 @@ use std::{
     io::{Read, Write},
 };
 
-use crate::BinaryDecodable;
+use crate::{DecodingOptions, SimpleBinaryDecodable};
 
-use super::encoding::{read_u32, write_u32, BinaryEncodable, EncodingResult};
+use super::encoding::{read_u32, write_u32, EncodingResult, SimpleBinaryEncodable};
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Default)]
 /// Wrapper around an OPC-UA status code, with utilities for displaying,
@@ -286,22 +286,21 @@ impl std::fmt::Debug for StatusCode {
     }
 }
 
-impl BinaryEncodable for StatusCode {
-    fn byte_len(&self, _ctx: &crate::Context<'_>) -> usize {
+impl SimpleBinaryEncodable for StatusCode {
+    fn byte_len(&self) -> usize {
         4
     }
 
-    fn encode<S: Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        _ctx: &crate::Context<'_>,
-    ) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
         write_u32(stream, self.bits())
     }
 }
 
-impl BinaryDecodable for StatusCode {
-    fn decode<S: Read + ?Sized>(stream: &mut S, _ctx: &crate::Context<'_>) -> EncodingResult<Self> {
+impl SimpleBinaryDecodable for StatusCode {
+    fn decode<S: Read + ?Sized>(
+        stream: &mut S,
+        _decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self> {
         Ok(StatusCode(read_u32(stream)?))
     }
 }

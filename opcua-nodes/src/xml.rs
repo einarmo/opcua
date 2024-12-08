@@ -86,7 +86,7 @@ impl NodeSet2Import {
     }
 
     /// Create a new NodeSet2 importer from an already loaded `NodeSet2.xml` file.
-    /// 
+    ///
     /// See documentation of [NodeSet2Import::new].
     pub fn new_str(
         preferred_locale: &str,
@@ -121,7 +121,7 @@ impl NodeSet2Import {
     }
 
     /// Add a type loader for importing types from XML.
-    /// 
+    ///
     /// Any custom variable Value must be supported by one of the added
     /// type loaders in order for the node set import to work.
     pub fn add_type_loader(&mut self, loader: Arc<dyn TypeLoader>) {

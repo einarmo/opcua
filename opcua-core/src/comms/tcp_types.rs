@@ -15,17 +15,25 @@ use opcua_types::{
 
 use super::url::url_matches_except_host;
 
-pub const CHUNK_MESSAGE: &[u8] = b"MSG";
-pub const OPEN_SECURE_CHANNEL_MESSAGE: &[u8] = b"OPN";
-pub const CLOSE_SECURE_CHANNEL_MESSAGE: &[u8] = b"CLO";
+/// Message header type for message chunks.
+pub(crate) const CHUNK_MESSAGE: &[u8] = b"MSG";
+/// Message header type for open secure channel messages.
+pub(crate) const OPEN_SECURE_CHANNEL_MESSAGE: &[u8] = b"OPN";
+/// Message header type for close secure channel messages.
+pub(crate) const CLOSE_SECURE_CHANNEL_MESSAGE: &[u8] = b"CLO";
+/// Message header type for hello messages.
+pub(crate) const HELLO_MESSAGE: &[u8] = b"HEL";
+/// Message header type for acknowledge messages.
+pub(crate) const ACKNOWLEDGE_MESSAGE: &[u8] = b"ACK";
+/// Message header type for error messages.
+pub(crate) const ERROR_MESSAGE: &[u8] = b"ERR";
 
-const HELLO_MESSAGE: &[u8] = b"HEL";
-const ACKNOWLEDGE_MESSAGE: &[u8] = b"ACK";
-const ERROR_MESSAGE: &[u8] = b"ERR";
-
-pub const CHUNK_FINAL: u8 = b'F';
-pub const CHUNK_INTERMEDIATE: u8 = b'C';
-pub const CHUNK_FINAL_ERROR: u8 = b'A';
+/// ChunkIsFinal type for the final chunk in a message.
+pub(crate) const CHUNK_FINAL: u8 = b'F';
+/// ChunkIsFinal type for intermediate chunks.
+pub(crate) const CHUNK_INTERMEDIATE: u8 = b'C';
+/// ChunkIsFinal type for error chunks.
+pub(crate) const CHUNK_FINAL_ERROR: u8 = b'A';
 
 /// Minimum size in bytes than any single message chunk can be
 pub const MIN_CHUNK_SIZE: usize = 8192;
@@ -34,17 +42,26 @@ pub const MIN_CHUNK_SIZE: usize = 8192;
 pub const MESSAGE_HEADER_LEN: usize = 8;
 
 #[derive(Debug, Clone, PartialEq)]
+/// Enum over possible message types.
 pub enum MessageType {
+    /// Invalid message type.
     Invalid,
+    /// HELLO message, sent on connection establishment.
     Hello,
+    /// ACK message, sent on connection establishment.
     Acknowledge,
+    /// Message chunk.
     Chunk,
+    /// Fatal error, followed by shutting down the channel.
     Error,
 }
 
 #[derive(Debug, Clone, PartialEq)]
+/// Header of all OPC-UA messages.
 pub struct MessageHeader {
+    /// Message type.
     pub message_type: MessageType,
+    /// Message size in bytes.
     pub message_size: u32,
 }
 
@@ -86,6 +103,7 @@ impl SimpleBinaryDecodable for MessageHeader {
 }
 
 impl MessageHeader {
+    /// Create a new message header with size set to 0.
     pub fn new(message_type: MessageType) -> MessageHeader {
         MessageHeader {
             message_type,
@@ -141,6 +159,7 @@ impl MessageHeader {
         Ok(result)
     }
 
+    /// Read the message type from the given prefix.
     pub fn message_type(t: &[u8]) -> MessageType {
         if t.len() != 4 {
             MessageType::Invalid
@@ -179,11 +198,17 @@ impl MessageHeader {
 #[derive(Debug, Clone, PartialEq)]
 pub struct HelloMessage {
     message_header: MessageHeader,
+    /// HELLO message protocol version.
     pub protocol_version: u32,
+    /// Requested receive buffer size.
     pub receive_buffer_size: u32,
+    /// Requested send buffer size.
     pub send_buffer_size: u32,
+    /// Requested max message size.
     pub max_message_size: u32,
+    /// Requested max chunk count.
     pub max_chunk_count: u32,
+    /// Endpoint URL that the client wants to connect to.
     pub endpoint_url: UAString,
 }
 
@@ -254,6 +279,7 @@ impl HelloMessage {
         msg
     }
 
+    /// Check if the endpoint URL is valid.
     pub fn is_endpoint_url_valid(&self, endpoints: &[EndpointDescription]) -> bool {
         if self.is_endpoint_valid_length() {
             self.matches_endpoint(endpoints)
@@ -264,6 +290,7 @@ impl HelloMessage {
         }
     }
 
+    /// Check if the endpoint URL has valid length.
     pub fn is_endpoint_valid_length(&self) -> bool {
         if let Some(ref endpoint_url) = self.endpoint_url.value() {
             endpoint_url.len() <= HelloMessage::MAX_URL_LEN
@@ -273,6 +300,7 @@ impl HelloMessage {
         }
     }
 
+    /// Check if any endpoint in the list matches the given endpoint in this message.
     pub fn matches_endpoint(&self, endpoints: &[EndpointDescription]) -> bool {
         // check server's endpoints to find one that matches the hello
         endpoints.iter().any(|e| {
@@ -282,6 +310,7 @@ impl HelloMessage {
         })
     }
 
+    /// Check if the requested buffer sizes are valid.
     pub fn is_valid_buffer_sizes(&self) -> bool {
         // Set in part 6 as minimum transport buffer size
         self.receive_buffer_size >= MIN_CHUNK_SIZE as u32
@@ -293,10 +322,15 @@ impl HelloMessage {
 #[derive(Debug, Clone, PartialEq)]
 pub struct AcknowledgeMessage {
     message_header: MessageHeader,
+    /// Negotiated protocol version.
     pub protocol_version: u32,
+    /// Negotiated receive buffer size.
     pub receive_buffer_size: u32,
+    /// Negotiated send buffer size.
     pub send_buffer_size: u32,
+    /// Negotiated max message size.
     pub max_message_size: u32,
+    /// Negotiated max chunk count.
     pub max_chunk_count: u32,
 }
 
@@ -340,6 +374,7 @@ impl SimpleBinaryDecodable for AcknowledgeMessage {
 }
 
 impl AcknowledgeMessage {
+    /// Create a new acknowledge message.
     pub fn new(
         protocol_version: u32,
         receive_buffer_size: u32,
@@ -364,7 +399,9 @@ impl AcknowledgeMessage {
 #[derive(Debug, Clone, PartialEq)]
 pub struct ErrorMessage {
     message_header: MessageHeader,
-    pub error: u32,
+    /// Error status code.
+    pub error: StatusCode,
+    /// Error reason as string.
     pub reason: UAString,
 }
 
@@ -388,7 +425,7 @@ impl SimpleBinaryDecodable for ErrorMessage {
         decoding_options: &DecodingOptions,
     ) -> EncodingResult<Self> {
         let message_header = MessageHeader::decode(stream, decoding_options)?;
-        let error = u32::decode(stream, decoding_options)?;
+        let error = StatusCode::decode(stream, decoding_options)?;
         let reason = UAString::decode(stream, decoding_options)?;
         Ok(ErrorMessage {
             message_header,
@@ -399,14 +436,16 @@ impl SimpleBinaryDecodable for ErrorMessage {
 }
 
 impl ErrorMessage {
+    /// Create a new error message from the given status code.
     pub fn from_status_code(status_code: StatusCode) -> ErrorMessage {
         Self::new(status_code, status_code.sub_code().description())
     }
 
+    /// Create a new error message from the given status code and reason.
     pub fn new(status_code: StatusCode, reason: &str) -> ErrorMessage {
         let mut error = ErrorMessage {
             message_header: MessageHeader::new(MessageType::Error),
-            error: status_code.bits(),
+            error: status_code,
             reason: UAString::from(reason),
         };
         error.message_header.message_size = error.byte_len() as u32;

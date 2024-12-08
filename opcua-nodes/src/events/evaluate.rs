@@ -74,7 +74,7 @@ macro_rules! bw_op {
 }
 
 /// Trait for something that can be queried for attribute values.
-/// 
+///
 /// Implemented by `dyn Event`. Types passed to a content filter must
 /// implement this.
 pub trait AttributeQueryable: Copy {
