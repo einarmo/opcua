@@ -5,6 +5,12 @@
 //! Contains the most of the implementation of `Variant`. Some substantial chunks like JSON serialization
 //! are moved off into their own files due to the complexity of this functionality.
 
+#[cfg(feature = "json")]
+mod json;
+mod type_id;
+
+pub use type_id::*;
+
 use std::{
     convert::TryFrom,
     fmt,
@@ -29,7 +35,6 @@ use crate::{
     qualified_name::QualifiedName,
     status_code::StatusCode,
     string::{UAString, XmlElement},
-    variant_type_id::*,
     write_i32, write_u8, DataTypeId, DataValue, DiagnosticInfo, DynEncodable, EncodingContext,
     Error, ExpandedMessageInfo, MessageInfo,
 };

@@ -251,9 +251,6 @@ pub mod status_code;
 pub mod string;
 pub mod type_loader;
 pub mod variant;
-#[cfg(feature = "json")]
-pub mod variant_json;
-pub mod variant_type_id;
 #[cfg(feature = "xml")]
 pub mod xml;
 
@@ -299,7 +296,6 @@ pub use self::{
     string::*,
     type_loader::*,
     variant::*,
-    variant_type_id::*,
 };
 
 #[derive(Debug, Clone)]

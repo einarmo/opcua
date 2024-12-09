@@ -4,7 +4,7 @@
 use log::error;
 use thiserror::Error;
 
-use crate::{variant::*, variant_type_id::*};
+use crate::variant::*;
 
 /// An array is a vector of values with an optional number of dimensions.
 /// It is expected that the multi-dimensional array is valid, or it might not be encoded or decoded

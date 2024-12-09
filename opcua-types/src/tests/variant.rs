@@ -2,9 +2,11 @@ use std::convert::TryFrom;
 use std::str::FromStr;
 
 use crate::{
-    numeric_range::NumericRange, status_code::StatusCode, variant::Variant,
-    variant_type_id::VariantTypeId, ByteString, DataTypeId, DataValue, DateTime, DiagnosticInfo,
-    ExpandedNodeId, Guid, LocalizedText, NodeId, QualifiedName, UAString, VariantScalarTypeId,
+    numeric_range::NumericRange,
+    status_code::StatusCode,
+    variant::{Variant, VariantTypeId},
+    ByteString, DataTypeId, DataValue, DateTime, DiagnosticInfo, ExpandedNodeId, Guid,
+    LocalizedText, NodeId, QualifiedName, UAString, VariantScalarTypeId,
 };
 
 #[test]
