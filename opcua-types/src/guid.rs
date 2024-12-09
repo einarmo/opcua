@@ -20,6 +20,12 @@ pub struct Guid {
     uuid: Uuid,
 }
 
+impl From<Guid> for Uuid {
+    fn from(value: Guid) -> Self {
+        value.uuid
+    }
+}
+
 #[cfg(feature = "json")]
 mod json {
     use std::io::{Read, Write};

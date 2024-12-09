@@ -11,7 +11,9 @@ use super::{Array, Variant, VariantScalarTypeId, VariantType};
 /// This is a workaround for specialization in `EventField`.
 ///
 /// Any type that implements this also implements `Into<Variant>` (and variant
-/// implements `From<T> where T : IntoVariant`)
+/// implements `From<T> where T : IntoVariant`). Variant also implements
+/// `From<Vec<T>>` and `From<Option<T>>`, so prefer to use that unless you
+/// need to special case `Vec` and `Option` behavior, like `EventField` does.
 pub trait IntoVariant {
     /// Convert self into a variant.
     fn into_variant(self) -> Variant;

@@ -5,11 +5,13 @@
 //! Contains the most of the implementation of `Variant`. Some substantial chunks like JSON serialization
 //! are moved off into their own files due to the complexity of this functionality.
 
+mod from;
 mod into;
 #[cfg(feature = "json")]
 mod json;
 mod type_id;
 
+pub use from::TryFromVariant;
 pub use into::IntoVariant;
 pub use type_id::*;
 
@@ -163,73 +165,6 @@ impl_variant_type_for!(DiagnosticInfo, VariantScalarTypeId::DiagnosticInfo);
 impl_variant_type_for!(chrono::DateTime<chrono::Utc>, VariantScalarTypeId::DateTime);
 impl_variant_type_for!(Uuid, VariantScalarTypeId::Guid);
 
-macro_rules! impl_from_variant_for {
-    ($tp: ty, $vt: expr, $venum: path) => {
-        impl TryFrom<Variant> for $tp {
-            type Error = ();
-            fn try_from(v: Variant) -> Result<Self, Self::Error> {
-                let casted = v.cast(VariantTypeId::Scalar($vt));
-                if let $venum(x) = casted {
-                    Ok(x)
-                } else {
-                    Err(())
-                }
-            }
-        }
-    };
-}
-
-macro_rules! impl_from_variant_for_array {
-    ($tp: ty, $vt: expr, $venum: path) => {
-        impl<const N: usize> TryFrom<Variant> for [$tp; N] {
-            type Error = ();
-            fn try_from(v: Variant) -> Result<Self, Self::Error> {
-                if let Variant::Array(arr) = v {
-                    let mut result = Vec::with_capacity(N);
-                    for val in arr.values {
-                        if result.len() == N {
-                            break;
-                        }
-                        let casted = val.cast(VariantTypeId::Array($vt, None));
-                        if let $venum(x) = casted {
-                            result.push(x);
-                        } else {
-                            return Err(());
-                        }
-                    }
-                    result.try_into().map_err(|_| ())
-                } else {
-                    Err(())
-                }
-            }
-        }
-    };
-}
-
-impl_from_variant_for!(bool, VariantScalarTypeId::Boolean, Variant::Boolean);
-impl_from_variant_for!(u8, VariantScalarTypeId::Byte, Variant::Byte);
-impl_from_variant_for!(i8, VariantScalarTypeId::SByte, Variant::SByte);
-impl_from_variant_for!(i16, VariantScalarTypeId::Int16, Variant::Int16);
-impl_from_variant_for!(i32, VariantScalarTypeId::Int32, Variant::Int32);
-impl_from_variant_for!(i64, VariantScalarTypeId::Int64, Variant::Int64);
-impl_from_variant_for!(u16, VariantScalarTypeId::UInt16, Variant::UInt16);
-impl_from_variant_for!(u32, VariantScalarTypeId::UInt32, Variant::UInt32);
-impl_from_variant_for!(u64, VariantScalarTypeId::UInt64, Variant::UInt64);
-impl_from_variant_for!(f32, VariantScalarTypeId::Float, Variant::Float);
-impl_from_variant_for!(f64, VariantScalarTypeId::Double, Variant::Double);
-
-impl_from_variant_for_array!(bool, VariantScalarTypeId::Boolean, Variant::Boolean);
-impl_from_variant_for_array!(u8, VariantScalarTypeId::Byte, Variant::Byte);
-impl_from_variant_for_array!(i8, VariantScalarTypeId::SByte, Variant::SByte);
-impl_from_variant_for_array!(i16, VariantScalarTypeId::Int16, Variant::Int16);
-impl_from_variant_for_array!(i32, VariantScalarTypeId::Int32, Variant::Int32);
-impl_from_variant_for_array!(i64, VariantScalarTypeId::Int64, Variant::Int64);
-impl_from_variant_for_array!(u16, VariantScalarTypeId::UInt16, Variant::UInt16);
-impl_from_variant_for_array!(u32, VariantScalarTypeId::UInt32, Variant::UInt32);
-impl_from_variant_for_array!(u64, VariantScalarTypeId::UInt64, Variant::UInt64);
-impl_from_variant_for_array!(f32, VariantScalarTypeId::Float, Variant::Float);
-impl_from_variant_for_array!(f64, VariantScalarTypeId::Double, Variant::Double);
-
 macro_rules! cast_to_bool {
     ($value: expr) => {
         if $value == 1 {
@@ -266,55 +201,6 @@ macro_rules! cast_to_integer {
         }
     }
 }
-
-/// This macro tries to return a `Vec<foo>` from a `Variant::Array<Variant::Foo>>`, e.g.
-/// If the Variant holds
-macro_rules! try_from_variant_to_array_impl {
-    ($rtype: ident, $vtype: ident) => {
-        impl TryFrom<&Variant> for Vec<$rtype> {
-            type Error = ();
-
-            fn try_from(value: &Variant) -> Result<Self, Self::Error> {
-                match value {
-                    Variant::Array(ref array) => {
-                        let values = &array.values;
-                        if !values_are_of_type(values, VariantScalarTypeId::$vtype) {
-                            Err(())
-                        } else {
-                            Ok(values
-                                .iter()
-                                .map(|v| {
-                                    if let Variant::$vtype(v) = v {
-                                        *v
-                                    } else {
-                                        panic!()
-                                    }
-                                })
-                                .collect())
-                        }
-                    }
-                    _ => Err(()),
-                }
-            }
-        }
-    };
-}
-
-// These are implementations of TryFrom which will attempt to transform a single dimension array
-// in a Variant to the respective Vec<T> defined in the macro. All the variants must be of the correct
-// type or the impl will return with an error.
-
-try_from_variant_to_array_impl!(bool, Boolean);
-try_from_variant_to_array_impl!(i8, SByte);
-try_from_variant_to_array_impl!(u8, Byte);
-try_from_variant_to_array_impl!(i16, Int16);
-try_from_variant_to_array_impl!(u16, UInt16);
-try_from_variant_to_array_impl!(i32, Int32);
-try_from_variant_to_array_impl!(u32, UInt32);
-try_from_variant_to_array_impl!(i64, Int64);
-try_from_variant_to_array_impl!(u64, UInt64);
-try_from_variant_to_array_impl!(f32, Float);
-try_from_variant_to_array_impl!(f64, Double);
 
 impl Variant {
     /// Get the value in bytes of the _contents_ of this variant
@@ -994,6 +880,11 @@ impl Variant {
     /// conversion and only then attempt to cast. Casting is potentially lossy.
     pub fn cast<'a>(&self, target_type: impl Into<VariantTypeId<'a>>) -> Variant {
         let target_type: VariantTypeId = target_type.into();
+        let self_type = self.type_id();
+        if self_type == target_type {
+            return self.clone();
+        }
+
         let result = self.convert(target_type);
         if !matches!(result, Variant::Empty) {
             return result;
@@ -1697,5 +1588,10 @@ impl Variant {
                 )))
             }
         }
+    }
+
+    /// Try to cast this variant to the type `T`.
+    pub fn try_cast_to<T: TryFromVariant>(self) -> Result<T, Error> {
+        T::try_from_variant(self)
     }
 }

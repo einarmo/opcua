@@ -11,7 +11,7 @@ use crate::{
 use opcua_core::ResponseMessage;
 use opcua_types::{
     CallMethodRequest, CallMethodResult, CallRequest, CallResponse, IntegerId, MethodId, NodeId,
-    ObjectId, StatusCode, Variant,
+    ObjectId, StatusCode, TryFromVariant, Variant,
 };
 
 #[derive(Debug, Clone)]
@@ -180,9 +180,9 @@ impl Session {
         let response = self.call_one(request).await?;
         if let Some(mut result) = response.output_arguments {
             if result.len() == 2 {
-                let server_handles = <Vec<u32>>::try_from(&result.remove(0))
+                let server_handles = <Vec<u32>>::try_from_variant(result.remove(0))
                     .map_err(|_| StatusCode::BadUnexpectedError)?;
-                let client_handles = <Vec<u32>>::try_from(&result.remove(0))
+                let client_handles = <Vec<u32>>::try_from_variant(result.remove(0))
                     .map_err(|_| StatusCode::BadUnexpectedError)?;
                 Ok((server_handles, client_handles))
             } else {

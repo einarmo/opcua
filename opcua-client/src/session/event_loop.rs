@@ -358,7 +358,7 @@ impl SessionActivityLoop {
                         Err(e) => return Some((SessionActivity::KeepAliveFailed(e), slf)),
                     };
 
-                    match data_value.value.and_then(|v| v.try_into().ok()) {
+                    match data_value.value.and_then(|v| v.try_cast_to().ok()) {
                         Some(0) => Some((SessionActivity::KeepAliveSucceeded, slf)),
                         Some(s) => {
                             warn!("Keep alive failed, non-running status code {s}");
