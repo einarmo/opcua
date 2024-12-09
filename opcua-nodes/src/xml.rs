@@ -637,13 +637,13 @@ mod tests {
         assert_eq!(v.data_type(), DataTypeId::EUInformation);
         assert_eq!(
             v.value.value,
-            Some(Variant::ExtensionObject(Box::new(
-                ExtensionObject::from_message(EUInformation {
+            Some(Variant::ExtensionObject(ExtensionObject::from_message(
+                EUInformation {
                     namespace_uri: "http://unit-namespace.namespace".into(),
                     unit_id: 15,
                     display_name: LocalizedText::new("en", "Degrees Celsius"),
                     description: LocalizedText::null()
-                })
+                }
             )))
         );
     }

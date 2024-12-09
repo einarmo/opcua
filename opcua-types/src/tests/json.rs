@@ -561,7 +561,7 @@ fn serialize_variant_localized_text() {
 fn serialize_variant_extension_object() {
     // ExtensionObject (22)
     test_ser_de_variant(
-        Variant::ExtensionObject(Box::new(ExtensionObject::null())),
+        Variant::ExtensionObject(ExtensionObject::null()),
         json!({"Type": 22, "Body": null}),
     );
     let argument = Argument {
@@ -578,7 +578,7 @@ fn serialize_variant_extension_object() {
     // Neither of these are easy to do, and will probably require a custom
     // serialize/deserialize macro.
     test_ser_de_variant(
-        Variant::ExtensionObject(Box::new(ExtensionObject::from_message(argument))),
+        Variant::ExtensionObject(ExtensionObject::from_message(argument)),
         json!({
             "Type": 22,
             "Body": {

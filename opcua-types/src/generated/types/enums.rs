@@ -42,14 +42,9 @@ impl Default for AccessLevelExType {
         Self::empty()
     }
 }
-impl From<AccessLevelExType> for opcua::types::Variant {
-    fn from(v: AccessLevelExType) -> Self {
-        Self::from(v.bits())
-    }
-}
-impl opcua::types::AsVariantRef for AccessLevelExType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        self.bits().into()
+impl opcua::types::IntoVariant for AccessLevelExType {
+    fn into_variant(self) -> opcua::types::Variant {
+        self.bits().into_variant()
     }
 }
 #[cfg(feature = "xml")]
@@ -115,14 +110,9 @@ impl Default for AccessLevelType {
         Self::empty()
     }
 }
-impl From<AccessLevelType> for opcua::types::Variant {
-    fn from(v: AccessLevelType) -> Self {
-        Self::from(v.bits())
-    }
-}
-impl opcua::types::AsVariantRef for AccessLevelType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        self.bits().into()
+impl opcua::types::IntoVariant for AccessLevelType {
+    fn into_variant(self) -> opcua::types::Variant {
+        self.bits().into_variant()
     }
 }
 #[cfg(feature = "xml")]
@@ -187,14 +177,9 @@ impl Default for AccessRestrictionType {
         Self::empty()
     }
 }
-impl From<AccessRestrictionType> for opcua::types::Variant {
-    fn from(v: AccessRestrictionType) -> Self {
-        Self::from(v.bits())
-    }
-}
-impl opcua::types::AsVariantRef for AccessRestrictionType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        self.bits().into()
+impl opcua::types::IntoVariant for AccessRestrictionType {
+    fn into_variant(self) -> opcua::types::Variant {
+        self.bits().into_variant()
     }
 }
 #[cfg(feature = "xml")]
@@ -275,14 +260,9 @@ impl From<ApplicationType> for i32 {
         value as i32
     }
 }
-impl From<ApplicationType> for opcua::types::Variant {
-    fn from(value: ApplicationType) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for ApplicationType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for ApplicationType {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -369,14 +349,9 @@ impl Default for AttributeWriteMask {
         Self::empty()
     }
 }
-impl From<AttributeWriteMask> for opcua::types::Variant {
-    fn from(v: AttributeWriteMask) -> Self {
-        Self::from(v.bits())
-    }
-}
-impl opcua::types::AsVariantRef for AttributeWriteMask {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        self.bits().into()
+impl opcua::types::IntoVariant for AttributeWriteMask {
+    fn into_variant(self) -> opcua::types::Variant {
+        self.bits().into_variant()
     }
 }
 #[cfg(feature = "xml")]
@@ -455,14 +430,9 @@ impl From<AxisScaleEnumeration> for i32 {
         value as i32
     }
 }
-impl From<AxisScaleEnumeration> for opcua::types::Variant {
-    fn from(value: AxisScaleEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for AxisScaleEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for AxisScaleEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -563,14 +533,9 @@ impl From<BrokerTransportQualityOfService> for i32 {
         value as i32
     }
 }
-impl From<BrokerTransportQualityOfService> for opcua::types::Variant {
-    fn from(value: BrokerTransportQualityOfService) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for BrokerTransportQualityOfService {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for BrokerTransportQualityOfService {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -666,14 +631,9 @@ impl From<BrowseDirection> for i32 {
         value as i32
     }
 }
-impl From<BrowseDirection> for opcua::types::Variant {
-    fn from(value: BrowseDirection) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for BrowseDirection {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for BrowseDirection {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -780,14 +740,9 @@ impl From<BrowseResultMask> for i32 {
         value as i32
     }
 }
-impl From<BrowseResultMask> for opcua::types::Variant {
-    fn from(value: BrowseResultMask) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for BrowseResultMask {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for BrowseResultMask {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -880,14 +835,9 @@ impl From<DataChangeTrigger> for i32 {
         value as i32
     }
 }
-impl From<DataChangeTrigger> for opcua::types::Variant {
-    fn from(value: DataChangeTrigger) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for DataChangeTrigger {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for DataChangeTrigger {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -967,14 +917,9 @@ impl Default for DataSetFieldContentMask {
         Self::empty()
     }
 }
-impl From<DataSetFieldContentMask> for opcua::types::Variant {
-    fn from(v: DataSetFieldContentMask) -> Self {
-        Self::from(v.bits())
-    }
-}
-impl opcua::types::AsVariantRef for DataSetFieldContentMask {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        self.bits().into()
+impl opcua::types::IntoVariant for DataSetFieldContentMask {
+    fn into_variant(self) -> opcua::types::Variant {
+        self.bits().into_variant()
     }
 }
 #[cfg(feature = "xml")]
@@ -1038,14 +983,9 @@ impl Default for DataSetFieldFlags {
         Self::empty()
     }
 }
-impl From<DataSetFieldFlags> for opcua::types::Variant {
-    fn from(v: DataSetFieldFlags) -> Self {
-        Self::from(v.bits())
-    }
-}
-impl opcua::types::AsVariantRef for DataSetFieldFlags {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        self.bits().into()
+impl opcua::types::IntoVariant for DataSetFieldFlags {
+    fn into_variant(self) -> opcua::types::Variant {
+        self.bits().into_variant()
     }
 }
 #[cfg(feature = "xml")]
@@ -1124,14 +1064,9 @@ impl From<DataSetOrderingType> for i32 {
         value as i32
     }
 }
-impl From<DataSetOrderingType> for opcua::types::Variant {
-    fn from(value: DataSetOrderingType) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for DataSetOrderingType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for DataSetOrderingType {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -1224,14 +1159,9 @@ impl From<DeadbandType> for i32 {
         value as i32
     }
 }
-impl From<DeadbandType> for opcua::types::Variant {
-    fn from(value: DeadbandType) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for DeadbandType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for DeadbandType {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -1328,14 +1258,9 @@ impl From<DiagnosticsLevel> for i32 {
         value as i32
     }
 }
-impl From<DiagnosticsLevel> for opcua::types::Variant {
-    fn from(value: DiagnosticsLevel) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for DiagnosticsLevel {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for DiagnosticsLevel {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -1414,14 +1339,9 @@ impl Default for EventNotifierType {
         Self::empty()
     }
 }
-impl From<EventNotifierType> for opcua::types::Variant {
-    fn from(v: EventNotifierType) -> Self {
-        Self::from(v.bits())
-    }
-}
-impl opcua::types::AsVariantRef for EventNotifierType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        self.bits().into()
+impl opcua::types::IntoVariant for EventNotifierType {
+    fn into_variant(self) -> opcua::types::Variant {
+        self.bits().into_variant()
     }
 }
 #[cfg(feature = "xml")]
@@ -1508,14 +1428,9 @@ impl From<ExceptionDeviationFormat> for i32 {
         value as i32
     }
 }
-impl From<ExceptionDeviationFormat> for opcua::types::Variant {
-    fn from(value: ExceptionDeviationFormat) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for ExceptionDeviationFormat {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for ExceptionDeviationFormat {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -1638,14 +1553,9 @@ impl From<FilterOperator> for i32 {
         value as i32
     }
 }
-impl From<FilterOperator> for opcua::types::Variant {
-    fn from(value: FilterOperator) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for FilterOperator {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for FilterOperator {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -1735,14 +1645,9 @@ impl From<HistoryUpdateType> for i32 {
         value as i32
     }
 }
-impl From<HistoryUpdateType> for opcua::types::Variant {
-    fn from(value: HistoryUpdateType) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for HistoryUpdateType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for HistoryUpdateType {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -1836,14 +1741,9 @@ impl From<IdentityCriteriaType> for i32 {
         value as i32
     }
 }
-impl From<IdentityCriteriaType> for opcua::types::Variant {
-    fn from(value: IdentityCriteriaType) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for IdentityCriteriaType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for IdentityCriteriaType {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -1938,14 +1838,9 @@ impl From<IdType> for i32 {
         value as i32
     }
 }
-impl From<IdType> for opcua::types::Variant {
-    fn from(value: IdType) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for IdType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for IdType {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -2024,14 +1919,9 @@ impl Default for JsonDataSetMessageContentMask {
         Self::empty()
     }
 }
-impl From<JsonDataSetMessageContentMask> for opcua::types::Variant {
-    fn from(v: JsonDataSetMessageContentMask) -> Self {
-        Self::from(v.bits())
-    }
-}
-impl opcua::types::AsVariantRef for JsonDataSetMessageContentMask {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        self.bits().into()
+impl opcua::types::IntoVariant for JsonDataSetMessageContentMask {
+    fn into_variant(self) -> opcua::types::Variant {
+        self.bits().into_variant()
     }
 }
 #[cfg(feature = "xml")]
@@ -2097,14 +1987,9 @@ impl Default for JsonNetworkMessageContentMask {
         Self::empty()
     }
 }
-impl From<JsonNetworkMessageContentMask> for opcua::types::Variant {
-    fn from(v: JsonNetworkMessageContentMask) -> Self {
-        Self::from(v.bits())
-    }
-}
-impl opcua::types::AsVariantRef for JsonNetworkMessageContentMask {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        self.bits().into()
+impl opcua::types::IntoVariant for JsonNetworkMessageContentMask {
+    fn into_variant(self) -> opcua::types::Variant {
+        self.bits().into_variant()
     }
 }
 #[cfg(feature = "xml")]
@@ -2186,14 +2071,9 @@ impl From<MessageSecurityMode> for i32 {
         value as i32
     }
 }
-impl From<MessageSecurityMode> for opcua::types::Variant {
-    fn from(value: MessageSecurityMode) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for MessageSecurityMode {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for MessageSecurityMode {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -2289,14 +2169,9 @@ impl From<ModelChangeStructureVerbMask> for i32 {
         value as i32
     }
 }
-impl From<ModelChangeStructureVerbMask> for opcua::types::Variant {
-    fn from(value: ModelChangeStructureVerbMask) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for ModelChangeStructureVerbMask {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for ModelChangeStructureVerbMask {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -2389,14 +2264,9 @@ impl From<MonitoringMode> for i32 {
         value as i32
     }
 }
-impl From<MonitoringMode> for opcua::types::Variant {
-    fn from(value: MonitoringMode) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for MonitoringMode {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for MonitoringMode {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -2484,14 +2354,9 @@ impl From<NamingRuleType> for i32 {
         value as i32
     }
 }
-impl From<NamingRuleType> for opcua::types::Variant {
-    fn from(value: NamingRuleType) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for NamingRuleType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for NamingRuleType {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -2648,14 +2513,9 @@ impl From<NodeAttributesMask> for i32 {
         value as i32
     }
 }
-impl From<NodeAttributesMask> for opcua::types::Variant {
-    fn from(value: NodeAttributesMask) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for NodeAttributesMask {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for NodeAttributesMask {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -2760,14 +2620,9 @@ impl From<NodeClass> for i32 {
         value as i32
     }
 }
-impl From<NodeClass> for opcua::types::Variant {
-    fn from(value: NodeClass) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for NodeClass {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for NodeClass {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -2867,14 +2722,9 @@ impl From<NodeIdType> for u8 {
         value as u8
     }
 }
-impl From<NodeIdType> for opcua::types::Variant {
-    fn from(value: NodeIdType) -> Self {
-        Self::from(value as u8)
-    }
-}
-impl opcua::types::AsVariantRef for NodeIdType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as u8).into()
+impl opcua::types::IntoVariant for NodeIdType {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as u8).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -2964,14 +2814,9 @@ impl From<OpenFileMode> for i32 {
         value as i32
     }
 }
-impl From<OpenFileMode> for opcua::types::Variant {
-    fn from(value: OpenFileMode) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for OpenFileMode {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for OpenFileMode {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -3064,14 +2909,9 @@ impl From<OverrideValueHandling> for i32 {
         value as i32
     }
 }
-impl From<OverrideValueHandling> for opcua::types::Variant {
-    fn from(value: OverrideValueHandling) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for OverrideValueHandling {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for OverrideValueHandling {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -3161,14 +3001,9 @@ impl From<PerformUpdateType> for i32 {
         value as i32
     }
 }
-impl From<PerformUpdateType> for opcua::types::Variant {
-    fn from(value: PerformUpdateType) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PerformUpdateType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PerformUpdateType {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -3251,14 +3086,9 @@ impl Default for PermissionType {
         Self::empty()
     }
 }
-impl From<PermissionType> for opcua::types::Variant {
-    fn from(v: PermissionType) -> Self {
-        Self::from(v.bits())
-    }
-}
-impl opcua::types::AsVariantRef for PermissionType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        self.bits().into()
+impl opcua::types::IntoVariant for PermissionType {
+    fn into_variant(self) -> opcua::types::Variant {
+        self.bits().into_variant()
     }
 }
 #[cfg(feature = "xml")]
@@ -3339,14 +3169,9 @@ impl From<PubSubDiagnosticsCounterClassification> for i32 {
         value as i32
     }
 }
-impl From<PubSubDiagnosticsCounterClassification> for opcua::types::Variant {
-    fn from(value: PubSubDiagnosticsCounterClassification) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PubSubDiagnosticsCounterClassification {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PubSubDiagnosticsCounterClassification {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -3441,14 +3266,9 @@ impl From<PubSubState> for i32 {
         value as i32
     }
 }
-impl From<PubSubState> for opcua::types::Variant {
-    fn from(value: PubSubState) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PubSubState {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PubSubState {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -3547,14 +3367,9 @@ impl From<RedundancySupport> for i32 {
         value as i32
     }
 }
-impl From<RedundancySupport> for opcua::types::Variant {
-    fn from(value: RedundancySupport) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for RedundancySupport {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for RedundancySupport {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -3649,14 +3464,9 @@ impl From<SecurityTokenRequestType> for i32 {
         value as i32
     }
 }
-impl From<SecurityTokenRequestType> for opcua::types::Variant {
-    fn from(value: SecurityTokenRequestType) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for SecurityTokenRequestType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for SecurityTokenRequestType {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -3759,14 +3569,9 @@ impl From<ServerState> for i32 {
         value as i32
     }
 }
-impl From<ServerState> for opcua::types::Variant {
-    fn from(value: ServerState) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for ServerState {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for ServerState {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -3859,14 +3664,9 @@ impl From<StructureType> for i32 {
         value as i32
     }
 }
-impl From<StructureType> for opcua::types::Variant {
-    fn from(value: StructureType) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for StructureType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for StructureType {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -3964,14 +3764,9 @@ impl From<TimestampsToReturn> for i32 {
         value as i32
     }
 }
-impl From<TimestampsToReturn> for opcua::types::Variant {
-    fn from(value: TimestampsToReturn) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for TimestampsToReturn {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for TimestampsToReturn {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -4070,14 +3865,9 @@ impl From<TrustListMasks> for i32 {
         value as i32
     }
 }
-impl From<TrustListMasks> for opcua::types::Variant {
-    fn from(value: TrustListMasks) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for TrustListMasks {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for TrustListMasks {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -4157,14 +3947,9 @@ impl Default for UadpDataSetMessageContentMask {
         Self::empty()
     }
 }
-impl From<UadpDataSetMessageContentMask> for opcua::types::Variant {
-    fn from(v: UadpDataSetMessageContentMask) -> Self {
-        Self::from(v.bits())
-    }
-}
-impl opcua::types::AsVariantRef for UadpDataSetMessageContentMask {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        self.bits().into()
+impl opcua::types::IntoVariant for UadpDataSetMessageContentMask {
+    fn into_variant(self) -> opcua::types::Variant {
+        self.bits().into_variant()
     }
 }
 #[cfg(feature = "xml")]
@@ -4232,14 +4017,9 @@ impl Default for UadpNetworkMessageContentMask {
         Self::empty()
     }
 }
-impl From<UadpNetworkMessageContentMask> for opcua::types::Variant {
-    fn from(v: UadpNetworkMessageContentMask) -> Self {
-        Self::from(v.bits())
-    }
-}
-impl opcua::types::AsVariantRef for UadpNetworkMessageContentMask {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        self.bits().into()
+impl opcua::types::IntoVariant for UadpNetworkMessageContentMask {
+    fn into_variant(self) -> opcua::types::Variant {
+        self.bits().into_variant()
     }
 }
 #[cfg(feature = "xml")]
@@ -4320,14 +4100,9 @@ impl From<UserTokenType> for i32 {
         value as i32
     }
 }
-impl From<UserTokenType> for opcua::types::Variant {
-    fn from(value: UserTokenType) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for UserTokenType {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for UserTokenType {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]

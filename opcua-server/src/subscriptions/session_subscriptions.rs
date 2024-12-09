@@ -21,11 +21,11 @@ use crate::{
 use opcua_core::sync::RwLock;
 use opcua_types::{
     AttributeId, CreateSubscriptionRequest, CreateSubscriptionResponse, DataValue, DateTime,
-    DateTimeUtc, EncodingContext, ExtensionObject, ModifySubscriptionRequest,
-    ModifySubscriptionResponse, MonitoredItemCreateResult, MonitoredItemModifyRequest,
-    MonitoredItemModifyResult, MonitoringMode, NodeId, NotificationMessage, PublishRequest,
-    PublishResponse, RepublishRequest, RepublishResponse, ResponseHeader, ServiceFault,
-    SetPublishingModeRequest, SetPublishingModeResponse, StatusCode, TimestampsToReturn,
+    DateTimeUtc, ExtensionObject, ModifySubscriptionRequest, ModifySubscriptionResponse,
+    MonitoredItemCreateResult, MonitoredItemModifyRequest, MonitoredItemModifyResult,
+    MonitoringMode, NodeId, NotificationMessage, PublishRequest, PublishResponse, RepublishRequest,
+    RepublishResponse, ResponseHeader, ServiceFault, SetPublishingModeRequest,
+    SetPublishingModeResponse, StatusCode, TimestampsToReturn,
 };
 
 /// Subscriptions belonging to a single session. Note that they are technically _owned_ by
@@ -44,8 +44,6 @@ pub struct SessionSubscriptions {
 
     /// Static reference to the session owning this, required to cleanly handle deletion.
     session: Arc<RwLock<Session>>,
-    /// Reference to the namespace map for the session
-    context: Arc<EncodingContext>,
 }
 
 impl SessionSubscriptions {
@@ -53,7 +51,6 @@ impl SessionSubscriptions {
         limits: SubscriptionLimits,
         user_token: PersistentSessionKey,
         session: Arc<RwLock<Session>>,
-        context: Arc<EncodingContext>,
     ) -> Self {
         Self {
             user_token,
@@ -62,7 +59,6 @@ impl SessionSubscriptions {
             retransmission_queue: VecDeque::new(),
             limits,
             session,
-            context,
         }
     }
 
@@ -770,7 +766,7 @@ impl SessionSubscriptions {
             let Some(sub) = self.subscriptions.get_mut(&handle.subscription_id) else {
                 continue;
             };
-            sub.notify_event(&handle.monitored_item_id, event, &self.context);
+            sub.notify_event(&handle.monitored_item_id, event);
         }
     }
 

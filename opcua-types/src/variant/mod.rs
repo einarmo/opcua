@@ -5,10 +5,12 @@
 //! Contains the most of the implementation of `Variant`. Some substantial chunks like JSON serialization
 //! are moved off into their own files due to the complexity of this functionality.
 
+mod into;
 #[cfg(feature = "json")]
 mod json;
 mod type_id;
 
+pub use into::IntoVariant;
 pub use type_id::*;
 
 use std::{
@@ -35,12 +37,8 @@ use crate::{
     qualified_name::QualifiedName,
     status_code::StatusCode,
     string::{UAString, XmlElement},
-    write_i32, write_u8, DataTypeId, DataValue, DiagnosticInfo, DynEncodable, EncodingContext,
-    Error, ExpandedMessageInfo, MessageInfo,
+    write_i32, write_u8, DataTypeId, DataValue, DiagnosticInfo, DynEncodable, Error,
 };
-
-use super::DateTimeUtc;
-
 /// A `Variant` holds built-in OPC UA data types, including single and multi dimensional arrays,
 /// data values and extension objects.
 ///
@@ -94,7 +92,7 @@ pub enum Variant {
     /// ExpandedNodeId
     ExpandedNodeId(Box<ExpandedNodeId>),
     /// ExtensionObject
-    ExtensionObject(Box<ExtensionObject>),
+    ExtensionObject(ExtensionObject),
     /// Variant containing a nested variant.
     Variant(Box<Variant>),
     /// DataValue
@@ -117,29 +115,13 @@ pub trait VariantType {
     fn variant_type_id() -> VariantScalarTypeId;
 }
 
-// Any type that implements MessageInfo is encoded as an extension object.
+// Any type that implements DynEncodable is encoded as an extension object.
 impl<T> VariantType for T
 where
-    T: ExpandedMessageInfo,
+    T: DynEncodable,
 {
     fn variant_type_id() -> VariantScalarTypeId {
         VariantScalarTypeId::ExtensionObject
-    }
-}
-
-/// Trait for types that can be converted to a variant from a reference
-/// directly, typically through encoding.
-pub trait AsVariantRef {
-    /// Convert this type to a variant by reference.
-    fn as_variant(&self, ctx: &EncodingContext) -> Variant;
-}
-
-impl<T> AsVariantRef for T
-where
-    T: DynEncodable + Clone,
-{
-    fn as_variant(&self, _ctx: &EncodingContext) -> Variant {
-        ExtensionObject::from_message(self.clone()).into()
     }
 }
 
@@ -248,219 +230,6 @@ impl_from_variant_for_array!(u64, VariantScalarTypeId::UInt64, Variant::UInt64);
 impl_from_variant_for_array!(f32, VariantScalarTypeId::Float, Variant::Float);
 impl_from_variant_for_array!(f64, VariantScalarTypeId::Double, Variant::Double);
 
-impl From<()> for Variant {
-    fn from(_: ()) -> Self {
-        Variant::Empty
-    }
-}
-
-impl From<bool> for Variant {
-    fn from(v: bool) -> Self {
-        Variant::Boolean(v)
-    }
-}
-
-impl From<u8> for Variant {
-    fn from(v: u8) -> Self {
-        Variant::Byte(v)
-    }
-}
-
-impl From<i8> for Variant {
-    fn from(v: i8) -> Self {
-        Variant::SByte(v)
-    }
-}
-
-impl From<i16> for Variant {
-    fn from(v: i16) -> Self {
-        Variant::Int16(v)
-    }
-}
-
-impl From<u16> for Variant {
-    fn from(v: u16) -> Self {
-        Variant::UInt16(v)
-    }
-}
-
-impl From<i32> for Variant {
-    fn from(v: i32) -> Self {
-        Variant::Int32(v)
-    }
-}
-
-impl From<u32> for Variant {
-    fn from(v: u32) -> Self {
-        Variant::UInt32(v)
-    }
-}
-
-impl From<i64> for Variant {
-    fn from(v: i64) -> Self {
-        Variant::Int64(v)
-    }
-}
-
-impl From<u64> for Variant {
-    fn from(v: u64) -> Self {
-        Variant::UInt64(v)
-    }
-}
-
-impl From<f32> for Variant {
-    fn from(v: f32) -> Self {
-        Variant::Float(v)
-    }
-}
-
-impl From<f64> for Variant {
-    fn from(v: f64) -> Self {
-        Variant::Double(v)
-    }
-}
-
-impl<'a> From<&'a str> for Variant {
-    fn from(v: &'a str) -> Self {
-        Variant::String(UAString::from(v))
-    }
-}
-
-impl From<String> for Variant {
-    fn from(v: String) -> Self {
-        Variant::String(UAString::from(v))
-    }
-}
-
-impl From<UAString> for Variant {
-    fn from(v: UAString) -> Self {
-        Variant::String(v)
-    }
-}
-
-impl From<DateTime> for Variant {
-    fn from(v: DateTime) -> Self {
-        Variant::DateTime(Box::new(v))
-    }
-}
-
-impl From<Guid> for Variant {
-    fn from(v: Guid) -> Self {
-        Variant::Guid(Box::new(v))
-    }
-}
-
-impl From<Uuid> for Variant {
-    fn from(v: Uuid) -> Self {
-        Variant::Guid(Box::new(v.into()))
-    }
-}
-
-impl From<StatusCode> for Variant {
-    fn from(v: StatusCode) -> Self {
-        Variant::StatusCode(v)
-    }
-}
-
-impl From<ByteString> for Variant {
-    fn from(v: ByteString) -> Self {
-        Variant::ByteString(v)
-    }
-}
-
-impl From<QualifiedName> for Variant {
-    fn from(v: QualifiedName) -> Self {
-        Variant::QualifiedName(Box::new(v))
-    }
-}
-
-impl From<LocalizedText> for Variant {
-    fn from(v: LocalizedText) -> Self {
-        Variant::LocalizedText(Box::new(v))
-    }
-}
-
-impl From<NodeId> for Variant {
-    fn from(v: NodeId) -> Self {
-        Variant::NodeId(Box::new(v))
-    }
-}
-
-impl From<ExpandedNodeId> for Variant {
-    fn from(v: ExpandedNodeId) -> Self {
-        Variant::ExpandedNodeId(Box::new(v))
-    }
-}
-
-impl From<ExtensionObject> for Variant {
-    fn from(v: ExtensionObject) -> Self {
-        Variant::ExtensionObject(Box::new(v))
-    }
-}
-
-impl From<DataValue> for Variant {
-    fn from(v: DataValue) -> Self {
-        Variant::DataValue(Box::new(v))
-    }
-}
-
-impl From<DiagnosticInfo> for Variant {
-    fn from(v: DiagnosticInfo) -> Self {
-        Variant::DiagnosticInfo(Box::new(v))
-    }
-}
-
-impl From<DateTimeUtc> for Variant {
-    fn from(v: DateTimeUtc) -> Self {
-        Variant::DateTime(Box::new(DateTime::from(v)))
-    }
-}
-
-impl<'a, 'b> From<(VariantScalarTypeId, &'a [&'b str])> for Variant {
-    fn from(v: (VariantScalarTypeId, &'a [&'b str])) -> Self {
-        let values: Vec<Variant> = v.1.iter().map(|v| Variant::from(*v)).collect();
-        let value = Array::new(v.0, values).unwrap();
-        Variant::from(value)
-    }
-}
-
-impl<T: Into<Variant>> From<(VariantScalarTypeId, Vec<T>)> for Variant {
-    fn from(v: (VariantScalarTypeId, Vec<T>)) -> Self {
-        let value = Array::new(v.0, v.1.into_iter().map(|v| v.into()).collect::<Vec<_>>()).unwrap();
-        Variant::from(value)
-    }
-}
-
-impl<T: Into<Variant>> From<(VariantScalarTypeId, Vec<T>, Vec<u32>)> for Variant {
-    fn from(v: (VariantScalarTypeId, Vec<T>, Vec<u32>)) -> Self {
-        let value = Array::new_multi(
-            v.0,
-            v.1.into_iter().map(|v| v.into()).collect::<Vec<_>>(),
-            v.2,
-        )
-        .unwrap();
-        Variant::from(value)
-    }
-}
-
-impl From<Array> for Variant {
-    fn from(v: Array) -> Self {
-        Variant::Array(Box::new(v))
-    }
-}
-
-impl<T> From<Option<T>> for Variant
-where
-    T: Into<Variant>,
-{
-    fn from(value: Option<T>) -> Self {
-        match value {
-            Some(v) => v.into(),
-            None => Variant::Empty,
-        }
-    }
-}
-
 macro_rules! cast_to_bool {
     ($value: expr) => {
         if $value == 1 {
@@ -495,44 +264,6 @@ macro_rules! cast_to_integer {
                 ($value as $to).into()
             }
         }
-    }
-}
-
-impl<'a, T> From<&'a Vec<T>> for Variant
-where
-    T: Into<Variant> + VariantType + Clone,
-{
-    fn from(value: &'a Vec<T>) -> Self {
-        Self::from(value.as_slice())
-    }
-}
-
-impl<T> From<Vec<T>> for Variant
-where
-    T: Into<Variant> + VariantType,
-{
-    fn from(value: Vec<T>) -> Self {
-        let array: Vec<Variant> = value.into_iter().map(|v| v.into()).collect();
-        Variant::from((T::variant_type_id(), array))
-    }
-}
-
-impl<'a, T> From<&'a [T]> for Variant
-where
-    T: Into<Variant> + VariantType + Clone,
-{
-    fn from(value: &'a [T]) -> Self {
-        let array: Vec<Variant> = value.iter().map(|v| v.clone().into()).collect();
-        Variant::from((T::variant_type_id(), array))
-    }
-}
-
-impl<T> From<T> for Variant
-where
-    T: DynEncodable + MessageInfo,
-{
-    fn from(value: T) -> Self {
-        ExtensionObject::from_message(value).into()
     }
 }
 

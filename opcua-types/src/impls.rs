@@ -18,8 +18,8 @@ use crate::{
     AnonymousIdentityToken, ApplicationDescription, CallMethodRequest, DataTypeId,
     EndpointDescription, Error, ExpandedNodeId, HistoryUpdateType, IdentityCriteriaType,
     MessageSecurityMode, MonitoredItemCreateRequest, MonitoringMode, MonitoringParameters,
-    NamespaceMap, NumericRange, ObjectId, ReadValueId, ServiceCounterDataType, ServiceFault,
-    SignatureData, UserNameIdentityToken, UserTokenPolicy, UserTokenType,
+    NumericRange, ObjectId, ReadValueId, ServiceCounterDataType, ServiceFault, SignatureData,
+    UserNameIdentityToken, UserTokenPolicy, UserTokenType,
 };
 
 use super::PerformUpdateType;
@@ -66,32 +66,6 @@ where
 
     fn full_data_type_id(&self) -> ExpandedNodeId {
         self.data_type_id().into()
-    }
-}
-
-/// Context used during event encoding and decoding.
-#[derive(Debug, Default)]
-pub struct EncodingContext {
-    namespaces: NamespaceMap,
-}
-
-impl EncodingContext {
-    /// Create a new context.
-    pub fn new(namespaces: NamespaceMap) -> Self {
-        Self { namespaces }
-    }
-
-    /// Resolve the given ExpandedNodeId to a NodeId.
-    pub fn resolve_node_id<'b>(
-        &self,
-        id: &'b ExpandedNodeId,
-    ) -> Option<std::borrow::Cow<'b, NodeId>> {
-        id.try_resolve(&self.namespaces)
-    }
-
-    /// Return the namespace map.
-    pub fn namespaces(&self) -> &NamespaceMap {
-        &self.namespaces
     }
 }
 

@@ -4,8 +4,8 @@ use log::error;
 use regex::Regex;
 
 use opcua_types::{
-    AttributeId, EncodingContext, EventFieldList, FilterOperator, NodeId, NumericRange,
-    QualifiedName, Variant, VariantScalarTypeId, VariantTypeId,
+    AttributeId, EventFieldList, FilterOperator, NodeId, NumericRange, QualifiedName, Variant,
+    VariantScalarTypeId, VariantTypeId,
 };
 
 use super::{
@@ -19,20 +19,15 @@ impl ParsedEventFilter {
     /// Evaluate the event filter, returning `None` if the
     /// filter does not accept the event, and a list of event fields fetched from
     /// the event if it does.
-    pub fn evaluate(
-        &self,
-        event: &dyn Event,
-        client_handle: u32,
-        ctx: &EncodingContext,
-    ) -> Option<EventFieldList> {
-        if !self.content_filter.evaluate(event, ctx) {
+    pub fn evaluate(&self, event: &dyn Event, client_handle: u32) -> Option<EventFieldList> {
+        if !self.content_filter.evaluate(event) {
             return None;
         }
 
         let fields: Vec<_> = self
             .select_clauses
             .iter()
-            .map(|c| get_field(event, c, ctx))
+            .map(|c| get_field(event, c))
             .collect();
         Some(EventFieldList {
             client_handle,
@@ -42,11 +37,11 @@ impl ParsedEventFilter {
 }
 
 macro_rules! cmp_op {
-    ($slf:ident, $evt:ident, $ctx:ident, $op:ident, $pt:pat) => {
+    ($slf:ident, $evt:ident, $op:ident, $pt:pat) => {
         matches!(
             ParsedContentFilter::compare_op(
-                $slf.evaluate_operand($evt, &$op.operands[0], $ctx),
-                $slf.evaluate_operand($evt, &$op.operands[1], $ctx),
+                $slf.evaluate_operand($evt, &$op.operands[0]),
+                $slf.evaluate_operand($evt, &$op.operands[1]),
             ),
             $pt
         )
@@ -85,7 +80,6 @@ pub trait AttributeQueryable: Copy {
         browse_path: &[QualifiedName],
         attribute_id: AttributeId,
         index_range: &NumericRange,
-        ctx: &EncodingContext,
     ) -> Variant;
 }
 
@@ -96,15 +90,8 @@ impl AttributeQueryable for &dyn Event {
         browse_path: &[QualifiedName],
         attribute_id: AttributeId,
         index_range: &NumericRange,
-        ctx: &EncodingContext,
     ) -> Variant {
-        self.get_field(
-            type_definition_id,
-            attribute_id,
-            index_range,
-            browse_path,
-            ctx,
-        )
+        self.get_field(type_definition_id, attribute_id, index_range, browse_path)
     }
 }
 
@@ -116,96 +103,80 @@ enum BitOperation {
 impl ParsedContentFilter {
     /// Evaluate the content filter, returning `true` if it
     /// passes the filter.
-    pub fn evaluate(&self, item: impl AttributeQueryable, ctx: &EncodingContext) -> bool {
+    pub fn evaluate(&self, item: impl AttributeQueryable) -> bool {
         if self.elements.is_empty() {
             return true;
         }
-        matches!(self.evulate_element(item, 0, ctx), Variant::Boolean(true))
+        matches!(self.evulate_element(item, 0), Variant::Boolean(true))
     }
 
-    fn evulate_element(
-        &self,
-        item: impl AttributeQueryable,
-        index: usize,
-        ctx: &EncodingContext,
-    ) -> Variant {
+    fn evulate_element(&self, item: impl AttributeQueryable, index: usize) -> Variant {
         let Some(op) = self.elements.get(index) else {
             return Variant::Empty;
         };
 
         match op.operator {
-            FilterOperator::Equals => cmp_op!(self, item, ctx, op, Some(Ordering::Equal)),
+            FilterOperator::Equals => cmp_op!(self, item, op, Some(Ordering::Equal)),
             FilterOperator::IsNull => {
-                (self.evaluate_operand(item, &op.operands[0], ctx) == Variant::Empty).into()
+                (self.evaluate_operand(item, &op.operands[0]) == Variant::Empty).into()
             }
-            FilterOperator::GreaterThan => cmp_op!(self, item, ctx, op, Some(Ordering::Greater)),
-            FilterOperator::LessThan => cmp_op!(self, item, ctx, op, Some(Ordering::Less)),
+            FilterOperator::GreaterThan => cmp_op!(self, item, op, Some(Ordering::Greater)),
+            FilterOperator::LessThan => cmp_op!(self, item, op, Some(Ordering::Less)),
             FilterOperator::GreaterThanOrEqual => {
-                cmp_op!(
-                    self,
-                    item,
-                    ctx,
-                    op,
-                    Some(Ordering::Equal | Ordering::Greater)
-                )
+                cmp_op!(self, item, op, Some(Ordering::Equal | Ordering::Greater))
             }
             FilterOperator::LessThanOrEqual => {
-                cmp_op!(self, item, ctx, op, Some(Ordering::Equal | Ordering::Less))
+                cmp_op!(self, item, op, Some(Ordering::Equal | Ordering::Less))
             }
             FilterOperator::Like => Self::like(
-                self.evaluate_operand(item, &op.operands[0], ctx),
-                self.evaluate_operand(item, &op.operands[1], ctx),
+                self.evaluate_operand(item, &op.operands[0]),
+                self.evaluate_operand(item, &op.operands[1]),
             )
             .into(),
-            FilterOperator::Not => Self::not(self.evaluate_operand(item, &op.operands[0], ctx)),
+            FilterOperator::Not => Self::not(self.evaluate_operand(item, &op.operands[0])),
             FilterOperator::Between => Self::between(
-                self.evaluate_operand(item, &op.operands[0], ctx),
-                self.evaluate_operand(item, &op.operands[1], ctx),
-                self.evaluate_operand(item, &op.operands[2], ctx),
+                self.evaluate_operand(item, &op.operands[0]),
+                self.evaluate_operand(item, &op.operands[1]),
+                self.evaluate_operand(item, &op.operands[2]),
             )
             .into(),
             FilterOperator::InList => Self::in_list(
-                self.evaluate_operand(item, &op.operands[0], ctx),
+                self.evaluate_operand(item, &op.operands[0]),
                 op.operands
                     .iter()
                     .skip(1)
-                    .map(|o| self.evaluate_operand(item, o, ctx)),
+                    .map(|o| self.evaluate_operand(item, o)),
             )
             .into(),
             FilterOperator::And => Self::and(
-                self.evaluate_operand(item, &op.operands[0], ctx),
-                self.evaluate_operand(item, &op.operands[1], ctx),
+                self.evaluate_operand(item, &op.operands[0]),
+                self.evaluate_operand(item, &op.operands[1]),
             ),
             FilterOperator::Or => Self::or(
-                self.evaluate_operand(item, &op.operands[0], ctx),
-                self.evaluate_operand(item, &op.operands[1], ctx),
+                self.evaluate_operand(item, &op.operands[0]),
+                self.evaluate_operand(item, &op.operands[1]),
             ),
             FilterOperator::Cast => Self::cast(
-                self.evaluate_operand(item, &op.operands[0], ctx),
-                self.evaluate_operand(item, &op.operands[1], ctx),
+                self.evaluate_operand(item, &op.operands[0]),
+                self.evaluate_operand(item, &op.operands[1]),
             ),
             FilterOperator::BitwiseAnd => Self::bitwise_op(
-                self.evaluate_operand(item, &op.operands[0], ctx),
-                self.evaluate_operand(item, &op.operands[1], ctx),
+                self.evaluate_operand(item, &op.operands[0]),
+                self.evaluate_operand(item, &op.operands[1]),
                 BitOperation::And,
             ),
             FilterOperator::BitwiseOr => Self::bitwise_op(
-                self.evaluate_operand(item, &op.operands[0], ctx),
-                self.evaluate_operand(item, &op.operands[1], ctx),
+                self.evaluate_operand(item, &op.operands[0]),
+                self.evaluate_operand(item, &op.operands[1]),
                 BitOperation::Or,
             ),
             _ => Variant::Empty,
         }
     }
 
-    fn evaluate_operand(
-        &self,
-        item: impl AttributeQueryable,
-        op: &ParsedOperand,
-        ctx: &EncodingContext,
-    ) -> Variant {
+    fn evaluate_operand(&self, item: impl AttributeQueryable, op: &ParsedOperand) -> Variant {
         match op {
-            ParsedOperand::ElementOperand(o) => self.evulate_element(item, o.index as usize, ctx),
+            ParsedOperand::ElementOperand(o) => self.evulate_element(item, o.index as usize),
             ParsedOperand::LiteralOperand(o) => o.value.clone(),
             ParsedOperand::AttributeOperand(_) => unreachable!(),
             ParsedOperand::SimpleAttributeOperand(o) => item.get_attribute(
@@ -213,7 +184,6 @@ impl ParsedContentFilter {
                 &o.browse_path,
                 o.attribute_id,
                 &o.index_range,
-                ctx,
             ),
         }
     }
@@ -331,17 +301,12 @@ impl ParsedContentFilter {
     }
 }
 
-fn get_field(
-    event: &dyn Event,
-    attr: &ParsedSimpleAttributeOperand,
-    ctx: &EncodingContext,
-) -> Variant {
+fn get_field(event: &dyn Event, attr: &ParsedSimpleAttributeOperand) -> Variant {
     event.get_field(
         &attr.type_definition_id,
         attr.attribute_id,
         &attr.index_range,
         &attr.browse_path,
-        ctx,
     )
 }
 
@@ -591,7 +556,7 @@ mod tests {
             &type_tree,
         );
         let event = event(2);
-        assert!(!f.evaluate(&event as &dyn Event, &Default::default()));
+        assert!(!f.evaluate(&event as &dyn Event));
         let f = filter(
             vec![filter_elem(
                 &[
@@ -607,7 +572,7 @@ mod tests {
             )],
             &type_tree,
         );
-        assert!(f.evaluate(&event as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&event as &dyn Event));
     }
 
     #[test]
@@ -621,7 +586,7 @@ mod tests {
             &type_tree,
         );
         let event = event(2);
-        assert!(!f.evaluate(&event as &dyn Event, &Default::default()));
+        assert!(!f.evaluate(&event as &dyn Event));
         let f = filter(
             vec![filter_elem(
                 &[
@@ -637,7 +602,7 @@ mod tests {
             )],
             &type_tree,
         );
-        assert!(f.evaluate(&event as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&event as &dyn Event));
         let f = filter(
             vec![filter_elem(
                 &[
@@ -653,7 +618,7 @@ mod tests {
             )],
             &type_tree,
         );
-        assert!(!f.evaluate(&event as &dyn Event, &Default::default()));
+        assert!(!f.evaluate(&event as &dyn Event));
     }
 
     #[test]
@@ -667,7 +632,7 @@ mod tests {
             &type_tree,
         );
         let event = event(2);
-        assert!(!f.evaluate(&event as &dyn Event, &Default::default()));
+        assert!(!f.evaluate(&event as &dyn Event));
         let f = filter(
             vec![filter_elem(
                 &[
@@ -683,7 +648,7 @@ mod tests {
             )],
             &type_tree,
         );
-        assert!(f.evaluate(&event as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&event as &dyn Event));
         let f = filter(
             vec![filter_elem(
                 &[
@@ -699,7 +664,7 @@ mod tests {
             )],
             &type_tree,
         );
-        assert!(f.evaluate(&event as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&event as &dyn Event));
     }
 
     #[test]
@@ -713,7 +678,7 @@ mod tests {
             &type_tree,
         );
         let event = event(2);
-        assert!(f.evaluate(&event as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&event as &dyn Event));
         let f = filter(
             vec![filter_elem(
                 &[
@@ -729,7 +694,7 @@ mod tests {
             )],
             &type_tree,
         );
-        assert!(f.evaluate(&event as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&event as &dyn Event));
         let f = filter(
             vec![filter_elem(
                 &[
@@ -745,7 +710,7 @@ mod tests {
             )],
             &type_tree,
         );
-        assert!(!f.evaluate(&event as &dyn Event, &Default::default()));
+        assert!(!f.evaluate(&event as &dyn Event));
     }
 
     #[test]
@@ -759,7 +724,7 @@ mod tests {
             &type_tree,
         );
         let event = event(2);
-        assert!(f.evaluate(&event as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&event as &dyn Event));
         let f = filter(
             vec![filter_elem(
                 &[
@@ -775,7 +740,7 @@ mod tests {
             )],
             &type_tree,
         );
-        assert!(f.evaluate(&event as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&event as &dyn Event));
         let f = filter(
             vec![filter_elem(
                 &[
@@ -791,7 +756,7 @@ mod tests {
             )],
             &type_tree,
         );
-        assert!(f.evaluate(&event as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&event as &dyn Event));
     }
 
     #[test]
@@ -802,7 +767,7 @@ mod tests {
             &type_tree,
         );
         let evt = event(2);
-        assert!(f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&evt as &dyn Event));
 
         let f = filter(
             vec![
@@ -822,9 +787,9 @@ mod tests {
             ],
             &type_tree,
         );
-        assert!(f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&evt as &dyn Event));
         let evt = event(3);
-        assert!(!f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(!f.evaluate(&evt as &dyn Event));
     }
 
     #[test]
@@ -842,7 +807,7 @@ mod tests {
             &type_tree,
         );
         let evt = event(2);
-        assert!(f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&evt as &dyn Event));
         let f = filter(
             vec![filter_elem(
                 &[
@@ -859,15 +824,15 @@ mod tests {
             )],
             &type_tree,
         );
-        assert!(!f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(!f.evaluate(&evt as &dyn Event));
         let evt = event(9);
-        assert!(f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&evt as &dyn Event));
         let evt = event(10);
-        assert!(f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&evt as &dyn Event));
         let evt = event(8);
-        assert!(f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&evt as &dyn Event));
         let evt = event(11);
-        assert!(!f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(!f.evaluate(&evt as &dyn Event));
     }
 
     #[test]
@@ -881,7 +846,7 @@ mod tests {
             &type_tree,
         );
         let evt = event(2);
-        assert!(!f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(!f.evaluate(&evt as &dyn Event));
         let f = filter(
             vec![
                 filter_elem(
@@ -908,9 +873,9 @@ mod tests {
             &type_tree,
         );
 
-        assert!(!f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(!f.evaluate(&evt as &dyn Event));
         let evt = event(3);
-        assert!(f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&evt as &dyn Event));
     }
 
     #[test]
@@ -924,7 +889,7 @@ mod tests {
             &type_tree,
         );
         let evt = event(2);
-        assert!(f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&evt as &dyn Event));
         let f = filter(
             vec![
                 filter_elem(
@@ -951,9 +916,9 @@ mod tests {
             &type_tree,
         );
 
-        assert!(!f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(!f.evaluate(&evt as &dyn Event));
         let evt = event(3);
-        assert!(f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&evt as &dyn Event));
     }
 
     #[test]
@@ -972,7 +937,7 @@ mod tests {
             &type_tree,
         );
         let evt = event(2);
-        assert!(f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&evt as &dyn Event));
         let f = filter(
             vec![filter_elem(
                 &[
@@ -990,8 +955,8 @@ mod tests {
             )],
             &type_tree,
         );
-        assert!(f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(f.evaluate(&evt as &dyn Event));
         let evt = event(4);
-        assert!(!f.evaluate(&evt as &dyn Event, &Default::default()));
+        assert!(!f.evaluate(&evt as &dyn Event));
     }
 }

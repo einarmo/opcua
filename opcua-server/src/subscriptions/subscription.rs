@@ -6,9 +6,7 @@ use std::{
 use log::{debug, trace, warn};
 use opcua_core::handle::Handle;
 use opcua_nodes::Event;
-use opcua_types::{
-    DataValue, DateTime, DateTimeUtc, EncodingContext, NotificationMessage, StatusCode,
-};
+use opcua_types::{DataValue, DateTime, DateTimeUtc, NotificationMessage, StatusCode};
 
 use super::monitored_item::{MonitoredItem, Notification};
 
@@ -236,9 +234,9 @@ impl Subscription {
     }
 
     /// Notify the given monitored item of a new event.
-    pub fn notify_event(&mut self, id: &u32, event: &dyn Event, ctx: &EncodingContext) {
+    pub fn notify_event(&mut self, id: &u32, event: &dyn Event) {
         if let Some(item) = self.monitored_items.get_mut(id) {
-            if item.notify_event(event, ctx) {
+            if item.notify_event(event) {
                 self.notified_monitored_items.insert(*id);
             }
         }

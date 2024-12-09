@@ -16,8 +16,8 @@ use tokio::sync::Notify;
 use crate::{identity_token::IdentityToken, info::ServerInfo};
 use opcua_types::{
     ActivateSessionRequest, ActivateSessionResponse, CloseSessionRequest, CloseSessionResponse,
-    CreateSessionRequest, CreateSessionResponse, EncodingContext, Error, NodeId, ResponseHeader,
-    SignatureData, StatusCode,
+    CreateSessionRequest, CreateSessionResponse, Error, NodeId, ResponseHeader, SignatureData,
+    StatusCode,
 };
 
 use super::{instance::Session, message_handler::MessageHandler};
@@ -366,10 +366,6 @@ pub(crate) async fn activate_session(
     };
 
     let namespaces = handler.get_namespaces_for_user(session_lck.clone(), session_id, user_token);
-    {
-        let mut session = trace_write_lock!(session_lck);
-        session.set_context(EncodingContext::new(namespaces.clone()));
-    }
     {
         channel.set_namespaces(namespaces);
     }

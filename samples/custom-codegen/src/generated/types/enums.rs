@@ -55,14 +55,9 @@ impl From<IMTagSelectorEnumeration> for i32 {
         value as i32
     }
 }
-impl From<IMTagSelectorEnumeration> for opcua::types::Variant {
-    fn from(value: IMTagSelectorEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for IMTagSelectorEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for IMTagSelectorEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -159,14 +154,9 @@ impl From<PnARStateEnumeration> for i32 {
         value as i32
     }
 }
-impl From<PnARStateEnumeration> for opcua::types::Variant {
-    fn from(value: PnARStateEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PnARStateEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PnARStateEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -261,14 +251,9 @@ impl From<PnARTypeEnumeration> for i32 {
         value as i32
     }
 }
-impl From<PnARTypeEnumeration> for opcua::types::Variant {
-    fn from(value: PnARTypeEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PnARTypeEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PnARTypeEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -365,14 +350,9 @@ impl From<PnAssetChangeEnumeration> for i32 {
         value as i32
     }
 }
-impl From<PnAssetChangeEnumeration> for opcua::types::Variant {
-    fn from(value: PnAssetChangeEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PnAssetChangeEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PnAssetChangeEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -471,14 +451,9 @@ impl From<PnAssetTypeEnumeration> for i32 {
         value as i32
     }
 }
-impl From<PnAssetTypeEnumeration> for opcua::types::Variant {
-    fn from(value: PnAssetTypeEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PnAssetTypeEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PnAssetTypeEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -573,14 +548,9 @@ impl From<PnChannelAccumulativeEnumeration> for i32 {
         value as i32
     }
 }
-impl From<PnChannelAccumulativeEnumeration> for opcua::types::Variant {
-    fn from(value: PnChannelAccumulativeEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PnChannelAccumulativeEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PnChannelAccumulativeEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -679,14 +649,9 @@ impl From<PnChannelDirectionEnumeration> for i32 {
         value as i32
     }
 }
-impl From<PnChannelDirectionEnumeration> for opcua::types::Variant {
-    fn from(value: PnChannelDirectionEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PnChannelDirectionEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PnChannelDirectionEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -785,14 +750,9 @@ impl From<PnChannelMaintenanceEnumeration> for i32 {
         value as i32
     }
 }
-impl From<PnChannelMaintenanceEnumeration> for opcua::types::Variant {
-    fn from(value: PnChannelMaintenanceEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PnChannelMaintenanceEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PnChannelMaintenanceEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -891,14 +851,9 @@ impl From<PnChannelSpecifierEnumeration> for i32 {
         value as i32
     }
 }
-impl From<PnChannelSpecifierEnumeration> for opcua::types::Variant {
-    fn from(value: PnChannelSpecifierEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PnChannelSpecifierEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PnChannelSpecifierEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -1005,14 +960,9 @@ impl From<PnChannelTypeEnumeration> for i32 {
         value as i32
     }
 }
-impl From<PnChannelTypeEnumeration> for opcua::types::Variant {
-    fn from(value: PnChannelTypeEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PnChannelTypeEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PnChannelTypeEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -1111,14 +1061,9 @@ impl From<PnDeviceStateEnumeration> for i32 {
         value as i32
     }
 }
-impl From<PnDeviceStateEnumeration> for opcua::types::Variant {
-    fn from(value: PnDeviceStateEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PnDeviceStateEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PnDeviceStateEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -1218,14 +1163,9 @@ impl From<PnLinkStateEnumeration> for i32 {
         value as i32
     }
 }
-impl From<PnLinkStateEnumeration> for opcua::types::Variant {
-    fn from(value: PnLinkStateEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PnLinkStateEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PnLinkStateEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -1326,14 +1266,9 @@ impl From<PnModuleStateEnumeration> for i32 {
         value as i32
     }
 }
-impl From<PnModuleStateEnumeration> for opcua::types::Variant {
-    fn from(value: PnModuleStateEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PnModuleStateEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PnModuleStateEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -1438,14 +1373,9 @@ impl From<PnPortStateEnumeration> for i32 {
         value as i32
     }
 }
-impl From<PnPortStateEnumeration> for opcua::types::Variant {
-    fn from(value: PnPortStateEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PnPortStateEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PnPortStateEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -1540,14 +1470,9 @@ impl From<PnSubmoduleAddInfoEnumeration> for i32 {
         value as i32
     }
 }
-impl From<PnSubmoduleAddInfoEnumeration> for opcua::types::Variant {
-    fn from(value: PnSubmoduleAddInfoEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PnSubmoduleAddInfoEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PnSubmoduleAddInfoEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -1648,14 +1573,9 @@ impl From<PnSubmoduleARInfoEnumeration> for i32 {
         value as i32
     }
 }
-impl From<PnSubmoduleARInfoEnumeration> for opcua::types::Variant {
-    fn from(value: PnSubmoduleARInfoEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PnSubmoduleARInfoEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PnSubmoduleARInfoEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]
@@ -1754,14 +1674,9 @@ impl From<PnSubmoduleIdentInfoEnumeration> for i32 {
         value as i32
     }
 }
-impl From<PnSubmoduleIdentInfoEnumeration> for opcua::types::Variant {
-    fn from(value: PnSubmoduleIdentInfoEnumeration) -> Self {
-        Self::from(value as i32)
-    }
-}
-impl opcua::types::AsVariantRef for PnSubmoduleIdentInfoEnumeration {
-    fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-        (*self as i32).into()
+impl opcua::types::IntoVariant for PnSubmoduleIdentInfoEnumeration {
+    fn into_variant(self) -> opcua::types::Variant {
+        (self as i32).into_variant()
     }
 }
 #[cfg(feature = "json")]

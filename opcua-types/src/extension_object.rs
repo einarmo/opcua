@@ -403,6 +403,16 @@ impl BinaryDecodable for ExtensionObject {
 }
 
 impl ExtensionObject {
+    /// Create an extension object from a structure.
+    pub fn new<T>(encodable: T) -> ExtensionObject
+    where
+        T: DynEncodable,
+    {
+        Self {
+            body: Some(Box::new(encodable)),
+        }
+    }
+
     /// Creates a null extension object, i.e. one with no value or payload
     pub fn null() -> ExtensionObject {
         ExtensionObject { body: None }
