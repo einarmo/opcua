@@ -4,12 +4,10 @@
 
 //! Contains the implementation of `VariableType` and `VariableTypeBuilder`.
 
-use std::convert::TryFrom;
-
 use log::error;
 use opcua_types::{
     AttributeId, AttributesMask, DataEncoding, DataValue, NumericRange, StatusCode,
-    TimestampsToReturn, VariableTypeAttributes, Variant,
+    TimestampsToReturn, TryFromVariant, VariableTypeAttributes, Variant,
 };
 
 use crate::FromAttributesError;
@@ -147,7 +145,7 @@ impl Node for VariableType {
                 Ok(())
             }
             AttributeId::ArrayDimensions => {
-                let array_dimensions = <Vec<u32>>::try_from(&value);
+                let array_dimensions = <Vec<u32>>::try_from_variant(value);
                 if let Ok(array_dimensions) = array_dimensions {
                     self.set_array_dimensions(&array_dimensions);
                     Ok(())

@@ -347,17 +347,9 @@ impl CodeGenerator {
         });
 
         impls.push(parse_quote! {
-            impl From<#enum_ident> for opcua::types::Variant {
-                fn from(v: #enum_ident) -> Self {
-                    Self::from(v.bits())
-                }
-            }
-        });
-
-        impls.push(parse_quote! {
-            impl opcua::types::AsVariantRef for #enum_ident {
-                fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-                    self.bits().into()
+            impl opcua::types::IntoVariant for #enum_ident {
+                fn into_variant(self) -> opcua::types::Variant {
+                    self.bits().into_variant()
                 }
             }
         });
@@ -571,17 +563,9 @@ impl CodeGenerator {
             }
         });
         impls.push(parse_quote! {
-            impl From<#enum_ident> for opcua::types::Variant {
-                fn from(value: #enum_ident) -> Self {
-                    Self::from(value as #ty)
-                }
-            }
-        });
-
-        impls.push(parse_quote! {
-            impl opcua::types::AsVariantRef for #enum_ident {
-                fn as_variant(&self, _ctx: &opcua::types::EncodingContext) -> opcua::types::Variant {
-                    (*self as #ty).into()
+            impl opcua::types::IntoVariant for #enum_ident {
+                fn into_variant(self) -> opcua::types::Variant {
+                    (self as #ty).into_variant()
                 }
             }
         });

@@ -1,10 +1,11 @@
-use std::convert::TryFrom;
 use std::str::FromStr;
 
 use crate::{
-    numeric_range::NumericRange, status_code::StatusCode, variant::Variant,
-    variant_type_id::VariantTypeId, ByteString, DataTypeId, DataValue, DateTime, DiagnosticInfo,
-    ExpandedNodeId, Guid, LocalizedText, NodeId, QualifiedName, UAString, VariantScalarTypeId,
+    numeric_range::NumericRange,
+    status_code::StatusCode,
+    variant::{Variant, VariantTypeId},
+    ByteString, DataTypeId, DataValue, DateTime, DiagnosticInfo, ExpandedNodeId, Guid,
+    LocalizedText, NodeId, QualifiedName, TryFromVariant, UAString, VariantScalarTypeId,
 };
 
 #[test]
@@ -189,7 +190,7 @@ fn variant_try_into_u32_array() {
     assert!(v.is_array_of_type(VariantScalarTypeId::UInt32));
     assert!(v.is_valid());
 
-    let result = <Vec<u32>>::try_from(&v).unwrap();
+    let result = <Vec<u32>>::try_from_variant(v).unwrap();
     assert_eq!(result.len(), 3);
 }
 

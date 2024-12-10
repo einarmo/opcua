@@ -1,7 +1,7 @@
 use crate::NamespaceMap;
 use opcua_types::{
-    event_field::EventField, AttributeId, ByteString, DateTime, EncodingContext, LocalizedText,
-    NodeId, NumericRange, ObjectTypeId, QualifiedName, TimeZoneDataType, UAString, Variant,
+    event_field::EventField, AttributeId, ByteString, DateTime, LocalizedText, NodeId,
+    NumericRange, ObjectTypeId, QualifiedName, TimeZoneDataType, UAString, Variant,
 };
 
 /// Trait implemented by all events.
@@ -17,7 +17,6 @@ pub trait Event: EventField {
         attribute_id: AttributeId,
         index_range: &NumericRange,
         browse_path: &[QualifiedName],
-        ctx: &EncodingContext,
     ) -> Variant;
 
     /// Get the `Time` of this event.
@@ -81,10 +80,9 @@ impl Event for BaseEventType {
         attribute_id: AttributeId,
         index_range: &NumericRange,
         browse_path: &[QualifiedName],
-        ctx: &EncodingContext,
     ) -> Variant {
         if type_definition_id == &ObjectTypeId::BaseEventType {
-            self.get_value(attribute_id, index_range, browse_path, ctx)
+            self.get_value(attribute_id, index_range, browse_path)
         } else {
             Variant::Empty
         }
@@ -97,7 +95,6 @@ impl EventField for BaseEventType {
         attribute_id: AttributeId,
         index_range: &NumericRange,
         remaining_path: &[QualifiedName],
-        ctx: &EncodingContext,
     ) -> Variant {
         if remaining_path.len() != 1 || attribute_id != AttributeId::Value {
             // Field is not from base event type.
@@ -108,40 +105,29 @@ impl EventField for BaseEventType {
             return Variant::Empty;
         }
         match field.name.as_ref() {
-            "EventId" => self.event_id.get_value(attribute_id, index_range, &[], ctx),
-            "EventType" => self
-                .event_type
-                .get_value(attribute_id, index_range, &[], ctx),
-            "SourceNode" => self
-                .source_node
-                .get_value(attribute_id, index_range, &[], ctx),
-            "SourceName" => self
-                .source_name
-                .get_value(attribute_id, index_range, &[], ctx),
-            "Time" => self.time.get_value(attribute_id, index_range, &[], ctx),
-            "ReceiveTime" => self
-                .receive_time
-                .get_value(attribute_id, index_range, &[], ctx),
-            "LocalTime" => self
-                .local_time
-                .get_value(attribute_id, index_range, &[], ctx),
-            "Message" => self.message.get_value(attribute_id, index_range, &[], ctx),
-            "Severity" => self.severity.get_value(attribute_id, index_range, &[], ctx),
-            "ConditionClassId" => {
-                self.condition_class_id
-                    .get_value(attribute_id, index_range, &[], ctx)
-            }
+            "EventId" => self.event_id.get_value(attribute_id, index_range, &[]),
+            "EventType" => self.event_type.get_value(attribute_id, index_range, &[]),
+            "SourceNode" => self.source_node.get_value(attribute_id, index_range, &[]),
+            "SourceName" => self.source_name.get_value(attribute_id, index_range, &[]),
+            "Time" => self.time.get_value(attribute_id, index_range, &[]),
+            "ReceiveTime" => self.receive_time.get_value(attribute_id, index_range, &[]),
+            "LocalTime" => self.local_time.get_value(attribute_id, index_range, &[]),
+            "Message" => self.message.get_value(attribute_id, index_range, &[]),
+            "Severity" => self.severity.get_value(attribute_id, index_range, &[]),
+            "ConditionClassId" => self
+                .condition_class_id
+                .get_value(attribute_id, index_range, &[]),
             "ConditionClassName" => {
                 self.condition_class_name
-                    .get_value(attribute_id, index_range, &[], ctx)
+                    .get_value(attribute_id, index_range, &[])
             }
             "ConditionSubClassId" => {
                 self.condition_sub_class_id
-                    .get_value(attribute_id, index_range, &[], ctx)
+                    .get_value(attribute_id, index_range, &[])
             }
             "ConditionSubClassName" => {
                 self.condition_sub_class_name
-                    .get_value(attribute_id, index_range, &[], ctx)
+                    .get_value(attribute_id, index_range, &[])
             }
             _ => Variant::Empty,
         }
@@ -274,24 +260,12 @@ mod tests {
     }
 
     fn get(id: &NodeId, evt: &dyn Event, field: &str) -> Variant {
-        evt.get_field(
-            id,
-            AttributeId::Value,
-            &NumericRange::None,
-            &[field.into()],
-            &Default::default(),
-        )
+        evt.get_field(id, AttributeId::Value, &NumericRange::None, &[field.into()])
     }
 
     fn get_nested(id: &NodeId, evt: &dyn Event, fields: &[&str]) -> Variant {
         let fields: Vec<QualifiedName> = fields.iter().map(|f| (*f).into()).collect();
-        evt.get_field(
-            id,
-            AttributeId::Value,
-            &NumericRange::None,
-            &fields,
-            &Default::default(),
-        )
+        evt.get_field(id, AttributeId::Value, &NumericRange::None, &fields)
     }
 
     #[test]
@@ -330,7 +304,6 @@ mod tests {
                 AttributeId::Value,
                 &NumericRange::None,
                 &["Message".into()],
-                &Default::default()
             ),
             Variant::Empty
         );
@@ -341,7 +314,6 @@ mod tests {
                 AttributeId::Value,
                 &NumericRange::None,
                 &["FooBar".into()],
-                &Default::default()
             ),
             Variant::Empty
         );
@@ -352,7 +324,6 @@ mod tests {
                 AttributeId::Value,
                 &NumericRange::None,
                 &["Float".into(), "Child".into()],
-                &Default::default()
             ),
             Variant::Empty
         );
@@ -363,7 +334,6 @@ mod tests {
                 AttributeId::NodeId,
                 &NumericRange::None,
                 &["Float".into()],
-                &Default::default()
             ),
             Variant::Empty
         );
@@ -497,7 +467,6 @@ mod tests {
                 AttributeId::NodeId,
                 &NumericRange::None,
                 &["SubComplex".into()],
-                &Default::default()
             ),
             Variant::from(NodeId::new(0, 15))
         );
@@ -507,7 +476,6 @@ mod tests {
                 AttributeId::NodeId,
                 &NumericRange::None,
                 &["Var".into()],
-                &Default::default()
             ),
             Variant::from(NodeId::new(0, 16))
         );
@@ -517,7 +485,6 @@ mod tests {
                 AttributeId::Value,
                 &NumericRange::None,
                 &["Var".into()],
-                &Default::default()
             ),
             Variant::from(20i32)
         );
@@ -538,7 +505,6 @@ mod tests {
                 AttributeId::Value,
                 &NumericRange::None,
                 &[QualifiedName::new(1, "Extra1"), "Float".into()],
-                &Default::default()
             ),
             Variant::from(20f32)
         );
@@ -548,7 +514,6 @@ mod tests {
                 AttributeId::Value,
                 &NumericRange::None,
                 &[QualifiedName::new(1, "Extra2"), "Float".into()],
-                &Default::default()
             ),
             Variant::from(21f32)
         );
@@ -558,7 +523,6 @@ mod tests {
                 AttributeId::Value,
                 &NumericRange::None,
                 &[QualifiedName::new(1, "Extra3"), "Float".into()],
-                &Default::default()
             ),
             Variant::Empty
         );
@@ -570,7 +534,6 @@ mod tests {
                 AttributeId::Value,
                 &NumericRange::None,
                 &["Var".into(), "Magic".into()],
-                &Default::default()
             ),
             Variant::from(15)
         );

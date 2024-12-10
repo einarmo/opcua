@@ -52,7 +52,7 @@ pub mod debug {
 }
 
 #[cfg(test)]
-pub mod tests;
+pub(crate) mod tests;
 
 /// Contains common OPC-UA constants.
 pub mod constants {

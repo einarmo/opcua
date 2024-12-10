@@ -16,7 +16,7 @@ use opcua_types::{
 
 use crate::{comms::secure_channel::SecureChannel, RequestMessage};
 
-pub fn serialize_test_and_return<T>(value: T) -> T
+pub(crate) fn serialize_test_and_return<T>(value: T) -> T
 where
     T: BinaryEncodable + BinaryDecodable + Debug + PartialEq,
 {
@@ -49,7 +49,7 @@ where
     new_value
 }
 
-pub fn serialize_test<T>(value: T)
+pub(crate) fn serialize_test<T>(value: T)
 where
     T: BinaryEncodable + BinaryDecodable + Debug + PartialEq,
 {
