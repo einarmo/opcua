@@ -49,6 +49,10 @@ public class TestNodeManager : CustomNodeManager2
             BrowseName = new QualifiedName("EchoMethod", NamespaceIndex)
         };
         mHello.DisplayName = mHello.BrowseName.Name;
+        mHello.InputArguments = new PropertyState<Argument[]>(mHello);
+        mHello.InputArguments.NodeId = GenerateNodeId();
+        mHello.OutputArguments = new PropertyState<Argument[]>(mHello);
+        mHello.OutputArguments.NodeId = GenerateNodeId();
         mHello.InputArguments.Value = [
             new Argument("Thing", DataTypeIds.String, ValueRanks.Scalar, "Thing to echo"),
         ];

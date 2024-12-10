@@ -17,8 +17,6 @@ public abstract class TaggedUnionConverter<TInterface, TEnum> : JsonConverter<TI
 
     protected abstract TInterface? FromEnum(JsonDocument document, JsonSerializerOptions options, TEnum type);
 
-    protected abstract TEnum? ParseEnum(string value);
-
     public override TInterface? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         using var doc = JsonDocument.ParseValue(ref reader);
@@ -28,7 +26,10 @@ public abstract class TaggedUnionConverter<TInterface, TEnum> : JsonConverter<TI
         {
             throw new JsonException($"Missing tag \"{TagName}\"");
         }
-        var type = ParseEnum(prop) ?? throw new JsonException($"Invalid tag value \"{prop}\"");
+        if (!Enum.TryParse<TEnum>(prop, true, out var type))
+        {
+            throw new JsonException($"Invalid tag \"{TagName}\"");
+        }
         return FromEnum(doc, options, type);
     }
 

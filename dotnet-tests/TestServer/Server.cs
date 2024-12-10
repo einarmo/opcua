@@ -1,3 +1,4 @@
+using Common;
 using Opc.Ua;
 using Opc.Ua.Server;
 
@@ -37,8 +38,10 @@ public class TestServer : StandardServer
         if (args.NewIdentity is UserNameIdentityToken userNameToken)
         {
             if (userNameToken.UserName != "test" || userNameToken.DecryptedPassword != "pass")
+            {
                 throw ServiceResultException.Create(StatusCodes.BadIdentityTokenRejected,
                     "Incorrect username or password");
+            }
         }
         else if (args.NewIdentity is AnonymousIdentityToken)
         {

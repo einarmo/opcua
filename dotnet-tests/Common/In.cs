@@ -2,10 +2,14 @@ using System.Text.Json;
 
 namespace Common;
 
-public interface IInMessage;
+public interface IInMessage
+{
+    InMessageType Type { get; }
+}
 
 public class ShutdownMessage : IInMessage
 {
+    public InMessageType Type { get; set; } = InMessageType.Shutdown;
 }
 
 public enum InMessageType
@@ -23,15 +27,6 @@ class InMessageConverter : TaggedUnionConverter<IInMessage, InMessageType>
         {
             InMessageType.Shutdown => document.Deserialize<ShutdownMessage>(options),
             _ => throw new JsonException("Unknown type variant")
-        };
-    }
-
-    protected override InMessageType? ParseEnum(string value)
-    {
-        return value switch
-        {
-            "shutdown" => InMessageType.Shutdown,
-            _ => null
         };
     }
 }

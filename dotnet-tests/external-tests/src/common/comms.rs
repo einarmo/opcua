@@ -22,10 +22,16 @@ pub struct ProcessLoop {
     stdout: ChildStdout,
 }
 
-pub fn spawn_proc(path: &str) -> (ProcessWrapper, ProcessLoop) {
+pub fn spawn_proc(path: &str, config_path: &str) -> (ProcessWrapper, ProcessLoop) {
+    println!(
+        "Start at {}",
+        std::path::absolute(path).unwrap().to_str().unwrap()
+    );
     let mut child = tokio::process::Command::new(path)
+        .arg(config_path)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
+        .kill_on_drop(true)
         .spawn()
         .unwrap();
 
@@ -81,16 +87,16 @@ impl ProcessLoop {
     pub async fn run(mut self) {
         let mut batch = Vec::new();
         let mut buf = [0u8; 1024];
-        let mut buf_mut = &mut buf[..];
 
         loop {
+            let mut buf_mut = &mut buf[..];
             select! {
                 len = self.stdout.read_buf(&mut buf_mut) => {
                     let Ok(len) = len else {
                         return;
                     };
                     batch.reserve(len);
-                    for it in &buf_mut[0..len] {
+                    for it in &buf[0..len] {
                         if *it == 0 {
                             let incoming: OutMessage = match serde_json::from_slice(&batch) {
                                 Ok(v) => v,
@@ -108,7 +114,9 @@ impl ProcessLoop {
                                 }
                                 r => self.incoming.send(r).await.unwrap()
                             }
-
+                            batch.clear();
+                        } else {
+                            batch.push(*it);
                         }
                     }
                 }

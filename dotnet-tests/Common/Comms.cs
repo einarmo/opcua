@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Common;
 
@@ -12,6 +13,9 @@ public static class Comms
         {
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
         };
+        res.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower, false));
+        res.Converters.Add(new OutMessageConverter());
+        res.Converters.Add(new InMessageConverter());
         return res;
     }
 

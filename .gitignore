@@ -14,3 +14,4 @@ lib/certs
 
 **/bin
 **/obj
+**/pki-ext-client

@@ -6,14 +6,13 @@ description = "OPC UA tests using an external .NET server"
 authors = ["Einar Omang <einar@omang.com>"]
 license = "MPL-2.0"
 
-[lib]
-name = "external_tests"
-
-[dev-dependencies]
+[dependencies]
 tokio = { workspace = true }
 tokio-util = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+log = { workspace = true }
+futures = { workspace = true }
 
 opcua = { path = "../../lib" }
 

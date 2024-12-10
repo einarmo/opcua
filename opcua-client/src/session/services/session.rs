@@ -179,6 +179,7 @@ impl<'b> UARequest for CreateSession<'b> {
         let response = channel.send(request, self.header.timeout).await?;
 
         if let ResponseMessage::CreateSession(response) = response {
+            log::debug!("create_session, success");
             process_service_result(&response.response_header)?;
 
             let security_policy = channel.security_policy();
@@ -211,6 +212,7 @@ impl<'b> UARequest for CreateSession<'b> {
 
             Ok(*response)
         } else {
+            log::error!("create_session failed");
             Err(process_unexpected_response(response))
         }
     }
@@ -483,10 +485,12 @@ impl UARequest for ActivateSession {
         let response = channel.send(request, timeout).await?;
 
         if let ResponseMessage::ActivateSession(response) = response {
+            log::debug!("activate_session success");
             // trace!("ActivateSessionResponse = {:#?}", response);
             process_service_result(&response.response_header)?;
             Ok(*response)
         } else {
+            log::error!("activate_session failed");
             Err(process_unexpected_response(response))
         }
     }
