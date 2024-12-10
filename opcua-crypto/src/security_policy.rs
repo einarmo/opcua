@@ -7,14 +7,14 @@
 use std::fmt;
 use std::str::FromStr;
 
-use log::{error, trace};
+use log::error;
 
 use opcua_types::{constants, status_code::StatusCode, ByteString, Error};
 
 use super::{
     aeskey::AesKey,
     hash,
-    pkey::{KeySize, PrivateKey, PublicKey, RsaPadding},
+    pkey::{PrivateKey, PublicKey, RsaPadding},
     random, SHA1_SIZE, SHA256_SIZE,
 };
 
@@ -565,7 +565,7 @@ impl SecurityPolicy {
         verification_key: &PublicKey,
         data: &[u8],
         signature: &[u8],
-        their_private_key: Option<PrivateKey>,
+        #[allow(unused)] their_private_key: Option<PrivateKey>,
     ) -> Result<(), Error> {
         // Asymmetric verify signature against supplied certificate
         let result = match self {
@@ -588,6 +588,8 @@ impl SecurityPolicy {
             // For debugging / unit testing purposes we might have a their_key to see the source of the error
             #[cfg(debug_assertions)]
             if let Some(their_key) = their_private_key {
+                use crate::pkey::KeySize;
+                use log::trace;
                 // Calculate the signature using their key, see what we were expecting versus theirs
                 let mut their_signature = vec![0u8; their_key.size()];
                 self.asymmetric_sign(&their_key, data, their_signature.as_mut_slice())?;
