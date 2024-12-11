@@ -15,11 +15,17 @@ pub async fn main() {
 }
 
 fn colored(r: i32, g: i32, b: i32, text: &str) -> String {
-    return format!("\x1B[38;2;{};{};{}m{}\x1B[0m", r, g, b, text);
+    format!("\x1B[38;2;{};{};{}m{}\x1B[0m", r, g, b, text)
 }
 
 pub struct Runner {
     filter: Option<String>,
+}
+
+impl Default for Runner {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Runner {
