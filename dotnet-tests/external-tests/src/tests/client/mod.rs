@@ -9,6 +9,7 @@ use tokio::select;
 
 use crate::{
     client::{make_client, ClientTestState},
+    common::JoinHandleAbortGuard,
     Runner,
 };
 
@@ -27,6 +28,7 @@ async fn test_connect(policy: SecurityPolicy, mode: MessageSecurityMode) {
         .await
         .unwrap();
     let h = event_loop.spawn();
+    let _guard = JoinHandleAbortGuard::new(h.abort_handle());
     select! {
         r = h => {
             panic!("Failed to connect, loop terminated: {r:?}");
@@ -52,6 +54,9 @@ async fn test_connect(policy: SecurityPolicy, mode: MessageSecurityMode) {
         read[0].value.clone().unwrap().try_cast_to::<i32>().unwrap(),
         ServerState::Running as i32
     );
+    if let Err(e) = session.disconnect().await {
+        println!("Failed to shut down session: {e}");
+    }
 }
 
 pub async fn run_connect_tests(runner: &Runner, _tester: &mut ClientTestState) {

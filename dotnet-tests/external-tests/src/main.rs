@@ -1,8 +1,9 @@
-use std::{env, future::Future, panic::AssertUnwindSafe};
+use std::{env, future::Future, panic::AssertUnwindSafe, time::Duration};
 
 use futures::FutureExt;
 
 use tests::run_client_tests;
+use tokio::select;
 
 pub mod client;
 pub mod common;
@@ -41,7 +42,15 @@ impl Runner {
         }
 
         println!("Starting test {name}");
-        let r = AssertUnwindSafe(test).catch_unwind().await;
+        let r = select! {
+            r = AssertUnwindSafe(test).catch_unwind() => {
+                r
+            }
+            _ = tokio::time::sleep(Duration::from_secs(20)) => {
+                println!(" {} {name} timed out after 20 seconds", colored(255, 0, 0, "X"));
+                return;
+            }
+        };
         match r {
             Ok(_) => println!(" {} {name}", colored(0, 255, 0, "🗸")),
             Err(e) => {

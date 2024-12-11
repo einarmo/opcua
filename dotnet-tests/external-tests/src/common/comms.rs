@@ -130,12 +130,14 @@ impl ProcessLoop {
                             panic!("Failed to serialize message to send: {e}");
                         }
                     }).await.unwrap();
+                    self.stdin.write_u8(0).await.unwrap();
                 }
                 r = self.proc.wait() => {
                     let r = r.unwrap();
                     if !r.success() {
                         panic!("Child excited with non-zero exit code");
                     }
+                    return;
                 }
             }
         }
