@@ -92,7 +92,10 @@ pub async fn run_connect_tests(runner: &Runner, _tester: &mut ClientTestState) {
         ),
     ] {
         runner
-            .run_test(&format!("{policy}:{mode}"), test_connect(policy, mode))
+            .run_test(
+                &format!("Connect {policy}:{mode}"),
+                test_connect(policy, mode),
+            )
             .await;
     }
 }

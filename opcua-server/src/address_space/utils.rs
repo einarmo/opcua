@@ -128,7 +128,6 @@ pub fn validate_value_to_write(
         let Some(data_type) = value_data_type.try_resolve(type_tree.namespaces()) else {
             return Err(StatusCode::BadTypeMismatch);
         };
-        println!("{data_type:?}");
         // Value is scalar, check if the data type matches
         let data_type_matches = type_tree.is_subtype_of(&data_type, &node_data_type);
 
