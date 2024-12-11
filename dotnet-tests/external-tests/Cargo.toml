@@ -1,0 +1,18 @@
+[package]
+name = "external-tests"
+version = "0.1.0"
+edition = "2021"
+description = "OPC UA tests using an external .NET server"
+authors = ["Einar Omang <einar@omang.com>"]
+license = "MPL-2.0"
+
+[dependencies]
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+log = { workspace = true }
+futures = { workspace = true }
+
+opcua = { path = "../../lib" }
+

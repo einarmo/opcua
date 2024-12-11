@@ -15,7 +15,7 @@ members = [
     "opcua-macros",
     "opcua-xml",
     "opcua-types"
-, "opcua-crypto", "opcua-core", "opcua-client", "opcua-server", "opcua-nodes", "opcua-core-namespace", "samples/custom-codegen"]
+, "opcua-crypto", "opcua-core", "opcua-client", "opcua-server", "opcua-nodes", "opcua-core-namespace", "samples/custom-codegen", "dotnet-tests/external-tests"]
 
 [workspace.dependencies]
 async-trait = "0.1.79"

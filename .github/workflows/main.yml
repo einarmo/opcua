@@ -20,29 +20,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Provision toolchain
-        run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
       - name: Build
-        run: cargo build
+        run: cargo check
       - name: Run tests
         run: cargo test --verbose
 
-  # build-windows:
-  #   strategy:
-  #     matrix:
-  #       toolchain:
-  #         - stable
-  #         - beta
-  #   runs-on: windows-latest
-  #   env:
-  #     VCPKGRS_DYNAMIC: 1
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Provision toolchain
-  #       run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
-  #     - name: Build
-  #       run: cargo build
-  #     - name: Run tests
-  #       run: cargo test --verbose
+  test-external-server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Build .NET
+        run: dotnet build
+      - name: Run tests against external server
+        run: cargo run --bin external-tests
 
   code-coverage:
     uses: ./.github/workflows/ci_code_coverage.yml
