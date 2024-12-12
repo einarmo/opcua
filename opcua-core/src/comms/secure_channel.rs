@@ -483,7 +483,7 @@ impl SecureChannel {
         }
     }
 
-    /// Get the plain text block size and key length for this channel.
+    /// Get the plain text block size and minimum padding for this channel.
     /// Only makes sense if security policy is not None, and security mode is
     /// SignAndEncrypt
     pub fn get_padding_block_sizes(
@@ -509,12 +509,18 @@ impl SecureChannel {
                     let padding = self.security_policy.asymmetric_encryption_padding();
                     let x509 = self.remote_cert().unwrap();
                     let pk = x509.public_key().unwrap();
-                    (pk.plain_text_block_size(padding), pk.size())
+                    (
+                        pk.plain_text_block_size(padding),
+                        Self::minimum_padding(pk.size()),
+                    )
                 }
             }
             SecurityHeader::Symmetric(_) => {
                 // Plain text block size comes from policy
-                (self.security_policy.plain_block_size(), signature_size)
+                (
+                    self.security_policy.plain_block_size(),
+                    Self::minimum_padding(signature_size),
+                )
             }
         }
     }
@@ -529,15 +535,14 @@ impl SecureChannel {
         signature_size: usize,
         message_type: MessageChunkType,
     ) -> (usize, usize) {
-        let (plain_text_block_size, key_length) =
+        let (plain_text_block_size, minimum_padding) =
             self.get_padding_block_sizes(security_header, signature_size, message_type);
 
-        if key_length == 0 {
+        if plain_text_block_size == 0 {
             return (0, 0);
         }
 
         // PaddingSize = PlainTextBlockSize – ((BytesToWrite + SignatureSize + 1) % PlainTextBlockSize);
-        let minimum_padding = Self::minimum_padding(key_length);
         let encrypt_size = 8 + body_size + signature_size + minimum_padding;
         let padding_size = if encrypt_size % plain_text_block_size != 0 {
             plain_text_block_size - (encrypt_size % plain_text_block_size)

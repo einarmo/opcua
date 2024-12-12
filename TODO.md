@@ -2,6 +2,7 @@
 
 This is a list of things that are known to be missing, or ideas that could be implemented. Feel free to pick up any of these if you wish to contribute.
 
+ - Optimize the `Chunker`. It currently allocates too much, and it has some other inefficiencies.
  - Flesh out the server and client SDK with tooling for ease if use.
    - Make it even easier to implement custom node managers.
    - Write a generic `Browser` for the client, to make it easier to recursively browse node hierarchies. This should be made super flexible, perhaps a trait based approach where the browser is generic over something that handles the response from a browse request and returns what nodes to browse next...
