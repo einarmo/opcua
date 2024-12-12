@@ -277,30 +277,30 @@ impl MessageChunk {
                 "message size {} is less than minimum allowed by the spec",
                 message_size
             );
-            Err(MessageChunkTooSmall)
-        } else {
-            let security_header = secure_channel.make_security_header(message_type);
-
-            let mut data_size = MESSAGE_CHUNK_HEADER_SIZE;
-            data_size += security_header.byte_len();
-            data_size += (SequenceHeader {
-                sequence_number: 0,
-                request_id: 0,
-            })
-            .byte_len();
-
-            // 1 byte == most padding
-            let signature_size = secure_channel.signature_size(&security_header);
-            data_size += secure_channel
-                .padding_size(&security_header, 1, signature_size, message_type)
-                .0;
-
-            // signature length
-            data_size += signature_size;
-
-            // Message size is what's left
-            Ok(message_size - data_size)
+            return Err(MessageChunkTooSmall);
         }
+
+        let security_header = secure_channel.make_security_header(message_type);
+
+        let signature_size = secure_channel.signature_size(&security_header);
+        let (plain_text_block_size, _) =
+            secure_channel.get_padding_block_sizes(&security_header, signature_size, message_type);
+
+        let mut data_size = MESSAGE_CHUNK_HEADER_SIZE;
+        data_size += security_header.byte_len();
+        data_size += (SequenceHeader {
+            sequence_number: 0,
+            request_id: 0,
+        })
+        .byte_len();
+
+        data_size += signature_size;
+        // The plain text block size is the maximum possible padding, so we need to
+        // subtract that to avoid overflowing buffers later.
+        data_size += plain_text_block_size;
+
+        // Message size is what's left
+        Ok(message_size - data_size)
     }
 
     /// Decode the message header from the inner data.

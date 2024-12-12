@@ -71,6 +71,8 @@ public class TestNodeManager : CustomNodeManager2
 
             return ServiceResult.Good;
         };
+        AddNodeRelation(mHello, root, ReferenceTypeIds.HasComponent);
+
         AddPredefinedNode(SystemContext, mHello);
     }
 

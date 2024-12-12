@@ -1,4 +1,5 @@
 using Common;
+using Microsoft.Extensions.Logging;
 using Opc.Ua;
 using Opc.Ua.Server;
 
@@ -11,6 +12,15 @@ public class TestServer : StandardServer
     protected override void OnServerStarting(ApplicationConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(configuration);
+
+        if (Environment.GetEnvironmentVariable("OPCUA_NET_TEST_SERVER_TRACE") == "true")
+        {
+            Utils.SetTraceMask(Utils.TraceMasks.All);
+            Utils.SetLogLevel(LogLevel.Trace);
+            Utils.SetLogger(new CommsLogger());
+        }
+
+
 
         base.OnServerStarting(configuration);
     }

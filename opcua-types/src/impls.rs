@@ -192,6 +192,26 @@ impl<'a> From<(u16, &'a str)> for ReadValueId {
     }
 }
 
+impl ReadValueId {
+    /// Create a new simple read value ID.
+    pub fn new(node_id: NodeId, attribute_id: AttributeId) -> Self {
+        Self {
+            node_id,
+            attribute_id: attribute_id as u32,
+            ..Default::default()
+        }
+    }
+
+    /// Create a new read value ID for values.
+    pub fn new_value(node_id: NodeId) -> Self {
+        Self {
+            node_id,
+            attribute_id: AttributeId::Value as u32,
+            ..Default::default()
+        }
+    }
+}
+
 impl Default for AnonymousIdentityToken {
     fn default() -> Self {
         AnonymousIdentityToken {
