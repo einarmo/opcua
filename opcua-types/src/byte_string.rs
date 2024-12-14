@@ -83,16 +83,14 @@ impl SimpleBinaryEncodable for ByteString {
         }
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<()> {
         // Strings are uncoded as UTF8 chars preceded by an Int32 length. A -1 indicates a null string
         if self.value.is_none() {
             write_i32(stream, -1)
         } else {
-            let mut size: usize = 0;
             let value = self.value.as_ref().unwrap();
-            size += write_i32(stream, value.len() as i32)?;
-            size += process_encode_io_result(stream.write(value))?;
-            Ok(size)
+            write_i32(stream, value.len() as i32)?;
+            process_encode_io_result(stream.write_all(value))
         }
     }
 }

@@ -64,15 +64,13 @@ impl BinaryEncodable for ResponseHeader {
         &self,
         stream: &mut S,
         ctx: &crate::Context<'_>,
-    ) -> EncodingResult<usize> {
-        let mut size = 0;
-        size += self.timestamp.encode(stream, ctx)?;
-        size += self.request_handle.encode(stream, ctx)?;
-        size += self.service_result.encode(stream, ctx)?;
-        size += self.service_diagnostics.encode(stream, ctx)?;
-        size += self.string_table.encode(stream, ctx)?;
-        size += self.additional_header.encode(stream, ctx)?;
-        Ok(size)
+    ) -> EncodingResult<()> {
+        self.timestamp.encode(stream, ctx)?;
+        self.request_handle.encode(stream, ctx)?;
+        self.service_result.encode(stream, ctx)?;
+        self.service_diagnostics.encode(stream, ctx)?;
+        self.string_table.encode(stream, ctx)?;
+        self.additional_header.encode(stream, ctx)
     }
 }
 

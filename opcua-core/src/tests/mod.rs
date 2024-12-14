@@ -28,12 +28,8 @@ where
 
     // Encode to stream
     let start_pos = stream.position();
-    let result = value.encode(&mut stream, &ctx);
+    value.encode(&mut stream, &ctx).expect("Encoding failed");
     let end_pos = stream.position();
-    assert!(result.is_ok());
-
-    // This ensures the size reported is the same as the byte length impl
-    assert_eq!(result.unwrap(), byte_len);
 
     // Test that the position matches the byte_len
     assert_eq!((end_pos - start_pos) as usize, byte_len);

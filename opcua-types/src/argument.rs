@@ -74,15 +74,10 @@ impl BinaryEncodable for Argument {
         size
     }
 
-    fn encode<S: Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &Context<'_>,
-    ) -> EncodingResult<usize> {
-        let mut size = 0;
-        size += self.name.encode(stream, ctx)?;
-        size += self.data_type.encode(stream, ctx)?;
-        size += self.value_rank.encode(stream, ctx)?;
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S, ctx: &Context<'_>) -> EncodingResult<()> {
+        self.name.encode(stream, ctx)?;
+        self.data_type.encode(stream, ctx)?;
+        self.value_rank.encode(stream, ctx)?;
         // Encode the array dimensions
         if self.value_rank > 0 {
             if let Some(ref array_dimensions) = self.array_dimensions {
@@ -90,16 +85,16 @@ impl BinaryEncodable for Argument {
                     return Err(Error::encoding(
                         format!("The array dimensions {} of the Argument should match value rank {} and they don't", array_dimensions.len(), self.value_rank)));
                 }
-                size += self.array_dimensions.encode(stream, ctx)?;
+                self.array_dimensions.encode(stream, ctx)?;
             } else {
                 return Err(Error::encoding(format!("The array dimensions are expected in the Argument matching value rank {} and they aren't", self.value_rank)));
             }
         } else {
-            size += write_u32(stream, 0u32)?;
+            write_u32(stream, 0u32)?;
         }
 
-        size += self.description.encode(stream, ctx)?;
-        Ok(size)
+        self.description.encode(stream, ctx)?;
+        Ok(())
     }
 }
 

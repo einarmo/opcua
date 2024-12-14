@@ -78,10 +78,8 @@ impl BinaryEncodable for Guid {
         &self,
         stream: &mut S,
         _ctx: &crate::Context<'_>,
-    ) -> EncodingResult<usize> {
-        let mut size: usize = 0;
-        size += process_encode_io_result(stream.write(self.uuid.as_bytes()))?;
-        Ok(size)
+    ) -> EncodingResult<()> {
+        process_encode_io_result(stream.write_all(self.uuid.as_bytes()))
     }
 }
 

@@ -173,7 +173,7 @@ impl DynamicStructure {
         f: &Variant,
         field: &ParsedStructureField,
         ctx: &Context<'_>,
-    ) -> EncodingResult<usize> {
+    ) -> EncodingResult<()> {
         match f {
             Variant::ExtensionObject(o) => {
                 let Some(field_ty) = self.type_tree.get_struct_type(&field.type_id) else {
@@ -195,7 +195,6 @@ impl DynamicStructure {
                 }
             }
             Variant::Array(a) => {
-                let mut size = 0;
                 if field.value_rank > 1 {
                     let Some(dims) = &a.dimensions else {
                         return Err(Error::encoding(
@@ -206,18 +205,18 @@ impl DynamicStructure {
                     // as UInt32 through attribute.
 
                     // Encode dimensions
-                    size += write_i32(stream, dims.len() as i32)?;
+                    write_i32(stream, dims.len() as i32)?;
                     for dimension in dims {
-                        size += write_i32(stream, *dimension as i32)?;
+                        write_i32(stream, *dimension as i32)?;
                     }
                 } else {
-                    size += write_i32(stream, a.values.len() as i32)?;
+                    write_i32(stream, a.values.len() as i32)?;
                 }
 
                 for value in a.values.iter() {
-                    size += self.encode_field(stream, value, field, ctx)?;
+                    self.encode_field(stream, value, field, ctx)?;
                 }
-                Ok(size)
+                Ok(())
             }
             Variant::Empty => Err(Error::encoding("Empty variant value in structure")),
             r => r.encode_value(stream, ctx),
@@ -265,14 +264,13 @@ impl BinaryEncodable for DynamicStructure {
         &self,
         stream: &mut S,
         ctx: &crate::Context<'_>,
-    ) -> crate::EncodingResult<usize> {
+    ) -> crate::EncodingResult<()> {
         let s = &self.type_def;
-        let mut size = 0;
         match s.structure_type {
             StructureType::Structure => {
                 // Invariant used here: The data list must contain the correct fields with the correct values.
                 for (value, field) in self.data.iter().zip(s.fields.iter()) {
-                    size += self.encode_field(stream, value, field, ctx)?;
+                    self.encode_field(stream, value, field, ctx)?;
                 }
             }
             StructureType::StructureWithOptionalFields => {
@@ -282,15 +280,15 @@ impl BinaryEncodable for DynamicStructure {
                         encoding_mask |= 1 << idx;
                     }
                 }
-                size += write_u32(stream, encoding_mask)?;
+                write_u32(stream, encoding_mask)?;
                 for (value, field) in self.data.iter().zip(s.fields.iter()) {
                     if !field.is_optional || !matches!(value, Variant::Empty) {
-                        size += self.encode_field(stream, value, field, ctx)?;
+                        self.encode_field(stream, value, field, ctx)?;
                     }
                 }
             }
             StructureType::Union => {
-                size += write_u32(stream, self.discriminant)?;
+                write_u32(stream, self.discriminant)?;
                 let (Some(value), Some(field)) =
                     (self.data.first(), s.fields.get(self.discriminant as usize))
                 else {
@@ -299,11 +297,11 @@ impl BinaryEncodable for DynamicStructure {
                     ));
                 };
 
-                size += self.encode_field(stream, value, field, ctx)?;
+                self.encode_field(stream, value, field, ctx)?;
             }
         }
 
-        Ok(size)
+        Ok(())
     }
 }
 

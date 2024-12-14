@@ -262,9 +262,9 @@ impl Variant {
         &self,
         stream: &mut S,
         ctx: &crate::Context<'_>,
-    ) -> EncodingResult<usize> {
+    ) -> EncodingResult<()> {
         match self {
-            Variant::Empty => Ok(0),
+            Variant::Empty => Ok(()),
             Variant::Boolean(value) => value.encode(stream, ctx),
             Variant::SByte(value) => value.encode(stream, ctx),
             Variant::Byte(value) => value.encode(stream, ctx),
@@ -291,22 +291,22 @@ impl Variant {
             Variant::Variant(value) => value.encode(stream, ctx),
             Variant::DiagnosticInfo(value) => value.encode(stream, ctx),
             Variant::Array(array) => {
-                let mut size = write_i32(stream, array.values.len() as i32)?;
+                write_i32(stream, array.values.len() as i32)?;
                 for value in array.values.iter() {
-                    size += Variant::encode_variant_value(stream, value, ctx)?;
+                    Variant::encode_variant_value(stream, value, ctx)?;
                 }
                 if let Some(ref dimensions) = array.dimensions {
                     // Note array dimensions are encoded as Int32 even though they are presented
                     // as UInt32 through attribute.
 
                     // Encode dimensions length
-                    size += write_i32(stream, dimensions.len() as i32)?;
+                    write_i32(stream, dimensions.len() as i32)?;
                     // Encode dimensions
                     for dimension in dimensions {
-                        size += write_i32(stream, *dimension as i32)?;
+                        write_i32(stream, *dimension as i32)?;
                     }
                 }
-                Ok(size)
+                Ok(())
             }
         }
     }
@@ -329,15 +329,12 @@ impl BinaryEncodable for Variant {
         &self,
         stream: &mut S,
         ctx: &crate::Context<'_>,
-    ) -> EncodingResult<usize> {
-        let mut size: usize = 0;
-
+    ) -> EncodingResult<()> {
         // Encoding mask will include the array bits if applicable for the type
         let encoding_mask = self.encoding_mask();
-        size += write_u8(stream, encoding_mask)?;
+        write_u8(stream, encoding_mask)?;
 
-        size += self.encode_value(stream, ctx)?;
-        Ok(size)
+        self.encode_value(stream, ctx)
     }
 }
 
@@ -527,9 +524,9 @@ impl Variant {
         stream: &mut S,
         value: &Variant,
         ctx: &crate::Context<'_>,
-    ) -> EncodingResult<usize> {
+    ) -> EncodingResult<()> {
         match value {
-            Variant::Empty => Ok(0),
+            Variant::Empty => Ok(()),
             Variant::Boolean(value) => value.encode(stream, ctx),
             Variant::SByte(value) => value.encode(stream, ctx),
             Variant::Byte(value) => value.encode(stream, ctx),

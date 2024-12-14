@@ -79,8 +79,7 @@ impl BinaryEncodable for LocalizedText {
         &self,
         stream: &mut S,
         ctx: &crate::Context<'_>,
-    ) -> EncodingResult<usize> {
-        let mut size = 0;
+    ) -> EncodingResult<()> {
         // A bit mask that indicates which fields are present in the stream.
         // The mask has the following bits:
         // 0x01    Locale
@@ -92,14 +91,14 @@ impl BinaryEncodable for LocalizedText {
         if !self.text.is_empty() {
             encoding_mask |= 0x2;
         }
-        size += encoding_mask.encode(stream, ctx)?;
+        encoding_mask.encode(stream, ctx)?;
         if !self.locale.is_empty() {
-            size += self.locale.encode(stream, ctx)?;
+            self.locale.encode(stream, ctx)?;
         }
         if !self.text.is_empty() {
-            size += self.text.encode(stream, ctx)?;
+            self.text.encode(stream, ctx)?;
         }
-        Ok(size)
+        Ok(())
     }
 }
 

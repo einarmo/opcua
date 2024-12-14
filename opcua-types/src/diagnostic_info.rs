@@ -164,42 +164,37 @@ impl BinaryEncodable for DiagnosticInfo {
         size
     }
 
-    fn encode<S: Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &Context<'_>,
-    ) -> EncodingResult<usize> {
-        let mut size: usize = 0;
-        size += write_u8(stream, self.encoding_mask().bits())?;
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S, ctx: &Context<'_>) -> EncodingResult<()> {
+        write_u8(stream, self.encoding_mask().bits())?;
         if let Some(ref symbolic_id) = self.symbolic_id {
             // Write symbolic id
-            size += write_i32(stream, *symbolic_id)?;
+            write_i32(stream, *symbolic_id)?;
         }
         if let Some(ref namespace_uri) = self.namespace_uri {
             // Write namespace
-            size += namespace_uri.encode(stream, ctx)?;
+            namespace_uri.encode(stream, ctx)?;
         }
         if let Some(ref locale) = self.locale {
             // Write locale
-            size += locale.encode(stream, ctx)?;
+            locale.encode(stream, ctx)?;
         }
         if let Some(ref localized_text) = self.localized_text {
             // Write localized text
-            size += localized_text.encode(stream, ctx)?;
+            localized_text.encode(stream, ctx)?;
         }
         if let Some(ref additional_info) = self.additional_info {
             // Write Additional info
-            size += additional_info.encode(stream, ctx)?;
+            additional_info.encode(stream, ctx)?;
         }
         if let Some(ref inner_status_code) = self.inner_status_code {
             // Write inner status code
-            size += inner_status_code.encode(stream, ctx)?;
+            inner_status_code.encode(stream, ctx)?;
         }
         if let Some(ref inner_diagnostic_info) = self.inner_diagnostic_info {
             // Write inner diagnostic info
-            size += inner_diagnostic_info.clone().encode(stream, ctx)?;
+            inner_diagnostic_info.clone().encode(stream, ctx)?;
         }
-        Ok(size)
+        Ok(())
     }
 }
 

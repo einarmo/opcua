@@ -25,7 +25,7 @@ impl opcua::types::BinaryEncodable for AccessLevelExType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, self.bits())
     }
 }
@@ -93,7 +93,7 @@ impl opcua::types::BinaryEncodable for AccessLevelType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_u8(stream, self.bits())
     }
 }
@@ -160,7 +160,7 @@ impl opcua::types::BinaryEncodable for AccessRestrictionType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i16(stream, self.bits())
     }
 }
@@ -298,7 +298,7 @@ impl opcua::types::BinaryEncodable for ApplicationType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -332,7 +332,7 @@ impl opcua::types::BinaryEncodable for AttributeWriteMask {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, self.bits())
     }
 }
@@ -468,7 +468,7 @@ impl opcua::types::BinaryEncodable for AxisScaleEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -571,7 +571,7 @@ impl opcua::types::BinaryEncodable for BrokerTransportQualityOfService {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -669,7 +669,7 @@ impl opcua::types::BinaryEncodable for BrowseDirection {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -778,7 +778,7 @@ impl opcua::types::BinaryEncodable for BrowseResultMask {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -873,7 +873,7 @@ impl opcua::types::BinaryEncodable for DataChangeTrigger {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -900,7 +900,7 @@ impl opcua::types::BinaryEncodable for DataSetFieldContentMask {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, self.bits())
     }
 }
@@ -966,7 +966,7 @@ impl opcua::types::BinaryEncodable for DataSetFieldFlags {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i16(stream, self.bits())
     }
 }
@@ -1102,7 +1102,7 @@ impl opcua::types::BinaryEncodable for DataSetOrderingType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1197,7 +1197,7 @@ impl opcua::types::BinaryEncodable for DeadbandType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1296,7 +1296,7 @@ impl opcua::types::BinaryEncodable for DiagnosticsLevel {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1322,7 +1322,7 @@ impl opcua::types::BinaryEncodable for EventNotifierType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_u8(stream, self.bits())
     }
 }
@@ -1466,7 +1466,7 @@ impl opcua::types::BinaryEncodable for ExceptionDeviationFormat {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1591,7 +1591,7 @@ impl opcua::types::BinaryEncodable for FilterOperator {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1683,7 +1683,7 @@ impl opcua::types::BinaryEncodable for HistoryUpdateType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1779,7 +1779,7 @@ impl opcua::types::BinaryEncodable for IdentityCriteriaType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1876,7 +1876,7 @@ impl opcua::types::BinaryEncodable for IdType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1902,7 +1902,7 @@ impl opcua::types::BinaryEncodable for JsonDataSetMessageContentMask {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, self.bits())
     }
 }
@@ -1970,7 +1970,7 @@ impl opcua::types::BinaryEncodable for JsonNetworkMessageContentMask {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, self.bits())
     }
 }
@@ -2109,7 +2109,7 @@ impl opcua::types::BinaryEncodable for MessageSecurityMode {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -2207,7 +2207,7 @@ impl opcua::types::BinaryEncodable for ModelChangeStructureVerbMask {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -2302,7 +2302,7 @@ impl opcua::types::BinaryEncodable for MonitoringMode {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -2392,7 +2392,7 @@ impl opcua::types::BinaryEncodable for NamingRuleType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -2551,7 +2551,7 @@ impl opcua::types::BinaryEncodable for NodeAttributesMask {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -2658,7 +2658,7 @@ impl opcua::types::BinaryEncodable for NodeClass {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -2760,7 +2760,7 @@ impl opcua::types::BinaryEncodable for NodeIdType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_u8(stream, *self as u8)
     }
 }
@@ -2852,7 +2852,7 @@ impl opcua::types::BinaryEncodable for OpenFileMode {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -2947,7 +2947,7 @@ impl opcua::types::BinaryEncodable for OverrideValueHandling {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -3039,7 +3039,7 @@ impl opcua::types::BinaryEncodable for PerformUpdateType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -3069,7 +3069,7 @@ impl opcua::types::BinaryEncodable for PermissionType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, self.bits())
     }
 }
@@ -3207,7 +3207,7 @@ impl opcua::types::BinaryEncodable for PubSubDiagnosticsCounterClassification {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -3304,7 +3304,7 @@ impl opcua::types::BinaryEncodable for PubSubState {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -3405,7 +3405,7 @@ impl opcua::types::BinaryEncodable for RedundancySupport {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -3502,7 +3502,7 @@ impl opcua::types::BinaryEncodable for SecurityTokenRequestType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -3607,7 +3607,7 @@ impl opcua::types::BinaryEncodable for ServerState {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -3702,7 +3702,7 @@ impl opcua::types::BinaryEncodable for StructureType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -3802,7 +3802,7 @@ impl opcua::types::BinaryEncodable for TimestampsToReturn {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -3903,7 +3903,7 @@ impl opcua::types::BinaryEncodable for TrustListMasks {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -3930,7 +3930,7 @@ impl opcua::types::BinaryEncodable for UadpDataSetMessageContentMask {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, self.bits())
     }
 }
@@ -4000,7 +4000,7 @@ impl opcua::types::BinaryEncodable for UadpNetworkMessageContentMask {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, self.bits())
     }
 }
@@ -4138,7 +4138,7 @@ impl opcua::types::BinaryEncodable for UserTokenType {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
