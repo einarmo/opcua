@@ -1,3 +1,5 @@
+using System.Buffers.Text;
+using Common;
 using Opc.Ua;
 using Opc.Ua.Server;
 
@@ -18,6 +20,21 @@ public class TestNodeManager : CustomNodeManager2
         }
 
         base.CreateAddressSpace(externalReferences);
+    }
+
+    public void UpdateValue(ChangeValueMessage message)
+    {
+        var nodeId = NodeId.Parse(message.NodeId);
+        var bytes = Convert.FromBase64String(message.Value!);
+
+        var variant = new BinaryDecoder(bytes, Server.MessageContext).ReadVariant("");
+
+        var vb = PredefinedNodes[nodeId];
+        if (vb is not BaseDataVariableState state) throw new Exception("Not a variable");
+        state.Value = variant.Value;
+        state.Timestamp = DateTime.UtcNow;
+        state.StatusCode = StatusCodes.Good;
+        state.ClearChangeMasks(SystemContext, false);
     }
 
     private void PopulateCore(IDictionary<NodeId, IList<IReference>> externalReferences)
@@ -71,6 +88,8 @@ public class TestNodeManager : CustomNodeManager2
 
             return ServiceResult.Good;
         };
+        AddNodeRelation(mHello, root, ReferenceTypeIds.HasComponent);
+
         AddPredefinedNode(SystemContext, mHello);
     }
 

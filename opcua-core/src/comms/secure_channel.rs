@@ -276,6 +276,11 @@ impl SecureChannel {
         self.encoding_context.read()
     }
 
+    /// Get a reference counted reference to the encoding context.
+    pub fn context_arc(&self) -> Arc<RwLock<ContextOwned>> {
+        self.encoding_context.clone()
+    }
+
     /// Set the namespace map.
     pub fn set_namespaces(&self, namespaces: NamespaceMap) {
         *self.encoding_context.write().namespaces_mut() = namespaces;
@@ -483,6 +488,48 @@ impl SecureChannel {
         }
     }
 
+    /// Get the plain text block size and minimum padding for this channel.
+    /// Only makes sense if security policy is not None, and security mode is
+    /// SignAndEncrypt
+    pub fn get_padding_block_sizes(
+        &self,
+        security_header: &SecurityHeader,
+        signature_size: usize,
+        message_type: MessageChunkType,
+    ) -> (usize, usize) {
+        if self.security_policy == SecurityPolicy::None
+            || self.security_mode != MessageSecurityMode::SignAndEncrypt
+                && !message_type.is_open_secure_channel()
+        {
+            return (0, 0);
+        }
+
+        match security_header {
+            SecurityHeader::Asymmetric(security_header) => {
+                if security_header.sender_certificate.is_null() {
+                    error!("Sender has not supplied a certificate so it is doubtful that this will work");
+                    (self.security_policy.plain_block_size(), signature_size)
+                } else {
+                    // Padding requires we look at the remote certificate and security policy
+                    let padding = self.security_policy.asymmetric_encryption_padding();
+                    let x509 = self.remote_cert().unwrap();
+                    let pk = x509.public_key().unwrap();
+                    (
+                        pk.plain_text_block_size(padding),
+                        Self::minimum_padding(pk.size()),
+                    )
+                }
+            }
+            SecurityHeader::Symmetric(_) => {
+                // Plain text block size comes from policy
+                (
+                    self.security_policy.plain_block_size(),
+                    Self::minimum_padding(signature_size),
+                )
+            }
+        }
+    }
+
     /// Calculate the padding size
     ///
     /// Padding adds bytes to the body to make it a multiple of the block size so it can be encrypted.
@@ -493,43 +540,22 @@ impl SecureChannel {
         signature_size: usize,
         message_type: MessageChunkType,
     ) -> (usize, usize) {
-        if self.security_policy != SecurityPolicy::None
-            && (self.security_mode == MessageSecurityMode::SignAndEncrypt
-                || message_type.is_open_secure_channel())
-        {
-            // Signature size in bytes
-            let (plain_text_block_size, key_length) = match security_header {
-                SecurityHeader::Asymmetric(security_header) => {
-                    if security_header.sender_certificate.is_null() {
-                        error!("Sender has not supplied a certificate so it is doubtful that this will work");
-                        (self.security_policy.plain_block_size(), signature_size)
-                    } else {
-                        // Padding requires we look at the remote certificate and security policy
-                        let padding = self.security_policy.asymmetric_encryption_padding();
-                        let x509 = self.remote_cert().unwrap();
-                        let pk = x509.public_key().unwrap();
-                        (pk.plain_text_block_size(padding), pk.size())
-                    }
-                }
-                SecurityHeader::Symmetric(_) => {
-                    // Plain text block size comes from policy
-                    (self.security_policy.plain_block_size(), signature_size)
-                }
-            };
+        let (plain_text_block_size, minimum_padding) =
+            self.get_padding_block_sizes(security_header, signature_size, message_type);
 
-            // PaddingSize = PlainTextBlockSize – ((BytesToWrite + SignatureSize + 1) % PlainTextBlockSize);
-            let minimum_padding = Self::minimum_padding(key_length);
-            let encrypt_size = 8 + body_size + signature_size + minimum_padding;
-            let padding_size = if encrypt_size % plain_text_block_size != 0 {
-                plain_text_block_size - (encrypt_size % plain_text_block_size)
-            } else {
-                0
-            };
-            trace!("sequence_header(8) + body({}) + signature ({}) = plain text size = {} / with padding {} = {}, plain_text_block_size = {}", body_size, signature_size, encrypt_size, padding_size, encrypt_size + padding_size, plain_text_block_size);
-            (minimum_padding + padding_size, minimum_padding)
-        } else {
-            (0, 0)
+        if plain_text_block_size == 0 {
+            return (0, 0);
         }
+
+        // PaddingSize = PlainTextBlockSize – ((BytesToWrite + SignatureSize + 1) % PlainTextBlockSize);
+        let encrypt_size = 8 + body_size + signature_size + minimum_padding;
+        let padding_size = if encrypt_size % plain_text_block_size != 0 {
+            plain_text_block_size - (encrypt_size % plain_text_block_size)
+        } else {
+            0
+        };
+        trace!("sequence_header(8) + body({}) + signature ({}) = plain text size = {} / with padding {} = {}, plain_text_block_size = {}", body_size, signature_size, encrypt_size, padding_size, encrypt_size + padding_size, plain_text_block_size);
+        (minimum_padding + padding_size, minimum_padding)
     }
 
     // Takes an unpadded message chunk and adds padding as well as space to the end to accomodate a signature.

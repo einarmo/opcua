@@ -3,9 +3,12 @@ use std::{
     time::Duration,
 };
 
-use opcua::client::ClientBuilder;
+use opcua::{
+    client::{ClientBuilder, Session},
+    types::{NodeId, Variant},
+};
 
-use crate::common::{spawn_proc, ProcessWrapper};
+use crate::common::{spawn_proc, InMessage, ProcessWrapper, UpdateValueMessage};
 
 pub struct ClientTestState {
     pub server: ProcessWrapper,
@@ -21,6 +24,16 @@ impl ClientTestState {
         let handle = tokio::task::spawn(server_loop.run());
 
         Self { server, handle }
+    }
+
+    pub async fn send_change_message(&self, session: &Session, node_id: NodeId, value: Variant) {
+        let msg = {
+            let context = session.context();
+            let ctx_r = context.read();
+            InMessage::ChangeValue(UpdateValueMessage::new(node_id, value, &ctx_r.context()))
+        };
+
+        self.server.send_message(msg).await;
     }
 }
 

@@ -1,5 +1,6 @@
 use std::process::Stdio;
 
+use opcua::types::{BinaryEncodable, ByteString, Context, NodeId, Variant};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tokio::{
@@ -78,9 +79,26 @@ pub struct GeneralMessage {
 }
 
 #[derive(Debug, Serialize)]
-#[serde(rename_all = "snake_case", tag = "type")]
+#[serde(rename_all = "snake_case")]
+pub struct UpdateValueMessage {
+    pub node_id: String,
+    pub value: String,
+}
+
+impl UpdateValueMessage {
+    pub fn new(node_id: NodeId, value: Variant, ctx: &Context) -> Self {
+        Self {
+            node_id: node_id.to_string(),
+            value: ByteString::from(value.encode_to_vec(ctx)).as_base64(),
+        }
+    }
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "lowercase", tag = "type")]
 pub enum InMessage {
     Shutdown {},
+    ChangeValue(UpdateValueMessage),
 }
 
 impl ProcessLoop {

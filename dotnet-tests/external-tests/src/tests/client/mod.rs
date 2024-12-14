@@ -1,20 +1,44 @@
+mod connect;
+pub mod services;
+
+use std::{future::Future, panic::AssertUnwindSafe, sync::Arc};
+
+pub use connect::run_connect_tests;
+use futures::FutureExt;
 use opcua::{
-    client::IdentityToken,
+    client::{IdentityToken, Session},
     crypto::{hostname, SecurityPolicy},
-    types::{
-        AttributeId, MessageSecurityMode, ReadValueId, ServerState, TimestampsToReturn, VariableId,
-    },
+    types::MessageSecurityMode,
 };
 use tokio::select;
 
 use crate::{
     client::{make_client, ClientTestState},
     common::JoinHandleAbortGuard,
-    Runner,
 };
 
-async fn test_connect(policy: SecurityPolicy, mode: MessageSecurityMode) {
-    opcua::console_logging::init();
+/// Workaround for AsyncFn, but it only really barely works, and breaks closures.
+pub trait WithSessionMethod<'a>:
+    FnOnce(Arc<Session>, &'a mut ClientTestState) -> Self::Fut
+{
+    type Fut: Future<Output = ()> + 'a;
+}
+
+impl<'a, T, F> WithSessionMethod<'a> for T
+where
+    T: FnOnce(Arc<Session>, &'a mut ClientTestState) -> F,
+    F: Future<Output = ()> + 'a,
+{
+    type Fut = F;
+}
+
+pub async fn with_session<Fun: for<'a> WithSessionMethod<'a>>(
+    f: Fun,
+    policy: SecurityPolicy,
+    mode: MessageSecurityMode,
+    identity_token: IdentityToken,
+    ctx: &mut ClientTestState,
+) {
     let mut client = make_client(true).client().unwrap();
     let (session, event_loop) = client
         .connect_to_matching_endpoint(
@@ -23,84 +47,46 @@ async fn test_connect(policy: SecurityPolicy, mode: MessageSecurityMode) {
                 policy.to_str(),
                 mode,
             ),
-            IdentityToken::UserName("test".to_owned(), "pass".to_owned()),
+            identity_token,
         )
         .await
         .unwrap();
-    let h = event_loop.spawn();
+    let mut h = event_loop.spawn();
     let _guard = JoinHandleAbortGuard::new(h.abort_handle());
     select! {
-        r = h => {
+        r = session.wait_for_connection() => assert!(r, "Expected connection"),
+        r = &mut h => {
             panic!("Failed to connect, loop terminated: {r:?}");
         }
-        c = session.wait_for_connection() => {
-            assert!(c, "Expected connection");
+    };
+    let r = select! {
+        r = AssertUnwindSafe(f(session.clone(), ctx)).catch_unwind() => r,
+        r = &mut h => {
+            panic!("Event loop terminated unexpectedly while test was running: {r:?}");
         }
-    }
+    };
 
-    let read = session
-        .read(
-            &[ReadValueId {
-                node_id: VariableId::Server_ServerStatus_State.into(),
-                attribute_id: AttributeId::Value as u32,
-                ..Default::default()
-            }],
-            TimestampsToReturn::Both,
-            0.0,
-        )
-        .await
-        .unwrap();
-    assert_eq!(
-        read[0].value.clone().unwrap().try_cast_to::<i32>().unwrap(),
-        ServerState::Running as i32
-    );
     if let Err(e) = session.disconnect().await {
         println!("Failed to shut down session: {e}");
+    } else {
+        let _ = h.await;
+    }
+
+    if let Err(e) = r {
+        std::panic::resume_unwind(e)
     }
 }
 
-pub async fn run_connect_tests(runner: &Runner, _tester: &mut ClientTestState) {
-    for (policy, mode) in [
-        (SecurityPolicy::None, MessageSecurityMode::None),
-        (SecurityPolicy::Basic256Sha256, MessageSecurityMode::Sign),
-        (
-            SecurityPolicy::Basic256Sha256,
-            MessageSecurityMode::SignAndEncrypt,
-        ),
-        (
-            SecurityPolicy::Aes128Sha256RsaOaep,
-            MessageSecurityMode::Sign,
-        ),
-        (
-            SecurityPolicy::Aes128Sha256RsaOaep,
-            MessageSecurityMode::SignAndEncrypt,
-        ),
-        (
-            SecurityPolicy::Aes256Sha256RsaPss,
-            MessageSecurityMode::Sign,
-        ),
-        (
-            SecurityPolicy::Aes256Sha256RsaPss,
-            MessageSecurityMode::SignAndEncrypt,
-        ),
-        // The .NET SDK is hard to use with these, since its configuration around minimum
-        // required nonce length is really weird.
-        /*(SecurityPolicy::Basic128Rsa15, MessageSecurityMode::Sign),
-        (
-            SecurityPolicy::Basic128Rsa15,
-            MessageSecurityMode::SignAndEncrypt,
-        ), */
-        (SecurityPolicy::Basic256, MessageSecurityMode::Sign),
-        (
-            SecurityPolicy::Basic256,
-            MessageSecurityMode::SignAndEncrypt,
-        ),
-    ] {
-        runner
-            .run_test(
-                &format!("Connect {policy}:{mode}"),
-                test_connect(policy, mode),
-            )
-            .await;
-    }
+pub async fn with_basic_session<Fun: for<'a> WithSessionMethod<'a>>(
+    f: Fun,
+    ctx: &mut ClientTestState,
+) {
+    with_session(
+        f,
+        SecurityPolicy::None,
+        MessageSecurityMode::None,
+        IdentityToken::Anonymous,
+        ctx,
+    )
+    .await
 }

@@ -270,37 +270,60 @@ impl MessageChunk {
     pub fn body_size_from_message_size(
         message_type: MessageChunkType,
         secure_channel: &SecureChannel,
-        message_size: usize,
+        max_chunk_size: usize,
     ) -> Result<usize, MessageChunkTooSmall> {
-        if message_size < MIN_CHUNK_SIZE {
+        if max_chunk_size < MIN_CHUNK_SIZE {
             error!(
-                "message size {} is less than minimum allowed by the spec",
-                message_size
+                "chunk size {} is less than minimum allowed by the spec",
+                max_chunk_size
             );
-            Err(MessageChunkTooSmall)
-        } else {
-            let security_header = secure_channel.make_security_header(message_type);
-
-            let mut data_size = MESSAGE_CHUNK_HEADER_SIZE;
-            data_size += security_header.byte_len();
-            data_size += (SequenceHeader {
-                sequence_number: 0,
-                request_id: 0,
-            })
-            .byte_len();
-
-            // 1 byte == most padding
-            let signature_size = secure_channel.signature_size(&security_header);
-            data_size += secure_channel
-                .padding_size(&security_header, 1, signature_size, message_type)
-                .0;
-
-            // signature length
-            data_size += signature_size;
-
-            // Message size is what's left
-            Ok(message_size - data_size)
+            return Err(MessageChunkTooSmall);
         }
+        // First, get the size of the various message chunk headers.
+        let security_header = secure_channel.make_security_header(message_type);
+
+        let mut header_size = MESSAGE_CHUNK_HEADER_SIZE;
+        header_size += security_header.byte_len();
+        header_size += (SequenceHeader {
+            sequence_number: 0,
+            request_id: 0,
+        })
+        .byte_len();
+
+        // Next, get the size of the signature, which may be zero if the
+        // header isn't signed.
+        let signature_size = secure_channel.signature_size(&security_header);
+
+        // Get the encryption block size, and the minimum padding length.
+        // The minimum padding depends on the key length.
+        let (plain_text_block_size, minimum_padding) =
+            secure_channel.get_padding_block_sizes(&security_header, signature_size, message_type);
+
+        // Compute the max chunk size aligned to an encryption block.
+        // When encrypting, the size must be a whole multiple of `plain_text_block_size`,
+        // we round the max chunk size down to the nearest such chunk.
+        let aligned_max_chunk_size = if plain_text_block_size > 0 {
+            max_chunk_size - (max_chunk_size % plain_text_block_size)
+        } else {
+            max_chunk_size
+        };
+        // So, the total maximum chunk body size is
+        // - the aligned chunk size,
+        // - minus the size of the message chunk headers.
+        // - minus the size of the signature.
+        // - minus the minimum padding.
+
+        // This means that if the chunk size is 8191, with 32 bytes header and 32 bytes signature,
+        // 1 minimum padding and 16 bytes block size,
+        // we get a chunk size of 8111. Add the header, 8143, add the signature
+        // 8175, pad with a minimum padding of 1 -> 8176.
+
+        // Note that if we used a chunk size of 8112 instead, we would end up with
+        // 8176 bytes after header and signature, and we would need to pad _16_ bytes,
+        // which would put us at 8192, which exceeds the configured limit.
+        // So 8111 is the largest the chunk can possibly be with this chunk size.
+
+        Ok(aligned_max_chunk_size - header_size - signature_size - minimum_padding)
     }
 
     /// Decode the message header from the inner data.

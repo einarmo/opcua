@@ -353,7 +353,7 @@ impl SecurityPolicy {
 
     /// Signature size in bytes.
     ///
-    /// This will panic if the security policy is `Unknown` or `None`.
+    /// This will panic if the security policy is `Unknown`.
     pub fn symmetric_signature_size(&self) -> usize {
         match self {
             SecurityPolicy::None => 0,

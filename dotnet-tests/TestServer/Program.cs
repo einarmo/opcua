@@ -1,8 +1,29 @@
 ﻿using Common;
+using Microsoft.Extensions.Logging;
 using Opc.Ua;
 using Opc.Ua.Configuration;
 
 namespace TestServer;
+
+class CommsLogger : ILogger
+{
+    public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+    {
+        return null;
+    }
+
+    public bool IsEnabled(LogLevel logLevel)
+    {
+        return true;
+    }
+
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+    {
+        var toLog = formatter(state, exception);
+        Comms.LogToRust(toLog);
+    }
+}
+
 
 internal sealed class Program
 {
@@ -49,6 +70,21 @@ internal sealed class Program
                 if (message is ShutdownMessage)
                 {
                     source.Cancel();
+                }
+                else if (message is ChangeValueMessage ch)
+                {
+                    try
+                    {
+                        server.NodeManager.UpdateValue(ch);
+                    }
+                    catch (Exception ex)
+                    {
+                        Comms.Send(new ErrorMessage
+                        {
+                            Message = $"Fatal error setting value: {ex}"
+                        });
+                        return 1;
+                    }
                 }
             }
         }
