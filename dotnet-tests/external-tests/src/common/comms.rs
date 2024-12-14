@@ -89,7 +89,7 @@ impl UpdateValueMessage {
     pub fn new(node_id: NodeId, value: Variant, ctx: &Context) -> Self {
         Self {
             node_id: node_id.to_string(),
-            value: ByteString::from(value.encode_to_vec(&ctx)).as_base64(),
+            value: ByteString::from(value.encode_to_vec(ctx)).as_base64(),
         }
     }
 }

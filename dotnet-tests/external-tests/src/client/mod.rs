@@ -27,15 +27,13 @@ impl ClientTestState {
     }
 
     pub async fn send_change_message(&self, session: &Session, node_id: NodeId, value: Variant) {
-        let context = session.context();
-        let ctx_r = context.read();
-        self.server
-            .send_message(InMessage::ChangeValue(UpdateValueMessage::new(
-                node_id,
-                value,
-                &ctx_r.context(),
-            )))
-            .await;
+        let msg = {
+            let context = session.context();
+            let ctx_r = context.read();
+            InMessage::ChangeValue(UpdateValueMessage::new(node_id, value, &ctx_r.context()))
+        };
+
+        self.server.send_message(msg).await;
     }
 }
 
