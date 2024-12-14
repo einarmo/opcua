@@ -44,6 +44,41 @@ impl SimpleBinaryEncodable for SecurityHeader {
     }
 }
 
+impl SecurityHeader {
+    /// Decode the security header from a stream. The type of header is
+    /// given by the message header, so this type doesn't implement BinaryDecodable.
+    pub fn decode_from_stream<S: Read + ?Sized>(
+        stream: &mut S,
+        is_open_secure_channel: bool,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self> {
+        if is_open_secure_channel {
+            let security_header = AsymmetricSecurityHeader::decode(stream, &decoding_options)?;
+
+            let security_policy = if security_header.security_policy_uri.is_null() {
+                SecurityPolicy::None
+            } else {
+                SecurityPolicy::from_uri(security_header.security_policy_uri.as_ref())
+            };
+
+            if security_policy == SecurityPolicy::Unknown {
+                return Err(Error::new(
+                    StatusCode::BadSecurityPolicyRejected,
+                    format!(
+                        "Security policy of chunk is unknown, policy = {:?}",
+                        security_header.security_policy_uri
+                    ),
+                ));
+            }
+
+            Ok(SecurityHeader::Asymmetric(security_header))
+        } else {
+            let security_header = SymmetricSecurityHeader::decode(stream, &decoding_options)?;
+            Ok(SecurityHeader::Symmetric(security_header))
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 /// Security header for symmetric encryption.
 pub struct SymmetricSecurityHeader {

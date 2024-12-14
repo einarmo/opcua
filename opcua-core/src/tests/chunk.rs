@@ -477,11 +477,11 @@ fn security_policy_symmetric_encrypt_decrypt() {
         SecurityPolicy::Basic128Rsa15,
     );
 
-    let src = vec![0u8; 100];
+    let mut src = vec![0u8; 100];
     let mut dst = vec![0u8; 200];
 
     let encrypted_len = secure_channel1
-        .symmetric_sign_and_encrypt(&src, 0..80, 20..100, &mut dst)
+        .symmetric_sign_and_encrypt(&mut src, 0..80, 20..100, &mut dst)
         .unwrap();
     assert_eq!(encrypted_len, 100);
 

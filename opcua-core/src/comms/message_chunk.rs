@@ -17,7 +17,7 @@ use opcua_types::{
 use super::{
     message_chunk_info::ChunkInfo,
     secure_channel::SecureChannel,
-    security_header::SequenceHeader,
+    security_header::{SecurityHeader, SequenceHeader},
     tcp_types::{
         CHUNK_FINAL, CHUNK_FINAL_ERROR, CHUNK_INTERMEDIATE, CHUNK_MESSAGE,
         CLOSE_SECURE_CHANNEL_MESSAGE, MIN_CHUNK_SIZE, OPEN_SECURE_CHANNEL_MESSAGE,
@@ -25,7 +25,10 @@ use super::{
 };
 
 /// The size of a chunk header, used by several places
-pub const MESSAGE_CHUNK_HEADER_SIZE: usize = 12;
+pub const MESSAGE_CHUNK_HEADER_SIZE: usize = 3 + 1 + 4 + 4;
+/// Offset of the MessageSize in chunk headers. This comes after the chunk type and
+/// the is_final flag.
+pub const MESSAGE_SIZE_OFFSET: usize = 3 + 1;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 /// Type of message chunk.
@@ -115,9 +118,7 @@ impl SimpleBinaryDecodable for MessageChunkHeader {
             CHUNK_INTERMEDIATE => MessageIsFinalType::Intermediate,
             CHUNK_FINAL_ERROR => MessageIsFinalType::FinalError,
             r => {
-                return Err(Error::decoding(format!(
-                    "Invalid message final type: {r:?}"
-                )));
+                return Err(Error::decoding(format!("Invalid message final type: {r}")));
             }
         };
 
@@ -342,5 +343,21 @@ impl MessageChunk {
     /// Decode info about this chunk.
     pub fn chunk_info(&self, secure_channel: &SecureChannel) -> EncodingResult<ChunkInfo> {
         ChunkInfo::new(self, secure_channel)
+    }
+
+    pub(crate) fn encrypted_data_offset(
+        &self,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<usize> {
+        // Fetch just the encrypted data offset, which may be slightly more efficient than
+        // fetching the entire ChunkInfo struct.
+        let mut stream = Cursor::new(&self.data);
+        let message_header = MessageChunkHeader::decode(&mut stream, decoding_options)?;
+        SecurityHeader::decode_from_stream(
+            &mut stream,
+            message_header.message_type.is_open_secure_channel(),
+            decoding_options,
+        )?;
+        Ok(stream.position() as usize)
     }
 }
