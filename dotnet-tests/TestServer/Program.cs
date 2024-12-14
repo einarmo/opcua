@@ -71,6 +71,21 @@ internal sealed class Program
                 {
                     source.Cancel();
                 }
+                else if (message is ChangeValueMessage ch)
+                {
+                    try
+                    {
+                        server.NodeManager.UpdateValue(ch);
+                    }
+                    catch (Exception ex)
+                    {
+                        Comms.Send(new ErrorMessage
+                        {
+                            Message = $"Fatal error setting value: {ex}"
+                        });
+                        return 1;
+                    }
+                }
             }
         }
 

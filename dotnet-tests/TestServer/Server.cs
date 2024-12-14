@@ -9,6 +9,8 @@ public class TestServer : StandardServer
 {
     TestNodeManager custom = null!;
 
+    public TestNodeManager NodeManager => custom;
+
     protected override void OnServerStarting(ApplicationConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(configuration);
@@ -19,8 +21,6 @@ public class TestServer : StandardServer
             Utils.SetLogLevel(LogLevel.Trace);
             Utils.SetLogger(new CommsLogger());
         }
-
-
 
         base.OnServerStarting(configuration);
     }

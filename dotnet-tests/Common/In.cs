@@ -12,9 +12,18 @@ public class ShutdownMessage : IInMessage
     public InMessageType Type { get; set; } = InMessageType.Shutdown;
 }
 
+public class ChangeValueMessage : IInMessage
+{
+    public InMessageType Type { get; set; } = InMessageType.ChangeValue;
+
+    public string? NodeId { get; set; }
+    public string? Value { get; set; }
+}
+
 public enum InMessageType
 {
     Shutdown,
+    ChangeValue,
 }
 
 class InMessageConverter : TaggedUnionConverter<IInMessage, InMessageType>
@@ -26,6 +35,7 @@ class InMessageConverter : TaggedUnionConverter<IInMessage, InMessageType>
         return type switch
         {
             InMessageType.Shutdown => document.Deserialize<ShutdownMessage>(options),
+            InMessageType.ChangeValue => document.Deserialize<ChangeValueMessage>(options),
             _ => throw new JsonException("Unknown type variant")
         };
     }

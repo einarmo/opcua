@@ -291,4 +291,9 @@ impl Session {
     pub fn add_type_loader(&mut self, type_loader: Arc<dyn TypeLoader>) {
         self.encoding_context.write().loaders_mut().add(type_loader);
     }
+
+    /// Get a reference to the encoding
+    pub fn context(&self) -> Arc<RwLock<ContextOwned>> {
+        self.channel.secure_channel.read().context_arc()
+    }
 }

@@ -12,13 +12,32 @@ use opcua::{
 };
 use tokio::select;
 
-use crate::{client::make_client, common::JoinHandleAbortGuard};
+use crate::{
+    client::{make_client, ClientTestState},
+    common::JoinHandleAbortGuard,
+};
 
-pub async fn with_session<Fut: Future<Output = ()>, Fun: FnOnce(Arc<Session>) -> Fut>(
+/// Workaround for AsyncFn, but it only really barely works, and breaks closures.
+pub trait WithSessionMethod<'a>:
+    FnOnce(Arc<Session>, &'a mut ClientTestState) -> Self::Fut
+{
+    type Fut: Future<Output = ()> + 'a;
+}
+
+impl<'a, T, F> WithSessionMethod<'a> for T
+where
+    T: FnOnce(Arc<Session>, &'a mut ClientTestState) -> F,
+    F: Future<Output = ()> + 'a,
+{
+    type Fut = F;
+}
+
+pub async fn with_session<Fun: for<'a> WithSessionMethod<'a>>(
     f: Fun,
     policy: SecurityPolicy,
     mode: MessageSecurityMode,
     identity_token: IdentityToken,
+    ctx: &mut ClientTestState,
 ) {
     let mut client = make_client(true).client().unwrap();
     let (session, event_loop) = client
@@ -41,7 +60,7 @@ pub async fn with_session<Fut: Future<Output = ()>, Fun: FnOnce(Arc<Session>) ->
         }
     };
     let r = select! {
-        r = AssertUnwindSafe(f(session.clone())).catch_unwind() => r,
+        r = AssertUnwindSafe(f(session.clone(), ctx)).catch_unwind() => r,
         r = &mut h => {
             panic!("Event loop terminated unexpectedly while test was running: {r:?}");
         }
@@ -58,14 +77,16 @@ pub async fn with_session<Fut: Future<Output = ()>, Fun: FnOnce(Arc<Session>) ->
     }
 }
 
-pub async fn with_basic_session<Fut: Future<Output = ()>, Fun: FnOnce(Arc<Session>) -> Fut>(
+pub async fn with_basic_session<Fun: for<'a> WithSessionMethod<'a>>(
     f: Fun,
+    ctx: &mut ClientTestState,
 ) {
     with_session(
         f,
         SecurityPolicy::None,
         MessageSecurityMode::None,
         IdentityToken::Anonymous,
+        ctx,
     )
     .await
 }

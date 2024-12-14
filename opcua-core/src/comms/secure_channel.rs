@@ -276,6 +276,11 @@ impl SecureChannel {
         self.encoding_context.read()
     }
 
+    /// Get a reference counted reference to the encoding context.
+    pub fn context_arc(&self) -> Arc<RwLock<ContextOwned>> {
+        self.encoding_context.clone()
+    }
+
     /// Set the namespace map.
     pub fn set_namespaces(&self, namespaces: NamespaceMap) {
         *self.encoding_context.write().namespaces_mut() = namespaces;

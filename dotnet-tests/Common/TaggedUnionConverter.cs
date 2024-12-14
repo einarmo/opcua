@@ -28,7 +28,7 @@ public abstract class TaggedUnionConverter<TInterface, TEnum> : JsonConverter<TI
         }
         if (!Enum.TryParse<TEnum>(prop, true, out var type))
         {
-            throw new JsonException($"Invalid tag \"{TagName}\"");
+            throw new JsonException($"Invalid tag \"{prop}\"");
         }
         return FromEnum(doc, options, type);
     }
