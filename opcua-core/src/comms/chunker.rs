@@ -234,7 +234,7 @@ impl<'a> ChunkingStream<'a> {
     }
 }
 
-impl<'a> Write for ChunkingStream<'a> {
+impl Write for ChunkingStream<'_> {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
         if self.is_closed {
             return Ok(0);

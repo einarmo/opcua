@@ -53,7 +53,7 @@ impl SecurityHeader {
         decoding_options: &DecodingOptions,
     ) -> EncodingResult<Self> {
         if is_open_secure_channel {
-            let security_header = AsymmetricSecurityHeader::decode(stream, &decoding_options)?;
+            let security_header = AsymmetricSecurityHeader::decode(stream, decoding_options)?;
 
             let security_policy = if security_header.security_policy_uri.is_null() {
                 SecurityPolicy::None
@@ -73,7 +73,7 @@ impl SecurityHeader {
 
             Ok(SecurityHeader::Asymmetric(security_header))
         } else {
-            let security_header = SymmetricSecurityHeader::decode(stream, &decoding_options)?;
+            let security_header = SymmetricSecurityHeader::decode(stream, decoding_options)?;
             Ok(SecurityHeader::Symmetric(security_header))
         }
     }

@@ -900,7 +900,7 @@ impl SecureChannel {
 
         // Sign the message header, security header, sequence header, body, padding
         let (l, r) = src.split_at_mut(signed_range.end);
-        security_policy.asymmetric_sign(signing_key, &l, &mut r[0..signing_key_size])?;
+        security_policy.asymmetric_sign(signing_key, l, &mut r[0..signing_key_size])?;
 
         // tmp[signature_range.clone()].copy_from_slice(&signature);
         assert_eq!(encrypted_range.end, signature_range.end);
