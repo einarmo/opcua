@@ -313,6 +313,18 @@ impl DecodingOptions {
 /// OPC UA Binary Encoding interface. Anything that encodes to binary must implement this. It provides
 /// functions to calculate the size in bytes of the struct (for allocating memory), encoding to a stream
 /// and decoding from a stream.
+///
+/// # Implementing
+///
+/// The majority of implementers should just use the `derive(BinaryEncodable)` macro,
+/// if you need to implement this yourself for some reason, the following _must_ be satisfied:
+///
+///  - `byte_len` must return a length exactly equal to what `encode` will write, or `encode`
+///    must be guaranteed to fail. Since `byte_len` is infallible, you are allowed to
+///    return some invalid value there, then fail later when calling `encode`. This should be avoided.
+///  - `encode` must use `write_all` on the stream, not just `write`, to ensure that all the data
+///    is written, even if the stream is interrupted. Prefer calling `encode` on inner types
+///    instead.
 pub trait BinaryEncodable {
     /// Returns the exact byte length of the structure as it would be if `encode` were called.
     /// This may be called prior to writing to ensure the correct amount of space is available.

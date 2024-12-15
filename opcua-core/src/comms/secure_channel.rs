@@ -587,7 +587,7 @@ impl SecureChannel {
         let mut stream = Cursor::new(buffer);
 
         // First off just write out the src to the buffer. The message header, security header, sequence header and payload
-        stream.write(data)?;
+        stream.write_all(data)?;
 
         if padding_size > 0 {
             // A number of bytes are written out equal to the padding size.

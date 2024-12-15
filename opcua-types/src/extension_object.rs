@@ -334,7 +334,7 @@ impl BinaryEncodable for ExtensionObject {
         // Just default to null here, we'll fail later.
         let mut size = id.map(|n| n.byte_len(ctx)).unwrap_or(2usize);
         size += match &self.body {
-            Some(b) => 4 + b.byte_len_dyn(ctx),
+            Some(b) => 5 + b.byte_len_dyn(ctx),
             None => 1,
         };
 

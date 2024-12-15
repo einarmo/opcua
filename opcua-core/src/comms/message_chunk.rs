@@ -254,7 +254,7 @@ impl MessageChunk {
         // write sequence header
         sequence_header.encode(&mut stream)?;
         // write message
-        stream.write(data)?;
+        stream.write_all(data)?;
 
         Ok(MessageChunk { data: buf })
     }

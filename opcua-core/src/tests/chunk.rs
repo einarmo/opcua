@@ -36,7 +36,7 @@ fn sample_secure_channel_request_data_security_none() -> MessageChunk {
         secure_channel_id: 1,
     }
     .encode(&mut stream, &ctx);
-    let _ = stream.write(&sample_data);
+    stream.write_all(&sample_data).unwrap();
 
     // Decode chunk from stream
     stream.set_position(0);

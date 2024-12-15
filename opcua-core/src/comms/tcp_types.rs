@@ -133,7 +133,7 @@ impl MessageHeader {
 
         // Write header to stream
         let mut out = Cursor::new(Vec::with_capacity(message_size as usize));
-        let result = out.write(&header);
+        let result = out.write_all(&header);
         if result.is_err() {
             return Err(Error::new(
                 ErrorKind::Other,
