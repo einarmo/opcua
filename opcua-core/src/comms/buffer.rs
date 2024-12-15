@@ -84,8 +84,14 @@ impl SendBuffer {
         trace!("Sending chunk {:?}", next_chunk);
         let size = match next_chunk {
             PendingPayload::Chunk(c) => secure_channel.apply_security(&c, self.buffer.get_mut())?,
-            PendingPayload::Ack(a) => a.encode(&mut self.buffer)?,
-            PendingPayload::Error(e) => e.encode(&mut self.buffer)?,
+            PendingPayload::Ack(a) => {
+                a.encode(&mut self.buffer)?;
+                self.buffer.position() as usize
+            }
+            PendingPayload::Error(e) => {
+                e.encode(&mut self.buffer)?;
+                self.buffer.position() as usize
+            }
         };
         self.buffer.set_position(0);
         self.state = SendBufferState::Reading(size);

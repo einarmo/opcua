@@ -348,45 +348,42 @@ impl BinaryEncodable for NodeId {
         &self,
         stream: &mut S,
         ctx: &crate::Context<'_>,
-    ) -> EncodingResult<usize> {
-        let mut size: usize = 0;
+    ) -> EncodingResult<()> {
         // Type determines the byte code
         match &self.identifier {
             Identifier::Numeric(value) => {
                 if self.namespace == 0 && *value <= 255 {
                     // node id fits into 2 bytes when the namespace is 0 and the value <= 255
-                    size += write_u8(stream, 0x0)?;
-                    size += write_u8(stream, *value as u8)?;
+                    write_u8(stream, 0x0)?;
+                    write_u8(stream, *value as u8)
                 } else if self.namespace <= 255 && *value <= 65535 {
                     // node id fits into 4 bytes when namespace <= 255 and value <= 65535
-                    size += write_u8(stream, 0x1)?;
-                    size += write_u8(stream, self.namespace as u8)?;
-                    size += write_u16(stream, *value as u16)?;
+                    write_u8(stream, 0x1)?;
+                    write_u8(stream, self.namespace as u8)?;
+                    write_u16(stream, *value as u16)
                 } else {
                     // full node id
-                    size += write_u8(stream, 0x2)?;
-                    size += write_u16(stream, self.namespace)?;
-                    size += write_u32(stream, *value)?;
+                    write_u8(stream, 0x2)?;
+                    write_u16(stream, self.namespace)?;
+                    write_u32(stream, *value)
                 }
             }
             Identifier::String(value) => {
-                size += write_u8(stream, 0x3)?;
-                size += write_u16(stream, self.namespace)?;
-                size += value.encode(stream, ctx)?;
+                write_u8(stream, 0x3)?;
+                write_u16(stream, self.namespace)?;
+                value.encode(stream, ctx)
             }
             Identifier::Guid(value) => {
-                size += write_u8(stream, 0x4)?;
-                size += write_u16(stream, self.namespace)?;
-                size += value.encode(stream, ctx)?;
+                write_u8(stream, 0x4)?;
+                write_u16(stream, self.namespace)?;
+                value.encode(stream, ctx)
             }
             Identifier::ByteString(value) => {
-                size += write_u8(stream, 0x5)?;
-                size += write_u16(stream, self.namespace)?;
-                size += value.encode(stream, ctx)?;
+                write_u8(stream, 0x5)?;
+                write_u16(stream, self.namespace)?;
+                value.encode(stream, ctx)
             }
         }
-        assert_eq!(size, self.byte_len(ctx));
-        Ok(size)
     }
 }
 

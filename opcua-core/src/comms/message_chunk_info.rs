@@ -7,15 +7,12 @@
 
 use std::io::Cursor;
 
-use opcua_crypto::SecurityPolicy;
-use opcua_types::{EncodingResult, Error, SimpleBinaryDecodable, StatusCode};
+use opcua_types::{EncodingResult, SimpleBinaryDecodable};
 
 use super::{
     message_chunk::{MessageChunk, MessageChunkHeader},
     secure_channel::SecureChannel,
-    security_header::{
-        AsymmetricSecurityHeader, SecurityHeader, SequenceHeader, SymmetricSecurityHeader,
-    },
+    security_header::{SecurityHeader, SequenceHeader},
 };
 
 /// Chunk info provides some basic information gleaned from reading the chunk such as offsets into
@@ -51,38 +48,13 @@ impl ChunkInfo {
 
         // Read the security header
         let security_header_offset = stream.position() as usize;
-        let security_header = if chunk.is_open_secure_channel(&decoding_options) {
-            let security_header = AsymmetricSecurityHeader::decode(&mut stream, &decoding_options)
-                .map_err(|err| {
-                    Error::decoding(format!(
-                        "chunk_info() cannot decode asymmetric security_header, {:?}",
-                        err
-                    ))
-                })?;
+        let security_header = SecurityHeader::decode_from_stream(
+            &mut stream,
+            message_header.message_type.is_open_secure_channel(),
+            &decoding_options,
+        )?;
 
-            let security_policy = if security_header.security_policy_uri.is_null() {
-                SecurityPolicy::None
-            } else {
-                SecurityPolicy::from_uri(security_header.security_policy_uri.as_ref())
-            };
-
-            if security_policy == SecurityPolicy::Unknown {
-                return Err(Error::new(
-                    StatusCode::BadSecurityPolicyRejected,
-                    format!(
-                        "Security policy of chunk is unsupported, policy = {:?}",
-                        security_header.security_policy_uri
-                    ),
-                ));
-            }
-
-            // Anything related to policy can be worked out here
-            SecurityHeader::Asymmetric(security_header)
-        } else {
-            let security_header = SymmetricSecurityHeader::decode(&mut stream, &decoding_options)?;
-            SecurityHeader::Symmetric(security_header)
-        };
-
+        // Read the sequence header. Note that this is garbage if the chunk is encrypted.
         let sequence_header_offset = stream.position() as usize;
         let sequence_header = SequenceHeader::decode(&mut stream, &decoding_options)?;
 

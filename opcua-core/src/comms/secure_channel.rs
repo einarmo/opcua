@@ -12,6 +12,7 @@ use std::{
     time::Instant,
 };
 
+use bytes::Buf;
 use chrono::Duration;
 use log::{error, trace};
 
@@ -23,14 +24,14 @@ use opcua_crypto::{
     CertificateStore, SecurityPolicy,
 };
 use opcua_types::{
-    status_code::StatusCode, write_bytes, write_u8, ByteString, ChannelSecurityToken, ContextOwned,
-    DateTime, DecodingOptions, Error, MessageSecurityMode, NamespaceMap, SimpleBinaryDecodable,
-    SimpleBinaryEncodable,
+    status_code::StatusCode, write_bytes, write_u32, write_u8, ByteString, ChannelSecurityToken,
+    ContextOwned, DateTime, DecodingOptions, Error, MessageSecurityMode, NamespaceMap,
+    SimpleBinaryDecodable,
 };
 use parking_lot::RwLock;
 
 use super::{
-    message_chunk::{MessageChunk, MessageChunkHeader, MessageChunkType},
+    message_chunk::{MessageChunk, MessageChunkHeader, MessageChunkType, MESSAGE_SIZE_OFFSET},
     security_header::{AsymmetricSecurityHeader, SecurityHeader, SymmetricSecurityHeader},
 };
 
@@ -569,12 +570,6 @@ impl SecureChannel {
 
         let security_header = chunk_info.security_header;
 
-        let buffer = Vec::with_capacity(message_chunk.data.len() + 4096);
-        let mut stream = Cursor::new(buffer);
-
-        // First off just write out the src to the buffer. The message header, security header, sequence header and payload
-        let _ = stream.write(data);
-
         // Signature size (if required)
         let signature_size = self.signature_size(&security_header);
 
@@ -587,6 +582,13 @@ impl SecureChannel {
             signature_size,
             chunk_info.message_header.message_type,
         );
+
+        let buffer = Vec::with_capacity(message_chunk.data.len() + padding_size + signature_size);
+        let mut stream = Cursor::new(buffer);
+
+        // First off just write out the src to the buffer. The message header, security header, sequence header and payload
+        stream.write_all(data)?;
+
         if padding_size > 0 {
             // A number of bytes are written out equal to the padding size.
             // Each byte is the padding size. So if padding size is 15 then
@@ -613,40 +615,22 @@ impl SecureChannel {
 
         // Update message header to reflect size with padding + signature
         let message_size = data.len() + padding_size + signature_size;
-        Self::update_message_size_and_truncate(
-            stream.into_inner(),
-            message_size,
-            &self.decoding_options(),
-        )
+        Self::update_message_size_and_truncate(stream.into_inner(), message_size)
     }
 
-    fn update_message_size(
-        data: &mut [u8],
-        message_size: usize,
-        decoding_options: &DecodingOptions,
-    ) -> Result<(), Error> {
+    fn update_message_size(data: &mut [u8], message_size: usize) -> Result<(), Error> {
         // Read and rewrite the message_size in the header
         let mut stream = Cursor::new(data);
-        let mut message_header = MessageChunkHeader::decode(&mut stream, decoding_options)?;
-        stream.set_position(0);
-        let old_message_size = message_header.message_size;
-        message_header.message_size = message_size as u32;
-        message_header.encode(&mut stream)?;
-        trace!(
-            "Message header message size being modified from {} to {}",
-            old_message_size,
-            message_size
-        );
-        Ok(())
+        stream.advance(MESSAGE_SIZE_OFFSET);
+        write_u32(&mut stream, message_size as u32)
     }
 
     /// Writes message size and truncates the message to fit.
     pub fn update_message_size_and_truncate(
         mut data: Vec<u8>,
         message_size: usize,
-        decoding_options: &DecodingOptions,
     ) -> Result<Vec<u8>, Error> {
-        Self::update_message_size(&mut data[..], message_size, decoding_options)?;
+        Self::update_message_size(&mut data[..], message_size)?;
         // Truncate vector to the size
         data.truncate(message_size);
         Ok(data)
@@ -666,7 +650,8 @@ impl SecureChannel {
             && (self.security_mode == MessageSecurityMode::Sign
                 || self.security_mode == MessageSecurityMode::SignAndEncrypt)
         {
-            let chunk_info = message_chunk.chunk_info(self)?;
+            let encrypted_data_offset =
+                message_chunk.encrypted_data_offset(&self.decoding_options())?;
 
             // S - Message Header
             // S - Security Header
@@ -675,21 +660,26 @@ impl SecureChannel {
             // S - Padding         - E
             //     Signature       - E
 
-            let data = self.add_space_for_padding_and_signature(message_chunk)?;
+            let mut data = self.add_space_for_padding_and_signature(message_chunk)?;
             Self::log_crypto_data("Chunk before padding", &message_chunk.data[..]);
             Self::log_crypto_data("Chunk after padding", &data[..]);
 
             // Encrypted range is from the sequence header to the end
-            let encrypted_range = chunk_info.sequence_header_offset..data.len();
+            let encrypted_range = encrypted_data_offset..data.len();
 
             // Encrypt and sign - open secure channel
             let encrypted_size = if message_chunk.is_open_secure_channel(&self.decoding_options()) {
-                self.asymmetric_sign_and_encrypt(self.security_policy, &data, encrypted_range, dst)?
+                self.asymmetric_sign_and_encrypt(
+                    self.security_policy,
+                    &mut data,
+                    encrypted_range,
+                    dst,
+                )?
             } else {
                 // Symmetric encrypt and sign
                 let signed_range =
                     0..(data.len() - self.security_policy.symmetric_signature_size());
-                self.symmetric_sign_and_encrypt(&data, signed_range, encrypted_range, dst)?
+                self.symmetric_sign_and_encrypt(&mut data, signed_range, encrypted_range, dst)?
             };
 
             Self::log_crypto_data("Chunk after encryption", &dst[..encrypted_size]);
@@ -726,17 +716,11 @@ impl SecureChannel {
         let (message_header, security_header, encrypted_data_offset) = {
             let mut stream = Cursor::new(&src);
             let message_header = MessageChunkHeader::decode(&mut stream, &decoding_options)?;
-            let security_header = if message_header.message_type.is_open_secure_channel() {
-                SecurityHeader::Asymmetric(AsymmetricSecurityHeader::decode(
-                    &mut stream,
-                    &decoding_options,
-                )?)
-            } else {
-                SecurityHeader::Symmetric(SymmetricSecurityHeader::decode(
-                    &mut stream,
-                    &decoding_options,
-                )?)
-            };
+            let security_header = SecurityHeader::decode_from_stream(
+                &mut stream,
+                message_header.message_type.is_open_secure_channel(),
+                &decoding_options,
+            )?;
             let encrypted_data_offset = stream.position() as usize;
             (message_header, security_header, encrypted_data_offset)
         };
@@ -833,11 +817,7 @@ impl SecureChannel {
                 &mut decrypted_data,
             )?;
 
-            Self::update_message_size_and_truncate(
-                decrypted_data,
-                decrypted_size,
-                &decoding_options,
-            )?
+            Self::update_message_size_and_truncate(decrypted_data, decrypted_size)?
         } else if self.security_policy != SecurityPolicy::None
             && (self.security_mode == MessageSecurityMode::Sign
                 || self.security_mode == MessageSecurityMode::SignAndEncrypt)
@@ -872,11 +852,7 @@ impl SecureChannel {
             )?;
 
             // Value returned from symmetric_decrypt_and_verify is the end of the actual decrypted data.
-            Self::update_message_size_and_truncate(
-                decrypted_data,
-                decrypted_size,
-                &decoding_options,
-            )?
+            Self::update_message_size_and_truncate(decrypted_data, decrypted_size)?
         } else {
             src.to_vec()
         };
@@ -884,11 +860,12 @@ impl SecureChannel {
         Ok(MessageChunk { data })
     }
 
-    /// Use the security policy to asymmetric encrypt and sign the specified chunk of data
+    /// Use the security policy to asymmetric encrypt and sign the specified chunk of data.
+    /// Signs the source data in place.
     fn asymmetric_sign_and_encrypt(
         &self,
         security_policy: SecurityPolicy,
-        src: &[u8],
+        src: &mut [u8],
         encrypted_range: Range<usize>,
         dst: &mut [u8],
     ) -> Result<usize, StatusCode> {
@@ -902,11 +879,7 @@ impl SecureChannel {
 
         trace!("Header size = {}, Encrypted range = {:?}, Signed range = {:?}, Signature range = {:?}, signature size = {}", header_size, encrypted_range, signed_range, signature_range, signing_key_size);
 
-        let mut signature = vec![0u8; signing_key_size];
         let encryption_key = self.remote_cert.as_ref().unwrap().public_key()?;
-
-        let mut tmp = vec![0u8; encrypted_range.end];
-        tmp[signed_range.clone()].copy_from_slice(&src[signed_range.clone()]);
 
         // Encryption will change the size of the chunk. Since we sign before encrypting, we need to
         // compute that size and change the message header to be that new size
@@ -922,26 +895,22 @@ impl SecureChannel {
             );
             cipher_text_size
         };
-        Self::update_message_size(
-            &mut tmp[..],
-            header_size + cipher_text_size,
-            &self.decoding_options(),
-        )?;
+        Self::update_message_size(src, header_size + cipher_text_size)?;
+        dst[0..encrypted_range.start].copy_from_slice(&src[0..encrypted_range.start]);
 
         // Sign the message header, security header, sequence header, body, padding
-        security_policy.asymmetric_sign(signing_key, &tmp[signed_range], &mut signature)?;
-        tmp[signature_range.clone()].copy_from_slice(&signature);
+        let (l, r) = src.split_at_mut(signed_range.end);
+        security_policy.asymmetric_sign(signing_key, l, &mut r[0..signing_key_size])?;
+
+        // tmp[signature_range.clone()].copy_from_slice(&signature);
         assert_eq!(encrypted_range.end, signature_range.end);
 
-        Self::log_crypto_data("Chunk after signing", &tmp[..signature_range.end]);
-
-        // Copy the unencrypted message header / security header portion to dst
-        dst[..encrypted_range.start].copy_from_slice(&tmp[..encrypted_range.start]);
+        Self::log_crypto_data("Chunk after signing", &dst[..signature_range.end]);
 
         // Encrypt the sequence header, payload, signature portion into dst
         let encrypted_size = security_policy.asymmetric_encrypt(
             &encryption_key,
-            &tmp[encrypted_range.clone()],
+            &src[encrypted_range.clone()],
             &mut dst[encrypted_range.start..],
         )?;
 
@@ -1240,7 +1209,7 @@ impl SecureChannel {
     ///     Signature       - E
     pub fn symmetric_sign_and_encrypt(
         &self,
-        src: &[u8],
+        src: &mut [u8],
         signed_range: Range<usize>,
         encrypted_range: Range<usize>,
         dst: &mut [u8],
@@ -1256,27 +1225,27 @@ impl SecureChannel {
             MessageSecurityMode::Sign => {
                 trace!("encrypt_and_sign security mode == Sign");
                 self.expect_supported_security_policy();
-                self.symmetric_sign(src, signed_range, dst)?
+                let size = self.symmetric_sign_in_place(src, signed_range)?;
+                dst[0..size].copy_from_slice(&src[0..size]);
+                size
             }
             MessageSecurityMode::SignAndEncrypt => {
                 trace!("encrypt_and_sign security mode == SignAndEncrypt, signed_range = {:?}, encrypted_range = {:?}", signed_range, encrypted_range);
                 self.expect_supported_security_policy();
 
-                let mut dst_tmp = vec![0u8; dst.len() + 16]; // tmp includes +16 for blocksize
-
                 // Sign the block
-                let _ = self.symmetric_sign(src, signed_range, &mut dst_tmp)?;
+                self.symmetric_sign_in_place(src, signed_range)?;
 
                 // Encrypt the sequence header, payload, signature
                 let (key, iv) = self.encryption_keys();
                 let encrypted_size = self.security_policy.symmetric_encrypt(
                     key,
                     iv,
-                    &dst_tmp[encrypted_range.clone()],
-                    &mut dst[encrypted_range.start..(encrypted_range.end + 16)],
+                    &src[encrypted_range.clone()],
+                    &mut dst[encrypted_range.start..],
                 )?;
                 // Copy the message header / security header
-                dst[..encrypted_range.start].copy_from_slice(&dst_tmp[..encrypted_range.start]);
+                dst[..encrypted_range.start].copy_from_slice(&src[..encrypted_range.start]);
 
                 encrypted_range.start + encrypted_size
             }
@@ -1287,37 +1256,25 @@ impl SecureChannel {
         Ok(encrypted_size)
     }
 
-    fn symmetric_sign(
+    fn symmetric_sign_in_place(
         &self,
-        src: &[u8],
+        buf: &mut [u8],
         signed_range: Range<usize>,
-        dst: &mut [u8],
     ) -> Result<usize, StatusCode> {
         let signature_size = self.security_policy.symmetric_signature_size();
-        let mut signature = vec![0u8; signature_size];
-        let signature_range = signed_range.end..(signed_range.end + signature_size);
         trace!(
-            "signed_range = {:?}, signature range = {:?}, signature len = {}",
+            "signed_range = {:?}, signature len = {}",
             signed_range,
-            signature_range,
             signature_size
         );
 
         // Sign the message header, security header, sequence header, body, padding
         let signing_key = self.signing_key();
-        self.security_policy.symmetric_sign(
-            signing_key,
-            &src[signed_range.clone()],
-            &mut signature,
-        )?;
+        let (l, r) = buf.split_at_mut(signed_range.end);
+        self.security_policy
+            .symmetric_sign(signing_key, l, &mut r[0..signature_size])?;
 
-        trace!("Signature, len {} = {:?}", signature.len(), signature);
-
-        // Copy the signed portion and the signature to the destination
-        dst[signed_range.clone()].copy_from_slice(&src[signed_range]);
-        dst[signature_range.clone()].copy_from_slice(&signature);
-
-        Ok(signature_range.end)
+        Ok(signed_range.end + signature_size)
     }
 
     /// Decrypts and verifies data.

@@ -135,16 +135,14 @@ impl BinaryEncodable for RequestHeader {
         &self,
         stream: &mut S,
         ctx: &crate::Context<'_>,
-    ) -> EncodingResult<usize> {
-        let mut size: usize = 0;
-        size += self.authentication_token.encode(stream, ctx)?;
-        size += self.timestamp.encode(stream, ctx)?;
-        size += self.request_handle.encode(stream, ctx)?;
-        size += self.return_diagnostics.bits().encode(stream, ctx)?;
-        size += self.audit_entry_id.encode(stream, ctx)?;
-        size += self.timeout_hint.encode(stream, ctx)?;
-        size += self.additional_header.encode(stream, ctx)?;
-        Ok(size)
+    ) -> EncodingResult<()> {
+        self.authentication_token.encode(stream, ctx)?;
+        self.timestamp.encode(stream, ctx)?;
+        self.request_handle.encode(stream, ctx)?;
+        self.return_diagnostics.bits().encode(stream, ctx)?;
+        self.audit_entry_id.encode(stream, ctx)?;
+        self.timeout_hint.encode(stream, ctx)?;
+        self.additional_header.encode(stream, ctx)
     }
 }
 

@@ -248,13 +248,7 @@ impl BinaryEncodable for ExpandedNodeId {
         size
     }
 
-    fn encode<S: Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &Context<'_>,
-    ) -> EncodingResult<usize> {
-        let mut size: usize = 0;
-
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S, ctx: &Context<'_>) -> EncodingResult<()> {
         let mut data_encoding = 0;
         if !self.namespace_uri.is_null() {
             data_encoding |= 0x80;
@@ -268,43 +262,43 @@ impl BinaryEncodable for ExpandedNodeId {
             Identifier::Numeric(value) => {
                 if self.node_id.namespace == 0 && *value <= 255 {
                     // node id fits into 2 bytes when the namespace is 0 and the value <= 255
-                    size += write_u8(stream, data_encoding)?;
-                    size += write_u8(stream, *value as u8)?;
+                    write_u8(stream, data_encoding)?;
+                    write_u8(stream, *value as u8)?;
                 } else if self.node_id.namespace <= 255 && *value <= 65535 {
                     // node id fits into 4 bytes when namespace <= 255 and value <= 65535
-                    size += write_u8(stream, data_encoding | 0x1)?;
-                    size += write_u8(stream, self.node_id.namespace as u8)?;
-                    size += write_u16(stream, *value as u16)?;
+                    write_u8(stream, data_encoding | 0x1)?;
+                    write_u8(stream, self.node_id.namespace as u8)?;
+                    write_u16(stream, *value as u16)?;
                 } else {
                     // full node id
-                    size += write_u8(stream, data_encoding | 0x2)?;
-                    size += write_u16(stream, self.node_id.namespace)?;
-                    size += write_u32(stream, *value)?;
+                    write_u8(stream, data_encoding | 0x2)?;
+                    write_u16(stream, self.node_id.namespace)?;
+                    write_u32(stream, *value)?;
                 }
             }
             Identifier::String(value) => {
-                size += write_u8(stream, data_encoding | 0x3)?;
-                size += write_u16(stream, self.node_id.namespace)?;
-                size += value.encode(stream, ctx)?;
+                write_u8(stream, data_encoding | 0x3)?;
+                write_u16(stream, self.node_id.namespace)?;
+                value.encode(stream, ctx)?;
             }
             Identifier::Guid(value) => {
-                size += write_u8(stream, data_encoding | 0x4)?;
-                size += write_u16(stream, self.node_id.namespace)?;
-                size += value.encode(stream, ctx)?;
+                write_u8(stream, data_encoding | 0x4)?;
+                write_u16(stream, self.node_id.namespace)?;
+                value.encode(stream, ctx)?;
             }
             Identifier::ByteString(ref value) => {
-                size += write_u8(stream, data_encoding | 0x5)?;
-                size += write_u16(stream, self.node_id.namespace)?;
-                size += value.encode(stream, ctx)?;
+                write_u8(stream, data_encoding | 0x5)?;
+                write_u16(stream, self.node_id.namespace)?;
+                value.encode(stream, ctx)?;
             }
         }
         if !self.namespace_uri.is_null() {
-            size += self.namespace_uri.encode(stream, ctx)?;
+            self.namespace_uri.encode(stream, ctx)?;
         }
         if self.server_index != 0 {
-            size += self.server_index.encode(stream, ctx)?;
+            self.server_index.encode(stream, ctx)?;
         }
-        Ok(size)
+        Ok(())
     }
 }
 

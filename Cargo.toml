@@ -2,20 +2,11 @@
 resolver = "2"
 members = [
     "lib",
-    "samples/demo-server",
-    "samples/simple-client",
-    "samples/mqtt-client",
-    "samples/simple-server",
-    "samples/chess-server",
-    "samples/discovery-client",
-    "samples/event-client",
+    "samples/*",
+    "opcua-*",
     "tools/certificate-creator",
-    "samples/async-server",
-    "opcua-codegen",
-    "opcua-macros",
-    "opcua-xml",
-    "opcua-types"
-, "opcua-crypto", "opcua-core", "opcua-client", "opcua-server", "opcua-nodes", "opcua-core-namespace", "samples/custom-codegen", "dotnet-tests/external-tests"]
+    "dotnet-tests/external-tests",
+]
 
 [workspace.dependencies]
 async-trait = "0.1.79"
@@ -46,14 +37,14 @@ url = "1.6"
 
 
 hmac = "0.12.1"
-sha2 = {version = "0.10.8", features = ["oid"]}
-sha1 = {version = "0.10.6", features = ["oid"]}
-cbc  = "0.1.2"
-aes  = "0.8.4"
-rsa = {version = "0.9.6", features = ["sha2","sha1","pem"]}
+sha2 = { version = "0.10.8", features = ["oid"] }
+sha1 = { version = "0.10.6", features = ["oid"] }
+cbc = "0.1.2"
+aes = "0.8.4"
+rsa = { version = "0.9.6", features = ["sha2", "sha1", "pem"] }
 rand = "0.8.5"
-x509-cert = {version="0.2.5",features=["builder","hazmat"]}
-const-oid = {version="0.9.3",features=["db"]}
+x509-cert = { version = "0.2.5", features = ["builder", "hazmat"] }
+const-oid = { version = "0.9.3", features = ["db"] }
 
 
 # Compile the crypto dependencies in release even in debug, to make test performance tolerable

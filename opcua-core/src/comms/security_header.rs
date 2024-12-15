@@ -36,10 +36,45 @@ impl SimpleBinaryEncodable for SecurityHeader {
         }
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<()> {
         match self {
             SecurityHeader::Asymmetric(value) => value.encode(stream),
             SecurityHeader::Symmetric(value) => value.encode(stream),
+        }
+    }
+}
+
+impl SecurityHeader {
+    /// Decode the security header from a stream. The type of header is
+    /// given by the message header, so this type doesn't implement BinaryDecodable.
+    pub fn decode_from_stream<S: Read + ?Sized>(
+        stream: &mut S,
+        is_open_secure_channel: bool,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<Self> {
+        if is_open_secure_channel {
+            let security_header = AsymmetricSecurityHeader::decode(stream, decoding_options)?;
+
+            let security_policy = if security_header.security_policy_uri.is_null() {
+                SecurityPolicy::None
+            } else {
+                SecurityPolicy::from_uri(security_header.security_policy_uri.as_ref())
+            };
+
+            if security_policy == SecurityPolicy::Unknown {
+                return Err(Error::new(
+                    StatusCode::BadSecurityPolicyRejected,
+                    format!(
+                        "Security policy of chunk is unknown, policy = {:?}",
+                        security_header.security_policy_uri
+                    ),
+                ));
+            }
+
+            Ok(SecurityHeader::Asymmetric(security_header))
+        } else {
+            let security_header = SymmetricSecurityHeader::decode(stream, decoding_options)?;
+            Ok(SecurityHeader::Symmetric(security_header))
         }
     }
 }
@@ -56,7 +91,7 @@ impl SimpleBinaryEncodable for SymmetricSecurityHeader {
         4
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<()> {
         self.token_id.encode(stream)
     }
 }
@@ -91,13 +126,11 @@ impl SimpleBinaryEncodable for AsymmetricSecurityHeader {
         size
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
-        let mut size = 0;
-        size += self.security_policy_uri.encode(stream)?;
-        size += self.sender_certificate.encode(stream)?;
-        size += self.receiver_certificate_thumbprint.encode(stream)?;
-        assert_eq!(size, self.byte_len());
-        Ok(size)
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<()> {
+        self.security_policy_uri.encode(stream)?;
+        self.sender_certificate.encode(stream)?;
+        self.receiver_certificate_thumbprint.encode(stream)?;
+        Ok(())
     }
 }
 
@@ -198,11 +231,10 @@ impl SimpleBinaryEncodable for SequenceHeader {
         8
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
-        let mut size: usize = 0;
-        size += self.sequence_number.encode(stream)?;
-        size += self.request_id.encode(stream)?;
-        Ok(size)
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<()> {
+        self.sequence_number.encode(stream)?;
+        self.request_id.encode(stream)?;
+        Ok(())
     }
 }
 

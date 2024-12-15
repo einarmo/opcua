@@ -28,7 +28,7 @@ macro_rules! request_enum {
                 }
             }
 
-            fn encode<S: Write + ?Sized>(&self, stream: &mut S, ctx: &opcua_types::Context<'_>) -> EncodingResult<usize> {
+            fn encode<S: Write + ?Sized>(&self, stream: &mut S, ctx: &opcua_types::Context<'_>) -> EncodingResult<()> {
                 match self {
                     $( Self::$name(value) => value.encode(stream, ctx), )*
                 }

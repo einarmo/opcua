@@ -291,7 +291,7 @@ impl SimpleBinaryEncodable for StatusCode {
         4
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<()> {
         write_u32(stream, self.bits())
     }
 }

@@ -17,7 +17,7 @@ use opcua_types::{
 use super::{
     message_chunk_info::ChunkInfo,
     secure_channel::SecureChannel,
-    security_header::SequenceHeader,
+    security_header::{SecurityHeader, SequenceHeader},
     tcp_types::{
         CHUNK_FINAL, CHUNK_FINAL_ERROR, CHUNK_INTERMEDIATE, CHUNK_MESSAGE,
         CLOSE_SECURE_CHANNEL_MESSAGE, MIN_CHUNK_SIZE, OPEN_SECURE_CHANNEL_MESSAGE,
@@ -25,7 +25,10 @@ use super::{
 };
 
 /// The size of a chunk header, used by several places
-pub const MESSAGE_CHUNK_HEADER_SIZE: usize = 12;
+pub const MESSAGE_CHUNK_HEADER_SIZE: usize = 3 + 1 + 4 + 4;
+/// Offset of the MessageSize in chunk headers. This comes after the chunk type and
+/// the is_final flag.
+pub const MESSAGE_SIZE_OFFSET: usize = 3 + 1;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 /// Type of message chunk.
@@ -74,7 +77,7 @@ impl SimpleBinaryEncodable for MessageChunkHeader {
         MESSAGE_CHUNK_HEADER_SIZE
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<()> {
         let message_type = match self.message_type {
             MessageChunkType::Message => CHUNK_MESSAGE,
             MessageChunkType::OpenSecureChannel => OPEN_SECURE_CHANNEL_MESSAGE,
@@ -87,13 +90,10 @@ impl SimpleBinaryEncodable for MessageChunkHeader {
             MessageIsFinalType::FinalError => CHUNK_FINAL_ERROR,
         };
 
-        let mut size = 0;
-        size += process_encode_io_result(stream.write(message_type))?;
-        size += write_u8(stream, is_final)?;
-        size += write_u32(stream, self.message_size)?;
-        size += write_u32(stream, self.secure_channel_id)?;
-        assert_eq!(size, self.byte_len());
-        Ok(size)
+        process_encode_io_result(stream.write_all(message_type))?;
+        write_u8(stream, is_final)?;
+        write_u32(stream, self.message_size)?;
+        write_u32(stream, self.secure_channel_id)
     }
 }
 
@@ -118,9 +118,7 @@ impl SimpleBinaryDecodable for MessageChunkHeader {
             CHUNK_INTERMEDIATE => MessageIsFinalType::Intermediate,
             CHUNK_FINAL_ERROR => MessageIsFinalType::FinalError,
             r => {
-                return Err(Error::decoding(format!(
-                    "Invalid message final type: {r:?}"
-                )));
+                return Err(Error::decoding(format!("Invalid message final type: {r}")));
             }
         };
 
@@ -152,8 +150,8 @@ impl SimpleBinaryEncodable for MessageChunk {
         self.data.len()
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
-        stream.write(&self.data).map_err(|e| {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<()> {
+        stream.write_all(&self.data).map_err(|e| {
             Error::encoding(format!(
                 "Encoding error while writing message chunk to stream: {e}"
             ))
@@ -192,14 +190,14 @@ impl SimpleBinaryDecodable for MessageChunk {
             let mut stream = Cursor::new(data);
 
             // Write header to a buffer
-            let chunk_header_size = chunk_header.encode(&mut stream)?;
-            assert_eq!(chunk_header_size, MESSAGE_CHUNK_HEADER_SIZE);
+            let chunk_header_size = chunk_header.byte_len();
+            chunk_header.encode(&mut stream)?;
 
             // Get the data (with header written to it)
             let mut data = stream.into_inner();
 
             // Read remainder of stream into slice after the header
-            let _ = in_stream.read_exact(&mut data[chunk_header_size..]);
+            in_stream.read_exact(&mut data[chunk_header_size..])?;
 
             Ok(MessageChunk { data })
         }
@@ -246,22 +244,19 @@ impl MessageChunk {
             secure_channel_id,
         };
 
-        let mut stream = Cursor::new(vec![0u8; message_size]);
-        let mut size = 0;
+        let mut buf = vec![0u8; message_size];
+        let buf_ref = &mut buf as &mut [u8];
+        let mut stream = Cursor::new(buf_ref);
         // write chunk header
-        size += chunk_header.encode(&mut stream)?;
+        chunk_header.encode(&mut stream)?;
         // write security header
-        size += security_header.encode(&mut stream)?;
+        security_header.encode(&mut stream)?;
         // write sequence header
-        size += sequence_header.encode(&mut stream)?;
+        sequence_header.encode(&mut stream)?;
         // write message
-        size += stream.write(data)?;
+        stream.write_all(data)?;
 
-        debug_assert_eq!(size, message_size);
-
-        Ok(MessageChunk {
-            data: stream.into_inner(),
-        })
+        Ok(MessageChunk { data: buf })
     }
 
     /// Calculates the body size that fit inside of a message chunk of a particular size.
@@ -348,5 +343,21 @@ impl MessageChunk {
     /// Decode info about this chunk.
     pub fn chunk_info(&self, secure_channel: &SecureChannel) -> EncodingResult<ChunkInfo> {
         ChunkInfo::new(self, secure_channel)
+    }
+
+    pub(crate) fn encrypted_data_offset(
+        &self,
+        decoding_options: &DecodingOptions,
+    ) -> EncodingResult<usize> {
+        // Fetch just the encrypted data offset, which may be slightly more efficient than
+        // fetching the entire ChunkInfo struct.
+        let mut stream = Cursor::new(&self.data);
+        let message_header = MessageChunkHeader::decode(&mut stream, decoding_options)?;
+        SecurityHeader::decode_from_stream(
+            &mut stream,
+            message_header.message_type.is_open_secure_channel(),
+            decoding_options,
+        )?;
+        Ok(stream.position() as usize)
     }
 }

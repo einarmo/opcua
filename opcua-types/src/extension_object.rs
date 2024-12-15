@@ -45,7 +45,7 @@ pub trait DynEncodable: Any + Send + Sync + std::fmt::Debug {
         &self,
         stream: &mut dyn std::io::Write,
         ctx: &crate::Context<'_>,
-    ) -> EncodingResult<usize>;
+    ) -> EncodingResult<()>;
 
     #[cfg(feature = "json")]
     /// Encode the struct using reversible OPC-UA JSON encoding.
@@ -96,7 +96,7 @@ macro_rules! blanket_dyn_encodable {
         where
             T: $bound  $(+ $others)* + ExpandedMessageInfo + Any + std::fmt::Debug + Send + Sync + Clone + PartialEq,
         {
-            fn encode_binary(&self, stream: &mut dyn std::io::Write, ctx: &crate::Context<'_>) -> EncodingResult<usize> {
+            fn encode_binary(&self, stream: &mut dyn std::io::Write, ctx: &crate::Context<'_>) -> EncodingResult<()> {
                 BinaryEncodable::encode(self, stream, ctx)
             }
 
@@ -334,7 +334,7 @@ impl BinaryEncodable for ExtensionObject {
         // Just default to null here, we'll fail later.
         let mut size = id.map(|n| n.byte_len(ctx)).unwrap_or(2usize);
         size += match &self.body {
-            Some(b) => 4 + b.byte_len_dyn(ctx),
+            Some(b) => 5 + b.byte_len_dyn(ctx),
             None => 1,
         };
 
@@ -345,27 +345,23 @@ impl BinaryEncodable for ExtensionObject {
         &self,
         mut stream: &mut S,
         ctx: &crate::Context<'_>,
-    ) -> EncodingResult<usize> {
-        let mut size = 0;
+    ) -> EncodingResult<()> {
         let type_id = self.binary_type_id();
         let id = type_id.try_resolve(ctx.namespaces());
         let Some(id) = id else {
             return Err(Error::encoding(format!("Unknown encoding ID: {type_id}")));
         };
 
-        size += BinaryEncodable::encode(id.as_ref(), stream, ctx)?;
+        BinaryEncodable::encode(id.as_ref(), stream, ctx)?;
 
         match &self.body {
             Some(b) => {
-                size += write_u8(stream, 0x1)?;
-                size += write_i32(stream, b.byte_len_dyn(ctx) as i32)?;
-                size += b.encode_binary(&mut stream as &mut dyn Write, ctx)?;
+                write_u8(stream, 0x1)?;
+                write_i32(stream, b.byte_len_dyn(ctx) as i32)?;
+                b.encode_binary(&mut stream as &mut dyn Write, ctx)
             }
-            None => {
-                size += write_u8(stream, 0x0)?;
-            }
+            None => write_u8(stream, 0x0),
         }
-        Ok(size)
     }
 }
 impl BinaryDecodable for ExtensionObject {

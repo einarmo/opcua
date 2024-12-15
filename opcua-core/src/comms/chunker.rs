@@ -4,7 +4,7 @@
 
 //! Contains code for turning messages into chunks and chunks into messages.
 
-use std::io::{Cursor, Read, Write};
+use std::io::{Read, Write};
 
 use crate::{
     comms::{
@@ -17,9 +17,11 @@ use crate::{
 use log::{debug, error, trace};
 use opcua_crypto::SecurityPolicy;
 use opcua_types::{
-    encoding::BinaryEncodable, node_id::NodeId, status_code::StatusCode, BinaryDecodable, Error,
-    ObjectId,
+    encoding::BinaryEncodable, node_id::NodeId, status_code::StatusCode, BinaryDecodable,
+    EncodingResult, Error, ObjectId,
 };
+
+use super::message_chunk::MessageChunkType;
 
 /// Read implementation for a sequence of message chunks.
 /// This lets us avoid allocating a buffer for the message.
@@ -96,6 +98,162 @@ impl<'a, T: Iterator<Item = &'a MessageChunk>> Read for ReceiveStream<'a, T> {
         let written = buf.write(&self.buffer[self.pos..])?;
         self.pos += written;
         Ok(written)
+    }
+}
+
+struct ChunkingStream<'a> {
+    secure_channel: &'a SecureChannel,
+    chunks: Vec<MessageChunk>,
+    expected_chunk_count: usize,
+    max_body_per_chunk: usize,
+    next_buf: Vec<u8>,
+    buf_position: usize,
+    is_closed: bool,
+    sequence_number: u32,
+    request_id: u32,
+    message_size: usize,
+    message_type: MessageChunkType,
+}
+
+impl<'a> ChunkingStream<'a> {
+    pub fn new(
+        message_type: MessageChunkType,
+        secure_channel: &'a SecureChannel,
+        max_chunk_size: usize,
+        message_size: usize,
+        request_id: u32,
+        request_handle: u32,
+        sequence_number: u32,
+    ) -> Result<Self, Error> {
+        if max_chunk_size > 0 {
+            let max_body_per_chunk = MessageChunk::body_size_from_message_size(
+                message_type,
+                secure_channel,
+                max_chunk_size,
+            )
+            .map_err(|_| {
+                Error::new(
+                    StatusCode::BadTcpInternalError,
+                    format!(
+                        "body_size_from_message_size error for max_chunk_size = {}",
+                        max_chunk_size
+                    ),
+                )
+                .with_context(
+                    Some(request_id),
+                    if request_handle > 0 {
+                        Some(request_handle)
+                    } else {
+                        None
+                    },
+                )
+            })?;
+            let expected_chunk_count = message_size / max_body_per_chunk + 1;
+            let next_buf_size = if expected_chunk_count == 1 {
+                message_size
+            } else {
+                max_body_per_chunk
+            };
+
+            Ok(Self {
+                secure_channel,
+                chunks: Vec::with_capacity(expected_chunk_count),
+                expected_chunk_count,
+                max_body_per_chunk,
+                next_buf: vec![0; next_buf_size],
+                buf_position: 0,
+                is_closed: false,
+                sequence_number,
+                request_id,
+                message_type,
+                message_size,
+            })
+        } else {
+            let expected_chunk_count = 1;
+            let max_body_per_chunk = 0;
+            let next_buf_size = message_size;
+            Ok(Self {
+                secure_channel,
+                chunks: Vec::with_capacity(expected_chunk_count),
+                expected_chunk_count,
+                max_body_per_chunk,
+                next_buf: vec![0; next_buf_size],
+                buf_position: 0,
+                is_closed: false,
+                sequence_number,
+                request_id,
+                message_type,
+                message_size,
+            })
+        }
+    }
+
+    fn flush_chunk(&mut self) -> EncodingResult<()> {
+        if self.is_closed {
+            return Ok(());
+        }
+
+        let buf = std::mem::take(&mut self.next_buf);
+        let is_final = if self.chunks.len() == self.expected_chunk_count - 1 {
+            self.is_closed = true;
+            MessageIsFinalType::Final
+        } else {
+            MessageIsFinalType::Intermediate
+        };
+
+        let chunk = MessageChunk::new(
+            self.sequence_number + self.chunks.len() as u32,
+            self.request_id,
+            self.message_type,
+            is_final,
+            self.secure_channel,
+            &buf,
+        )?;
+        self.chunks.push(chunk);
+
+        if !self.is_closed {
+            let next_buf_size = if self.chunks.len() == self.expected_chunk_count - 1 {
+                self.message_size % self.max_body_per_chunk
+            } else {
+                self.max_body_per_chunk
+            };
+            self.next_buf = vec![0; next_buf_size];
+            self.buf_position = 0;
+        }
+
+        Ok(())
+    }
+
+    fn finish(self) -> EncodingResult<Vec<MessageChunk>> {
+        if !self.is_closed {
+            return Err(Error::encoding(
+                "Message did not encode to the expected size",
+            ));
+        }
+        Ok(self.chunks)
+    }
+}
+
+impl Write for ChunkingStream<'_> {
+    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        if self.is_closed {
+            return Ok(0);
+        }
+
+        let to_read = buf.len().min(self.next_buf.len() - self.buf_position);
+        self.next_buf[self.buf_position..(self.buf_position + to_read)]
+            .copy_from_slice(&buf[..to_read]);
+        self.buf_position += to_read;
+        if self.buf_position == self.next_buf.len() {
+            self.flush_chunk()?;
+        }
+
+        Ok(to_read)
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        self.flush_chunk()?;
+        Ok(())
     }
 }
 
@@ -210,7 +368,7 @@ impl Chunker {
                 max_message_size, message_size
             );
             // Client stack should report a BadRequestTooLarge, server BadResponseTooLarge
-            Err(Error::new(
+            return Err(Error::new(
                 if secure_channel.is_client_role() {
                     StatusCode::BadRequestTooLarge
                 } else {
@@ -221,78 +379,32 @@ impl Chunker {
                     max_message_size, message_size
                 ),
             )
-            .with_context(ctx_id, ctx_handle))
-        } else {
-            let node_id = supported_message.type_id();
-            message_size += node_id.byte_len(&ctx);
-
-            let message_type = supported_message.message_type();
-            let mut stream = Cursor::new(vec![0u8; message_size]);
-
-            trace!("Encoding node id {:?}", node_id);
-            let _ = node_id.encode(&mut stream, &ctx);
-            let _ = supported_message
-                .encode(&mut stream, &ctx)
-                .map_err(|e| e.with_context(ctx_id, ctx_handle))?;
-            let data = stream.into_inner();
-
-            let result = if max_chunk_size > 0 {
-                let max_body_per_chunk = MessageChunk::body_size_from_message_size(
-                    message_type,
-                    secure_channel,
-                    max_chunk_size,
-                )
-                .map_err(|_| {
-                    Error::new(
-                        StatusCode::BadTcpInternalError,
-                        format!(
-                            "body_size_from_message_size error for max_chunk_size = {}",
-                            max_chunk_size
-                        ),
-                    )
-                    .with_context(ctx_id, ctx_handle)
-                })?;
-
-                // Multiple chunks means breaking the data up into sections. Fortunately
-                // Rust has a nice function to do just that.
-                let data_chunks = data.chunks(max_body_per_chunk);
-                let data_chunks_len = data_chunks.len();
-                trace!(
-                    "Split message into {} chunks of {} length max",
-                    data_chunks_len,
-                    max_body_per_chunk
-                );
-                let mut chunks = Vec::with_capacity(data_chunks_len);
-                for (i, data_chunk) in data_chunks.enumerate() {
-                    let is_final = if i == data_chunks_len - 1 {
-                        MessageIsFinalType::Final
-                    } else {
-                        MessageIsFinalType::Intermediate
-                    };
-                    let chunk = MessageChunk::new(
-                        sequence_number + i as u32,
-                        request_id,
-                        message_type,
-                        is_final,
-                        secure_channel,
-                        data_chunk,
-                    )?;
-                    chunks.push(chunk);
-                }
-                chunks
-            } else {
-                let chunk = MessageChunk::new(
-                    sequence_number,
-                    request_id,
-                    message_type,
-                    MessageIsFinalType::Final,
-                    secure_channel,
-                    &data,
-                )?;
-                vec![chunk]
-            };
-            Ok(result)
+            .with_context(ctx_id, ctx_handle));
         }
+
+        let node_id = supported_message.type_id();
+        message_size += node_id.byte_len(&ctx);
+
+        let message_type = supported_message.message_type();
+
+        let mut stream = ChunkingStream::new(
+            message_type,
+            secure_channel,
+            max_chunk_size,
+            message_size,
+            request_id,
+            handle,
+            sequence_number,
+        )?;
+
+        node_id.encode(&mut stream, &ctx)?;
+        supported_message
+            .encode(&mut stream, &ctx)
+            .map_err(|e| e.with_context(ctx_id, ctx_handle))?;
+
+        stream.flush()?;
+
+        stream.finish()
     }
 
     /// Decodes a series of chunks to create a message. The message must be of a `SupportedMessage`

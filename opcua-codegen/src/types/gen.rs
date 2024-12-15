@@ -324,7 +324,7 @@ impl CodeGenerator {
                     #size
                 }
 
-                fn encode<S: std::io::Write + ?Sized>(&self, stream: &mut S, _ctx: &opcua::types::Context<'_>) -> opcua::types::EncodingResult<usize> {
+                fn encode<S: std::io::Write + ?Sized>(&self, stream: &mut S, _ctx: &opcua::types::Context<'_>) -> opcua::types::EncodingResult<()> {
                     opcua::types::#write_method(stream, self.bits())
                 }
             }
@@ -616,7 +616,7 @@ impl CodeGenerator {
                     #size
                 }
 
-                fn encode<S: std::io::Write + ?Sized>(&self, stream: &mut S, _ctx: &opcua::types::Context<'_>) -> opcua::types::EncodingResult<usize> {
+                fn encode<S: std::io::Write + ?Sized>(&self, stream: &mut S, _ctx: &opcua::types::Context<'_>) -> opcua::types::EncodingResult<()> {
                     opcua::types::#write_method(stream, *self as #ty)
                 }
             }

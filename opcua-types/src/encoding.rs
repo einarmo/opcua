@@ -313,14 +313,25 @@ impl DecodingOptions {
 /// OPC UA Binary Encoding interface. Anything that encodes to binary must implement this. It provides
 /// functions to calculate the size in bytes of the struct (for allocating memory), encoding to a stream
 /// and decoding from a stream.
+///
+/// # Implementing
+///
+/// The majority of implementers should just use the `derive(BinaryEncodable)` macro,
+/// if you need to implement this yourself for some reason, the following _must_ be satisfied:
+///
+///  - `byte_len` must return a length exactly equal to what `encode` will write, or `encode`
+///    must be guaranteed to fail. Since `byte_len` is infallible, you are allowed to
+///    return some invalid value there, then fail later when calling `encode`. This should be avoided.
+///  - `encode` must use `write_all` on the stream, not just `write`, to ensure that all the data
+///    is written, even if the stream is interrupted. Prefer calling `encode` on inner types
+///    instead.
 pub trait BinaryEncodable {
     /// Returns the exact byte length of the structure as it would be if `encode` were called.
     /// This may be called prior to writing to ensure the correct amount of space is available.
     #[allow(unused)]
     fn byte_len(&self, ctx: &crate::Context<'_>) -> usize;
     /// Encodes the instance to the write stream.
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S, ctx: &Context<'_>)
-        -> EncodingResult<usize>;
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S, ctx: &Context<'_>) -> EncodingResult<()>;
 
     /// Convenience method for encoding a message straight into an array of bytes. It is preferable to reuse buffers than
     /// to call this so it should be reserved for tests and trivial code.
@@ -348,7 +359,7 @@ pub trait SimpleBinaryEncodable {
     fn byte_len(&self) -> usize;
 
     /// Encodes the instance to the write stream.
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize>;
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<()>;
 
     /// Convenience method for encoding a message straight into an array of bytes. It is preferable to reuse buffers than
     /// to call this so it should be reserved for tests and trivial code.
@@ -367,11 +378,7 @@ where
         SimpleBinaryEncodable::byte_len(self)
     }
 
-    fn encode<S: Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        _ctx: &Context<'_>,
-    ) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S, _ctx: &Context<'_>) -> EncodingResult<()> {
         SimpleBinaryEncodable::encode(self, stream)
     }
 }
@@ -396,7 +403,7 @@ where
 }
 
 /// Converts an IO encoding error (and logs when in error) into an EncodingResult
-pub fn process_encode_io_result(result: Result<usize>) -> EncodingResult<usize> {
+pub fn process_encode_io_result(result: Result<()>) -> EncodingResult<()> {
     result.map_err(Error::encoding)
 }
 
@@ -420,21 +427,16 @@ where
         size
     }
 
-    fn encode<S: Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &Context<'_>,
-    ) -> EncodingResult<usize> {
-        let mut size = 0;
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S, ctx: &Context<'_>) -> EncodingResult<()> {
         if let Some(ref values) = self {
-            size += write_i32(stream, values.len() as i32)?;
+            write_i32(stream, values.len() as i32)?;
             for value in values.iter() {
-                size += value.encode(stream, ctx)?;
+                value.encode(stream, ctx)?;
             }
         } else {
-            size += write_i32(stream, -1)?;
+            write_i32(stream, -1)?;
         }
-        Ok(size)
+        Ok(())
     }
 }
 
@@ -491,92 +493,92 @@ pub fn write_bytes<W: Write + ?Sized>(
 }
 
 /// Writes an unsigned byte to the stream
-pub fn write_u8<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
+pub fn write_u8<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<()>
 where
     T: Into<u8>,
 {
     let buf: [u8; 1] = [value.into()];
-    process_encode_io_result(stream.write(&buf))
+    process_encode_io_result(stream.write_all(&buf))
 }
 
 /// Writes a signed 16-bit value to the stream
-pub fn write_i16<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
+pub fn write_i16<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<()>
 where
     T: Into<i16>,
 {
     let mut buf = [0u8; 2];
     LittleEndian::write_i16(&mut buf, value.into());
-    process_encode_io_result(stream.write(&buf))
+    process_encode_io_result(stream.write_all(&buf))
 }
 
 /// Writes an unsigned 16-bit value to the stream
-pub fn write_u16<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
+pub fn write_u16<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<()>
 where
     T: Into<u16>,
 {
     let mut buf = [0u8; 2];
     LittleEndian::write_u16(&mut buf, value.into());
-    process_encode_io_result(stream.write(&buf))
+    process_encode_io_result(stream.write_all(&buf))
 }
 
 /// Writes a signed 32-bit value to the stream
-pub fn write_i32<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
+pub fn write_i32<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<()>
 where
     T: Into<i32>,
 {
     let mut buf = [0u8; 4];
     LittleEndian::write_i32(&mut buf, value.into());
-    process_encode_io_result(stream.write(&buf))
+    process_encode_io_result(stream.write_all(&buf))
 }
 
 /// Writes an unsigned 32-bit value to the stream
-pub fn write_u32<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
+pub fn write_u32<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<()>
 where
     T: Into<u32>,
 {
     let mut buf = [0u8; 4];
     LittleEndian::write_u32(&mut buf, value.into());
-    process_encode_io_result(stream.write(&buf))
+    process_encode_io_result(stream.write_all(&buf))
 }
 
 /// Writes a signed 64-bit value to the stream
-pub fn write_i64<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
+pub fn write_i64<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<()>
 where
     T: Into<i64>,
 {
     let mut buf = [0u8; 8];
     LittleEndian::write_i64(&mut buf, value.into());
-    process_encode_io_result(stream.write(&buf))
+    process_encode_io_result(stream.write_all(&buf))
 }
 
 /// Writes an unsigned 64-bit value to the stream
-pub fn write_u64<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
+pub fn write_u64<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<()>
 where
     T: Into<u64>,
 {
     let mut buf = [0u8; 8];
     LittleEndian::write_u64(&mut buf, value.into());
-    process_encode_io_result(stream.write(&buf))
+    process_encode_io_result(stream.write_all(&buf))
 }
 
 /// Writes a 32-bit precision value to the stream
-pub fn write_f32<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
+pub fn write_f32<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<()>
 where
     T: Into<f32>,
 {
     let mut buf = [0u8; 4];
     LittleEndian::write_f32(&mut buf, value.into());
-    process_encode_io_result(stream.write(&buf))
+    process_encode_io_result(stream.write_all(&buf))
 }
 
 /// Writes a 64-bit precision value to the stream
-pub fn write_f64<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<usize>
+pub fn write_f64<T, W: Write + ?Sized>(stream: &mut W, value: T) -> EncodingResult<()>
 where
     T: Into<f64>,
 {
     let mut buf = [0u8; 8];
     LittleEndian::write_f64(&mut buf, value.into());
-    process_encode_io_result(stream.write(&buf))
+    process_encode_io_result(stream.write_all(&buf))
 }
 
 /// Reads an array of bytes from the stream

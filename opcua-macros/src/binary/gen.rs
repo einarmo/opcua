@@ -24,7 +24,7 @@ pub fn generate_binary_encode_impl(strct: BinaryStruct) -> syn::Result<TokenStre
             size += self.#ident.byte_len(ctx);
         });
         encode_body.extend(quote! {
-            size += self.#ident.encode(stream, ctx)?;
+            self.#ident.encode(stream, ctx)?;
         });
     }
     let ident = strct.ident;
@@ -42,10 +42,9 @@ pub fn generate_binary_encode_impl(strct: BinaryStruct) -> syn::Result<TokenStre
                 &self,
                 stream: &mut S,
                 ctx: &opcua::types::Context<'_>,
-            ) -> opcua::types::EncodingResult<usize> {
-                let mut size = 0usize;
+            ) -> opcua::types::EncodingResult<()> {
                 #encode_body
-                Ok(size)
+                Ok(())
             }
         }
     })

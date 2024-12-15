@@ -91,51 +91,41 @@ impl BinaryEncodable for DataValue {
         size
     }
 
-    fn encode<S: Write + ?Sized>(
-        &self,
-        stream: &mut S,
-        ctx: &Context<'_>,
-    ) -> EncodingResult<usize> {
-        let mut size = 0;
-
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S, ctx: &Context<'_>) -> EncodingResult<()> {
         let encoding_mask = self.encoding_mask();
-        size += encoding_mask.bits().encode(stream, ctx)?;
+        encoding_mask.bits().encode(stream, ctx)?;
 
         if encoding_mask.contains(DataValueFlags::HAS_VALUE) {
-            size += self.value.as_ref().unwrap().encode(stream, ctx)?;
+            self.value.as_ref().unwrap().encode(stream, ctx)?;
         }
         if encoding_mask.contains(DataValueFlags::HAS_STATUS) {
-            size += self.status.as_ref().unwrap().bits().encode(stream, ctx)?;
+            self.status.as_ref().unwrap().bits().encode(stream, ctx)?;
         }
         if encoding_mask.contains(DataValueFlags::HAS_SOURCE_TIMESTAMP) {
-            size += self
-                .source_timestamp
+            self.source_timestamp
                 .as_ref()
                 .unwrap()
                 .encode(stream, ctx)?;
             if encoding_mask.contains(DataValueFlags::HAS_SOURCE_PICOSECONDS) {
-                size += self
-                    .source_picoseconds
+                self.source_picoseconds
                     .as_ref()
                     .unwrap()
                     .encode(stream, ctx)?;
             }
         }
         if encoding_mask.contains(DataValueFlags::HAS_SERVER_TIMESTAMP) {
-            size += self
-                .server_timestamp
+            self.server_timestamp
                 .as_ref()
                 .unwrap()
                 .encode(stream, ctx)?;
             if encoding_mask.contains(DataValueFlags::HAS_SERVER_PICOSECONDS) {
-                size += self
-                    .server_picoseconds
+                self.server_picoseconds
                     .as_ref()
                     .unwrap()
                     .encode(stream, ctx)?;
             }
         }
-        Ok(size)
+        Ok(())
     }
 }
 

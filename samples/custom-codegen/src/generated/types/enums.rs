@@ -93,7 +93,7 @@ impl opcua::types::BinaryEncodable for IMTagSelectorEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -192,7 +192,7 @@ impl opcua::types::BinaryEncodable for PnARStateEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -289,7 +289,7 @@ impl opcua::types::BinaryEncodable for PnARTypeEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -388,7 +388,7 @@ impl opcua::types::BinaryEncodable for PnAssetChangeEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -489,7 +489,7 @@ impl opcua::types::BinaryEncodable for PnAssetTypeEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -586,7 +586,7 @@ impl opcua::types::BinaryEncodable for PnChannelAccumulativeEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -687,7 +687,7 @@ impl opcua::types::BinaryEncodable for PnChannelDirectionEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -788,7 +788,7 @@ impl opcua::types::BinaryEncodable for PnChannelMaintenanceEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -889,7 +889,7 @@ impl opcua::types::BinaryEncodable for PnChannelSpecifierEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -998,7 +998,7 @@ impl opcua::types::BinaryEncodable for PnChannelTypeEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1099,7 +1099,7 @@ impl opcua::types::BinaryEncodable for PnDeviceStateEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1201,7 +1201,7 @@ impl opcua::types::BinaryEncodable for PnLinkStateEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1304,7 +1304,7 @@ impl opcua::types::BinaryEncodable for PnModuleStateEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1411,7 +1411,7 @@ impl opcua::types::BinaryEncodable for PnPortStateEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1508,7 +1508,7 @@ impl opcua::types::BinaryEncodable for PnSubmoduleAddInfoEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1611,7 +1611,7 @@ impl opcua::types::BinaryEncodable for PnSubmoduleARInfoEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }
@@ -1712,7 +1712,7 @@ impl opcua::types::BinaryEncodable for PnSubmoduleIdentInfoEnumeration {
         &self,
         stream: &mut S,
         _ctx: &opcua::types::Context<'_>,
-    ) -> opcua::types::EncodingResult<usize> {
+    ) -> opcua::types::EncodingResult<()> {
         opcua::types::write_i32(stream, *self as i32)
     }
 }

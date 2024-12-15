@@ -92,15 +92,13 @@ impl SimpleBinaryEncodable for UAString {
         }
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<()> {
         // Strings are encoded as UTF8 chars preceded by an Int32 length. A -1 indicates a null string
         match &self.value {
             Some(s) => {
-                let mut size: usize = 0;
-                size += write_i32(stream, s.len() as i32)?;
+                write_i32(stream, s.len() as i32)?;
                 let buf = s.as_bytes();
-                size += process_encode_io_result(stream.write(buf))?;
-                Ok(size)
+                process_encode_io_result(stream.write_all(buf))
             }
             None => write_i32(stream, -1),
         }

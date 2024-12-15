@@ -70,12 +70,11 @@ impl SimpleBinaryEncodable for MessageHeader {
         MESSAGE_HEADER_LEN
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
-        let mut size: usize = 0;
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<()> {
         let result = match self.message_type {
-            MessageType::Hello => stream.write(HELLO_MESSAGE),
-            MessageType::Acknowledge => stream.write(ACKNOWLEDGE_MESSAGE),
-            MessageType::Error => stream.write(ERROR_MESSAGE),
+            MessageType::Hello => stream.write_all(HELLO_MESSAGE),
+            MessageType::Acknowledge => stream.write_all(ACKNOWLEDGE_MESSAGE),
+            MessageType::Error => stream.write_all(ERROR_MESSAGE),
             MessageType::Chunk => {
                 panic!("Don't write chunks to stream with this call, use Chunk and Chunker");
             }
@@ -83,10 +82,10 @@ impl SimpleBinaryEncodable for MessageHeader {
                 panic!("Unrecognized type");
             }
         };
-        size += process_encode_io_result(result)?;
-        size += write_u8(stream, b'F')?;
-        size += write_u32(stream, self.message_size)?;
-        Ok(size)
+        process_encode_io_result(result)?;
+        write_u8(stream, b'F')?;
+        write_u32(stream, self.message_size)?;
+        Ok(())
     }
 }
 
@@ -134,7 +133,7 @@ impl MessageHeader {
 
         // Write header to stream
         let mut out = Cursor::new(Vec::with_capacity(message_size as usize));
-        let result = out.write(&header);
+        let result = out.write_all(&header);
         if result.is_err() {
             return Err(Error::new(
                 ErrorKind::Other,
@@ -218,16 +217,14 @@ impl SimpleBinaryEncodable for HelloMessage {
         self.message_header.byte_len() + 20 + self.endpoint_url.byte_len()
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
-        let mut size = 0;
-        size += self.message_header.encode(stream)?;
-        size += self.protocol_version.encode(stream)?;
-        size += self.receive_buffer_size.encode(stream)?;
-        size += self.send_buffer_size.encode(stream)?;
-        size += self.max_message_size.encode(stream)?;
-        size += self.max_chunk_count.encode(stream)?;
-        size += self.endpoint_url.encode(stream)?;
-        Ok(size)
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<()> {
+        self.message_header.encode(stream)?;
+        self.protocol_version.encode(stream)?;
+        self.receive_buffer_size.encode(stream)?;
+        self.send_buffer_size.encode(stream)?;
+        self.max_message_size.encode(stream)?;
+        self.max_chunk_count.encode(stream)?;
+        self.endpoint_url.encode(stream)
     }
 }
 
@@ -339,15 +336,13 @@ impl SimpleBinaryEncodable for AcknowledgeMessage {
         self.message_header.byte_len() + 20
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
-        let mut size: usize = 0;
-        size += self.message_header.encode(stream)?;
-        size += self.protocol_version.encode(stream)?;
-        size += self.receive_buffer_size.encode(stream)?;
-        size += self.send_buffer_size.encode(stream)?;
-        size += self.max_message_size.encode(stream)?;
-        size += self.max_chunk_count.encode(stream)?;
-        Ok(size)
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<()> {
+        self.message_header.encode(stream)?;
+        self.protocol_version.encode(stream)?;
+        self.receive_buffer_size.encode(stream)?;
+        self.send_buffer_size.encode(stream)?;
+        self.max_message_size.encode(stream)?;
+        self.max_chunk_count.encode(stream)
     }
 }
 
@@ -410,12 +405,10 @@ impl SimpleBinaryEncodable for ErrorMessage {
         self.message_header.byte_len() + self.error.byte_len() + self.reason.byte_len()
     }
 
-    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<usize> {
-        let mut size: usize = 0;
-        size += self.message_header.encode(stream)?;
-        size += self.error.encode(stream)?;
-        size += self.reason.encode(stream)?;
-        Ok(size)
+    fn encode<S: Write + ?Sized>(&self, stream: &mut S) -> EncodingResult<()> {
+        self.message_header.encode(stream)?;
+        self.error.encode(stream)?;
+        self.reason.encode(stream)
     }
 }
 

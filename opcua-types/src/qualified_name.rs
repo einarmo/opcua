@@ -88,11 +88,9 @@ impl BinaryEncodable for QualifiedName {
         &self,
         stream: &mut S,
         ctx: &crate::Context<'_>,
-    ) -> EncodingResult<usize> {
-        let mut size: usize = 0;
-        size += self.namespace_index.encode(stream, ctx)?;
-        size += self.name.encode(stream, ctx)?;
-        Ok(size)
+    ) -> EncodingResult<()> {
+        self.namespace_index.encode(stream, ctx)?;
+        self.name.encode(stream, ctx)
     }
 }
 impl BinaryDecodable for QualifiedName {
