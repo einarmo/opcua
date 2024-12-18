@@ -152,14 +152,7 @@ impl BrowserPolicy for BrowseFilter {
             .references
             .iter()
             .filter(|r| r.node_id.server_index == 0)
-            .map(|r| BrowseDescription {
-                node_id: r.node_id.node_id.clone(),
-                browse_direction: self.direction,
-                reference_type_id: self.reference_type_id.clone(),
-                include_subtypes: self.include_subtypes,
-                node_class_mask: self.node_class_mask.bits(),
-                result_mask: self.result_mask.bits(),
-            })
+            .map(|r| self.new_description_from_node(r.node_id.node_id.clone()))
             .collect()
     }
 }
@@ -179,6 +172,18 @@ impl BrowseFilter {
             include_subtypes,
             result_mask: BrowseResultMaskFlags::all(),
             node_class_mask: NodeClassMask::all(),
+        }
+    }
+
+    /// Create a new browse description from this filter and a node ID to browse.
+    pub fn new_description_from_node(&self, node_id: NodeId) -> BrowseDescription {
+        BrowseDescription {
+            node_id,
+            browse_direction: self.direction,
+            reference_type_id: self.reference_type_id.clone(),
+            include_subtypes: self.include_subtypes,
+            node_class_mask: self.node_class_mask.bits(),
+            result_mask: self.result_mask.bits(),
         }
     }
 

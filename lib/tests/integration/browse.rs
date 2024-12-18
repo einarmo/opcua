@@ -8,7 +8,9 @@ use opcua::{
         RelativePathElement, StatusCode, VariableTypeId,
     },
 };
-use opcua_types::{AttributeId, ReadValueId, TimestampsToReturn, Variant};
+use opcua_client::browser::BrowseFilter;
+use opcua_nodes::DefaultTypeTree;
+use opcua_types::{AttributeId, ReadValueId, TimestampsToReturn, VariableId, Variant};
 
 fn hierarchical_desc(node_id: NodeId) -> BrowseDescription {
     BrowseDescription {
@@ -578,4 +580,75 @@ async fn translate_browse_paths_auto_impl() {
             "DefaultAccessRestrictions".into()
         )))
     );
+}
+
+#[tokio::test]
+async fn test_recursive_browser() {
+    let (_tester, _nm, session) = setup().await;
+
+    let filter = BrowseFilter::new_hierarchical();
+    let to_browse = vec![filter.new_description_from_node(ObjectId::TypesFolder.into())];
+    let res = session
+        .browser()
+        .max_concurrent_requests(3)
+        .handler(filter)
+        .run_into_result(to_browse)
+        .await
+        .unwrap();
+
+    assert_eq!(3740, res.nodes.len());
+
+    // Try to get some event fields.
+    let rs: Vec<_> = res
+        .references
+        .find_references(
+            &ObjectTypeId::BaseEventType.into(),
+            None::<(NodeId, _)>,
+            &DefaultTypeTree::new(),
+            BrowseDirection::Forward,
+        )
+        .collect();
+
+    assert_eq!(rs.len(), 21);
+
+    assert!(rs
+        .iter()
+        .find(|r| *r.target_node == VariableId::BaseEventType_EventId)
+        .is_some());
+}
+
+#[tokio::test]
+// Hit the same node multiple times.
+async fn test_recursive_browser_multi_hit() {
+    let (_tester, _nm, session) = setup().await;
+
+    let filter = BrowseFilter::new(BrowseDirection::Forward, ReferenceTypeId::References, true);
+    let to_browse = vec![filter.new_description_from_node(ObjectId::TypesFolder.into())];
+    let res = session
+        .browser()
+        .max_concurrent_requests(3)
+        .handler(filter)
+        .run_into_result(to_browse)
+        .await
+        .unwrap();
+
+    assert_eq!(4228, res.nodes.len());
+
+    // This one will be referenced from many places.
+    assert!(res
+        .nodes
+        .contains_key(&NodeId::from(ObjectId::ModellingRule_Mandatory)));
+
+    // Get the nodes that have a mandatory modelling rule
+    let rs: Vec<_> = res
+        .references
+        .find_references(
+            &ObjectId::ModellingRule_Mandatory.into(),
+            None::<(NodeId, _)>,
+            &DefaultTypeTree::new(),
+            BrowseDirection::Inverse,
+        )
+        .collect();
+
+    assert_eq!(rs.len(), 2164);
 }
