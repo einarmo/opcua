@@ -9,10 +9,11 @@ use std::{
 use arc_swap::ArcSwap;
 
 use crate::{
+    browser::Browser,
     retry::SessionRetryPolicy,
     session::session_warn,
     transport::{tcp::TransportConfiguration, Connector},
-    AsyncSecureChannel, ClientConfig,
+    AsyncSecureChannel, ClientConfig, ExponentialBackoff,
 };
 use opcua_core::{
     handle::AtomicHandle,
@@ -26,7 +27,7 @@ use opcua_types::{
 
 use super::{
     services::subscriptions::{state::SubscriptionState, PublishLimits},
-    SessionEventLoop, SessionInfo,
+    DefaultRetryPolicy, SessionEventLoop, SessionInfo,
 };
 
 #[derive(Clone, Copy)]
@@ -295,5 +296,21 @@ impl Session {
     /// Get a reference to the encoding
     pub fn context(&self) -> Arc<RwLock<ContextOwned>> {
         self.channel.secure_channel.read().context_arc()
+    }
+
+    /// Create a browser, used to recursively browse the node hierarchy.
+    ///
+    /// You must call `handler` on the returned browser and set a browse policy
+    /// before it can be used. You can, for example, use [BrowseFilter](crate::browser::BrowseFilter)
+    pub fn browser(&self) -> Browser<'_, (), DefaultRetryPolicy> {
+        Browser::new(
+            self,
+            (),
+            DefaultRetryPolicy::new(ExponentialBackoff::new(
+                Duration::from_secs(30),
+                Some(5),
+                Duration::from_millis(500),
+            )),
+        )
     }
 }

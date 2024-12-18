@@ -191,6 +191,7 @@ bitflags! {
 
 // Bits for a node class mask
 bitflags! {
+    #[derive(Debug, Copy, Clone)]
     /// Bitmask for node classes.
     pub struct NodeClassMask: u32 {
         /// Object node class.
@@ -209,6 +210,25 @@ bitflags! {
         const DATA_TYPE = 1 << 6;
         /// View node class.
         const VIEW = 1 << 7;
+    }
+}
+
+bitflags! {
+    #[derive(Debug, Copy, Clone)]
+    /// Bitmask for browse results.
+    pub struct BrowseResultMaskFlags: u32 {
+        /// Include the reference type ID.
+        const ReferenceTypeId = 1;
+        /// Include whether the reference is forward or inverse.
+        const IsForward = 1 << 1;
+        /// Include the node class.
+        const NodeClass = 1 << 2;
+        /// Include the browse name.
+        const BrowseName = 1 << 3;
+        /// Include the display name.
+        const DisplayName = 1 << 4;
+        /// Include the type definition
+        const TypeDefinition = 1 << 5;
     }
 }
 

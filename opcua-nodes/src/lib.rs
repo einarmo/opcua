@@ -10,6 +10,7 @@ use bitflags::bitflags;
 mod events;
 mod generic;
 mod import;
+mod references;
 mod type_tree;
 #[cfg(feature = "xml")]
 mod xml;
@@ -28,6 +29,7 @@ pub use object_type::{ObjectType, ObjectTypeBuilder};
 pub use opcua_types::NamespaceMap;
 use opcua_types::NodeId;
 pub use reference_type::{ReferenceType, ReferenceTypeBuilder};
+pub use references::{Reference, ReferenceRef, References};
 pub use type_tree::{
     DefaultTypeTree, TypeProperty, TypePropertyInverseRef, TypeTree, TypeTreeNode,
 };

@@ -113,6 +113,7 @@
 //! [`ClientBuilder`]: ./client_builder/struct.ClientBuilder.html
 //! [`Session`]: ./session/struct.Session.html
 
+pub mod browser;
 mod builder;
 mod config;
 mod retry;

@@ -3,7 +3,7 @@
 mod implementation;
 mod utils;
 
-pub use implementation::{AddressSpace, Reference, ReferenceRef};
+pub use implementation::AddressSpace;
 pub use opcua_nodes::*;
 pub use utils::*;
 

@@ -13,6 +13,12 @@ pub trait RequestRetryPolicy {
     fn get_next_delay(&mut self, status: StatusCode) -> Option<Duration>;
 }
 
+impl RequestRetryPolicy for Box<dyn RequestRetryPolicy + Send> {
+    fn get_next_delay(&mut self, status: StatusCode) -> Option<Duration> {
+        (**self).get_next_delay(status)
+    }
+}
+
 /// A simple default retry policy. This will retry using the given [`ExponentialBackoff`] if
 /// the error matches one of the following status codes:
 ///
@@ -48,6 +54,7 @@ pub trait RequestRetryPolicy {
 /// - StatusCode::BadConnectionRejected
 ///
 /// or if it's in the configured `extra_status_codes`.
+#[derive(Clone)]
 pub struct DefaultRetryPolicy<'a> {
     backoff: ExponentialBackoff,
     extra_status_codes: &'a [StatusCode],
